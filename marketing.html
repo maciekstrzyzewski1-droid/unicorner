@@ -103,8 +103,15 @@
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:linear-gradient(rgba(39,232,255,.05) 1px,transparent 1px) 0 0/100% 3px;mix-blend-mode:screen;opacity:.5;}
 h1,h2,h3,h4,h5,h6,.uc-wordmark{font-family:'Chakra Petch','Space Grotesk','Inter',sans-serif !important;letter-spacing:.4px;}
 .tab,.card,.opt,.cbox,.uc-back{border-radius:4px !important;}
-.tab,.card{transition:border-color .18s,box-shadow .18s,background .18s,transform .18s !important;}
-.tab:hover,.card:hover{border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 10px 30px rgba(167,139,250,.22),0 0 16px rgba(39,232,255,.13) !important;}
+/* neon obwódka tylko na elementach klikalnych */
+.tab,.opt,.uc-back,.nav-btn{transition:border-color .18s,box-shadow .18s,background .18s !important;}
+.tab:hover,.uc-back:hover,.nav-btn:hover,.opt:hover:not(.correct):not(.wrong){border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 8px 26px rgba(167,139,250,.22),0 0 14px rgba(39,232,255,.13) !important;}
+/* materiały tekstowe — wygodniejsze czytanie */
+.container,.uc-head-in,.page-intro{max-width:900px !important;}
+.card{padding:1.5rem 1.75rem !important;margin-bottom:1rem !important;}
+.card-body,.step-desc,.maslow-ex,.pros-cons li,.quiz-feedback{font-size:14.5px !important;line-height:1.75 !important;}
+.cbox-body{font-size:13.5px !important;line-height:1.62 !important;}
+.opt{font-size:14px !important;}
 </style>
 </head>
 <body>
