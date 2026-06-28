@@ -174,6 +174,16 @@ h1,h2,h3,h4,h5,h6,.uc-wordmark,.num{font-family:'Chakra Petch','Space Grotesk','
 .tabbtn:hover,.dzial:hover,.uc-back:hover,.opt:hover:not(:disabled){border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 8px 26px rgba(167,139,250,.22),0 0 14px rgba(39,232,255,.13) !important;}
 /* lewe menu — barwy projektu zamiast żółtego */
 nav a.head,.mobnav summary{color:#a78bfa !important;}
+/* mobile: logo jak na stronie głównej */
+@media(max-width:560px){.wordmark,.uc-wordmark{font-size:1.5rem !important;}.horn,.uc-horn{width:34px !important;height:34px !important;}}
+/* węższe menu — odzyskanie miejsca po lewej */
+nav{width:200px !important;padding:20px 12px !important;}
+/* sekcja tytułowa w stylu marketingu (bez pudełka), spięta z zakładkami */
+.page-intro{max-width:1100px;margin:22px auto 16px;padding:0 24px;text-align:center;}
+.page-intro h1{font-size:clamp(1.7rem,4vw,2.2rem);line-height:1.12;margin:0;}
+.page-intro p{margin:8px 0 0;color:var(--muted);font-size:.92rem;}
+.hero,.qhero{background:none !important;border:none !important;padding:0 !important;margin:4px 0 18px !important;}
+.lead-note{color:var(--muted);font-size:.96rem;line-height:1.62;margin:0 0 24px;}
 </style>
 </head>
 <body>
@@ -199,6 +209,12 @@ nav a.head,.mobnav summary{color:#a78bfa !important;}
     <a class="uc-back" href="index.html">← Wszystkie przedmioty</a>
   </div>
 </header>
+
+<!-- ===== SEKCJA TYTUŁOWA (styl jak w marketingu) ===== -->
+<div class="page-intro">
+  <h1>Metody i Techniki Zarządzania</h1>
+  <p>Kompletne kompendium na egzamin · 7 działów · ściąga MUST KNOW na końcu</p>
+</div>
 
 <!-- ===== TAB BAR ===== -->
 <div class="tabbar">
@@ -226,13 +242,7 @@ nav a.head,.mobnav summary{color:#a78bfa !important;}
 </nav>
 
 <main>
-<div class="hero">
-  <h1>Metody i Techniki Zarządzania</h1>
-  <p>Kompletne kompendium na egzamin — opracowane z 5 wykładów. Pomarańczowe boxy <b style="color:var(--must)">MUST KNOW</b> to rzeczy, które najczęściej padają na teście. Fioletowe boxy to dodatkowe wyjaśnienia i skojarzenia ułatwiające zapamiętanie. Quiz znajdziesz w zakładce <b>🧠 Quiz</b> u góry.</p>
-  <span class="badge">UEP · Katedra Zarządzania Jakością</span>
-  <span class="badge">dr hab. inż. M. Kaźmierczak, prof. UEP</span>
-  <span class="badge">7 działów · ściąga na końcu</span>
-</div>
+<p class="lead-note">Kompletne kompendium opracowane z 5 wykładów. Pomarańczowe boxy <b style="color:var(--must)">MUST KNOW</b> to rzeczy, które najczęściej padają na teście; fioletowe boxy to dodatkowe wyjaśnienia i skojarzenia ułatwiające zapamiętanie. Źródło: UEP, Katedra Zarządzania Jakością · dr hab. inż. M. Kaźmierczak, prof. UEP.</p>
 
 <details class="mobnav">
   <summary>📑 Spis treści — przejdź do działu</summary>
