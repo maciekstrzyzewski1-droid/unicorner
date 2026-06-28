@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Statystyka opisowa — miary średnie i zróżnicowania · Unicorner</title>
+<meta name="description" content="Miary tendencji centralnej, pozycyjne, zróżnicowania i asymetrii. Materiały, ściąga funkcji Excela, interaktywne zadania i quiz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c0a18; --ink2:#100d20; --surface:#161230; --surface2:#1c1740;
+    --line:#272050; --line2:#352c66;
+    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --accent-d:#8b5cf6;
+    --ok:#5ad1a0; --ok-bg:#10241d; --ok-line:#1d4a3a;
+    --bad:#f87a8e; --bad-bg:#2a0f17; --bad-line:#5a2230;
+    --iris:linear-gradient(115deg,#5ad1ff 0%,#a78bfa 34%,#f472b6 66%,#fcd34d 100%);
+    --shadow:0 18px 50px rgba(0,0,0,.5);
+    --mono:'Space Grotesk',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:
+      radial-gradient(900px 500px at 85% -8%, #1e1646 0%, transparent 58%),
+      radial-gradient(700px 460px at -8% 4%, #181133 0%, transparent 52%),
+      var(--ink);
+    color:var(--text);min-height:100vh;line-height:1.55;letter-spacing:.1px;overflow-x:hidden;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+
+  /* HEADER */
+  header{padding:20px 0 6px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .horn{width:26px;height:26px;flex-shrink:0;display:block;}
+  .horn .seg{fill:url(#irisGrad);}
+  .wordmark{font-family:var(--mono);font-weight:700;font-size:1.16rem;letter-spacing:-.3px;}
+  .wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .back{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:7px 13px;border-radius:999px;transition:border-color .2s,color .2s;}
+  .back:hover{color:var(--text);border-color:var(--line2);}
+
+  /* HERO */
+  .hero{padding:34px 0 18px;max-width:760px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);background:var(--ink2);padding:6px 12px;border-radius:999px;margin-bottom:18px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);}
+  h1{font-family:var(--mono);font-weight:700;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.07;letter-spacing:-.8px;margin-bottom:14px;}
+  h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .lede{font-size:1.02rem;color:var(--muted);max-width:600px;}
+  .lede b{color:var(--text);font-weight:600;}
+
+  /* NAV PILLS */
+  nav.pills{position:sticky;top:0;z-index:20;display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;margin:8px 0 6px;
+    background:linear-gradient(var(--ink),var(--ink) 70%,transparent);backdrop-filter:blur(4px);}
+  nav.pills a{font-family:var(--mono);font-size:.85rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:999px;transition:.2s;}
+  nav.pills a:hover{color:var(--text);border-color:var(--line2);transform:translateY(-1px);}
+
+  /* SECTION */
+  section.block{padding:26px 0 8px;}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin:8px 0 18px;font-family:var(--mono);}
+  .sec-head h2{font-size:1.3rem;font-weight:700;letter-spacing:-.3px;}
+  .sec-head .num{font-size:.8rem;color:var(--accent);font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:8px;padding:3px 9px;}
+  .sec-head .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+  .sub-note{color:var(--muted);font-size:.92rem;margin:-8px 0 18px;max-width:680px;}
+
+  /* CARDS / MATERIALS */
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden;}
+  .mcard::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);opacity:.65;}
+  .mcard h3{font-family:var(--mono);font-size:1.05rem;font-weight:600;margin-bottom:4px;}
+  .mcard .tagline{font-size:.78rem;color:var(--accent);font-family:var(--mono);margin-bottom:10px;}
+  .mcard p{font-size:.9rem;color:var(--muted);margin-bottom:8px;}
+  .mcard p b{color:var(--text);font-weight:600;}
+  .mcard ul{list-style:none;margin:6px 0 0;}
+  .mcard li{font-size:.88rem;color:var(--muted);padding:4px 0 4px 18px;position:relative;}
+  .mcard li::before{content:"›";position:absolute;left:2px;color:var(--accent);font-weight:700;}
+  .mcard li b{color:var(--text);font-weight:600;}
+  .fml{display:block;font-family:var(--mono);font-size:.92rem;color:var(--text);background:var(--ink2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:8px 0;letter-spacing:.2px;}
+  .fml .v{color:var(--accent);}
+  .pill-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+  .mini{font-size:.74rem;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-radius:7px;padding:3px 8px;font-family:var(--mono);}
+  .callout{font-size:.84rem;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;padding:10px 13px;margin-top:10px;}
+  .callout b{color:var(--text);}
+
+  /* EXCEL TABLE */
+  .xtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);}
+  table.xt{width:100%;border-collapse:collapse;min-width:560px;font-size:.9rem;}
+  table.xt th{font-family:var(--mono);text-align:left;font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;padding:12px 14px;border-bottom:1px solid var(--line2);background:var(--ink2);}
+  table.xt td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.xt tr:last-child td{border-bottom:none;}
+  table.xt td.fn{font-family:var(--mono);color:var(--accent);white-space:nowrap;}
+  table.xt td.fn span{color:var(--muted2);}
+  table.xt td.measure b{color:var(--text);}
+  table.xt td.measure small{display:block;color:var(--muted2);font-size:.78rem;margin-top:2px;}
+
+  /* EXERCISES */
+  .ex{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;position:relative;}
+  .ex.solved{border-color:var(--ok-line);}
+  .ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+  .ex-theme{font-family:var(--mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);}
+  .ex-diff{font-family:var(--mono);font-size:.68rem;color:var(--muted2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;}
+  .ex h3{font-family:var(--mono);font-size:1.04rem;font-weight:600;margin-bottom:10px;}
+  .ex .data{font-size:.9rem;color:var(--muted);margin-bottom:12px;}
+  .dtable-wrap{overflow-x:auto;margin:10px 0;}
+  table.dt{border-collapse:collapse;font-family:var(--mono);font-size:.85rem;}
+  table.dt th,table.dt td{border:1px solid var(--line2);padding:6px 12px;text-align:center;color:var(--text);}
+  table.dt th{background:var(--ink2);color:var(--muted);font-weight:600;}
+  .answer-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:6px;}
+  .answer-row input{font-family:var(--mono);font-size:1rem;color:var(--text);background:var(--ink2);border:1px solid var(--line2);border-radius:10px;padding:10px 13px;width:140px;outline:none;transition:border-color .2s;}
+  .answer-row input:focus{border-color:var(--accent);}
+  .answer-row .unit{font-family:var(--mono);color:var(--muted);font-size:.92rem;}
+  .btn{font-family:var(--mono);font-weight:600;font-size:.9rem;color:#160d2b;background:var(--accent);border:none;border-radius:10px;padding:10px 18px;cursor:pointer;transition:transform .15s,background .2s;}
+  .btn:hover{transform:translateY(-1px);background:#b9a3fb;}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line2);}
+  .btn.ghost:hover{color:var(--text);background:var(--surface2);}
+  .verdict{font-family:var(--mono);font-size:.9rem;font-weight:600;padding:8px 0;display:none;}
+  .verdict.ok{color:var(--ok);display:block;}
+  .verdict.bad{color:var(--bad);display:block;}
+  .solution{display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:14px;}
+  .solution.show{display:block;animation:fade .3s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .solution h4{font-family:var(--mono);font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;}
+  .step{font-size:.9rem;color:var(--muted);padding:4px 0 4px 20px;position:relative;}
+  .step::before{content:"";position:absolute;left:4px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  .step b{color:var(--text);}
+  .step .calc{font-family:var(--mono);color:var(--text);}
+  .excel-tag{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.86rem;background:var(--ok-bg);border:1px solid var(--ok-line);border-radius:10px;padding:9px 13px;font-family:var(--mono);color:#a7e8cd;flex-wrap:wrap;}
+  .excel-tag b{color:#d7f7e8;font-weight:600;}
+  .excel-tag .xi{font-size:.95rem;}
+
+  .progress{position:sticky;bottom:14px;margin:18px auto 0;max-width:340px;background:var(--surface);border:1px solid var(--line2);border-radius:999px;padding:8px 16px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.82rem;box-shadow:var(--shadow);z-index:15;}
+  .progress .bar{flex:1;height:6px;background:var(--ink2);border-radius:99px;overflow:hidden;}
+  .progress .bar i{display:block;height:100%;width:0;background:var(--iris);transition:width .4s ease;}
+  .progress .lbl{color:var(--muted);white-space:nowrap;}
+
+  /* QUIZ */
+  .quiz-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .q-no{font-family:var(--mono);font-size:.72rem;color:var(--accent);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .q-text{font-size:1rem;margin:8px 0 14px;font-weight:500;}
+  .opt{display:block;width:100%;text-align:left;background:var(--ink2);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:9px;cursor:pointer;color:var(--text);font-family:inherit;font-size:.94rem;transition:border-color .15s,background .15s;}
+  .opt:hover:not(:disabled){border-color:var(--line2);background:var(--surface2);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#cdeede;}
+  .opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#f7c9d1;}
+  .q-exp{display:none;font-size:.9rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:var(--ink2);border-radius:9px;padding:11px 13px;}
+  .q-exp.show{display:block;animation:fade .3s ease;}
+  .q-exp b{color:var(--text);}
+  .quiz-score{text-align:center;font-family:var(--mono);padding:22px;border:1px solid var(--line2);border-radius:16px;background:var(--ink2);margin-top:6px;}
+  .quiz-score .big{font-size:2.2rem;font-weight:700;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);padding:26px 0 50px;margin-top:40px;}
+  .disclaimer{font-size:.78rem;color:var(--muted2);max-width:620px;line-height:1.6;}
+  .disclaimer b{color:var(--muted);font-weight:600;}
+
+  @media(max-width:560px){
+    .hero{padding:26px 0 14px;}
+    nav.pills{top:0;}
+    .answer-row input{width:120px;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wordmark">Unicorn<span class="ai">er</span></span>
+      </a>
+      <a class="back" href="index.html">← wszystkie przedmioty</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>Statystyka opisowa · UEP</span>
+    <h1>Miary średnie i <span class="grad">zróżnicowania</span></h1>
+    <p class="lede">Analiza struktury: tendencja centralna, miary pozycyjne, zróżnicowanie i asymetria. <b>Materiały, ściąga funkcji Excela, zadania krok po kroku i quiz</b> — tu liczy się policzenie, nie wyklepanie definicji.</p>
+  </section>
+
+  <nav class="pills">
+    <a href="#materialy">Materiały</a>
+    <a href="#excel">Ściąga Excela</a>
+    <a href="#zadania">Zadania</a>
+    <a href="#quiz">Quiz</a>
+  </nav>
+
+  <!-- ===================== MATERIAŁY ===================== -->
+  <section class="block" id="materialy">
+    <div class="sec-head"><span class="num">01</span><h2>Materiały</h2><span class="line"></span></div>
+    <p class="sub-note">Najpierw rozróżnij <b>typ szeregu</b> — od tego zależy wzór. <b>Szczegółowy</b>: surowe obserwacje. <b>Punktowy (rozdzielczy)</b>: wartości + liczebności. <b>Przedziałowy</b>: klasy (przedziały) + liczebności — tu wchodzi interpolacja.</p>
+
+    <div class="cards">
+
+      <div class="mcard">
+        <h3>Średnia arytmetyczna</h3>
+        <div class="tagline">tendencja centralna · klasyczna</div>
+        <span class="fml">szczegółowy: <span class="v">x̄ = Σxᵢ / n</span></span>
+        <span class="fml">rozdzielczy: <span class="v">x̄ = Σxᵢnᵢ / Σnᵢ</span></span>
+        <p>W przedziałowym za xᵢ bierzesz <b>środek przedziału</b>.</p>
+        <ul>
+          <li>Suma odchyleń od średniej = <b>0</b> (Σ(xᵢ−x̄)=0)</li>
+          <li><b>Wrażliwa na wartości skrajne</b> — jeden outlier ją ciągnie</li>
+          <li>Suma kwadratów odchyleń od x̄ jest <b>najmniejsza</b></li>
+        </ul>
+        <div class="callout">Średnia ma sens tylko dla cechy <b>mierzalnej</b>. Przy silnej asymetrii lepiej opisuje typową jednostkę <b>mediana</b>.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Dominanta (moda)</h3>
+        <div class="tagline">tendencja centralna · pozycyjna</div>
+        <p>Wartość <b>najczęściej występująca</b>. Szczegółowy/punktowy: wariant o największej liczebności.</p>
+        <span class="fml">przedziałowy:<br><span class="v">D = x₀ + (nD−nD₋₁) / [(nD−nD₋₁)+(nD−nD₊₁)] · h</span></span>
+        <ul>
+          <li>x₀ — dolna granica przedziału z dominantą</li>
+          <li>nD, nD₋₁, nD₊₁ — liczebności: dominanty, poprzedniego, następnego</li>
+          <li>h — rozpiętość przedziału</li>
+          <li>Jedyna miara dla cechy <b>jakościowej / nominalnej</b></li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Mediana i kwartyle</h3>
+        <div class="tagline">miary pozycyjne</div>
+        <p>Dzielą uporządkowany zbiór: <b>Me</b> na pół, <b>Q1</b> odcina 25%, <b>Q3</b> odcina 75%.</p>
+        <span class="fml">przedziałowy:<br><span class="v">Me = x₀ + (N/2 − cum₋₁)/n<sub>Me</sub> · h</span></span>
+        <span class="fml"><span class="v">Q1 = x₀ + (N/4 − cum₋₁)/n<sub>Q1</sub> · h</span></span>
+        <ul>
+          <li>cum₋₁ — liczebność skumulowana <b>przed</b> przedziałem</li>
+          <li>Q3 analogicznie z <b>3N/4</b></li>
+          <li>Mediana jest <b>odporna na outliery</b></li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Rozstęp i odchylenie ćwiartkowe</h3>
+        <div class="tagline">zróżnicowanie · pozycyjne</div>
+        <span class="fml">Rozstęp: <span class="v">R = x<sub>max</sub> − x<sub>min</sub></span></span>
+        <span class="fml">Rozstęp międzykwartylowy: <span class="v">R<sub>Q</sub> = Q3 − Q1</span></span>
+        <span class="fml">Odchylenie ćwiartkowe: <span class="v">Q = (Q3 − Q1) / 2</span></span>
+        <ul>
+          <li>Typowy obszar zmienności: <b>Me ± Q</b></li>
+          <li>R<sub>Q</sub> odporny na skrajne — bierze tylko środkowe 50%</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Wariancja i odchylenie standardowe</h3>
+        <div class="tagline">zróżnicowanie · klasyczne</div>
+        <span class="fml">rozdzielczy: <span class="v">S² = Σ(xᵢ−x̄)²nᵢ / Σnᵢ</span></span>
+        <span class="fml"><span class="v">S = √S²</span></span>
+        <ul>
+          <li>S — przeciętne odchylenie wartości od średniej (w jednostkach cechy)</li>
+          <li>Typowy obszar zmienności: <b>x̄ ± S</b></li>
+          <li>Wariancja jest w <b>jednostkach do kwadratu</b> — trudna do interpretacji, dlatego liczymy S</li>
+        </ul>
+        <div class="callout">UEP liczy wariancję z dzielnikiem <b>N</b> (populacyjną) — w Excelu to <b>WARIANCJA.POP</b> / <b>ODCH.STANDARD.POPUL</b>, nie wersje „PRÓBKI".</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Współczynniki zmienności</h3>
+        <div class="tagline">zróżnicowanie · względne</div>
+        <span class="fml">klasyczny: <span class="v">V<sub>S</sub> = S / x̄ · 100%</span></span>
+        <span class="fml">pozycyjny: <span class="v">V<sub>Q</sub> = Q / Me · 100%</span></span>
+        <p>Bez jednostki → pozwala <b>porównać zróżnicowanie</b> dwóch różnych cech albo zbiorowości.</p>
+        <ul>
+          <li>Im wyższy, tym zbiorowość bardziej <b>niejednorodna</b></li>
+          <li>Orientacyjnie: V &gt; ok. 60–70% to silne zróżnicowanie</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Asymetria (skośność)</h3>
+        <div class="tagline">kształt rozkładu</div>
+        <span class="fml">wskaźnik: <span class="v">W<sub>s</sub> = x̄ − D</span></span>
+        <span class="fml">klasyczny: <span class="v">A<sub>s</sub> = (x̄ − D) / S</span></span>
+        <span class="fml">skośności: <span class="v">A<sub>sS</sub> = (Q3 + Q1 − 2Me)/(Q3 − Q1)</span></span>
+        <ul>
+          <li><b>As &gt; 0</b> → prawostronna: x̄ &gt; Me &gt; D, ogon w prawo</li>
+          <li><b>As &lt; 0</b> → lewostronna: x̄ &lt; Me &lt; D</li>
+          <li><b>As ≈ 0</b> → rozkład symetryczny</li>
+        </ul>
+        <div class="callout">Pamięć: przy prawej asymetrii (np. zarobki) <b>średnia jest zawyżona</b> względem typowej osoby — stąd mediana bywa uczciwsza.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Koncentracja (kurtoza)</h3>
+        <div class="tagline">kształt rozkładu</div>
+        <span class="fml"><span class="v">α₄ = [ (1/N)Σ(xᵢ−x̄)⁴nᵢ ] / S⁴</span></span>
+        <p>Mówi jak bardzo wartości <b>skupiają się wokół średniej</b> (wysmukłość rozkładu).</p>
+        <ul>
+          <li><b>α₄ = 3</b> → rozkład normalny (mezokurtyczny)</li>
+          <li><b>α₄ &gt; 3</b> → wysmukły (leptokurtyczny), wartości skupione</li>
+          <li><b>α₄ &lt; 3</b> → spłaszczony (platokurtyczny)</li>
+          <li>Eksces E = α₄ − 3 (odniesienie do normalnego)</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== ŚCIĄGA EXCEL ===================== -->
+  <section class="block" id="excel">
+    <div class="sec-head"><span class="num">02</span><h2>Ściąga funkcji Excela</h2><span class="line"></span></div>
+    <p class="sub-note">Polskie nazwy funkcji (UEP). Dla szeregu <b>rozdzielczego</b> przy średniej i wariancji najczęściej budujesz kolumny pomocnicze (xᵢnᵢ, (xᵢ−x̄)²nᵢ) i sumujesz — funkcje skrótowe działają „od ręki" tylko na szeregu szczegółowym.</p>
+    <div class="xtable-wrap">
+      <table class="xt">
+        <thead><tr><th>Miara</th><th>Funkcja Excela</th><th>Uwaga</th></tr></thead>
+        <tbody>
+          <tr><td class="measure"><b>Średnia arytmetyczna</b></td><td class="fn">=ŚREDNIA(zakres)</td><td>Szczegółowy. Rozdzielczy: <span style="font-family:var(--mono)">=SUMA.ILOCZYNÓW(x;n)/SUMA(n)</span></td></tr>
+          <tr><td class="measure"><b>Mediana</b></td><td class="fn">=MEDIANA(zakres)</td><td>Działa na szeregu szczegółowym (surowe dane)</td></tr>
+          <tr><td class="measure"><b>Dominanta</b></td><td class="fn">=WYST.NAJCZĘŚCIEJ.WART(zakres)</td><td>Starsza nazwa: <span style="font-family:var(--mono)">=WYST.NAJCZĘŚCIEJ</span></td></tr>
+          <tr><td class="measure"><b>Kwartyle Q1, Q3</b></td><td class="fn">=KWARTYL.PRZEDZ(zakres;<span>1</span>)</td><td>3. argument: 1 = Q1, 2 = Me, 3 = Q3</td></tr>
+          <tr><td class="measure"><b>Wariancja populacyjna</b><small>dzielnik N (konwencja UEP)</small></td><td class="fn">=WARIANCJA.POP(zakres)</td><td>Próbkowa (÷n−1): <span style="font-family:var(--mono)">=WARIANCJA.PRÓBKI</span></td></tr>
+          <tr><td class="measure"><b>Odchylenie standardowe</b><small>populacyjne</small></td><td class="fn">=ODCH.STANDARD.POPUL(zakres)</td><td>Próbkowe: <span style="font-family:var(--mono)">=ODCH.STANDARD.PRÓBKI</span></td></tr>
+          <tr><td class="measure"><b>Współczynnik zmienności</b></td><td class="fn">=ODCH.STANDARD.POPUL(z)/ŚREDNIA(z)</td><td>Pomnóż przez 100 dla %</td></tr>
+          <tr><td class="measure"><b>Skośność (asymetria)</b></td><td class="fn">=SKOŚNOŚĆ(zakres)</td><td>Klasyczny współczynnik asymetrii</td></tr>
+          <tr><td class="measure"><b>Kurtoza</b></td><td class="fn">=KURTOZA(zakres)</td><td>Excel zwraca <b>eksces</b> (α₄ − 3): 0 = normalny</td></tr>
+          <tr><td class="measure"><b>Min / Max → rozstęp</b></td><td class="fn">=MAX(z) − MIN(z)</td><td>Rozstęp R</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== ZADANIA ===================== -->
+  <section class="block" id="zadania">
+    <div class="sec-head"><span class="num">03</span><h2>Zadania krok po kroku</h2><span class="line"></span></div>
+    <p class="sub-note">Policz wynik (na kartce albo w Excelu), wpisz go i sprawdź. Akceptuję przecinek i kropkę oraz drobne zaokrąglenia. Po sprawdzeniu rozwija się <b>pełne rozwiązanie</b> i pokazuję, <b>którą funkcją Excela</b> policzyć to samo. Dane pochodzą z ćwiczeń z zajęć.</p>
+    <div id="exList"></div>
+    <div class="progress"><span class="lbl" id="exLbl">0 / 0</span><div class="bar"><i id="exFill"></i></div></div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="block" id="quiz">
+    <div class="sec-head"><span class="num">04</span><h2>Quiz teoretyczny</h2><span class="line"></span></div>
+    <p class="sub-note">Interpretacje, własności i pułapki — to, co egzamin lubi sprawdzać poza samym liczeniem. Klikasz odpowiedź, dostajesz natychmiast wyjaśnienie.</p>
+    <div id="quizList"></div>
+    <div class="quiz-score" id="quizScore" style="display:none">
+      <div class="big" id="scoreBig">0 / 0</div>
+      <div id="scoreMsg" style="color:var(--muted);margin-top:6px"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="disclaimer">
+      <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani żadną katedrą.
+      Materiały to własne opracowania na bazie zajęć — nie udostępniamy prezentacji wykładowców.
+      Konwencje (np. wariancja z dzielnikiem N) zgodne z ćwiczeniami; mimo to licz też z oryginalnych źródeł.
+    </p>
+  </footer>
+</div>
+
+<script>
+/* ============ DANE ZADAŃ (wyniki zweryfikowane w Pythonie) ============ */
+const tbl = (head, rows) =>
+  '<div class="dtable-wrap"><table class="dt"><thead><tr>'+head.map(h=>`<th>${h}</th>`).join('')+
+  '</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')+
+  '</tbody></table></div>';
+
+const S1x=[10,50,100,300,700,900,960], S1n=[50,80,100,120,110,90,80];
+const S2x=[10,50,100,300,500,700,900], S2n=[1,5,70,250,155,43,106];
+const s1rows = S1x.map((x,i)=>[x, S1n[i]]);
+const s2rows = S2x.map((x,i)=>[x, S2n[i]]);
+const intHead=['Przedział','Liczebność nᵢ','Skum. cum'];
+const intRows=[['0 – 10','8','8'],['10 – 20','20','28'],['20 – 30','34','62'],['30 – 40','22','84'],['40 – 50','16','100']];
+
+const EXS = [
+ {theme:'Średnia', diff:'łatwe',
+  title:'Średnia arytmetyczna (szereg rozdzielczy)',
+  data:'Rozkład kwoty zakupów (zł) wg liczebności klientów. Policz średnią kwotę.'+tbl(['kwota xᵢ','liczebność nᵢ'],s1rows),
+  ans:452.86, tol:1.5, unit:'zł',
+  sol:[['Σnᵢ (N)','50+80+100+120+110+90+80 = <span class="calc">630</span>'],
+       ['Σxᵢnᵢ','10·50+50·80+100·100+300·120+700·110+900·90+960·80 = <span class="calc">285 300</span>'],
+       ['Średnia','x̄ = 285 300 / 630 = <span class="calc">452,86 zł</span>']],
+  excel:'=SUMA.ILOCZYNÓW(A:A;B:B)/SUMA(B:B)'},
+
+ {theme:'Mediana', diff:'łatwe',
+  title:'Mediana (szereg punktowy)',
+  data:'Te same dane. Wyznacz medianę kwoty zakupów.'+tbl(['kwota xᵢ','liczebność nᵢ','skum.'],S1x.map((x,i)=>[x,S1n[i],S1n.slice(0,i+1).reduce((a,b)=>a+b,0)])),
+  ans:300, tol:0, unit:'zł',
+  sol:[['Pozycja mediany','N/2 = 630/2 = <span class="calc">315</span>'],
+       ['Szukamy klasy','skumulowane: 50, 130, 230, <b>350</b>… pozycja 315 wpada w wartość <span class="calc">300</span>'],
+       ['Mediana','Me = <span class="calc">300 zł</span> — połowa klientów wydała ≤ 300 zł']],
+  excel:'=MEDIANA(dane szczegółowe)  •  na rozdzielczym: po skum. liczebności'},
+
+ {theme:'Dominanta', diff:'łatwe',
+  title:'Dominanta (szereg punktowy)',
+  data:'Te same dane. Podaj dominantę.'+tbl(['kwota xᵢ','liczebność nᵢ'],s1rows),
+  ans:300, tol:0, unit:'zł',
+  sol:[['Największa liczebność','max(nᵢ) = <span class="calc">120</span>'],
+       ['Odpowiadająca wartość','nᵢ=120 przy kwocie <span class="calc">300</span>'],
+       ['Dominanta','D = <span class="calc">300 zł</span> — najczęstsza kwota zakupu']],
+  excel:'=WYST.NAJCZĘŚCIEJ.WART(dane)'},
+
+ {theme:'Rozstęp', diff:'łatwe',
+  title:'Rozstęp (druga zbiorowość)',
+  data:'Inna zbiorowość klientów. Policz rozstęp kwoty.'+tbl(['kwota xᵢ','liczebność nᵢ'],s2rows),
+  ans:890, tol:0, unit:'zł',
+  sol:[['Maksimum','x_max = <span class="calc">900</span>'],
+       ['Minimum','x_min = <span class="calc">10</span>'],
+       ['Rozstęp','R = 900 − 10 = <span class="calc">890 zł</span>']],
+  excel:'=MAX(A:A) − MIN(A:A)'},
+
+ {theme:'Odch. standardowe', diff:'średnie',
+  title:'Odchylenie standardowe (rozdzielczy)',
+  data:'Druga zbiorowość (średnia x̄ = 452,79 zł). Policz odchylenie standardowe (dzielnik N).'+tbl(['kwota xᵢ','liczebność nᵢ'],s2rows),
+  ans:251.12, tol:3, unit:'zł',
+  sol:[['Wariancja','S² = Σ(xᵢ−x̄)²nᵢ / N, gdzie x̄ = 452,79; N = 630'],
+       ['Wynik wariancji','S² = <span class="calc">63 061</span>'],
+       ['Odch. standardowe','S = √63 061 = <span class="calc">251,12 zł</span> — przeciętnie kwota różni się od średniej o ~251 zł']],
+  excel:'=ODCH.STANDARD.POPUL(dane)  •  rozdzielczy: kolumna (xᵢ−x̄)²·nᵢ → √(SUMA/N)'},
+
+ {theme:'Wsp. zmienności', diff:'średnie',
+  title:'Klasyczny współczynnik zmienności V_S',
+  data:'Druga zbiorowość: x̄ = 452,79 zł, S = 251,12 zł. Policz V_S w %.',
+  ans:55.46, tol:1, unit:'%',
+  sol:[['Wzór','V_S = S / x̄ · 100%'],
+       ['Podstawienie','V_S = 251,12 / 452,79 · 100% = <span class="calc">55,5%</span>'],
+       ['Interpretacja','> 50% → zbiorowość <b>silnie zróżnicowana</b> pod względem kwoty zakupów']],
+  excel:'=ODCH.STANDARD.POPUL(d)/ŚREDNIA(d)*100'},
+
+ {theme:'Dominanta · przedział', diff:'trudne',
+  title:'Dominanta z szeregu przedziałowego (interpolacja)',
+  data:'Wynagrodzenia (w setkach zł) w 100-osobowej firmie. Policz dominantę. Rozpiętość przedziału h = 10.'+tbl(intHead,intRows),
+  ans:25.38, tol:0.5, unit:'(setek zł)',
+  sol:[['Przedział z dominantą','najwięcej osób: nᵢ=34 → przedział <b>20–30</b>, x₀=20'],
+       ['Liczebności sąsiadów','nD=34, nD₋₁=20, nD₊₁=22'],
+       ['Wzór','D = 20 + (34−20)/[(34−20)+(34−22)] · 10'],
+       ['Wynik','D = 20 + 14/26 · 10 = <span class="calc">25,38</span> → ok. 2 538 zł']],
+  excel:'wzór interpolacyjny ręcznie (Excel nie ma funkcji dla przedziałów)'},
+
+ {theme:'Mediana · przedział', diff:'trudne',
+  title:'Mediana z szeregu przedziałowego (interpolacja)',
+  data:'Te same wynagrodzenia (N = 100, h = 10). Policz medianę.'+tbl(intHead,intRows),
+  ans:26.47, tol:0.5, unit:'(setek zł)',
+  sol:[['Pozycja','N/2 = 50'],
+       ['Przedział mediany','cum: 8, 28, <b>62</b> → 50 wpada w przedział <b>20–30</b>, x₀=20, n_Me=34'],
+       ['Liczebność przed','cum₋₁ = 28'],
+       ['Wzór','Me = 20 + (50−28)/34 · 10 = 20 + 22/34·10'],
+       ['Wynik','Me = <span class="calc">26,47</span> → ok. 2 647 zł']],
+  excel:'wzór interpolacyjny ręcznie (z liczebności skumulowanych)'},
+
+ {theme:'Asymetria', diff:'średnie',
+  title:'Klasyczny współczynnik asymetrii A_s',
+  data:'Rozkład zarobków: średnia x̄ = 11,7; dominanta D = 0; odchylenie standardowe S = 7,7. Policz A_s.',
+  ans:1.51, tol:0.05, unit:'',
+  sol:[['Wzór','A_s = (x̄ − D) / S'],
+       ['Podstawienie','A_s = (11,7 − 0) / 7,7 = <span class="calc">1,51</span>'],
+       ['Interpretacja','A_s > 0 → <b>asymetria prawostronna</b>: ogon w stronę wysokich zarobków, średnia zawyżona względem typowej osoby']],
+  excel:'=SKOŚNOŚĆ(dane)'},
+
+ {theme:'Skośność', diff:'średnie',
+  title:'Współczynnik skośności A_sS (pozycyjny)',
+  data:'Z tego samego rozkładu: Q1 = 5; Me = 11; Q3 = 19. Policz A_sS.',
+  ans:0.14, tol:0.03, unit:'',
+  sol:[['Wzór','A_sS = (Q3 + Q1 − 2·Me) / (Q3 − Q1)'],
+       ['Podstawienie','A_sS = (19 + 5 − 22) / (19 − 5) = 2/14'],
+       ['Wynik','A_sS = <span class="calc">0,14</span> → lekka asymetria prawostronna']],
+  excel:'z kwartyli: =(KWARTYL.PRZEDZ(d;3)+KWARTYL.PRZEDZ(d;1)−2*MEDIANA(d))/(KWARTYL.PRZEDZ(d;3)−KWARTYL.PRZEDZ(d;1))'}
+];
+
+/* ============ RENDER ZADAŃ ============ */
+const KEY='unicorner_stat_v1';
+let solved = JSON.parse(localStorage.getItem(KEY)||'{}');
+const exList=document.getElementById('exList');
+EXS.forEach((e,i)=>{
+  const d=document.createElement('div'); d.className='ex'+(solved['e'+i]?' solved':''); d.id='ex'+i;
+  d.innerHTML=`
+    <div class="ex-top"><span class="ex-theme">${e.theme}</span><span class="ex-diff">${e.diff}</span></div>
+    <h3>${i+1}. ${e.title}</h3>
+    <div class="data">${e.data}</div>
+    <div class="answer-row">
+      <input type="text" inputmode="decimal" placeholder="Twój wynik" aria-label="wynik">
+      ${e.unit?`<span class="unit">${e.unit}</span>`:''}
+      <button class="btn" data-act="check">Sprawdź</button>
+      <button class="btn ghost" data-act="show">Pokaż rozwiązanie</button>
+    </div>
+    <div class="verdict"></div>
+    <div class="solution">
+      <h4>Rozwiązanie</h4>
+      ${e.sol.map(s=>`<div class="step"><b>${s[0]}:</b> ${s[1]}</div>`).join('')}
+      <div class="excel-tag"><span class="xi">▦</span><b>W Excelu:</b> ${e.excel}</div>
+    </div>`;
+  const inp=d.querySelector('input'), verd=d.querySelector('.verdict'), sol=d.querySelector('.solution');
+  const reveal=ok=>{ sol.classList.add('show'); if(ok){ d.classList.add('solved'); solved['e'+i]=1; localStorage.setItem(KEY,JSON.stringify(solved)); updateProg(); } };
+  d.querySelector('[data-act=check]').onclick=()=>{
+    const raw=inp.value.replace(',','.').replace(/[^0-9.\-]/g,'');
+    if(raw===''){verd.className='verdict bad';verd.textContent='Wpisz wynik liczbowy.';return;}
+    const v=parseFloat(raw); const ok=Math.abs(v-e.ans)<= (e.tol||0.01)+1e-9;
+    if(ok){verd.className='verdict ok';verd.textContent='✓ Dobrze! Wynik: '+String(e.ans).replace('.',',')+(e.unit?' '+e.unit:'');}
+    else{verd.className='verdict bad';verd.textContent='✗ Nie tym razem — sprawdź rozwiązanie poniżej.';}
+    reveal(ok);
+  };
+  d.querySelector('[data-act=show]').onclick=()=>{ sol.classList.add('show'); };
+  inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')d.querySelector('[data-act=check]').click();});
+  exList.appendChild(d);
+});
+function updateProg(){
+  const done=EXS.filter((_,i)=>solved['e'+i]).length;
+  document.getElementById('exLbl').textContent=done+' / '+EXS.length;
+  document.getElementById('exFill').style.width=(done/EXS.length*100)+'%';
+}
+updateProg();
+
+/* ============ QUIZ ============ */
+const QUIZ=[
+ {q:'Która miara najlepiej opisuje „typowego" przedstawiciela zbiorowości przy silnej asymetrii prawostronnej (np. zarobki)?',
+  o:['Średnia arytmetyczna','Mediana','Rozstęp','Wariancja'],c:1,
+  e:'Przy prawej asymetrii nieliczne bardzo wysokie wartości <b>zawyżają średnią</b>. Mediana jest odporna na skrajne wartości, więc lepiej oddaje typową jednostkę.'},
+ {q:'Suma odchyleń poszczególnych wartości od średniej arytmetycznej wynosi:',
+  o:['Zawsze 0','Zawsze dodatnia','Równa wariancji','Zależy od rozkładu'],c:0,
+  e:'To podstawowa własność średniej: Σ(xᵢ − x̄) = 0. Dodatnie i ujemne odchylenia zawsze się znoszą.'},
+ {q:'As < 0 oznacza asymetrię:',
+  o:['Prawostronną (x̄ > Me > D)','Lewostronną (x̄ < Me < D)','Brak asymetrii','Zawsze błąd obliczeń'],c:1,
+  e:'Ujemny współczynnik asymetrii to <b>asymetria lewostronna</b>: ogon rozkładu ciągnie się w stronę niskich wartości, a x̄ < Me < D.'},
+ {q:'Po co liczymy współczynnik zmienności V_S zamiast samego odchylenia standardowego?',
+  o:['Bo jest dokładniejszy','Bo nie ma jednostki i pozwala porównać różne cechy','Bo zawsze jest mniejszy','Bo nie wymaga średniej'],c:1,
+  e:'V_S jest <b>względny i bezwymiarowy</b> (w %), więc można nim porównać zróżnicowanie cech wyrażonych w różnych jednostkach (np. wiek vs zarobki).'},
+ {q:'W szeregu przedziałowym, by policzyć medianę, musisz najpierw:',
+  o:['Posortować surowe dane','Wyznaczyć liczebności skumulowane i przedział mediany','Policzyć średnią','Znaleźć dominantę'],c:1,
+  e:'Mediana z przedziałów liczona jest <b>interpolacyjnie</b>: szukasz przedziału, w którym skumulowana liczebność osiąga N/2, i podstawiasz do wzoru.'},
+ {q:'Typowy obszar zmienności w ujęciu klasycznym to:',
+  o:['Me ± Q','x̄ ± S','Q1 do Q3','x_min do x_max'],c:1,
+  e:'Klasyczny typowy obszar zmienności to <b>x̄ ± S</b> (średnia ± odchylenie standardowe). Pozycyjny odpowiednik to Me ± Q.'},
+ {q:'Która miara tendencji centralnej ma sens dla cechy jakościowej nominalnej (np. ulubiona marka)?',
+  o:['Średnia','Mediana','Dominanta','Kwartyl'],c:2,
+  e:'Tylko <b>dominanta</b> — najczęstszy wariant. Średniej i mediany nie policzysz dla cechy, której wartości nie da się uporządkować ani dodać.'},
+ {q:'Kurtoza α₄ = 3 odpowiada rozkładowi:',
+  o:['Wysmukłemu','Spłaszczonemu','Normalnemu (mezokurtycznemu)','Dwumodalnemu'],c:2,
+  e:'α₄ = 3 to punkt odniesienia — rozkład normalny. α₄ > 3 → wysmukły (leptokurtyczny), α₄ < 3 → spłaszczony. Excel zwraca eksces = α₄ − 3.'},
+ {q:'Odchylenie ćwiartkowe Q oblicza się jako:',
+  o:['(Q3 − Q1) / 2','Q3 − Q1','(Q3 + Q1) / 2','Q3 / Q1'],c:0,
+  e:'Q = (Q3 − Q1)/2 — połowa rozstępu międzykwartylowego. Opisuje rozproszenie środkowych 50% jednostek, odporne na outliery.'},
+ {q:'Jaką funkcją w polskim Excelu policzysz odchylenie standardowe z dzielnikiem N (konwencja UEP)?',
+  o:['=ODCH.STANDARD.PRÓBKI','=ODCH.STANDARD.POPUL','=WARIANCJA.PRÓBKI','=ŚREDNIA'],c:1,
+  e:'<b>=ODCH.STANDARD.POPUL</b> dzieli przez N (populacyjne). Wersja „PRÓBKI" dzieli przez n−1 i da inny wynik.'},
+ {q:'Dlaczego przy zarobkach średnia bywa wyższa od mediany?',
+  o:['Bo zawsze tak jest','Bo rozkład ma prawą asymetrię — wysokie zarobki ciągną średnią w górę','Bo mediana jest błędna','Bo średnia ignoruje liczebności'],c:1,
+  e:'Rozkład zarobków jest zwykle <b>prawostronnie asymetryczny</b>. Garstka bardzo wysokich pensji podnosi średnią, podczas gdy mediana zostaje przy typowej wartości.'},
+ {q:'Współczynnik V_S = 65% interpretujemy jako:',
+  o:['Słabe zróżnicowanie','Umiarkowane, idealne','Silne zróżnicowanie zbiorowości','Błąd — V nie przekracza 50%'],c:2,
+  e:'Im wyższy V_S, tym większa <b>niejednorodność</b>. Wartości rzędu 60–70%+ świadczą o silnym zróżnicowaniu cechy w zbiorowości. (V może przekraczać 100%.)'}
+];
+const quizList=document.getElementById('quizList'); let answered=0, correct=0;
+QUIZ.forEach((q,i)=>{
+  const order=q.o.map((t,idx)=>idx).sort(()=>Math.random()-0.5);
+  const card=document.createElement('div'); card.className='quiz-card';
+  card.innerHTML=`<div class="q-no">Pytanie ${i+1} / ${QUIZ.length}</div><div class="q-text">${q.q}</div>
+    <div class="opts"></div><div class="q-exp">${q.e}</div>`;
+  const opts=card.querySelector('.opts'), exp=card.querySelector('.q-exp');
+  order.forEach(idx=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=q.o[idx];
+    b.onclick=()=>{
+      opts.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      if(idx===q.c){b.classList.add('correct');correct++;}
+      else{b.classList.add('wrong');opts.querySelectorAll('.opt').forEach(x=>{if(x.textContent===q.o[q.c])x.classList.add('correct');});}
+      exp.classList.add('show'); answered++;
+      if(answered===QUIZ.length){
+        const sc=document.getElementById('quizScore'); sc.style.display='block';
+        document.getElementById('scoreBig').textContent=correct+' / '+QUIZ.length;
+        const pct=correct/QUIZ.length;
+        document.getElementById('scoreMsg').textContent=
+          pct===1?'Komplet — robisz to na luzie. 🦄':pct>=0.7?'Mocno. Dopnij słabsze tematy i jesteś gotowy.':'Wróć do materiałów i zadań — drugie podejście pójdzie lepiej.';
+      }
+    };
+    opts.appendChild(b);
+  });
+  quizList.appendChild(card);
+});
+</script>
+</body>
+</html>

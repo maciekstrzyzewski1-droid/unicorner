@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MiTZ — Materiały i Quiz egzaminacyjny</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0c0a18; --bg2:#100d20; --card:#161230; --card2:#1c1740;
+  --txt:#ece9f7; --muted:#9b93c4; --line:#272050;
+  --acc:#8b5cf6; --acc2:#a78bfa; --gold:#fcd34d;
+  --green:#5ad1a0; --red:#f87171; --yellow:#fcd34d; --must:#ff8a3d;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:linear-gradient(160deg,#0c0a18,#100d20);color:var(--txt);line-height:1.6;font-size:16px;letter-spacing:.1px}
+h1,h2,h3,h4,.hero h1,section>h2,.num{font-family:'Space Grotesk','Inter',sans-serif;letter-spacing:-.2px}
+a{color:var(--acc);text-decoration:none}
+.hidden{display:none!important}
+
+/* ===== UNICORNER BRAND BAR (spójny nagłówek na wszystkich stronach) ===== */
+.uc-head{position:relative;z-index:40;background:rgba(12,10,24,.6);border-bottom:1px solid var(--line)}
+.uc-head-in{max-width:1300px;margin:0 auto;padding:13px 20px;display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+.uc-brand{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+.uc-horn{width:27px;height:27px;flex-shrink:0;display:block;transition:transform .3s ease}
+.uc-brand:hover .uc-horn{transform:translateY(-2px) rotate(-4deg)}
+.uc-wordmark{font-family:'Space Grotesk','Inter',sans-serif;font-weight:700;font-size:1.18rem;letter-spacing:-.3px;color:var(--txt)}
+.uc-wordmark .ai{background:linear-gradient(115deg,#5ad1ff,#a78bfa 34%,#f472b6 66%,#fcd34d);-webkit-background-clip:text;background-clip:text;color:transparent}
+.uc-sep{color:var(--muted);font-weight:300;font-size:1.1rem}
+.uc-subject{font-family:'Space Grotesk','Inter',sans-serif;font-weight:600;font-size:.98rem;color:var(--muted)}
+.uc-back{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk','Inter',sans-serif;font-size:.8rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--bg2);padding:7px 13px;border-radius:999px;transition:.18s}
+.uc-back:hover{color:var(--txt);border-color:#352c66}
+@media(max-width:560px){.uc-back{display:none}}
+
+/* ===== TAB BAR ===== */
+.tabbar{position:sticky;top:0;z-index:50;display:flex;gap:8px;justify-content:center;
+  background:rgba(12,10,24,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:10px 12px}
+.tabbar .brand{position:absolute;left:18px;top:12px;font-weight:800;color:var(--gold);font-size:1rem}
+.tabbtn{background:var(--card);border:1.5px solid var(--line);color:var(--txt);border-radius:30px;
+  padding:9px 22px;font-size:.98rem;font-weight:700;cursor:pointer;font-family:inherit;transition:.12s}
+.tabbtn:hover{border-color:var(--acc)}
+.tabbtn.active{background:linear-gradient(135deg,var(--acc),var(--acc2));border-color:transparent;color:#fff}
+@media(max-width:880px){.tabbar .brand{display:none}}
+
+/* ===== MATERIAŁY ===== */
+.wrap{display:flex;max-width:1300px;margin:0 auto}
+nav{position:sticky;top:58px;align-self:flex-start;width:270px;height:calc(100vh - 58px);overflow-y:auto;
+  padding:22px 16px;background:rgba(12,10,24,.6);border-right:1px solid var(--line);flex:0 0 auto}
+nav h2{font-size:.8rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+nav a{display:block;color:var(--txt);padding:8px 12px;border-radius:9px;font-size:.93rem;margin-bottom:2px;border-left:3px solid transparent}
+nav a:hover{background:var(--card)}
+nav a.head{font-weight:700;color:var(--gold)}
+main{flex:1 1 auto;min-width:0;padding:32px 38px 90px}
+
+.hero{background:linear-gradient(135deg,#1c1740,#1c1740);border:1px solid var(--line);border-radius:20px;padding:34px 32px;margin-bottom:30px}
+.hero h1{margin:0 0 6px;font-size:2rem;line-height:1.15}
+.hero p{margin:6px 0 0;color:var(--muted)}
+.badge{display:inline-block;background:var(--card2);color:var(--acc);font-size:.78rem;padding:4px 11px;border-radius:30px;margin:10px 8px 0 0;border:1px solid var(--line)}
+
+section{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:26px 28px;margin-bottom:26px;scroll-margin-top:72px}
+section>h2{margin-top:0;font-size:1.5rem;display:flex;align-items:center;gap:12px}
+.num{background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;width:38px;height:38px;border-radius:11px;
+  display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:1.05rem;flex:0 0 auto}
+h3{font-size:1.15rem;margin:26px 0 8px;color:#d8d3ee}
+h4{font-size:1rem;margin:18px 0 6px;color:var(--gold)}
+ul{padding-left:22px;margin:8px 0}
+li{margin:4px 0}
+p{margin:8px 0}
+
+.must{background:linear-gradient(135deg,rgba(255,138,61,.16),rgba(255,138,61,.06));border:1px solid var(--must);
+  border-left:5px solid var(--must);border-radius:12px;padding:14px 18px;margin:16px 0}
+.must .lbl{display:inline-block;font-weight:800;color:var(--must);font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.tip{background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(139,92,246,.05));border:1px solid #6d5bc4;border-left:5px solid var(--acc2);border-radius:12px;padding:14px 18px;margin:16px 0}
+.tip .lbl{display:inline-block;font-weight:800;color:#c4b5fd;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.def{background:rgba(139,92,246,.08);border:1px solid var(--line);border-left:5px solid var(--acc);border-radius:12px;padding:14px 18px;margin:14px 0}
+.def b{color:var(--acc)}
+
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:.92rem;overflow:hidden;border-radius:12px}
+th,td{border:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top}
+th{background:var(--card2);color:#d8d3ee;font-weight:700}
+tr:nth-child(even) td{background:rgba(255,255,255,.02)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:14px 0}
+.gcard{background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.gcard h4{margin-top:0}
+.kbd{background:var(--card2);border:1px solid var(--line);border-radius:6px;padding:1px 7px;font-family:monospace;color:var(--gold)}
+.toplink{display:block;text-align:right;font-size:.82rem;color:var(--muted);margin-top:8px}
+.mobnav{display:none}
+.foot{color:var(--muted);font-size:.85rem;text-align:center;margin-top:30px}
+
+@media(max-width:880px){
+  nav{display:none}
+  .wrap{flex-direction:column}
+  main{padding:20px 16px 70px}
+  .hero{padding:24px 20px}.hero h1{font-size:1.55rem}
+  section{padding:20px 17px}
+  .mobnav{display:block;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 10px;margin-bottom:18px}
+  .mobnav summary{cursor:pointer;font-weight:700;padding:6px 8px;color:var(--gold)}
+  .mobnav a{display:block;padding:8px 10px;color:var(--txt);border-radius:8px}
+  .mobnav a:hover{background:var(--card2)}
+}
+
+/* ===== QUIZ (scoped) ===== */
+#quizView{max-width:780px;margin:0 auto;padding:24px 16px 70px}
+.qhero{background:linear-gradient(135deg,#1c1740,#1c1740);border:1px solid var(--line);border-radius:20px;padding:28px 26px;margin-bottom:22px;text-align:center}
+.qhero h1{margin:0 0 6px;font-size:1.7rem}
+.qhero p{margin:4px 0 0;color:var(--muted);font-size:.95rem}
+#quizView h2{font-size:1.2rem;margin:0 0 14px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.dzial{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;cursor:pointer;transition:transform .12s,border-color .12s;display:flex;flex-direction:column;gap:6px}
+.dzial:hover{transform:translateY(-3px);border-color:var(--acc)}
+.dzial .t{font-weight:700;font-size:1.05rem}
+.dzial .n{font-weight:800;color:#fff;background:linear-gradient(135deg,var(--acc),var(--acc2));width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:.95rem}
+.dzial .meta{color:var(--muted);font-size:.85rem}
+.dzial.all{background:linear-gradient(135deg,rgba(139,92,246,.25),rgba(139,92,246,.12));border-color:var(--acc2);grid-column:1/-1}
+.row{display:flex;align-items:center;gap:12px}
+.bar{height:9px;background:var(--card2);border-radius:20px;overflow:hidden;margin-bottom:6px}
+.bar>div{height:100%;background:linear-gradient(90deg,var(--acc),var(--acc2));width:0;transition:width .3s}
+.status{display:flex;justify-content:space-between;color:var(--muted);font-size:.88rem;margin-bottom:16px}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:24px 22px}
+.qtag{display:inline-block;background:var(--card2);color:var(--gold);font-size:.75rem;padding:3px 10px;border-radius:20px;margin-bottom:12px}
+.qtext{font-size:1.18rem;font-weight:600;margin-bottom:18px;line-height:1.4}
+.opt{display:block;width:100%;text-align:left;background:var(--card2);border:1.5px solid var(--line);color:var(--txt);border-radius:12px;padding:14px 16px;margin-bottom:10px;font-size:1rem;cursor:pointer;transition:.12s;font-family:inherit}
+.opt:hover:not(:disabled){border-color:var(--acc);background:#26204d90}
+.opt:disabled{cursor:default}
+.opt.correct{border-color:var(--green);background:rgba(54,211,153,.16)}
+.opt.wrong{border-color:var(--red);background:rgba(255,107,107,.16)}
+.opt .mk{float:right;font-weight:800}
+.exp{margin-top:6px;border-radius:12px;padding:14px 16px;font-size:.95rem;display:none}
+.exp.show{display:block}
+.exp.ok{background:rgba(54,211,153,.12);border:1px solid var(--green)}
+.exp.no{background:rgba(255,107,107,.10);border:1px solid var(--red)}
+.exp b{color:var(--gold)}
+.btn{display:inline-block;background:linear-gradient(135deg,var(--acc),var(--acc2));color:#fff;border:none;border-radius:12px;padding:13px 26px;font-size:1rem;font-weight:700;cursor:pointer;font-family:inherit;margin-top:8px}
+.btn:hover{filter:brightness(1.08)}
+.btn.ghost{background:transparent;border:1.5px solid var(--line);color:var(--txt)}
+.actions{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;margin-top:14px}
+.result{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:30px 24px;text-align:center}
+.score{font-size:3rem;font-weight:800;margin:6px 0}
+.scorelbl{color:var(--muted)}
+.ring{font-size:1.1rem;margin:10px 0 4px}
+.review{text-align:left;margin-top:20px}
+.review h3{font-size:1.05rem;color:var(--red)}
+.ritem{background:var(--card2);border:1px solid var(--line);border-left:4px solid var(--red);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:.92rem}
+.ritem .qq{font-weight:600;margin-bottom:5px}
+.ritem .gc{color:var(--green)}
+.allgood{background:rgba(54,211,153,.12);border:1px solid var(--green);border-radius:12px;padding:16px;margin-top:18px}
+@media(max-width:560px){.qhero h1{font-size:1.4rem}.qtext{font-size:1.05rem}.score{font-size:2.4rem}}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient></defs></svg>
+
+<!-- ===== UNICORNER BRAND BAR ===== -->
+<header class="uc-head">
+  <div class="uc-head-in">
+    <a class="uc-brand" href="unicorner.html" aria-label="Unicorner — strona główna">
+      <svg class="uc-horn" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/>
+        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#0c0a18" stroke-width="1.1" fill="none" opacity="0.55"/>
+      </svg>
+      <span class="uc-wordmark">Unicorn<span class="ai">er</span></span>
+    </a>
+    <span class="uc-sep">/</span>
+    <span class="uc-subject">Metody i Techniki Zarządzania</span>
+    <a class="uc-back" href="unicorner.html">← Wszystkie przedmioty</a>
+  </div>
+</header>
+
+<!-- ===== TAB BAR ===== -->
+<div class="tabbar">
+  <button class="tabbtn active" id="tabMatBtn" onclick="showTab('mat')">📘 Materiały</button>
+  <button class="tabbtn" id="tabQuizBtn" onclick="showTab('quiz')">🧠 Quiz</button>
+</div>
+
+<!-- ===================== MATERIAŁY ===================== -->
+<div id="matView">
+<div class="wrap">
+<nav>
+  <div style="font-family:'Space Grotesk','Inter',sans-serif;font-weight:700;font-size:1.05rem;color:var(--gold)">MiTZ</div>
+  <div style="color:var(--muted);font-size:.8rem;margin-bottom:6px">Materiały egzaminacyjne</div>
+  <h2>Działy</h2>
+  <a class="head" href="#d1">1 · Wprowadzenie</a>
+  <a class="head" href="#d2">2 · Narzędzia jakości</a>
+  <a class="head" href="#d3">3 · Kreatywne myślenie</a>
+  <a class="head" href="#d4">4 · Praca zespołowa</a>
+  <a class="head" href="#d5">5 · Metoda 5S</a>
+  <a class="head" href="#d6">6 · Kaizen i Poka-Yoke</a>
+  <a class="head" href="#d7">7 · Visual Management</a>
+  <h2>Na koniec</h2>
+  <a href="#sciaga">⭐ Ściąga MUST KNOW</a>
+  <a href="#" onclick="showTab('quiz');return false;" style="color:var(--acc);font-weight:700">🧠 Przejdź do quizu →</a>
+</nav>
+
+<main>
+<div class="hero">
+  <h1>Metody i Techniki Zarządzania</h1>
+  <p>Kompletne kompendium na egzamin — opracowane z 5 wykładów. Pomarańczowe boxy <b style="color:var(--must)">MUST KNOW</b> to rzeczy, które najczęściej padają na teście. Fioletowe boxy to dodatkowe wyjaśnienia i skojarzenia ułatwiające zapamiętanie. Quiz znajdziesz w zakładce <b>🧠 Quiz</b> u góry.</p>
+  <span class="badge">UEP · Katedra Zarządzania Jakością</span>
+  <span class="badge">dr hab. inż. M. Kaźmierczak, prof. UEP</span>
+  <span class="badge">7 działów · ściąga na końcu</span>
+</div>
+
+<details class="mobnav">
+  <summary>📑 Spis treści — przejdź do działu</summary>
+  <a href="#d1">1 · Wprowadzenie do metod i technik</a>
+  <a href="#d2">2 · Narzędzia jakości</a>
+  <a href="#d3">3 · Kreatywne myślenie</a>
+  <a href="#d4">4 · Praca zespołowa</a>
+  <a href="#d5">5 · Metoda 5S</a>
+  <a href="#d6">6 · Kaizen i Poka-Yoke</a>
+  <a href="#d7">7 · Visual Management</a>
+  <a href="#sciaga">⭐ Ściąga MUST KNOW</a>
+</details>
+
+<section id="d1">
+<h2><span class="num">1</span> Wprowadzenie do metod i technik zarządzania</h2>
+<h3>Świat VUCA</h3>
+<p>Nowoczesne organizacje funkcjonują w środowisku <b>VUCA</b> — i właśnie dlatego intuicja nie wystarcza, potrzebne są ustrukturyzowane metody.</p>
+<div class="must"><span class="lbl">⭐ Must know</span> <b>VUCA</b> = <b>V</b>olatility (zmienność) · <b>U</b>ncertainty (niepewność) · <b>C</b>omplexity (złożoność) · <b>A</b>mbiguity (niejednoznaczność).</div>
+<p>Metody wspierają: podejmowanie decyzji, rozwiązywanie problemów, analizę danych, pracę zespołową, planowanie i standaryzację procesów.</p>
+<h3>Metoda vs technika vs narzędzie</h3>
+<p>Klasyczne pytanie egzaminacyjne — trzeba rozróżnić te trzy pojęcia (od ogółu do szczegółu).</p>
+<table>
+<tr><th>Pojęcie</th><th>Definicja</th></tr>
+<tr><td><b>Metoda</b></td><td>Świadomy i konsekwentnie stosowany sposób postępowania (zespół czynności i środków na podstawach naukowych) ukierunkowany na osiągnięcie określonego celu.</td></tr>
+<tr><td><b>Technika</b></td><td>Tok postępowania dotyczący konkretnego, wąskiego fragmentu problemu; szczegółowy sposób osiągania celów cząstkowych; <b>część składowa metody</b>; wyuczona umiejętność.</td></tr>
+<tr><td><b>Narzędzie</b></td><td>Służy do zbierania i przetwarzania danych; prosty element stosowany w obrębie konkretnej metody/techniki.</td></tr>
+</table>
+<div class="tip"><span class="lbl">💡 Jak zapamiętać</span> Metoda → technika → narzędzie to hierarchia od ogółu do szczegółu. Metoda to „strategia", technika to „taktyka", narzędzie to „sprzęt".</div>
+<h3>Analiza przyczyn źródłowych (RCA)</h3>
+<div class="def"><b>RCA (Root Cause Analysis)</b> — metoda rozwiązywania problemów służąca do identyfikacji <b>przyczyn leżących u podstaw</b> problemu, a nie tylko jego objawów. Pomaga zapobiec ponownemu wystąpieniu i wdrożyć skuteczne działania naprawcze.</div>
+<h4>6 etapów RCA</h4>
+<ul>
+<li><b>Krok 1</b> — Organizacja zespołu</li>
+<li><b>Krok 2</b> — Definiowanie problemu</li>
+<li><b>Krok 3</b> — Przeprowadzenie analizy danych</li>
+<li><b>Krok 4</b> — Określenie przyczyn źródłowych</li>
+<li><b>Krok 5</b> — Planowanie udoskonaleń</li>
+<li><b>Krok 6</b> — Ocena postępów</li>
+</ul>
+<h3>Czym jest problem?</h3>
+<div class="must"><span class="lbl">⭐ Must know</span> W ujęciu <b>Lean Management problem to rozbieżność między standardem a warunkami rzeczywistymi</b> — niezgodność między tym, jak coś powinno działać, a jak działa obecnie. Hasło z wykładu: <i>„Problemy to również możliwości!"</i></div>
+<p>Większość problemów w organizacjach <b>nie wynika ze złej woli ludzi</b>, lecz z: niejasnych procesów, nieprecyzyjnej komunikacji, braku odpowiedzialności, złych priorytetów, braku danych do decyzji, złego zarządzania czasem, braku standardów i niejasnych celów.</p>
+<h4>Typy problemów</h4>
+<table>
+<tr><th>Typ</th><th>Istota</th></tr>
+<tr><td><b>Teoretyczne (poznawcze)</b></td><td>Poznanie i poszukiwanie wiedzy; brak ingerencji w przebieg zjawiska.</td></tr>
+<tr><td><b>Praktyczne (empiryczne)</b></td><td>Zmiana sytuacji; odpowiedź na pytanie „co zrobić, aby osiągnąć cel".</td></tr>
+</table>
+<a class="toplink" href="#d1">↑ góra</a>
+</section>
+
+<section id="d2">
+<h2><span class="num">2</span> Instrumentarium i narzędzia jakości</h2>
+<h3>Podział instrumentarium doskonalenia</h3>
+<p>Wykład rozróżnia cztery kategorie składników doskonalenia organizacji:</p>
+<table>
+<tr><th>ZASADY</th><th>METODY</th><th>NARZĘDZIA</th><th>TECHNIKI</th></tr>
+<tr>
+<td>Praca zespołowa, KAIZEN, POKA-YOKE, Zero defektów, zasady zarządzania jakością, 14 zasad Deminga</td>
+<td>FMEA, QFD, SPC, DOE (planowanie eksperymentów), Raport 8D, 5S</td>
+<td>Six Sigma, 5 Why, Diagram Ishikawy, Diagram Pareto-Lorenza, diagram przepływu, karty kontrolne Shewarta, histogram, burza mózgów, nowe narzędzia ZJ</td>
+<td>Pomiar, zapis, ocena organoleptyczna, arkusze</td>
+</tr>
+</table>
+<h3>Kategorie narzędzi wg zastosowania</h3>
+<table>
+<tr><th>Kategoria</th><th>Przykładowe narzędzia</th></tr>
+<tr><td>Analiza przyczyn</td><td>Diagram Ishikawy, Diagram Pareto-Lorenza, diagram korelacji</td></tr>
+<tr><td>Gromadzenie i analiza danych</td><td>Arkusz kontrolny, karta kontrolna, DOE, histogram, diagram rozrzutu, stratyfikacja, ankieta</td></tr>
+<tr><td>Ocena i podejmowanie decyzji</td><td>Macierz decyzyjna, wielokrotne głosowanie</td></tr>
+<tr><td>Kreowanie pomysłów</td><td>Diagram pokrewieństwa, benchmarking, burza mózgów, technika grup nominalnych</td></tr>
+<tr><td>Analiza procesów</td><td>Schemat blokowy, analiza FMEA</td></tr>
+</table>
+<h3>7 tradycyjnych (starych) narzędzi zarządzania jakością</h3>
+<div class="must"><span class="lbl">⭐ Must know</span> Siedem podstawowych narzędzi jakości: <b>arkusz kontrolny, histogram, karta kontrolna, diagram Ishikawy, diagram Pareto, diagram rozproszenia (korelacji), schemat blokowy</b>. Dzielą się na te do <b>zbierania danych</b> (arkusz kontrolny, histogram, karta kontrolna) i do <b>analizy danych</b> (diagram Pareto, Ishikawy, korelacji, schemat blokowy).</div>
+<h3>7 nowych narzędzi zarządzania jakością</h3>
+<div class="must"><span class="lbl">⭐ Must know</span> Siedem nowych narzędzi: <b>diagram pokrewieństwa, diagram relacji, diagram systematyki, diagram macierzowy, macierzowa analiza danych, diagram strzałkowy, PDPC (wykres programu decyzyjnego)</b>.</div>
+<p>Służą do: analizy problemu (pokrewieństwa, relacji, systematyki), podejmowania decyzji o działaniach (macierzowy, macierzowa analiza danych) oraz planowania kolejności działań/zasobów (strzałkowy, PDPC).</p>
+<div class="tip"><span class="lbl">💡 Tip</span> Nie myl: <b>stare</b> narzędzia = głównie liczby i kontrola jakości; <b>nowe</b> narzędzia = głównie organizacja informacji, planowanie i innowacja (więcej „słowne"/jakościowe).</div>
+<a class="toplink" href="#d2">↑ góra</a>
+</section>
+
+<section id="d3">
+<h2><span class="num">3</span> Kreatywne myślenie — od problemu do rozwiązania</h2>
+<h3>Kreatywność — definicja</h3>
+<div class="def"><b>Kreatywność</b> — tendencja do generowania lub rozpoznawania pomysłów, alternatyw i możliwości przydatnych w rozwiązywaniu problemów. To proces poznawczy/myślowy łączący <b>innowacyjność, wyobraźnię, intuicję i krytyczne myślenie</b>.</div>
+<p>Aby uwolnić kreatywność, potrzebne są: <b>prawo do zmiany</b> i <b>prawo do błędu</b>.</p>
+<h3>Wybrane techniki kreatywnego myślenia</h3>
+<div class="must"><span class="lbl">⭐ Must know</span> Cztery techniki z wykładu: <b>Burza mózgów</b>, <b>Metoda 6-3-5 (brainwriting)</b>, <b>Mind Map (mapa myśli)</b>, <b>Metoda Sześciu Myślowych Kapeluszy</b>.</div>
+<div class="grid">
+<div class="gcard"><h4>Burza mózgów</h4><p>Autor: <b>Alex F. Osborn (1939)</b>. Zasada: <i>„Najlepszym sposobem na dobry pomysł jest posiadanie wielu pomysłów"</i> — ilość przed jakością, brak krytyki na etapie generowania.</p></div>
+<div class="gcard"><h4>Metoda 6-3-5 (brainwriting)</h4><p>Odmiana pisemna: <b>6 osób</b> zapisuje po <b>3 pomysły</b> w <b>5 minut</b>, potem karty krążą po kole. Stąd nazwa 6-3-5.</p></div>
+<div class="gcard"><h4>Mind Map</h4><p>Graficzna mapa myśli — temat w centrum, gałęzie skojarzeń na zewnątrz; porządkuje i wizualizuje powiązania.</p></div>
+<div class="gcard"><h4>Sześć Myślowych Kapeluszy</h4><p>Metoda spojrzenia na problem z różnych perspektyw (każdy „kapelusz" = inny sposób myślenia).</p></div>
+</div>
+<div class="tip"><span class="lbl">💡 Tip</span> Liczby z metody 6-3-5 to gotowe pytanie testowe — zapamiętaj <span class="kbd">6 osób · 3 pomysły · 5 minut</span>.</div>
+<a class="toplink" href="#d3">↑ góra</a>
+</section>
+
+<section id="d4">
+<h2><span class="num">4</span> Praca zespołowa</h2>
+<h3>Grupa vs zespół</h3>
+<div class="must"><span class="lbl">⭐ Must know</span> <b>Nie każda grupa osób jest zespołem!</b> Aby grupa była zespołem, musi mieć: <b>wspólny cel, współpracę, wspólny system wartości i norm oraz zbiorową odpowiedzialność i wzajemne wsparcie</b>.</div>
+<div class="def"><b>Zespół</b> — mała liczba osób o uzupełniających się umiejętnościach, mających wspólny cel, system norm, wartości i podejście, za które wszyscy czują się odpowiedzialni.</div>
+<p>W <b>grupie</b>: cele nie są konkretne, wartości przyjmowane z otoczenia (nie wypracowane), ludzie przebywają obok siebie, ale nie współpracują — rozprasza to potencjał i uniemożliwia orientację na zadanie.</p>
+<h3>Klasyfikacje zespołów</h3>
+<table>
+<tr><th>Kryterium</th><th>Rodzaje</th></tr>
+<tr><td>Formalność</td><td><b>Formalne</b> (tworzone w określonym celu — doraźne/zadaniowe lub projektowe) i <b>nieformalne</b> (powstają z własnej inicjatywy).</td></tr>
+<tr><td>Trwałość / powtarzalność</td><td><b>Trwałe</b> (na stałe, np. dział), <b>doraźne</b> (ad hoc, np. do likwidacji wady), <b>okresowe</b> (zadania powtarzalne, np. komisje rekrutacyjne).</td></tr>
+</table>
+<h3>Efekt synergii</h3>
+<div class="must"><span class="lbl">⭐ Must know</span> <b>Synergia</b> = efekt zorganizowanej pracy zespołowej wyższy niż suma działań indywidualnych. Słynne <b>„2+2=5"</b> — wartość dodana z połączenia wysiłków, wiedzy i doświadczenia.</div>
+<h3>Korzyści i wady pracy zespołowej</h3>
+<div class="grid">
+<div class="gcard"><h4>Korzyści</h4><p>Bogactwo wiedzy i doświadczeń, wspólny cel, dobra atmosfera, poczucie akceptacji, wykorzystanie możliwości członków, <b>efekt synergii</b>.</p></div>
+<div class="gcard"><h4>Wady</h4><p>Zabijanie indywidualizmu, „zgniły" kompromis, konformizm, dodatkowa formalizacja, konieczność solidarności mimo odmiennego zdania.</p></div>
+</div>
+<h3>5 cech efektywnego zespołu</h3>
+<div class="must"><span class="lbl">⭐ Must know</span> Kolejność (model Lencioniego z wykładu): <b>1. Zaufanie → 2. Otwartość na konflikt → 3. Zaangażowanie → 4. Odpowiedzialność → 5. Dbałość o wynik.</b></div>
+<h3>Organizacje turkusowe</h3>
+<p>Nowoczesny model organizacji firm, szkół i instytucji publicznych, spopularyzowany w książkach — oparty na samoorganizacji i braku tradycyjnej hierarchii.</p>
+<a class="toplink" href="#d4">↑ góra</a>
+</section>
+
+<section id="d5">
+<h2><span class="num">5</span> Metoda 5S</h2>
+<p>W środowisku Lean Manufacturing <b>5S jest spoiwem</b> łączącym wszystkie pozostałe metodyki doskonalenia. To system pozwalający w zorganizowany sposób utrzymać porządek i dyscyplinę w przedsiębiorstwie. Cytat Osady: <i>„Jeżeli uda ci się wprowadzić zasady 5S, uda ci się wszystko"</i>.</p>
+<h3>Pięć filarów 5S (japońskie nazwy!)</h3>
+<div class="must"><span class="lbl">⭐ Must know — to pewne pytanie</span>
+<table style="margin-top:8px">
+<tr><th>#</th><th>Jap.</th><th>Ang.</th><th>Pol.</th><th>Znaczenie</th></tr>
+<tr><td>1S</td><td><b>SEIRI</b></td><td>Sort</td><td>Selekcja</td><td>Pozbyć się rzeczy niepotrzebnych</td></tr>
+<tr><td>2S</td><td><b>SEITON</b></td><td>Set in order</td><td>Systematyka</td><td>Ułożyć potrzebne rzeczy wygodnie do użycia</td></tr>
+<tr><td>3S</td><td><b>SEISO</b></td><td>Sweep / Shine</td><td>Sprzątanie</td><td>Zadbać o czystość stanowiska i narzędzi</td></tr>
+<tr><td>4S</td><td><b>SEIKETSU</b></td><td>Standardize</td><td>Standaryzacja</td><td>Utrzymanie czystości — zadanie wszystkich</td></tr>
+<tr><td>5S</td><td><b>SHITSUKE</b></td><td>Sustain</td><td>Samodyscyplina</td><td>Utrzymanie dyscypliny i poziomu etycznego</td></tr>
+</table>
+</div>
+<div class="tip"><span class="lbl">💡 Tip</span> Często dodaje się <b>+1S = Safety (bezpieczeństwo)</b>. Wszystkie japońskie nazwy zaczynają się na „S" — stąd 5S.</div>
+<h3>Szczegóły filarów</h3>
+<h4>1S — Selekcja</h4>
+<p>Usuwanie wszystkiego, co nie jest potrzebne do bieżącej operacji; sortowanie i posiadanie tylko niezbędnego. Reguła: <i>„tylko to, co potrzebne, tylko tyle ile potrzeba, tylko wtedy kiedy potrzeba"</i>.</p>
+<div class="def"><b>Metoda czerwonych etykiet</b> — naklejanie czerwonych nalepek na przedmioty, co do których mamy wątpliwość, czy są potrzebne. Następnie można je: przechowywać w obszarze „czerwonych etykiet", usunąć, przenieść lub pozostawić.</div>
+<h4>2S — Systematyka</h4>
+<p>Ułożenie i oznaczenie rzeczy tak, by <b>KAŻDY</b> mógł je łatwo znaleźć i odłożyć. Przykłady: oznakowanie dróg komunikacyjnych, miejsc odstawczych, stref bezpieczeństwa, <b>tablice cieni</b>.</p>
+<h4>3S — Sprzątanie</h4>
+<p>Usuwanie brudu, kurzu i odpadów; utrzymanie wszystkiego gotowego do użycia w każdej chwili.</p>
+<h4>4S — Standaryzacja</h4>
+<p>Metoda utrzymania trzech poprzednich filarów — <b>opracowanie jednego właściwego sposobu</b> wykonywania zadań. Standardy są fundamentem ciągłego doskonalenia.</p>
+<h4>5S — Samodyscyplina</h4>
+<p>Nawyk ścisłego przestrzegania procedur — dzień po dniu. Wspierają ją: świadomość, czas, struktura, wsparcie, nagrody i uznanie, satysfakcja.</p>
+<h3>Audyty 5S i korzyści</h3>
+<p>Audyty kontrolują poziom wdrożenia, kształtują dyscyplinę, podnoszą motywację i dają zespołom feedback. Korzyści wdrożenia: lepsza ergonomia, większa dyscyplina, wyższa jakość, niższe koszty, większe bezpieczeństwo, mniej odpadów, lepsza reputacja firmy.</p>
+<div class="tip"><span class="lbl">💡 Tip</span> Hasło z wykładu: <i>„5S może i jest proste, ale z pewnością nie jest łatwe"</i>.</div>
+<a class="toplink" href="#d5">↑ góra</a>
+</section>
+
+<section id="d6">
+<h2><span class="num">6</span> Kaizen i Poka-Yoke</h2>
+<h3>Kaizen — filozofia ciągłego doskonalenia</h3>
+<div class="must"><span class="lbl">⭐ Must know</span> <b>KAIZEN</b> = KAI (zmieniać) + ZEN (na lepsze) → <b>„dobra zmiana / zmiana na lepsze"</b>. To <b>metoda małych kroków</b> — ciągłe doskonalenie oparte na logice, zdrowym rozsądku i drobnych usprawnieniach, <b>bez nagłych kosztownych inwestycji</b>.</div>
+<p>Twórca filozofii: <b>Masaaki Imai (1930–2023)</b>, „guru Kaizen", założyciel Kaizen Institute. Jego pierwsza książka <i>„Kaizen. Klucz do konkurencyjnego sukcesu Japonii"</i> ukazała się w <b>1986 r.</b></p>
+<div class="def"><b>GEMBA</b> — japońskie słowo oznaczające <b>„miejsce, gdzie dzieje się rzeczywista praca"</b> (przestrzeń robocza tworząca wartość dla klienta).</div>
+<div class="tip"><span class="lbl">💡 Tip — kluczowy kontrast</span> Zachód preferuje <b>innowacyjność</b> (nagłe zmiany, duże inwestycje, technologie); Japonia preferuje <b>kaizen</b> (małe kroki, zdrowy rozsądek, zaangażowanie pracowników). Imai: trwały sukces daje dopiero <b>SYNERGIA innowacyjności i kaizen</b>.</div>
+<h3>Poka-Yoke — uodpornianie na błędy</h3>
+<div class="def"><b>Poka-Yoke</b> (ang. <i>mistake-proofing</i> / error-proofing) — pierwotnie <b>Baka-Yoke</b> („idiotoodporne", nazwa porzucona jako lekceważąca). Twórca: <b>Shigeo Shingo (1909–1990)</b>, japoński inżynier, wynalazca <b>SMED</b> (szybkie przezbrajanie maszyn), jeden z architektów <b>TPS (Toyota Production System)</b>.</div>
+<p>Założenie Shingo: <b>popełnianie błędów leży w ludzkiej naturze</b> — zamiast mobilizować ludzi do większej uwagi, lepiej <b>uniemożliwić popełnienie błędu</b>.</p>
+<div class="must"><span class="lbl">⭐ Must know — 3 zasady Poka-Yoke</span>
+<ul style="margin-top:6px">
+<li><b>Zapobieganie błędom</b> — warunki, w których błąd jest niemożliwy</li>
+<li><b>Szybkie wykrywanie błędów</b> — natychmiast po wystąpieniu, zanim trafią dalej</li>
+<li><b>Minimalizacja skutków błędów</b> — zmniejszenie wpływu na proces i produkt</li>
+</ul>
+</div>
+<p>Pierwsze urządzenie Poka-Yoke: Shingo w fabryce Yamada Electric — pracownicy zapominali włożyć sprężynę pod przycisk przełącznika; rozwiązanie wymusiło prawidłowy montaż.</p>
+<h4>Funkcje i metody Poka-Yoke</h4>
+<table>
+<tr><th>Funkcje regulacyjne (control)</th><th>Funkcje ustawiające (setting)</th></tr>
+<tr><td>
+<b>Metody kontroli/sterowania</b> — zatrzymują maszynę/proces przy wadzie (potem poprawa i restart).<br>
+<b>Metody ostrzegania</b> — alarm dźwiękowy/świetlny; wada: jeśli operator nie reaguje, wady powstają nadal.
+</td><td>
+<b>Metody kontaktu</b> — wykrywanie zmian kształtu, koloru, wagi, temperatury (czujnik/element mechaniczny).<br>
+<b>Metody ustalonej wartości</b> — sprawdzanie liczby ruchów/elementów.<br>
+<b>Metody koniecznego kroku (motion-step)</b> — kontrola, czy ruch wykonano w określonym czasie/kolejności.
+</td></tr>
+</table>
+<div class="tip"><span class="lbl">💡 Tip</span> Metody kontroli vs ostrzegania: kontrola <b>zatrzymuje</b> proces (pewniejsza), ostrzeganie tylko <b>alarmuje</b> (słabsza — zależy od reakcji operatora).</div>
+<a class="toplink" href="#d6">↑ góra</a>
+</section>
+
+<section id="d7">
+<h2><span class="num">7</span> Zarządzanie wizualne (Visual Management)</h2>
+<h3>Dlaczego wizualnie?</h3>
+<div class="must"><span class="lbl">⭐ Must know — statystyki z wykładu</span>
+<ul style="margin-top:6px">
+<li>Ludzie zapamiętują: <b>10%</b> tego, co usłyszą · <b>20%</b> tego, co przeczytają · <b>ponad 80%</b> tego, co zobaczą i zrobią.</li>
+<li>Informacje wizualne są przetwarzane <b>60 000 razy szybciej niż tekst</b>.</li>
+<li>~10 z 11 mln receptorów odpowiada za widzenie; połowa mózgu przetwarza obraz.</li>
+</ul>
+</div>
+<p>Chińskie przysłowie z wykładu: <i>„Powiedz mi, a zapomnę. Pokaż mi, a zapamiętam. Zaangażuj mnie, a zrozumiem"</i>. Większość ludzi to wzrokowcy.</p>
+<h3>Definicja (wg Masaaki Imai)</h3>
+<div class="def">Zarządzanie wizualne — <b>metoda zarządzania mająca przedstawiać informacje w bardzo widoczny sposób</b> (dla pracowników i kierownictwa), tak by obecny stan operacji oraz przyszłe cele Kaizen były zrozumiałe dla każdego. VM jest <b>nieodłącznym elementem metodyki Kaizen</b>. Sekret tkwi w <b>kolorach, symbolach i prostocie</b>.</div>
+<h3>3 podstawowe funkcje</h3>
+<div class="must"><span class="lbl">⭐ Must know</span>
+<ul style="margin-top:6px">
+<li><b>Wskazanie problemów</b> — łatwiej dostrzec odchylenia od normy</li>
+<li><b>Informowanie o stanie rzeczywistym</b> — wiadomo „na czym stoimy" (np. harmonogram, grafik dyżurów)</li>
+<li><b>Wyznaczanie celów</b> — uwidacznia cele i stopień ich realizacji</li>
+</ul>
+</div>
+<h3>3 zasady VM</h3>
+<ul>
+<li>Informacje umieszczone w <b>widocznym i powszechnie dostępnym</b> miejscu</li>
+<li>Dane muszą być <b>aktualizowane</b></li>
+<li>Informacje muszą być <b>czytelne i zrozumiałe dla wszystkich</b></li>
+</ul>
+<h3>4 poziomy zarządzania wizualnego</h3>
+<p>Od podstaw do szczytu (dobre VM nie wymaga interpretacji i natychmiast wywołuje właściwą reakcję):</p>
+<ol>
+<li>Organizacja miejsca pracy</li>
+<li>Wyświetlanie wizualne</li>
+<li>Pomiary wizualne</li>
+<li>Zarządzanie wizualne</li>
+</ol>
+<h3>System Andon</h3>
+<div class="def"><b>Andon</b> — wizualny sposób komunikacji przy użyciu <b>sygnałów świetlnych</b>; daje możliwość <b>zatrzymania procesu produkcyjnego</b> w momencie pojawienia się defektu. Głównym narzędziem jest tablica wskazująca miejsce powstania problemu (sygnały świetlne, tony, muzyka, teksty, audio).</div>
+<p>Inne metody/narzędzia VM: strzałki, opisy, znaki, tablice informacyjne, instrukcje, <b>karty kanban</b>; dźwiękowe — syreny, sygnał cofania wózka widłowego. W praktyce VM obejmuje systemy: <b>Andon, 5S, Kanban</b>.</p>
+<div class="tip"><span class="lbl">💡 Tip</span> Cechy dobrych tablic wizualizacji: jasne i proste, z miernikami i legendą, pokazujące obecną sytuację, w jednym łatwo dostępnym miejscu. Hasło: <i>„jeden obraz wart jest tysiąca słów"</i> oraz <i>„Aby coś poprawić, musisz to zobaczyć!"</i></div>
+<a class="toplink" href="#d7">↑ góra</a>
+</section>
+
+<section id="sciaga" style="border-color:var(--must)">
+<h2><span class="num" style="background:linear-gradient(135deg,var(--must),var(--gold))">⭐</span> Ściąga MUST KNOW — last minute</h2>
+<p style="color:var(--muted)">Najczęstsze pytania testowe w pigułce. Jeśli umiesz to z pamięci — jesteś gotowy.</p>
+<table>
+<tr><th>Temat</th><th>Zapamiętaj</th></tr>
+<tr><td>VUCA</td><td>Volatility, Uncertainty, Complexity, Ambiguity</td></tr>
+<tr><td>Hierarchia</td><td>Metoda → Technika → Narzędzie (od ogółu do szczegółu)</td></tr>
+<tr><td>Problem (Lean)</td><td>Rozbieżność między standardem a stanem rzeczywistym</td></tr>
+<tr><td>RCA</td><td>6 kroków: zespół → definicja → dane → przyczyny źródłowe → udoskonalenia → ocena</td></tr>
+<tr><td>7 starych narzędzi</td><td>arkusz kontrolny, histogram, karta kontrolna, Ishikawa, Pareto, korelacji, schemat blokowy</td></tr>
+<tr><td>7 nowych narzędzi</td><td>pokrewieństwa, relacji, systematyki, macierzowy, macierzowa analiza danych, strzałkowy, PDPC</td></tr>
+<tr><td>Burza mózgów</td><td>Alex Osborn, 1939</td></tr>
+<tr><td>Metoda 6-3-5</td><td>6 osób · 3 pomysły · 5 minut (brainwriting)</td></tr>
+<tr><td>Techniki kreatywne</td><td>burza mózgów, 6-3-5, mind map, 6 kapeluszy</td></tr>
+<tr><td>Zespół (warunki)</td><td>wspólny cel, współpraca, wspólne normy/wartości, zbiorowa odpowiedzialność</td></tr>
+<tr><td>Synergia</td><td>2+2=5 — efekt wyższy niż suma działań indywidualnych</td></tr>
+<tr><td>Efektywny zespół</td><td>zaufanie → konflikt → zaangażowanie → odpowiedzialność → wynik</td></tr>
+<tr><td>5S</td><td>Seiri-Selekcja, Seiton-Systematyka, Seiso-Sprzątanie, Seiketsu-Standaryzacja, Shitsuke-Samodyscyplina (+1S Safety)</td></tr>
+<tr><td>Czerwone etykiety</td><td>1S Selekcja — oznaczanie rzeczy wątpliwych</td></tr>
+<tr><td>Kaizen</td><td>„dobra zmiana", małe kroki, Masaaki Imai, książka 1986</td></tr>
+<tr><td>Gemba</td><td>miejsce, gdzie dzieje się rzeczywista praca</td></tr>
+<tr><td>Innowacja vs Kaizen</td><td>sukces = synergia obu (Imai)</td></tr>
+<tr><td>Poka-Yoke</td><td>Shigeo Shingo, mistake-proofing; 3 zasady: zapobieganie, szybkie wykrycie, minimalizacja skutków</td></tr>
+<tr><td>Shingo — też</td><td>SMED + architekt TPS (Toyota)</td></tr>
+<tr><td>VM statystyki</td><td>10/20/80%, 60 000× szybciej niż tekst</td></tr>
+<tr><td>VM 3 funkcje</td><td>wskazanie problemów, informowanie o stanie, wyznaczanie celów</td></tr>
+<tr><td>Andon</td><td>sygnały świetlne, zatrzymanie procesu przy defekcie</td></tr>
+</table>
+<div style="text-align:center;margin-top:18px"><button class="btn" onclick="showTab('quiz')">🧠 Sprawdź się w quizie →</button></div>
+</section>
+
+<div class="foot">Opracowano z 5 wykładów MiTZ · materiał pomocniczy do nauki własnej · powodzenia na egzaminie 🍀</div>
+</main>
+</div>
+</div>
+
+<!-- ===================== QUIZ ===================== -->
+<div id="quizView" class="hidden">
+  <div id="home">
+    <div class="qhero">
+      <h1>🧠 Quiz egzaminacyjny — MiTZ</h1>
+      <p>Wybierz dział i ćwicz tylko to, czego jeszcze nie umiesz. Pytania i odpowiedzi losują się przy każdym podejściu. Po każdej odpowiedzi zobaczysz wyjaśnienie.</p>
+    </div>
+    <h2>Wybierz dział</h2>
+    <div class="cards" id="dzialList"></div>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <div class="bar"><div id="prog"></div></div>
+    <div class="status"><span id="stHead"></span><span id="stScore"></span></div>
+    <div class="qcard">
+      <span class="qtag" id="qtag"></span>
+      <div class="qtext" id="qtext"></div>
+      <div id="opts"></div>
+      <div class="exp" id="exp"></div>
+      <div class="actions">
+        <button class="btn ghost" onclick="quit()">← Zakończ</button>
+        <button class="btn hidden" id="nextBtn" onclick="next()">Dalej →</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="result" class="hidden">
+    <div class="result">
+      <div class="scorelbl">Twój wynik</div>
+      <div class="score" id="finalScore"></div>
+      <div class="ring" id="finalPct"></div>
+      <div id="verdict" class="ring"></div>
+      <div class="review" id="review"></div>
+      <div class="actions" style="justify-content:center;margin-top:22px">
+        <button class="btn ghost" onclick="goHome()">🏠 Wybór działu</button>
+        <button class="btn" id="retryWrong">🔁 Powtórz błędne</button>
+        <button class="btn" onclick="restartSame()">↺ Ten dział od nowa</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ===== TABS ===== */
+function showTab(t){
+  const mat=t==='mat';
+  document.getElementById('matView').classList.toggle('hidden',!mat);
+  document.getElementById('quizView').classList.toggle('hidden',mat);
+  document.getElementById('tabMatBtn').classList.toggle('active',mat);
+  document.getElementById('tabQuizBtn').classList.toggle('active',!mat);
+  window.scrollTo(0,0);
+}
+
+/* ===== QUIZ ===== */
+const DZIALY={1:"Wprowadzenie do metod i technik",2:"Narzędzia jakości",3:"Kreatywne myślenie",4:"Praca zespołowa",5:"Metoda 5S",6:"Kaizen i Poka-Yoke",7:"Visual Management"};
+const BANK = [
+{d:1,q:"Co oznacza skrót VUCA?",opts:["Volatility, Uncertainty, Complexity, Ambiguity","Value, Utility, Cost, Action","Vision, Unity, Control, Adaptation","Volume, Usage, Capacity, Analysis"],c:0,e:"VUCA = zmienność (Volatility), niepewność (Uncertainty), złożoność (Complexity), niejednoznaczność (Ambiguity)."},
+{d:1,q:"Które pojęcie jest najszersze (najbardziej ogólne)?",opts:["Metoda","Technika","Narzędzie","Wszystkie są równorzędne"],c:0,e:"Hierarchia od ogółu do szczegółu: metoda → technika → narzędzie. Metoda jest najszersza."},
+{d:1,q:"Czym jest technika według wykładu?",opts:["Częścią składową metody, dotyczącą wąskiego fragmentu problemu","Najbardziej ogólnym sposobem postępowania","Wyłącznie urządzeniem do pomiaru","Zbiorem zasad zarządzania jakością"],c:0,e:"Technika to tok postępowania dla wąskiego fragmentu problemu i część składowa metody."},
+{d:1,q:"Co według definicji służy głównie do zbierania i przetwarzania danych?",opts:["Narzędzie","Metoda","Technika","Zasada"],c:0,e:"Narzędzie to prosty element w obrębie metody/techniki, służący do zbierania i przetwarzania danych."},
+{d:1,q:"RCA to skrót od:",opts:["Root Cause Analysis","Risk Control Assessment","Rapid Change Action","Resource Capacity Audit"],c:0,e:"RCA = Root Cause Analysis, czyli analiza przyczyn źródłowych."},
+{d:1,q:"Jaki jest główny cel analizy przyczyn źródłowych (RCA)?",opts:["Identyfikacja przyczyn leżących u podstaw problemu, a nie tylko objawów","Szybkie usunięcie objawów problemu","Ukaranie osoby odpowiedzialnej","Zmniejszenie kosztów audytu"],c:0,e:"RCA ma znaleźć podstawową przyczynę, by zapobiec ponownemu wystąpieniu problemu — nie tylko leczyć objawy."},
+{d:1,q:"Ile etapów ma analiza przyczyn źródłowych według wykładu?",opts:["6","3","4","8"],c:0,e:"6 etapów: organizacja zespołu, definiowanie problemu, analiza danych, określenie przyczyn źródłowych, planowanie udoskonaleń, ocena postępów."},
+{d:1,q:"Który etap jest PIERWSZYM krokiem RCA?",opts:["Organizacja zespołu","Definiowanie problemu","Analiza danych","Ocena postępów"],c:0,e:"Kolejność: 1) organizacja zespołu, 2) definiowanie problemu, 3) analiza danych..."},
+{d:1,q:"Jak Lean Management definiuje problem?",opts:["Rozbieżność między standardem a warunkami rzeczywistymi","Każda trudna decyzja menedżera","Błąd popełniony przez pracownika","Brak zysku w danym okresie"],c:0,e:"Problem = niezgodność między tym, jak coś powinno działać (standard), a jak działa obecnie."},
+{d:1,q:"Z czego najczęściej wynikają problemy w organizacjach?",opts:["Z niejasnych procesów, komunikacji i braku standardów","Wyłącznie ze złej woli pracowników","Z nadmiaru danych do decyzji","Z nadmiernej liczby standardów"],c:0,e:"Większość problemów NIE wynika ze złej woli ludzi, lecz z niejasnych procesów, komunikacji, braku odpowiedzialności i standardów."},
+{d:1,q:"Co charakteryzuje problem teoretyczny (poznawczy)?",opts:["Poznanie i poszukiwanie wiedzy, bez ingerencji w przebieg zjawiska","Zmianę sytuacji i osiągnięcie celu","Natychmiastowe działanie naprawcze","Wyłącznie kwestie finansowe"],c:0,e:"Problem teoretyczny = poszukiwanie wiedzy bez ingerencji; praktyczny = zmiana sytuacji ('co zrobić, aby osiągnąć cel')."},
+{d:1,q:"Co charakteryzuje problem praktyczny (empiryczny)?",opts:["Zmianę sytuacji — odpowiedź na pytanie, co zrobić, aby osiągnąć cel","Wyłącznie poszukiwanie wiedzy","Brak ingerencji w sytuację","Analizę historyczną zdarzeń"],c:0,e:"Problem praktyczny dotyczy zmiany sytuacji i osiągnięcia celu."},
+{d:1,q:"Które hasło dotyczące problemów pojawia się na wykładzie?",opts:["Problemy to również możliwości!","Problemy zawsze są winą ludzi","Lepiej ignorować małe problemy","Problem to porażka organizacji"],c:0,e:"Wykład podkreśla pozytywne podejście: 'Problemy to również możliwości!'"},
+
+{d:2,q:"Które narzędzie należy do 7 TRADYCYJNYCH narzędzi jakości?",opts:["Diagram Ishikawy","Diagram pokrewieństwa","Diagram strzałkowy","PDPC"],c:0,e:"Diagram Ishikawy to stare narzędzie. Pokrewieństwa, strzałkowy i PDPC należą do 7 NOWYCH narzędzi."},
+{d:2,q:"Które narzędzie NIE należy do 7 tradycyjnych narzędzi jakości?",opts:["Diagram relacji","Histogram","Karta kontrolna","Diagram Pareto"],c:0,e:"Diagram relacji to NOWE narzędzie. Histogram, karta kontrolna i Pareto to narzędzia tradycyjne."},
+{d:2,q:"Do której grupy 7 tradycyjnych narzędzi należy ARKUSZ KONTROLNY?",opts:["Do zbierania (gromadzenia) danych","Do analizy danych","Do planowania projektów","Do kreowania pomysłów"],c:0,e:"Narzędzia zbierania danych: arkusz kontrolny, histogram, karta kontrolna. Analiza: Pareto, Ishikawa, korelacji, schemat blokowy."},
+{d:2,q:"PDPC (wykres programu decyzyjnego) należy do:",opts:["7 nowych narzędzi zarządzania jakością","7 starych narzędzi","Technik kreatywnego myślenia","Zasad zarządzania jakością"],c:0,e:"PDPC to jedno z 7 nowych narzędzi, służących do planowania i podejmowania decyzji."},
+{d:2,q:"Które jest jednym z 7 NOWYCH narzędzi zarządzania jakością?",opts:["Diagram macierzowy","Histogram","Karta kontrolna Shewarta","Diagram Pareto"],c:0,e:"Nowe narzędzia: pokrewieństwa, relacji, systematyki, macierzowy, macierzowa analiza danych, strzałkowy, PDPC."},
+{d:2,q:"Do czego służą narzędzia takie jak diagram Ishikawy i Pareto-Lorenza?",opts:["Do analizy (identyfikacji) przyczyn problemu","Do kreowania pomysłów","Do podejmowania decyzji finansowych","Do rekrutacji pracowników"],c:0,e:"Diagram Ishikawy, Pareto-Lorenza i korelacji to narzędzia do analizy przyczyn problemu."},
+{d:2,q:"Które narzędzia służą do KREOWANIA pomysłów?",opts:["Burza mózgów, diagram pokrewieństwa, benchmarking","Karta kontrolna i histogram","Macierz decyzyjna","Schemat blokowy i FMEA"],c:0,e:"Kreowanie pomysłów: diagram pokrewieństwa, benchmarking, burza mózgów, technika grup nominalnych."},
+{d:2,q:"FMEA jest zaliczana do narzędzi:",opts:["Do analizy procesów","Do zbierania danych","Do kreowania pomysłów","Do oceny pracowników"],c:0,e:"FMEA (obok schematu blokowego) służy do analizy procesów — zrozumienia ich przebiegu."},
+{d:2,q:"W podziale instrumentarium doskonalenia metoda 5S została zaklasyfikowana jako:",opts:["Metoda","Zasada","Narzędzie","Technika"],c:0,e:"Wg tabeli z wykładu 5S figuruje wśród METOD (obok FMEA, QFD, SPC, raportu 8D)."},
+{d:2,q:"KAIZEN i POKA-YOKE w podziale instrumentarium to:",opts:["Zasady","Metody","Narzędzia","Techniki"],c:0,e:"W kolumnie ZASADY znajdują się m.in.: praca zespołowa, KAIZEN, POKA-YOKE, zero defektów, 14 zasad Deminga."},
+{d:2,q:"Macierz decyzyjna i wielokrotne głosowanie to narzędzia do:",opts:["Oceny i podejmowania decyzji","Analizy przyczyn","Gromadzenia danych","Kreowania pomysłów"],c:0,e:"To narzędzia do wyboru najlepszych rozwiązań / oceny — czyli oceny i podejmowania decyzji."},
+{d:2,q:"Ile jest 'nowych' narzędzi zarządzania jakością?",opts:["7","5","4","10"],c:0,e:"Jest 7 nowych narzędzi (i analogicznie 7 tradycyjnych)."},
+
+{d:3,q:"Jakie elementy łączy w sobie kreatywność według definicji z wykładu?",opts:["Innowacyjność, wyobraźnię, intuicję i krytyczne myślenie","Wyłącznie wiedzę techniczną","Dyscyplinę i standaryzację","Kontrolę jakości i pomiar"],c:0,e:"Kreatywność to proces myślowy łączący innowacyjność, wyobraźnię, intuicję i krytyczne myślenie."},
+{d:3,q:"Co — wg wykładu — pozwala 'uwolnić kreatywność'?",opts:["Prawo do zmiany i prawo do błędu","Ścisłe procedury","Brak czasu na refleksję","Indywidualna rywalizacja"],c:0,e:"Uwolnienie kreatywności wymaga prawa do zmiany oraz prawa do błędu."},
+{d:3,q:"Kto jest autorem metody burzy mózgów?",opts:["Alex F. Osborn (1939)","Masaaki Imai","Shigeo Shingo","Edward de Bono"],c:0,e:"Burzę mózgów opracował Alex F. Osborn w 1939 r."},
+{d:3,q:"Jaka jest naczelna zasada burzy mózgów?",opts:["Najlepszym sposobem na dobry pomysł jest posiadanie wielu pomysłów","Liczy się tylko jeden, najlepszy pomysł","Pomysły należy od razu krytykować","Pracuje się wyłącznie indywidualnie"],c:0,e:"Cytat z wykładu (Osborn): 'Najlepszym sposobem na dobry pomysł jest posiadanie wielu pomysłów'."},
+{d:3,q:"Co oznaczają liczby w metodzie 6-3-5?",opts:["6 osób zapisuje po 3 pomysły w 5 minut","6 etapów, 3 zespoły, 5 rund","6 minut, 3 osoby, 5 pomysłów","6 zasad, 3 narzędzia, 5 technik"],c:0,e:"Metoda 6-3-5: 6 osób, po 3 pomysły, w 5 minut — następnie karty krążą po kole."},
+{d:3,q:"Metoda 6-3-5 jest odmianą:",opts:["Burzy mózgów (brainwriting — wersja pisemna)","Mapy myśli","Metody sześciu kapeluszy","Diagramu Ishikawy"],c:0,e:"6-3-5 (brainwriting) to pisemna odmiana burzy mózgów."},
+{d:3,q:"Która technika polega na graficznym przedstawieniu skojarzeń wokół centralnego tematu?",opts:["Mind Map (mapa myśli)","Metoda 6-3-5","Metoda czerwonych etykiet","Andon"],c:0,e:"Mind Map to mapa myśli — temat w centrum, gałęzie skojarzeń na zewnątrz."},
+{d:3,q:"Na czym polega metoda Sześciu Myślowych Kapeluszy?",opts:["Na spojrzeniu na problem z różnych perspektyw","Na losowaniu sześciu pomysłów","Na pracy w sześcioosobowych zespołach przez 6 minut","Na sześciu etapach kontroli jakości"],c:0,e:"Każdy 'kapelusz' to inny sposób myślenia/perspektywa spojrzenia na problem."},
+{d:3,q:"Która z poniższych NIE jest techniką kreatywnego myślenia z wykładu?",opts:["Diagram Pareto","Burza mózgów","Mind Map","Metoda 6-3-5"],c:0,e:"Techniki kreatywne: burza mózgów, 6-3-5, mind map, 6 kapeluszy. Diagram Pareto to narzędzie analizy danych."},
+{d:3,q:"Kreatywność jest procesem przede wszystkim:",opts:["Poznawczym (myślowym)","Wyłącznie finansowym","Czysto mechanicznym","Niezależnym od myślenia"],c:0,e:"Kreatywność to proces poznawczy/myślowy prowadzący do nowych, oryginalnych pomysłów."},
+{d:3,q:"Ile pomysłów zapisuje każda osoba w jednej rundzie metody 6-3-5?",opts:["3","6","5","1"],c:0,e:"Każda z 6 osób zapisuje po 3 pomysły w 5 minut."},
+{d:3,q:"Ile osób uczestniczy w klasycznej metodzie 6-3-5?",opts:["6","3","5","9"],c:0,e:"W metodzie 6-3-5 uczestniczy 6 osób."},
+
+{d:4,q:"Czy każda grupa osób jest zespołem?",opts:["Nie — grupa musi spełnić określone warunki, by być zespołem","Tak, każda grupa to zespół","Tylko grupy formalne są zespołami","Tylko grupy liczące ponad 10 osób"],c:0,e:"Nie każda grupa jest zespołem — potrzebny jest m.in. wspólny cel, współpraca i zbiorowa odpowiedzialność."},
+{d:4,q:"Który warunek MUSI spełniać grupa, by stać się zespołem?",opts:["Posiadanie wspólnego celu","Liczenie co najmniej 5 osób","Istnienie formalnego lidera","Pracę w jednym pomieszczeniu"],c:0,e:"Cechy zespołu: wspólny cel, współpraca, wspólny system norm i wartości, zbiorowa odpowiedzialność i wzajemne wsparcie."},
+{d:4,q:"Jak definiuje się zespół?",opts:["Mała liczba osób o uzupełniających się umiejętnościach ze wspólnym celem i odpowiedzialnością","Dowolnie liczna grupa ludzi w jednej firmie","Zbiór osób przydzielonych przez przełożonego","Grupa o sprzecznych celach"],c:0,e:"Zespół to mała liczba osób o uzupełniających się umiejętnościach, ze wspólnym celem, normami i wspólną odpowiedzialnością."},
+{d:4,q:"Czym jest efekt synergii?",opts:["Efektem pracy zespołowej wyższym niż suma działań indywidualnych","Sumą wyników poszczególnych osób","Spadkiem wydajności w dużych grupach","Konfliktem między członkami zespołu"],c:0,e:"Synergia = wartość dodana; efekt zorganizowanej pracy zespołowej wyższy niż suma działań indywidualnych."},
+{d:4,q:"Zapis '2+2=5' ilustruje:",opts:["Efekt synergii","Błąd w obliczeniach kosztów","Zasadę Pareto","Metodę 6-3-5"],c:0,e:"'2+2=5' to symboliczne ujęcie synergii — całość daje więcej niż suma części."},
+{d:4,q:"Zespół formalny charakteryzuje się tym, że:",opts:["Jest tworzony w określonym celu, do realizacji określonych zadań","Powstaje spontanicznie z inicjatywy ludzi","Nigdy nie ma lidera","Działa zawsze tylko jeden dzień"],c:0,e:"Zespoły formalne tworzone są celowo (doraźne/zadaniowe lub projektowe); nieformalne powstają z własnej inicjatywy."},
+{d:4,q:"Zespół doraźny jest:",opts:["Powoływany ad hoc do nieprzewidzianych zadań/problemów","Trwale umiejscowiony w strukturze organizacji","Komisją powtarzalną co roku","Grupą nieformalną przyjaciół"],c:0,e:"Zespół doraźny powołuje się ad hoc, np. do likwidacji wady produktu."},
+{d:4,q:"Przykładem zespołu okresowego jest:",opts:["Komisja rekrutacyjna dla kandydatów do pracy","Dział lub sekcja w firmie","Grupa ad hoc gasząca awarię","Spotkanie towarzyskie pracowników"],c:0,e:"Zespoły okresowe realizują zadania powtarzalne i przewidywalne (np. komisje rekrutacyjne)."},
+{d:4,q:"Przykładem zespołu trwałego jest:",opts:["Dział lub sekcja w strukturze organizacji","Grupa powołana ad hoc do usunięcia wady","Komisja rekrutacyjna","Zespół projektowy na jeden projekt"],c:0,e:"Zespoły trwałe są utworzone na stałe i umiejscowione w strukturze (np. dział, sekcja)."},
+{d:4,q:"Która cecha jest PIERWSZą (fundamentem) efektywnego zespołu?",opts:["Zaufanie","Dbałość o wynik","Odpowiedzialność","Zaangażowanie"],c:0,e:"Kolejność: 1) zaufanie, 2) otwartość na konflikt, 3) zaangażowanie, 4) odpowiedzialność, 5) dbałość o wynik."},
+{d:4,q:"Która z poniższych jest WADą pracy zespołowej?",opts:["Konformizm i 'zgniły' kompromis","Efekt synergii","Bogactwo wiedzy i doświadczeń","Poczucie akceptacji członków"],c:0,e:"Wady: zabijanie indywidualizmu, 'zgniły' kompromis, konformizm, dodatkowa formalizacja."},
+{d:4,q:"Która z poniższych jest KORZYŚCIą pracy zespołowej?",opts:["Efekt synergii i bogactwo wiedzy","Konformizm","Zabijanie indywidualizmu","Dodatkowa formalizacja"],c:0,e:"Korzyści: bogactwo wiedzy, wspólny cel, dobra atmosfera, akceptacja, synergia."},
+{d:4,q:"Czym są organizacje turkusowe?",opts:["Nowoczesnym modelem organizacji opartym na samoorganizacji","Firmami produkującymi farby","Organizacjami o sztywnej hierarchii wojskowej","Wyłącznie instytucjami publicznymi"],c:0,e:"To nowoczesny model organizacji (firm, szkół, instytucji) spopularyzowany w książkach, oparty na samoorganizacji."},
+
+{d:5,q:"Od czego pochodzi nazwa '5S'?",opts:["Od pierwszych liter pięciu japońskich słów","Od pięciu etapów audytu","Od nazwiska twórcy (Mr. S.)","Od pięciu standardów ISO"],c:0,e:"5S pochodzi od pierwszych liter japońskich słów: Seiri, Seiton, Seiso, Seiketsu, Shitsuke."},
+{d:5,q:"Co oznacza 1S — SEIRI?",opts:["Selekcja (sort) — pozbycie się rzeczy niepotrzebnych","Systematyka","Sprzątanie","Standaryzacja"],c:0,e:"1S Seiri = Selekcja: usuwanie wszystkiego, co nie jest potrzebne do bieżącej operacji."},
+{d:5,q:"Co oznacza 2S — SEITON?",opts:["Systematyka — ułożenie rzeczy wygodnie do użycia","Selekcja","Samodyscyplina","Sprzątanie"],c:0,e:"2S Seiton = Systematyka (set in order): ułożenie i oznaczenie tak, by KAŻDY łatwo znalazł rzecz."},
+{d:5,q:"Co oznacza 3S — SEISO?",opts:["Sprzątanie — usunięcie brudu, kurzu i odpadów","Standaryzacja","Systematyka","Selekcja"],c:0,e:"3S Seiso = Sprzątanie (sweep/shine): czystość stanowiska i narzędzi, gotowość do użycia."},
+{d:5,q:"Co oznacza 4S — SEIKETSU?",opts:["Standaryzacja — utrzymanie trzech poprzednich filarów","Samodyscyplina","Sprzątanie","Selekcja"],c:0,e:"4S Seiketsu = Standaryzacja: opracowanie jednego właściwego sposobu wykonywania zadań."},
+{d:5,q:"Co oznacza 5S — SHITSUKE?",opts:["Samodyscyplina — nawyk przestrzegania procedur","Standaryzacja","Systematyka","Bezpieczeństwo"],c:0,e:"5S Shitsuke = Samodyscyplina (sustain): nawyk ścisłego przestrzegania procedur dzień po dniu."},
+{d:5,q:"Jaki dodatkowy filar oznacza '+1S'?",opts:["Safety — bezpieczeństwo","Speed — szybkość","Sales — sprzedaż","Service — obsługa"],c:0,e:"+1S = Safety (bezpieczeństwo). Brudne środowisko sprzyja wypadkom i defektom maszyn."},
+{d:5,q:"Do którego filaru 5S należy metoda czerwonych etykiet?",opts:["1S — Selekcja","2S — Systematyka","4S — Standaryzacja","5S — Samodyscyplina"],c:0,e:"Czerwone etykiety to narzędzie Selekcji — oznaczanie przedmiotów wątpliwej przydatności."},
+{d:5,q:"Jakie słowo jest KLUCZOWE w definicji Systematyki (2S)?",opts:["KAŻDY","SZYBKO","TANIO","RAZ"],c:0,e:"Systematyka oznacza ułożenie rzeczy tak, by KAŻDY mógł je łatwo znaleźć i odłożyć."},
+{d:5,q:"Czym jest standaryzacja (4S)?",opts:["Metodą utrzymania trzech poprzednich filarów i fundamentem doskonalenia","Pierwszym krokiem 5S","Wyłącznie sprzątaniem hali","Usuwaniem zbędnych przedmiotów"],c:0,e:"Standaryzacja utrzymuje selekcję, systematykę i sprzątanie oraz stanowi fundament ciągłego doskonalenia."},
+{d:5,q:"Tablice cieni są przykładem realizacji którego filaru?",opts:["Systematyki (2S)","Selekcji (1S)","Sprzątania (3S)","Samodyscypliny (5S)"],c:0,e:"Tablice cieni (oznaczanie miejsc na narzędzia) to przykład Systematyki."},
+{d:5,q:"Jaką rolę pełni 5S w środowisku Lean Manufacturing?",opts:["Jest spoiwem łączącym wszystkie pozostałe metodyki doskonalenia","Jest metodą księgowania kosztów","Zastępuje wszystkie inne metody","Dotyczy tylko działu sprzedaży"],c:0,e:"5S to spoiwo łączące pozostałe metodyki doskonalenia i podstawa porządku oraz dyscypliny."},
+{d:5,q:"Jak brzmi reguła Selekcji (1S)?",opts:["Tylko to, co potrzebne; tylko tyle, ile potrzeba; tylko wtedy, kiedy potrzeba","Im więcej zapasów, tym lepiej","Wszystko trzymać na wszelki wypadek","Sprzątać raz w roku"],c:0,e:"Selekcja: 'tylko to, co potrzebne, tylko tyle ile potrzeba, tylko wtedy kiedy potrzeba'."},
+{d:5,q:"Co oznacza Samodyscyplina (5S)?",opts:["Nawyk ścisłego przestrzegania ustalonych procedur","Jednorazowe wielkie sprzątanie","Usuwanie czerwonych etykiet","Zakup nowych maszyn"],c:0,e:"Samodyscyplina = nawyk przestrzegania procedur; wspierają ją świadomość, czas, struktura, wsparcie, nagrody, satysfakcja."},
+{d:5,q:"Czemu służą audyty 5S?",opts:["Kontroli wdrożenia, kształtowaniu dyscypliny i dawaniu feedbacku zespołom","Wyłącznie karaniu pracowników","Zwiększaniu zapasów","Likwidacji standardów"],c:0,e:"Audyty kontrolują poziom wdrożenia/utrzymania 5S, kształtują dyscyplinę, podnoszą motywację i dają feedback."},
+
+{d:6,q:"Co dosłownie oznacza słowo KAIZEN?",opts:["Dobra zmiana / zmiana na lepsze","Zero defektów","Szybkie przezbrajanie","Kontrola wizualna"],c:0,e:"KAI (zmieniać) + ZEN (na lepsze) = 'dobra zmiana', zmiana na lepsze."},
+{d:6,q:"Kaizen jest nazywany metodą:",opts:["Małych kroków","Wielkiego skoku technologicznego","Jednorazowej rewolucji","Masowych zwolnień"],c:0,e:"Kaizen to metoda małych kroków — ciągłe drobne usprawnienia bez nagłych inwestycji."},
+{d:6,q:"Czy Kaizen wymaga nagłych, kosztownych inwestycji?",opts:["Nie — opiera się na drobnych usprawnieniach i zdrowym rozsądku","Tak, zawsze wymaga dużych nakładów","Tak, ale tylko w IT","Tylko gdy zatrudnia się konsultantów"],c:0,e:"Kaizen polega na ciągłych drobnych usprawnieniach bez nagłych kosztownych inwestycji."},
+{d:6,q:"Kto jest twórcą filozofii Kaizen?",opts:["Masaaki Imai","Shigeo Shingo","Alex Osborn","Walter Shewhart"],c:0,e:"Masaaki Imai (1930–2023) — 'guru Kaizen', założyciel Kaizen Institute."},
+{d:6,q:"W którym roku ukazała się pierwsza książka Masaaki Imai o Kaizen?",opts:["1986","1939","2003","1957"],c:0,e:"Książka 'Kaizen. Klucz do konkurencyjnego sukcesu Japonii' ukazała się w 1986 r."},
+{d:6,q:"Co oznacza japońskie słowo GEMBA?",opts:["Miejsce, gdzie dzieje się rzeczywista praca","Marnotrawstwo","Standard pracy","Sygnał świetlny"],c:0,e:"Gemba = miejsce, gdzie dzieje się rzeczywista praca tworząca wartość dla klienta."},
+{d:6,q:"Według Imai trwały sukces zapewnia:",opts:["Synergia innowacyjności i kaizen","Wyłącznie innowacyjność (duże inwestycje)","Wyłącznie kaizen (małe kroki)","Rezygnacja z doskonalenia"],c:0,e:"Imai: jedynie synergia innowacyjności (nagłe zmiany) i kaizen (małe kroki) warunkuje trwały sukces."},
+{d:6,q:"Co oznacza Poka-Yoke?",opts:["Uodpornianie na błędy (mistake-proofing)","Szybkie przezbrajanie maszyn","Kontrola statystyczna procesu","Zarządzanie wizualne"],c:0,e:"Poka-Yoke = mistake-proofing / error-proofing, czyli uodpornianie procesu na błędy."},
+{d:6,q:"Jaka była pierwotna nazwa metody Poka-Yoke?",opts:["Baka-Yoke","Kaizen","Gemba","Andon"],c:0,e:"Pierwotnie 'Baka-Yoke' ('idiotoodporne') — porzucona jako lekceważąca dla pracowników."},
+{d:6,q:"Kto jest twórcą Poka-Yoke?",opts:["Shigeo Shingo","Masaaki Imai","Takashi Osada","Alex Osborn"],c:0,e:"Shigeo Shingo (1909–1990) — japoński inżynier, twórca Poka-Yoke."},
+{d:6,q:"Shigeo Shingo jest też wynalazcą metody:",opts:["SMED (szybkie przezbrajanie maszyn)","5S","QFD","Burzy mózgów"],c:0,e:"Shingo wynalazł SMED i był jednym z architektów Systemu Produkcyjnego Toyoty (TPS)."},
+{d:6,q:"Jakie jest podstawowe założenie Shingo dotyczące błędów?",opts:["Błędy leżą w ludzkiej naturze — lepiej uniemożliwić ich popełnienie niż liczyć na uwagę","Błędy zawsze są winą pracownika","Wystarczy karać za błędy","Błędom nie da się zapobiegać"],c:0,e:"Shingo: popełnianie błędów leży w ludzkiej naturze — zamiast mobilizować do uwagi, lepiej uniemożliwić błąd."},
+{d:6,q:"Która z poniższych NIE jest jedną z 3 zasad Poka-Yoke?",opts:["Karanie pracownika za błąd","Zapobieganie błędom","Szybkie wykrywanie błędów","Minimalizacja skutków błędów"],c:0,e:"3 zasady Poka-Yoke: zapobieganie błędom, szybkie wykrywanie, minimalizacja skutków. Karanie nie jest zasadą."},
+{d:6,q:"Na czym polega metoda kontroli/sterowania w Poka-Yoke?",opts:["Na zatrzymaniu maszyny/procesu w razie wystąpienia wady","Tylko na alarmie dźwiękowym","Na ręcznym liczeniu elementów","Na ignorowaniu defektów"],c:0,e:"Metoda kontroli/sterowania zatrzymuje proces przy wadzie; element trzeba poprawić i ponownie uruchomić maszynę."},
+{d:6,q:"Jaka jest WADA metody ostrzegania w Poka-Yoke?",opts:["Jeśli operator nie reaguje na alarm, wady powstają nadal","Zawsze zatrzymuje całą produkcję","Jest najdroższą z metod","Nie wykrywa żadnych wad"],c:0,e:"Metoda ostrzegania (alarm świetlny/dźwiękowy) zawodzi, gdy operator nie reaguje — wtedy wady powstają dalej."},
+
+{d:7,q:"Ile procent ludzie zapamiętują z tego, co ZOBACZyLI i ZROBILI?",opts:["Ponad 80%","10%","20%","50%"],c:0,e:"Ludzie zapamiętują ~10% tego, co usłyszą, ~20% tego, co przeczytają i ponad 80% tego, co zobaczą i zrobią."},
+{d:7,q:"Ile procent ludzie zapamiętują z tego, co USŁYSZeLI?",opts:["10%","20%","80%","60%"],c:0,e:"Tylko ok. 10% tego, co usłyszane; 20% przeczytane; ponad 80% zobaczone i zrobione."},
+{d:7,q:"Ile razy szybciej przetwarzane są informacje wizualne w porównaniu z tekstem?",opts:["60 000 razy","100 razy","6 razy","600 razy"],c:0,e:"Informacje wizualne są przetwarzane 60 000 razy szybciej niż tekst."},
+{d:7,q:"Kto zdefiniował zarządzanie wizualne przywołane na wykładzie?",opts:["Masaaki Imai","Shigeo Shingo","Alex Osborn","Takashi Osada"],c:0,e:"Definicja VM pochodzi od Masaaki Imai — informacje przedstawione w bardzo widoczny sposób dla wszystkich."},
+{d:7,q:"Elementem której metodyki jest Visual Management?",opts:["Kaizen","FMEA","QFD","SMED"],c:0,e:"VM jest nieodłącznym elementem metodyki Kaizen, używanym przez kierownictwo i pracowników."},
+{d:7,q:"W czym — wg wykładu — tkwi 'sekret' zarządzania wizualnego?",opts:["W kolorach, symbolach i prostocie","W skomplikowanych raportach","W długich instrukcjach tekstowych","W tajności danych"],c:0,e:"Sekret VM tkwi w kolorach i symbolach oraz prostocie; VM wspiera podejmowanie decyzji."},
+{d:7,q:"Która jest PIERWSZą z trzech podstawowych funkcji VM?",opts:["Wskazanie problemów (odchyleń od normy)","Wyznaczanie celów","Karanie pracowników","Liczenie zysków"],c:0,e:"3 funkcje VM: wskazanie problemów, informowanie o stanie rzeczywistym, wyznaczanie celów."},
+{d:7,q:"Która z poniższych jest jedną z 3 funkcji VM?",opts:["Wyznaczanie celów","Rekrutacja pracowników","Naliczanie wynagrodzeń","Audyt finansowy"],c:0,e:"Funkcje VM: wskazanie problemów, informowanie o stanie rzeczywistym, wyznaczanie celów."},
+{d:7,q:"Która jest jedną z trzech zasad zarządzania wizualnego?",opts:["Dane muszą być aktualizowane","Informacje powinny być tajne","Tablice mają być jak najbardziej skomplikowane","Dane aktualizuje się raz w roku"],c:0,e:"Zasady VM: widoczne i dostępne miejsce, dane aktualizowane, informacje czytelne i zrozumiałe dla wszystkich."},
+{d:7,q:"System Andon komunikuje przede wszystkim za pomocą:",opts:["Sygnałów świetlnych","Wyłącznie e-maili","Dokumentów papierowych","Rozmów telefonicznych"],c:0,e:"Andon to wizualny sposób komunikacji za pomocą sygnałów świetlnych (oraz tonów, audio)."},
+{d:7,q:"Jaką kluczową możliwość daje system Andon?",opts:["Zatrzymanie procesu produkcyjnego w momencie pojawienia się defektu","Automatyczne zwiększenie produkcji","Naliczanie premii","Sortowanie dokumentów"],c:0,e:"Andon umożliwia zatrzymanie procesu produkcyjnego w chwili pojawienia się defektu i wskazuje jego miejsce."},
+{d:7,q:"Ile poziomów wyróżnia się w zarządzaniu wizualnym?",opts:["4","3","5","7"],c:0,e:"4 poziomy: organizacja miejsca pracy, wyświetlanie wizualne, pomiary wizualne, zarządzanie wizualne."}
+];
+
+let pool=[], idx=0, score=0, wrong=[], currentSet=null, currentLabel="";
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function buildHome(){
+  const counts={};BANK.forEach(q=>counts[q.d]=(counts[q.d]||0)+1);
+  let html=`<div class="dzial all" onclick="start('all')"><div class="row"><div class="n">★</div><div><div class="t">Cały materiał — wszystkie działy</div><div class="meta">${BANK.length} pytań · pełna powtórka przed egzaminem</div></div></div></div>`;
+  for(let d=1;d<=7;d++){html+=`<div class="dzial" onclick="start(${d})"><div class="row"><div class="n">${d}</div><div class="t">${DZIALY[d]}</div></div><div class="meta">${counts[d]} pytań</div></div>`;}
+  document.getElementById('dzialList').innerHTML=html;
+}
+function start(d){
+  if(d==='all'){currentSet=BANK.slice();currentLabel='Cały materiał';}
+  else{currentSet=BANK.filter(q=>q.d===d);currentLabel='Dział '+d+' · '+DZIALY[d];}
+  launch(currentSet);
+}
+function restartSame(){launch(currentSet);}
+function retryWrongSet(){const set=wrong.map(w=>w.qObj);currentLabel+=' (powtórka błędnych)';launch(set);}
+function launch(set){
+  pool=shuffle(set).map(q=>{const opts=q.opts.map((t,i)=>({t,ok:i===q.c}));return {q:q.q,d:q.d,e:q.e,opts:shuffle(opts)};});
+  idx=0;score=0;wrong=[];
+  document.getElementById('home').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  render();
+}
+function render(){
+  const item=pool[idx];
+  document.getElementById('prog').style.width=((idx)/pool.length*100)+'%';
+  document.getElementById('stHead').textContent=currentLabel+' · pytanie '+(idx+1)+'/'+pool.length;
+  document.getElementById('stScore').textContent='Wynik: '+score;
+  document.getElementById('qtag').textContent='Dział '+item.d+' · '+DZIALY[item.d];
+  document.getElementById('qtext').textContent=item.q;
+  const oc=document.getElementById('opts');oc.innerHTML='';
+  item.opts.forEach((o,i)=>{const b=document.createElement('button');b.className='opt';b.innerHTML=o.t;b.onclick=()=>answer(i);oc.appendChild(b);});
+  const exp=document.getElementById('exp');exp.className='exp';exp.innerHTML='';
+  document.getElementById('nextBtn').classList.add('hidden');
+}
+function answer(i){
+  const item=pool[idx];const btns=document.querySelectorAll('#opts .opt');const chosen=item.opts[i];let correctText='';
+  item.opts.forEach((o,j)=>{btns[j].disabled=true;if(o.ok){btns[j].classList.add('correct');btns[j].insertAdjacentHTML('beforeend','<span class="mk">✓</span>');correctText=o.t;}});
+  const exp=document.getElementById('exp');
+  if(chosen.ok){score++;exp.className='exp show ok';exp.innerHTML='✅ <b>Dobrze!</b> '+item.e;}
+  else{btns[i].classList.add('wrong');btns[i].insertAdjacentHTML('beforeend','<span class="mk">✗</span>');exp.className='exp show no';exp.innerHTML='❌ <b>Niepoprawnie.</b> Prawidłowa odpowiedź: <b>'+correctText+'</b>.<br>'+item.e;
+    wrong.push({q:item.q,correct:correctText,e:item.e,d:item.d,qObj:{d:item.d,q:item.q,opts:item.opts.map(o=>o.t),c:item.opts.findIndex(o=>o.ok),e:item.e}});}
+  document.getElementById('stScore').textContent='Wynik: '+score;
+  document.getElementById('nextBtn').classList.remove('hidden');
+  document.getElementById('nextBtn').textContent=(idx===pool.length-1)?'Zobacz wynik →':'Dalej →';
+}
+function next(){idx++;if(idx>=pool.length){showResult();}else{render();}}
+function showResult(){
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  const pct=Math.round(score/pool.length*100);
+  document.getElementById('finalScore').textContent=score+' / '+pool.length;
+  document.getElementById('finalPct').textContent=pct+'% poprawnych odpowiedzi';
+  let v='';
+  if(pct===100)v='🏆 Komplet! Ten dział masz opanowany — możesz go pominąć.';
+  else if(pct>=80)v='💪 Bardzo dobrze! Tylko drobne luki do powtórki.';
+  else if(pct>=60)v='👍 Nieźle, ale warto powtórzyć błędne pytania.';
+  else v='📚 Ten dział wymaga jeszcze nauki — przejrzyj materiały i spróbuj ponownie.';
+  document.getElementById('verdict').textContent=v;
+  const rev=document.getElementById('review');
+  if(wrong.length===0){rev.innerHTML='<div class="allgood">🎉 Zero błędów — nic do powtórki w tym podejściu!</div>';document.getElementById('retryWrong').classList.add('hidden');}
+  else{let h='<h3>Do powtórki ('+wrong.length+'):</h3>';wrong.forEach(w=>{h+='<div class="ritem"><div class="qq">'+w.q+'</div><div class="gc">✔ '+w.correct+'</div><div style="color:var(--muted);margin-top:4px">'+w.e+'</div></div>';});rev.innerHTML=h;const rw=document.getElementById('retryWrong');rw.classList.remove('hidden');rw.onclick=retryWrongSet;}
+}
+function quit(){if(confirm('Zakończyć ten quiz i wrócić do wyboru działu?'))goHome();}
+function goHome(){document.getElementById('quiz').classList.add('hidden');document.getElementById('result').classList.add('hidden');document.getElementById('home').classList.remove('hidden');window.scrollTo(0,0);}
+buildHome();
+</script>
+</body>
+</html>

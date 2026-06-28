@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podstawy Marketingu – Kolokwium v2</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
+  :root {
+    --cream:#0c0a18;--cream-dark:#1c1740;--green:#a78bfa;--green-mid:#8b5cf6;
+    --green-light:#4a3d7a;--green-faint:#1c1740;--ink:#ece9f7;--ink-mid:#c4bce0;
+    --ink-light:#9b93c4;--red-bg:#2a1320;--red-text:#fca5a5;--red-border:#f87171;
+    --amber-bg:#2a2212;--amber-text:#fcd34d;--blue-bg:#10243a;--blue-text:#7cc4ff;
+    --purple-bg:#1f1640;--purple-text:#c4b5fd;--ok:#5ad1a0;--ok-bg:#10241d;--ok-line:#1d4a3a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--cream);color:var(--ink);min-height:100vh;padding:0 0 4rem}
+  /* ===== UNICORNER BRAND BAR (spójny nagłówek na wszystkich stronach) ===== */
+  .uc-head{position:sticky;top:0;z-index:60;background:rgba(12,10,24,.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid #272050;margin-bottom:2rem}
+  .uc-head-in{max-width:840px;margin:0 auto;padding:13px 1.5rem;display:flex;align-items:center;gap:11px;flex-wrap:wrap}
+  .uc-brand{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0}
+  .uc-horn{width:27px;height:27px;flex-shrink:0;display:block;transition:transform .3s ease}
+  .uc-brand:hover .uc-horn{transform:translateY(-2px) rotate(-4deg)}
+  .uc-wordmark{font-family:'Space Grotesk','Inter',sans-serif;font-weight:700;font-size:1.18rem;letter-spacing:-.3px;color:var(--ink)}
+  .uc-wordmark .ai{background:linear-gradient(115deg,#5ad1ff,#a78bfa 34%,#f472b6 66%,#fcd34d);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .uc-sep{color:var(--ink-light);font-weight:300;font-size:1.1rem}
+  .uc-subject{font-family:'Space Grotesk','Inter',sans-serif;font-weight:600;font-size:.98rem;color:var(--ink-mid)}
+  .uc-back{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk','Inter',sans-serif;font-size:.8rem;font-weight:600;color:var(--ink-light);text-decoration:none;border:1px solid #272050;background:var(--cream-dark);padding:7px 13px;border-radius:999px;transition:.18s}
+  .uc-back:hover{color:var(--ink);border-color:#352c66}
+  @media(max-width:560px){.uc-back{display:none}}
+  .page-intro{max-width:840px;margin:-.5rem auto 1.5rem;padding:0 1.5rem}
+  .page-intro h1{font-family:'Space Grotesk','Inter',sans-serif;font-size:1.9rem;font-weight:700;letter-spacing:-.5px;margin-bottom:.3rem;color:var(--ink)}
+  .page-intro p{font-size:.78rem;letter-spacing:.04em;color:var(--ink-light);text-transform:uppercase}
+  .container{max-width:840px;margin:0 auto;padding:0 1.5rem}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1.5rem;border-bottom:1px solid var(--cream-dark);padding-bottom:1rem}
+  .tab{padding:8px 16px;border-radius:999px;border:1px solid #272050;background:#161230;font-family:'Space Grotesk','Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--ink-mid);transition:all .15s;letter-spacing:.01em}
+  .tab.active{background:linear-gradient(135deg,#8b5cf6,#a78bfa);color:#fff;border-color:transparent;box-shadow:0 6px 18px rgba(139,92,246,.4)}
+  .tab:hover:not(.active){background:var(--cream-dark);border-color:#352c66;color:var(--ink)}
+  .section{display:none}.section.active{display:block}
+  .card{background:#161230;border:1px solid #272050;border-radius:14px;padding:1.25rem 1.5rem;margin-bottom:.75rem}
+  .card-label{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-light);margin-bottom:6px}
+  .card-title{font-family:'Space Grotesk','Inter',sans-serif;font-size:1.3rem;font-weight:500;color:var(--ink);margin-bottom:8px;line-height:1.3}
+  .card-body{font-size:13px;color:var(--ink-mid);line-height:1.7}
+  .tags{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+  .tag{display:inline-block;font-size:11px;padding:3px 10px;border-radius:20px;line-height:1.5}
+  .tag-green{background:var(--green-faint);color:var(--green);border:1px solid var(--green-light)}
+  .tag-red{background:var(--red-bg);color:var(--red-text);border:1px solid #f87171}
+  .tag-amber{background:var(--amber-bg);color:var(--amber-text);border:1px solid #fcd34d}
+  .tag-blue{background:var(--blue-bg);color:var(--blue-text);border:1px solid #7cc4ff}
+  .note-box{background:var(--amber-bg);border:1px solid #fcd34d;border-radius:8px;padding:1rem 1.25rem;margin-bottom:1rem;font-size:13px;color:var(--amber-text);line-height:1.6}
+  .steps{counter-reset:step}
+  .step{display:flex;gap:14px;padding:.75rem 0;border-bottom:1px solid var(--cream-dark)}
+  .step:last-child{border-bottom:none}
+  .step-num{width:30px;height:30px;border-radius:50%;background:var(--green);color:var(--cream);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:2px}
+  .step-title{font-family:'Space Grotesk','Inter',sans-serif;font-size:1.05rem;font-weight:500;margin-bottom:4px;color:var(--ink)}
+  .step-desc{font-size:13px;color:var(--ink-mid);line-height:1.6}
+  table{width:100%;border-collapse:collapse}
+  td,th{padding:9px 12px;text-align:left;font-size:13px;border-bottom:1px solid var(--cream-dark);vertical-align:top}
+  th{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-light);font-weight:400}
+  tr:last-child td{border-bottom:none}
+  .pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.5rem}
+  .pros-cons ul{padding-left:1rem}
+  .pros-cons li{font-size:13px;color:var(--ink-mid);margin-bottom:5px;line-height:1.5}
+  .col-head{font-size:12px;font-weight:500;letter-spacing:.05em;text-transform:uppercase;margin-bottom:8px}
+  .col-head.green{color:var(--green)}.col-head.red{color:var(--red-text)}
+  .maslow-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--cream-dark)}
+  .maslow-row:last-child{border-bottom:none}
+  .maslow-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0;margin-top:1px}
+  .maslow-name{font-size:14px;font-weight:500;min-width:160px;color:var(--ink)}
+  .maslow-ex{font-size:13px;color:var(--ink-mid);line-height:1.5}
+  .cialdini-grid{display:grid;grid-template-columns:1fr 1fr;gap:.6rem;margin-top:.75rem}
+  .cbox{background:var(--cream-dark);border-radius:6px;padding:.75rem 1rem}
+  .cbox-title{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:4px}
+  .cbox-body{font-size:12px;color:var(--ink-mid);line-height:1.5}
+  /* QUIZ */
+  .quiz-q{font-family:'Space Grotesk','Inter',sans-serif;font-size:1.15rem;font-weight:300;line-height:1.5;margin-bottom:1rem;color:var(--ink)}
+  .quiz-opts{display:flex;flex-direction:column;gap:8px}
+  .opt{padding:10px 16px;border:1px solid #272050;border-radius:6px;font-family:'Inter',system-ui,sans-serif;font-size:13px;cursor:pointer;text-align:left;background:#161230;color:var(--ink-mid);transition:all .12s;line-height:1.5}
+  .opt:hover{background:var(--cream-dark);border-color:#352c66}
+  .opt.correct{border-color:var(--green);background:var(--green-faint);color:var(--green)}
+  .opt.wrong{border-color:var(--red-border);background:var(--red-bg);color:var(--red-text)}
+  .quiz-feedback{margin-top:12px;padding:10px 16px;border-radius:6px;font-size:13px;line-height:1.6}
+  .quiz-feedback.ok{background:var(--green-faint);color:var(--green);border:1px solid var(--green-light)}
+  .quiz-feedback.fail{background:var(--red-bg);color:var(--red-text);border:1px solid #f87171}
+  .quiz-nav{display:flex;gap:8px;margin-top:1rem;align-items:center}
+  .quiz-counter{font-size:12px;color:var(--ink-light);flex:1}
+  .nav-btn{padding:7px 16px;border:1px solid #272050;border-radius:6px;font-family:'Inter',system-ui,sans-serif;font-size:12px;cursor:pointer;background:transparent;color:var(--ink-mid);transition:all .12s}
+  .nav-btn:hover{background:var(--cream-dark)}
+  .nav-btn.primary{background:var(--green);color:var(--cream);border-color:var(--green)}
+  .score-big{font-family:'Space Grotesk','Inter',sans-serif;font-size:4rem;font-weight:300;color:var(--green);margin:1rem 0 .5rem}
+  .progress-bar{height:4px;background:var(--cream-dark);border-radius:2px;margin-bottom:1.25rem;overflow:hidden}
+  .progress-fill{height:100%;background:var(--green);border-radius:2px;transition:width .3s}
+  @media(max-width:600px){.cialdini-grid{grid-template-columns:1fr}.pros-cons{grid-template-columns:1fr}}
+</style>
+<style>
+  .opt.correct{border-color:var(--ok)!important;background:var(--ok-bg)!important;color:#bff3d3!important}
+  .quiz-feedback.ok{background:var(--ok-bg)!important;color:#bff3d3!important;border-color:var(--ok-line)!important}
+  .col-head.green{color:var(--ok)!important}
+  .tag-green{background:var(--ok-bg)!important;color:#bff3d3!important;border-color:var(--ok-line)!important}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient></defs></svg>
+<header class="uc-head">
+  <div class="uc-head-in">
+    <a class="uc-brand" href="unicorner.html" aria-label="Unicorner — strona główna">
+      <svg class="uc-horn" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/>
+        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#0c0a18" stroke-width="1.1" fill="none" opacity="0.55"/>
+      </svg>
+      <span class="uc-wordmark">Unicorn<span class="ai">er</span></span>
+    </a>
+    <span class="uc-sep">/</span>
+    <span class="uc-subject">Podstawy marketingu</span>
+    <a class="uc-back" href="unicorner.html">← Wszystkie przedmioty</a>
+  </div>
+</header>
+<div class="page-intro">
+  <h1>Podstawy Marketingu</h1>
+  <p>Materiały do kolokwium · wersja 2 · quiz 55 pytań</p>
+</div>
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('notatki',this)">Pojęcia</button>
+    <button class="tab" onclick="switchTab('mixp',this)">4P / 7P / 4C</button>
+    <button class="tab" onclick="switchTab('decyzje',this)">Proces decyzji</button>
+    <button class="tab" onclick="switchTab('cialdini',this)">Cialdini</button>
+    <button class="tab" onclick="switchTab('generacje',this)">Generacje</button>
+    <button class="tab" onclick="switchTab('maslow',this)">Maslow</button>
+    <button class="tab" onclick="switchTab('reklama',this)">Reklama</button>
+    <button class="tab" onclick="switchTab('quiz',this)">Quiz (55 pyt.)</button>
+  </div>
+
+  <!-- POJĘCIA -->
+  <div class="section active" id="notatki">
+
+    <div class="card">
+      <div class="card-label">Definicja</div>
+      <div class="card-title">Potrzeba</div>
+      <div class="card-body">Odczucie braku czegoś. Punkt wyjścia każdego działania konsumenckiego.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Greenwashing</div>
+      <div class="card-title">Ekologiczne kłamstwo marki</div>
+      <div class="card-body">Przedstawianie produktu lub firmy jako ekologicznej bez realnych podstaw. Misleading marketing dotyczący wpływu na środowisko.</div>
+      <div class="tags">
+        <span class="tag tag-green">H&M „Conscious Collection" – minimalna ilość recyklingu, ogromna kampania eko</span>
+        <span class="tag tag-green">Shell – reklamy „zeroemisyjności" + jednoczesna ekspansja wydobycia ropy</span>
+        <span class="tag tag-green">VW Dieselgate – 40× więcej spalin niż deklarował</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Logo kompletne (combined mark)</div>
+      <div class="card-title">Grafika + tekst + nazwa</div>
+      <div class="card-body">Logo zawierające ikonę/grafikę, nazwę firmy i opcjonalnie hasło lub element kolorystyczny marki.</div>
+      <div class="tags">
+        <span class="tag tag-green">Starbucks – syrena + „Starbucks Coffee"</span>
+        <span class="tag tag-green">Burger King – grafika bułki + napis</span>
+        <span class="tag tag-green">Lacoste – krokodyl + napis</span>
+        <span class="tag tag-green">Adidas – trzy paski + napis</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Kluczowa różnica</div>
+      <div class="card-title">Skuteczność vs Efektywność</div>
+      <div class="card-body">
+        <strong>Skuteczność</strong> = osiągnąłeś cel (nieważne jakim kosztem).<br>
+        <strong>Efektywność</strong> = osiągnąłeś cel małym nakładem. Wzór: efekt ÷ nakład.
+      </div>
+      <div class="tags">
+        <span class="tag tag-amber">Skuteczny: zdałeś egzamin (nieważne ile się uczyłeś)</span>
+        <span class="tag tag-green">Efektywny: zdałeś egzamin ucząc się 2h</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Downsizing (shrinkflacja)</div>
+      <div class="card-title">Mniej za tę samą cenę</div>
+      <div class="card-body">Producent zmniejsza ilość/wagę produktu utrzymując tę samą cenę i opakowanie. Konsument zazwyczaj nie zauważa. Technika stosowana przy rosnących kosztach surowców – zamiast podnieść cenę (co jest zauważalne), producent zmniejsza zawartość.</div>
+      <div class="tags">
+        <span class="tag tag-red">Milka – czekolada kosztuje tyle samo, ale 90g zamiast 100g</span>
+        <span class="tag tag-red">Pringles – puszka ta sama, mniej chipsów w środku</span>
+        <span class="tag tag-red">Domestos – butelka tak samo wygląda, ale 700ml zamiast 750ml</span>
+        <span class="tag tag-red">Lays – opakowanie tej samej wielkości, więcej powietrza</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Społeczny dowód słuszności (Social Proof)</div>
+      <div class="card-title">Skoro inni to robią, to musi być dobre</div>
+      <div class="card-body">Mechanizm psychologiczny: ludzie naśladują zachowania innych, zakładając że skoro wielu tak robi – to musi być właściwe. Jedna z zasad Cialdiniego. Używana masowo w marketingu.</div>
+      <div class="tags">
+        <span class="tag tag-green">„Ponad 1 miliard obsłużonych" – McDonald's na szyldzie</span>
+        <span class="tag tag-green">„Bestseller", „Klienci kupili też..." – Amazon</span>
+        <span class="tag tag-green">Gwiazdki i opinie pod produktem (4,8 ⭐ z 12 000 opinii)</span>
+        <span class="tag tag-green">Kolejka przed sklepem – chcesz wejść, bo inni stoją</span>
+        <span class="tag tag-green">TikTok – viralowy trend żywieniowy, bo milion osób spróbowało</span>
+        <span class="tag tag-green">Influencer pokazuje produkt – social proof + autorytet</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Segmentacja rynku</div>
+      <div class="card-title">Podział rynku na jednorodne grupy</div>
+      <div class="card-body">Dzielenie rynku na grupy o podobnych potrzebach, by lepiej dopasować ofertę. Kryteria: <strong>demograficzne</strong> (wiek, płeć), <strong>geograficzne</strong> (miasto/wieś), <strong>psychograficzne</strong> (styl życia), <strong>behawioralne</strong> (jak używają produktu).</div>
+      <div class="tags">
+        <span class="tag tag-green">Nike: segmentacja wiekowa + styl życia (biegacze, koszykarze)</span>
+        <span class="tag tag-green">Red Bull: 18–35 lat, aktywni, sporty ekstremalne, studenci</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">POS – Point of Sale</div>
+      <div class="card-title">Materiały w miejscu sprzedaży</div>
+      <div class="card-body">POS (ang. Point of Sale) = materiały i działania marketingowe bezpośrednio w miejscu zakupu. Cel: skłonienie klienta do zakupu w ostatnim momencie przed decyzją. To ostatnia szansa marki na dotarcie do konsumenta.</div>
+      <div class="tags">
+        <span class="tag tag-green">Wobbler – zawieszka przy półce „Nowość!" lub „Promocja!"</span>
+        <span class="tag tag-green">Stojak z produktem przy kasie (impulse buying)</span>
+        <span class="tag tag-green">Plakat Coca-Coli na lodówce w sklepie</span>
+        <span class="tag tag-green">Degustacja produktu w Biedronce / Lidlu</span>
+        <span class="tag tag-green">Podświetlone logo Red Bull na barze</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">NNK / Reklama nieosobowa vs osobowa</div>
+      <div class="card-title">NNK = Nieosobowe Nośniki Komunikacji</div>
+      <div class="card-body">
+        <strong>NNK (nieosobowe)</strong> = reklama masowa bez bezpośredniego kontaktu: TV, radio, billboardy, internet, prasa. Dotarcie do wielu osób jednocześnie.<br><br>
+        <strong>Osobowe</strong> = bezpośredni kontakt human-to-human: sprzedawca w sklepie, konsultant, akwizytor, doradca finansowy.<br><br>
+        Reklama = zawsze NNK (płatna i nieosobowa).
+      </div>
+      <div class="tags">
+        <span class="tag tag-blue">NNK: billboard, spot TV, baner na stronie</span>
+        <span class="tag tag-green">Osobowe: sprzedawca w salonie RTV, agent ubezpieczeniowy</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Influencer marketing</div>
+      <div class="card-title">Sprzedaż przez autorytety społeczne</div>
+      <div class="card-body">Współpraca marki z osobą mającą zasięg i zaufanie w mediach społecznościowych. Działa przez zasadę autorytetu + social proof. Podział:</div>
+      <div class="tags">
+        <span class="tag tag-green">Nano (1–10k) – bardzo wysokie zaangażowanie, niszowe</span>
+        <span class="tag tag-green">Micro (10–100k) – dobre engagement rate, tańsi</span>
+        <span class="tag tag-green">Macro (100k–1M) – szeroki zasięg, drożsi</span>
+        <span class="tag tag-green">Mega/Celebrity (1M+) – zasięg masowy, niskie engagement rate</span>
+        <span class="tag tag-amber">Lewy Messi reklamuje Pepsi zamiast Coca-Coli – niespójność z wizerunkiem</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Meme marketing</div>
+      <div class="card-title">Viralowość przez humor internetowy</div>
+      <div class="card-body">Używanie memów i formatu kulturowego internetu do komunikacji marki. Tani, szybki, bardzo wysokie organiczne zasięgi gdy dobrze trafiony. Ryzyko: można wyglądać na cringe gdy marka nie rozumie kontekstu.</div>
+      <div class="tags">
+        <span class="tag tag-green">KFC Polska – memy na Twitterze/Instagramie reagujące na trendy</span>
+        <span class="tag tag-green">Wendy's (USA) – agresywny memowy marketing na X (Twitterze)</span>
+        <span class="tag tag-red">Biedronka próbująca memów, które wyszły sztucznie – cringe</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Sprzedaż osobista</div>
+      <div class="card-title">Bezpośredni kontakt sprzedawca–klient</div>
+      <div class="card-body">Jedna z form promocji w miksie marketingowym. Polega na bezpośrednim, osobistym kontakcie z potencjalnym klientem. Najdroższy kanał, ale najskuteczniejszy w przypadku produktów skomplikowanych lub drogich.</div>
+      <div class="tags">
+        <span class="tag tag-green">Agent ubezpieczeniowy odwiedzający klienta</span>
+        <span class="tag tag-green">Sprzedawca w salonie samochodowym</span>
+        <span class="tag tag-green">Doradca w banku proponujący kredyt hipoteczny</span>
+        <span class="tag tag-amber">Akwizytor od garnków w domu – sprzedaż bezpośrednia</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Perswazja w marketingu</div>
+      <div class="card-title">Wpływanie na decyzje bez przymusu</div>
+      <div class="card-body">Perswazja = świadome wpływanie na przekonania, postawy lub decyzje odbiorcy za pomocą argumentów, emocji lub technik psychologicznych. Różni się od manipulacji tym, że nie ukrywa swojego celu.<br><br>Narzędzia perswazji w reklamie: emocje (strach, radość), autorytety, storytelling, dowody społeczne, niedobór, pilność.</div>
+      <div class="tags">
+        <span class="tag tag-green">„Lekarze polecają Colgate" – autorytet</span>
+        <span class="tag tag-green">„Zostały ostatnie 3 sztuki!" – niedobór (scarcity)</span>
+        <span class="tag tag-green">Reklama OLX z historią człowieka – storytelling + emocje</span>
+        <span class="tag tag-amber">„Oferta ważna tylko dziś" – pilność (urgency)</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Reklama – definicja formalna</div>
+      <div class="card-title">Płatna, nieosobowa forma komunikacji</div>
+      <div class="card-body">Reklama = <strong>PŁATNA</strong> i <strong>NIEOSOBOWA</strong>. Odróżnia ją od:<br>
+      – PR: bezpłatne pokrycie medialne<br>
+      – sprzedaży osobistej: bezpośredni kontakt z klientem<br>
+      – promocji sprzedaży: tymczasowe zachęty (rabaty, kupony)</div>
+    </div>
+
+  </div>
+
+  <!-- 4P / 7P / 4C -->
+  <div class="section" id="mixp">
+
+    <div class="card">
+      <div class="card-label">Marketing Mix klasyczny</div>
+      <div class="card-title">4P – cztery filary marketingu</div>
+      <div class="card-body">Model McCarthy'ego (1960). Cztery zmienne kontrolowane przez firmę:</div>
+      <table style="margin-top:.75rem">
+        <tr><th>P</th><th>Nazwa</th><th>Co obejmuje</th><th>Przykład (Nike Air Max)</th></tr>
+        <tr><td><strong>Product</strong></td><td>Produkt</td><td>Design, jakość, marka, opakowanie, gwarancja</td><td>Buty z poduszką powietrzną, kolorystyka, pudełko</td></tr>
+        <tr><td><strong>Price</strong></td><td>Cena</td><td>Cena katalogowa, rabaty, warunki płatności</td><td>Cena 700 zł, wyprzedaże sezonowe</td></tr>
+        <tr><td><strong>Place</strong></td><td>Dystrybucja</td><td>Kanały sprzedaży, lokalizacja, logistyka</td><td>Własne sklepy Nike, Zalando, Footlocker</td></tr>
+        <tr><td><strong>Promotion</strong></td><td>Promocja</td><td>Reklama, PR, sprzedaż osobista, digital</td><td>Kampania z LeBronem, Instagram ads, sklep Nike.com</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Rozszerzony Marketing Mix</div>
+      <div class="card-title">7P – dla sektora usług</div>
+      <div class="card-body">4P + 3 dodatkowe P dla usług (Booms & Bitner, 1981). Ważne gdy usługa jest centrum oferty:</div>
+      <table style="margin-top:.75rem">
+        <tr><th>P</th><th>Nazwa</th><th>Co obejmuje</th><th>Przykład (Starbucks)</th></tr>
+        <tr><td><strong>Product</strong></td><td>Produkt</td><td>jak w 4P</td><td>Kawa, frappuccino, menu sezonowe</td></tr>
+        <tr><td><strong>Price</strong></td><td>Cena</td><td>jak w 4P</td><td>Premium pricing – latte za 22 zł</td></tr>
+        <tr><td><strong>Place</strong></td><td>Miejsce</td><td>jak w 4P</td><td>Centra handlowe, strefy biznesowe</td></tr>
+        <tr><td><strong>Promotion</strong></td><td>Promocja</td><td>jak w 4P</td><td>Aplikacja lojalnościowa, Red Cup Season</td></tr>
+        <tr><td><strong>People</strong></td><td>Ludzie</td><td>Pracownicy, obsługa klienta, kultura</td><td>Barista piszący imię na kubku, szkolenia</td></tr>
+        <tr><td><strong>Process</strong></td><td>Procesy</td><td>Procedury, systemy obsługi, kolejkowanie</td><td>Zamówienie przez aplikację, pick-up window</td></tr>
+        <tr><td><strong>Physical Evidence</strong></td><td>Świadectwo materialne</td><td>Środowisko fizyczne, dowody jakości</td><td>Wystrój kawiarni, kubek z logo, zielone barwy</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Perspektywa klienta</div>
+      <div class="card-title">4C – 4P z perspektywy konsumenta</div>
+      <div class="card-body">Model Lauterborna (1990). Każde P ma odpowiednie C – to samo, ale patrząc oczami klienta:</div>
+      <table style="margin-top:.75rem">
+        <tr><th>4P (firma)</th><th>4C (klient)</th><th>Co zmienia perspektywa</th><th>Przykład</th></tr>
+        <tr><td>Product</td><td><strong>Customer Value</strong><br>(wartość dla klienta)</td><td>Nie „co sprzedajemy" ale „co klient z tego ma"</td><td>Nie „sprzedajemy buty" ale „sprzedajemy komfort biegania"</td></tr>
+        <tr><td>Price</td><td><strong>Cost</strong><br>(całkowity koszt klienta)</td><td>Nie tylko cena, ale czas + wysiłek + koszty alternatywne</td><td>iPhone drogi, ale oszczędza czas i jest intuicyjny</td></tr>
+        <tr><td>Place</td><td><strong>Convenience</strong><br>(wygoda dostępu)</td><td>Czy klient może łatwo kupić i otrzymać produkt?</td><td>Allegro: dostawa jutro, odbiór w paczkomacie, darmowy zwrot</td></tr>
+        <tr><td>Promotion</td><td><strong>Communication</strong><br>(komunikacja)</td><td>Nie jednostronne nadawanie, ale dialog z klientem</td><td>Komentarze na IG, czat na stronie, odpowiedzi na recenzje</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Przykład – zadanie egzaminacyjne</div>
+      <div class="card-title">4P w działaniu – co zrobić jeśli spada sprzedaż?</div>
+      <div class="card-body">Pytanie typu: <em>„Co może zrobić firma X w ramach każdego P?"</em></div>
+      <div class="tags">
+        <span class="tag tag-blue">Product: dodać nowy smak, zmienić opakowanie, dodać gwarancję</span>
+        <span class="tag tag-blue">Price: obniżyć cenę, wprowadzić pakiety, rabaty lojalnościowe</span>
+        <span class="tag tag-blue">Place: wejść do nowych sklepów, uruchomić sklep online, paczkomaty</span>
+        <span class="tag tag-blue">Promotion: kampania na TikToku, influencer, konkurs</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- DECYZJE -->
+  <div class="section" id="decyzje">
+    <div class="note-box">⚠️ Egzaminatorka: proces NIE kończy się decyzją zakupu. Ostatni etap to <strong>dysonans pozakupowy</strong>.</div>
+    <div class="card">
+      <div class="card-label">Źródła potrzeb – etap 1</div>
+      <div class="card-title">Samoświadome vs Wykreowane</div>
+      <div class="card-body"><strong>Samoświadome</strong> – fizjologiczne (głód, zimno, pragnienie).<br><strong>Wykreowane</strong> – ziomek ma nowy sweter i ty też chcesz. Social proof, reklama, moda.</div>
+    </div>
+    <div class="card">
+      <div class="steps">
+        <div class="step"><div class="step-num">1</div><div><div class="step-title">Identyfikacja potrzeby</div><div class="step-desc">Uświadomienie sobie braku. Może być samoświadome (głód) lub wykreowane (influencer ma nowe słuchawki → ty też chcesz).</div></div></div>
+        <div class="step"><div class="step-num">2</div><div><div class="step-title">Poszukiwanie informacji</div><div class="step-desc">Źródła wewnętrzne (własne doświadczenie) i zewnętrzne (recenzje, znajomi, reklamy, wizyty w sklepach).</div></div></div>
+        <div class="step"><div class="step-num">3</div><div><div class="step-title">Ocena wariantów / alternatyw</div><div class="step-desc">Porównujesz opcje wg kryteriów. Przykład: chcesz zjeść → Baraboo, automat, FFF Restaurant. Oceniasz: cena, czas, smak, lokalizacja.</div></div></div>
+        <div class="step"><div class="step-num">4</div><div><div class="step-title">Decyzja zakupu</div><div class="step-desc">Wybierasz i kupujesz. Na tym etapie mogą zadziałać czynniki zewnętrzne: opinia sprzedawcy, nagła promocja, brak towaru.</div></div></div>
+        <div class="step"><div class="step-num">5</div><div><div class="step-title">Dysonans pozakupowy</div><div class="step-desc">Po zakupie pojawiają się wątpliwości: „Czy dobrze wybrałem?" Marki walczą z tym przez maile po zakupie, gwarancje, pozytywne opinie.<br><br>Przykład: kupiłeś iPhone za 5000 zł i zaczynasz myśleć czy Samsung nie był lepszy.</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CIALDINI -->
+  <div class="section" id="cialdini">
+    <div class="card">
+      <div class="card-label">Robert Cialdini – „Wywieranie wpływu na ludzi" (1984)</div>
+      <div class="card-title">6 zasad perswazji – znać z przykładami</div>
+      <div class="card-body" style="margin-bottom:.75rem">Najważniejszy framework perswazji w marketingu. Na egzaminie mogą podać przykład i zapytać którą zasadę stosuje.</div>
+      <div class="cialdini-grid">
+
+        <div class="cbox">
+          <div class="cbox-title">1. Wzajemność (Reciprocity)</div>
+          <div class="cbox-body">Jeśli ktoś ci daje, czujesz się zobowiązany oddać. Marka daje coś za darmo → czujesz się zobowiązany kupić.<br><br>
+          <em>Przykłady:</em> bezpłatny ebook / próbka w drogerii Sephora / darmowy trial Spotify Premium / darmowa kawka na stacji Shell po karcie lojalnościowej.</div>
+        </div>
+
+        <div class="cbox">
+          <div class="cbox-title">2. Społeczny dowód słuszności (Social Proof)</div>
+          <div class="cbox-body">Skoro inni to robią / kupują / polecają – to musi być dobre. Wzmacniany przez tłum, autorytety, influencerów.<br><br>
+          <em>Przykłady:</em> „Bestseller", „12 000 opinii ⭐ 4,8", kolejka przed sklepem, influencer z produktem, „Ponad miliard obsłużonych" (McDonald's).</div>
+        </div>
+
+        <div class="cbox">
+          <div class="cbox-title">3. Autorytet (Authority)</div>
+          <div class="cbox-body">Ufamy ekspertom, lekarzom, celebrytom z doświadczeniem. Marka pożycza wiarygodność od autorytetu.<br><br>
+          <em>Przykłady:</em> „9 na 10 dentystów poleca Colgate", lekarz w reklamie leku, Nike + LeBron James, „Rekomendowane przez dietetyków".</div>
+        </div>
+
+        <div class="cbox">
+          <div class="cbox-title">4. Lubienie (Liking)</div>
+          <div class="cbox-body">Kupujemy od osób/marek, które lubimy. Atrakcyjność fizyczna, podobieństwo, komplementy zwiększają sprzedaż.<br><br>
+          <em>Przykłady:</em> Przyjazny sprzedawca w salonie → łatwiej kupić. Marka z wartościami zbieżnymi z naszymi (np. eko). Influencer, którego lubisz → kupujesz co poleca.</div>
+        </div>
+
+        <div class="cbox">
+          <div class="cbox-title">5. Niedostępność / Niedobór (Scarcity)</div>
+          <div class="cbox-body">Im coś trudniej dostać, tym bardziej chcemy. Ograniczona dostępność podnosi postrzeganą wartość.<br><br>
+          <em>Przykłady:</em> „Zostały ostatnie 3 sztuki!", „Oferta ważna tylko dziś 23:59", limitowane edycje sneakersów (Nike Air Jordan drop), „Zajęte – 8 osób ogląda ten hotel teraz".</div>
+        </div>
+
+        <div class="cbox">
+          <div class="cbox-title">6. Zaangażowanie i konsekwencja (Commitment)</div>
+          <div class="cbox-body">Raz gdy powiesz „tak", trudno się wycofać. Mała zgoda prowadzi do większej. Technika „stopa w drzwiach".<br><br>
+          <em>Przykłady:</em> Newsletter za darmo → potem płatny kurs. Bezpłatny trial → trudno zrezygnować przed końcem miesiąca. Program lojalnościowy – im więcej punktów, tym trudniej odejść do konkurencji.</div>
+        </div>
+
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">7. Zasada dodana później</div>
+      <div class="card-title">Jedność (Unity) – Cialdini 2016</div>
+      <div class="card-body">„My" – przynależność do tej samej grupy. Kupujemy od kogoś kto jest „jednym z nas" – ta sama subkultura, pochodzenie, wartości. Marki budują poczucie wspólnoty (tribe marketing).<br><br>
+      <em>Przykłady:</em> Harley-Davidson – wspólnota jeźdźców. Apple – „Think Different", poczucie bycia w elicie. CrossFit – cult-like community.</div>
+    </div>
+  </div>
+
+  <!-- GENERACJE -->
+  <div class="section" id="generacje">
+    <div class="card">
+      <div class="card-label">Znaj przedziały lat + kluczowe cechy konsumenckie</div>
+      <table>
+        <tr><th>Generacja</th><th>Lata urodzenia</th><th>Kluczowe cechy marketingowe</th></tr>
+        <tr><td style="font-weight:500;color:var(--green)">Pokolenie Z</td><td>~1997–2012</td><td>TikTok, autentyczność, wartości społeczne, krótka uwaga, UGC, memy. Odrzucają klasyczne reklamy.</td></tr>
+        <tr><td style="font-weight:500;color:var(--blue-text)">Millenialsi</td><td>~1981–1996</td><td>Dorastali z internetem, kryzys 2008, Instagram, lojalność marki przez wartości, work-life balance.</td></tr>
+        <tr><td style="font-weight:500;color:var(--amber-text)">Generacja X</td><td>~1965–1980</td><td>„Zapomniane pokolenie". Wychowani analogowo, adaptowali się do cyfry. Niezależni, sceptyczni.</td></tr>
+        <tr><td style="font-weight:500;color:var(--ink-mid)">Baby Boomers</td><td>~1946–1964</td><td>Wyż po II WŚ. Lojalni wobec marek, telewizja to ich medium, cenią stabilność i tradycję.</td></tr>
+        <tr><td style="font-weight:500;color:var(--purple-text)">Generacja Alfa</td><td>2013–dziś</td><td>Pierwsze pokolenie w pełni cyfrowe. Dorastają z AI i ekranami dotykowymi od niemowlęctwa.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- MASLOW -->
+  <div class="section" id="maslow">
+    <div class="card">
+      <div class="card-label">Piramida Maslowa – przykłady produktów dla każdego poziomu</div>
+      <div class="card-body" style="margin-bottom:1rem">Na egzaminie: podaj przykład produktu lub komunikatu marketingowego dla danego poziomu potrzeby.</div>
+      <div class="maslow-row">
+        <div class="maslow-dot" style="background:var(--red-bg);color:var(--red-text)">5</div>
+        <div><div class="maslow-name">Samorealizacja</div><div class="maslow-ex">Kursy online, MBA, coaching, siłownia, podróże. Slogan „Just do it" Nike – osiągaj swój potencjał.</div></div>
+      </div>
+      <div class="maslow-row">
+        <div class="maslow-dot" style="background:var(--amber-bg);color:var(--amber-text)">4</div>
+        <div><div class="maslow-name">Szacunek / Prestiż</div><div class="maslow-ex">iPhone, Mercedes, Rolex, markowe ubrania, luksusowe hotele. Status społeczny i uznanie otoczenia.</div></div>
+      </div>
+      <div class="maslow-row">
+        <div class="maslow-dot" style="background:var(--green-faint);color:var(--green)">3</div>
+        <div><div class="maslow-name">Przynależność</div><div class="maslow-ex">Spotify (muzyka ze znajomymi), Clubcard Tesco, aplikacje randkowe, Nike Run Club. Poczucie bycia częścią grupy.</div></div>
+      </div>
+      <div class="maslow-row">
+        <div class="maslow-dot" style="background:var(--blue-bg);color:var(--blue-text)">2</div>
+        <div><div class="maslow-name">Bezpieczeństwo</div><div class="maslow-ex">Ubezpieczenie OC, alarm domowy, kask rowerowy, lokata bankowa, antywirus. Ochrona przed ryzykiem.</div></div>
+      </div>
+      <div class="maslow-row">
+        <div class="maslow-dot" style="background:var(--purple-bg);color:var(--purple-text)">1</div>
+        <div><div class="maslow-name">Fizjologiczne (podstawa)</div><div class="maslow-ex">Żywność (Żabka, McDonald's), woda, materac, Huel jako kompletny posiłek, ogrzewanie, ubranie.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REKLAMA -->
+  <div class="section" id="reklama">
+    <div class="card">
+      <div class="card-label">Wady i zalety reklamy telewizyjnej</div>
+      <div class="pros-cons">
+        <div>
+          <div class="col-head green">Zalety</div>
+          <ul>
+            <li>Szeroki zasięg – trafia do milionów</li>
+            <li>Łączy obraz, dźwięk i ruch – angażuje emocjonalnie</li>
+            <li>Prestiż – „bycie w TV" buduje wiarygodność</li>
+            <li>Możliwość targetowania (pora dnia, kanał tematyczny)</li>
+            <li>Silne oddziaływanie na świadomość marki</li>
+          </ul>
+        </div>
+        <div>
+          <div class="col-head red">Wady</div>
+          <ul>
+            <li>Bardzo wysoki koszt produkcji i emisji</li>
+            <li>Krótki czas przekazu (15–30 sek)</li>
+            <li>Zapping – przełączanie kanałów podczas reklam</li>
+            <li>Trudno zmierzyć bezpośredni efekt sprzedażowy</li>
+            <li>Malejąca oglądalność TV (Netflix, YouTube)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rodzaje reklamy – lista egzaminacyjna</div>
+      <table>
+        <tr><th>Rodzaj</th><th>Charakterystyka + przykład</th></tr>
+        <tr><td>Telewizyjna</td><td>Płatna, nieosobowa, szeroki zasięg, droga. Reklama Allegro „English for Beginners".</td></tr>
+        <tr><td>Radiowa</td><td>Tylko dźwięk, lokalne dotarcie, relatywnie tania. Kampanie regionalne na Radio ZET.</td></tr>
+        <tr><td>Prasowa</td><td>Gazety i magazyny. Długi czas kontaktu, malejący zasięg. Reklama perfum w Vogue.</td></tr>
+        <tr><td>Outdoor / OOH</td><td>Billboardy, citylighty, wrap na tramwaju. Wysoki zasięg, brak precyzyjnego targetowania.</td></tr>
+        <tr><td>Internetowa</td><td>Display, SEM, social media ads. Precyzyjne targetowanie, pełna mierzalność.</td></tr>
+        <tr><td>RTM / Real Time</td><td>Reakcja na bieżące wydarzenie. Oreo + blackout Super Bowl 2013.</td></tr>
+        <tr><td>Teasing</td><td>Budowanie napięcia przed premierą. Apple, Cyberpunk 2077.</td></tr>
+        <tr><td>Ambient / NNK</td><td>Niestandardowe nośniki, zaskoczenie. Kanapa Nivea, McDonald's frytki na pasach.</td></tr>
+        <tr><td>Ambush</td><td>Kojarzenie z wydarzeniem bez sponsorowania. Nike vs Adidas na igrzyskach.</td></tr>
+        <tr><td>Meme marketing</td><td>Viralowe formaty internetowe. KFC Polska, Wendy's USA.</td></tr>
+        <tr><td>Influencer</td><td>Współpraca z twórcami mającymi zasięg. Nano/micro/macro/mega.</td></tr>
+        <tr><td>Product placement</td><td>Lokowanie produktu. Aston Martin w Bondzie, Red Bull w F1.</td></tr>
+        <tr><td>POS</td><td>Działania w miejscu sprzedaży. Wobblers, stojaki przy kasie, degustacje.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- QUIZ -->
+  <div class="section" id="quiz">
+    <div id="quiz-container"></div>
+  </div>
+
+</div>
+
+<script>
+// Każde pytanie: q=treść, opts=opcje, ans=indeks poprawnej, exp=wyjaśnienie
+// opts są tu w oryginalnej kolejności; przed wyświetleniem tasujemy je i śledzimy nowy indeks poprawnej
+const RAW = [
+  // ZESTAW 1 – Podstawy i pojęcia (10)
+  {set:0,q:"Greenwashing to...",opts:["Ekologiczne opakowanie z recyklingu","Fałszywe przedstawianie firmy jako ekologicznej bez pokrycia w faktach","Kampania na rzecz ochrony środowiska","Używanie zielonych kolorów w logo"],ans:1,exp:"Greenwashing = zielone kłamstwo. H&M 'Conscious Collection', Shell reklamujący zeroemisyjność przy ekspansji ropy, VW Dieselgate – 40× więcej spalin niż deklarował."},
+  {set:0,q:"VW Dieselgate to przykład greenwashingu, ponieważ...",opts:["VW sponsorował projekt leśny","Logo VW było zielone","VW przestał produkować diesle","Samochody emitowały 40× więcej spalin niż producent deklarował"],ans:3,exp:"Oprogramowanie manipulowało wynikami testów. W testach – czyste. Na drodze – brudne. Klasyczny greenwashing + oszustwo na skalę globalną."},
+  {set:0,q:"Logo kompletne (combined mark) zawiera...",opts:["Wyłącznie abstrakcyjny symbol","Tylko nazwę firmy pisaną unikalną czcionką","Grafikę, nazwę firmy i opcjonalnie hasło","Tylko grafikę bez tekstu"],ans:2,exp:"Starbucks: syrena + 'Starbucks Coffee'. Burger King: grafika bułki + napis. Lacoste: krokodyl + napis. Minimum grafika + tekst."},
+  {set:0,q:"Skuteczność to...",opts:["Stosunek efektu do nakładu (efekt ÷ nakład)","Osiągnięcie celu niezależnie od nakładu pracy","Optymalne alokowanie zasobów","Minimalizowanie błędów podczas realizacji"],ans:1,exp:"Skuteczność = sam efekt (zdałeś egzamin). Nie wiadomo jakim kosztem – może 48h nauki, może 2h."},
+  {set:0,q:"Efektywność to...",opts:["Osiągnięcie celu za wszelką cenę","Liczba błędów podczas działania","Tylko wynik końcowy","Stosunek efektu do nakładu pracy (efekt ÷ nakład)"],ans:3,exp:"Efektywność = efekt ÷ nakład. Zdałeś egzamin ucząc się 2h = efektywny. Zdałeś ucząc się 60h = skuteczny, ale nieefektywny."},
+  {set:0,q:"Downsizing (shrinkflacja) to...",opts:["Ograniczenie liczby kanałów dystrybucji","Zmniejszenie liczby pracowników firmy","Zmniejszenie zawartości/wagi produktu przy tej samej cenie i opakowaniu","Zmniejszenie ceny produktu przy tej samej zawartości"],ans:2,exp:"Milka kosztuje tyle samo, ale 90g zamiast 100g. Lays – ta sama puszka, więcej powietrza. Domestos – 700ml zamiast 750ml. Konsument zazwyczaj nie zauważa."},
+  {set:0,q:"Przykładem shrinkflacji jest...",opts:["Milka wprowadza nowy smak w tej samej cenie","Milka wydłuża termin ważności produktu","Obniżka ceny Milki z 4 zł na 3,50 zł","Czekolada Milka kosztuje tyle samo, ale waży 90g zamiast 100g"],ans:3,exp:"Shrinkflacja = ta sama cena + mniej produktu. Stosowane zamiast jawnej podwyżki, bo podwyżka jest zauważalna, a zmniejszenie wagi zazwyczaj nie."},
+  {set:0,q:"Segmentacja rynku to...",opts:["Tworzenie nowego produktu dla nieznanej grupy","Podział rynku na jednorodne grupy o podobnych potrzebach","Ustalanie ceny dla różnych grup","Wybór jednego docelowego rynku"],ans:1,exp:"Segmentacja = podział (nie wybór). Kryteria: demograficzne, geograficzne, psychograficzne, behawioralne."},
+  {set:0,q:"Reklama to forma komunikacji która jest...",opts:["Bezpłatna i nieosobowa","Bezpłatna i osobista","Płatna i osobista","Płatna i nieosobowa"],ans:3,exp:"Definicja formalna: płatna i nieosobowa. Odróżnia od PR (bezpłatne) i sprzedaży osobistej (bezpośredni kontakt)."},
+  {set:0,q:"Sprzedaż osobista różni się od reklamy tym, że jest...",opts:["Kierowana wyłącznie przez internet","Płatna i nieosobowa","Bezpłatna i nieosobowa","Bezpośrednim kontaktem human-to-human z potencjalnym klientem"],ans:3,exp:"Sprzedaż osobista = bezpośredni kontakt: sprzedawca w salonie samochodowym, doradca bankowy, agent ubezpieczeniowy. Reklama = nieosobowa."},
+
+  // ZESTAW 2 – Proces decyzji, Maslow, generacje (11)
+  {set:1,q:"Na którym etapie kończy się proces podejmowania decyzji zakupowej?",opts:["Decyzja zakupu","Poszukiwanie informacji","Dysonans pozakupowy","Ocena wariantów"],ans:2,exp:"Proces ma 5 etapów i NIE kończy się zakupem! Ostatni etap to dysonans pozakupowy = wątpliwości po zakupie."},
+  {set:1,q:"Dysonans pozakupowy to...",opts:["Procedura zwrotu towaru","Stan wątpliwości i niepewności po dokonaniu zakupu","Radość z dobrego wyboru","Porównywanie ofert przed zakupem"],ans:1,exp:"Kupiłeś iPhone za 5000 zł i myślisz 'może jednak Samsung był lepszy'. Marki walczą z tym mailem po zakupie, gwarancją, pozytywnymi opiniami."},
+  {set:1,q:"Potrzeba wykreowana to...",opts:["Głód gdy nic nie jadłeś cały dzień","Senność po nieprzespanej nocy","Pragnienie po treningu","Chęć kupna swetra, bo ziomek ma taki sam"],ans:3,exp:"Wykreowana = powstała pod wpływem otoczenia, reklamy, social proof. Samoświadome/fizjologiczne = głód, pragnienie, zimno."},
+  {set:1,q:"Etap 3 procesu decyzji zakupowej to...",opts:["Dysonans pozakupowy","Identyfikacja potrzeby","Ocena wariantów / alternatyw","Poszukiwanie informacji"],ans:2,exp:"1→Identyfikacja potrzeby, 2→Poszukiwanie informacji, 3→Ocena wariantów, 4→Decyzja, 5→Dysonans pozakupowy."},
+  {set:1,q:"Firmy wysyłają e-mail 'Świetny wybór!' po zakupie w celu...",opts:["Zbierania danych osobowych","Sprzedaży kolejnych produktów (upselling)","Walki z dysonansem pozakupowym – upewnienia klienta że wybrał dobrze","Rekrutowania ambasadorów marki"],ans:2,exp:"Klasyczna technika redukowania dysonansu pozakupowego. Potwierdzasz klientowi że wybrał dobrze – zmniejsza wątpliwości i buduje lojalność."},
+  {set:1,q:"Najwyższy poziom piramidy Maslowa to...",opts:["Przynależność","Bezpieczeństwo","Prestiż i szacunek","Samorealizacja"],ans:3,exp:"Od dołu: 1. Fizjologiczne → 2. Bezpieczeństwo → 3. Przynależność → 4. Prestiż → 5. Samorealizacja (szczyt)."},
+  {set:1,q:"Ubezpieczenie OC to produkt zaspokajający potrzebę...",opts:["Fizjologiczną","Samorealizacji","Bezpieczeństwa","Przynależności"],ans:2,exp:"Bezpieczeństwo (poziom 2): ubezpieczenia, alarmy, kaski, lokaty, antywirusy. Ochrona przed zewnętrznym ryzykiem."},
+  {set:1,q:"iPhone jako produkt zaspokaja głównie potrzebę...",opts:["Fizjologiczną (poziom 1)","Prestiżu i szacunku (poziom 4)","Bezpieczeństwa (poziom 2)","Wyłącznie fizjologiczną"],ans:1,exp:"Marketing iPhone'a oparty jest na statusie i przynależności do ekosystemu Apple. Głównie poziom 4 (prestiż)."},
+  {set:1,q:"Do której generacji należy osoba urodzona w 1999 roku?",opts:["Baby Boomers (1946–1964)","Millenialsi (1981–1996)","Generacja Z (1997–2012)","Generacja X (1965–1980)"],ans:2,exp:"Gen Z: ~1997–2012. 1999 = jednoznacznie Gen Z. Millenialsi kończą się na 1996."},
+  {set:1,q:"Kluczowa cecha Baby Boomers w marketingu to...",opts:["Priorytet work-life balance i Instagram","TikTok i krótka uwaga","Brak zaufania do mediów tradycyjnych","Lojalność wobec marek i telewizja jako główne medium"],ans:3,exp:"Baby Boomers (1946–1964): lojalni wobec marek, TV to ich naturalne medium, cenią stabilność i tradycję."},
+  {set:1,q:"Generacja Z (born ~1997–2012) charakteryzuje się...",opts:["Pełną lojalnością wobec marek TV","Preferowaniem reklam telewizyjnych","TikTokiem, autentycznością, wartościami społecznymi i odrzucaniem klasycznych reklam","Dorastaniem bez internetu"],ans:2,exp:"Gen Z = natywni cyfrowi. TikTok, UGC, memy, autentyczność. Są bardzo wyczuleni na fałsz w komunikacji marek."},
+
+  // ZESTAW 3 – Reklama i nośniki (10)
+  {set:2,q:"Real Time Marketing (RTM) to...",opts:["Wysyłanie SMS-ów do klientów w nocy","Reklama TV emitowana na żywo","Błyskawiczne reagowanie na aktualne wydarzenia w komunikacji marki","Planowanie kampanii na 6 miesięcy"],ans:2,exp:"Oreo podczas blackoutu Super Bowl 2013: 'You can still dunk in the dark'. Tweet w minutach od zdarzenia."},
+  {set:2,q:"Teasing marketing polega na...",opts:["Porównywaniu się z konkurencją","Obniżeniu ceny tuż przed zakupem","Wysyłaniu reklam do wąskiej grupy","Stopniowym budowaniu napięcia przed premierą bez ujawniania szczegółów"],ans:3,exp:"Apple przed premierą iPhone'a: tylko data + logo. Zero info o produkcie. Efekt: gigantyczny buzz medialny."},
+  {set:2,q:"Kanapa Nivea na przystanku z ładowarką to przykład...",opts:["Guerrilla marketingu","Real time marketingu","Reklamy telewizyjnej","Ambient marketingu – niestandardowego nośnika"],ans:3,exp:"Ambient = reklama w nieoczekiwanym miejscu, często z dodaną wartością użytkową. Zaskoczenie + zaangażowanie."},
+  {set:2,q:"Ambush marketing oznacza...",opts:["Ukrywanie ceny do ostatniej chwili","Kojarzenie marki z wydarzeniem bez bycia oficjalnym sponsorem","Marketing tylko w aplikacjach mobilnych","Napaść na konkurenta podczas targów"],ans:1,exp:"Nike podczas igrzysk sponsorowanych przez Adidas. FedEx na samochodzie DHL. Kontrowersyjne, balansuje na granicy prawa."},
+  {set:2,q:"Outdoor (OOH) to reklamy...",opts:["W gazetach i magazynach","W kinach przed filmem","Wyłącznie w internecie","Na billboardach, citylightach, przystankach, autobusach"],ans:3,exp:"OOH = Out-Of-Home. Billboardy, citylighty, wrap na tramwaju, reklama w metrze. Wysoki zasięg, niska targetowalność."},
+  {set:2,q:"NNK to skrót od...",opts:["Narzędzia Nadawania Komunikatów","Nieosobowe Nośniki Komunikacji","Normy Negocjacji Komercyjnych","Niestandardowe Narzędzia Kampanii"],ans:1,exp:"NNK = Nieosobowe Nośniki Komunikacji = masowe nośniki reklamy bez bezpośredniego kontaktu: TV, radio, billboardy, internet, prasa."},
+  {set:2,q:"Meme marketing to...",opts:["Analiza viralowych treści konkurencji","Płatna forma reklamy display w social mediach","Reklama skierowana wyłącznie do Gen Z","Używanie memów i kulturowych formatów internetu w komunikacji marki"],ans:3,exp:"Meme marketing = tani, szybki, wysokie organiczne zasięgi gdy dobrze trafiony. KFC Polska, Wendy's USA. Ryzyko: cringe gdy marka nie rozumie kontekstu."},
+  {set:2,q:"Influencer z 5000 followersami i bardzo wysokim zaangażowaniem to...",opts:["Macro influencer","Mega influencer","Nano influencer","Micro influencer"],ans:2,exp:"Nano influencer: 1–10k followersów. Bardzo wysokie zaangażowanie, niszowe dotarcie. Micro: 10–100k. Macro: 100k–1M. Mega: 1M+."},
+  {set:2,q:"Która wada jest specyficzna dla reklamy telewizyjnej?",opts:["Brak możliwości targetowania po porze dnia","Zbyt krótki zasięg geograficzny","Wysoki koszt produkcji i emisji + zapping + malejąca oglądalność","Brak możliwości pokazania produktu wizualnie"],ans:2,exp:"TV: droga produkcja, drogie sloty, zapping (przełączanie kanałów), malejąca oglądalność przez Netflix i YouTube."},
+  {set:2,q:"POS w marketingu to...",opts:["Proof of Sale – dowód zakupu","Power of Suggestion – technika sprzedaży","Point of Strategy – strategia firmy","Point of Sale – materiały i działania w miejscu sprzedaży"],ans:3,exp:"POS = Point of Sale. Wobblers, stojaki przy kasie, degustacje, podświetlone logo. Ostatnia szansa marki przed decyzją zakupu."},
+
+  // ZESTAW 4 – 4P, 7P, 4C (11)
+  {set:3,q:"Promotion w 4P to...",opts:["Cena produktu","Cechy fizyczne produktu","Działania komunikacyjne marki skierowane do rynku","Kanały dystrybucji"],ans:2,exp:"4P: Product, Price, Place, Promotion. Promotion = reklama, PR, sprzedaż osobista, promocje sprzedaży, marketing bezpośredni."},
+  {set:3,q:"Model 7P różni się od 4P tym, że dodaje...",opts:["Perception, Performance, Purpose","Personas, Platforms, Partnerships","Price, Place, Promotion","People, Process, Physical Evidence"],ans:3,exp:"7P = 4P + People (pracownicy) + Process (procesy obsługi) + Physical Evidence (świadectwo materialne). Ważne dla sektora usług."},
+  {set:3,q:"Physical Evidence w 7P to...",opts:["Liczba pracowników obsługi","Cena produktu","Kanały dystrybucji fizycznej","Materialne dowody jakości usługi – wystrój, atmosfera, kubek z logo"],ans:3,exp:"Physical Evidence: wystrój Starbucksa, kubek z logo, zielone barwy – budują postrzeganie jakości usługi, którą inaczej trudno ocenić przed zakupem."},
+  {set:3,q:"Zasada 'People' w 7P dotyczy...",opts:["Akcjonariuszy firmy","Pracowników, ich kompetencji i kultury obsługi klienta","Partnerów biznesowych i dostawców","Grupy docelowej klientów firmy"],ans:1,exp:"People w 7P = personel: bariści Starbucks piszący imię, szkolenia z obsługi, kultura firmy. Zły barista = zła kawa, niezależnie od receptury."},
+  {set:3,q:"Model 4C patrzy na marketing z perspektywy...",opts:["Dystrybutorów","Inwestorów","Firmy / producenta","Klienta / konsumenta"],ans:3,exp:"4C = ta sama treść co 4P, ale z perspektywy klienta. Product=co klient z tego ma, Price=ile go naprawdę kosztuje, Place=jak wygodnie kupić, Promotion=czy jest dialog."},
+  {set:3,q:"Czwarte C w modelu 4C (odpowiednik Promotion) to...",opts:["Customer Value (wartość dla klienta)","Cost (całkowity koszt)","Communication (komunikacja – dialog z klientem)","Convenience (wygoda)"],ans:2,exp:"4P→4C: Product=Customer Value, Price=Cost, Place=Convenience, Promotion=Communication. Promotion = jednostronne nadawanie; Communication = dialog."},
+  {set:3,q:"W modelu 4P cena (Price) z perspektywy klienta (4C) to...",opts:["Convenience","Communication","Customer Value","Cost (całkowity koszt klienta)"],ans:3,exp:"Price (4P) = Cost (4C). Klient liczy nie tylko cenę zakupu, ale też czas, wysiłek, koszty alternatywne."},
+  {set:3,q:"Przykładem zastosowania zasady 4C – Convenience jest...",opts:["Zmiana składu produktu","Obniżka ceny produktu","Kampania reklamowa na TV","Allegro: dostawa jutro, paczkomat, darmowy zwrot"],ans:3,exp:"Convenience = wygoda dostępu dla klienta. Allegro: zamawiam online, odbieram kiedy chcę, zwracam bezpłatnie. Perspektywa klienta, nie firmy."},
+  {set:3,q:"POS działa głównie na którym etapie procesu decyzyjnego?",opts:["Identyfikacji potrzeby","Po zakupie – dysonans","Poszukiwania informacji","Tuż przed i w trakcie zakupu (etap 3–4)"],ans:3,exp:"POS = ostatnia szansa przed decyzją. Wobbler 'Nowość!', stojak przy kasie, próbka – działają gdy klient stoi przy półce lub kasie."},
+  {set:3,q:"Sprzedaż osobista jest najskuteczniejsza dla produktów...",opts:["Tanich i masowych (chleb, woda)","Przeznaczonych dla dzieci","Wyłącznie cyfrowych","Skomplikowanych lub drogich, wymagających wyjaśnienia"],ans:3,exp:"Sprzedaż osobista = drogi kanał, ale najlepszy gdy klient potrzebuje wyjaśnienia i ma wahania. Dealer samochodowy, doradca bankowy."},
+  {set:3,q:"Która z opcji to działanie w ramach 'Place' (dystrybucja) w 4P?",opts:["Obniżka ceny o 20%","Reklama w social mediach","Otwarcie sklepu online i wejście do sieci Żabka","Zmiana opakowania na bardziej eko"],ans:2,exp:"Place = kanały i miejsca sprzedaży. Żabka + sklep online = nowe punkty dostępu do produktu. Cena = Price. Reklama = Promotion. Opakowanie = Product."},
+
+  // ZESTAW 5 – Cialdini i perswazja (14)
+  {set:4,q:"Zasada wzajemności Cialdiniego mówi, że...",opts:["Ufamy ekspertom i autorytetom","Naśladujemy zachowania innych ludzi","Kupujemy od osób które lubimy","Jeśli ktoś nam daje, czujemy się zobowiązani oddać lub odwzajemnić"],ans:3,exp:"Wzajemność (reciprocity): darmowa próbka → czujesz się zobowiązany kupić. Bezpłatny ebook → subskrypcja. Sephora: próbki → zakup."},
+  {set:4,q:"Społeczny dowód słuszności (social proof) to...",opts:["Certyfikat jakości ISO","Zakaz sprzedaży dla osób poniżej 18 lat","Mechanizm: skoro inni to robią/kupują, to musi być właściwe","Opinia eksperta o produkcie"],ans:2,exp:"McDonald's 'Miliard obsłużonych', gwiazdki Amazon, kolejka przed sklepem, influencer z produktem, 'Bestseller'. Skoro wielu kupuje – to musi być dobre."},
+  {set:4,q:"'Zostały ostatnie 3 sztuki!' to w marketingu zasada...",opts:["Niedostępności (scarcity)","Lubienia","Autorytetu","Wzajemności"],ans:0,exp:"Scarcity / niedostępność (Cialdini): ograniczona dostępność podnosi postrzeganą wartość. Też: 'Tylko dziś', limitowane edycje sneakersów, 'Tylko 2 pokoje wolne'."},
+  {set:4,q:"'9 na 10 dentystów poleca Colgate' to zasada...",opts:["Niedostępności","Wzajemności","Zaangażowania","Autorytetu"],ans:3,exp:"Autorytet (Authority): pożyczamy wiarygodność od ekspertów. Dentyści, lekarze, naukowcy. Nike + LeBron James. 'Rekomendowane przez dietetyków'."},
+  {set:4,q:"Przykład społecznego dowodu słuszności to...",opts:["'Oferta ważna tylko dziś'","'Zostały ostatnie 3 sztuki!'","'12 000 opinii ⭐ 4,8 na Amazon'","'Lekarze polecają Colgate'"],ans:2,exp:"12 000 opinii = social proof. 'Lekarze polecają' = autorytet. 'Ostatnie 3 sztuki' = scarcity. 'Tylko dziś' = urgency."},
+  {set:4,q:"'Stopa w drzwiach' to technika opierająca się na zasadzie...",opts:["Autorytetu","Lubienia","Społecznego dowodu słuszności","Zaangażowania i konsekwencji"],ans:3,exp:"Commitment: mała zgoda → trudno się wycofać → większa zgoda. Newsletter za darmo → potem płatny kurs. Trial Spotify → trudno zrezygnować."},
+  {set:4,q:"'Bezpłatny miesiąc Spotify Premium' to przykład zasady Cialdiniego...",opts:["Autorytetu","Niedostępności","Lubienia","Wzajemności i/lub Zaangażowania (obie działają)"],ans:3,exp:"Wzajemność: Spotify daje za darmo → czujesz się zobowiązany. Zaangażowanie: gdy zacząłeś używać Premium, trudno zrezygnować po miesiącu."},
+  {set:4,q:"Influencer marketing działa przede wszystkim przez zasady...",opts:["Niedostępności i pilności","Wyłącznie zasadę autorytetu","Wzajemności i konsekwencji","Autorytetu i społecznego dowodu słuszności"],ans:3,exp:"Influencer = autorytet w swojej niszy + social proof (skoro on/ona używa, to jest dobre). Potęgowane przez lubienie (Liking)."},
+  {set:4,q:"Harley-Davidson buduje silną wspólnotę klientów. Która zasada Cialdiniego to?",opts:["Niedostępność","Wzajemność","Autorytet","Jedność (Unity) – poczucie 'my'"],ans:3,exp:"Unity (jedność) – zasada dodana przez Cialdiniego w 2016. 'My' = przynależność do tej samej grupy. Harley, Apple, CrossFit – cult-like community."},
+  {set:4,q:"Meme marketing może być ryzykowny, ponieważ...",opts:["Dociera wyłącznie do osób 40+","Jest niezgodny z prawem reklamowym","Jest zbyt drogi dla małych firm","Marka może wyglądać na cringe gdy nie rozumie kontekstu internetowego"],ans:3,exp:"KFC Polska – robi to dobrze. Biedronka próbując memów wychodziła sztucznie. Marka musi rozumieć kulturę internetową."},
+  {set:4,q:"Którą zasadę Cialdiniego stosuje reklama 'Miliard obsłużonych klientów McDonald's'?",opts:["Niedostępność","Wzajemność","Społeczny dowód słuszności","Autorytet"],ans:2,exp:"Miliard obsłużonych = klasyczny social proof. Skoro miliard ludzi zjadło tu jedzenie, to musi być OK. Jak gwiazdki na Amazonie."},
+  {set:4,q:"Perswazja różni się od manipulacji tym, że...",opts:["Perswazja działa tylko przez internet","Perswazja jest droższa","Perswazja nie ukrywa swojego celu i wpływa przez argumenty","Manipulacja jest legalna, perswazja nie"],ans:2,exp:"Perswazja = świadome wpływanie bez ukrywania celu. Manipulacja = ukryte wpływanie z pominięciem racjonalnej oceny."},
+  {set:4,q:"Przykładem perswazji przez urgency (pilność) jest...",opts:["'9 na 10 dentystów poleca'","'Bezpłatna próbka do zamówienia'","'Ponad miliard obsłużonych'","'Oferta ważna tylko do północy dzisiaj'"],ans:3,exp:"Urgency = pilność. 'Tylko dziś', 'Do końca dnia', timer odliczający na stronie. Tworzy presję czasu i przyspiesza decyzję."},
+  {set:4,q:"Która zasada Cialdiniego działa gdy kupujesz produkt polecony przez lubianego influencera?",opts:["Wyłącznie social proof","Wyłącznie autorytet","Wyłącznie wzajemność","Lubienie + autorytet + social proof – wszystkie trzy jednocześnie"],ans:3,exp:"Influencer marketing łączy: Lubienie (lubisz tę osobę), Autorytet (jest ekspertem w niszy), Social proof (skoro on/ona używa, to musi być dobre)."},
+];
+
+const SETS = [
+  {name:"Zestaw 1 – Podstawy i pojęcia",range:[0,9]},
+  {name:"Zestaw 2 – Decyzje, Maslow, generacje",range:[10,20]},
+  {name:"Zestaw 3 – Reklama i nośniki",range:[21,30]},
+  {name:"Zestaw 4 – 4P / 7P / 4C",range:[31,41]},
+  {name:"Zestaw 5 – Cialdini i perswazja",range:[42,55]},
+  {name:"Wszystkie (55 pytań)",range:[0,55]},
+];
+
+// Tasowanie opcji – zwraca {opts, ans} z pomieszaną kolejnością
+function shuffle(q){
+  const idxs=[0,1,2,3];
+  for(let i=idxs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idxs[i],idxs[j]]=[idxs[j],idxs[i]];}
+  const newOpts=idxs.map(i=>q.opts[i]);
+  const newAns=idxs.indexOf(q.ans);
+  return{opts:newOpts,ans:newAns};
+}
+
+let activeSet=null; // null = wybór zestawu
+let questions=[];
+let shuffled=[];
+let current=0,score=0,answered=[];
+
+function switchTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='quiz')renderSetPicker();
+}
+
+function startSet(si){
+  const s=SETS[si];
+  questions=RAW.slice(s.range[0],s.range[1]);
+  shuffled=questions.map(q=>shuffle(q));
+  current=0;score=0;answered=new Array(questions.length).fill(null);
+  activeSet=si;
+  renderQuiz();
+}
+
+function renderSetPicker(){
+  activeSet=null;
+  const c=document.getElementById('quiz-container');
+  c.innerHTML=`<div class="card"><div class="card-label">Wybierz zestaw pytań</div><div class="card-title" style="font-size:1.1rem;margin-bottom:1rem">Z czego chcesz się teraz pouczyć?</div>`+
+  SETS.map((s,i)=>`<button class="opt" style="margin-bottom:6px" onclick="startSet(${i})">${s.name}</button>`).join('')+`</div>`;
+}
+
+function renderQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(current>=questions.length){
+    const pct=Math.round(score/questions.length*100);
+    c.innerHTML=`<div class="card" style="text-align:center;padding:2.5rem">
+      <div class="card-label">${SETS[activeSet].name}</div>
+      <div class="score-big">${score}/${questions.length}</div>
+      <div class="card-body" style="margin-bottom:1.5rem">
+        ${pct>=80?'✅ Solidna znajomość materiału.':pct>=60?'⚠️ Kilka rzeczy warto powtórzyć.':'❌ Wróć do notatek i spróbuj ponownie.'}
+        <br><span style="color:var(--ink-light)">${pct}% poprawnych odpowiedzi</span>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="nav-btn primary" onclick="startSet(${activeSet})">Powtórz zestaw</button>
+        <button class="nav-btn" onclick="renderSetPicker()">← Zmień zestaw</button>
+      </div>
+    </div>`;
+    return;
+  }
+  const q=questions[current];
+  const sh=shuffled[current];
+  const isAnswered=answered[current]!==null;
+  const pct=Math.round((current/questions.length)*100);
+  c.innerHTML=`
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div style="margin-bottom:.5rem"><button class="nav-btn" style="font-size:11px;padding:4px 12px" onclick="renderSetPicker()">← Zestawy</button></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-label">${SETS[activeSet].name.split('–')[1]||SETS[activeSet].name} · pytanie ${current+1}/${questions.length}</span>
+        <span class="card-label">Wynik: ${score} pkt</span>
+      </div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-opts">
+        ${sh.opts.map((o,i)=>{
+          let cls='opt';
+          if(isAnswered){if(i===sh.ans)cls+=' correct';else if(i===answered[current]&&i!==sh.ans)cls+=' wrong';}
+          const oc=isAnswered?'':` onclick="pickAnswer(${i})"`;
+          return `<button class="${cls}"${oc}>${o}</button>`;
+        }).join('')}
+      </div>
+      ${isAnswered?`<div class="quiz-feedback ${answered[current]===sh.ans?'ok':'fail'}">${answered[current]===sh.ans?'✅':'❌'} ${q.exp}</div>`:''}
+      <div class="quiz-nav">
+        <span class="quiz-counter">${current+1} / ${questions.length}</span>
+        ${current>0?`<button class="nav-btn" onclick="prevQ()">← Wstecz</button>`:''}
+        ${isAnswered&&current<questions.length-1?`<button class="nav-btn primary" onclick="nextQ()">Dalej →</button>`:''}
+        ${isAnswered&&current===questions.length-1?`<button class="nav-btn primary" onclick="nextQ()">Pokaż wynik</button>`:''}
+      </div>
+    </div>`;
+}
+
+function pickAnswer(i){
+  if(answered[current]!==null)return;
+  answered[current]=i;
+  if(i===shuffled[current].ans)score++;
+  renderQuiz();
+}
+function nextQ(){current++;renderQuiz();}
+function prevQ(){if(current>0){current--;renderQuiz();}}
+
+// inicjalizacja
+document.addEventListener('DOMContentLoaded',()=>{
+  const quizTab=document.querySelector('.tab[onclick*="quiz"]');
+  if(quizTab) quizTab.addEventListener('click',renderSetPicker);
+});
+</script>
+</body>
+</html>

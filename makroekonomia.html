@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Makroekonomia – nauka do egzaminu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0c0a18; --bg2:#100d20; --surface:#161230; --surface2:#1c1740;
+    --border:#272050; --border2:#352c66;
+    --green:#8b5cf6; --green-l:#a78bfa; --green-bright:#c4b5fd;
+    --mint:#c4b5fd; --gold:#fcd34d; --gold-d:#d4a843;
+    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
+    --red:#f87171; --red-bg:#2a1320; --ok:#5ad1a0; --ok-bg:#10241d;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{font-family:'Inter','Segoe UI Variable',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;letter-spacing:.1px;background:
+    radial-gradient(1200px 600px at 80% -10%, #1c1740 0%, transparent 55%),
+    radial-gradient(900px 500px at -10% 10%, #1c1740 0%, transparent 50%),
+    var(--bg);
+    color:var(--text);min-height:100vh;font-size:16px;line-height:1.55;}
+
+  /* HEADER + NAV */
+  header{position:sticky;top:0;z-index:50;background:rgba(12,10,24,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);}
+  .head-top{max-width:1000px;margin:0 auto;padding:14px 18px 0;display:flex;align-items:center;gap:12px;}
+  .logo{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--green),var(--green-bright));display:flex;align-items:center;justify-content:center;font-weight:800;color:#160a2e;font-size:1.1rem;flex-shrink:0;box-shadow:0 4px 14px rgba(139,92,246,.4);}
+  .head-top h1{font-family:'Space Grotesk','Inter',system-ui,sans-serif;font-size:1.16rem;font-weight:700;letter-spacing:.2px;}
+  h2.section-title,.wall-card h3,.fc-term,.result .score,.acc-head{font-family:'Space Grotesk','Inter',system-ui,sans-serif;}
+  .head-top h1 span{color:var(--green-bright);}
+  .head-sub{color:var(--muted2);font-size:.72rem;font-weight:500;}
+  /* ===== UNICORNER BRAND BAR (spójny nagłówek na wszystkich stronach) ===== */
+  .uc-brand{display:flex;align-items:center;gap:9px;text-decoration:none;flex-shrink:0;}
+  .uc-horn{width:27px;height:27px;flex-shrink:0;display:block;transition:transform .3s ease;}
+  .uc-brand:hover .uc-horn{transform:translateY(-2px) rotate(-4deg);}
+  .uc-wordmark{font-family:'Space Grotesk','Inter',sans-serif;font-weight:700;font-size:1.18rem;letter-spacing:-.3px;color:var(--text);}
+  .uc-wordmark .ai{background:linear-gradient(115deg,#5ad1ff,#a78bfa 34%,#f472b6 66%,#fcd34d);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .uc-sep{color:var(--muted2);font-weight:300;font-size:1.1rem;}
+  .uc-subject{font-family:'Space Grotesk','Inter',sans-serif;font-weight:600;font-size:.98rem;color:var(--muted);}
+  .uc-back{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-family:'Space Grotesk','Inter',sans-serif;font-size:.8rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--border);background:var(--bg2);padding:7px 13px;border-radius:999px;transition:.18s;}
+  .uc-back:hover{color:var(--text);border-color:var(--border2);}
+  @media(max-width:560px){.uc-back{display:none;}}
+  nav{max-width:1000px;margin:0 auto;padding:10px 12px;display:flex;gap:6px;overflow-x:auto;}
+  .tab{flex:1;min-width:max-content;white-space:nowrap;padding:10px 14px;border:1px solid var(--border);background:var(--surface);color:var(--muted);
+    border-radius:11px;cursor:pointer;font-size:.86rem;font-weight:700;transition:.18s;display:flex;align-items:center;gap:7px;justify-content:center;}
+  .tab:hover{border-color:var(--border2);color:var(--text);}
+  .tab.active{background:linear-gradient(135deg,var(--green),var(--green-l));border-color:var(--green-bright);color:#fff;box-shadow:0 6px 18px rgba(139,92,246,.4);}
+
+  main{max-width:1000px;margin:0 auto;padding:18px 16px 70px;}
+  .view{display:none;animation:fade .3s ease;}
+  .view.active{display:block;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  h2.section-title{font-size:1.7rem;font-weight:700;letter-spacing:-.3px;margin-bottom:4px;}
+  .section-intro{color:var(--muted);font-size:.9rem;margin-bottom:18px;max-width:680px;}
+
+  /* generic card */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px;box-shadow:var(--shadow);}
+
+  /* ---------- FISZKI ---------- */
+  .fc-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;}
+  .chip{padding:7px 13px;border:1px solid var(--border);background:var(--surface);color:var(--muted);border-radius:999px;cursor:pointer;font-size:.8rem;font-weight:600;transition:.15s;}
+  .chip:hover{border-color:var(--border2);color:var(--text);}
+  .chip.active{background:var(--green);border-color:var(--green-bright);color:#fff;}
+  .fc-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;font-size:.8rem;}
+  .stat{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:7px 12px;color:var(--muted);}
+  .stat b{color:var(--text);font-size:.95rem;}
+  .stat.know b{color:var(--green-bright);} .stat.dont b{color:var(--gold);}
+
+  .flashcard{perspective:1600px;width:100%;height:340px;margin:0 auto 14px;cursor:pointer;}
+  .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+  .flashcard.flipped .fc-inner{transform:rotateY(180deg);}
+  .fc-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:20px;padding:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;border:1px solid var(--border2);box-shadow:var(--shadow);overflow:auto;}
+  .fc-front{background:linear-gradient(160deg,#1c1740,#100d20);}
+  .fc-back{background:linear-gradient(160deg,#100d20,#100d20);transform:rotateY(180deg);}
+  .fc-tag{position:absolute;top:14px;left:14px;font-size:.65rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--green-bright);background:rgba(139,92,246,.13);padding:4px 9px;border-radius:6px;}
+  .fc-hint{position:absolute;bottom:14px;font-size:.7rem;color:var(--muted2);}
+  .fc-term{font-size:1.6rem;font-weight:800;line-height:1.25;color:#fff;}
+  .fc-def{font-size:1.02rem;color:var(--mint);line-height:1.6;}
+  .fc-deflabel{font-size:.68rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted2);margin-bottom:10px;}
+
+  .fc-controls{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+  .btn{padding:14px;border:none;border-radius:13px;font-size:.95rem;font-weight:700;cursor:pointer;transition:.15s;color:#fff;}
+  .btn:active{transform:scale(.98);}
+  .btn-dont{background:linear-gradient(135deg,#b3402f,#d65a3f);}
+  .btn-know{background:linear-gradient(135deg,var(--green),var(--green-l));}
+  .btn-ghost{background:var(--surface);border:1px solid var(--border);color:var(--muted);}
+  .btn-ghost:hover{color:var(--text);border-color:var(--border2);}
+  .fc-nav{display:flex;gap:10px;justify-content:space-between;align-items:center;}
+  .fc-nav button{flex:1;}
+  .fc-progress{height:7px;background:var(--surface);border-radius:6px;overflow:hidden;margin-bottom:12px;border:1px solid var(--border);}
+  .fc-progress div{height:100%;background:linear-gradient(90deg,var(--green),var(--green-bright));transition:width .3s;}
+  .fc-done{text-align:center;padding:34px 18px;}
+  .fc-done .em{font-size:3rem;}
+  .fc-done h3{color:var(--green-bright);margin:10px 0 6px;font-size:1.3rem;}
+  .fc-done p{color:var(--muted);font-size:.9rem;margin-bottom:18px;}
+
+  /* ---------- ZADANIA ---------- */
+  .accordion{background:var(--surface);border:1px solid var(--border);border-radius:14px;margin-bottom:12px;overflow:hidden;}
+  .acc-head{padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:12px;font-weight:700;font-size:.98rem;}
+  .acc-head:hover{background:var(--surface2);}
+  .acc-num{width:30px;height:30px;flex-shrink:0;border-radius:9px;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;}
+  .acc-arrow{margin-left:auto;color:var(--muted);transition:.25s;font-size:1.1rem;}
+  .accordion.open .acc-arrow{transform:rotate(90deg);color:var(--green-bright);}
+  .acc-body{display:none;padding:0 18px 18px;border-top:1px solid var(--border);}
+  .accordion.open .acc-body{display:block;animation:fade .25s;}
+  .acc-body h4{color:var(--green-bright);margin:16px 0 6px;font-size:.95rem;}
+  .acc-body p{margin:8px 0;font-size:.92rem;color:#d8d3ee;}
+  .acc-body .muted{color:var(--muted);}
+  .given{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:12px 0;font-size:.9rem;}
+  .given b{color:var(--gold);}
+  .formula{background:#0a0818;border:1px dashed var(--border2);border-radius:10px;padding:12px 14px;margin:10px 0;font-family:'Cambria Math','Georgia',serif;font-size:1.05rem;color:var(--mint);text-align:center;overflow-x:auto;}
+  .answer{background:var(--ok-bg);border-left:4px solid var(--ok);border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0;font-size:.94rem;}
+  .answer b{color:var(--green-bright);}
+  .eli5{background:rgba(233,196,106,.08);border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:12px 14px;margin:12px 0;font-size:.92rem;color:#f0e4c4;}
+  .eli5 b{color:var(--gold);}
+  .reveal-btn{margin-top:10px;background:var(--surface2);border:1px solid var(--border2);color:var(--mint);padding:9px 16px;border-radius:10px;cursor:pointer;font-weight:700;font-size:.85rem;}
+  .reveal-btn:hover{background:#241a44;}
+  .sol{display:none;margin-top:10px;}
+  .sol.show{display:block;animation:fade .25s;}
+  table.mini{width:100%;border-collapse:collapse;margin:10px 0;font-size:.85rem;}
+  table.mini th,table.mini td{border:1px solid var(--border);padding:7px 9px;text-align:center;}
+  table.mini th{background:var(--surface2);color:var(--mint);}
+
+  /* ---------- SCIANA ---------- */
+  .wall-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;
+    width:min(1280px,94vw);position:relative;left:50%;transform:translateX(-50%);}
+  .wall-card{position:relative;background:linear-gradient(165deg,#100d20 0%,#100d20 100%);border:1px solid var(--border);
+    border-radius:20px;padding:24px 26px 22px;box-shadow:0 14px 40px rgba(0,0,0,.4);overflow:hidden;
+    transition:transform .25s,border-color .25s,box-shadow .25s;}
+  .wall-card::before{content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    background:linear-gradient(90deg,var(--green-bright),var(--mint),transparent);opacity:.85;}
+  .wall-card:hover{transform:translateY(-4px);border-color:var(--border2);box-shadow:0 22px 54px rgba(0,0,0,.52);}
+  .wall-card h3{font-size:1.16rem;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px;letter-spacing:.2px;}
+  .wall-card .ico{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,rgba(167,139,250,.24),rgba(139,92,246,.07));
+    border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+  .wall-card ul{list-style:none;}
+  .wall-card li{padding:11px 0;border-bottom:1px solid rgba(53,44,102,.42);font-size:.94rem;line-height:1.62;color:#d8d3ee;}
+  .wall-card li:last-child{border-bottom:none;padding-bottom:0;}
+  .wall-card li b{color:#fff;font-weight:600;}
+  .wall-card code{display:inline-block;background:#0a0818;border:1px solid var(--border2);border-radius:7px;
+    padding:2px 8px;margin:1px 0;color:var(--mint);font-family:'Cambria Math',Georgia,serif;font-size:.95rem;white-space:normal;}
+  .kv{color:var(--gold);font-weight:700;}
+
+  /* ---------- QUIZ ---------- */
+  #quizStart .chip{font-size:.82rem;}
+  .qstep{color:var(--green-bright);font-size:.98rem;font-weight:700;letter-spacing:.2px;}
+  #quizBatches .chip{font-variant-numeric:tabular-nums;}
+  .qcount{font-size:.8rem;color:var(--muted);margin:14px 0;}
+  .q-meta{display:flex;justify-content:space-between;color:var(--muted2);font-size:.78rem;margin-bottom:8px;}
+  .q-text{font-size:1.08rem;font-weight:600;line-height:1.5;margin-bottom:16px;}
+  .opt{background:var(--bg2);border:1.5px solid var(--border);border-radius:12px;padding:13px 14px;margin-bottom:10px;cursor:pointer;display:flex;gap:12px;align-items:center;font-size:.92rem;transition:.13s;}
+  .opt:hover:not(.dis){border-color:var(--border2);background:var(--surface2);}
+  .opt .lt{width:30px;height:30px;flex-shrink:0;border-radius:50%;background:var(--surface2);color:var(--mint);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.85rem;}
+  .opt.correct{background:var(--ok-bg);border-color:var(--ok);color:#bff3d3;}
+  .opt.correct .lt{background:var(--ok);color:#fff;}
+  .opt.wrong{background:var(--red-bg);border-color:var(--red);color:#ffc9cb;}
+  .opt.wrong .lt{background:var(--red);color:#fff;}
+  .opt.dis{cursor:default;}
+  .q-exp{background:var(--ok-bg);border-left:4px solid var(--ok);border-radius:0 10px 10px 0;padding:12px 14px;margin-top:6px;font-size:.88rem;color:#cdeed9;display:none;}
+  .q-exp.wrongx{background:var(--red-bg);border-left-color:var(--red);color:#f3d2d4;}
+  .q-exp.show{display:block;animation:fade .2s;}
+  .q-next{margin-top:14px;width:100%;display:none;}
+  .q-next.show{display:block;}
+  .result{text-align:center;padding:30px 18px;}
+  .result .em{font-size:3.2rem;}
+  .result .score{font-size:2.6rem;font-weight:800;color:var(--green-bright);margin-top:6px;}
+  .result .grade{font-size:1.05rem;font-weight:600;margin:8px 0 6px;}
+  .result .msg{color:var(--muted);font-size:.9rem;}
+  .bd{margin:22px auto 0;max-width:420px;text-align:left;}
+  .bd-row{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);font-size:.86rem;}
+  .bd-row:last-child{border:none;}
+
+  .footer-note{text-align:center;color:var(--muted2);font-size:.72rem;margin-top:24px;}
+  @media(max-width:560px){
+    .flashcard{height:300px;} .fc-term{font-size:1.35rem;} .fc-def{font-size:.96rem;}
+    .head-top h1{font-size:1rem;} main{padding:16px 12px 60px;}
+    .tab{padding:9px 11px;font-size:.8rem;}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient></defs></svg>
+<header>
+  <div class="head-top">
+    <a class="uc-brand" href="unicorner.html" aria-label="Unicorner — strona główna">
+      <svg class="uc-horn" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/>
+        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#0c0a18" stroke-width="1.1" fill="none" opacity="0.55"/>
+      </svg>
+      <span class="uc-wordmark">Unicorn<span class="ai">er</span></span>
+    </a>
+    <span class="uc-sep">/</span>
+    <span class="uc-subject">Makroekonomia</span>
+    <a class="uc-back" href="unicorner.html">← Wszystkie przedmioty</a>
+  </div>
+  <nav>
+    <button class="tab active" data-view="fiszki">🗂️ Fiszki</button>
+    <button class="tab" data-view="zadania">🧮 Zadania makro</button>
+    <button class="tab" data-view="sciana">🧱 Ściana</button>
+    <button class="tab" data-view="quiz">❓ Quiz</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ============ FISZKI ============ -->
+  <section id="fiszki" class="view active">
+    <h2 class="section-title">Fiszki — słownik pojęć</h2>
+    <p class="section-intro">Z jednej strony pojęcie, z drugiej definicja. Kliknij kartę, żeby ją obrócić. Zaznacz „Umiem" albo „Nie umiem" — potem możesz powtarzać cały zestaw albo tylko to, czego jeszcze nie ogarniasz.</p>
+
+    <div class="fc-bar" id="fcCats"></div>
+    <div class="fc-bar">
+      <span class="chip" id="modeAll" onclick="fcSetMode('all')">📚 Wszystkie</span>
+      <span class="chip" id="modeDont" onclick="fcSetMode('dont')">🔁 Tylko nieumiane</span>
+      <span class="chip" onclick="fcShuffle()">🔀 Losuj kolejność</span>
+      <span class="chip" onclick="fcResetProgress()">♻️ Wyczyść postęp</span>
+    </div>
+
+    <div class="fc-stats">
+      <span class="stat">W zestawie: <b id="stTotal">0</b></span>
+      <span class="stat know">Umiem: <b id="stKnow">0</b></span>
+      <span class="stat dont">Nie umiem: <b id="stDont">0</b></span>
+    </div>
+
+    <div class="fc-progress"><div id="fcBar" style="width:0%"></div></div>
+
+    <div id="fcArea">
+      <div class="flashcard" id="flashcard" onclick="fcFlip()">
+        <div class="fc-inner">
+          <div class="fc-face fc-front">
+            <span class="fc-tag" id="fcTagF"></span>
+            <div class="fc-term" id="fcTerm"></div>
+            <span class="fc-hint">kliknij, aby zobaczyć definicję</span>
+          </div>
+          <div class="fc-face fc-back">
+            <span class="fc-tag" id="fcTagB"></span>
+            <div class="fc-deflabel">Definicja</div>
+            <div class="fc-def" id="fcDef"></div>
+            <span class="fc-hint">kliknij, aby wrócić do pojęcia</span>
+          </div>
+        </div>
+      </div>
+      <div class="fc-controls">
+        <button class="btn btn-dont" onclick="fcMark(false)">✗ Nie umiem</button>
+        <button class="btn btn-know" onclick="fcMark(true)">✓ Umiem</button>
+      </div>
+      <div class="fc-nav">
+        <button class="btn btn-ghost" onclick="fcPrev()">← Poprzednia</button>
+        <span id="fcPos" style="color:var(--muted);font-size:.85rem;font-weight:700;"></span>
+        <button class="btn btn-ghost" onclick="fcNext()">Następna →</button>
+      </div>
+    </div>
+
+    <div id="fcDone" class="card fc-done" style="display:none;">
+      <div class="em">🎉</div>
+      <h3 id="fcDoneTitle">Koniec zestawu!</h3>
+      <p id="fcDoneMsg"></p>
+      <div class="fc-controls" style="max-width:460px;margin:0 auto;">
+        <button class="btn btn-ghost" onclick="fcRestartAll()">🔁 Od początku</button>
+        <button class="btn btn-know" onclick="fcSetMode('dont')">📌 Ćwicz tylko nieumiane</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ZADANIA ============ -->
+  <section id="zadania" class="view">
+    <h2 class="section-title">Zadania z makroekonomii</h2>
+    <p class="section-intro">Najpierw Twoje przykładowe zadanie rozłożone na czynniki pierwsze — tłumaczone tak prosto, jak się da. Potem warianty tego samego typu i inne zadania, które lubią wracać na egzaminach. Kliknij zadanie, żeby je rozwinąć, a rozwiązania odsłaniaj przyciskiem.</p>
+    <div id="zadaniaArea"></div>
+  </section>
+
+  <!-- ============ SCIANA ============ -->
+  <section id="sciana" class="view">
+    <h2 class="section-title">Ściana — najważniejsze informacje</h2>
+    <p class="section-intro">Najważniejsze wzory, definicje i mechanizmy w jednym miejscu. Wszystko, co warto mieć w głowie wchodząc na egzamin.</p>
+    <div class="wall-grid" id="wallArea"></div>
+  </section>
+
+  <!-- ============ QUIZ ============ -->
+  <section id="quiz" class="view">
+    <h2 class="section-title">Quiz</h2>
+    <p class="section-intro">Sprawdź wiedzę ze wszystkich materiałów. Po każdym pytaniu zobaczysz wyjaśnienie.</p>
+
+    <div id="quizStart" class="card">
+      <h3 class="qstep">1 · Wybierz dział</h3>
+      <div class="fc-bar" id="quizCats" style="margin-top:10px;"></div>
+
+      <h3 class="qstep" style="margin-top:20px;">2 · Długość</h3>
+      <div class="fc-bar" id="quizModes" style="margin-top:8px;">
+        <span class="chip active" id="qmFull" onclick="quizSetMode('full')">📋 Cały dział</span>
+        <span class="chip" id="qmBatch" onclick="quizSetMode('batch')">🔟 Zestawy po 10</span>
+      </div>
+      <div class="fc-bar" id="quizBatches" style="margin-top:10px;display:none;"></div>
+
+      <div class="qcount" id="quizCount"></div>
+      <button class="btn btn-know" style="width:100%;" onclick="quizStart()">▶ Rozpocznij quiz</button>
+    </div>
+
+    <div id="quizPlay" style="display:none;">
+      <div class="fc-progress"><div id="qBar" style="width:0%"></div></div>
+      <div class="card">
+        <div class="q-meta"><span id="qProg"></span><span id="qTopic"></span></div>
+        <div class="q-text" id="qText"></div>
+        <div id="qOpts"></div>
+        <div class="q-exp" id="qExp"></div>
+        <button class="btn btn-know q-next" id="qNext" onclick="quizNext()">Następne →</button>
+      </div>
+    </div>
+
+    <div id="quizResult" style="display:none;">
+      <div class="card result">
+        <div class="em" id="rEm">🎯</div>
+        <div class="score" id="rScore"></div>
+        <div class="grade" id="rGrade"></div>
+        <div class="msg" id="rMsg"></div>
+        <div class="bd" id="rBreak"></div>
+        <button class="btn btn-know" style="width:100%;max-width:420px;margin:22px auto 0;" onclick="quizReset()">🔁 Jeszcze raz</button>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer-note">Zrobione na podstawie Twoich materiałów · powodzenia na egzaminie 🍀</div>
+</main>
+
+<script>
+/* =================== DANE: FISZKI =================== */
+const CATS = {met:"Metoda i pojęcia",mik:"Rynek / mikro",pkb:"PKB i dochód",bezr:"Bezrobocie",inf:"Pieniądz i inflacja",wzr:"Wzrost",fisk:"Polityka fiskalna",handel:"Handel i kursy",adas:"AD-AS, cykl, mnożnik"};
+const FLASHCARDS = [
+ {c:"inf",t:"Agregat pieniężny",d:"Ogólna miara podaży pieniądza."},
+ {c:"inf",t:"Akcja",d:"Udział we własności spółki posiadany przez udziałowca."},
+ {c:"inf",t:"Aktywa finansowe",d:"Wierzytelności w formie papierowej, które uprawniają kupującego do przyszłych dochodów od sprzedającego."},
+ {c:"inf",t:"Aktywa fizyczne",d:"Materialne przedmioty, które mogą być wykorzystane do generowania przyszłych dochodów."},
+ {c:"inf",t:"Aktywa o niskiej płynności",d:"Aktywa, których nie można szybko zamienić na gotówkę przy stosunkowo niewielkiej utracie wartości."},
+ {c:"inf",t:"Aktywa płynne",d:"Aktywa, które można szybko zamienić na gotówkę przy stosunkowo niewielkiej utracie wartości."},
+ {c:"adas",t:"Aktywizm w polityce makroekonomicznej",d:"Wykorzystywanie polityki monetarnej i fiskalnej do łagodzenia cyklu koniunkturalnego."},
+ {c:"met",t:"Analiza marginalna",d:"Zajmuje się badaniem decyzji marginalnych (krańcowych)."},
+ {c:"handel",t:"Aprecjacja",d:"Wzrost wartości danej waluty w stosunku do innych walut."},
+ {c:"handel",t:"Autarkia",d:"Sytuacja, w której dany kraj w ogóle nie handluje z innymi krajami."},
+ {c:"fisk",t:"Automatyczne stabilizatory",d:"Wydatki rządowe i zasady opodatkowania, które powodują, że polityka fiskalna staje się automatycznie ekspansywna, gdy gospodarka się kurczy, i automatycznie restrykcyjna, gdy gospodarka rośnie."},
+ {c:"adas",t:"Autonomiczna zmiana wydatków zagregowanych",d:"Początkowa zmiana w pożądanym poziomie wydatków firm, gospodarstw domowych lub rządu na danym poziomie realnego PKB (niezależna od dochodu)."},
+ {c:"wzr",t:"Badania i rozwój (B+R, R&D)",d:"Wysiłki ukierunkowane na tworzenie i wdrażanie nowych technologii."},
+ {c:"inf",t:"Bank",d:"Pośrednik finansowy, który dostarcza płynnych aktywów w postaci depozytów i wykorzystuje te środki do finansowania niskopłynnych pożyczek."},
+ {c:"inf",t:"Bank centralny",d:"Instytucja, która nadzoruje i reguluje system bankowy oraz kontroluje bazę monetarną."},
+ {c:"inf",t:"Bank inwestycyjny",d:"Prowadzi obrót aktywami finansowymi i nie jest objęty ubezpieczeniem depozytów."},
+ {c:"inf",t:"Barter",d:"Forma handlu, w której ludzie dokonują bezpośredniej wymiany posiadanych dóbr czy usług na pożądane dobra czy usługi."},
+ {c:"inf",t:"Baza monetarna",d:"Suma gotówki w obiegu i rezerw bankowych."},
+ {c:"bezr",t:"Bezrobocie",d:"Liczba osób, które aktywnie poszukują pracy i nie są obecnie zatrudnione."},
+ {c:"bezr",t:"Bezrobocie cykliczne",d:"Odchylenie rzeczywistej stopy bezrobocia od stopy naturalnej na skutek wahań cyklu koniunkturalnego."},
+ {c:"bezr",t:"Bezrobocie frykcyjne",d:"Bezrobocie wynikające z czasu, jaki pracownicy spędzają na poszukiwaniu pracy."},
+ {c:"bezr",t:"Bezrobocie naturalne",d:"Stan, gdy więcej osób poszukuje pracy na danym rynku niż jest dostępnych miejsc pracy przy obecnej stawce płac — nawet gdy gospodarka jest w szczycie cyklu."},
+ {c:"bezr",t:"Bezrobotny",d:"Osoba niezatrudniona i aktywnie poszukująca pracy."},
+ {c:"met",t:"Błąd odwrotnej przyczynowości",d:"Pojawia się, kiedy odwracamy prawdziwy kierunek związku przyczynowo-skutkowego między dwiema zmiennymi."},
+ {c:"met",t:"Błądzenie losowe",d:"Termin określający nieprzewidywalną zmianę zmiennej w czasie."},
+ {c:"fisk",t:"Bodziec fiskalny",d:"Ekspansywna polityka fiskalna w formie tymczasowych wydatków i tymczasowych cięć podatkowych."},
+ {c:"met",t:"Bodziec / zachęta",d:"Każda rzecz czy działanie, które nagradza ludzi za zmianę ich zachowań."},
+ {c:"handel",t:"Branża eksportowa",d:"Produkuje dobra i usługi sprzedawane za granicą."},
+ {c:"handel",t:"Branże konkurujące z importem",d:"Wytwarzają towary i usługi, które są również importowane."},
+ {c:"mik",t:"Całkowita nadwyżka",d:"Całkowity zysk netto konsumentów i producentów z handlu na rynku — suma nadwyżki konsumenta i producenta."},
+ {c:"mik",t:"Całkowita nadwyżka konsumenta",d:"Suma indywidualnych nadwyżek konsumenta wszystkich nabywców towaru na danym rynku."},
+ {c:"mik",t:"Całkowita nadwyżka producenta",d:"Suma indywidualnych nadwyżek producenta wszystkich sprzedających towar na danym rynku."},
+ {c:"wzr",t:"Całkowita produktywność czynników produkcji (TFP)",d:"Ilość produkcji, którą można osiągnąć przy danej ilości czynników produkcji."},
+ {c:"mik",t:"Cena dostawy",d:"Cena danej ilości towaru, przy której producenci będą dostarczać tę ilość."},
+ {c:"mik",t:"Cena maksymalna",d:"Prawnie narzucony górny limit ceny, jaką sprzedający mogą otrzymać za dobro lub usługę. Często prowadzi do niedoborów i marnotrawienia zasobów."},
+ {c:"mik",t:"Cena minimalna",d:"Prawnie narzucony dolny limit ceny, jaką kupujący muszą zapłacić za dobro lub usługę."},
+ {c:"mik",t:"Cena równowagi",d:"Cena, przy której dochodzi do równowagi na rynku konkurencyjnym (popyt = podaż)."},
+ {c:"mik",t:"Cena sprzedawcy",d:"Najniższa cena, po której sprzedawca jest skłonny sprzedać towar."},
+ {c:"handel",t:"Cena światowa",d:"Cena towaru, po której można go kupić lub sprzedać za granicą."},
+ {c:"inf",t:"Certyfikat depozytowy (CD)",d:"Aktywo emitowane przez bank, umożliwiające zdeponowanie środków na określony czas, za co bank płaci określoną stopę procentową."},
+ {c:"pkb",t:"Chained dollars",d:"Metoda obliczania zmian PKB realnego wykorzystująca średnią ze stóp wzrostu liczonych przy roku początkowym i końcowym jako bazowym."},
+ {c:"handel",t:"Cło",d:"Podatki należne od importu."},
+ {c:"adas",t:"Cykl koniunkturalny",d:"Krótkookresowe, naprzemienne występowanie recesji i ekspansji."},
+ {c:"mik",t:"Czarny rynek",d:"Rynek, na którym towary lub usługi są kupowane i sprzedawane niezgodnie z prawem."},
+ {c:"wzr",t:"Czynniki produkcji",d:"Zasoby wykorzystywane do produkcji dóbr i usług."},
+ {c:"met",t:"Decyzje z zakresu rachunku marginalnego",d:"Decyzje o tym, czy zrobić czegoś więcej, czy mniej."},
+ {c:"fisk",t:"Deficyt budżetowy",d:"Różnica między wpływami z podatków a wydatkami publicznymi, gdy wydatki są większe od wpływów."},
+ {c:"handel",t:"Deficyt handlowy",d:"Występuje, gdy wartość towarów kupowanych od innych krajów jest większa niż wartość towarów im sprzedawanych."},
+ {c:"inf",t:"Deflacja",d:"Spadek ogólnego poziomu cen."},
+ {c:"inf",t:"Deflacja długu",d:"Redukcja zagregowanego popytu wynikająca ze wzrostu rzeczywistego obciążenia długiem spowodowanego deflacją."},
+ {c:"pkb",t:"Deflator PKB",d:"Stukrotność stosunku PKB nominalnego do PKB realnego w danym roku."},
+ {c:"inf",t:"Depozyt bankowy",d:"Roszczenie wobec banku, które zobowiązuje bank do przekazania deponentowi na żądanie jego środków."},
+ {c:"inf",t:"Depozyty na rachunkach bieżących",d:"Środki, do których można mieć dostęp za pomocą czeków, kart debetowych i płatności cyfrowych."},
+ {c:"handel",t:"Deprecjacja",d:"Spadek wartości danej waluty w stosunku do innych walut."},
+ {c:"handel",t:"Dewaluacja",d:"Obniżenie wartości waluty ustalane w ramach systemu sztywnego kursu walutowego."},
+ {c:"inf",t:"Dezinflacja",d:"Proces obniżania stopy inflacji (inflacja wciąż dodatnia, ale rośnie wolniej)."},
+ {c:"met",t:"Diagram kołowy",d:"Pokazuje, jaką część całości stanowią poszczególne składniki — zwykle w procentach."},
+ {c:"bezr",t:"Długookresowa krzywa Phillipsa",d:"Pokazuje związek między bezrobociem a inflacją po tym, jak oczekiwania inflacyjne dostosowały się do doświadczenia (pionowa, na poziomie NAIRU)."},
+ {c:"adas",t:"Długookresowa równowaga makroekonomiczna",d:"Występuje, gdy punkt krótkookresowej równowagi leży na krzywej długookresowej podaży zagregowanej."},
+ {c:"wzr",t:"Długookresowy wzrost gospodarczy",d:"Utrzymująca się w czasie tendencja wzrostowa produkcji."},
+ {c:"inf",t:"Długoterminowe stopy procentowe",d:"Stopy procentowe aktywów, których termin zapadalności przypada za kilka lat."},
+ {c:"fisk",t:"Dług publiczny",d:"Dług rządu wobec osób fizycznych i instytucji pozarządowych."},
+ {c:"adas",t:"Dno cyklu koniunkturalnego",d:"Punkt, w którym gospodarka przechodzi z recesji do ekspansji."},
+ {c:"pkb",t:"Dobra i usługi konsumpcyjne (finalne)",d:"Dobra i usługi sprzedawane użytkownikowi końcowemu."},
+ {c:"pkb",t:"Dobra i usługi pośrednie",d:"Dobra kupowane przez jedną firmę od innej, będące wkładem do produkcji dóbr finalnych."},
+ {c:"mik",t:"Dobra komplementarne",d:"Dobra, dla których wzrost ceny jednego powoduje spadek popytu na drugie."},
+ {c:"mik",t:"Dobra substytucyjne",d:"Dobra, dla których wzrost ceny jednego powoduje wzrost popytu na drugie."},
+ {c:"mik",t:"Dobro normalne",d:"Dobro, na które popyt rośnie w wyniku wzrostu dochodów."},
+ {c:"mik",t:"Dobro podrzędne (niższego rzędu)",d:"Dobro, na które popyt spada w wyniku wzrostu dochodów."},
+ {c:"inf",t:"Docelowa stopa funduszy federalnych",d:"Stopa funduszy federalnych zaplanowana przez Rezerwę Federalną."},
+ {c:"pkb",t:"Dochód realny",d:"Dochód uwzględniający poziom cen (siłę nabywczą)."},
+ {c:"inf",t:"Dywersyfikacja",d:"Inwestowanie w kilka różnych aktywów tak, aby ewentualne straty były zdarzeniami niezależnymi."},
+ {c:"inf",t:"Efekt Fishera",d:"Wzrost oczekiwanej inflacji powoduje wzrost nominalnej stopy procentowej, pozostawiając realną stopę bez zmian."},
+ {c:"adas",t:"Efekt majątkowy zmian poziomu cen",d:"Wpływ na wydatki konsumpcyjne wywierany przez zmianę siły nabywczej aktywów konsumenta przy zmianie poziomu cen."},
+ {c:"adas",t:"Efekt stopy procentowej zmian poziomu cen",d:"Wpływ na wydatki konsumpcyjne i inwestycyjne przez wpływ zmian poziomu cen na zasoby pieniężne."},
+ {c:"fisk",t:"Efekt wypychania (crowding out)",d:"Deficyt budżetowy podnosi stopę procentową, co zmniejsza prywatne wydatki na konsumpcję i inwestycje."},
+ {c:"met",t:"Ekonomia",d:"Nauka społeczna badająca produkcję, dystrybucję i konsumpcję dóbr i usług."},
+ {c:"adas",t:"Ekonomia keynesowska",d:"Głosi, że zmiany zagregowanego popytu wpływają na produkcję, zatrudnienie i ceny, a załamania spowodowane niewystarczającymi wydatkami można łagodzić interwencją rządu."},
+ {c:"met",t:"Ekonomia normatywna",d:"Zajmuje się tym, jak gospodarka powinna działać (sądy wartościujące)."},
+ {c:"met",t:"Ekonomia pozytywna",d:"Opisuje, jak gospodarka faktycznie działa (fakty, nie oceny)."},
+ {c:"adas",t:"Ekspansja (ożywienie)",d:"Okres poprawy koniunktury, gdy wzrasta produkcja i zatrudnienie."},
+ {c:"fisk",t:"Ekspansywna polityka fiskalna",d:"Polityka fiskalna, która zwiększa zagregowany popyt."},
+ {c:"inf",t:"Ekspansywna polityka pieniężna",d:"Polityka pieniężna, która zwiększa zagregowany popyt."},
+ {c:"handel",t:"Eksport",d:"Dobra i usługi sprzedawane do innych krajów."},
+ {c:"handel",t:"Eksport netto",d:"Różnica między wartością eksportu a wartością importu."},
+ {c:"met",t:"Firma",d:"Organizacja produkująca dobra lub usługi na sprzedaż."},
+ {c:"inf",t:"Fundusz emerytalny",d:"Rodzaj funduszu inwestycyjnego, który gromadzi aktywa, by zapewnić członkom dochód emerytalny."},
+ {c:"inf",t:"Fundusz inwestycyjny",d:"Pośrednik finansowy, który tworzy portfel akcji i odsprzedaje jego udziały inwestorom indywidualnym."},
+ {c:"adas",t:"Funkcja konsumpcji zagregowanej",d:"Relacja między zagregowanym bieżącym dochodem rozporządzalnym a zagregowanymi wydatkami konsumpcyjnymi."},
+ {c:"wzr",t:"Funkcja produkcji zagregowanej",d:"Pokazuje, jak produktywność (PKB realny na pracownika) zależy od kapitału fizycznego, ludzkiego i poziomu technologii."},
+ {c:"handel",t:"Globalizacja",d:"Zjawisko rosnących powiązań gospodarczych między krajami."},
+ {c:"inf",t:"Globalny rynek funduszy pożyczkowych",d:"Powstaje, gdy międzynarodowe przepływy kapitału są tak duże, że wyrównują stopy procentowe między krajami."},
+ {c:"met",t:"Gospodarka",d:"System koordynujący działania produkcyjne społeczeństwa."},
+ {c:"met",t:"Gospodarka efektywna",d:"Wykorzystuje wszystkie możliwości poprawy sytuacji jednych ludzi bez pogarszania sytuacji innych."},
+ {c:"met",t:"Gospodarka rynkowa",d:"Gospodarka, w której decyzje o produkcji i konsumpcji podejmują indywidualni producenci i konsumenci."},
+ {c:"met",t:"Gospodarstwo domowe",d:"Osoba lub grupa osób mająca wspólne dochody."},
+ {c:"mik",t:"Gotowość do zapłaty",d:"Maksymalna cena, po której konsument kupiłby dany towar."},
+ {c:"inf",t:"Gotówka w obiegu",d:"Gotówka znajdująca się w posiadaniu społeczeństwa."},
+ {c:"mik",t:"Handel / wymiana",d:"Dostarczanie innym dóbr lub usług w zamian za inne dobra lub usługi; przynosi korzyści obu stronom."},
+ {c:"handel",t:"Hiperglobalizacja",d:"Zjawisko niezwykle wysokiego poziomu handlu międzynarodowego."},
+ {c:"inf",t:"Hipoteza efektywności rynku",d:"Zakłada, że ceny aktywów uwzględniają wszystkie publicznie dostępne informacje."},
+ {c:"wzr",t:"Hipoteza konwergencji",d:"Międzynarodowe różnice w PKB per capita mają tendencję do zmniejszania się w czasie."},
+ {c:"bezr",t:"Hipoteza naturalnej stopy bezrobocia",d:"Aby uniknąć przyspieszania inflacji, bezrobocie powinno utrzymywać się wokół stopy naturalnej."},
+ {c:"mik",t:"Ilość dostarczona",d:"Rzeczywista ilość dobra lub usługi, którą sprzedający są skłonni dostarczyć po danej cenie."},
+ {c:"mik",t:"Ilość równowagi",d:"Ilość dobra kupiona i sprzedana po cenie równowagi."},
+ {c:"handel",t:"Import",d:"Dobra i usługi kupowane od innych krajów."},
+ {c:"mik",t:"Indywidualna nadwyżka konsumenta",d:"Zysk netto nabywcy = różnica między jego gotowością do zapłaty a ceną zapłaconą."},
+ {c:"mik",t:"Indywidualna nadwyżka producenta",d:"Zysk netto sprzedawcy = różnica między ceną otrzymaną a jego ceną sprzedawcy."},
+ {c:"met",t:"Indywidualny wybór",d:"Decyzja jednostki o tym, co robić — a tym samym czego nie robić."},
+ {c:"inf",t:"Inflacja",d:"Wzrost ogólnego poziomu cen."},
+ {c:"wzr",t:"Infrastruktura",d:"Drogi, linie energetyczne, porty, sieci informacyjne i inne podstawy działalności gospodarczej."},
+ {c:"met",t:"Interakcje wyborów indywidualnych",d:"Sytuacja, w której moje wybory wpływają na twoje i odwrotnie."},
+ {c:"handel",t:"Interwencja walutowa",d:"Zakup lub sprzedaż waluty przez rząd na rynku walutowym."},
+ {c:"adas",t:"Inwestycje w zapasy",d:"Wartość zmian stanu zapasów przechowywanych w gospodarce w danym okresie."},
+ {c:"inf",t:"Jednostka rozrachunkowa",d:"Miara stosowana do ustalania cen i dokonywania obliczeń ekonomicznych."},
+ {c:"wzr",t:"Kapitał fizyczny",d:"Zasoby wytworzone w procesie produkcji, takie jak budynki czy maszyny."},
+ {c:"wzr",t:"Kapitał ludzki",d:"Poprawa jakości pracy dzięki edukacji i wiedzy siły roboczej."},
+ {c:"inf",t:"Kasa oszczędnościowo-pożyczkowa (S&L)",d:"Instytucja przyjmująca depozyty, specjalizująca się w kredytach dla nabywców mieszkań."},
+ {c:"inf",t:"Klasyczny model poziomu cen",d:"Model, w którym rzeczywista ilość pieniądza jest zawsze na poziomie długookresowej równowagi."},
+ {c:"inf",t:"Konsensus Wielkiej Stabilizacji",d:"Wiara w politykę pieniężną jako główne narzędzie stabilizacji, sceptycyzm wobec aktywnej polityki fiskalnej i uznanie ograniczeń wynikających z naturalnej stopy bezrobocia."},
+ {c:"inf",t:"Konto T",d:"Narzędzie analizy finansowej pokazujące aktywa (po lewej) i pasywa (po prawej) przedsiębiorstwa."},
+ {c:"mik",t:"Kontrola cen",d:"Prawne ustalanie, jak wysoka lub niska może być cena rynkowa (cena maksymalna lub minimalna)."},
+ {c:"handel",t:"Kontyngent / kwota",d:"Górny limit ilości towaru, który można kupić lub sprzedać; tworzy „klin” między ceną nabywcy a ceną sprzedawcy."},
+ {c:"handel",t:"Kontyngent importowy",d:"Prawne ograniczenie ilości towaru, który może zostać zaimportowany."},
+ {c:"met",t:"Koszt alternatywny",d:"Prawdziwy koszt danej rzeczy — to, z czego musisz zrezygnować, aby ją zdobyć."},
+ {c:"inf",t:"Koszty miernika wartości",d:"Koszty wynikające z tego, że inflacja czyni pieniądz mniej wiarygodną jednostką rozrachunkową."},
+ {c:"mik",t:"Koszty transakcyjne",d:"Koszty negocjacji i realizacji transakcji."},
+ {c:"inf",t:"„Koszty zdartych zelówek”",d:"Zwiększone koszty transakcji spowodowane inflacją (częstsze chodzenie do banku po gotówkę)."},
+ {c:"inf",t:"Koszty zmiany cennika",d:"Rzeczywiste koszty zmiany ustalonych cen."},
+ {c:"inf",t:"Koszyk dóbr i usług",d:"Hipotetyczny zestaw konsumenckich zakupów towarów i usług."},
+ {c:"adas",t:"Krańcowa skłonność do konsumpcji (MPC)",d:"Wzrost wydatków konsumpcyjnych, gdy dochód rozporządzalny wzrasta o jednostkę."},
+ {c:"adas",t:"Krańcowa skłonność do oszczędzania (MPS)",d:"Wzrost oszczędności gospodarstwa domowego, gdy dochód rozporządzalny wzrasta o jednostkę. MPC + MPS = 1."},
+ {c:"inf",t:"Kredyt",d:"Umowa pożyczki zawarta między pożyczkodawcą a pożyczkobiorcą."},
+ {c:"inf",t:"Kredyt dyskontowy",d:"Rozwiązanie, dzięki któremu bank centralny może pożyczyć pieniądze bankom w trudnej sytuacji."},
+ {c:"inf",t:"Kredyty wysokiego ryzyka (subprime)",d:"Kredyty na zakup domów udzielane osobom niespełniającym zwykłych kryteriów kwalifikujących."},
+ {c:"bezr",t:"Krótkookresowa krzywa Phillipsa",d:"Przedstawia odwrotną krótkookresową relację między stopą bezrobocia a stopą inflacji."},
+ {c:"adas",t:"Krótkookresowa równowaga makroekonomiczna",d:"Występuje, gdy wielkość dostarczonej produkcji zagregowanej równa się wielkości popytu na nią."},
+ {c:"inf",t:"Krótkoterminowe stopy procentowe",d:"Stopy aktywów o terminie zapadalności krótszym niż rok."},
+ {c:"met",t:"Krzywa",d:"Linia na wykresie przedstawiająca zależność między dwiema zmiennymi (prosta = liniowa, inna = nieliniowa)."},
+ {c:"adas",t:"Krzywa krótkookresowej podaży zagregowanej (SRAS)",d:"Zależność między poziomem cen a ilością dostarczonej produkcji w krótkim okresie, gdy część kosztów jest stała."},
+ {c:"met",t:"Krzywa możliwości produkcyjnych (KMP)",d:"Pokazuje kompromisy gospodarki produkującej dwa towary — maksymalną ilość jednego przy danej ilości drugiego."},
+ {c:"met",t:"Krzywa nieliniowa",d:"Linia, której nachylenie nie jest takie samo dla każdej pary punktów."},
+ {c:"mik",t:"Krzywa podaży",d:"Graficzna ilustracja zależności między ilością dostarczoną a ceną."},
+ {c:"inf",t:"Krzywa podaży pieniądza",d:"Pokazuje, jak ilość dostarczanego pieniądza zmienia się w zależności od stopy procentowej."},
+ {c:"mik",t:"Krzywa popytu",d:"Graficzne przedstawienie tabeli popytu — zależność między ceną a popytem."},
+ {c:"inf",t:"Krzywa popytu na pieniądz",d:"Zależność między stopą procentową a ilością pieniądza, którą chcą utrzymywać konsumenci."},
+ {c:"adas",t:"Krzywa zagregowanego popytu (AD)",d:"Związek między poziomem cen a wielkością produkcji, na którą jest popyt ze strony gospodarstw, firm, rządu i zagranicy."},
+ {c:"handel",t:"Kurs walutowy równowagi",d:"Kurs, przy którym ilość waluty, na jaką jest popyt, równa się ilości dostarczonej."},
+ {c:"handel",t:"Kursy walutowe",d:"Ceny, po których handluje się walutami."},
+ {c:"mik",t:"Licencja",d:"Daje właścicielowi prawo do sprzedaży towaru."},
+ {c:"adas",t:"Luka inflacyjna",d:"Sytuacja, w której produkcja zagregowana jest wyższa od produktu potencjalnego."},
+ {c:"adas",t:"Luka produktowa",d:"Procentowa różnica między rzeczywistą produkcją a produktem potencjalnym."},
+ {c:"adas",t:"Luka recesyjna",d:"Sytuacja, w której produkcja zagregowana jest niższa od produktu potencjalnego."},
+ {c:"inf",t:"Majątek gospodarstwa domowego",d:"Wartość jego zgromadzonych oszczędności."},
+ {c:"met",t:"Makroekonomia",d:"Dziedzina ekonomii zajmująca się ogólnymi wzrostami i spadkami w gospodarce jako całości."},
+ {c:"wzr",t:"Malejąca krańcowa produktywność kapitału",d:"Każdy kolejny wzrost kapitału fizycznego na pracownika (przy stałej technologii i kapitale ludzkim) daje coraz mniejszy przyrost produkcji."},
+ {c:"mik",t:"Marnotrawienie zasobów",d:"Strata pieniędzy, wysiłku i czasu na radzenie sobie z niedoborami spowodowanymi ceną maksymalną."},
+ {c:"handel",t:"Międzynarodowe umowy handlowe",d:"Traktaty, w których państwa zobowiązują się wzajemnie ograniczać ochronę handlu przed importem."},
+ {c:"met",t:"Mikroekonomia",d:"Dziedzina badająca, jak ludzie podejmują decyzje i jak te decyzje oddziałują na siebie."},
+ {c:"met",t:"Minimum (krzywej)",d:"Najniższy punkt krzywej nieliniowej; nachylenie zmienia się z ujemnego na dodatnie."},
+ {c:"adas",t:"Mnożnik",d:"Stosunek całkowitej zmiany realnego PKB (wywołanej autonomiczną zmianą wydatków) do wielkości tej autonomicznej zmiany. = 1/(1−MPC)."},
+ {c:"inf",t:"Mnożnik pieniężny",d:"Stosunek podaży pieniądza do bazy monetarnej."},
+ {c:"met",t:"Model",d:"Uproszczone przedstawienie rzeczywistości w celu jej lepszego zrozumienia."},
+ {c:"adas",t:"Model AD-AS",d:"Krzywa zagregowanego popytu i zagregowanej podaży używane łącznie do analizy wahań ekonomicznych."},
+ {c:"mik",t:"Model podaży i popytu",d:"Model opisujący działanie rynku konkurencyjnego."},
+ {c:"inf",t:"Model preferencji płynności",d:"Stopa procentowa ustalana jest na podstawie podaży i popytu na pieniądz."},
+ {c:"inf",t:"Model racjonalnych oczekiwań",d:"Oczekiwane zmiany polityki pieniężnej nie wpływają na bezrobocie i produkcję, a tylko na poziom cen."},
+ {c:"handel",t:"Model Ricarda",d:"Model handlu międzynarodowego przy założeniu stałych kosztów alternatywnych."},
+ {c:"inf",t:"Monetaryzm",d:"Zakłada, że PKB będzie stabilnie wzrastać, jeśli podaż pieniądza będzie stale rosła."},
+ {c:"met",t:"Nachylenie krzywej",d:"Miara zależności między zmiennymi = zmiana y podzielona przez zmianę x między dwoma punktami."},
+ {c:"fisk",t:"Nadwyżka budżetowa",d:"Różnica między wpływami z podatków a wydatkami, gdy wydatki są mniejsze od wpływów."},
+ {c:"handel",t:"Nadwyżka handlowa",d:"Kraj ma ją, gdy wartość towarów kupowanych od innych krajów jest mniejsza niż wartość im sprzedawanych."},
+ {c:"handel",t:"Napływ kapitału netto",d:"Całkowity napływ środków do kraju pomniejszony o całkowity odpływ."},
+ {c:"bezr",t:"Naturalna stopa bezrobocia",d:"Stopa wynikająca z bezrobocia frykcyjnego i strukturalnego."},
+ {c:"inf",t:"Neutralność pieniądza",d:"Zasada, że zmiany podaży pieniądza nie mają realnego wpływu na gospodarkę (w długim okresie)."},
+ {c:"handel",t:"Otwarta gospodarka",d:"Gospodarka handlująca towarami i usługami z innymi krajami."},
+ {c:"handel",t:"Outsourcing zagraniczny (offshoring)",d:"Firmy zatrudniają ludzi w innych krajach do wykonywania różnych zadań."},
+ {c:"bezr",t:"Ożywienie bez zatrudnienia (jobless recovery)",d:"Okres, w którym stopa wzrostu PKB realnego jest dodatnia, ale stopa bezrobocia wciąż rośnie."},
+ {c:"inf",t:"Panika bankowa",d:"Wielu deponentów próbuje jednocześnie wycofać środki w obawie przed upadkiem banku."},
+ {c:"inf",t:"Papiery wartościowe zabezpieczone kredytami",d:"Aktywa utworzone przez połączenie pojedynczych kredytów i sprzedaż udziałów w tej puli."},
+ {c:"inf",t:"Pieniądze",d:"Wszelkie aktywa, które mogą być łatwo wykorzystane do zakupu dóbr i usług."},
+ {c:"inf",t:"Pieniądz fiducjarny",d:"Pieniądz, którego wartość wynika w całości z jego oficjalnego statusu."},
+ {c:"inf",t:"Pieniądz towarowy",d:"Towar używany jako środek wymiany, mający wartość wewnętrzną poza swoim zastosowaniem (np. złoto)."},
+ {c:"pkb",t:"PKB (Produkt Krajowy Brutto)",d:"Całkowita wartość rynkowa wszystkich dóbr i usług finalnych wytworzonych w gospodarce w danym roku."},
+ {c:"pkb",t:"PKB per capita",d:"PKB podzielony przez wielkość populacji — średni PKB na osobę."},
+ {c:"pkb",t:"PKB realny",d:"Wartość dóbr i usług finalnych wytworzonych w danym roku, liczona w cenach z roku bazowego (bez wpływu inflacji)."},
+ {c:"adas",t:"PKB w równowadze dochodów i wydatków",d:"Poziom realnego PKB, dla którego PKB realny równa się planowanym wydatkom zagregowanym."},
+ {c:"adas",t:"Planowane wydatki inwestycyjne",d:"Wydatki inwestycyjne, które przedsiębiorstwa zamierzają ponieść w danym okresie."},
+ {c:"adas",t:"Planowane wydatki zagregowane",d:"Całkowita kwota planowanych wydatków w gospodarce."},
+ {c:"bezr",t:"Płaca minimalna",d:"Narzucony przez prawo dolny próg stawki wynagrodzenia."},
+ {c:"bezr",t:"Płace nominalne",d:"Płace mierzone w jednostce monetarnej."},
+ {c:"bezr",t:"Płace realne",d:"Stawki płac podzielone przez poziom cen."},
+ {c:"bezr",t:"Płace sztywne",d:"Płace nominalne, które spadają powoli mimo wysokiego bezrobocia i rosną powoli mimo niedoboru pracowników."},
+ {c:"handel",t:"Płynny kurs walutowy",d:"Występuje, gdy rząd pozwala siłom rynkowym określać kurs wymiany."},
+ {c:"inf",t:"Podatek inflacyjny",d:"Obniżenie wartości pieniądza posiadanego przez społeczeństwo w wyniku inflacji."},
+ {c:"fisk",t:"Podatki kwotowe",d:"Podatki, których wysokość nie zależy od dochodów podatnika."},
+ {c:"inf",t:"Podaż pieniądza",d:"Całkowita wartość aktywów finansowych w gospodarce uznawanych za pieniądz."},
+ {c:"inf",t:"Polityczny cykl koniunkturalny",d:"Występuje, gdy politycy wykorzystują politykę makroekonomiczną do celów politycznych."},
+ {c:"fisk",t:"Polityka fiskalna",d:"Wykorzystuje zmiany wydatków rządowych i podatków, aby wpłynąć na ogólne wydatki."},
+ {c:"inf",t:"Polityka monetarna (pieniężna)",d:"Wykorzystuje zmiany ilości pieniądza do zmiany stóp procentowych i wpływania na ogólne wydatki."},
+ {c:"adas",t:"Polityka stabilizacyjna",d:"Działania rządu zmniejszające negatywne skutki recesji i powstrzymujące zbyt silną ekspansję."},
+ {c:"mik",t:"Popyt",d:"Ilość dobra lub usługi, którą konsumenci są skłonni kupić po określonej cenie."},
+ {c:"wzr",t:"Porozumienie paryskie",d:"Umowa z 2015 r. (196 krajów) o redukcji emisji gazów cieplarnianych dla ograniczenia wzrostu temperatury do max 2°C."},
+ {c:"wzr",t:"Postęp technologiczny",d:"Postęp w dziedzinie technicznych środków produkcji dóbr i usług."},
+ {c:"inf",t:"Pośrednik finansowy",d:"Instytucja przekształcająca środki zgromadzone od wielu osób w aktywa finansowe."},
+ {c:"fisk",t:"Pożyczki rządowe",d:"Całkowita kwota środków pożyczonych przez władze państwowe na rynkach finansowych."},
+ {c:"bezr",t:"Pracownicy zniechęceni",d:"Osoby zdolne do pracy, które zrezygnowały z jej poszukiwania ze względu na stan rynku pracy."},
+ {c:"inf",t:"Prawie-pieniądz (quasi-pieniądze)",d:"Aktywa zbliżone do pieniężnych, niemożliwe do bezpośredniego użycia jako środek płatniczy, ale łatwo zamienialne na gotówkę."},
+ {c:"bezr",t:"Prawo Okuna",d:"Mówi o odwrotnej zależności między luką produktową a cyklicznym bezrobociem."},
+ {c:"mik",t:"Prawo popytu",d:"Im wyższa cena towaru (ceteris paribus), tym mniejszy popyt na ten towar."},
+ {c:"inf",t:"Prędkość obiegu pieniądza",d:"Stosunek PKB nominalnego do podaży pieniądza (V w równaniu MV=PY)."},
+ {c:"adas",t:"Produkt potencjalny",d:"Poziom realnego PKB przy pełnej elastyczności wszystkich cen i płac (pełne wykorzystanie zasobów)."},
+ {c:"met",t:"Prognoza",d:"Proste przewidywanie przyszłości."},
+ {c:"inf",t:"Przechowywanie wartości",d:"Funkcja pieniądza: utrzymanie wartości w czasie."},
+ {c:"mik",t:"Przesunięcie krzywej podaży",d:"Zmiana ilości dostarczanej przy danej cenie — cała krzywa przesuwa się na nową pozycję."},
+ {c:"mik",t:"Przesunięcie krzywej popytu",d:"Zmiana zapotrzebowania przy danej cenie — cała krzywa popytu przesuwa się na nową pozycję."},
+ {c:"handel",t:"Przewaga absolutna",d:"Kraj/osoba ma ją, gdy potrafi wyprodukować więcej danego dobra na pracownika niż inni."},
+ {c:"handel",t:"Przewaga komparatywna",d:"Kraj/osoba ma ją, gdy koszt alternatywny produkcji danego dobra jest niższy niż u innych."},
+ {c:"inf",t:"Pułapka płynności",d:"Konwencjonalna polityka pieniężna jest nieskuteczna, bo nominalna stopa procentowa osiągnęła zerową dolną granicę."},
+ {c:"met",t:"Punkt przecięcia z osią y",d:"Wartość zmiennej y, gdy x = 0."},
+ {c:"met",t:"Racjonalne oczekiwania",d:"Założenie, że ludzie i firmy podejmują decyzje optymalnie, wykorzystując wszystkie dostępne informacje."},
+ {c:"pkb",t:"Rachunek obrotów bieżących",d:"Bilans handlu dobrami i usługami powiększony o transfery i dochody z czynników produkcji."},
+ {c:"pkb",t:"Rachunek obrotów finansowych",d:"Różnica między wartością aktywów sprzedanych za granicę a kupionych od zagranicy."},
+ {c:"pkb",t:"Bilans płatniczy",d:"Podsumowanie wszystkich transakcji danego kraju z zagranicą za dany rok."},
+ {c:"pkb",t:"Rachunki dochodu narodowego",d:"Śledzą przepływy pieniądza między różnymi sektorami gospodarki."},
+ {c:"wzr",t:"Rachunkowość wzrostu",d:"Szacuje udział poszczególnych czynników produkcji we wzroście gospodarczym."},
+ {c:"adas",t:"Recesja",d:"Okres spowolnienia wzrostu, gdy spada produkcja i zatrudnienie."},
+ {c:"wzr",t:"Reguła 70",d:"Czas podwojenia rosnącej zmiennej ≈ 70 podzielone przez roczną stopę wzrostu (w %)."},
+ {c:"inf",t:"Reguła Taylora",d:"Reguła ustalania stopy funduszy federalnych w zależności od inflacji oraz luki produktowej lub bezrobocia."},
+ {c:"inf",t:"Reguły polityki pieniężnej",d:"Zasady określające działania banku centralnego."},
+ {c:"fisk",t:"Relacja długu publicznego do PKB",d:"Dług publiczny wyrażony jako procent PKB."},
+ {c:"fisk",t:"Restrykcyjna polityka fiskalna",d:"Polityka fiskalna, która zmniejsza zagregowany popyt."},
+ {c:"inf",t:"Restrykcyjna polityka pieniężna",d:"Polityka pieniężna, która zmniejsza zagregowany popyt."},
+ {c:"handel",t:"Rewaluacja",d:"Wzrost wartości waluty w ramach systemu sztywnego kursu walutowego."},
+ {c:"inf",t:"Rezerwa obowiązkowa",d:"Zasady banku centralnego określające minimalną stopę rezerw dla banków."},
+ {c:"inf",t:"Rezerwy bankowe",d:"Gotówka w skarbcach banków oraz ich depozyty w banku centralnym."},
+ {c:"inf",t:"Rezerwy nadwyżkowe",d:"Rezerwy banku przekraczające jego rezerwy obowiązkowe."},
+ {c:"handel",t:"Rezerwy walutowe",d:"Zapasy waluty obcej utrzymywane przez rządy w celu zakupu własnej waluty na rynku."},
+ {c:"inf",t:"Równoległy system bankowy (shadow banking)",d:"Działalność podobna do bankowej prowadzona przez firmy bez statusu depozytariusza i bez nadzoru (np. fundusze hedgingowe)."},
+ {c:"adas",t:"Równowaga dochodów i wydatków",d:"Występuje, gdy produkcja zagregowana (realny PKB) równa się planowanym wydatkom zagregowanym."},
+ {c:"mik",t:"Równowaga na rynku konkurencyjnym",d:"Cena osiągnęła poziom, na którym zapotrzebowanie równa się ilości dostarczonej."},
+ {c:"met",t:"Ruch wzdłuż krzywej popytu",d:"Zmiana zapotrzebowania wynikająca wyłącznie ze zmiany ceny danego towaru."},
+ {c:"met",t:"Ruch wzdłuż krzywej podaży",d:"Zmiana ilości dostarczonej wynikająca wyłącznie ze zmiany ceny danego towaru."},
+ {c:"inf",t:"Rynek funduszy federalnych",d:"Umożliwia bankom bez wystarczających rezerw pożyczanie środków od banków z nadwyżką rezerw."},
+ {c:"inf",t:"Rynek funduszy pożyczkowych",d:"Hipotetyczny rynek ilustrujący popyt na fundusze (pożyczkobiorcy) i ich podaż (pożyczkodawcy)."},
+ {c:"mik",t:"Rynek konkurencyjny",d:"Rynek z wieloma kupującymi i sprzedającymi, gdzie nikt nie wpływa samodzielnie na cenę."},
+ {c:"inf",t:"Ryzyko finansowe",d:"Niepewność co do przyszłych wyników — zysków lub strat."},
+ {c:"fisk",t:"Saldo budżetowe",d:"Różnica między wpływami z podatków a wydatkami publicznymi."},
+ {c:"handel",t:"Saldo obrotów handlowych (bilans handlowy)",d:"Różnica między eksportem a importem dóbr danego kraju."},
+ {c:"fisk",t:"Saldo strukturalne budżetu",d:"Szacunkowe saldo budżetu, gdyby PKB był równy produktowi potencjalnemu (oczyszczone z cyklu)."},
+ {c:"adas",t:"Samorównoważąca się gospodarka",d:"Gospodarka, w której problemy (np. bezrobocie) rozwiązuje „niewidzialna ręka rynku” bez interwencji."},
+ {c:"inf",t:"Sekularna stagnacja",d:"Stan, gdy stopa procentowa potrzebna do pełnego zatrudnienia stale spada poniżej zera."},
+ {c:"inf",t:"Sekurytyzacja",d:"Tworzenie puli kredytów i sprzedaż jej udziałów inwestorom."},
+ {c:"bezr",t:"Siła robocza",d:"Suma zatrudnionych i bezrobotnych."},
+ {c:"inf",t:"Stabilność cen",d:"Sytuacja, gdy ogólny poziom cen nie zmienia się lub zmienia bardzo powoli."},
+ {c:"inf",t:"Stagflacja",d:"Połączenie inflacji ze spadkiem produkcji zagregowanej (jednocześnie!)."},
+ {c:"bezr",t:"Stopa bezrobocia",d:"Odsetek bezrobotnych w sile roboczej. = bezrobotni / siła robocza × 100%."},
+ {c:"bezr",t:"NAIRU",d:"Stopa bezrobocia niepowodująca wzrostu inflacji — przy niej inflacja się nie zmienia."},
+ {c:"inf",t:"Stopa dyskontowa",d:"Stopa, według której bank centralny pobiera opłaty od pożyczek udzielanych bankom."},
+ {c:"inf",t:"Stopa funduszy federalnych",d:"Stopa, po której środki są pożyczane na rynku funduszy federalnych (między bankami)."},
+ {c:"inf",t:"Stopa inflacji",d:"Procentowa zmiana roczna wskaźnika cen (zwykle CPI)."},
+ {c:"inf",t:"Stopa procentowa równowagi",d:"Stopa, przy której ilość dostarczonych funduszy pożyczkowych równa się zapotrzebowaniu na nie."},
+ {c:"inf",t:"Stopa rezerw",d:"Część depozytów bankowych, którą bank utrzymuje jako rezerwy."},
+ {c:"inf",t:"Strategia bezpośredniego celu inflacyjnego",d:"Bank centralny wyznacza wyraźny cel inflacyjny i prowadzi politykę pieniężną tak, by go osiągnąć."},
+ {c:"met",t:"Styczna",d:"Linia prosta stykająca się z krzywą w jednym punkcie; jej nachylenie równa się nachyleniu krzywej w tym punkcie."},
+ {c:"inf",t:"System finansowy",d:"Zbiór rynków i instytucji ułatwiających przepływ środków od pożyczkodawców do pożyczkobiorców."},
+ {c:"handel",t:"System kursu walutowego",d:"Zasada regulująca politykę wobec kursu walutowego."},
+ {c:"adas",t:"Szczyt cyklu koniunkturalnego",d:"Punkt, w którym gospodarka przechodzi od ekspansji do recesji."},
+ {c:"adas",t:"Szok podażowy",d:"Zdarzenie powodujące przesunięcie krzywej krótkookresowej podaży zagregowanej (SRAS)."},
+ {c:"adas",t:"Szok popytowy",d:"Zdarzenie powodujące przesunięcie krzywej zagregowanego popytu (AD)."},
+ {c:"handel",t:"Sztywny kurs walutowy",d:"Rząd utrzymuje kurs wymiany na inną walutę na poziomie lub w pobliżu określonego celu."},
+ {c:"inf",t:"Środek wymiany",d:"Składnik aktywów nabywany w celu obrotu towarami i usługami, a nie własnej konsumpcji (funkcja pieniądza)."},
+ {c:"handel",t:"Światowa Organizacja Handlu (WTO)",d:"Nadzoruje międzynarodowe umowy handlowe i rozstrzyga spory między krajami."},
+ {c:"mik",t:"Tabela podaży",d:"Pokazuje, ile towaru byłoby dostarczane przy różnych cenach."},
+ {c:"mik",t:"Tabela popytu",d:"Pokazuje, ile dobra użytkownik chciałby kupić po różnych cenach."},
+ {c:"wzr",t:"Technologia",d:"Techniczne środki produkcji dóbr i usług."},
+ {c:"fisk",t:"Teoria ekspansywnych oszczędności",d:"Głosi, że oszczędności fiskalne prowadzą do wzrostu produkcji i zatrudnienia przez zwiększenie zaufania sektora prywatnego."},
+ {c:"handel",t:"Teoria obfitości zasobów",d:"Kraj ma przewagę komparatywną w dobrach, których produkcja intensywnie wykorzystuje czynniki powszechnie u niego dostępne."},
+ {c:"adas",t:"Teoria realnego cyklu koniunkturalnego",d:"Wahania tempa wzrostu całkowitej produktywności czynników produkcji powodują cykl koniunkturalny."},
+ {c:"inf",t:"Towarzystwo ubezpieczeń na życie",d:"Sprzedaje polisy gwarantujące wypłatę środków beneficjentom w momencie śmierci ubezpieczonego."},
+ {c:"fisk",t:"Ubezpieczenia społeczne",d:"Programy rządowe chroniące rodziny przed trudnościami ekonomicznymi."},
+ {c:"inf",t:"Ubezpieczenie depozytu",d:"Gwarancja wypłaty deponentom (do określonej kwoty), nawet gdy bank nie może wypłacić środków."},
+ {c:"handel",t:"Unia Europejska (UE)",d:"Unia celna między 27 państwami europejskimi (po brexicie)."},
+ {c:"inf",t:"Uznaniowa (dyskrecjonalna) polityka pieniężna",d:"Wykorzystanie zmian stóp lub podaży pieniądza do stabilizacji gospodarki na podstawie decyzji, a nie sztywnych zasad."},
+ {c:"fisk",t:"Uznaniowa polityka fiskalna",d:"Polityka będąca wynikiem świadomych decyzji decydentów, a nie automatycznych zasad."},
+ {c:"met",t:"Wartość absolutna",d:"Wartość liczby z pominięciem znaku „minus”."},
+ {c:"inf",t:"Wartość bieżąca X",d:"Kwota potrzebna dziś, by w przyszłości otrzymać X, przy danej stopie procentowej."},
+ {c:"pkb",t:"Wartość dodana producenta",d:"Wartość sprzedaży pomniejszona o wartość zakupów dóbr i usług pośrednich."},
+ {c:"inf",t:"Wielka Stabilizacja",d:"Okres 1985–2007, gdy gospodarka USA doświadczała niewielkich wahań i niskiej inflacji."},
+ {c:"handel",t:"Wolny handel",d:"Występuje, gdy rząd nie próbuje zmniejszać ani zwiększać poziomu eksportu i importu wynikającego z podaży i popytu."},
+ {c:"bezr",t:"Wskaźnik aktywności zawodowej",d:"Procentowy udział ludności (16+) w sile roboczej."},
+ {c:"inf",t:"Wskaźnik cen",d:"Mierzy koszt zakupu koszyka dóbr w danym roku; w roku bazowym znormalizowany do 100."},
+ {c:"inf",t:"Wskaźnik cen konsumpcyjnych (CPI)",d:"Mierzy koszt koszyka dóbr i usług typowej rodziny."},
+ {c:"inf",t:"Wskaźnik cen dóbr produkcyjnych (PPI)",d:"Mierzy zmiany cen towarów kupowanych przez producentów."},
+ {c:"wzr",t:"Wydajność pracy (produktywność)",d:"Wielkość produkcji przypadająca na jednego pracownika."},
+ {c:"pkb",t:"Wydatki inwestycyjne",d:"Wydatki na kapitał produkcyjny (maszyny, budynki) oraz na uzupełnienie zapasów."},
+ {c:"pkb",t:"Wydatki konsumpcyjne",d:"Wydatki gospodarstw domowych na dobra i usługi."},
+ {c:"pkb",t:"Wydatki zagregowane",d:"Suma konsumpcji, inwestycji, zakupów rządowych i eksportu netto."},
+ {c:"adas",t:"Wykres krzywej keynesowskiej (krzyż keynesowski)",d:"Określa równowagę jako punkt przecięcia krzywej planowanych wydatków zagregowanych z linią 45°."},
+ {c:"wzr",t:"Wzrost gospodarczy",d:"Rosnąca zdolność gospodarki do wytwarzania dóbr i usług."},
+ {c:"pkb",t:"Zagregowana produkcja",d:"Całkowita ilość dóbr i usług wyprodukowanych w gospodarce."},
+ {c:"met",t:"Zależność dodatnia",d:"Wzrost jednej zmiennej wiąże się ze wzrostem drugiej (krzywa rosnąca)."},
+ {c:"met",t:"Zależność ujemna",d:"Wzrost jednej zmiennej wiąże się ze spadkiem drugiej (krzywa malejąca)."},
+ {c:"adas",t:"Zapas",d:"Zasoby dóbr utrzymywane w celu zaspokojenia przyszłej sprzedaży."},
+ {c:"adas",t:"Zasada akceleratora",d:"Wyższe tempo wzrostu PKB realnego → wyższe planowane wydatki inwestycyjne (i odwrotnie)."},
+ {c:"adas",t:"Zasada tożsamości oszczędności i inwestycji",d:"Dla gospodarki jako całości oszczędności i wydatki inwestycyjne są zawsze równe."},
+ {c:"met",t:"Zasoby",d:"Wszystko, co może być wykorzystane do wyprodukowania czegoś innego."},
+ {c:"met",t:"Zasoby ograniczone (rzadkość)",d:"Niewystarczająca ilość dostępnych zasobów, by zaspokoić wszystkie potrzeby."},
+ {c:"bezr",t:"Zatrudnienie",d:"Liczba osób obecnie pracujących (w pełnym lub niepełnym wymiarze)."},
+ {c:"mik",t:"Zawodne rynki (zawodność rynku)",d:"Sytuacja, gdy realizacja własnych interesów prowadzi do złych wyników dla całego społeczeństwa."},
+ {c:"inf",t:"Zerowa dolna granica stóp procentowych",d:"Stopy procentowe nie mogą spadać znacznie poniżej zera bez powodowania poważnych problemów."},
+ {c:"met",t:"Zmienna",d:"Wielkość, która może przyjąć więcej niż jedną wartość."},
+ {c:"met",t:"Zmienna niezależna",d:"Zmienna, która wpływa na drugą zmienną (przyczyna)."},
+ {c:"met",t:"Zmienna pominięta",d:"Nieobserwowana zmienna tworząca fałszywe wrażenie związku przyczynowego między innymi zmiennymi."},
+ {c:"met",t:"Zmienna zależna",d:"Zmienna podlegająca wpływowi drugiej zmiennej (skutek)."},
+ {c:"fisk",t:"Zobowiązania ukryte",d:"Obietnice wydatków rządu stanowiące faktyczny dług, choć nieujmowane w zwykłych statystykach długu."},
+ {c:"wzr",t:"Zrównoważony wzrost gospodarczy",d:"Wzrost długookresowy możliwy do kontynuowania mimo ograniczonych zasobów naturalnych i przy mniejszej szkodliwości dla środowiska."},
+ {c:"met",t:"Związek przyczynowy",d:"Występuje, gdy wartość jednej zmiennej bezpośrednio wpływa na wartość drugiej."}
+];
+
+/* dane zadań, ściany i quizu dołączane poniżej */
+var ZADANIA=[], WALL=[], QUIZ=[];
+</script>
+<script id="dataScript">
+/* =================== DANE: ZADANIA =================== */
+ZADANIA = [
+{badge:"WZORCOWE", num:"★", title:"Twoje zadanie — równowaga dochodu i zapasy", html:`
+<div class="given"><b>Dane:</b> konsumpcja autonomiczna C₀ = 800 · MPC = 0,75 · wydatki inwestycyjne I = 200.<br><b>Pytania:</b> (a) co dzieje się z zapasami, gdy produkcja PKB = 800? (b) ile wynosi produkcja w stanie równowagi?</div>
+
+<h4>🧒 Wyobraź to sobie jak fabrykę cukierków</h4>
+<div class="eli5"><b>Wyobraź sobie</b>, że cała gospodarka to jedna wielka fabryka. <b>Produkcja (PKB)</b> to ile cukierków fabryka <i>zrobiła</i>. <b>Wydatki zagregowane (AE)</b> to ile cukierków ludzie i firmy <i>chcą kupić</i>.<br><br>
+• Jeśli ludzie chcą kupić <b>więcej</b>, niż fabryka zrobiła → cukierki znikają z magazynu (<b>zapasy spadają</b>), więc następnym razem fabryka zrobi więcej.<br>
+• Jeśli ludzie chcą kupić <b>mniej</b> → cukierki zalegają w magazynie (<b>zapasy rosną</b>), więc fabryka zwolni.<br>
+• <b>Równowaga</b> to magiczny punkt, gdzie fabryka robi DOKŁADNIE tyle, ile ludzie chcą kupić — magazyn się nie zmienia.</div>
+
+<h4>Krok 1 — zbuduję wzór na wydatki (AE)</h4>
+<p>Wydatki zagregowane to konsumpcja + inwestycje. Konsumpcja ma dwie części: część stałą C₀ (kupujemy zawsze, nawet bez dochodu) oraz część rosnącą z dochodem (MPC × Y — z każdej dodatkowej złotówki wydajemy 75 groszy).</p>
+<div class="formula">AE = C₀ + MPC·Y + I = 800 + 0,75·Y + 200 = 1000 + 0,75·Y</div>
+
+<h4>Krok 2 — sprawdzam, co się dzieje przy PKB = 800</h4>
+<p>Podstawiam Y = 800 do wzoru na wydatki:</p>
+<div class="formula">AE = 1000 + 0,75·800 = 1000 + 600 = <b>1600</b></div>
+<p>Fabryka zrobiła <b>800</b>, a ludzie chcą kupić aż <b>1600</b>. Chętnych jest dużo więcej niż towaru!</p>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż odpowiedź (a) ▾</button>
+<div class="sol"><div class="answer">Skoro wydatki (1600) &gt; produkcja (800), ludzie wykupują towar z magazynów. <b>Zapasy nieplanowo SPADAJĄ.</b> To sygnał, że produkcja jest za niska — firmy będą ją zwiększać, aż dojdą do równowagi.</div></div>
+
+<h4>Krok 3 — liczę równowagę (gdzie produkcja = wydatki)</h4>
+<p>W równowadze to, co fabryka zrobiła, równa się temu, co ludzie chcą kupić: Y = AE.</p>
+<div class="formula">Y = 1000 + 0,75·Y &nbsp;→&nbsp; Y − 0,75·Y = 1000 &nbsp;→&nbsp; 0,25·Y = 1000</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż odpowiedź (b) ▾</button>
+<div class="sol"><div class="answer">Y = 1000 / 0,25 = <b>4000</b> — produkcja w stanie równowagi.</div>
+<p class="muted">Sprawdzenie mnożnikiem: mnożnik = 1/(1−MPC) = 1/0,25 = <b>4</b>. Wydatki autonomiczne (800+200 = 1000) × 4 = <b>4000</b>. ✓ Zgadza się.</p></div>
+`},
+
+{badge:"WARIANT", num:"1", title:"Inne liczby — sama równowaga", html:`
+<div class="given"><b>Dane:</b> C₀ = 400 · MPC = 0,8 · I = 100. <b>Pytanie:</b> ile wynosi produkcja w równowadze i ile wynosi mnożnik?</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">AE = 400 + 0,8·Y + 100 = 500 + 0,8·Y</div>
+<div class="formula">Y = 500 + 0,8·Y → 0,2·Y = 500 → <b>Y = 2500</b></div>
+<div class="answer">Mnożnik = 1/(1−0,8) = 1/0,2 = <b>5</b>. Równowaga: <b>Y = 2500</b>.</div></div>
+`},
+
+{badge:"WARIANT", num:"2", title:"Z wydatkami rządowymi (G)", html:`
+<div class="given"><b>Dane:</b> C₀ = 300 · MPC = 0,6 · I = 200 · zakupy rządowe G = 100. <b>Pytanie:</b> produkcja w równowadze?</div>
+<div class="eli5"><b>Trik:</b> G wrzucamy do wydatków autonomicznych tak samo jak C₀ i I — to po prostu kolejny stały zastrzyk popytu.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">AE = 300 + 0,6·Y + 200 + 100 = 600 + 0,6·Y</div>
+<div class="formula">Y = 600 + 0,6·Y → 0,4·Y = 600 → <b>Y = 1500</b></div>
+<div class="answer">Wydatki autonomiczne = 600, mnożnik = 1/0,4 = 2,5; 600 × 2,5 = <b>1500</b>.</div></div>
+`},
+
+{badge:"WARIANT", num:"3", title:"O ile wzrośnie PKB? (efekt mnożnikowy)", html:`
+<div class="given"><b>Dane:</b> MPC = 0,75. Inwestycje rosną o ΔI = 50. <b>Pytanie:</b> o ile zmieni się produkcja w równowadze?</div>
+<div class="eli5"><b>Dlaczego więcej niż 50?</b> Bo 50 zł wydane na inwestycje staje się czyimś dochodem. Ta osoba wyda z tego 75% dalej, kolejna znów 75%... i tak efekt się „mnoży".</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">ΔY = mnożnik × ΔI = 1/(1−0,75) × 50 = 4 × 50 = <b>200</b></div>
+<div class="answer">PKB wzrośnie o <b>200</b> (cztery razy więcej niż początkowy zastrzyk 50).</div></div>
+`},
+
+{badge:"WARIANT", num:"4", title:"Powyżej równowagi — co z zapasami?", html:`
+<div class="given"><b>Dane:</b> równowaga gospodarki to Y* = 2000. Aktualnie produkcja wynosi Y = 2500. <b>Pytanie:</b> co dzieje się z zapasami?</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<p>Produkcja (2500) jest <b>powyżej</b> równowagi (2000), więc ludzie chcą kupić mniej, niż fabryka wyprodukowała.</p>
+<div class="answer">Niesprzedany towar ląduje w magazynie → <b>zapasy nieplanowo ROSNĄ</b>. Firmy zareagują obniżeniem produkcji, aż wróci do Y* = 2000.</div>
+<p class="muted">Reguła do zapamiętania: produkcja &gt; wydatki → zapasy rosną; produkcja &lt; wydatki → zapasy spadają; produkcja = wydatki → równowaga.</p></div>
+`},
+
+{badge:"WARIANT", num:"5", title:"Z podatkiem (poziom trudniejszy)", html:`
+<div class="given"><b>Dane:</b> C₀ = 500 · MPC = 0,75 · I = 250 · G = 250 · podatek autonomiczny T = 200. <b>Pytanie:</b> produkcja w równowadze?</div>
+<div class="eli5"><b>Uwaga:</b> ludzie konsumują z dochodu <i>po opodatkowaniu</i> (Y − T), a nie z całego Y. Najpierw odejmujemy podatek.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">C = C₀ + MPC·(Y − T) = 500 + 0,75·(Y − 200) = 350 + 0,75·Y</div>
+<div class="formula">AE = 350 + 0,75·Y + 250 + 250 = 850 + 0,75·Y</div>
+<div class="formula">Y = 850 + 0,75·Y → 0,25·Y = 850 → <b>Y = 3400</b></div>
+<div class="answer">Równowaga: <b>Y = 3400</b>.</div></div>
+`},
+
+{badge:"WARIANT", num:"6", title:"Odwrotnie — znajdź MPC", html:`
+<div class="given"><b>Dane:</b> C₀ = 200 · I = 100 · produkcja w równowadze Y = 1500. <b>Pytanie:</b> ile wynosi MPC?</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">W równowadze: Y = (C₀ + I) + MPC·Y → 1500 = 300 + MPC·1500</div>
+<div class="formula">1200 = MPC·1500 → MPC = 1200/1500 = <b>0,8</b></div>
+<div class="answer">MPC = <b>0,8</b> (a MPS = 1 − 0,8 = 0,2).</div></div>
+`},
+
+{badge:"TYPOWE", num:"7", title:"PKB nominalny, realny i deflator", html:`
+<div class="given">Gospodarka produkuje 2 dobra. Rok bazowy: <b>2020</b>.
+<table class="mini"><tr><th>Dobro</th><th>Ilość 2024</th><th>Cena 2020</th><th>Cena 2024</th></tr>
+<tr><td>Chleb</td><td>100</td><td>4 zł</td><td>5 zł</td></tr>
+<tr><td>Książki</td><td>50</td><td>20 zł</td><td>24 zł</td></tr></table>
+<b>Policz:</b> PKB nominalny 2024, PKB realny 2024 (w cenach 2020) i deflator PKB.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<p><b>PKB nominalny</b> = ilości 2024 × ceny 2024:</p>
+<div class="formula">100·5 + 50·24 = 500 + 1200 = <b>1700 zł</b></div>
+<p><b>PKB realny</b> = ilości 2024 × ceny bazowe 2020:</p>
+<div class="formula">100·4 + 50·20 = 400 + 1000 = <b>1400 zł</b></div>
+<p><b>Deflator PKB</b> = (nominalny / realny) × 100:</p>
+<div class="formula">(1700 / 1400) × 100 ≈ <b>121,4</b></div>
+<div class="answer">Ceny wzrosły średnio o ok. <b>21,4%</b> względem roku bazowego.</div></div>
+`},
+
+{badge:"TYPOWE", num:"8", title:"CPI i stopa inflacji", html:`
+<div class="given">Koszyk typowej rodziny kosztował <b>2000 zł</b> w roku bazowym i <b>2300 zł</b> w roku bieżącym. <b>Policz:</b> CPI oraz stopę inflacji.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">CPI = (koszt koszyka teraz / koszt w roku bazowym) × 100 = (2300/2000)×100 = <b>115</b></div>
+<div class="formula">Stopa inflacji = (CPI − 100) = <b>15%</b></div>
+<div class="answer">Ceny koszyka wzrosły o <b>15%</b>. (Gdyby pytano o inflację między dwoma latami nie-bazowymi: (CPI₂ − CPI₁)/CPI₁ × 100%.)</div></div>
+`},
+
+{badge:"TYPOWE", num:"9", title:"Stopa wzrostu gospodarczego", html:`
+<div class="given">PKB realny w 2023 r. = <b>500 mld</b>, w 2024 r. = <b>525 mld</b>. <b>Policz</b> tempo wzrostu gospodarczego.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">stopa wzrostu = (PKB₂ − PKB₁)/PKB₁ × 100% = (525 − 500)/500 × 100% = <b>5%</b></div>
+<div class="answer">Gospodarka urosła o <b>5%</b>. Używamy PKB <b>realnego</b>, bo chcemy wzrost ilości, a nie cen.</div></div>
+`},
+
+{badge:"TYPOWE", num:"10", title:"Stopa bezrobocia i aktywności zawodowej", html:`
+<div class="given">Ludność w wieku produkcyjnym (16+) = <b>100 tys.</b> Pracujący = <b>60 tys.</b> Bezrobotni = <b>10 tys.</b> Reszta to bierni zawodowo. <b>Policz</b> stopę bezrobocia i wskaźnik aktywności zawodowej.</div>
+<div class="eli5"><b>Pamiętaj:</b> siła robocza = pracujący + bezrobotni (bez biernych!). Bierni — np. studenci, emeryci — nie liczą się do stopy bezrobocia.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">Siła robocza = 60 + 10 = 70 tys.</div>
+<div class="formula">Stopa bezrobocia = bezrobotni / siła robocza × 100% = 10/70 × 100% ≈ <b>14,3%</b></div>
+<div class="formula">Wskaźnik aktywności = siła robocza / ludność 16+ × 100% = 70/100 × 100% = <b>70%</b></div>
+<div class="answer">Stopa bezrobocia ≈ <b>14,3%</b>, aktywność zawodowa = <b>70%</b>.</div></div>
+`},
+
+{badge:"TYPOWE", num:"11", title:"Prawo Okuna", html:`
+<div class="given">Stopa bezrobocia jest o <b>2 pkt proc.</b> wyższa od naturalnej. Współczynnik Okuna = <b>3</b>. Produkt potencjalny = <b>1000 mld</b>. <b>Policz</b> lukę produktową i rzeczywisty PKB.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<p>Prawo Okuna: każdy 1 pkt proc. bezrobocia powyżej naturalnej stopy = PKB niższy o ok. 3% od potencjału.</p>
+<div class="formula">luka produktowa = −3 × 2 = <b>−6%</b></div>
+<div class="formula">rzeczywisty PKB = 1000 × (1 − 0,06) = <b>940 mld</b></div>
+<div class="answer">PKB jest <b>6% poniżej</b> potencjału (luka recesyjna), czyli wynosi <b>940 mld</b>.</div></div>
+`},
+
+{badge:"TYPOWE", num:"12", title:"Reguła 70 — czas podwojenia", html:`
+<div class="given">Gospodarka rośnie w tempie <b>3,5%</b> rocznie. <b>Policz</b>, po ilu latach PKB się podwoi.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">czas podwojenia ≈ 70 / stopa wzrostu = 70 / 3,5 = <b>20 lat</b></div>
+<div class="answer">PKB podwoi się po ok. <b>20 latach</b>. (Przy 7% byłoby to 10 lat, przy 2% — 35 lat.)</div></div>
+`},
+
+{badge:"TYPOWE", num:"13", title:"Mnożnik pieniężny i kreacja pieniądza", html:`
+<div class="given">Stopa rezerw obowiązkowych = <b>10%</b>. Bank centralny zwiększa bazę monetarną o <b>200</b>. <b>Policz</b> mnożnik pieniężny i maksymalny wzrost podaży pieniądza.</div>
+<div class="eli5"><b>Jak to działa:</b> wpłacasz 200 do banku, bank zostawia 10% (20) w rezerwie, a 180 pożycza dalej. Te 180 ktoś znów wpłaca, bank pożycza 162... i tak pieniądz się „rozmnaża".</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">mnożnik pieniężny = 1 / stopa rezerw = 1 / 0,10 = <b>10</b></div>
+<div class="formula">max wzrost podaży pieniądza = 200 × 10 = <b>2000</b></div>
+<div class="answer">Podaż pieniądza może wzrosnąć maksymalnie o <b>2000</b>.</div></div>
+`},
+
+{badge:"TYPOWE", num:"14", title:"Ilościowa teoria pieniądza (MV = PY)", html:`
+<div class="given">Podaż pieniądza M = <b>500</b>, prędkość obiegu V = <b>4</b>. <b>Policz</b> PKB nominalny (P·Y). Dodatkowo: jeśli M rośnie o 10%, V stała, a realny PKB rośnie o 3% — jaka będzie inflacja?</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">M·V = P·Y → PKB nominalny = 500 × 4 = <b>2000</b></div>
+<p>W tempie wzrostu: %ΔM + %ΔV ≈ %ΔP + %ΔY</p>
+<div class="formula">10% + 0% ≈ inflacja + 3% → inflacja ≈ <b>7%</b></div>
+<div class="answer">PKB nominalny = <b>2000</b>; przewidywana inflacja ≈ <b>7%</b>.</div></div>
+`}
+];
+
+/* =================== DANE: ŚCIANA =================== */
+WALL = [
+{ico:"🧮", title:"Wzory, które musisz znać", items:[
+ "<b>Mnożnik wydatków</b> <code>k = 1/(1−MPC)</code>",
+ "<b>MPC + MPS = 1</b>",
+ "<b>Równowaga dochodu</b> <code>Y = AE</code>, czyli <code>Y = C₀+I+G + MPC·Y</code>",
+ "<b>Deflator PKB</b> <code>= PKB nom./PKB realny ×100</code>",
+ "<b>Stopa inflacji</b> <code>= (CPI₂−CPI₁)/CPI₁ ×100%</code>",
+ "<b>Stopa bezrobocia</b> <code>= bezrobotni/siła robocza ×100%</code>",
+ "<b>Reguła 70</b> <code>czas podwojenia ≈ 70/tempo wzrostu</code>",
+ "<b>Ilościowa teoria</b> <code>M·V = P·Y</code>",
+ "<b>Mnożnik pieniężny</b> <code>= 1/stopa rezerw</code>",
+ "<b>Efekt Fishera</b> <code>i ≈ r + oczekiwana inflacja</code>"]},
+
+{ico:"⚖️", title:"Równowaga dochodu (krzyż keynesowski)", items:[
+ "<b>AE</b> = konsumpcja + inwestycje + zakupy rządowe + eksport netto.",
+ "Konsumpcja: <code>C = C₀ + MPC·Yd</code> (część stała + część zależna od dochodu).",
+ "Równowaga = punkt, gdzie krzywa AE przecina linię <b>45°</b> (Y = AE).",
+ "<b>Produkcja &lt; wydatki</b> → zapasy <b>spadają</b> → firmy zwiększają produkcję.",
+ "<b>Produkcja &gt; wydatki</b> → zapasy <b>rosną</b> → firmy ograniczają produkcję.",
+ "Z podatkiem: konsumujemy z dochodu po opodatkowaniu <code>(Y−T)</code>."]},
+
+{ico:"📊", title:"PKB i dochód narodowy", items:[
+ "<b>PKB</b> = wartość rynkowa dóbr i usług <b>finalnych</b> wytworzonych w kraju w roku.",
+ "Liczymy tylko dobra finalne (inaczej podwójne liczenie) lub sumę <b>wartości dodanej</b>.",
+ "<b>PKB nominalny</b> — w cenach bieżących; <b>realny</b> — w cenach roku bazowego.",
+ "Realny PKB służy do mierzenia <b>wzrostu</b> (oczyszczony z inflacji).",
+ "<b>PKB per capita</b> = PKB / liczba ludności."]},
+
+{ico:"📉", title:"Bezrobocie", items:[
+ "<b>Siła robocza</b> = pracujący + bezrobotni (bierni się NIE liczą).",
+ "<b>Frykcyjne</b> — czas szukania pracy; <b>strukturalne</b> — niedopasowanie kwalifikacji.",
+ "<b>Cykliczne</b> — z powodu recesji (odchylenie od stopy naturalnej).",
+ "<b>Naturalna stopa</b> = frykcyjne + strukturalne (cykliczne = 0).",
+ "<b>NAIRU</b> — stopa, przy której inflacja się nie zmienia.",
+ "<b>Prawo Okuna</b> — wyższe bezrobocie ⇒ luka recesyjna w PKB."]},
+
+{ico:"🔥", title:"Inflacja i pieniądz", items:[
+ "<b>Inflacja</b> = wzrost ogólnego poziomu cen; <b>deflacja</b> = spadek; <b>dezinflacja</b> = wolniejszy wzrost.",
+ "<b>Stagflacja</b> = inflacja + spadek produkcji jednocześnie (szok podażowy).",
+ "Mierniki: <b>CPI</b> (koszyk konsumenta), <b>PPI</b> (ceny producentów), <b>deflator PKB</b>.",
+ "Koszty inflacji: „zdarte zelówki”, zmiana cenników, podatek inflacyjny.",
+ "Funkcje pieniądza: środek wymiany, jednostka rozrachunkowa, przechowywanie wartości.",
+ "<b>Neutralność pieniądza</b> — w długim okresie więcej pieniądza = tylko wyższe ceny."]},
+
+{ico:"🏦", title:"Bank centralny i polityka monetarna", items:[
+ "<b>Baza monetarna</b> = gotówka w obiegu + rezerwy banków.",
+ "<b>Podaż pieniądza</b> = baza × mnożnik pieniężny.",
+ "Narzędzia: operacje otwartego rynku, stopa rezerw, stopa dyskontowa.",
+ "<b>Ekspansywna</b> (luźna) → niższe stopy, więcej pieniądza, wyższy popyt.",
+ "<b>Restrykcyjna</b> (ciasna) → wyższe stopy, mniej pieniądza, niższa inflacja.",
+ "<b>Pułapka płynności</b> — stopy przy zerze, polityka pieniężna nie działa."]},
+
+{ico:"🏛️", title:"Polityka fiskalna i budżet", items:[
+ "<b>Polityka fiskalna</b> = zmiany wydatków rządowych (G) i podatków (T).",
+ "<b>Ekspansywna</b>: ↑G lub ↓T → wyższy popyt (walka z recesją).",
+ "<b>Restrykcyjna</b>: ↓G lub ↑T → niższy popyt (hamowanie inflacji).",
+ "<b>Deficyt</b>: G &gt; T; <b>nadwyżka</b>: G &lt; T.",
+ "<b>Automatyczne stabilizatory</b> — zasiłki i podatki działające same.",
+ "<b>Efekt wypychania</b> — deficyt ↑ stopy → mniej inwestycji prywatnych."]},
+
+{ico:"🚀", title:"Wzrost gospodarczy", items:[
+ "Źródła: <b>kapitał fizyczny</b>, <b>kapitał ludzki</b>, <b>postęp technologiczny</b>.",
+ "<b>Wydajność pracy</b> = produkcja na pracownika — klucz do długookresowego wzrostu.",
+ "<b>Malejąca produktywność kapitału</b> — sam kapitał nie wystarczy bez technologii.",
+ "<b>Reguła 70</b> — szybko liczy czas podwojenia dochodu.",
+ "<b>Hipoteza konwergencji</b> — biedniejsze kraje mogą doganiać bogatsze."]},
+
+{ico:"🌍", title:"Handel i kursy walut", items:[
+ "<b>Przewaga komparatywna</b> — produkuj to, co masz najniższym kosztem alternatywnym.",
+ "<b>Eksport netto</b> = eksport − import; dodatni = nadwyżka, ujemny = deficyt.",
+ "<b>Aprecjacja/deprecjacja</b> — wzrost/spadek wartości waluty (kurs płynny).",
+ "<b>Rewaluacja/dewaluacja</b> — to samo, ale przy kursie sztywnym (decyzja rządu).",
+ "Cła i kontyngenty chronią rynek krajowy, ale obniżają całkowitą nadwyżkę."]},
+
+{ico:"📈", title:"AD-AS i cykl koniunkturalny", items:[
+ "<b>AD</b> (popyt) opada — niższe ceny → wyższy popyt (efekt majątkowy i stopy proc.).",
+ "<b>SRAS</b> (krótka podaż) rośnie; <b>LRAS</b> (długa) pionowa na produkcie potencjalnym.",
+ "<b>Szok popytowy</b> przesuwa AD; <b>szok podażowy</b> przesuwa SRAS.",
+ "Cykl: ekspansja → <b>szczyt</b> → recesja → <b>dno</b> → ekspansja.",
+ "<b>Luka recesyjna</b>: PKB &lt; potencjał; <b>luka inflacyjna</b>: PKB &gt; potencjał."]}
+];
+
+/* =================== DANE: QUIZ =================== */
+QUIZ = [
+{cat:"pkb",topic:"PKB",q:"Co dokładnie mierzy PKB?",o:["Wartość wszystkich dóbr finalnych wytworzonych w kraju w danym roku","Liczbę zatrudnionych osób","Sumę oszczędności gospodarstw domowych","Ilość pieniądza w obiegu"],a:0,e:"PKB = wartość rynkowa dóbr i usług finalnych wytworzonych w gospodarce w danym roku."},
+{cat:"pkb",topic:"PKB",q:"Czym różni się PKB realny od nominalnego?",o:["Realny jest liczony w cenach roku bazowego (bez wpływu inflacji)","Realny dotyczy tylko usług","Nominalny pomija eksport","Nie ma różnicy"],a:0,e:"PKB realny liczymy w stałych cenach roku bazowego, dzięki czemu pokazuje zmianę ilości, a nie cen."},
+{cat:"pkb",topic:"PKB",q:"Deflator PKB obliczamy jako:",o:["(PKB nominalny / PKB realny) × 100","(PKB realny / PKB nominalny) × 100","PKB nominalny − PKB realny","PKB realny × stopa inflacji"],a:0,e:"Deflator = PKB nominalny / PKB realny × 100. Pokazuje ogólny wzrost cen względem roku bazowego."},
+{cat:"pkb",topic:"PKB",q:"Aby uniknąć podwójnego liczenia w PKB, sumujemy:",o:["Wartość dodaną na każdym etapie produkcji","Wszystkie transakcje w gospodarce","Tylko produkcję rządu","Dobra pośrednie i finalne razem"],a:0,e:"Liczymy dobra finalne lub równoważnie sumę wartości dodanej — inaczej policzylibyśmy te same składniki wielokrotnie."},
+
+{cat:"adas",topic:"Równowaga",q:"Gospodarka jest w równowadze dochodu, gdy:",o:["Produkcja = planowane wydatki zagregowane","Eksport = import","Inflacja = 0","Budżet jest zrównoważony"],a:0,e:"Równowaga dochodów i wydatków: realny PKB = planowane wydatki zagregowane (Y = AE)."},
+{cat:"adas",topic:"Równowaga",q:"Jeśli planowane wydatki przewyższają produkcję, to zapasy:",o:["Nieplanowo spadają, a firmy zwiększą produkcję","Nieplanowo rosną","Nie zmieniają się","Zamieniają się w oszczędności"],a:0,e:"Popyt > produkcja → towar znika z magazynów (zapasy spadają) → sygnał do zwiększenia produkcji."},
+{cat:"adas",topic:"Mnożnik",q:"Mnożnik wydatków przy MPC = 0,75 wynosi:",o:["4","0,25","1,75","7,5"],a:0,e:"k = 1/(1−MPC) = 1/(1−0,75) = 1/0,25 = 4."},
+{cat:"adas",topic:"Mnożnik",q:"Inwestycje rosną o 100, MPC = 0,8. O ile wzrośnie PKB w równowadze?",o:["500","100","80","400"],a:0,e:"ΔY = 1/(1−0,8) × 100 = 5 × 100 = 500."},
+{cat:"adas",topic:"AD-AS",q:"Stagflacja to:",o:["Jednoczesna inflacja i spadek produkcji","Wysoki wzrost i niska inflacja","Spadek cen i wzrost produkcji","Pełne zatrudnienie"],a:0,e:"Stagflacja = inflacja + spadek produkcji naraz; typowo wywołana negatywnym szokiem podażowym."},
+{cat:"adas",topic:"Cykl",q:"Punkt, w którym gospodarka przechodzi z ekspansji do recesji, to:",o:["Szczyt cyklu koniunkturalnego","Dno cyklu","Luka inflacyjna","Produkt potencjalny"],a:0,e:"Szczyt = przejście z ekspansji do recesji; dno = z recesji do ekspansji."},
+{cat:"adas",topic:"AD-AS",q:"Negatywny szok podażowy przesuwa krzywą:",o:["SRAS w lewo (wyższe ceny, niższa produkcja)","AD w prawo","LRAS w prawo","Popytu na pieniądz w dół"],a:0,e:"Szok podażowy (np. wzrost cen ropy) przesuwa SRAS w lewo → stagflacja."},
+
+{cat:"bezr",topic:"Bezrobocie",q:"Siłę roboczą tworzą:",o:["Pracujący i bezrobotni","Wszyscy dorośli","Tylko zatrudnieni","Pracujący i bierni zawodowo"],a:0,e:"Siła robocza = pracujący + bezrobotni. Bierni zawodowo (studenci, emeryci) się nie liczą."},
+{cat:"bezr",topic:"Bezrobocie",q:"Pracujący = 90, bezrobotni = 10, bierni = 50. Stopa bezrobocia wynosi:",o:["10%","6,7%","20%","11,1%"],a:0,e:"Siła robocza = 90+10 = 100. Stopa = 10/100 = 10%. Bierni nie wchodzą do mianownika."},
+{cat:"bezr",topic:"Bezrobocie",q:"Bezrobocie frykcyjne wynika z:",o:["Czasu poświęcanego na poszukiwanie pracy","Recesji","Automatyzacji likwidującej zawody","Zbyt wysokiej płacy minimalnej"],a:0,e:"Frykcyjne = naturalny czas między pracami (szukanie, zmiana). Występuje nawet w dobrej koniunkturze."},
+{cat:"bezr",topic:"Bezrobocie",q:"Naturalna stopa bezrobocia to suma bezrobocia:",o:["Frykcyjnego i strukturalnego","Cyklicznego i frykcyjnego","Cyklicznego i strukturalnego","Tylko strukturalnego"],a:0,e:"Naturalna stopa = frykcyjne + strukturalne. Bezrobocie cykliczne wtedy wynosi 0."},
+{cat:"bezr",topic:"Bezrobocie",q:"Prawo Okuna opisuje zależność między:",o:["Luką produktową a bezrobociem cyklicznym","Inflacją a stopą procentową","Podażą pieniądza a cenami","Eksportem a kursem walutowym"],a:0,e:"Prawo Okuna: im wyższe bezrobocie ponad naturalne, tym większa luka recesyjna (niższy PKB)."},
+
+{cat:"inf",topic:"Inflacja",q:"Inflacja to:",o:["Wzrost ogólnego poziomu cen","Spadek wartości eksportu","Wzrost bezrobocia","Spadek PKB"],a:0,e:"Inflacja = wzrost ogólnego poziomu cen. Stopa inflacji = procentowa zmiana wskaźnika cen."},
+{cat:"inf",topic:"Inflacja",q:"CPI mierzy:",o:["Koszt koszyka dóbr typowej rodziny","Ceny towarów kupowanych przez producentów","Podaż pieniądza","Eksport netto"],a:0,e:"CPI = wskaźnik cen dóbr i usług konsumpcyjnych typowego gospodarstwa. PPI dotyczy producentów."},
+{cat:"inf",topic:"Pieniądz",q:"Która funkcja pieniądza polega na ustalaniu cen i robieniu obliczeń?",o:["Jednostka rozrachunkowa","Środek wymiany","Przechowywanie wartości","Mnożnik pieniężny"],a:0,e:"Jako jednostka rozrachunkowa pieniądz pozwala wyrażać ceny i porównywać wartości."},
+{cat:"inf",topic:"Pieniądz",q:"Baza monetarna to:",o:["Gotówka w obiegu + rezerwy banków","Wszystkie depozyty","Podaż pieniądza M2","Dług publiczny"],a:0,e:"Baza monetarna (pieniądz wielkiej mocy) = gotówka w obiegu + rezerwy bankowe."},
+{cat:"inf",topic:"Pieniądz",q:"Przy stopie rezerw 20% mnożnik pieniężny wynosi:",o:["5","20","2","0,2"],a:0,e:"Mnożnik pieniężny = 1/stopa rezerw = 1/0,2 = 5."},
+{cat:"inf",topic:"Monetarna",q:"Ekspansywna polityka pieniężna to:",o:["Zwiększanie podaży pieniądza i obniżanie stóp","Podnoszenie podatków","Sprzedaż obligacji przez bank centralny","Zmniejszanie wydatków rządu"],a:0,e:"Ekspansywna (luźna) polityka pieniężna zwiększa podaż pieniądza, obniża stopy i pobudza popyt."},
+{cat:"inf",topic:"Monetarna",q:"Równanie ilościowej teorii pieniądza to:",o:["M · V = P · Y","C + I + G = Y","Y = C₀ + MPC·Y","i = r + π"],a:0,e:"M·V = P·Y: podaż pieniądza × prędkość obiegu = poziom cen × realny PKB."},
+{cat:"inf",topic:"Inflacja",q:"Efekt Fishera mówi, że wzrost oczekiwanej inflacji:",o:["Podnosi nominalną stopę procentową, realna bez zmian","Obniża wszystkie stopy","Nie wpływa na stopy","Zwiększa realny PKB"],a:0,e:"i ≈ r + oczekiwana inflacja. Realna stopa pozostaje stała, rośnie nominalna."},
+
+{cat:"fisk",topic:"Fiskalna",q:"Deficyt budżetowy występuje, gdy:",o:["Wydatki publiczne > wpływy z podatków","Wpływy > wydatki","Eksport > import","Inflacja > 0"],a:0,e:"Deficyt: G > T. Gdy T > G mamy nadwyżkę budżetową."},
+{cat:"fisk",topic:"Fiskalna",q:"Który element jest automatycznym stabilizatorem?",o:["Zasiłki dla bezrobotnych i podatki dochodowe","Stopa rezerw obowiązkowych","Kurs walutowy","Stopa dyskontowa"],a:0,e:"Automatyczne stabilizatory (zasiłki, progresywne podatki) działają same, bez decyzji rządu."},
+{cat:"fisk",topic:"Fiskalna",q:"Efekt wypychania (crowding out) polega na tym, że:",o:["Deficyt podnosi stopy proc. i ogranicza inwestycje prywatne","Import wypiera eksport","Inflacja wypiera oszczędności","Płaca minimalna zwiększa bezrobocie"],a:0,e:"Pożyczki rządu na pokrycie deficytu podnoszą stopy procentowe, zniechęcając firmy do inwestowania."},
+{cat:"fisk",topic:"Fiskalna",q:"Restrykcyjna polityka fiskalna to:",o:["Cięcie wydatków lub podwyżka podatków","Obniżka stóp procentowych","Skup obligacji","Druk pieniądza"],a:0,e:"Restrykcyjna polityka fiskalna (↓G lub ↑T) zmniejsza zagregowany popyt — hamuje inflację."},
+
+{cat:"wzr",topic:"Wzrost",q:"Reguła 70: przy wzroście 5% rocznie PKB podwoi się po około:",o:["14 latach","5 latach","35 latach","70 latach"],a:0,e:"70 / 5 = 14 lat."},
+{cat:"wzr",topic:"Wzrost",q:"Głównym źródłem długookresowego wzrostu wydajności jest:",o:["Postęp technologiczny","Wzrost cen","Większy deficyt budżetowy","Wyższa inflacja"],a:0,e:"Długookresowo to postęp technologiczny (obok kapitału ludzkiego) napędza wydajność pracy."},
+{cat:"wzr",topic:"Wzrost",q:"Malejąca krańcowa produktywność kapitału oznacza, że:",o:["Każda kolejna maszyna daje coraz mniejszy przyrost produkcji","Kapitał nigdy się nie zużywa","Technologia jest bez znaczenia","Produkcja rośnie w nieskończoność"],a:0,e:"Przy stałej technologii i kapitale ludzkim dorzucanie samego kapitału fizycznego daje coraz mniejsze przyrosty."},
+
+{cat:"handel",topic:"Handel",q:"Kraj ma przewagę komparatywną w dobrze, którego:",o:["Koszt alternatywny produkcji jest niższy niż u innych","Cena jest najwyższa","Produkcja jest największa","Eksport jest zakazany"],a:0,e:"Przewaga komparatywna = niższy koszt alternatywny. To ona, nie absolutna, decyduje o opłacalności handlu."},
+{cat:"handel",topic:"Kursy",q:"Aprecjacja waluty to:",o:["Wzrost jej wartości względem innych walut","Spadek jej wartości","Decyzja rządu przy kursie sztywnym","Wzrost inflacji"],a:0,e:"Aprecjacja = wzrost wartości (kurs płynny). Spadek to deprecjacja. Przy kursie sztywnym: rewaluacja/dewaluacja."},
+{cat:"handel",topic:"Handel",q:"Eksport netto to:",o:["Eksport minus import","Import minus eksport","Suma eksportu i importu","Eksport razy kurs"],a:0,e:"Eksport netto = eksport − import. Dodatni = nadwyżka handlowa, ujemny = deficyt."},
+
+{cat:"pkb",topic:"PKB",q:"Które z poniższych NIE jest wliczane do PKB danego roku?",o:["Sprzedaż samochodu używanego","Nowy telefon kupiony przez konsumenta","Usługa fryzjerska","Nowy dom"],a:0,e:"PKB liczy produkcję bieżącego roku. Używany samochód był już policzony, gdy go wyprodukowano — to tylko zmiana właściciela."},
+{cat:"pkb",topic:"PKB",q:"Wartość dodana producenta to:",o:["Wartość sprzedaży minus wartość zakupionych dóbr pośrednich","Cała wartość sprzedaży","Zysk netto po podatkach","Wartość eksportu"],a:0,e:"Wartość dodana = sprzedaż − zakupy dóbr i usług pośrednich. Suma wartości dodanej = PKB."},
+{cat:"pkb",topic:"PKB",q:"PKB per capita to:",o:["PKB podzielony przez liczbę ludności","PKB pomnożony przez inflację","PKB realny minus nominalny","Eksport na mieszkańca"],a:0,e:"PKB per capita = PKB / liczba ludności — przybliża średni dochód na osobę."},
+{cat:"pkb",topic:"PKB",q:"Bilans płatniczy kraju to:",o:["Podsumowanie wszystkich transakcji z zagranicą w danym roku","Tylko eksport towarów","Dług publiczny wobec zagranicy","Saldo budżetu państwa"],a:0,e:"Bilans płatniczy zestawia rachunek obrotów bieżących i finansowych — całość transakcji z zagranicą."},
+{cat:"pkb",topic:"PKB",q:"Dobra finalne to dobra:",o:["Sprzedawane użytkownikowi końcowemu","Kupowane przez firmy jako surowiec","Wyłącznie eksportowane","Tylko usługi rządowe"],a:0,e:"Dobra finalne trafiają do użytkownika końcowego; dobra pośrednie są wkładem do dalszej produkcji."},
+
+{cat:"adas",topic:"Mnożnik",q:"Przy MPC = 0,9 krańcowa skłonność do oszczędzania (MPS) wynosi:",o:["0,1","0,9","1","0,19"],a:0,e:"MPC + MPS = 1, więc MPS = 1 − 0,9 = 0,1."},
+{cat:"adas",topic:"Mnożnik",q:"Mnożnik wydatków przy MPC = 0,6 wynosi:",o:["2,5","6","1,6","0,4"],a:0,e:"k = 1/(1−0,6) = 1/0,4 = 2,5."},
+{cat:"adas",topic:"Cykl",q:"Dno cyklu koniunkturalnego to punkt, w którym gospodarka:",o:["Przechodzi z recesji do ekspansji","Przechodzi z ekspansji do recesji","Osiąga produkt potencjalny","Ma zerową inflację"],a:0,e:"Dno = przejście z recesji do ekspansji. Szczyt = odwrotnie."},
+{cat:"adas",topic:"Równowaga",q:"W krzyżu keynesowskim równowaga to punkt, w którym:",o:["Krzywa planowanych wydatków przecina linię 45°","AD przecina LRAS","Inflacja równa się bezrobociu","Oszczędności są zerowe"],a:0,e:"Linia 45° to miejsca, gdzie Y = AE; jej przecięcie z krzywą wydatków wyznacza równowagę."},
+{cat:"adas",topic:"AD-AS",q:"Luka inflacyjna występuje, gdy:",o:["Produkcja jest wyższa od produktu potencjalnego","Produkcja jest niższa od potencjału","Bezrobocie przekracza naturalne","Budżet ma deficyt"],a:0,e:"Luka inflacyjna: PKB > potencjał (gospodarka „przegrzana”). Luka recesyjna: PKB < potencjał."},
+{cat:"adas",topic:"Mnożnik",q:"Zasada akceleratora mówi, że:",o:["Wyższe tempo wzrostu PKB zwiększa planowane inwestycje","Inwestycje zawsze maleją","Konsumpcja nie zależy od dochodu","Mnożnik jest zawsze równy 1"],a:0,e:"Akcelerator: szybszy wzrost PKB → wyższe planowane wydatki inwestycyjne (i odwrotnie)."},
+{cat:"adas",topic:"AD-AS",q:"Długookresowa krzywa podaży zagregowanej (LRAS) jest:",o:["Pionowa na poziomie produktu potencjalnego","Pozioma","Opadająca","Taka sama jak AD"],a:0,e:"W długim okresie produkcja zależy od zasobów i technologii, nie od cen — stąd pionowa LRAS na potencjale."},
+
+{cat:"bezr",topic:"Bezrobocie",q:"Pracownik zniechęcony jest klasyfikowany jako:",o:["Bierny zawodowo (poza siłą roboczą)","Bezrobotny","Pracujący","Frykcyjnie bezrobotny"],a:0,e:"Zniechęceni przestali szukać pracy, więc wypadają z siły roboczej i nie liczą się do stopy bezrobocia."},
+{cat:"bezr",topic:"Bezrobocie",q:"Bezrobocie strukturalne wynika z:",o:["Niedopasowania kwalifikacji do potrzeb rynku","Recesji","Czasu poświęcanego na zmianę pracy","Sezonowości"],a:0,e:"Strukturalne = trwałe niedopasowanie umiejętności/lokalizacji do dostępnych miejsc pracy."},
+{cat:"bezr",topic:"Bezrobocie",q:"Krótkookresowa krzywa Phillipsa pokazuje:",o:["Odwrotną relację między bezrobociem a inflacją","Dodatnią relację bezrobocia i inflacji","Relację PKB i eksportu","Brak związku zmiennych"],a:0,e:"W krótkim okresie niższe bezrobocie wiąże się z wyższą inflacją (krzywa opadająca)."},
+{cat:"bezr",topic:"Bezrobocie",q:"Długookresowa krzywa Phillipsa jest pionowa, ponieważ:",o:["Oczekiwania inflacyjne się dostosowują, a bezrobocie wraca do naturalnego","Inflacja jest zawsze zerowa","Płace są sztywne na zawsze","Rząd kontroluje ceny"],a:0,e:"Długookresowo bezrobocie wraca do stopy naturalnej niezależnie od inflacji — stąd pionowa krzywa."},
+{cat:"bezr",topic:"Bezrobocie",q:"Bezrobocie cykliczne to:",o:["Odchylenie od stopy naturalnej wskutek wahań koniunktury","Bezrobocie wynikające z pór roku","Stałe niedopasowanie kwalifikacji","Naturalna stopa bezrobocia"],a:0,e:"Cykliczne rośnie w recesji i spada w ekspansji — to różnica między faktyczną a naturalną stopą."},
+
+{cat:"inf",topic:"Inflacja",q:"Dezinflacja oznacza, że:",o:["Ceny nadal rosną, ale wolniej niż wcześniej","Ceny spadają","Inflacja jest ujemna","Pieniądz traci status prawnego środka płatniczego"],a:0,e:"Dezinflacja = spadek stopy inflacji (np. z 8% na 4%). Spadek cen to deflacja."},
+{cat:"inf",topic:"Inflacja",q:"Deflacja to:",o:["Spadek ogólnego poziomu cen","Spowolnienie wzrostu cen","Wzrost podaży pieniądza","Wzrost bezrobocia"],a:0,e:"Deflacja = ujemna inflacja, czyli spadek ogólnego poziomu cen."},
+{cat:"inf",topic:"Pieniądz",q:"Pieniądz fiducjarny to pieniądz, którego wartość:",o:["Wynika z jego oficjalnego statusu, a nie z materiału","Pochodzi z zawartości złota","Jest gwarantowana towarem","Zależy od kursu walut"],a:0,e:"Pieniądz fiducjarny (np. banknot) nie ma wartości wewnętrznej — opiera się na zaufaniu i statusie prawnym."},
+{cat:"inf",topic:"Pieniądz",q:"Przy stopie rezerw 25% mnożnik pieniężny wynosi:",o:["4","25","2,5","0,25"],a:0,e:"Mnożnik pieniężny = 1/0,25 = 4."},
+{cat:"inf",topic:"Monetarna",q:"Restrykcyjna polityka pieniężna polega na:",o:["Podnoszeniu stóp i ograniczaniu podaży pieniądza","Obniżaniu stóp procentowych","Zwiększaniu wydatków rządu","Skupie obligacji"],a:0,e:"Restrykcyjna (ciasna) polityka pieniężna ogranicza podaż pieniądza i podnosi stopy — hamuje inflację."},
+{cat:"inf",topic:"Monetarna",q:"Gdy bank centralny skupuje obligacje na otwartym rynku, to:",o:["Zwiększa podaż pieniądza (działanie ekspansywne)","Zmniejsza podaż pieniądza","Podnosi rezerwę obowiązkową","Zwiększa podatki"],a:0,e:"Skup obligacji wpompowuje pieniądz do gospodarki → podaż pieniądza rośnie, stopy spadają."},
+{cat:"inf",topic:"Pieniądz",q:"Neutralność pieniądza oznacza, że w długim okresie zmiany podaży pieniądza:",o:["Wpływają tylko na ceny, nie na realny PKB","Zwiększają trwale produkcję","Obniżają bezrobocie naturalne","Nie mają wpływu na ceny"],a:0,e:"Długookresowo więcej pieniądza = wyższe ceny; realna produkcja zależy od czynników realnych."},
+{cat:"inf",topic:"Inflacja",q:"Podatek inflacyjny to:",o:["Utrata siły nabywczej pieniądza trzymanego przez społeczeństwo","Podatek od zysków kapitałowych","Cło nakładane na import","Opłata bankowa"],a:0,e:"Inflacja „opodatkowuje” gotówkę — jej realna wartość maleje, co przynosi korzyść emitentowi pieniądza."},
+{cat:"inf",topic:"Pieniądz",q:"Pułapka płynności to sytuacja, gdy:",o:["Stopy są przy zerze i polityka pieniężna przestaje działać","Banki nie mają rezerw","Inflacja jest bardzo wysoka","Kurs walutowy jest sztywny"],a:0,e:"Przy zerowej dolnej granicy stóp obniżki już nie pobudzają popytu — konwencjonalna polityka pieniężna jest nieskuteczna."},
+
+{cat:"fisk",topic:"Fiskalna",q:"Nadwyżka budżetowa występuje, gdy:",o:["Wpływy z podatków > wydatki publiczne","Wydatki > wpływy","Eksport > import","Dług = 0"],a:0,e:"Nadwyżka: T > G. Deficyt: G > T."},
+{cat:"fisk",topic:"Fiskalna",q:"Czym różni się dług publiczny od deficytu?",o:["Dług to skumulowany zasób, deficyt to roczny strumień","To synonimy","Dług dotyczy tylko zagranicy","Deficyt jest zawsze większy od długu"],a:0,e:"Deficyt to różnica wydatki−wpływy w danym roku; dług publiczny to suma narosłych deficytów z lat."},
+{cat:"fisk",topic:"Fiskalna",q:"Ekspansywna polityka fiskalna to:",o:["Wzrost wydatków rządowych lub obniżka podatków","Podwyżka podatków","Cięcie wydatków","Podniesienie stóp procentowych"],a:0,e:"Ekspansywna fiskalna (↑G lub ↓T) zwiększa zagregowany popyt — stosowana w walce z recesją."},
+{cat:"fisk",topic:"Fiskalna",q:"Saldo strukturalne budżetu to:",o:["Saldo, jakie byłoby przy PKB równym potencjałowi","Saldo w bieżącym roku","Dług publiczny do PKB","Saldo handlu zagranicznego"],a:0,e:"Saldo strukturalne oczyszcza budżet z wpływu cyklu — pokazuje sytuację przy pełnym wykorzystaniu zasobów."},
+
+{cat:"wzr",topic:"Wzrost",q:"Kapitał ludzki to:",o:["Wiedza i umiejętności pracowników (efekt edukacji)","Maszyny i budynki","Zasoby naturalne","Pieniądze w banku"],a:0,e:"Kapitał ludzki = jakość pracy wynikająca z edukacji, doświadczenia i zdrowia."},
+{cat:"wzr",topic:"Wzrost",q:"Reguła 70: przy wzroście 2% rocznie dochód podwoi się po około:",o:["35 latach","14 latach","20 latach","70 latach"],a:0,e:"70 / 2 = 35 lat."},
+{cat:"wzr",topic:"Wzrost",q:"Hipoteza konwergencji głosi, że:",o:["Biedniejsze kraje mają tendencję do doganiania bogatszych","Wszystkie kraje rosną tak samo szybko","Różnice w PKB rosną w czasie","Wzrost jest niemożliwy"],a:0,e:"Konwergencja: różnice w PKB per capita między krajami mają tendencję do zmniejszania się w czasie."},
+{cat:"wzr",topic:"Wzrost",q:"Całkowita produktywność czynników (TFP) rośnie głównie dzięki:",o:["Postępowi technologicznemu","Wzrostowi cen","Większemu zadłużeniu","Wyższym podatkom"],a:0,e:"TFP odzwierciedla efektywność wykorzystania czynników — napędza ją głównie technologia."},
+{cat:"handel",topic:"Handel",q:"Przewaga komparatywna różni się od absolutnej tym, że dotyczy:",o:["Niższego kosztu alternatywnego, a nie większej wydajności","Wyłącznie eksportu","Liczby ludności","Wielkości PKB"],a:0,e:"Absolutna = produkuję więcej; komparatywna = produkuję taniej (niższy koszt alternatywny) — to ona decyduje o handlu."},
+{cat:"handel",topic:"Kursy",q:"Deprecjacja waluty to:",o:["Spadek jej wartości względem innych walut (kurs płynny)","Wzrost wartości waluty","Decyzja banku przy kursie sztywnym","Wzrost rezerw walutowych"],a:0,e:"Deprecjacja = rynkowy spadek wartości waluty. Odpowiednikiem przy kursie sztywnym jest dewaluacja."},
+{cat:"handel",topic:"Handel",q:"Cło to:",o:["Podatek nakładany na import","Dotacja do eksportu","Limit ilościowy importu","Kurs walutowy"],a:0,e:"Cło = podatek od towarów importowanych. Ilościowe ograniczenie to kontyngent."},
+{cat:"handel",topic:"Handel",q:"Deficyt handlowy występuje, gdy:",o:["Import jest większy od eksportu","Eksport jest większy od importu","Budżet ma deficyt","Waluta się umacnia"],a:0,e:"Deficyt handlowy: wartość importu > wartość eksportu (eksport netto ujemny)."},
+{cat:"met",topic:"Podstawy",q:"Koszt alternatywny danej decyzji to:",o:["Wartość najlepszej rzeczy, z której rezygnujemy","Cena rynkowa dobra","Koszt księgowy","Podatek od transakcji"],a:0,e:"Koszt alternatywny = to, z czego rezygnujesz, wybierając daną opcję."},
+{cat:"met",topic:"Podstawy",q:"Ekonomia normatywna zajmuje się tym:",o:["Jak gospodarka POWINNA działać (oceny wartościujące)","Jak gospodarka faktycznie działa","Wyłącznie statystyką","Tylko handlem zagranicznym"],a:0,e:"Normatywna = sądy wartościujące (jak powinno być). Pozytywna = opis faktów (jak jest)."},
+{cat:"met",topic:"Podstawy",q:"Makroekonomia (w przeciwieństwie do mikroekonomii) bada:",o:["Gospodarkę jako całość (PKB, inflacja, bezrobocie)","Decyzje pojedynczego konsumenta","Cenę jednego dobra","Zysk pojedynczej firmy"],a:0,e:"Makro patrzy na agregaty całej gospodarki; mikro — na pojedyncze podmioty i rynki."}
+];
+</script>
+<script>
+/* ---------- bezpieczny localStorage ---------- */
+const store={
+  get(k,def){try{const v=localStorage.getItem(k);return v?JSON.parse(v):def;}catch(e){return def;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+};
+
+/* ---------- NAWIGACJA ---------- */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById(t.dataset.view).classList.add('active');
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* ============ FISZKI ============ */
+let fcKnown=store.get('makro_known',{});
+let fcCat='all', fcMode='all', fcDeck=[], fcIdx=0, fcFlipped=false;
+
+function buildCatChips(){
+  const wrap=document.getElementById('fcCats');
+  let html=`<span class="chip active" data-c="all" onclick="fcSetCat('all',this)">Wszystkie kategorie</span>`;
+  for(const k in CATS){html+=`<span class="chip" data-c="${k}" onclick="fcSetCat('${k}',this)">${CATS[k]}</span>`;}
+  wrap.innerHTML=html;
+}
+function fcSetCat(c,el){
+  fcCat=c;
+  document.querySelectorAll('#fcCats .chip').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  fcBuildDeck();
+}
+function fcSetMode(m){
+  fcMode=m;
+  document.getElementById('modeAll').classList.toggle('active',m==='all');
+  document.getElementById('modeDont').classList.toggle('active',m==='dont');
+  fcBuildDeck();
+}
+function fcBuildDeck(){
+  fcDeck=FLASHCARDS.filter(c=>fcCat==='all'||c.c===fcCat);
+  if(fcMode==='dont') fcDeck=fcDeck.filter(c=>fcKnown[c.t]!==true);
+  fcIdx=0; fcFlipped=false;
+  fcRender();
+}
+function fcShuffle(){
+  for(let i=fcDeck.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fcDeck[i],fcDeck[j]]=[fcDeck[j],fcDeck[i]];}
+  fcIdx=0; fcFlipped=false; fcRender();
+}
+function fcStats(){
+  const pool=FLASHCARDS.filter(c=>fcCat==='all'||c.c===fcCat);
+  const know=pool.filter(c=>fcKnown[c.t]===true).length;
+  const dont=pool.filter(c=>fcKnown[c.t]===false).length;
+  document.getElementById('stTotal').textContent=pool.length;
+  document.getElementById('stKnow').textContent=know;
+  document.getElementById('stDont').textContent=dont;
+}
+function fcRender(){
+  fcStats();
+  const area=document.getElementById('fcArea'), done=document.getElementById('fcDone');
+  if(fcDeck.length===0){
+    area.style.display='none'; done.style.display='block';
+    document.getElementById('fcDoneTitle').textContent= fcMode==='dont'?'Brawo! 🏆':'Brak kart';
+    document.getElementById('fcDoneMsg').textContent= fcMode==='dont'
+      ? 'Nie masz tu już nic do powtórki w tej kategorii — wszystko oznaczone jako „Umiem".'
+      : 'W tej kategorii nie ma kart.';
+    document.getElementById('fcBar').style.width='100%';
+    return;
+  }
+  if(fcIdx>=fcDeck.length){
+    area.style.display='none'; done.style.display='block';
+    const know=fcDeck.filter(c=>fcKnown[c.t]===true).length;
+    document.getElementById('fcDoneTitle').textContent='Koniec zestawu! 🎉';
+    document.getElementById('fcDoneMsg').textContent=`Przejrzałeś ${fcDeck.length} fiszek. Umiesz: ${know}/${fcDeck.length}.`;
+    document.getElementById('fcBar').style.width='100%';
+    return;
+  }
+  area.style.display='block'; done.style.display='none';
+  const card=fcDeck[fcIdx];
+  const fc=document.getElementById('flashcard');
+  fc.classList.remove('flipped'); fcFlipped=false;
+  document.getElementById('fcTagF').textContent=CATS[card.c];
+  document.getElementById('fcTagB').textContent=CATS[card.c];
+  document.getElementById('fcTerm').textContent=card.t;
+  document.getElementById('fcDef').textContent=card.d;
+  let pos=`${fcIdx+1} / ${fcDeck.length}`;
+  if(fcKnown[card.t]===true)pos+=' ✓'; else if(fcKnown[card.t]===false)pos+=' ✗';
+  document.getElementById('fcPos').textContent=pos;
+  document.getElementById('fcBar').style.width=((fcIdx)/fcDeck.length*100)+'%';
+}
+function fcFlip(){fcFlipped=!fcFlipped;document.getElementById('flashcard').classList.toggle('flipped',fcFlipped);}
+function fcMark(known){
+  const card=fcDeck[fcIdx];
+  fcKnown[card.t]=known; store.set('makro_known',fcKnown);
+  fcNext();
+}
+function fcNext(){fcIdx++;fcRender();}
+function fcPrev(){if(fcIdx>0){fcIdx--;fcRender();}}
+function fcRestartAll(){fcSetMode('all');fcIdx=0;fcRender();}
+function fcResetProgress(){
+  if(confirm('Wyczyścić cały postęp (oznaczenia „Umiem/Nie umiem")?')){
+    fcKnown={}; store.set('makro_known',fcKnown); fcBuildDeck();
+  }
+}
+
+/* ============ ZADANIA ============ */
+function renderZadania(){
+  const wrap=document.getElementById('zadaniaArea');
+  wrap.innerHTML=ZADANIA.map((z,i)=>`
+   <div class="accordion${i===0?' open':''}">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle('open')">
+       <span class="acc-num">${z.num}</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">${z.badge}</span>${z.title}</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">${z.html}</div>
+   </div>`).join('');
+}
+function revealSol(btn){
+  const sol=btn.nextElementSibling;
+  const open=sol.classList.toggle('show');
+  btn.textContent=btn.textContent.replace(/[▾▴]/,open?'▴':'▾');
+}
+
+/* ============ ŚCIANA ============ */
+function renderWall(){
+  document.getElementById('wallArea').innerHTML=WALL.map(c=>`
+    <div class="wall-card">
+      <h3><span class="ico">${c.ico}</span>${c.title}</h3>
+      <ul>${c.items.map(it=>`<li>${it}</li>`).join('')}</ul>
+    </div>`).join('');
+}
+
+/* ============ QUIZ ============ */
+const QCATS={all:"Wszystko",pkb:"PKB",adas:"AD-AS / mnożnik",bezr:"Bezrobocie",inf:"Pieniądz / inflacja",fisk:"Pol. fiskalna",wzr:"Wzrost",handel:"Handel",met:"Podstawy"};
+let qCat='all', qMode='full', qBatch=0, qList=[], qIdx=0, qScore=0, qByTopic={}, qAnswered=false, qOrder=[];
+
+function renderQuizCats(){
+  const wrap=document.getElementById('quizCats');
+  let html='';
+  for(const k in QCATS){html+=`<span class="chip${k==='all'?' active':''}" data-c="${k}" onclick="quizSetCat('${k}',this)">${QCATS[k]}</span>`;}
+  wrap.innerHTML=html; quizUpdateCount();
+}
+function quizSetCat(c,el){
+  qCat=c; qBatch=0;
+  document.querySelectorAll('#quizCats .chip').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active');
+  if(qMode==='batch') renderBatches();
+  quizUpdateCount();
+}
+function quizSetMode(m){
+  qMode=m; qBatch=0;
+  document.getElementById('qmFull').classList.toggle('active',m==='full');
+  document.getElementById('qmBatch').classList.toggle('active',m==='batch');
+  const box=document.getElementById('quizBatches');
+  if(m==='batch'){box.style.display='flex';renderBatches();}
+  else{box.style.display='none';}
+  quizUpdateCount();
+}
+function renderBatches(){
+  const total=quizPool().length, n=Math.ceil(total/10);
+  let html='';
+  for(let i=0;i<n;i++){
+    const from=i*10+1, to=Math.min((i+1)*10,total);
+    html+=`<span class="chip${i===qBatch?' active':''}" onclick="quizSetBatch(${i},this)">Zestaw ${i+1} · ${from}–${to}</span>`;
+  }
+  document.getElementById('quizBatches').innerHTML=html;
+}
+function quizSetBatch(i,el){
+  qBatch=i;
+  document.querySelectorAll('#quizBatches .chip').forEach(x=>x.classList.remove('active'));
+  el.classList.add('active'); quizUpdateCount();
+}
+function quizPool(){return QUIZ.filter(q=>qCat==='all'||q.cat===qCat);}
+function quizSelected(){
+  const p=quizPool();
+  if(qMode==='batch') return p.slice(qBatch*10, qBatch*10+10);
+  return p;
+}
+function quizUpdateCount(){
+  const n=quizSelected().length;
+  const extra=qMode==='batch'?` (zestaw ${qBatch+1})`:'';
+  document.getElementById('quizCount').textContent=`Pytań w wybranym zakresie: ${n}${extra}`;
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function quizStart(){
+  qList=shuffle(quizSelected().slice());
+  if(qList.length===0){alert('Brak pytań w tym zakresie.');return;}
+  qIdx=0;qScore=0;qByTopic={};qAnswered=false;
+  document.getElementById('quizStart').style.display='none';
+  document.getElementById('quizResult').style.display='none';
+  document.getElementById('quizPlay').style.display='block';
+  renderQ();
+}
+function renderQ(){
+  qAnswered=false;
+  const q=qList[qIdx];
+  document.getElementById('qBar').style.width=(qIdx/qList.length*100)+'%';
+  document.getElementById('qProg').textContent=`Pytanie ${qIdx+1} z ${qList.length}`;
+  document.getElementById('qTopic').textContent=q.topic;
+  document.getElementById('qText').textContent=q.q;
+  const L=['A','B','C','D'];
+  qOrder=shuffle(q.o.map((_,i)=>i));
+  document.getElementById('qOpts').innerHTML=qOrder.map((origIdx,pos)=>
+    `<div class="opt" onclick="quizPick(${pos})"><span class="lt">${L[pos]}</span><span>${q.o[origIdx]}</span></div>`).join('');
+  const exp=document.getElementById('qExp'); exp.className='q-exp'; exp.textContent='';
+  document.getElementById('qNext').classList.remove('show');
+}
+function quizPick(pos){
+  if(qAnswered)return; qAnswered=true;
+  const q=qList[qIdx];
+  const picked=qOrder[pos];
+  const opts=document.querySelectorAll('#qOpts .opt');
+  opts.forEach((o,p)=>{o.classList.add('dis');
+    const oi=qOrder[p];
+    if(oi===q.a)o.classList.add('correct');
+    if(p===pos&&picked!==q.a)o.classList.add('wrong');});
+  qByTopic[q.topic]=qByTopic[q.topic]||{c:0,t:0}; qByTopic[q.topic].t++;
+  const exp=document.getElementById('qExp');
+  if(picked===q.a){qScore++;qByTopic[q.topic].c++;exp.className='q-exp show';exp.innerHTML='✓ Dobrze! '+q.e;}
+  else{exp.className='q-exp show wrongx';exp.innerHTML='✗ Poprawna: <b>'+q.o[q.a]+'</b>. '+q.e;}
+  const nx=document.getElementById('qNext');
+  nx.textContent=(qIdx===qList.length-1)?'Zobacz wynik →':'Następne →';
+  nx.classList.add('show');
+}
+function quizNext(){
+  if(qIdx<qList.length-1){qIdx++;renderQ();window.scrollTo({top:0,behavior:'smooth'});}
+  else quizShowResult();
+}
+function quizShowResult(){
+  document.getElementById('quizPlay').style.display='none';
+  const res=document.getElementById('quizResult'); res.style.display='block';
+  const pct=Math.round(qScore/qList.length*100);
+  document.getElementById('rScore').textContent=`${qScore} / ${qList.length}`;
+  let em,grade,msg;
+  if(pct>=90){em='🏆';grade='Świetnie!';msg='Materiał masz opanowany — tak trzymaj na egzaminie.';}
+  else if(pct>=70){em='💪';grade='Dobrze!';msg='Solidnie. Dopnij słabsze tematy na fiszkach.';}
+  else if(pct>=50){em='📚';grade='Nieźle, ale jest co poprawiać.';msg='Wróć do ściany i fiszek z najsłabszych działów.';}
+  else{em='🔁';grade='Trzeba poćwiczyć.';msg='Spokojnie — przejdź fiszki i ścianę, potem powtórz quiz.';}
+  document.getElementById('rEm').textContent=em;
+  document.getElementById('rGrade').textContent=`${grade} (${pct}%)`;
+  document.getElementById('rMsg').textContent=msg;
+  let bd='<h3 style="color:var(--green-bright);font-size:.95rem;margin-bottom:8px;">Wynik wg tematów</h3>';
+  for(const t in qByTopic){const o=qByTopic[t];bd+=`<div class="bd-row"><span>${t}</span><span style="font-weight:700;color:${o.c===o.t?'var(--green-bright)':'var(--gold)'}">${o.c}/${o.t}</span></div>`;}
+  document.getElementById('rBreak').innerHTML=bd;
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+function quizReset(){
+  document.getElementById('quizResult').style.display='none';
+  document.getElementById('quizStart').style.display='block';
+}
+
+/* ---------- INIT ---------- */
+buildCatChips();
+fcSetMode('all');
+renderZadania();
+renderWall();
+renderQuizCats();
+</script>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Unicorner — materiały do egzaminów</title>
+<meta name="description" content="Fiszki, zadania i quizy do egzaminów. Zrobione po ludzku przez studentów, dla studentów.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c0a18; --ink2:#100d20; --surface:#161230; --surface2:#1c1740;
+    --line:#272050; --line2:#352c66;
+    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --accent-d:#8b5cf6;
+    --ok:#5ad1a0; --ok-bg:#10241d;
+    --iris:linear-gradient(115deg,#5ad1ff 0%,#a78bfa 34%,#f472b6 66%,#fcd34d 100%);
+    --shadow:0 18px 50px rgba(0,0,0,.5);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:
+      radial-gradient(900px 500px at 85% -8%, #1e1646 0%, transparent 58%),
+      radial-gradient(700px 460px at -8% 4%, #181133 0%, transparent 52%),
+      var(--ink);
+    color:var(--text);min-height:100vh;line-height:1.55;letter-spacing:.1px;overflow-x:hidden;
+  }
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px;}
+
+  /* HEADER */
+  header{padding:22px 0 6px;}
+  .brand{display:flex;align-items:center;gap:11px;}
+  .horn{width:30px;height:30px;flex-shrink:0;display:block;}
+  .horn .seg{fill:url(#irisGrad);}
+  .wordmark{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:1.32rem;letter-spacing:-.3px;}
+  .wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% 100%;}
+  @media (prefers-reduced-motion: no-preference){
+    .wordmark .ai{animation:shimmer 7s linear infinite;}
+    .horn{animation:hornFloat 5s ease-in-out infinite;}
+  }
+  @keyframes shimmer{to{background-position:200% 0;}}
+  @keyframes hornFloat{50%{transform:translateY(-3px) rotate(-3deg);}}
+
+  /* HERO */
+  .hero{padding:46px 0 30px;max-width:720px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:'Space Grotesk',sans-serif;font-size:.74rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);background:var(--ink2);padding:6px 12px;border-radius:999px;margin-bottom:20px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);}
+  h1{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(2.1rem,6vw,3.4rem);line-height:1.06;letter-spacing:-1px;margin-bottom:18px;}
+  h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .lede{font-size:1.06rem;color:var(--muted);max-width:560px;}
+  .lede b{color:var(--text);font-weight:600;}
+
+  /* ROW LABEL */
+  .row-label{display:flex;align-items:baseline;gap:12px;margin:14px 0 16px;font-family:'Space Grotesk',sans-serif;}
+  .row-label h2{font-size:1.04rem;font-weight:600;letter-spacing:.2px;}
+  .row-label .count{font-size:.8rem;color:var(--muted2);font-variant-numeric:tabular-nums;}
+  .row-label .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+
+  /* SUBJECT CARDS */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;margin-bottom:40px;}
+  .card{position:relative;display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:22px 22px 20px;text-decoration:none;color:inherit;overflow:hidden;transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease;opacity:0;transform:translateY(14px);}
+  .card.in{opacity:1;transform:none;}
+  @media (prefers-reduced-motion: reduce){.card{opacity:1;transform:none;transition:none;}}
+  .card.live::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);opacity:.9;}
+  .card.live:hover{transform:translateY(-5px);border-color:var(--line2);box-shadow:var(--shadow);}
+  .card.live:focus-visible{outline:2px solid var(--accent);outline-offset:3px;}
+  .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:14px;}
+  .emoji{width:46px;height:46px;flex-shrink:0;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;background:var(--surface2);border:1px solid var(--line);}
+  .badge{font-family:'Space Grotesk',sans-serif;font-size:.66rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:5px 9px;border-radius:7px;white-space:nowrap;}
+  .badge.live{color:var(--ok);background:var(--ok-bg);border:1px solid #1d4a3a;}
+  .badge.soon{color:var(--muted2);background:var(--ink2);border:1px solid var(--line);}
+  .card h3{font-family:'Space Grotesk',sans-serif;font-size:1.22rem;font-weight:600;letter-spacing:-.2px;margin-bottom:6px;}
+  .card .desc{font-size:.88rem;color:var(--muted);margin-bottom:16px;flex:1;}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;}
+  .tag{font-size:.74rem;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-radius:7px;padding:4px 9px;}
+  .go{display:inline-flex;align-items:center;gap:7px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.9rem;color:var(--text);margin-top:auto;}
+  .card.live:hover .go{color:#fff;}
+  .card.live:hover .go .arr{transform:translateX(4px);}
+  .go .arr{transition:transform .22s ease;color:var(--accent);}
+  .card.soon{cursor:default;}
+  .card.soon .go{color:var(--muted2);}
+
+  /* ABOUT */
+  .about{border:1px solid var(--line);border-radius:18px;background:var(--ink2);padding:24px;margin-bottom:48px;display:grid;gap:18px;grid-template-columns:repeat(3,1fr);}
+  .about .item h4{font-family:'Space Grotesk',sans-serif;font-size:.95rem;font-weight:600;margin-bottom:5px;}
+  .about .item p{font-size:.85rem;color:var(--muted);}
+  @media(max-width:640px){.about{grid-template-columns:1fr;}}
+
+  /* FAQ */
+  .faq{display:flex;flex-direction:column;gap:12px;margin-bottom:60px;}
+  .faq-item{position:relative;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:14px;cursor:pointer;color:inherit;font-family:inherit;overflow:hidden;transition:border-color .2s ease, background .2s ease;}
+  .faq-item:hover, .faq-item.open{border-color:transparent;background:var(--surface2);}
+  /* iryzująca obwódka na hover / otwarciu (maska gradientowa) */
+  .faq-item:hover::before, .faq-item.open::before{
+    content:"";position:absolute;inset:0;border-radius:14px;padding:1px;background:var(--iris);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+    -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
+  }
+  .faq-item:focus-visible{outline:2px solid var(--accent);outline-offset:2px;}
+  .faq-q{display:flex;align-items:center;gap:14px;padding:18px 22px;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:1.02rem;}
+  .faq-ic{width:20px;height:20px;flex-shrink:0;position:relative;}
+  .faq-ic::before,.faq-ic::after{content:"";position:absolute;background:var(--accent);border-radius:2px;transition:transform .25s ease;}
+  .faq-ic::before{top:9px;left:2px;width:16px;height:2px;}
+  .faq-ic::after{top:2px;left:9px;width:2px;height:16px;}
+  .faq-item.open .faq-ic::after{transform:rotate(90deg);opacity:0;}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .faq-item.open .faq-a{max-height:300px;}
+  .faq-a p{padding:0 22px 20px 56px;font-size:.92rem;color:var(--muted);}
+  .faq-a p b{color:var(--text);font-weight:600;}
+
+  /* GIANT WORDMARK */
+  .giant{position:relative;width:100vw;left:50%;margin-left:-50vw;overflow:hidden;line-height:.8;user-select:none;pointer-events:none;margin-bottom:-2vw;}
+  .giant span{display:block;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(3.4rem,17vw,15rem);letter-spacing:-.04em;text-align:center;white-space:nowrap;color:#1a1640;}
+  @supports (-webkit-background-clip:text){
+    .giant span{background:linear-gradient(180deg,#221c4a 0%,#14112e 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  }
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--line);padding:26px 0 50px;}
+  .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+  .disclaimer{font-size:.78rem;color:var(--muted2);max-width:560px;line-height:1.6;}
+  .disclaimer b{color:var(--muted);font-weight:600;}
+  .foot-brand{display:flex;align-items:center;gap:8px;color:var(--muted);font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:.9rem;}
+
+  @media(max-width:560px){
+    .hero{padding:34px 0 24px;}
+    .about{padding:20px;}
+    .faq-a p{padding-left:22px;}
+  }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+      <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<div class="wrap">
+  <header>
+    <div class="brand">
+      <svg class="horn" viewBox="0 0 24 24" aria-hidden="true">
+        <path class="seg" d="M12 1 L15 22 H9 Z"/>
+        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#0c0a18" stroke-width="1.1" fill="none" opacity="0.55"/>
+      </svg>
+      <span class="wordmark">Unicorn<span class="ai">er</span></span>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>materiały studenckie · UEP</span>
+    <h1>Egzaminy ogarnięte <span class="grad">po ludzku.</span></h1>
+    <p class="lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
+  </section>
+
+  <div class="row-label"><h2>Przedmioty</h2><span class="count" id="count"></span><span class="line"></span></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="about">
+    <div class="item"><h4>Po co to jest</h4><p>Wkuwanie definicji rzadko wystarcza — egzaminy lubią przykłady i zastosowanie. Materiały są pod to ułożone.</p></div>
+    <div class="item"><h4>Jak korzystać</h4><p>Wybierz przedmiot, przejdź fiszki, rozwiąż zadania, sprawdź się quizem. Postęp zapisuje się w przeglądarce.</p></div>
+    <div class="item"><h4>Skąd się bierze</h4><p>To nasze własne opracowania na bazie zajęć. Robione, bo sami się z tego uczymy — i bo działa.</p></div>
+  </div>
+
+  <div class="row-label"><h2>FAQ</h2><span class="line"></span></div>
+  <div class="faq" id="faq"></div>
+</div>
+
+<div class="giant" aria-hidden="true"><span>UNICORNER</span></div>
+
+<div class="wrap">
+  <footer>
+    <div class="foot-grid">
+      <p class="disclaimer">
+        <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą.
+        Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.
+        Bez gwarancji kompletności: ucz się też z oryginalnych źródeł.
+      </p>
+      <div class="foot-brand">
+        <svg class="horn" style="width:18px;height:18px;animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        Unicorner
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* ===== PRZEDMIOTY — dodanie nowego = jeden wpis =====
+   status:'live' → karta klikalna (linkuje do file); 'soon' → wyszarzona.
+   file: nazwa pliku HTML w TYM SAMYM folderze co ta strona.            */
+const SUBJECTS = [
+  { name:"Makroekonomia", emoji:"📈",
+    desc:"Pieniądz, inflacja, bezrobocie, wzrost, cykl koniunkturalny i polityka banku centralnego.",
+    tags:["Fiszki","Zadania","Ściana","Quiz"], status:"live", file:"makroekonomia.html" },
+  { name:"Podstawy marketingu", emoji:"🎯",
+    desc:"Reguły Cialdiniego, marketing mix (4P/7P/4C), proces decyzyjny konsumenta, segmentacja i perswazja.",
+    tags:["Materiały","Quiz 55 pytań"], status:"live", file:"marketing.html" },
+  { name:"Metody i Techniki Zarządzania", emoji:"⚙️",
+    desc:"VUCA, narzędzia jakości, analiza przyczyn źródłowych (RCA), kreatywność i praca zespołowa.",
+    tags:["Kompendium","Quiz"], status:"live", file:"mitz.html" },
+  { name:"Statystyka opisowa", emoji:"📊",
+    desc:"Miary średnie, pozycyjne i zróżnicowania, asymetria i koncentracja. Liczenie w Excelu, nie wkuwanie definicji.",
+    tags:["Materiały","Ściąga Excela","Zadania","Quiz"], status:"live", file:"statystyka.html" },
+  { name:"Kolejne przedmioty", emoji:"✦",
+    desc:"Dochodzą po kolei. Masz przedmiot, który chcesz tu zobaczyć następny? Daj znać.",
+    tags:["Wkrótce"], status:"soon", file:null }
+];
+
+/* ===== FAQ — dodanie wpisu = jeden obiekt ===== */
+const FAQS = [
+  { q:"Co to jest Unicorner?",
+    a:"Zbiór materiałów do egzaminów: fiszki, zadania i quizy z natychmiastową informacją zwrotną. Wszystko w jednym miejscu, bez logowania, działa na telefonie." },
+  { q:"Czy to oficjalna strona UEP?",
+    a:"<b>Nie.</b> To projekt studencki, niepowiązany z uczelnią ani żadną katedrą. Robiony przez studentów, dla studentów." },
+  { q:"Skąd biorą się materiały?",
+    a:"To <b>nasze własne opracowania</b> na bazie zajęć — nie udostępniamy tu prezentacji ani materiałów wykładowców. Traktuj to jako dodatek do nauki, a nie zamiennik oryginalnych źródeł." },
+  { q:"Czy to darmowe?",
+    a:"Tak. Otwierasz i się uczysz — bez kont, bez opłat, bez reklam." },
+  { q:"Czy postęp się zapisuje?",
+    a:"W quizach i fiszkach postęp trzymany jest w Twojej przeglądarce. Wyczyścisz dane przeglądarki — zacznie się od zera. Nic nie wysyłamy na żaden serwer." },
+  { q:"Chcę dorzucić swój przedmiot albo pomóc — jak?",
+    a:"Super. Odezwij się — dorzucanie kolejnych przedmiotów to dokładnie kierunek, w którym to idzie." }
+];
+
+const grid = document.getElementById('grid');
+const liveCount = SUBJECTS.filter(s=>s.status==='live').length;
+document.getElementById('count').textContent =
+  liveCount + (liveCount===1?' gotowy':(liveCount>=2&&liveCount<=4?' gotowe':' gotowych'));
+
+grid.innerHTML = SUBJECTS.map(s=>{
+  const live = s.status==='live';
+  const tagHtml = s.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  const inner = `
+    <div class="card-top"><div class="emoji">${s.emoji}</div>
+    <span class="badge ${live?'live':'soon'}">${live?'gotowe':'wkrótce'}</span></div>
+    <h3>${s.name}</h3><p class="desc">${s.desc}</p>
+    <div class="tags">${tagHtml}</div>
+    <span class="go">${live?'Otwórz':'W przygotowaniu'} <span class="arr">→</span></span>`;
+  return live ? `<a class="card live" href="${s.file}">${inner}</a>`
+              : `<div class="card soon">${inner}</div>`;
+}).join('');
+
+const faq = document.getElementById('faq');
+faq.innerHTML = FAQS.map(f=>`
+  <button class="faq-item" aria-expanded="false">
+    <div class="faq-q"><span class="faq-ic"></span><span>${f.q}</span></div>
+    <div class="faq-a"><p>${f.a}</p></div>
+  </button>`).join('');
+faq.querySelectorAll('.faq-item').forEach(it=>{
+  it.addEventListener('click',()=>{
+    const open = it.classList.toggle('open');
+    it.setAttribute('aria-expanded', open);
+  });
+});
+
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+document.querySelectorAll('.card').forEach((c,i)=>{
+  if(reduce){c.classList.add('in');return;}
+  setTimeout(()=>c.classList.add('in'), 90 + i*90);
+});
+</script>
+</body>
+</html>
