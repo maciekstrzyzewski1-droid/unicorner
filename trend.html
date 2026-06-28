@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analiza dynamiki — indeksy · Unicorner</title>
-<meta name="description" content="Przyrosty, indeksy indywidualne (łańcuchowe i jednopodstawowe), średnie tempo zmian, indeksy agregatowe Laspeyresa, Paaschego i Fishera. Materiały, ściąga Excela, zadania i quiz.">
+<title>Analiza tendencji rozwojowej — trend · Unicorner</title>
+<meta name="description" content="Szeregi czasowe i modele trendu: trend liniowy MNK, miary dopasowania (R², φ², błąd szacunku), trend potęgowy i wykładniczy, prognozowanie. Materiały, ściąga Excela, zadania i quiz.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
@@ -158,8 +158,8 @@
 
   <section class="hero">
     <span class="eyebrow"><span class="dot"></span>Statystyka opisowa · UEP</span>
-    <h1>Analiza dynamiki <span class="grad">— indeksy</span></h1>
-    <p class="lede">Jak zmienia się zjawisko w czasie: przyrosty, indeksy indywidualne (łańcuchowe i jednopodstawowe), średnie tempo zmian i <b>indeksy agregatowe Laspeyresa, Paaschego i Fishera</b>. Cała pułapka egzaminu siedzi w tym, które liczebności są wagą.</p>
+    <h1>Analiza tendencji <span class="grad">rozwojowej</span></h1>
+    <p class="lede">Modele trendu w szeregach czasowych: trend liniowy metodą najmniejszych kwadratów, <b>ocena dopasowania (R², φ², błąd szacunku)</b>, trend potęgowy i wykładniczy oraz prognozowanie. Sezonowość — w osobnym dziale.</p>
   </section>
 
   <nav class="pills">
@@ -172,93 +172,103 @@
   <!-- ===================== MATERIAŁY ===================== -->
   <section class="block" id="materialy">
     <div class="sec-head"><span class="num">01</span><h2>Materiały</h2><span class="line"></span></div>
-    <p class="sub-note">Podstawą jest <b>szereg czasowy</b> — wartości zjawiska w kolejnych okresach. Warunek: dane <b>porównywalne</b> (ta sama częstość, ten sam zakres przestrzenny, te same jednostki). Oznaczenia: y<sub>t</sub> — wartość w okresie t, y<sub>0</sub>/y<sub>c</sub> — okres bazowy (constans), y<sub>t−1</sub> — okres poprzedni.</p>
+    <p class="sub-note">Zmienną objaśniającą jest <b>czas t</b> (kolejne okresy 1, 2, …, n). Parametry trendu szacuje się <b>klasyczną metodą najmniejszych kwadratów</b> (MNK) — minimalizując sumę kwadratów odchyleń danych od linii trendu. Przykład przewodni: sprzedaż (mln zł) w latach 2015–2023.</p>
 
     <div class="cards">
 
       <div class="mcard">
-        <h3>Przyrosty</h3>
-        <div class="tagline">zmiana bezwzględna i względna</div>
-        <span class="fml">absolutny: <span class="v">Δy = y<sub>t</sub> − y<sub>0</sub></span></span>
-        <span class="fml">względny: <span class="v">(y<sub>t</sub> − y<sub>0</sub>) / y<sub>0</sub> · 100%</span></span>
+        <h3>Szereg czasowy i jego składowe</h3>
+        <div class="tagline">co siedzi w danych</div>
+        <p>Chronologiczny ciąg wartości zjawiska. Rozkłada się na:</p>
         <ul>
-          <li>Absolutny — o ile <b>jednostek</b> zmieniło się zjawisko</li>
-          <li>Względny — o ile <b>procent</b>, względem bazy</li>
-          <li>Jedno- lub łańcuchowo (baza stała vs poprzedni okres)</li>
+          <li><b>Trend (T)</b> — długookresowy kierunek zmian</li>
+          <li><b>Wahania cykliczne (C)</b> — wieloletnie, koniunkturalne</li>
+          <li><b>Wahania sezonowe (S)</b> — regularne w ciągu roku</li>
+          <li><b>Wahania przypadkowe (ε)</b> — losowe, nieregularne</li>
         </ul>
       </div>
 
       <div class="mcard">
-        <h3>Indeks łańcuchowy</h3>
-        <div class="tagline">indeks indywidualny · podstawa zmienna</div>
-        <span class="fml"><span class="v">ł i<sub>t</sub> = y<sub>t</sub> / y<sub>t−1</sub> · 100%</span></span>
-        <p>Porównuje okres t do <b>poprzedniego</b> (t−1). Każdy ma inną podstawę.</p>
+        <h3>Trend liniowy</h3>
+        <div class="tagline">stały przyrost absolutny</div>
+        <span class="fml"><span class="v">Y = a·t + b</span></span>
         <ul>
-          <li>Pokazuje dynamikę <b>rok do roku</b></li>
-          <li>Dla pierwszego okresu — <b>nie da się wyznaczyć</b></li>
-          <li>105,2% → wzrost o 5,2% względem poprzedniego okresu</li>
+          <li><b>a</b> — o ile jednostek <b>średnio</b> zmienia się Y co okres</li>
+          <li><b>b</b> — wartość teoretyczna dla <b>t = 0</b> (okres zerowy)</li>
+          <li>t przyjmuje wartości 1, 2, …, n</li>
+        </ul>
+        <div class="callout">Przykład: <b>Y = 13,893·t + 121,426</b> → sprzedaż rosła średnio o 13,893 mln zł rocznie; w 2014 (t=0) trend daje 121,426 mln zł.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Wyznaczanie parametrów (MNK)</h3>
+        <div class="tagline">jak liczyć a i b ręcznie</div>
+        <span class="fml"><span class="v">a = Σ(tᵢ−t̄)(yᵢ−ȳ) / Σ(tᵢ−t̄)²</span></span>
+        <span class="fml"><span class="v">b = ȳ − a·t̄</span></span>
+        <ul>
+          <li>Budujesz kolumny: t−t̄, y−ȳ, ich iloczyn i (t−t̄)²</li>
+          <li>a = suma iloczynów / suma kwadratów</li>
+          <li>t̄ to środek osi czasu (dla n=9 → t̄=5)</li>
         </ul>
       </div>
 
       <div class="mcard">
-        <h3>Indeks jednopodstawowy</h3>
-        <div class="tagline">indeks indywidualny · podstawa stała</div>
-        <span class="fml"><span class="v">s i<sub>t</sub> = y<sub>t</sub> / y<sub>c</sub> · 100%</span></span>
-        <p>Porównuje każdy okres do <b>jednego, stałego</b> okresu bazowego (constans).</p>
+        <h3>Miary dopasowania</h3>
+        <div class="tagline">jak dobrze trend pasuje</div>
+        <span class="fml">determinacja: <span class="v">R² ∈ [0; 1]</span></span>
+        <span class="fml">zbieżność: <span class="v">φ² = 1 − R²</span></span>
+        <span class="fml">błąd szacunku: <span class="v">s = √(Σ(yᵢ−ŷᵢ)² / (n−2))</span></span>
         <ul>
-          <li>Pokazuje skumulowaną zmianę względem bazy</li>
-          <li>185,6% → o 85,6% więcej niż w okresie bazowym</li>
-          <li>Stopa zmian = indeks − 100%</li>
+          <li><b>R²</b> — jaką część zmienności trend <b>wyjaśnia</b> (0,988 → 98,8%)</li>
+          <li><b>φ²</b> — część <b>niewyjaśniona</b> (0,012 → 1,2%)</li>
+          <li><b>s</b> — przeciętne odchylenie od trendu, w jednostkach Y</li>
         </ul>
       </div>
 
       <div class="mcard">
-        <h3>Zamiana indeksów</h3>
-        <div class="tagline">łańcuchowy ↔ jednopodstawowy</div>
-        <span class="fml">łań → jedno: <span class="v">s i<sub>t</sub> = ł i<sub>t</sub> · s i<sub>t−1</sub> / 100</span></span>
-        <span class="fml">jedno → łań: <span class="v">ł i<sub>t</sub> = s i<sub>t</sub> / s i<sub>t−1</sub> · 100</span></span>
-        <div class="callout">Dwóch zjawisk <b>nie porównasz</b>, jeśli jedno masz w łańcuchowych, a drugie w jednopodstawowych — najpierw sprowadź do jednego typu.</div>
-      </div>
-
-      <div class="mcard">
-        <h3>Średnie tempo zmian</h3>
-        <div class="tagline">średnia geometryczna</div>
-        <span class="fml"><span class="v">ŝ = ⁿ⁻¹√(y<sub>n</sub> / y<sub>1</sub>) · 100%</span></span>
-        <p>Równoważnie: pierwiastek stopnia (n−1) z iloczynu indeksów łańcuchowych.</p>
+        <h3>Wartości teoretyczne i reszty</h3>
+        <div class="tagline">ŷ kontra rzeczywistość</div>
+        <span class="fml">teoretyczna: <span class="v">ŷᵢ = a·tᵢ + b</span></span>
+        <span class="fml">reszta: <span class="v">eᵢ = yᵢ − ŷᵢ</span></span>
         <ul>
-          <li>Liczone gdy zjawisko ma <b>stałą tendencję</b> (rosnącą lub malejącą)</li>
-          <li><b>Geometryczna</b>, nie arytmetyczna — bo zmiany się składają (mnożą)</li>
-          <li>113,2% → średnio +13,2% rocznie</li>
+          <li>ŷ — wartość „z linii trendu" dla okresu tᵢ</li>
+          <li>Reszta dodatnia → punkt nad trendem, ujemna → pod</li>
+          <li>Suma reszt w MNK = 0; ich kwadraty są minimalizowane</li>
         </ul>
       </div>
 
       <div class="mcard">
-        <h3>Indeks wartości</h3>
-        <div class="tagline">agregatowy · wielkości absolutne</div>
-        <span class="fml"><span class="v">I<sub>w</sub> = Σq<sub>j1</sub>p<sub>j1</sub> / Σq<sub>j0</sub>p<sub>j0</sub></span></span>
-        <p>Zmiana <b>łącznej wartości</b> (sprzedaży/produkcji) — łączny efekt zmian ilości i cen.</p>
+        <h3>Trend potęgowy</h3>
+        <div class="tagline">stała elastyczność</div>
+        <span class="fml"><span class="v">Y = b·tᵃ</span></span>
         <ul>
-          <li>q — ilość, p — cena; indeks 0 = baza, 1 = okres badany</li>
-          <li>Rozkład: <b>I<sub>w</sub> = I<sub>C</sub> · I<sub>I</sub></b> (ceny × ilości)</li>
+          <li><b>a</b> — elastyczność: o ile % zmieni się Y, gdy t wzrośnie o 1%</li>
+          <li><b>b</b> — wartość dla t = 1 (okres pierwszy)</li>
+          <li>Przykład: Y = 523,81·t⁰′¹²⁹³ → +1% czasu ≈ +0,13% sprzedaży</li>
         </ul>
       </div>
 
       <div class="mcard">
-        <h3>Indeks cen (waga: ilość q)</h3>
-        <div class="tagline">agregatowy · Laspeyres / Paasche / Fisher</div>
-        <span class="fml">Laspeyres (q<sub>0</sub>): <span class="v">Σq<sub>0</sub>p<sub>1</sub> / Σq<sub>0</sub>p<sub>0</sub></span></span>
-        <span class="fml">Paasche (q<sub>1</sub>): <span class="v">Σq<sub>1</sub>p<sub>1</sub> / Σq<sub>1</sub>p<sub>0</sub></span></span>
-        <span class="fml">Fisher: <span class="v">√(I<sub>C</sub><sup>L</sup> · I<sub>C</sub><sup>P</sup>)</span></span>
-        <div class="callout">Indeks <b>cen</b> → wagą jest <b>ilość</b>. Laspeyres bierze ilości z <b>bazy</b> (q₀), Paasche z okresu <b>badanego</b> (q₁).</div>
+        <h3>Trend wykładniczy</h3>
+        <div class="tagline">stała stopa wzrostu</div>
+        <span class="fml"><span class="v">Y = b·aᵗ</span></span>
+        <ul>
+          <li><b>(a−1)·100%</b> — o ile % średnio rośnie Y co okres</li>
+          <li>a &gt; 1 → wzrost; 0 &lt; a &lt; 1 → spadek</li>
+          <li>Przykład: Y = 144,76·e⁰′¹²⁰³ᵗ, e⁰′¹²⁰³=1,128 → +12,8% rocznie</li>
+        </ul>
       </div>
 
       <div class="mcard">
-        <h3>Indeks ilości (waga: cena p)</h3>
-        <div class="tagline">agregatowy · Laspeyres / Paasche / Fisher</div>
-        <span class="fml">Laspeyres (p<sub>0</sub>): <span class="v">Σq<sub>1</sub>p<sub>0</sub> / Σq<sub>0</sub>p<sub>0</sub></span></span>
-        <span class="fml">Paasche (p<sub>1</sub>): <span class="v">Σq<sub>1</sub>p<sub>1</sub> / Σq<sub>0</sub>p<sub>1</sub></span></span>
-        <span class="fml">Fisher: <span class="v">√(I<sub>I</sub><sup>L</sup> · I<sub>I</sub><sup>P</sup>)</span></span>
-        <div class="callout">Indeks <b>ilości</b> → wagą jest <b>cena</b>. Lustrzane odbicie indeksu cen — zamieniasz rolę p i q.</div>
+        <h3>Prognozowanie</h3>
+        <div class="tagline">ekstrapolacja trendu</div>
+        <p>Podstawiasz do równania trendu <b>kolejne wartości t</b> (poza zakresem danych).</p>
+        <ul>
+          <li>Prognozę stawiasz na model o <b>najlepszym dopasowaniu</b></li>
+          <li>Preferowane R² ≥ <b>0,90</b></li>
+          <li>Przy n=9 obserwacjach prognoza zaczyna się od t=10</li>
+        </ul>
+        <div class="callout">Im dalej w przyszłość, tym mniej pewna prognoza — trend zakłada, że dotychczasowa prawidłowość się utrzyma.</div>
       </div>
 
     </div>
@@ -267,19 +277,19 @@
   <!-- ===================== ŚCIĄGA EXCEL ===================== -->
   <section class="block" id="excel">
     <div class="sec-head"><span class="num">02</span><h2>Ściąga funkcji Excela</h2><span class="line"></span></div>
-    <p class="sub-note">Indeksy to głównie dzielenie kolumn i sumy iloczynów — pełną mocą Excela jest tu <b>SUMA.ILOCZYNÓW</b> (liczy Σq·p jednym wzorem) oraz <b>blokowanie odwołań</b> ($) przy bazie stałej.</p>
+    <p class="sub-note">Trend liniowy policzysz dwoma drogami: <b>funkcjami</b> (NACHYLENIE/ODCIĘTA) albo <b>linią trendu na wykresie</b> (prawy klik na serii → „Dodaj linię trendu" → zaznacz „Wyświetl równanie" i „Wyświetl R²"). Linia trendu obsługuje też wariant potęgowy i wykładniczy.</p>
     <div class="xtable-wrap">
       <table class="xt">
-        <thead><tr><th>Czego liczysz</th><th>Formuła w Excelu</th><th>Uwaga</th></tr></thead>
+        <thead><tr><th>Co liczysz</th><th>Funkcja Excela</th><th>Uwaga</th></tr></thead>
         <tbody>
-          <tr><td class="measure"><b>Indeks łańcuchowy</b><small>yₜ / yₜ₋₁ · 100</small></td><td class="fn">=B4/B3*100</td><td>Zwykłe odwołanie względne — „przeciągasz" w dół</td></tr>
-          <tr><td class="measure"><b>Indeks jednopodstawowy</b><small>yₜ / y_baza · 100</small></td><td class="fn">=B4/B$3*100</td><td><b>$</b> blokuje wiersz bazy, żeby się nie przesuwał</td></tr>
-          <tr><td class="measure"><b>Σ q·p (wartość)</b></td><td class="fn">=SUMA.ILOCZYNÓW(q;p)</td><td>Liczy Σqⱼpⱼ jednym wzorem — serce indeksów agregatowych</td></tr>
-          <tr><td class="measure"><b>Indeks wartości Iw</b></td><td class="fn">=SUMA.ILOCZYNÓW(q1;p1)/SUMA.ILOCZYNÓW(q0;p0)*100</td><td>Wszystko z okresu 1 / wszystko z okresu 0</td></tr>
-          <tr><td class="measure"><b>Indeks cen Laspeyres</b></td><td class="fn">=SUMA.ILOCZYNÓW(q0;p1)/SUMA.ILOCZYNÓW(q0;p0)*100</td><td>Waga q0 — ilości z bazy w obu sumach</td></tr>
-          <tr><td class="measure"><b>Indeks cen Paasche</b></td><td class="fn">=SUMA.ILOCZYNÓW(q1;p1)/SUMA.ILOCZYNÓW(q1;p0)*100</td><td>Waga q1 — ilości z okresu badanego</td></tr>
-          <tr><td class="measure"><b>Indeks Fishera</b></td><td class="fn">=PIERWIASTEK(I_L*I_P)</td><td>Średnia geometryczna Laspeyresa i Paaschego</td></tr>
-          <tr><td class="measure"><b>Średnie tempo zmian</b><small>średnia geometryczna</small></td><td class="fn">=(yn/y1)^(1/(n−1))*100</td><td>lub =ŚREDNIA.GEOMETRYCZNA(zakres indeksów łańcuchowych)</td></tr>
+          <tr><td class="measure"><b>Nachylenie a</b><small>współczynnik kierunkowy</small></td><td class="fn">=NACHYLENIE(Y;t)</td><td>Y — wartości zjawiska, t — zmienna czasowa</td></tr>
+          <tr><td class="measure"><b>Wyraz wolny b</b></td><td class="fn">=ODCIĘTA(Y;t)</td><td>Wartość trendu dla t = 0</td></tr>
+          <tr><td class="measure"><b>Współczynnik determinacji R²</b></td><td class="fn">=R.KWADRAT(Y;t)</td><td>0–1; ·100 daje %</td></tr>
+          <tr><td class="measure"><b>Współczynnik zbieżności φ²</b></td><td class="fn">=1−R.KWADRAT(Y;t)</td><td>Część niewyjaśniona</td></tr>
+          <tr><td class="measure"><b>Błąd standardowy szacunku s</b></td><td class="fn">=REGBŁSTD(Y;t)</td><td>Dzielnik n−2 (uwzględnia 2 parametry)</td></tr>
+          <tr><td class="measure"><b>Prognoza dla nowego t</b></td><td class="fn">=NACHYLENIE(Y;t)*t_new+ODCIĘTA(Y;t)</td><td>Lub krócej: <span style="font-family:var(--mono)">=REGLINX(t_new;Y;t)</span></td></tr>
+          <tr><td class="measure"><b>Pełna regresja (a, b + statystyki)</b></td><td class="fn">=REGLINP(Y;t;PRAWDA;PRAWDA)</td><td>Formuła tablicowa — zwraca też R² i błędy</td></tr>
+          <tr><td class="measure"><b>Trend potęgowy / wykładniczy</b></td><td class="fn">linia trendu na wykresie</td><td>Wybierz typ „Potęgowy" / „Wykładniczy" → pokaż równanie i R²</td></tr>
         </tbody>
       </table>
     </div>
@@ -288,7 +298,7 @@
   <!-- ===================== ZADANIA ===================== -->
   <section class="block" id="zadania">
     <div class="sec-head"><span class="num">03</span><h2>Zadania krok po kroku</h2><span class="line"></span></div>
-    <p class="sub-note">Policz, wpisz wynik, sprawdź. Indeksy podawaj <b>w procentach</b> (np. 120,3). Akceptuję przecinek/kropkę i drobne zaokrąglenia. Dane z ćwiczeń: mieszkania (pozwolenia na budowę, w tys.) i koszyk pieczywa.</p>
+    <p class="sub-note">Dane przewodnie: sprzedaż (mln zł), lata 2015–2023, czyli t = 1…9. Akceptuję przecinek/kropkę i drobne zaokrąglenia. Sumy pomocnicze masz pod tabelą — używaj ich przy MNK.</p>
     <div id="exList"></div>
     <div class="progress"><span class="lbl" id="exLbl">0 / 0</span><div class="bar"><i id="exFill"></i></div></div>
   </section>
@@ -296,7 +306,7 @@
   <!-- ===================== QUIZ ===================== -->
   <section class="block" id="quiz">
     <div class="sec-head"><span class="num">04</span><h2>Quiz teoretyczny</h2><span class="line"></span></div>
-    <p class="sub-note">Definicje, interpretacje i klasyczne pułapki — zwłaszcza która waga należy do którego indeksu.</p>
+    <p class="sub-note">Interpretacja parametrów i miar dopasowania, MNK, modele nieliniowe i zasady prognozowania.</p>
     <div id="quizList"></div>
     <div class="quiz-score" id="quizScore" style="display:none">
       <div class="big" id="scoreBig">0 / 0</div>
@@ -314,110 +324,103 @@
 
 <script>
 const tbl=(head,rows)=>'<div class="dtable-wrap"><table class="dt"><thead><tr>'+head.map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')+'</tbody></table></div>';
-
-// dane mieszkania
-const miesz=[['2013','138,8'],['2014','156,9'],['2015','188,8'],['2016','211,5'],['2017','250,9'],['2018','257,6']];
-// dane pieczywo
-const breadHead=['Produkt','q₀ (2017)','p₀','q₁ (2018)','p₁'];
-const bread=[['Bułka pszenna','4926','0,35','4876','0,39'],['Bułka razowa','1542','0,49','1596','0,55'],['Chleb pszenno-żytni','2965','1,79','2716','1,89'],['Chleb razowy','1293','2,59','1315','2,99']];
-const sums='<div class="callout"><b>Sumy pomocnicze:</b> Σq₀p₀ = 11135,90 • Σq₁p₁ = 11844,53 • Σq₀p₁ = 12239,16 • Σq₁p₀ = 10756,13</div>';
+const trendRows=[['2015','1','138,816'],['2016','2','141,696'],['2017','3','162,976'],['2018','4','183,744'],['2019','5','187,209'],['2020','6','205,056'],['2021','7','220,608'],['2022','8','234,248'],['2023','9','243,648']];
+const trendTbl=tbl(['Rok','t','yₜ (mln zł)'],trendRows);
+const sums='<div class="callout"><b>Sumy pomocnicze:</b> ȳ = 190,889 • t̄ = 5 • Σ(tᵢ−t̄)(yᵢ−ȳ) = 833,56 • Σ(tᵢ−t̄)² = 60</div>';
 
 const EXS=[
- {theme:'Indeks łańcuchowy', diff:'łatwe',
-  title:'Indeks łańcuchowy dla 2015',
-  data:'Mieszkania, na które wydano pozwolenia (w tys.). Policz indeks łańcuchowy dla 2015 (w %).'+tbl(['Rok','y (tys.)'],miesz),
-  ans:120.3, tol:0.3, unit:'%',
-  sol:[['Wzór','ł i₂₀₁₅ = y₂₀₁₅ / y₂₀₁₄ · 100'],
-       ['Podstawienie','= 188,8 / 156,9 · 100 = <span class="calc">120,3%</span>'],
-       ['Interpretacja','w 2015 liczba wzrosła o <b>20,3%</b> względem 2014']],
-  excel:'=188,8/156,9*100  →  w arkuszu: =B5/B4*100'},
+ {theme:'MNK · parametr a', diff:'średnie',
+  title:'Współczynnik kierunkowy a',
+  data:'Policz parametr a trendu liniowego (metoda najmniejszych kwadratów).'+trendTbl+sums,
+  ans:13.89, tol:0.1, unit:'mln zł',
+  sol:[['Wzór','a = Σ(tᵢ−t̄)(yᵢ−ȳ) / Σ(tᵢ−t̄)²'],
+       ['Podstawienie','= 833,56 / 60 = <span class="calc">13,893</span>'],
+       ['Interpretacja','sprzedaż rosła średnio o <b>13,893 mln zł rocznie</b>']],
+  excel:'=NACHYLENIE(yₜ;t)'},
 
- {theme:'Indeks jednopodstawowy', diff:'łatwe',
-  title:'Indeks jednopodstawowy dla 2018 (2013 = 100)',
-  data:'Te same dane, okres bazowy 2013. Policz indeks jednopodstawowy dla 2018 (w %).'+tbl(['Rok','y (tys.)'],miesz),
-  ans:185.6, tol:0.4, unit:'%',
-  sol:[['Wzór','s i₂₀₁₈ = y₂₀₁₈ / y₂₀₁₃ · 100'],
-       ['Podstawienie','= 257,6 / 138,8 · 100 = <span class="calc">185,6%</span>'],
-       ['Interpretacja','o <b>85,6%</b> więcej mieszkań niż w 2013']],
-  excel:'=B7/B$2*100  ($ blokuje wiersz bazy)'},
+ {theme:'MNK · parametr b', diff:'średnie',
+  title:'Wyraz wolny b',
+  data:'Znając a = 13,893, policz wyraz wolny b.'+sums,
+  ans:121.43, tol:0.25, unit:'mln zł',
+  sol:[['Wzór','b = ȳ − a·t̄'],
+       ['Podstawienie','= 190,889 − 13,893·5 = 190,889 − 69,465 = <span class="calc">121,43</span>'],
+       ['Interpretacja','teoretyczna wartość dla t=0 (rok 2014): 121,426 mln zł']],
+  excel:'=ODCIĘTA(yₜ;t)'},
 
- {theme:'Interpretacja', diff:'łatwe',
-  title:'Stopa wzrostu z indeksu',
-  data:'Indeks jednopodstawowy dla 2017 wynosi 180,8% (2013 = 100). O ile procent wzrosło zjawisko względem bazy?',
-  ans:80.8, tol:0.3, unit:'%',
-  sol:[['Reguła','stopa zmian = indeks − 100%'],
-       ['Obliczenie','180,8% − 100% = <span class="calc">80,8%</span>'],
-       ['Sens','w 2017 było o 80,8% więcej niż w roku bazowym 2013']],
-  excel:'=180,8−100'},
+ {theme:'Wartość teoretyczna', diff:'łatwe',
+  title:'Wartość trendu ŷ dla 2019',
+  data:'Równanie trendu: Y = 13,893·t + 121,426. Policz wartość teoretyczną dla 2019 (t = 5).',
+  ans:190.89, tol:0.6, unit:'mln zł',
+  sol:[['Podstawienie','ŷ = 13,893·5 + 121,426 = 69,465 + 121,426'],
+       ['Wynik','ŷ = <span class="calc">190,89 mln zł</span>'],
+       ['Sens','tyle „powinno być" w 2019 wg trendu (rzeczywiste = 187,209)']],
+  excel:'=13,893*5+121,426'},
 
- {theme:'Średnie tempo', diff:'średnie',
-  title:'Średnioroczne tempo zmian (2013→2018)',
-  data:'Mieszkania: y₂₀₁₃ = 138,8 i y₂₀₁₈ = 257,6 (6 lat, czyli 5 indeksów łańcuchowych). Policz średnioroczne tempo wzrostu (w %).',
-  ans:13.2, tol:0.4, unit:'%',
-  sol:[['Wzór','ŝ = ⁵√(y₂₀₁₈ / y₂₀₁₃) · 100'],
-       ['Podstawienie','= ⁵√(257,6 / 138,8) · 100 = ⁵√1,856 · 100 = <span class="calc">113,2%</span>'],
-       ['Tempo','113,2% − 100% = <b>13,2%</b> średnio rocznie']],
-  excel:'=(257,6/138,8)^(1/5)*100  potem −100'},
+ {theme:'Reszta', diff:'średnie',
+  title:'Reszta (odchylenie od trendu) dla 2015',
+  data:'Y = 13,893·t + 121,426. Rzeczywista sprzedaż w 2015 (t=1) to 138,816. Policz resztę e = y − ŷ.',
+  ans:3.50, tol:0.3, unit:'mln zł',
+  sol:[['Wartość teoretyczna','ŷ = 13,893·1 + 121,426 = <span class="calc">135,319</span>'],
+       ['Reszta','e = 138,816 − 135,319 = <span class="calc">3,50</span>'],
+       ['Sens','punkt leży <b>nad</b> trendem (reszta dodatnia)']],
+  excel:'=138,816−(13,893*1+121,426)'},
 
- {theme:'Zamiana indeksów', diff:'średnie',
-  title:'Łańcuchowy → jednopodstawowy',
-  data:'Indeksy łańcuchowe: ł2017 = 105%, ł2018 = 102%. Baza jednopodstawowa 2016 = 100%, więc s2017 = 105%. Policz s2018 (jednopodstawowy, w %).',
-  ans:107.1, tol:0.3, unit:'%',
-  sol:[['Wzór','s i₂₀₁₈ = ł i₂₀₁₈ · s i₂₀₁₇ / 100'],
-       ['Podstawienie','= 102 · 105 / 100 = <span class="calc">107,1%</span>'],
-       ['Sens','w 2018 o 7,1% więcej niż w bazowym 2016']],
-  excel:'=102*105/100'},
+ {theme:'Prognoza', diff:'średnie',
+  title:'Prognoza na 2024',
+  data:'Y = 13,893·t + 121,426. Lata 2015–2023 to t = 1…9, więc 2024 → t = 10. Policz prognozę sprzedaży na 2024.',
+  ans:260.36, tol:0.6, unit:'mln zł',
+  sol:[['Podstawienie','ŷ = 13,893·10 + 121,426 = 138,93 + 121,426'],
+       ['Wynik','= <span class="calc">260,36 mln zł</span>'],
+       ['Warunek','R² = 0,988 ≥ 0,90 → model nadaje się do prognozy']],
+  excel:'=13,893*10+121,426  lub  =REGLINX(10;yₜ;t)'},
 
- {theme:'Zamiana indeksów', diff:'średnie',
-  title:'Jednopodstawowy → łańcuchowy',
-  data:'Indeksy jednopodstawowe (2015 = 100): s2016 = 110%, s2017 = 125%. Policz indeks łańcuchowy ł2017 (w %).',
-  ans:113.6, tol:0.3, unit:'%',
-  sol:[['Wzór','ł i₂₀₁₇ = s i₂₀₁₇ / s i₂₀₁₆ · 100'],
-       ['Podstawienie','= 125 / 110 · 100 = <span class="calc">113,6%</span>'],
-       ['Sens','w 2017 o 13,6% więcej niż w 2016']],
-  excel:'=125/110*100'},
+ {theme:'Prognoza', diff:'średnie',
+  title:'Prognoza na 2025',
+  data:'Ten sam trend. Policz prognozę na 2025 (t = 11).',
+  ans:274.25, tol:0.6, unit:'mln zł',
+  sol:[['Podstawienie','ŷ = 13,893·11 + 121,426 = 152,823 + 121,426'],
+       ['Wynik','= <span class="calc">274,25 mln zł</span>'],
+       ['Uwaga','im dalej w przyszłość, tym mniej pewna prognoza']],
+  excel:'=13,893*11+121,426'},
 
- {theme:'Indeks wartości', diff:'średnie',
-  title:'Agregatowy indeks wartości Iw',
-  data:'Koszyk pieczywa, okres 0 = 2017, 1 = 2018. Policz indeks wartości (w %).'+tbl(breadHead,bread)+sums,
-  ans:106.36, tol:0.5, unit:'%',
-  sol:[['Wzór','Iw = Σq₁p₁ / Σq₀p₀ · 100'],
-       ['Podstawienie','= 11844,53 / 11135,90 · 100 = <span class="calc">106,36%</span>'],
-       ['Sens','łączna wartość sprzedaży wzrosła o 6,36%']],
-  excel:'=SUMA.ILOCZYNÓW(q1;p1)/SUMA.ILOCZYNÓW(q0;p0)*100'},
+ {theme:'Dopasowanie · R²', diff:'łatwe',
+  title:'Interpretacja współczynnika determinacji',
+  data:'Współczynnik determinacji trendu wynosi R² = 0,988. W ilu procentach trend liniowy wyjaśnia kształtowanie się sprzedaży?',
+  ans:98.8, tol:0.3, unit:'%',
+  sol:[['Reguła','udział wyjaśniony = R² · 100%'],
+       ['Obliczenie','0,988 · 100% = <span class="calc">98,8%</span>'],
+       ['Sens','trend liniowy bardzo dobrze opisuje te dane']],
+  excel:'=R.KWADRAT(yₜ;t)*100'},
 
- {theme:'Indeks cen', diff:'trudne',
-  title:'Indeks cen Laspeyresa',
-  data:'Ten sam koszyk. Policz indeks cen wg Laspeyresa (waga q₀, w %).'+tbl(breadHead,bread)+sums,
-  ans:109.91, tol:0.6, unit:'%',
-  sol:[['Wzór','I_C^L = Σq₀p₁ / Σq₀p₀ · 100'],
-       ['Wskazówka','waga = ilości z bazy (q₀) w liczniku i mianowniku'],
-       ['Podstawienie','= 12239,16 / 11135,90 · 100 = <span class="calc">109,91%</span>'],
-       ['Sens','przy stałych ilościach z 2017 ceny wzrosły o ~9,9%']],
-  excel:'=SUMA.ILOCZYNÓW(q0;p1)/SUMA.ILOCZYNÓW(q0;p0)*100'},
+ {theme:'Dopasowanie · φ²', diff:'średnie',
+  title:'Współczynnik zbieżności φ²',
+  data:'Dla R² = 0,988 policz współczynnik zbieżności φ².',
+  ans:0.012, tol:0.005, unit:'',
+  sol:[['Wzór','φ² = 1 − R²'],
+       ['Obliczenie','= 1 − 0,988 = <span class="calc">0,012</span>'],
+       ['Sens','jedynie <b>1,2%</b> zmienności zostaje niewyjaśnione przez trend']],
+  excel:'=1−R.KWADRAT(yₜ;t)'},
 
- {theme:'Indeks cen', diff:'trudne',
-  title:'Indeks cen Paaschego',
-  data:'Ten sam koszyk. Policz indeks cen wg Paaschego (waga q₁, w %).'+tbl(breadHead,bread)+sums,
-  ans:110.12, tol:0.6, unit:'%',
-  sol:[['Wzór','I_C^P = Σq₁p₁ / Σq₁p₀ · 100'],
-       ['Wskazówka','waga = ilości z okresu badanego (q₁)'],
-       ['Podstawienie','= 11844,53 / 10756,13 · 100 = <span class="calc">110,12%</span>'],
-       ['Sens','przy aktualnych ilościach ceny wzrosły o ~10,1%']],
-  excel:'=SUMA.ILOCZYNÓW(q1;p1)/SUMA.ILOCZYNÓW(q1;p0)*100'},
+ {theme:'Trend wykładniczy', diff:'trudne',
+  title:'Roczna stopa wzrostu z trendu wykładniczego',
+  data:'Trend wykładniczy: Y = 144,76·e^(0,1203·t). Wiedząc, że e^0,1203 = 1,128, policz przeciętną roczną stopę wzrostu (w %).',
+  ans:12.8, tol:0.3, unit:'%',
+  sol:[['Reguła','stopa wzrostu = (a − 1)·100%, gdzie a = e^0,1203 = 1,128'],
+       ['Obliczenie','(1,128 − 1)·100% = <span class="calc">12,8%</span>'],
+       ['Sens','sprzedaż rośnie średnio o 12,8% rocznie (procent składany)']],
+  excel:'=(EXP(0,1203)−1)*100'},
 
- {theme:'Indeks ilości', diff:'trudne',
-  title:'Indeks ilości Laspeyresa',
-  data:'Ten sam koszyk. Policz indeks ilości wg Laspeyresa (waga p₀, w %).'+tbl(breadHead,bread)+sums,
-  ans:96.59, tol:0.5, unit:'%',
-  sol:[['Wzór','I_I^L = Σq₁p₀ / Σq₀p₀ · 100'],
-       ['Wskazówka','indeks ilości → wagą jest cena; Laspeyres bierze ceny z bazy (p₀)'],
-       ['Podstawienie','= 10756,13 / 11135,90 · 100 = <span class="calc">96,59%</span>'],
-       ['Sens','wolumen sprzedaży spadł o ~3,4% (indeks < 100)']],
-  excel:'=SUMA.ILOCZYNÓW(q1;p0)/SUMA.ILOCZYNÓW(q0;p0)*100'}
+ {theme:'Trend potęgowy', diff:'trudne',
+  title:'Elastyczność z trendu potęgowego',
+  data:'Trend potęgowy: Y = 523,81·t^0,1293. O ile procent przeciętnie zmieni się sprzedaż, gdy zmienna czasowa wzrośnie o 1%?',
+  ans:0.13, tol:0.03, unit:'%',
+  sol:[['Reguła','w trendzie potęgowym wykładnik a = elastyczność'],
+       ['Odczyt','a = 0,1293 ≈ <span class="calc">0,13</span>'],
+       ['Sens','+1% czasu → +0,13% sprzedaży (stała elastyczność)']],
+  excel:'odczyt wykładnika z równania linii trendu (potęgowej)'}
 ];
 
-const KEY='unicorner_dyn_v1';
+const KEY='unicorner_trend_v1';
 let solved=JSON.parse(localStorage.getItem(KEY)||'{}');
 const exList=document.getElementById('exList');
 EXS.forEach((e,i)=>{
@@ -460,42 +463,42 @@ function updateProg(){
 updateProg();
 
 const QUIZ=[
- {q:'Indeks łańcuchowy porównuje poziom zjawiska w okresie t do:',
-  o:['Stałego okresu bazowego','Okresu bezpośrednio poprzedniego (t−1)','Średniej z całego szeregu','Okresu następnego'],c:1,
-  e:'Łańcuchowy ma <b>podstawę zmienną</b> — każdy okres odnosi do poprzedniego (t−1). Pokazuje dynamikę rok do roku.'},
- {q:'Indeks jednopodstawowy 185,6% (2013 = 100) oznacza, że zjawisko:',
-  o:['Spadło o 85,6%','Wzrosło o 185,6%','Wzrosło o 85,6% względem 2013','Jest 185,6 razy większe'],c:2,
-  e:'Stopa zmian = indeks − 100%. 185,6% − 100% = <b>+85,6%</b> względem okresu bazowego 2013.'},
- {q:'Dlaczego średnie tempo zmian liczymy średnią geometryczną, a nie arytmetyczną?',
-  o:['Bo jest łatwiejsza','Bo zmiany w czasie się składają (mnożą), nie dodają','Bo daje wyższy wynik','To bez różnicy'],c:1,
-  e:'Dynamika kumuluje się multiplikatywnie — kolejne indeksy się <b>mnożą</b>. Średnia geometryczna oddaje to poprawnie, arytmetyczna by zawyżała.'},
- {q:'W indeksie CEN według Laspeyresa wagą są:',
-  o:['Ceny z okresu badanego','Ilości z okresu bazowego (q₀)','Ilości z okresu badanego (q₁)','Ceny z okresu bazowego'],c:1,
-  e:'Indeks cen → wagą jest <b>ilość</b>. Laspeyres używa ilości z <b>bazy</b> (q₀): Σq₀p₁ / Σq₀p₀.'},
- {q:'Indeks cen Paaschego używa jako wagi:',
-  o:['Ilości z okresu badanego (q₁)','Ilości z okresu bazowego (q₀)','Cen bazowych','Średniej ilości'],c:0,
-  e:'Paasche bierze ilości z okresu <b>badanego</b> (q₁): Σq₁p₁ / Σq₁p₀. Różnica L vs P to właśnie który okres dostarcza wag.'},
- {q:'Indeks Fishera to:',
-  o:['Suma Laspeyresa i Paaschego','Średnia arytmetyczna L i P','Średnia geometryczna L i P','Iloraz L i P'],c:2,
-  e:'Fisher = <b>√(I_L · I_P)</b> — średnia geometryczna indeksów Laspeyresa i Paaschego. Uznawany za „idealny”.'},
- {q:'Indeks WARTOŚCI można rozłożyć jako:',
-  o:['Iw = I_cen · I_ilości','Iw = I_cen + I_ilości','Iw = I_cen − I_ilości','Iw = I_cen / I_ilości'],c:0,
-  e:'Łączna zmiana wartości to <b>iloczyn</b> zmian cen i ilości, np. Iw = I_C^L · I_I^P = I_C^P · I_I^L = I_C^F · I_I^F.'},
- {q:'Której pary nie da się bezpośrednio porównać?',
-  o:['Dwa zjawiska w indeksach łańcuchowych','Dwa zjawiska w jednopodstawowych','Jedno w łańcuchowych, drugie w jednopodstawowych','Dwa zjawiska w tych samych jednostkach'],c:2,
-  e:'Mieszanki typów nie porównasz wprost — najpierw <b>sprowadź oba do tego samego typu</b> indeksu (oba łańcuchowe albo oba jednopodstawowe).'},
- {q:'Warunkiem poprawnej analizy szeregu czasowego NIE jest:',
-  o:['Ta sama częstość danych','Ten sam zakres przestrzenny','Te same jednostki','Rosnąca liczba obserwacji'],c:3,
-  e:'Porównywalność wymaga tej samej częstości, zakresu i jednostek. Liczba obserwacji nie musi rosnąć — to nie warunek.'},
- {q:'Agregatowy indeks ilości 96,6% oznacza, że:',
-  o:['Ceny spadły o 3,4%','Wolumen sprzedaży spadł o 3,4%','Wartość wzrosła o 96,6%','Ilość wzrosła o 3,4%'],c:1,
-  e:'Indeks ilości < 100% → <b>spadek wolumenu</b>: 96,6% − 100% = −3,4%. Indeks ilości mierzy zmianę ilości przy ustalonych cenach.'},
- {q:'Aby zamienić indeks łańcuchowy na jednopodstawowy, trzeba:',
-  o:['Dodać 100%','Pomnożyć ł iₜ przez s iₜ₋₁ i podzielić przez 100','Podzielić przez liczbę okresów','Odjąć indeks poprzedni'],c:1,
-  e:'s iₜ = ł iₜ · s iₜ₋₁ / 100. Kumulujesz dynamikę, mnożąc kolejny łańcuchowy przez jednopodstawowy z poprzedniego okresu.'},
- {q:'Indeks łańcuchowy dla pierwszego okresu szeregu:',
-  o:['Wynosi 100%','Wynosi 0%','Nie da się go wyznaczyć','Równa się indeksowi jednopodstawowemu'],c:2,
-  e:'Brak okresu poprzedniego (t−1), więc <b>nie da się go policzyć</b>. Pierwszy indeks jednopodstawowy z kolei zawsze = 100% (baza).'}
+ {q:'Trend (tendencja rozwojowa) to:',
+  o:['Krótkookresowe wahania wokół średniej','Długookresowy, regularny kierunek zmian zjawiska','Przypadkowe odchylenia','Wahania w ciągu roku'],c:1,
+  e:'Trend to <b>długookresowa</b> prawidłowość — ogólny kierunek, w którym zmierza zjawisko, po odfiltrowaniu wahań sezonowych i losowych.'},
+ {q:'Parametry funkcji trendu szacuje się:',
+  o:['Metodą prób i błędów','Klasyczną metodą najmniejszych kwadratów (MNK)','Średnią geometryczną','Medianą'],c:1,
+  e:'Standardem jest <b>MNK</b> — dobiera parametry tak, by zminimalizować sumę kwadratów odchyleń danych od linii trendu.'},
+ {q:'Co minimalizuje metoda najmniejszych kwadratów?',
+  o:['Sumę reszt','Sumę kwadratów różnic między wartościami rzeczywistymi a teoretycznymi','Największą resztę','Liczbę parametrów'],c:1,
+  e:'MNK minimalizuje <b>Σ(yᵢ − ŷᵢ)²</b> — sumę kwadratów odchyleń punktów empirycznych od linii trendu. (Sama suma reszt i tak wychodzi 0.)'},
+ {q:'W trendzie liniowym Y = a·t + b parametr a oznacza:',
+  o:['Wartość dla t = 0','Średnią zmianę Y na jeden okres','Współczynnik determinacji','Błąd szacunku'],c:1,
+  e:'<b>a</b> to przeciętna zmiana zjawiska co okres. W przykładzie a = 13,893 → sprzedaż rosła średnio o 13,893 mln zł rocznie.'},
+ {q:'Parametr b w trendzie liniowym to:',
+  o:['Nachylenie linii','Teoretyczna wartość zjawiska dla t = 0','Procent wyjaśnionej zmienności','Suma reszt'],c:1,
+  e:'<b>b</b> to wyraz wolny — wartość trendu w okresie zerowym (t = 0), czyli tuż przed pierwszą obserwacją.'},
+ {q:'R² = 0,988 oznacza, że:',
+  o:['Trend wyjaśnia 98,8% zmienności zjawiska','Błąd wynosi 98,8%','Zjawisko rośnie o 98,8%','98,8% danych to outliery'],c:0,
+  e:'Współczynnik determinacji = udział zmienności <b>wyjaśnionej</b> przez trend. 0,988 → trend tłumaczy 98,8% zmienności sprzedaży.'},
+ {q:'Współczynnik zbieżności φ² informuje o:',
+  o:['Części zmienności wyjaśnionej','Części zmienności niewyjaśnionej przez trend','Nachyleniu trendu','Liczbie okresów'],c:1,
+  e:'φ² = 1 − R². To <b>część niewyjaśniona</b>. Dla R²=0,988 mamy φ²=0,012 → tylko 1,2% zmienności poza trendem.'},
+ {q:'Standardowy błąd szacunku jest wyrażony:',
+  o:['W procentach','W tych samych jednostkach co zmienna Y','Zawsze w przedziale 0–1','Bez jednostki'],c:1,
+  e:'Błąd szacunku s mierzy przeciętne odchylenie punktów od trendu i ma <b>te same jednostki co Y</b> (np. mln zł).'},
+ {q:'Trend liniowy najlepiej opisuje zjawisko o:',
+  o:['Stałym przyroście absolutnym','Stałej stopie wzrostu','Stałej elastyczności','Braku tendencji'],c:0,
+  e:'Liniowy = <b>stały przyrost absolutny</b> (co okres +/− podobna liczba jednostek). Stała stopa wzrostu → wykładniczy, stała elastyczność → potęgowy.'},
+ {q:'Trend wykładniczy Y = b·aᵗ charakteryzuje się:',
+  o:['Stałym przyrostem absolutnym','Stałą stopą wzrostu','Stałą elastycznością','Brakiem parametru b'],c:1,
+  e:'Wykładniczy = <b>stała stopa wzrostu</b>: (a−1)·100% mówi, o ile % średnio zmienia się Y co okres (procent składany).'},
+ {q:'Jak wyznacza się prognozę z funkcji trendu?',
+  o:['Uśrednia się ostatnie wartości','Podstawia kolejne wartości t poza zakresem danych','Mnoży ostatnią wartość przez R²','Dodaje błąd szacunku'],c:1,
+  e:'Prognoza = <b>ekstrapolacja</b>: do równania trendu wstawiasz kolejne t (np. po 9 obserwacjach zaczynasz od t=10).'},
+ {q:'Który model najlepiej nadaje się do prognozowania?',
+  o:['Ten o najniższym R²','Ten o najlepszym dopasowaniu (np. R² ≥ 0,90)','Zawsze liniowy','Ten z najmniejszą liczbą danych'],c:1,
+  e:'Prognozę stawia się na model <b>najlepiej dopasowany</b> do danych — preferowane wysokie R² (≥ 0,90) i wiarygodny przebieg w przyszłości.'}
 ];
 const quizList=document.getElementById('quizList'); let answered=0, correct=0;
 QUIZ.forEach((q,i)=>{
@@ -515,7 +518,7 @@ QUIZ.forEach((q,i)=>{
         document.getElementById('scoreBig').textContent=correct+' / '+QUIZ.length;
         const pct=correct/QUIZ.length;
         document.getElementById('scoreMsg').textContent=
-          pct===1?'Komplet — indeksy masz w małym palcu. 🦄':pct>=0.7?'Dobrze. Dopnij wagi L vs P i jesteś gotowy.':'Wróć do kart o indeksach agregatowych — tam siedzi większość błędów.';
+          pct===1?'Komplet — trend rozłożony na czynniki. 🦄':pct>=0.7?'Dobrze. Dopnij miary dopasowania i prognozy.':'Wróć do kart o MNK i R² — tam siedzi sedno.';
       }
     };
     opts.appendChild(b);
