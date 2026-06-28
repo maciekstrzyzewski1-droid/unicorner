@@ -7,7 +7,7 @@
 <meta name="description" content="Miary tendencji centralnej, pozycyjne, zróżnicowania i asymetrii. Materiały, ściąga funkcji Excela, interaktywne zadania i quiz.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#0c0a18; --ink2:#100d20; --surface:#161230; --surface2:#1c1740;
@@ -162,6 +162,14 @@
     nav.pills{top:0;}
     .answer-row input{width:120px;}
   }
+</style>
+<style>
+/* ===== CYBERPUNK THEME — spójny z Unicorner ===== */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:linear-gradient(rgba(39,232,255,.05) 1px,transparent 1px) 0 0/100% 3px;mix-blend-mode:screen;opacity:.5;}
+h1,h2,h3,h4,h5,h6,.wordmark,.sec-head h2,.mcard h3{font-family:'Chakra Petch','Space Grotesk','Inter',sans-serif !important;letter-spacing:.4px;}
+nav.pills a,.mcard,.ex,.quiz-card,.opt,.quiz-score,.xtable-wrap,.eyebrow,.back{border-radius:4px !important;}
+nav.pills a,.mcard,.ex,.quiz-card{transition:border-color .18s,box-shadow .18s,background .18s,transform .18s !important;}
+nav.pills a:hover,.mcard:hover,.ex:hover,.quiz-card:hover{border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 10px 30px rgba(167,139,250,.22),0 0 16px rgba(39,232,255,.13) !important;}
 </style>
 </head>
 <body>

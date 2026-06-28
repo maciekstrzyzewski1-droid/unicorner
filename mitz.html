@@ -6,7 +6,7 @@
 <title>MiTZ — Materiały i Quiz egzaminacyjny</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0c0a18; --bg2:#100d20; --card:#161230; --card2:#1c1740;
@@ -150,6 +150,14 @@ tr:nth-child(even) td{background:rgba(255,255,255,.02)}
 .ritem .gc{color:var(--green)}
 .allgood{background:rgba(54,211,153,.12);border:1px solid var(--green);border-radius:12px;padding:16px;margin-top:18px}
 @media(max-width:560px){.qhero h1{font-size:1.4rem}.qtext{font-size:1.05rem}.score{font-size:2.4rem}}
+</style>
+<style>
+/* ===== CYBERPUNK THEME — spójny z Unicorner ===== */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:linear-gradient(rgba(39,232,255,.05) 1px,transparent 1px) 0 0/100% 3px;mix-blend-mode:screen;opacity:.5;}
+h1,h2,h3,h4,h5,h6,.uc-wordmark,.num{font-family:'Chakra Petch','Space Grotesk','Inter',sans-serif !important;letter-spacing:.4px;}
+.tabbtn,.dzial,.gcard,.qcard,.opt,.card,section,.result,.hero,.qhero,.uc-back{border-radius:4px !important;}
+.tabbtn,.dzial,.gcard,.qcard,.card,section{transition:border-color .18s,box-shadow .18s,background .18s,transform .18s !important;}
+.tabbtn:hover,.dzial:hover,.gcard:hover,.qcard:hover,.card:hover,section:hover{border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 10px 30px rgba(167,139,250,.22),0 0 16px rgba(39,232,255,.13) !important;}
 </style>
 </head>
 <body>
