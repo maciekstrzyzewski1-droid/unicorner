@@ -138,6 +138,13 @@
 <style>
 /* ===== CYBERPUNK THEME — spójny z Unicorner ===== */
 body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:linear-gradient(rgba(39,232,255,.05) 1px,transparent 1px) 0 0/100% 3px;mix-blend-mode:screen;opacity:.5;}
+/* kwadratowa siatka w tle — jak na stronie głównej */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px,linear-gradient(rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px;}
+/* logo spójne ze stroną główną + lewitujący róg jednorożca */
+.wordmark,.uc-wordmark{font-size:1.72rem !important;letter-spacing:.5px !important;}
+.horn,.uc-horn{width:38px !important;height:38px !important;filter:drop-shadow(0 0 7px rgba(39,232,255,.5));}
+@media (prefers-reduced-motion:no-preference){.horn,.uc-horn{animation:hornFloat 5s ease-in-out infinite;}}
+@keyframes hornFloat{50%{transform:translateY(-3px) rotate(-3deg);}}
 h1,h2,h3,h4,h5,h6,.wordmark,.sec-head h2,.mcard h3{font-family:'Chakra Petch','Space Grotesk','Inter',sans-serif !important;letter-spacing:.4px;}
 nav.pills a,.mcard,.ex,.quiz-card,.opt,.quiz-score,.xtable-wrap,.eyebrow,.back{border-radius:4px !important;}
 /* neon obwódka tylko na elementach klikalnych */
