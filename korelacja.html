@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analiza korelacji — Pearson i Spearman · Unicorner</title>
+<meta name="description" content="Współczynnik korelacji liniowej Pearsona i korelacja rang Spearmana: wzory, interpretacja siły i kierunku, istotność. Materiały, ściąga Excela, zadania i quiz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c0a18; --ink2:#100d20; --surface:#161230; --surface2:#1c1740;
+    --line:#272050; --line2:#352c66;
+    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --accent-d:#8b5cf6;
+    --ok:#5ad1a0; --ok-bg:#10241d; --ok-line:#1d4a3a;
+    --bad:#f87a8e; --bad-bg:#2a0f17; --bad-line:#5a2230;
+    --iris:linear-gradient(115deg,#5ad1ff 0%,#a78bfa 34%,#f472b6 66%,#fcd34d 100%);
+    --shadow:0 18px 50px rgba(0,0,0,.5);
+    --mono:'Space Grotesk',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:
+      radial-gradient(900px 500px at 85% -8%, #1e1646 0%, transparent 58%),
+      radial-gradient(700px 460px at -8% 4%, #181133 0%, transparent 52%),
+      var(--ink);
+    color:var(--text);min-height:100vh;line-height:1.55;letter-spacing:.1px;overflow-x:hidden;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+  header{padding:20px 0 6px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .horn{width:26px;height:26px;flex-shrink:0;display:block;}
+  .horn .seg{fill:url(#irisGrad);}
+  .wordmark{font-family:var(--mono);font-weight:700;font-size:1.34rem;letter-spacing:.3px;}
+  .wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .back{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:7px 13px;border-radius:999px;transition:border-color .2s,color .2s;}
+  .back:hover{color:var(--text);border-color:var(--line2);}
+  .hero{padding:34px 0 18px;max-width:760px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);background:var(--ink2);padding:6px 12px;border-radius:999px;margin-bottom:18px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);}
+  h1{font-family:var(--mono);font-weight:700;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.07;letter-spacing:-.8px;margin-bottom:14px;}
+  h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .lede{font-size:1.02rem;color:var(--muted);max-width:600px;}
+  .lede b{color:var(--text);font-weight:600;}
+  nav.pills{position:sticky;top:0;z-index:20;display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;margin:8px 0 6px;
+    background:linear-gradient(var(--ink),var(--ink) 70%,transparent);backdrop-filter:blur(4px);}
+  nav.pills a{font-family:var(--mono);font-size:.85rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:999px;transition:.2s;}
+  nav.pills a:hover{color:var(--text);border-color:var(--line2);transform:translateY(-1px);}
+  section.block{padding:26px 0 8px;}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin:8px 0 18px;font-family:var(--mono);}
+  .sec-head h2{font-size:1.3rem;font-weight:700;letter-spacing:-.3px;}
+  .sec-head .num{font-size:.8rem;color:var(--accent);font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:8px;padding:3px 9px;}
+  .sec-head .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+  .sub-note{color:var(--muted);font-size:.92rem;margin:-8px 0 18px;max-width:700px;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden;}
+  .mcard::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);opacity:.65;}
+  .mcard h3{font-family:var(--mono);font-size:1.05rem;font-weight:600;margin-bottom:4px;}
+  .mcard .tagline{font-size:.78rem;color:var(--accent);font-family:var(--mono);margin-bottom:10px;}
+  .mcard p{font-size:.9rem;color:var(--muted);margin-bottom:8px;}
+  .mcard p b{color:var(--text);font-weight:600;}
+  .mcard ul{list-style:none;margin:6px 0 0;}
+  .mcard li{font-size:.88rem;color:var(--muted);padding:4px 0 4px 18px;position:relative;}
+  .mcard li::before{content:"›";position:absolute;left:2px;color:var(--accent);font-weight:700;}
+  .mcard li b{color:var(--text);font-weight:600;}
+  .fml{display:block;font-family:var(--mono);font-size:.92rem;color:var(--text);background:var(--ink2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:8px 0;letter-spacing:.2px;}
+  .fml .v{color:var(--accent);}
+  .callout{font-size:.84rem;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;padding:10px 13px;margin-top:10px;}
+  .callout b{color:var(--text);}
+  .scale{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
+  .scale .row{display:flex;align-items:center;gap:8px;font-size:.84rem;}
+  .scale .bar{height:8px;border-radius:4px;flex-shrink:0;}
+  .scale .lbl{color:var(--muted);}.scale .lbl b{color:var(--text);}
+  .xtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);}
+  table.xt{width:100%;border-collapse:collapse;min-width:560px;font-size:.9rem;}
+  table.xt th{font-family:var(--mono);text-align:left;font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;padding:12px 14px;border-bottom:1px solid var(--line2);background:var(--ink2);}
+  table.xt td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.xt tr:last-child td{border-bottom:none;}
+  table.xt td.fn{font-family:var(--mono);color:var(--accent);white-space:nowrap;}
+  table.xt td.measure b{color:var(--text);}
+  table.xt td.measure small{display:block;color:var(--muted2);font-size:.78rem;margin-top:2px;}
+  .ex{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;position:relative;}
+  .ex.solved{border-color:var(--ok-line);}
+  .ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+  .ex-theme{font-family:var(--mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);}
+  .ex-diff{font-family:var(--mono);font-size:.68rem;color:var(--muted2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;}
+  .ex h3{font-family:var(--mono);font-size:1.04rem;font-weight:600;margin-bottom:10px;}
+  .ex .data{font-size:.9rem;color:var(--muted);margin-bottom:12px;}
+  .dtable-wrap{overflow-x:auto;margin:10px 0;}
+  table.dt{border-collapse:collapse;font-family:var(--mono);font-size:.85rem;}
+  table.dt th,table.dt td{border:1px solid var(--line2);padding:6px 12px;text-align:center;color:var(--text);}
+  table.dt th{background:var(--ink2);color:var(--muted);font-weight:600;}
+  .answer-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:6px;}
+  .answer-row input{font-family:var(--mono);font-size:1rem;color:var(--text);background:var(--ink2);border:1px solid var(--line2);border-radius:10px;padding:10px 13px;width:140px;outline:none;transition:border-color .2s;}
+  .answer-row input:focus{border-color:var(--accent);}
+  .answer-row .unit{font-family:var(--mono);color:var(--muted);font-size:.92rem;}
+  .btn{font-family:var(--mono);font-weight:600;font-size:.9rem;color:#160d2b;background:var(--accent);border:none;border-radius:10px;padding:10px 18px;cursor:pointer;transition:transform .15s,background .2s;}
+  .btn:hover{transform:translateY(-1px);background:#b9a3fb;}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line2);}
+  .btn.ghost:hover{color:var(--text);background:var(--surface2);}
+  .verdict{font-family:var(--mono);font-size:.9rem;font-weight:600;padding:8px 0;display:none;}
+  .verdict.ok{color:var(--ok);display:block;}
+  .verdict.bad{color:var(--bad);display:block;}
+  .solution{display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:14px;}
+  .solution.show{display:block;animation:fade .3s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .solution h4{font-family:var(--mono);font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;}
+  .step{font-size:.9rem;color:var(--muted);padding:4px 0 4px 20px;position:relative;}
+  .step::before{content:"";position:absolute;left:4px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  .step b{color:var(--text);}
+  .step .calc{font-family:var(--mono);color:var(--text);}
+  .excel-tag{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.86rem;background:var(--ok-bg);border:1px solid var(--ok-line);border-radius:10px;padding:9px 13px;font-family:var(--mono);color:#a7e8cd;flex-wrap:wrap;}
+  .excel-tag b{color:#d7f7e8;font-weight:600;}
+  .progress{position:sticky;bottom:14px;margin:18px auto 0;max-width:340px;background:var(--surface);border:1px solid var(--line2);border-radius:999px;padding:8px 16px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.82rem;box-shadow:var(--shadow);z-index:15;}
+  .progress .bar{flex:1;height:6px;background:var(--ink2);border-radius:99px;overflow:hidden;}
+  .progress .bar i{display:block;height:100%;width:0;background:var(--iris);transition:width .4s ease;}
+  .progress .lbl{color:var(--muted);white-space:nowrap;}
+  .quiz-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .q-no{font-family:var(--mono);font-size:.72rem;color:var(--accent);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .q-text{font-size:1rem;margin:8px 0 14px;font-weight:500;}
+  .opt{display:block;width:100%;text-align:left;background:var(--ink2);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:9px;cursor:pointer;color:var(--text);font-family:inherit;font-size:.94rem;transition:border-color .15s,background .15s;}
+  .opt:hover:not(:disabled){border-color:var(--line2);background:var(--surface2);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#cdeede;}
+  .opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#f7c9d1;}
+  .q-exp{display:none;font-size:.9rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:var(--ink2);border-radius:9px;padding:11px 13px;}
+  .q-exp.show{display:block;animation:fade .3s ease;}
+  .q-exp b{color:var(--text);}
+  .quiz-score{text-align:center;font-family:var(--mono);padding:22px;border:1px solid var(--line2);border-radius:16px;background:var(--ink2);margin-top:6px;}
+  .quiz-score .big{font-size:2.2rem;font-weight:700;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  footer{border-top:1px solid var(--line);padding:26px 0 50px;margin-top:40px;}
+  .disclaimer{font-size:.78rem;color:var(--muted2);max-width:620px;line-height:1.6;}
+  .disclaimer b{color:var(--muted);font-weight:600;}
+  @media(max-width:560px){.hero{padding:26px 0 14px;}.answer-row input{width:120px;}}
+</style>
+<style>
+/* ===== CYBERPUNK THEME — spójny z Unicorner ===== */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:linear-gradient(rgba(39,232,255,.05) 1px,transparent 1px) 0 0/100% 3px;mix-blend-mode:screen;opacity:.5;}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px,linear-gradient(rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px;}
+.wordmark,.uc-wordmark{font-size:1.72rem !important;letter-spacing:.5px !important;}
+.horn,.uc-horn{width:38px !important;height:38px !important;filter:drop-shadow(0 0 7px rgba(39,232,255,.5));}
+@media (prefers-reduced-motion:no-preference){.horn,.uc-horn{animation:hornFloat 5s ease-in-out infinite;}}
+@keyframes hornFloat{50%{transform:translateY(-3px) rotate(-3deg);}}
+@media(max-width:560px){.wordmark,.uc-wordmark{font-size:1.5rem !important;}.horn,.uc-horn{width:34px !important;height:34px !important;}}
+h1,h2,h3,h4,h5,h6,.wordmark,.sec-head h2,.mcard h3{font-family:'Chakra Petch','Space Grotesk','Inter',sans-serif !important;letter-spacing:.4px;}
+nav.pills a,.mcard,.ex,.quiz-card,.opt,.quiz-score,.xtable-wrap,.eyebrow,.back{border-radius:4px !important;}
+nav.pills a,.opt,.back{transition:border-color .18s,box-shadow .18s,background .18s !important;}
+nav.pills a:hover,.back:hover,.opt:hover:not(:disabled){border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 8px 26px rgba(167,139,250,.22),0 0 14px rgba(39,232,255,.13) !important;}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wordmark">Uni<span class="ai">corner</span></span>
+      </a>
+      <a class="back" href="index.html">← wszystkie przedmioty</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>Statystyka opisowa · UEP</span>
+    <h1>Analiza <span class="grad">korelacji</span></h1>
+    <p class="lede">Siła i kierunek zależności między dwiema zmiennymi: <b>współczynnik Pearsona</b> dla danych ilościowych i <b>korelacja rang Spearmana</b> dla porządkowych. Plus interpretacja i istotność statystyczna.</p>
+  </section>
+
+  <nav class="pills">
+    <a href="#materialy">Materiały</a>
+    <a href="#excel">Ściąga Excela</a>
+    <a href="#zadania">Zadania</a>
+    <a href="#quiz">Quiz</a>
+  </nav>
+
+  <!-- ===================== MATERIAŁY ===================== -->
+  <section class="block" id="materialy">
+    <div class="sec-head"><span class="num">01</span><h2>Materiały</h2><span class="line"></span></div>
+    <p class="sub-note">Korelacja mierzy <b>współwystępowanie</b> zmian dwóch cech — jej <b>kierunek</b> (dodatni/ujemny) i <b>siłę</b>. Pierwszy krok zawsze: uzasadnij, że związek ma sens logiczny. Wybór miary zależy od skali pomiaru: ilościowa → Pearson, porządkowa → Spearman.</p>
+
+    <div class="cards">
+
+      <div class="mcard">
+        <h3>Współczynnik Pearsona r</h3>
+        <div class="tagline">zależność liniowa · dane ilościowe</div>
+        <span class="fml"><span class="v">r = cov(x,y) / (Sₓ · Sᵧ)</span></span>
+        <span class="fml">równoważnie:<br><span class="v">r = Σ(xᵢ−x̄)(yᵢ−ȳ) / √(Σ(xᵢ−x̄)²·Σ(yᵢ−ȳ)²)</span></span>
+        <ul>
+          <li>Założenia: obie zmienne <b>ilościowe</b>, zależność <b>w przybliżeniu liniowa</b></li>
+          <li>cov(x,y) — kowariancja, Sₓ/Sᵧ — odchylenia standardowe</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Własności r</h3>
+        <div class="tagline">co trzeba wiedzieć</div>
+        <ul>
+          <li>Przyjmuje wartości z przedziału <b>⟨−1; 1⟩</b></li>
+          <li><b>Symetryczny</b>: r<sub>xy</sub> = r<sub>yx</sub></li>
+          <li><b>Niemianowany</b> (bez jednostek)</li>
+          <li><b>r = 0</b> → brak korelacji liniowej (niezależne)</li>
+          <li><b>r &gt; 0</b> dodatnia, <b>r &lt; 0</b> ujemna; ±1 → zależność funkcyjna</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Skala interpretacji |r|</h3>
+        <div class="tagline">jak nazwać siłę związku</div>
+        <div class="scale">
+          <div class="row"><span class="bar" style="width:24px;background:#3a2e74"></span><span class="lbl">&lt; 0,2 — <b>brak</b> zależności</span></div>
+          <div class="row"><span class="bar" style="width:40px;background:#5a4fa0"></span><span class="lbl">0,2–0,4 — <b>słaba</b></span></div>
+          <div class="row"><span class="bar" style="width:60px;background:#8b5cf6"></span><span class="lbl">0,4–0,7 — <b>umiarkowana</b></span></div>
+          <div class="row"><span class="bar" style="width:80px;background:#c084fc"></span><span class="lbl">0,7–0,9 — <b>znacząca</b></span></div>
+          <div class="row"><span class="bar" style="width:100px;background:#f472b6"></span><span class="lbl">0,9–1,0 — <b>bardzo silna</b></span></div>
+        </div>
+      </div>
+
+      <div class="mcard">
+        <h3>Korelacja rang Spearmana</h3>
+        <div class="tagline">dane porządkowe / mała próba</div>
+        <span class="fml"><span class="v">r_s = 1 − 6·Σdᵢ² / [n(n²−1)]</span></span>
+        <ul>
+          <li>dᵢ = r1ᵢ − r2ᵢ — różnica rang i-tego obiektu</li>
+          <li>Założenie: ≥1 zmienna <b>porządkowa</b> (druga porządkowa lub ilościowa)</li>
+          <li>Albo gdy zmienne ilościowe, ale <b>mało obserwacji</b></li>
+          <li>Też z przedziału ⟨−1; 1⟩, symetryczny, niemianowany</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Procedura Spearmana</h3>
+        <div class="tagline">krok po kroku</div>
+        <ul>
+          <li><b>1.</b> Uporządkuj obiekty wg każdej cechy (tak samo)</li>
+          <li><b>2.</b> Nadaj <b>rangi</b> (1, 2, 3, …)</li>
+          <li><b>3.</b> Policz dᵢ = różnica rang i dᵢ²</li>
+          <li><b>4.</b> Podstaw do wzoru na r_s</li>
+        </ul>
+        <div class="callout"><b>Rangi wiązane:</b> gdy wartości są równe, każda dostaje <b>średnią</b> z rang, które by jej przypadły (np. pozycje 2 i 3 → obie 2,5).</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Istotność statystyczna</h3>
+        <div class="tagline">czy związek jest „prawdziwy"</div>
+        <span class="fml"><span class="v">t = r_s · √[(n−2)/(1−r_s²)]</span></span>
+        <ul>
+          <li><b>H₀:</b> cechy nieskorelowane w populacji</li>
+          <li><b>H₁:</b> występuje korelacja</li>
+          <li>t_kryt z rozkładu t-Studenta, df = <b>n−2</b>, zwykle α = 0,05</li>
+          <li>|t| ≥ t_kryt → <b>odrzucamy H₀</b> (związek istotny)</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Korelacja ≠ przyczynowość</h3>
+        <div class="tagline">najważniejsza pułapka</div>
+        <p>Wysokie r mówi tylko, że zmienne <b>zmieniają się razem</b> — nie, że jedna powoduje drugą.</p>
+        <ul>
+          <li>Może istnieć <b>trzecia zmienna</b> wpływająca na obie</li>
+          <li>Związek może być <b>pozorny</b> (przypadkowy)</li>
+          <li>Dlatego krok 1 to <b>uzasadnienie logiczne</b> związku</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Pearson kontra Spearman</h3>
+        <div class="tagline">którego użyć</div>
+        <ul>
+          <li><b>Pearson</b>: ilościowe, zależność liniowa, większa próba</li>
+          <li><b>Spearman</b>: porządkowe (oceny, rankingi) lub mała próba</li>
+          <li>Spearman = Pearson policzony <b>na rangach</b></li>
+          <li>Spearman łapie zależność <b>monotoniczną</b>, niekoniecznie liniową</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== ŚCIĄGA EXCEL ===================== -->
+  <section class="block" id="excel">
+    <div class="sec-head"><span class="num">02</span><h2>Ściąga funkcji Excela</h2><span class="line"></span></div>
+    <p class="sub-note">Pearsona policzysz jedną funkcją. Spearmana nie ma wprost — ranguj obie zmienne (<b>POZYCJA.ŚR</b> daje rangi wiązane jako średnie), a potem albo wzór na r_s, albo po prostu <b>WSP.KORELACJI na rangach</b> (Spearman to Pearson liczony na rangach).</p>
+    <div class="xtable-wrap">
+      <table class="xt">
+        <thead><tr><th>Co liczysz</th><th>Funkcja Excela</th><th>Uwaga</th></tr></thead>
+        <tbody>
+          <tr><td class="measure"><b>Korelacja Pearsona r</b></td><td class="fn">=WSP.KORELACJI(Y;X)</td><td>Lub <span style="font-family:var(--mono)">=PEARSON(Y;X)</span> — to samo</td></tr>
+          <tr><td class="measure"><b>Kowariancja</b></td><td class="fn">=KOWARIANCJA.POPUL(X;Y)</td><td>Dzielnik N (populacyjna)</td></tr>
+          <tr><td class="measure"><b>Odchylenie standardowe</b></td><td class="fn">=ODCH.STANDARD.POPUL(X)</td><td>Do wzoru r = cov/(Sₓ·Sᵧ)</td></tr>
+          <tr><td class="measure"><b>Rangi (z wiązanymi)</b></td><td class="fn">=POZYCJA.ŚR(wartość;zakres)</td><td>Średnie rangi dla wartości równych</td></tr>
+          <tr><td class="measure"><b>Spearman r_s</b></td><td class="fn">=WSP.KORELACJI(rangi_Y;rangi_X)</td><td>Pearson policzony na rangach</td></tr>
+          <tr><td class="measure"><b>Σdᵢ²</b><small>droga ze wzoru</small></td><td class="fn">=SUMA.KWADRATÓW(r1−r2)</td><td>Różnice rang do podniesienia do kwadratu</td></tr>
+          <tr><td class="measure"><b>Współczynnik determinacji r²</b></td><td class="fn">=WSP.KORELACJI(Y;X)^2</td><td>Część wspólnej zmienności</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== ZADANIA ===================== -->
+  <section class="block" id="zadania">
+    <div class="sec-head"><span class="num">03</span><h2>Zadania krok po kroku</h2><span class="line"></span></div>
+    <p class="sub-note">Przykład Pearsona: wydatki na odzież (y) a przeciętny dochód (x), 10 lat. Sumy pomocnicze: Σ(xᵢ−x̄)(yᵢ−ȳ) = 14929,59 • Σ(xᵢ−x̄)² = 397483,36 • Σ(yᵢ−ȳ)² = 589,03 • n = 10. Spearman: ranking ocen 6 studentów. Akceptuję przecinek/kropkę i drobne zaokrąglenia.</p>
+    <div id="exList"></div>
+    <div class="progress"><span class="lbl" id="exLbl">0 / 0</span><div class="bar"><i id="exFill"></i></div></div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="block" id="quiz">
+    <div class="sec-head"><span class="num">04</span><h2>Quiz teoretyczny</h2><span class="line"></span></div>
+    <p class="sub-note">Wybór miary, własności r, interpretacja siły i kierunku, rangi i istotność.</p>
+    <div id="quizList"></div>
+    <div class="quiz-score" id="quizScore" style="display:none">
+      <div class="big" id="scoreBig">0 / 0</div>
+      <div id="scoreMsg" style="color:var(--muted);margin-top:6px"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="disclaimer">
+      <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani żadną katedrą.
+      Materiały to własne opracowania na bazie zajęć. Licz też z oryginalnych źródeł.
+    </p>
+  </footer>
+</div>
+
+<script>
+const EXS=[
+ {theme:'Kowariancja', diff:'łatwe',
+  title:'Kowariancja cov(x,y)',
+  data:'Z danych wydatki/dochód: Σ(xᵢ−x̄)(yᵢ−ȳ) = 14929,59, n = 10. Policz kowariancję.',
+  ans:1492.96, tol:5, unit:'',
+  sol:[['Wzór','cov(x,y) = Σ(xᵢ−x̄)(yᵢ−ȳ) / n'],
+       ['Podstawienie','= 14929,59 / 10 = <span class="calc">1492,96</span>'],
+       ['Sens','dodatnia → gdy dochód rośnie, wydatki też rosną']],
+  excel:'=KOWARIANCJA.POPUL(X;Y)'},
+
+ {theme:'Odch. standardowe', diff:'średnie',
+  title:'Odchylenie standardowe dochodu Sₓ',
+  data:'Σ(xᵢ−x̄)² = 397483,36, n = 10. Policz Sₓ.',
+  ans:199.37, tol:1, unit:'',
+  sol:[['Wzór','Sₓ = √(Σ(xᵢ−x̄)² / n)'],
+       ['Podstawienie','= √(397483,36 / 10) = √39748,34'],
+       ['Wynik','Sₓ = <span class="calc">199,37</span>']],
+  excel:'=ODCH.STANDARD.POPUL(X)'},
+
+ {theme:'Odch. standardowe', diff:'średnie',
+  title:'Odchylenie standardowe wydatków Sᵧ',
+  data:'Σ(yᵢ−ȳ)² = 589,03, n = 10. Policz Sᵧ.',
+  ans:7.68, tol:0.1, unit:'',
+  sol:[['Wzór','Sᵧ = √(Σ(yᵢ−ȳ)² / n)'],
+       ['Podstawienie','= √(589,03 / 10) = √58,90'],
+       ['Wynik','Sᵧ = <span class="calc">7,68</span>']],
+  excel:'=ODCH.STANDARD.POPUL(Y)'},
+
+ {theme:'Pearson', diff:'średnie',
+  title:'Współczynnik Pearsona r (z cov i odchyleń)',
+  data:'Wiedząc, że cov(x,y) = 1492,96, Sₓ = 199,37 i Sᵧ = 7,675, policz r.',
+  ans:0.976, tol:0.01, unit:'',
+  sol:[['Wzór','r = cov(x,y) / (Sₓ · Sᵧ)'],
+       ['Podstawienie','= 1492,96 / (199,37 · 7,675) = 1492,96 / 1530,2'],
+       ['Wynik','r = <span class="calc">0,976</span>']],
+  excel:'=WSP.KORELACJI(Y;X)'},
+
+ {theme:'Pearson', diff:'trudne',
+  title:'Współczynnik Pearsona r (z sum)',
+  data:'Z sum: Σ(xᵢ−x̄)(yᵢ−ȳ) = 14929,59, Σ(xᵢ−x̄)² = 397483,36, Σ(yᵢ−ȳ)² = 589,03. Policz r drugim wzorem.',
+  ans:0.976, tol:0.01, unit:'',
+  sol:[['Wzór','r = Σ(xᵢ−x̄)(yᵢ−ȳ) / √(Σ(xᵢ−x̄)²·Σ(yᵢ−ȳ)²)'],
+       ['Podstawienie','= 14929,59 / √(397483,36 · 589,03) = 14929,59 / 15300'],
+       ['Wynik','r = <span class="calc">0,976</span> → zależność <b>bardzo silna</b> dodatnia']],
+  excel:'=WSP.KORELACJI(Y;X)'},
+
+ {theme:'Spearman', diff:'łatwe',
+  title:'Suma kwadratów różnic rang Σdᵢ²',
+  data:'Różnice rang podniesione do kwadratu dla 6 studentów: 0 · 0,25 · 1 · 1 · 0,25 · 1. Policz Σdᵢ².',
+  ans:3.5, tol:0, unit:'',
+  sol:[['Dodawanie','0 + 0,25 + 1 + 1 + 0,25 + 1 = <span class="calc">3,5</span>'],
+       ['Sens','suma dᵢ² wchodzi prosto do wzoru na r_s']],
+  excel:'=SUMA(zakres dᵢ²)'},
+
+ {theme:'Spearman', diff:'średnie',
+  title:'Współczynnik korelacji rang Spearmana',
+  data:'Σdᵢ² = 3,5, liczba obserwacji n = 6. Policz r_s.',
+  ans:0.9, tol:0.02, unit:'',
+  sol:[['Wzór','r_s = 1 − 6·Σdᵢ² / [n(n²−1)]'],
+       ['Podstawienie','= 1 − 6·3,5 / [6·(36−1)] = 1 − 21/210'],
+       ['Wynik','r_s = <span class="calc">0,900</span> → bardzo silna zgodność rankingów']],
+  excel:'=WSP.KORELACJI(rangi_Y;rangi_X)'},
+
+ {theme:'Rangi wiązane', diff:'łatwe',
+  title:'Ranga wiązana',
+  data:'Dwa obiekty mają identyczną wartość i przypadłyby im pozycje 2 oraz 3. Jaką rangę dostaje każdy z nich?',
+  ans:2.5, tol:0, unit:'',
+  sol:[['Reguła','ranga wiązana = średnia z rang, które by przypadły'],
+       ['Obliczenie','(2 + 3) / 2 = <span class="calc">2,5</span>'],
+       ['Sens','obie obserwacje dostają 2,5; następna ranga to 4']],
+  excel:'=POZYCJA.ŚR(wartość;zakres)'},
+
+ {theme:'Istotność', diff:'trudne',
+  title:'Statystyka testowa t dla Spearmana',
+  data:'r_s = 0,9, n = 6. Policz wartość statystyki testowej t = r_s·√[(n−2)/(1−r_s²)].',
+  ans:4.13, tol:0.1, unit:'',
+  sol:[['Podstawienie','t = 0,9 · √[(6−2)/(1−0,81)] = 0,9 · √(4/0,19)'],
+       ['Obliczenie','= 0,9 · √21,05 = 0,9 · 4,588'],
+       ['Wynik','t = <span class="calc">4,13</span>; t_kryt(α=0,05; df=4)=2,776 → odrzucamy H₀, związek istotny']],
+  excel:'=0,9*PIERWIASTEK((6−2)/(1−0,9^2))'},
+
+ {theme:'Pearson · od zera', diff:'trudne',
+  title:'Policz r dla małego zbioru',
+  data:'Dane: x = 1, 2, 3, 4, 5 oraz y = 2, 4, 5, 4, 5. Policz współczynnik Pearsona r.',
+  ans:0.77, tol:0.02, unit:'',
+  sol:[['Średnie','x̄ = 3, ȳ = 4'],
+       ['Sumy','Σ(x−x̄)(y−ȳ) = 6 ; Σ(x−x̄)² = 10 ; Σ(y−ȳ)² = 6'],
+       ['Wynik','r = 6 / √(10·6) = 6/√60 = <span class="calc">0,775</span> → zależność znacząca']],
+  excel:'=WSP.KORELACJI({2;4;5;4;5};{1;2;3;4;5})'}
+];
+
+const KEY='unicorner_korel_v1';
+let solved=JSON.parse(localStorage.getItem(KEY)||'{}');
+const exList=document.getElementById('exList');
+EXS.forEach((e,i)=>{
+  const d=document.createElement('div'); d.className='ex'+(solved['e'+i]?' solved':''); d.id='ex'+i;
+  d.innerHTML=`
+    <div class="ex-top"><span class="ex-theme">${e.theme}</span><span class="ex-diff">${e.diff}</span></div>
+    <h3>${i+1}. ${e.title}</h3>
+    <div class="data">${e.data}</div>
+    <div class="answer-row">
+      <input type="text" inputmode="decimal" placeholder="Twój wynik" aria-label="wynik">
+      ${e.unit?`<span class="unit">${e.unit}</span>`:''}
+      <button class="btn" data-act="check">Sprawdź</button>
+      <button class="btn ghost" data-act="show">Pokaż rozwiązanie</button>
+    </div>
+    <div class="verdict"></div>
+    <div class="solution">
+      <h4>Rozwiązanie</h4>
+      ${e.sol.map(s=>`<div class="step"><b>${s[0]}:</b> ${s[1]}</div>`).join('')}
+      <div class="excel-tag"><span>▦</span><b>W Excelu:</b> ${e.excel}</div>
+    </div>`;
+  const inp=d.querySelector('input'), verd=d.querySelector('.verdict'), sol=d.querySelector('.solution');
+  const reveal=ok=>{ sol.classList.add('show'); if(ok){ d.classList.add('solved'); solved['e'+i]=1; localStorage.setItem(KEY,JSON.stringify(solved)); updateProg(); } };
+  d.querySelector('[data-act=check]').onclick=()=>{
+    const raw=inp.value.replace(',','.').replace(/[^0-9.\-]/g,'');
+    if(raw===''){verd.className='verdict bad';verd.textContent='Wpisz wynik liczbowy.';return;}
+    const v=parseFloat(raw); const ok=Math.abs(v-e.ans)<=(e.tol||0.01)+1e-9;
+    if(ok){verd.className='verdict ok';verd.textContent='✓ Dobrze! Wynik: '+String(e.ans).replace('.',',')+(e.unit?' '+e.unit:'');}
+    else{verd.className='verdict bad';verd.textContent='✗ Nie tym razem — sprawdź rozwiązanie poniżej.';}
+    reveal(ok);
+  };
+  d.querySelector('[data-act=show]').onclick=()=>{ sol.classList.add('show'); };
+  inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')d.querySelector('[data-act=check]').click();});
+  exList.appendChild(d);
+});
+function updateProg(){
+  const done=EXS.filter((_,i)=>solved['e'+i]).length;
+  document.getElementById('exLbl').textContent=done+' / '+EXS.length;
+  document.getElementById('exFill').style.width=(done/EXS.length*100)+'%';
+}
+updateProg();
+
+const QUIZ=[
+ {q:'Współczynnik Pearsona stosujemy, gdy zmienne są:',
+  o:['Jakościowe na skali porządkowej','Ilościowe o zależności liniowej','Nominalne i nieuporządkowane','Wyrażone w różnych jednostkach'],c:1,
+  e:'Pearson wymaga danych <b>ilościowych</b> i zależności w przybliżeniu <b>liniowej</b>. Dla porządkowych używa się Spearmana.'},
+ {q:'Korelację rang Spearmana wybierzemy, gdy:',
+  o:['Dane są idealnie liniowe','Zmienne są porządkowe lub próba mała','Mamy bardzo dużo obserwacji','Zmienne są w tych samych jednostkach'],c:1,
+  e:'Spearman pasuje do cech <b>porządkowych</b> (oceny, rankingi) albo gdy zmienne są ilościowe, ale obserwacji jest <b>mało</b>.'},
+ {q:'Współczynnik korelacji przyjmuje wartości:',
+  o:['Od 0 do 1','Od −1 do 1','Od −∞ do +∞','Od 0 do 100'],c:1,
+  e:'Zarówno r Pearsona, jak i r_s Spearmana mieszczą się w przedziale <b>⟨−1; 1⟩</b>.'},
+ {q:'r = 0 oznacza, że zmienne:',
+  o:['Są wzajemnie tożsame ze sobą','Nie są liniowo skorelowane','Są od siebie w pełni zależne','Mają błędnie zebrane dane'],c:1,
+  e:'r = 0 → <b>brak korelacji liniowej</b> (przy Pearsonie traktujemy je jako liniowo niezależne).'},
+ {q:'r = −0,82 informuje o zależności:',
+  o:['Słabej i dodatniej','Silnej i ujemnej','Umiarkowanej i dodatniej','Zerowej, czyli żadnej'],c:1,
+  e:'Znak minus → kierunek <b>ujemny</b>, a |r|=0,82 mieści się w przedziale 0,7–0,9, czyli zależność <b>znacząca (silna)</b>.'},
+ {q:'|r| = 0,95 na skali interpretacji to zależność:',
+  o:['Praktycznie słaba zależność','Wyraźnie umiarkowana zależność','Dość znacząca zależność','Bardzo silna zależność'],c:3,
+  e:'Przedział 0,9–1,0 to zależność <b>bardzo silna</b>. 0,7–0,9 byłoby „znaczące", 0,4–0,7 „umiarkowane".'},
+ {q:'Współczynnik korelacji jest miarą symetryczną, czyli:',
+  o:['Zawsze przyjmuje wartość dodatnią','r dla x,y równa się r dla y,x','Wynik zależy od kolejności zmiennych','Zmienia się przy zmianie jednostek'],c:1,
+  e:'Symetria oznacza <b>r_xy = r_yx</b> — wynik nie zależy od tego, którą zmienną nazwiemy pierwszą.'},
+ {q:'Określenie „niemianowany" wobec r oznacza, że:',
+  o:['Nie ma żadnej jednostki fizycznej','Nie da się go w ogóle obliczyć','Jest zawsze liczbą całkowitą','Dotyczy tylko jednej ze zmiennych'],c:0,
+  e:'Niemianowany = <b>bez jednostek</b>. r to czysta liczba, dlatego można nim porównywać związki różnych cech.'},
+ {q:'Gdy dwie obserwacje mają tę samą wartość, ich ranga to:',
+  o:['Niższa z dwóch możliwych rang','Średnia z przypadających rang','Zawsze pierwsza ranga w kolejności','Suma obu możliwych do nadania rang'],c:1,
+  e:'Rangi wiązane = <b>średnia</b> z rang, które by im przypadły (np. pozycje 2 i 3 → obie dostają 2,5).'},
+ {q:'Wysoki współczynnik korelacji oznacza, że:',
+  o:['Jedna zmienna na pewno powoduje drugą','Zmienne silnie współwystępują ze sobą','Dane zostały błędnie i niedbale zebrane','Zależność między nimi jest zawsze liniowa'],c:1,
+  e:'Korelacja ≠ przyczynowość. Wysokie r mówi o <b>współwystępowaniu</b> — przyczyną może być trzecia zmienna albo zbieg okoliczności.'},
+ {q:'We wzorze Spearmana dᵢ oznacza:',
+  o:['Sumę wszystkich możliwych rang','Różnicę rang obiektu','Liczbę obserwacji w próbie','Średnią arytmetyczną cechy'],c:1,
+  e:'dᵢ = r1ᵢ − r2ᵢ, czyli <b>różnica rang</b> i-tego obiektu według obu cech. Do wzoru wchodzi Σdᵢ².'},
+ {q:'W teście istotności korelacji liczba stopni swobody wynosi:',
+  o:['n','n − 1','n − 2','2n'],c:2,
+  e:'Statystyka t ma rozkład t-Studenta z <b>df = n − 2</b>. t_kryt odczytujesz dla tego df i poziomu α (zwykle 0,05).'}
+];
+const quizList=document.getElementById('quizList'); let answered=0, correct=0;
+QUIZ.forEach((q,i)=>{
+  const order=q.o.map((t,idx)=>idx).sort(()=>Math.random()-0.5);
+  const card=document.createElement('div'); card.className='quiz-card';
+  card.innerHTML=`<div class="q-no">Pytanie ${i+1} / ${QUIZ.length}</div><div class="q-text">${q.q}</div><div class="opts"></div><div class="q-exp">${q.e}</div>`;
+  const opts=card.querySelector('.opts'), exp=card.querySelector('.q-exp');
+  order.forEach(idx=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=q.o[idx];
+    b.onclick=()=>{
+      opts.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      if(idx===q.c){b.classList.add('correct');correct++;}
+      else{b.classList.add('wrong');opts.querySelectorAll('.opt').forEach(x=>{if(x.textContent===q.o[q.c])x.classList.add('correct');});}
+      exp.classList.add('show'); answered++;
+      if(answered===QUIZ.length){
+        const sc=document.getElementById('quizScore'); sc.style.display='block';
+        document.getElementById('scoreBig').textContent=correct+' / '+QUIZ.length;
+        const pct=correct/QUIZ.length;
+        document.getElementById('scoreMsg').textContent=
+          pct===1?'Komplet — korelacja opanowana. 🦄':pct>=0.7?'Dobrze. Dopnij wybór miary i istotność.':'Wróć do kart o Pearsonie i Spearmanie — tam sedno.';
+      }
+    };
+    opts.appendChild(b);
+  });
+  quizList.appendChild(card);
+});
+</script>
+</body>
+</html>
