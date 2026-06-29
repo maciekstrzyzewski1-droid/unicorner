@@ -83,7 +83,7 @@
   .btn-review:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(167,139,250,.32);}
   .marquee{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:4px;background:rgba(7,6,15,.4);padding:14px 0;
     -webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);}
-  .marquee-track{display:flex;gap:14px;width:max-content;padding:0 7px;animation:marquee 44s linear infinite;}
+  .marquee-track{display:flex;align-items:center;gap:14px;width:max-content;padding:0 7px;animation:marquee 44s linear infinite;}
   .marquee:hover .marquee-track{animation-play-state:paused;}
   @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
   .review-chip{flex:0 0 auto;max-width:340px;background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line);border-radius:4px;padding:12px 16px;}
@@ -91,6 +91,8 @@
   .review-chip .rtext{font-size:.9rem;color:var(--text);margin:5px 0;line-height:1.4;}
   .review-chip .rname{font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.5px;}
   .review-chip .rname b{color:var(--cyan);}
+  .rev-ph{flex:0 0 auto;align-self:center;font-family:'Orbitron',var(--disp);font-weight:800;font-size:1.05rem;letter-spacing:.34em;text-transform:uppercase;padding:6px 30px;white-space:nowrap;
+    color:transparent;background:var(--iris);-webkit-background-clip:text;background-clip:text;text-shadow:0 0 26px rgba(39,232,255,.16);}
   @media (prefers-reduced-motion: reduce){
     .marquee-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center;}
   }
@@ -270,7 +272,7 @@
     <p class="lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
   </section>
 
-  <!-- OPINIE — pasek przewijany (czyta reviews.json) -->
+  <!-- OPINIE — pasek przewijany (czyta reviews.json; gdy brak opinii → napis-placeholder) -->
   <section class="reviews" id="reviews" style="display:none">
     <div class="reviews-head">
       <span class="lbl">Opinie</span>
@@ -433,25 +435,28 @@ document.querySelectorAll('.card, .stat-hub').forEach((c,i)=>{
   setTimeout(()=>c.classList.add('in'), 90 + i*90);
 });
 
-/* ===== OPINIE — wczytanie reviews.json i zbudowanie paska ===== */
+/* ===== OPINIE — wczytanie reviews.json; gdy brak realnych opinii → przewijany napis ===== */
 const escR = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
 function starRow(n){ n=Math.max(1,Math.min(5,Math.round(n||5))); return '★'.repeat(n)+'☆'.repeat(5-n); }
-fetch('reviews.json',{cache:'no-store'})
-  .then(r=>r.ok?r.json():Promise.reject())
-  .then(list=>{
-    if(!Array.isArray(list)||!list.length) return;
-    const chip = r => `<div class="review-chip">
+function buildReviews(list){
+  const track = document.getElementById('reviewTrack');
+  const has = Array.isArray(list) && list.length;
+  const chip = r => `<div class="review-chip">
       <div class="stars" aria-label="${(r.stars||5)} na 5">${starRow(r.stars)}</div>
       <div class="rtext">${escR(r.text||'')}</div>
       <div class="rname">— <b>${escR(r.name||'Anonim')}</b>${r.subject?' · '+escR(r.subject):''}</div>
     </div>`;
-    const track = document.getElementById('reviewTrack');
-    const one = list.map(chip).join('');
-    track.innerHTML = reduce ? one : one + one; // duplikat dla płynnej pętli
-    if(!reduce){ track.style.animationDuration = Math.max(20, list.length*7) + 's'; }
-    document.getElementById('reviews').style.display = 'block';
-  })
-  .catch(()=>{ /* brak pliku / pusty → pasek pozostaje ukryty */ });
+  const half = has
+    ? list.map(chip).join('')
+    : '<span class="rev-ph">✦ Tu będą Wasze opinie ✦</span>'.repeat(6);
+  track.innerHTML = reduce ? half : half + half; // duplikat dla płynnej pętli
+  if(!reduce){ track.style.animationDuration = (has ? Math.max(20, list.length*7) : 30) + 's'; }
+  document.getElementById('reviews').style.display = 'block';
+}
+fetch('reviews.json',{cache:'no-store'})
+  .then(r=>r.ok?r.json():[])
+  .then(buildReviews)
+  .catch(()=>buildReviews([]));
 </script>
 </body>
 </html>
