@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0053)file:///C:/Users/macie/Downloads/makroekonomia_3.html -->
+<!-- saved from url=(0053)file:///C:/Users/macie/Downloads/makroekonomia_5.html -->
 <html lang="pl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -123,6 +123,23 @@
   table.mini{width:100%;border-collapse:collapse;margin:10px 0;font-size:.85rem;}
   table.mini th,table.mini td{border:1px solid var(--border);padding:7px 9px;text-align:center;}
   table.mini th{background:var(--surface2);color:var(--mint);}
+
+  /* ---------- LEGENDA ---------- */
+  .legend-card{border:1px solid rgba(252,211,77,.35) !important;background:linear-gradient(160deg,#1c1740 0%,#100d20 100%) !important;margin-bottom:22px !important;}
+  .legend-card .acc-head{background:rgba(252,211,77,.04);}
+  .legend-card .acc-head:hover{background:rgba(252,211,77,.08);}
+  .legend-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px;margin-top:8px;}
+  .lg-item{display:flex;align-items:flex-start;gap:10px;padding:8px 11px;background:var(--bg2);border:1px solid var(--border);border-radius:8px;font-size:.85rem;}
+  .lg-item b{color:var(--gold);font-family:'Cambria Math',Georgia,serif;font-size:1.02rem;min-width:42px;flex-shrink:0;}
+  .lg-item span{color:#d8d3ee;line-height:1.45;}
+  .lg-formula{display:grid;grid-template-columns:1fr 1.4fr;gap:14px;align-items:center;background:#0a0818;border:1px solid var(--border2);border-radius:10px;padding:12px 14px;margin:10px 0;}
+  .lg-f-eq{font-family:'Cambria Math',Georgia,serif;color:var(--mint);font-size:1.0rem;text-align:center;line-height:1.5;}
+  .lg-f-use{font-size:.86rem;color:#d8d3ee;line-height:1.55;border-left:2px solid var(--gold);padding-left:12px;}
+  .lg-f-use b{color:var(--gold);}
+  @media(max-width:640px){
+    .lg-formula{grid-template-columns:1fr;gap:8px;}
+    .lg-f-use{border-left:none;border-top:1px solid var(--border);padding-left:0;padding-top:8px;}
+  }
 
   /* ---------- SCIANA ---------- */
   .wall-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px;
@@ -289,6 +306,109 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
   <section id="zadania" class="view">
     <h2 class="section-title">Zadania z makroekonomii</h2>
     <p class="section-intro">Najpierw Twoje przykładowe zadanie rozłożone na czynniki pierwsze — tłumaczone tak prosto, jak się da. Potem warianty tego samego typu i inne zadania, które lubią wracać na egzaminach. Kliknij zadanie, żeby je rozwinąć, a rozwiązania odsłaniaj przyciskiem.</p>
+
+    <!-- ============ LEGENDA + ŚCIĄGA ============ -->
+    <div class="accordion legend-card" id="legendCard">
+      <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+        <span class="acc-num" style="background:linear-gradient(135deg,#fcd34d,#f472b6);">📖</span>
+        <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">ZACZNIJ TUTAJ</span>Legenda symboli i ściąga ze wzorami</span>
+        <span class="acc-arrow">▸</span>
+      </div>
+      <div class="acc-body">
+
+        <h4 style="color:var(--gold);margin-top:14px;">🔤 Co oznacza każdy symbol</h4>
+        <p class="muted" style="font-size:.85rem;margin-bottom:10px;">W modelu keynesowskim <b>Y</b>, <b>PKB</b> i <b>dochód</b> to ta sama rzecz — synonimy. Ważne!</p>
+        <div class="legend-grid">
+          <div class="lg-item"><b>Y</b><span>produkcja / PKB / dochód (to wszystko jedno!)</span></div>
+          <div class="lg-item"><b>AE</b><span>wydatki zagregowane (Aggregate Expenditures) — ile wszyscy <i>chcą wydać</i></span></div>
+          <div class="lg-item"><b>C</b><span>całkowita konsumpcja gospodarstw domowych</span></div>
+          <div class="lg-item"><b>C₀</b><span>konsumpcja autonomiczna — stała, nawet gdy dochód = 0</span></div>
+          <div class="lg-item"><b>MPC</b><span>krańcowa skłonność do konsumpcji — jaką część <i>dodatkowej</i> złotówki ludzie wydają (0–1)</span></div>
+          <div class="lg-item"><b>MPS</b><span>krańcowa skłonność do oszczędzania (MPS = 1 − MPC)</span></div>
+          <div class="lg-item"><b>I</b><span>inwestycje (wydatki firm: maszyny, budynki, zapasy)</span></div>
+          <div class="lg-item"><b>G</b><span>zakupy rządowe (wydatki państwa na dobra i usługi)</span></div>
+          <div class="lg-item"><b>T</b><span>podatki autonomiczne (stała kwota, niezależna od dochodu)</span></div>
+          <div class="lg-item"><b>k</b><span>mnożnik wydatków — ile razy PKB rośnie po zastrzyku 1 zł</span></div>
+          <div class="lg-item"><b>Δ (delta)</b><span>zmiana wartości, np. ΔY = "zmiana Y"</span></div>
+          <div class="lg-item"><b>Y*</b><span>produkcja w stanie równowagi</span></div>
+          <div class="lg-item"><b>M</b><span>podaż pieniądza w gospodarce</span></div>
+          <div class="lg-item"><b>V</b><span>prędkość obiegu pieniądza (ile razy 1 zł zmieni ręce w roku)</span></div>
+          <div class="lg-item"><b>P</b><span>poziom cen (wskaźnik typu CPI lub deflator)</span></div>
+          <div class="lg-item"><b>u</b><span>stopa bezrobocia rzeczywista</span></div>
+          <div class="lg-item"><b>u_n</b><span>naturalna stopa bezrobocia</span></div>
+          <div class="lg-item"><b>CPI</b><span>wskaźnik cen konsumpcyjnych (rok bazowy = 100)</span></div>
+        </div>
+
+        <h4 style="color:var(--gold);margin-top:22px;">📐 Wzory i kiedy ich używać</h4>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">AE = C₀ + I + G + MPC·(Y − T)</div>
+          <div class="lg-f-use"><b>Kiedy:</b> zawsze pierwszy krok, gdy w zadaniu pojawiają się C₀, I, G lub T. Najpierw budujesz wzór na wydatki, potem dopiero szukasz równowagi. <i>Jeśli w zadaniu nie ma G lub T — po prostu wypadają ze wzoru.</i></div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">Y = AE &nbsp;(warunek równowagi)</div>
+          <div class="lg-f-use"><b>Kiedy:</b> zawsze gdy szukasz "produkcji w równowadze". To jest właśnie miejsce, gdzie AE "znika" — podstawiasz cały wzór AE w miejsce Y i rozwiązujesz równanie.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">k = 1 / (1 − MPC)</div>
+          <div class="lg-f-use"><b>Kiedy:</b> gdy pytają o mnożnik wydatków LUB gdy chcesz szybko sprawdzić wynik (Y = k × wydatki autonomiczne). Im wyższy MPC, tym większy mnożnik.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">ΔY = k · Δ(wydatki autonomiczne)</div>
+          <div class="lg-f-use"><b>Kiedy:</b> gdy w zadaniu pojawia się słowo "rosną o", "wzrosną o", "zmiana" — czyli pytają o <i>efekt</i> zmiany I, G lub C₀, a nie o samo Y.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">MPC + MPS = 1</div>
+          <div class="lg-f-use"><b>Kiedy:</b> gdy masz MPC i pytają o MPS (lub odwrotnie). Każda dodatkowa złotówka idzie albo na wydatki, albo na oszczędności — innej możliwości nie ma.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">Stopa bezrobocia = bezrobotni / siła robocza × 100%<br><span style="font-size:.85em;color:var(--muted);">siła robocza = pracujący + bezrobotni (bez biernych!)</span></div>
+          <div class="lg-f-use"><b>Kiedy:</b> dane o populacji z podziałem na pracujących, bezrobotnych i biernych. <b>UWAGA:</b> nie dziel przez całą populację — tylko przez siłę roboczą.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">Luka produktowa = −współczynnik · (u − u_n)</div>
+          <div class="lg-f-use"><b>Kiedy:</b> gdy w zadaniu pojawia się "prawo Okuna" lub "współczynnik Okuna". Liczy o ile % PKB odbiega od potencjału z powodu bezrobocia.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">Czas podwojenia ≈ 70 / tempo wzrostu (%)</div>
+          <div class="lg-f-use"><b>Kiedy:</b> gdy podają tempo wzrostu PKB i pytają "po ilu latach PKB się podwoi" (lub odwrotnie).</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">Mnożnik pieniężny = 1 / stopa rezerw</div>
+          <div class="lg-f-use"><b>Kiedy:</b> gdy w zadaniu są banki, stopa rezerw obowiązkowych, podaż pieniądza. Pokazuje ile razy bank centralny "rozmnoży" bazę monetarną.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">M · V = P · Y</div>
+          <div class="lg-f-use"><b>Kiedy:</b> gdy pojawia się podaż pieniądza (M), prędkość obiegu (V) lub pytanie o związek pieniądza z inflacją. W tempie wzrostu: %ΔM + %ΔV = %ΔP + %ΔY.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">CPI = (koszt koszyka teraz / koszt w bazie) × 100<br>Inflacja = (CPI₂ − CPI₁) / CPI₁ × 100%</div>
+          <div class="lg-f-use"><b>Kiedy:</b> pytanie o CPI, inflację, koszyk konsumencki. W roku bazowym CPI = 100, więc inflacja od bazy = CPI − 100.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">PKB nominalny = Q · P_teraz<br>PKB realny = Q · P_baza<br>Deflator = (nominalny / realny) × 100</div>
+          <div class="lg-f-use"><b>Kiedy:</b> masz tabelę z ilościami i cenami z różnych lat. Nominalny — w cenach bieżących. Realny — w cenach bazowych (usuwa inflację). Deflator — szeroka miara wzrostu cen.</div>
+        </div>
+
+        <div class="lg-formula">
+          <div class="lg-f-eq">Tempo wzrostu = (Y₂ − Y₁) / Y₁ × 100%</div>
+          <div class="lg-f-use"><b>Kiedy:</b> dwa lata PKB, pytanie o "stopę wzrostu". <b>Zawsze używaj PKB realnego</b>, nie nominalnego — inaczej liczysz wzrost cen, a nie produkcji.</div>
+        </div>
+
+      </div>
+    </div>
+
     <div id="zadaniaArea">
    <div class="accordion open">
      <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
