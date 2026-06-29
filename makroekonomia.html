@@ -1315,6 +1315,81 @@ ZADANIA = [
 <button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
 <div class="sol"><div class="eli5"><b>MV = PY — co to w ogóle znaczy?</b><br>Obie strony opisują tę samą kwotę — łączne transakcje w gospodarce w ciągu roku.<br>• <b>MV (lewa)</b>: M = ile pieniędzy jest w obiegu, V = ile razy każda złotówka "zmieniła ręce". Razem: całkowity "obrót pieniądza".<br>• <b>PY (prawa)</b>: P = poziom cen, Y = realna produkcja. Razem: PKB nominalny — łączna wartość wszystkiego co kupiono.<br><br><b>Obliczenia:</b><br>PKB nominalny = M × V = 500 × 4 = 2000.<br>Inflacja: używamy wersji "przyrostowej": %ΔM + %ΔV = %ΔP + %ΔY → 10% + 0% = inflacja + 3% → inflacja = 7%.<br><br><b>Kluczowy wniosek ilościowej teorii pieniądza:</b><br>Jeśli bank centralny podwoi M, a V i Y są stałe, ceny też się podwoją. Więcej pieniędzy "gonić" będzie tę samą ilość towarów → wyższe ceny. To właśnie dlatego nadmierne drukowanie pieniędzy prowadzi do inflacji.</div></div></div>
 `}
+,
+{badge:"EGZAMIN", num:"1", title:"Funkcja konsumpcji, dochód równowagi i mnożnik", html:`
+<div class="given"><b>Dane:</b> gospodarka zamknięta (bez państwa i zagranicy) · konsumpcja autonomiczna A = 250 · MPC = 2/3 · inwestycje I = 350.<br><b>Pytania:</b> (a) funkcja konsumpcji, (b) popyt globalny i dochód równowagi, (c) mnożnik.</div>
+<h4>🧒 Co tu w ogóle znaczą te słowa</h4>
+<div class="eli5"><b>Gospodarka zamknięta bez państwa i zagranicy</b> = w grze są tylko <b>ludzie (konsumpcja)</b> i <b>firmy (inwestycje)</b>. Bez podatków, wydatków rządu i zagranicy.<br><br>• <b>Konsumpcja autonomiczna (A = 250)</b> — tyle ludzie wydają <i>zawsze</i>, nawet przy zerowym dochodzie.<br>• <b>MPC = 2/3</b> — z każdych 3 zł dochodu <b>2 zł na wydatki, 1 zł na oszczędności</b>.<br>• <b>YD</b> — dochód do dyspozycji.</div>
+<h4>Krok 1 (a) — funkcja konsumpcji</h4>
+<p>Stała część + część rosnąca z dochodem:</p>
+<div class="formula">C = A + MPC·YD = <b>250 + (2/3)·YD</b></div>
+<h4>Krok 2 (b) — popyt globalny</h4>
+<p>Konsumpcja + inwestycje:</p>
+<div class="formula">AE = C + I = (250 + 2/3·YD) + 350 = <b>600 + 2/3·YD</b></div>
+<h4>Krok 3 (b) — dochód równowagi</h4>
+<p>Równowaga: produkcja = planowane wydatki (Y = AE):</p>
+<div class="formula">Y = 600 + 2/3·Y → 1/3·Y = 600</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż dochód równowagi ▾</button>
+<div class="sol"><div class="answer">Y = 600 / (1/3) = <b>1800</b> — PKB w równowadze.</div></div>
+<h4>Krok 4 (c) — mnożnik</h4>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż mnożnik ▾</button>
+<div class="sol"><div class="answer">mnożnik = 1/(1−MPC) = 1/(1/3) = <b>3</b></div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5">Każda 1 zł nowych wydatków podbija dochód o 3 zł: wydane pieniądze stają się czyimś dochodem, ten wydaje 2/3 dalej, kolejny znów 2/3… suma rund = 1/(1−2/3) = 3.<br><br><b>Sprawdzenie:</b> wydatki autonomiczne (A+I = 600) × 3 = <b>1800</b>. ✓</div></div></div>
+`},
+{badge:"EGZAMIN", num:"3", title:"Luki koniunkturalne i reakcja polityki fiskalnej", html:`
+<div class="given"><b>Sytuacja:</b> gospodarka jest w długookresowej równowadze. Dla każdego zdarzenia ustal, jaka powstaje <b>luka</b> i jaką trzeba zastosować <b>politykę fiskalną</b>.<br><b>Zdarzenia:</b> (a) boom na giełdzie podnosi wartość akcji gospodarstw domowych; (b) firmy spodziewają się recesji; (c) rząd zwiększa zakupy sprzętu wojskowego; (d) spada ilość pieniądza, rosną stopy procentowe.</div>
+<h4>🧒 Dwa pojęcia, które wystarczą</h4>
+<div class="eli5"><b>Luka inflacyjna</b> = gospodarka „przegrzana", produkuje powyżej potencjału (popyt za duży) → grozi inflacja → trzeba <b>schłodzić</b> popyt = <b>polityka restrykcyjna</b> (mniej wydatków/transferów albo wyższe podatki).<br><br><b>Luka recesyjna</b> = gospodarka „niedogrzana", produkuje poniżej potencjału (popyt za mały) → bezrobocie → trzeba <b>pobudzić</b> popyt = <b>polityka ekspansywna</b> (więcej wydatków/transferów albo niższe podatki).<br><br>Cały trik: ustal, czy popyt (AD) rośnie czy spada → to mówi, która luka → a luka mówi, jaka polityka.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>a)</b> Boom na giełdzie → ludzie czują się bogatsi (<b>efekt majątkowy</b>) → więcej konsumpcji → AD w prawo → <b>luka inflacyjna</b> → <b>polityka restrykcyjna</b>.</div>
+<div class="answer"><b>b)</b> Firmy boją się recesji → tną inwestycje → AD w lewo → <b>luka recesyjna</b> → <b>polityka ekspansywna</b>.</div>
+<div class="answer"><b>c)</b> Rząd kupuje więcej (sprzęt wojskowy) → AD w prawo → <b>luka inflacyjna</b> → <b>polityka restrykcyjna</b>.</div>
+<div class="answer"><b>d)</b> Mniej pieniądza → wyższe stopy → droższy kredyt → mniej inwestycji → AD w lewo → <b>luka recesyjna</b> → <b>polityka ekspansywna</b>.</div>
+</div>
+`},
+{badge:"EGZAMIN", num:"4", title:"Wzrost gospodarczy — rozkład na czynniki", html:`
+<div class="given"><b>Dane:</b> ΔPKB = 3% · ΔL = 1% · ΔK = 4% · elastyczność PKB względem K/L = 0,3.<br><b>Pytanie:</b> ile ze wzrostu daje większy kapitał na pracownika, a ile postęp techniczny?</div>
+<h4>🧒 O co chodzi (po ludzku)</h4>
+<div class="eli5">Gospodarka rośnie z trzech powodów: <b>więcej rąk do pracy</b>, <b>więcej kapitału na pracownika</b> (maszyn, narzędzi) i <b>postęp techniczny</b> — czyli z tych samych nakładów wyciskamy więcej. Rozbijamy 3% wzrostu na te kawałki.</div>
+<h4>Krok 1 — wzrost PKB na 1 pracownika</h4>
+<div class="formula">ΔPKB − ΔL = 3% − 1% = <b>2%</b></div>
+<h4>Krok 2 — wzrost kapitału na 1 pracownika</h4>
+<div class="formula">ΔK − ΔL = 4% − 1% = <b>3%</b></div>
+<h4>Krok 3 — ile dało „doposażenie" w kapitał</h4>
+<p>Elastyczność 0,3: 1% więcej kapitału na pracownika → 0,3% więcej produkcji na pracownika.</p>
+<div class="formula">0,3 × 3% = <b>0,9%</b></div>
+<h4>Krok 4 — postęp techniczny (reszta)</h4>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż wynik ▾</button>
+<div class="sol"><div class="answer">postęp techniczny = 2% − 0,9% = <b>1,1%</b></div>
+<p class="muted">Z 2% wzrostu PKB na pracownika: 0,9 pkt proc. to większy kapitał, 1,1 pkt proc. to postęp techniczny.</p></div>
+`},
+{badge:"EGZAMIN", num:"6", title:"Domknięcie luki — ile zmienić G i transfery", html:`
+<div class="given"><b>Dla każdego przypadku</b> ustal rodzaj luki i policz, o ile zmienić zakupy rządowe (ΔG) albo transfery (ΔTr), żeby PKB zrównał się z potencjalnym.<br>(a) PKB=100, potencjalny=160, MPC=0,75 · (b) PKB=250, potencjalny=200, MPC=0,5 · (c) PKB=180, potencjalny=100, MPC=0,8.</div>
+<h4>🧒 Jak to działa (po ludzku)</h4>
+<div class="eli5">Najpierw liczysz <b>lukę</b> = o ile PKB ma się zmienić, żeby dojść do potencjału. Potem: ile „dosypać/zabrać", żeby ta zmiana wyszła — pomaga <b>mnożnik</b>:<br>• zakupy rządowe: mnożnik = 1/(1−MPC), więc <b>ΔG = luka × (1−MPC)</b>.<br>• transfery działają słabiej (część ludzie odłożą): mnożnik = MPC/(1−MPC), więc <b>ΔTr = luka × (1−MPC)/MPC</b>.<br>Dlatego transfer co do wartości jest zawsze <b>większy</b> niż ΔG.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula"><b>a)</b> luka = 160−100 = 60 (recesyjna) → ΔG = 60×0,25 = <b>+15</b> · ΔTr = 60×0,25/0,75 = <b>+20</b></div>
+<div class="formula"><b>b)</b> luka = 250−200 = 50 (inflacyjna) → ΔG = 50×0,5 = <b>−25</b> · ΔTr = 50×0,5/0,5 = <b>−50</b></div>
+<div class="formula"><b>c)</b> luka = 180−100 = 80 (inflacyjna) → ΔG = 80×0,2 = <b>−16</b> · ΔTr = 80×0,2/0,8 = <b>−20</b></div>
+<div class="answer">Recesyjna → dokładamy (+); inflacyjna → zabieramy (−). Transfer zawsze co do wartości większy niż ΔG, bo część transferu ucieka w oszczędności.</div>
+</div>
+`},
+{badge:"EGZAMIN", num:"15", title:"Szoki popytowe i podażowe — kierunek przesunięcia", html:`
+<div class="given"><b>Dla każdego zdarzenia</b> wskaż, co się przesuwa (AD czy SRAS), w którą stronę i jaki to typ szoku.<br>(a) obniżenie płacy minimalnej; (b) większe transfery TANF; (c) zapowiedź wyższych podatków; (d) mniejsze wydatki na obronność.</div>
+<h4>🧒 Jak rozpoznać, co się rusza</h4>
+<div class="eli5"><b>AD (popyt)</b> = ile wszyscy chcą kupić. Ruszają nim: konsumpcja, inwestycje, wydatki rządu, transfery, eksport.<br><b>SRAS (podaż krótkookresowa)</b> = ile firmy chcą wyprodukować przy danych <b>kosztach</b>. Rusza nią to, co zmienia koszty produkcji (płace, surowce).<br>Reguła: zmienia się <b>koszt firm</b> → SRAS; zmienia się <b>czyjś popyt</b> → AD. „W prawo" = więcej, „w lewo" = mniej.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>a)</b> Niższa płaca minimalna → tańsza praca → niższe koszty firm → <b>SRAS w prawo</b> (pozytywny szok podażowy).</div>
+<div class="answer"><b>b)</b> Większe transfery → ludzie mają więcej do wydania → <b>AD w prawo</b> (pozytywny szok popytowy).</div>
+<div class="answer"><b>c)</b> Zapowiedź wyższych podatków → ludzie i firmy ograniczają wydatki → <b>AD w lewo</b> (negatywny szok popytowy).</div>
+<div class="answer"><b>d)</b> Mniejsze wydatki na obronność → rząd kupuje mniej → <b>AD w lewo</b> (negatywny szok popytowy).</div>
+</div>
+`}
+
 ];
 
 /* =================== DANE: ŚCIANA =================== */
