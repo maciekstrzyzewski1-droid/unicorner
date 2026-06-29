@@ -74,6 +74,27 @@
   .lede{font-size:1.06rem;color:var(--muted);max-width:580px;}
   .lede b{color:var(--text);font-weight:600;}
 
+  /* ===== OPINIE (pasek przewijany) ===== */
+  .reviews{margin:6px 0 34px;}
+  .reviews-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:14px;flex-wrap:wrap;}
+  .reviews-head .lbl{font-family:var(--mono);font-size:.92rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text);}
+  .reviews-head .lbl::before{content:"// ";color:var(--cyan);}
+  .btn-review{font-family:var(--mono);font-size:.74rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#07060f;background:var(--iris);border:none;border-radius:4px;padding:10px 16px;text-decoration:none;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease;white-space:nowrap;}
+  .btn-review:hover{transform:translateY(-1px);box-shadow:0 6px 22px rgba(167,139,250,.32);}
+  .marquee{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:4px;background:rgba(7,6,15,.4);padding:14px 0;
+    -webkit-mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);mask:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);}
+  .marquee-track{display:flex;gap:14px;width:max-content;padding:0 7px;animation:marquee 44s linear infinite;}
+  .marquee:hover .marquee-track{animation-play-state:paused;}
+  @keyframes marquee{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+  .review-chip{flex:0 0 auto;max-width:340px;background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line);border-radius:4px;padding:12px 16px;}
+  .review-chip .stars{color:var(--gold);font-size:.92rem;letter-spacing:2px;}
+  .review-chip .rtext{font-size:.9rem;color:var(--text);margin:5px 0;line-height:1.4;}
+  .review-chip .rname{font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.5px;}
+  .review-chip .rname b{color:var(--cyan);}
+  @media (prefers-reduced-motion: reduce){
+    .marquee-track{animation:none;flex-wrap:wrap;width:auto;justify-content:center;}
+  }
+
   /* ===== SECTION LABELS ===== */
   .row-label{display:flex;align-items:center;gap:14px;margin:16px 0 18px;font-family:var(--mono);}
   .row-label h2{font-size:.92rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text);}
@@ -249,6 +270,15 @@
     <p class="lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
   </section>
 
+  <!-- OPINIE — pasek przewijany (czyta reviews.json) -->
+  <section class="reviews" id="reviews" style="display:none">
+    <div class="reviews-head">
+      <span class="lbl">Opinie</span>
+      <a class="btn-review" href="https://tally.so/r/GxgX2L" target="_blank" rel="noopener">★ Zostaw opinię</a>
+    </div>
+    <div class="marquee"><div class="marquee-track" id="reviewTrack"></div></div>
+  </section>
+
   <div class="row-label"><h2>Przedmioty</h2><span class="count" id="count"></span><span class="line"></span></div>
   <div class="grid" id="grid"></div>
 
@@ -270,6 +300,7 @@
       <p class="disclaimer">
         <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą.
         Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.
+        Opinie są dobrowolne; publikujemy podane imię i treść, nie zbieramy adresów e-mail.
         Bez gwarancji kompletności: ucz się też z oryginalnych źródeł.
       </p>
       <div class="foot-brand">
@@ -401,6 +432,26 @@ document.querySelectorAll('.card, .stat-hub').forEach((c,i)=>{
   if(reduce){c.classList.add('in');return;}
   setTimeout(()=>c.classList.add('in'), 90 + i*90);
 });
+
+/* ===== OPINIE — wczytanie reviews.json i zbudowanie paska ===== */
+const escR = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+function starRow(n){ n=Math.max(1,Math.min(5,Math.round(n||5))); return '★'.repeat(n)+'☆'.repeat(5-n); }
+fetch('reviews.json',{cache:'no-store'})
+  .then(r=>r.ok?r.json():Promise.reject())
+  .then(list=>{
+    if(!Array.isArray(list)||!list.length) return;
+    const chip = r => `<div class="review-chip">
+      <div class="stars" aria-label="${(r.stars||5)} na 5">${starRow(r.stars)}</div>
+      <div class="rtext">${escR(r.text||'')}</div>
+      <div class="rname">— <b>${escR(r.name||'Anonim')}</b>${r.subject?' · '+escR(r.subject):''}</div>
+    </div>`;
+    const track = document.getElementById('reviewTrack');
+    const one = list.map(chip).join('');
+    track.innerHTML = reduce ? one : one + one; // duplikat dla płynnej pętli
+    if(!reduce){ track.style.animationDuration = Math.max(20, list.length*7) + 's'; }
+    document.getElementById('reviews').style.display = 'block';
+  })
+  .catch(()=>{ /* brak pliku / pusty → pasek pozostaje ukryty */ });
 </script>
 </body>
 </html>

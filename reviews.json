@@ -1,0 +1,5 @@
+[
+  { "name": "Kasia", "stars": 5, "text": "Świetne materiały, zdałam statystykę na 5!", "subject": "Statystyka" },
+  { "name": "Bartek", "stars": 5, "text": "Quizy uratowały mi sesję — wszystko po ludzku wytłumaczone.", "subject": "Makroekonomia" },
+  { "name": "Ola", "stars": 4, "text": "Zadania krok po kroku to złoto. Brakowało mi tylko więcej przykładów.", "subject": "Trend" }
+]
