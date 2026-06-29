@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sezonowość w szeregach czasowych · Unicorner</title>
+<meta name="description" content="Wahania sezonowe, model addytywny i multiplikatywny, wskaźniki sezonowości i prognozowanie. Materiały, ściąga Excela, zadania i quiz.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c0a18; --ink2:#100d20; --surface:#161230; --surface2:#1c1740;
+    --line:#272050; --line2:#352c66;
+    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --accent-d:#8b5cf6;
+    --ok:#5ad1a0; --ok-bg:#10241d; --ok-line:#1d4a3a;
+    --bad:#f87a8e; --bad-bg:#2a0f17; --bad-line:#5a2230;
+    --iris:linear-gradient(115deg,#5ad1ff 0%,#a78bfa 34%,#f472b6 66%,#fcd34d 100%);
+    --shadow:0 18px 50px rgba(0,0,0,.5);
+    --mono:'Space Grotesk',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:
+      radial-gradient(900px 500px at 85% -8%, #1e1646 0%, transparent 58%),
+      radial-gradient(700px 460px at -8% 4%, #181133 0%, transparent 52%),
+      var(--ink);
+    color:var(--text);min-height:100vh;line-height:1.55;letter-spacing:.1px;overflow-x:hidden;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+  header{padding:20px 0 6px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .horn{width:26px;height:26px;flex-shrink:0;display:block;}
+  .horn .seg{fill:url(#irisGrad);}
+  .wordmark{font-family:var(--mono);font-weight:700;font-size:1.34rem;letter-spacing:.3px;}
+  .wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .back{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:7px 13px;border-radius:999px;transition:border-color .2s,color .2s;}
+  .back:hover{color:var(--text);border-color:var(--line2);}
+  .hero{padding:34px 0 18px;max-width:760px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);background:var(--ink2);padding:6px 12px;border-radius:999px;margin-bottom:18px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);}
+  h1{font-family:var(--mono);font-weight:700;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.07;letter-spacing:-.8px;margin-bottom:14px;}
+  h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .lede{font-size:1.02rem;color:var(--muted);max-width:600px;}
+  .lede b{color:var(--text);font-weight:600;}
+  nav.pills{position:sticky;top:0;z-index:20;display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;margin:8px 0 6px;
+    background:linear-gradient(var(--ink),var(--ink) 70%,transparent);backdrop-filter:blur(4px);}
+  nav.pills a{font-family:var(--mono);font-size:.85rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:999px;transition:.2s;}
+  nav.pills a:hover{color:var(--text);border-color:var(--line2);transform:translateY(-1px);}
+  section.block{padding:26px 0 8px;}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin:8px 0 18px;font-family:var(--mono);}
+  .sec-head h2{font-size:1.3rem;font-weight:700;letter-spacing:-.3px;}
+  .sec-head .num{font-size:.8rem;color:var(--accent);font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:8px;padding:3px 9px;}
+  .sec-head .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+  .sub-note{color:var(--muted);font-size:.92rem;margin:-8px 0 18px;max-width:700px;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden;}
+  .mcard::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);opacity:.65;}
+  .mcard h3{font-family:var(--mono);font-size:1.05rem;font-weight:600;margin-bottom:4px;}
+  .mcard .tagline{font-size:.78rem;color:var(--accent);font-family:var(--mono);margin-bottom:10px;}
+  .mcard p{font-size:.9rem;color:var(--muted);margin-bottom:8px;}
+  .mcard p b{color:var(--text);font-weight:600;}
+  .mcard ul{list-style:none;margin:6px 0 0;}
+  .mcard li{font-size:.88rem;color:var(--muted);padding:4px 0 4px 18px;position:relative;}
+  .mcard li::before{content:"›";position:absolute;left:2px;color:var(--accent);font-weight:700;}
+  .mcard li b{color:var(--text);font-weight:600;}
+  .fml{display:block;font-family:var(--mono);font-size:.92rem;color:var(--text);background:var(--ink2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:8px 0;letter-spacing:.2px;}
+  .fml .v{color:var(--accent);}
+  .callout{font-size:.84rem;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;padding:10px 13px;margin-top:10px;}
+  .callout b{color:var(--text);}
+  .xtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);}
+  table.xt{width:100%;border-collapse:collapse;min-width:560px;font-size:.9rem;}
+  table.xt th{font-family:var(--mono);text-align:left;font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;padding:12px 14px;border-bottom:1px solid var(--line2);background:var(--ink2);}
+  table.xt td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.xt tr:last-child td{border-bottom:none;}
+  table.xt td.fn{font-family:var(--mono);color:var(--accent);white-space:nowrap;}
+  table.xt td.measure b{color:var(--text);}
+  table.xt td.measure small{display:block;color:var(--muted2);font-size:.78rem;margin-top:2px;}
+  .ex{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;position:relative;}
+  .ex.solved{border-color:var(--ok-line);}
+  .ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+  .ex-theme{font-family:var(--mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);}
+  .ex-diff{font-family:var(--mono);font-size:.68rem;color:var(--muted2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;}
+  .ex h3{font-family:var(--mono);font-size:1.04rem;font-weight:600;margin-bottom:10px;}
+  .ex .data{font-size:.9rem;color:var(--muted);margin-bottom:12px;}
+  .dtable-wrap{overflow-x:auto;margin:10px 0;}
+  table.dt{border-collapse:collapse;font-family:var(--mono);font-size:.85rem;}
+  table.dt th,table.dt td{border:1px solid var(--line2);padding:6px 12px;text-align:center;color:var(--text);}
+  table.dt th{background:var(--ink2);color:var(--muted);font-weight:600;}
+  .answer-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:6px;}
+  .answer-row input{font-family:var(--mono);font-size:1rem;color:var(--text);background:var(--ink2);border:1px solid var(--line2);border-radius:10px;padding:10px 13px;width:140px;outline:none;transition:border-color .2s;}
+  .answer-row input:focus{border-color:var(--accent);}
+  .answer-row .unit{font-family:var(--mono);color:var(--muted);font-size:.92rem;}
+  .btn{font-family:var(--mono);font-weight:600;font-size:.9rem;color:#160d2b;background:var(--accent);border:none;border-radius:10px;padding:10px 18px;cursor:pointer;transition:transform .15s,background .2s;}
+  .btn:hover{transform:translateY(-1px);background:#b9a3fb;}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line2);}
+  .btn.ghost:hover{color:var(--text);background:var(--surface2);}
+  .verdict{font-family:var(--mono);font-size:.9rem;font-weight:600;padding:8px 0;display:none;}
+  .verdict.ok{color:var(--ok);display:block;}
+  .verdict.bad{color:var(--bad);display:block;}
+  .solution{display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:14px;}
+  .solution.show{display:block;animation:fade .3s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .solution h4{font-family:var(--mono);font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;}
+  .step{font-size:.9rem;color:var(--muted);padding:4px 0 4px 20px;position:relative;}
+  .step::before{content:"";position:absolute;left:4px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  .step b{color:var(--text);}
+  .step .calc{font-family:var(--mono);color:var(--text);}
+  .excel-tag{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.86rem;background:var(--ok-bg);border:1px solid var(--ok-line);border-radius:10px;padding:9px 13px;font-family:var(--mono);color:#a7e8cd;flex-wrap:wrap;}
+  .excel-tag b{color:#d7f7e8;font-weight:600;}
+  .progress{position:sticky;bottom:14px;margin:18px auto 0;max-width:340px;background:var(--surface);border:1px solid var(--line2);border-radius:999px;padding:8px 16px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.82rem;box-shadow:var(--shadow);z-index:15;}
+  .progress .bar{flex:1;height:6px;background:var(--ink2);border-radius:99px;overflow:hidden;}
+  .progress .bar i{display:block;height:100%;width:0;background:var(--iris);transition:width .4s ease;}
+  .progress .lbl{color:var(--muted);white-space:nowrap;}
+  .quiz-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .q-no{font-family:var(--mono);font-size:.72rem;color:var(--accent);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .q-text{font-size:1rem;margin:8px 0 14px;font-weight:500;}
+  .opt{display:block;width:100%;text-align:left;background:var(--ink2);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:9px;cursor:pointer;color:var(--text);font-family:inherit;font-size:.94rem;transition:border-color .15s,background .15s;}
+  .opt:hover:not(:disabled){border-color:var(--line2);background:var(--surface2);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#cdeede;}
+  .opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#f7c9d1;}
+  .q-exp{display:none;font-size:.9rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:var(--ink2);border-radius:9px;padding:11px 13px;}
+  .q-exp.show{display:block;animation:fade .3s ease;}
+  .q-exp b{color:var(--text);}
+  .quiz-score{text-align:center;font-family:var(--mono);padding:22px;border:1px solid var(--line2);border-radius:16px;background:var(--ink2);margin-top:6px;}
+  .quiz-score .big{font-size:2.2rem;font-weight:700;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  footer{border-top:1px solid var(--line);padding:26px 0 50px;margin-top:40px;}
+  .disclaimer{font-size:.78rem;color:var(--muted2);max-width:620px;line-height:1.6;}
+  .disclaimer b{color:var(--muted);font-weight:600;}
+  @media(max-width:560px){.hero{padding:26px 0 14px;}.answer-row input{width:120px;}}
+</style>
+<style>
+/* ===== CYBERPUNK THEME — spójny z Unicorner ===== */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:linear-gradient(rgba(39,232,255,.05) 1px,transparent 1px) 0 0/100% 3px;mix-blend-mode:screen;opacity:.5;}
+/* kwadratowa siatka w tle — jak na stronie głównej */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px,linear-gradient(rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px;}
+/* logo spójne ze stroną główną + lewitujący róg jednorożca */
+.wordmark,.uc-wordmark{font-size:1.72rem !important;letter-spacing:.5px !important;}
+.horn,.uc-horn{width:38px !important;height:38px !important;filter:drop-shadow(0 0 7px rgba(39,232,255,.5));}
+@media (prefers-reduced-motion:no-preference){.horn,.uc-horn{animation:hornFloat 5s ease-in-out infinite;}}
+@keyframes hornFloat{50%{transform:translateY(-3px) rotate(-3deg);}}
+@media(max-width:560px){.wordmark,.uc-wordmark{font-size:1.5rem !important;}.horn,.uc-horn{width:34px !important;height:34px !important;}}
+h1,h2,h3,h4,h5,h6,.wordmark,.sec-head h2,.mcard h3{font-family:'Chakra Petch','Space Grotesk','Inter',sans-serif !important;letter-spacing:.4px;}
+nav.pills a,.mcard,.ex,.quiz-card,.opt,.quiz-score,.xtable-wrap,.eyebrow,.back{border-radius:4px !important;}
+/* neon obwódka tylko na elementach klikalnych */
+nav.pills a,.opt,.back{transition:border-color .18s,box-shadow .18s,background .18s !important;}
+nav.pills a:hover,.back:hover,.opt:hover:not(:disabled){border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 8px 26px rgba(167,139,250,.22),0 0 14px rgba(39,232,255,.13) !important;}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wordmark">Uni<span class="ai">corner</span></span>
+      </a>
+      <a class="back" href="index.html">← wszystkie przedmioty</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>Statystyka opisowa · UEP</span>
+    <h1>Sezonowość <span class="grad">w szeregach czasowych</span></h1>
+    <p class="lede">Regularne wahania w ciągu roku: model addytywny vs multiplikatywny, <b>wskaźniki sezonowości</b> i trzy metody prognozowania. Przykład przewodni: przychody kwartalne PolShop Online 2020–2024.</p>
+  </section>
+
+  <nav class="pills">
+    <a href="#materialy">Materiały</a>
+    <a href="#excel">Ściąga Excela</a>
+    <a href="#zadania">Zadania</a>
+    <a href="#quiz">Quiz</a>
+  </nav>
+
+  <!-- ===================== MATERIAŁY ===================== -->
+  <section class="block" id="materialy">
+    <div class="sec-head"><span class="num">01</span><h2>Materiały</h2><span class="line"></span></div>
+    <p class="sub-note">Szereg czasowy rozkłada się na: <b>tendencję (T)</b>, <b>wahania cykliczne (C)</b>, <b>sezonowe (S)</b> i <b>przypadkowe (ε)</b>. Sezonowość to regularne, powtarzające się w stałych odstępach wahania (kwartał, miesiąc). Tu skupiamy się na ich pomiarze i uwzględnieniu w prognozie.</p>
+
+    <div class="cards">
+
+      <div class="mcard">
+        <h3>Model addytywny vs multiplikatywny</h3>
+        <div class="tagline">jak sezon łączy się z trendem</div>
+        <span class="fml">addytywny: <span class="v">yₜ = T + S + ε</span></span>
+        <span class="fml">multiplikatywny: <span class="v">yₜ = T · S · ε</span></span>
+        <ul>
+          <li><b>Addytywny</b> — amplituda wahań <b>stała</b>, niezależna od poziomu trendu</li>
+          <li><b>Multiplikatywny</b> — amplituda <b>rośnie wraz z trendem</b> (proporcjonalna)</li>
+          <li>E-commerce, sprzedaż → zwykle <b>multiplikatywny</b></li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Wskaźnik sezonowości</h3>
+        <div class="tagline">model multiplikatywny</div>
+        <span class="fml">indywidualny: <span class="v">yᵢ / ŷᵢ</span></span>
+        <span class="fml">sezonowy: <span class="v">Sᵢ = średnia indywidualnych dla danego okresu</span></span>
+        <ul>
+          <li><b>S = 1,00</b> → brak wahań w tym okresie</li>
+          <li><b>S &gt; 1</b> → sezon wysoki (S=1,18 → +18% nad trendem)</li>
+          <li><b>S &lt; 1</b> → sezon niski (S=0,86 → −14% pod trendem)</li>
+        </ul>
+        <div class="callout">Warunek: <b>suma wskaźników = liczba okresów</b> (kwartalne → 4, miesięczne → 12). Jeśli odbiega, normalizujesz: każdy ·(4/suma).</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Procedura krok po kroku</h3>
+        <div class="tagline">multiplikatywny — jak policzyć</div>
+        <ul>
+          <li><b>1.</b> Dopasuj trend liniowy ŷ = a₀ + a₁·t</li>
+          <li><b>2.</b> Policz wskaźniki indywidualne yᵢ/ŷᵢ</li>
+          <li><b>3.</b> Uśrednij je w obrębie tego samego okresu → Sᵢ</li>
+          <li><b>4.</b> Sprawdź sumę (≈4) — w razie potrzeby znormalizuj</li>
+          <li><b>5.</b> Prognoza: trend · Sᵢ</li>
+        </ul>
+        <div class="callout">Sezonowość <b>zaniża R²</b> samego trendu — regularne odchylenia sezonowe wyglądają jak „niewyjaśniona" zmienność.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Interpretacja wskaźników</h3>
+        <div class="tagline">przykład PolShop</div>
+        <span class="fml">Q1 = 0,857 → <span class="v">−14,3%</span> pod trendem</span>
+        <span class="fml">Q2 = 1,033 → <span class="v">+3,3%</span> nad trendem</span>
+        <span class="fml">Q3 = 0,934 → <span class="v">−6,6%</span> pod trendem</span>
+        <span class="fml">Q4 = 1,177 → <span class="v">+17,7%</span> nad trendem</span>
+        <ul>
+          <li>Q4 = szczyt (Black Friday, święta)</li>
+          <li>Największa sezonowość = największe odchylenie od 1</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Prognoza · metoda 1</h3>
+        <div class="tagline">trend + wskaźniki sezonowości</div>
+        <span class="fml"><span class="v">ŷ(T+k) = (a₀ + a₁·(T+k)) · Sᵢ</span></span>
+        <p>Najpierw ekstrapolujesz trend na przyszły okres, potem mnożysz przez wskaźnik sezonowości tego kwartału.</p>
+        <ul>
+          <li>Prosta, najczęściej stosowana</li>
+          <li>PolShop 2025 Q4: 59,07 · 1,177 = <b>69,5 mln</b></li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Prognoza · metoda 2</h3>
+        <div class="tagline">szereg oczyszczony (desezonalizacja)</div>
+        <span class="fml">oczyszczenie: <span class="v">yᵢ / Sᵢ</span></span>
+        <ul>
+          <li>Dzielisz dane przez wskaźnik → znika sezon, zostaje trend+szum</li>
+          <li>Na oczyszczonym szeregu budujesz trend i prognozujesz</li>
+          <li>Na koniec mnożysz prognozę z powrotem przez Sᵢ</li>
+          <li>Desezonalizacja przydaje się też do porównań „kwartał do kwartału"</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Prognoza · metoda 3</h3>
+        <div class="tagline">szeregi jednoimienne</div>
+        <p>Osobna linia trendu <b>dla każdego kwartału</b> — bierzesz tylko wartości z tego samego kwartału kolejnych lat.</p>
+        <ul>
+          <li>Q1 z lat 2020–2024 → własny trend, Q2 → własny itd.</li>
+          <li>Zwykle <b>bardzo wysokie R²</b> (każda seria jest „gładka")</li>
+          <li>PolShop: Q4 → y = 36,87 + 5,21·t, prognoza 2025 = 68,1 mln</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Po co to wszystko</h3>
+        <div class="tagline">sens praktyczny</div>
+        <p>Sam trend kłamie o przyszłym kwartale, jeśli zignoruje sezon — wyjdzie „średnia", a nie realny szczyt/dołek.</p>
+        <ul>
+          <li>Planowanie zapasów, zatrudnienia, budżetu</li>
+          <li>Ocena, czy spadek to słaby wynik czy zwykły niski sezon</li>
+          <li>Prognoza z sezonem jest po prostu wiarygodniejsza</li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== ŚCIĄGA EXCEL ===================== -->
+  <section class="block" id="excel">
+    <div class="sec-head"><span class="num">02</span><h2>Ściąga funkcji Excela</h2><span class="line"></span></div>
+    <p class="sub-note">Najpierw trend (jak w dziale o tendencji), potem kolumna wskaźników indywidualnych, a wskaźniki sezonowości to średnie z odpowiednich kwartałów — <b>ŚREDNIA.JEŻELI</b> robi to jednym wzorem, jeśli masz kolumnę z numerem kwartału.</p>
+    <div class="xtable-wrap">
+      <table class="xt">
+        <thead><tr><th>Co liczysz</th><th>Funkcja Excela</th><th>Uwaga</th></tr></thead>
+        <tbody>
+          <tr><td class="measure"><b>Trend a₁ i a₀</b></td><td class="fn">=NACHYLENIE(y;t) · =ODCIĘTA(y;t)</td><td>Linia trendu na całym szeregu</td></tr>
+          <tr><td class="measure"><b>Wartość teoretyczna ŷ</b></td><td class="fn">=ODCIĘTA(y;t)+NACHYLENIE(y;t)*t</td><td>Albo wprost a₀ + a₁·t</td></tr>
+          <tr><td class="measure"><b>Wskaźnik indywidualny</b><small>yᵢ / ŷᵢ</small></td><td class="fn">=B2/C2</td><td>B = wartość, C = trend dla tego okresu</td></tr>
+          <tr><td class="measure"><b>Wskaźnik sezonowości Sᵢ</b></td><td class="fn">=ŚREDNIA.JEŻELI(kwartały;"Q1";wsk)</td><td>Średnia indywidualnych z danego kwartału</td></tr>
+          <tr><td class="measure"><b>Suma / kontrola</b></td><td class="fn">=SUMA(S1:S4)</td><td>Powinno wyjść ≈ 4 (kwartały)</td></tr>
+          <tr><td class="measure"><b>Normalizacja</b><small>gdy suma ≠ 4</small></td><td class="fn">=Sᵢ*4/SUMA(S1:S4)</td><td>Skaluje wskaźniki, by sumowały się do 4</td></tr>
+          <tr><td class="measure"><b>Szereg oczyszczony</b></td><td class="fn">=yᵢ/Sᵢ</td><td>Usuwa sezon (desezonalizacja)</td></tr>
+          <tr><td class="measure"><b>Prognoza (metoda 1)</b></td><td class="fn">=(a₀+a₁*t_new)*Sᵢ</td><td>Trend na przyszły okres · wskaźnik kwartału</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== ZADANIA ===================== -->
+  <section class="block" id="zadania">
+    <div class="sec-head"><span class="num">03</span><h2>Zadania krok po kroku</h2><span class="line"></span></div>
+    <p class="sub-note">Dane PolShop Online: przychody kwartalne 2020–2024 (20 okresów). Trend: <b>ŷ = 30,29 + 1,20·t</b>. Wskaźniki sezonowości: <b>Q1=0,857, Q2=1,033, Q3=0,934, Q4=1,177</b>. Akceptuję przecinek/kropkę i drobne zaokrąglenia.</p>
+    <div id="exList"></div>
+    <div class="progress"><span class="lbl" id="exLbl">0 / 0</span><div class="bar"><i id="exFill"></i></div></div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="block" id="quiz">
+    <div class="sec-head"><span class="num">04</span><h2>Quiz teoretyczny</h2><span class="line"></span></div>
+    <p class="sub-note">Modele sezonowości, wskaźniki, interpretacja i metody prognozowania.</p>
+    <div id="quizList"></div>
+    <div class="quiz-score" id="quizScore" style="display:none">
+      <div class="big" id="scoreBig">0 / 0</div>
+      <div id="scoreMsg" style="color:var(--muted);margin-top:6px"></div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="disclaimer">
+      <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani żadną katedrą.
+      Materiały to własne opracowania na bazie zajęć. Licz też z oryginalnych źródeł.
+    </p>
+  </footer>
+</div>
+
+<script>
+const EXS=[
+ {theme:'Trend', diff:'łatwe',
+  title:'Wartość teoretyczna trendu dla 2020 Q4',
+  data:'Trend ŷ = 30,29 + 1,20·t. Okres 2020 Q4 to t = 4. Policz wartość teoretyczną trendu.',
+  ans:35.09, tol:0.2, unit:'mln',
+  sol:[['Podstawienie','ŷ = 30,29 + 1,20·4 = 30,29 + 4,80'],
+       ['Wynik','ŷ = <span class="calc">35,09 mln</span>'],
+       ['Sens','tyle „dałby" sam trend, bez uwzględnienia sezonu']],
+  excel:'=30,29+1,20*4'},
+
+ {theme:'Wskaźnik indywidualny', diff:'łatwe',
+  title:'Indywidualny wskaźnik sezonowości 2020 Q4',
+  data:'Rzeczywiste przychody w 2020 Q4 to 42,1 mln, a trend dla t=4 daje 35,08 mln. Policz wskaźnik indywidualny y/ŷ.',
+  ans:1.20, tol:0.02, unit:'',
+  sol:[['Wzór','wskaźnik indywidualny = yᵢ / ŷᵢ'],
+       ['Podstawienie','= 42,1 / 35,08 = <span class="calc">1,200</span>'],
+       ['Sens','Q4 2020 był o 20% powyżej trendu']],
+  excel:'=42,1/35,08'},
+
+ {theme:'Wskaźnik sezonowości', diff:'średnie',
+  title:'Wskaźnik sezonowości Q4',
+  data:'Indywidualne wskaźniki dla Q4 z pięciu lat: 1,200 · 1,186 · 1,177 · 1,160 · 1,163. Policz wskaźnik sezonowości Q4 (ich średnią).',
+  ans:1.177, tol:0.01, unit:'',
+  sol:[['Wzór','Sᵢ = średnia arytmetyczna indywidualnych dla kwartału'],
+       ['Suma','1,200+1,186+1,177+1,160+1,163 = 5,886'],
+       ['Średnia','5,886 / 5 = <span class="calc">1,177</span>']],
+  excel:'=ŚREDNIA(zakres indyw. dla Q4)  lub  =ŚREDNIA.JEŻELI(kwartały;"Q4";wsk)'},
+
+ {theme:'Kontrola', diff:'łatwe',
+  title:'Suma wskaźników sezonowości',
+  data:'Wskaźniki kwartalne: Q1=0,857, Q2=1,033, Q3=0,934, Q4=1,177. Policz ich sumę (warunek poprawności).',
+  ans:4.00, tol:0.02, unit:'',
+  sol:[['Dodawanie','0,857 + 1,033 + 0,934 + 1,177 = <span class="calc">4,001</span>'],
+       ['Warunek','suma kwartalnych ≈ 4 → spełniony, nie trzeba normalizować'],
+       ['Gdyby nie 4','każdy wskaźnik ·(4/suma)']],
+  excel:'=SUMA(S1:S4)'},
+
+ {theme:'Interpretacja', diff:'łatwe',
+  title:'O ile procent Q1 jest pod trendem?',
+  data:'Wskaźnik sezonowości Q1 = 0,857. O ile procent przeciętnie przychody w Q1 są poniżej trendu?',
+  ans:14.3, tol:0.3, unit:'%',
+  sol:[['Reguła','odchylenie = (1 − S)·100% (dla S<1 sezon niski)'],
+       ['Obliczenie','(1 − 0,857)·100% = <span class="calc">14,3%</span>'],
+       ['Sens','Q1 to niski sezon — spowolnienie po świętach']],
+  excel:'=(1−0,857)*100'},
+
+ {theme:'Interpretacja', diff:'łatwe',
+  title:'O ile procent Q4 jest nad trendem?',
+  data:'Wskaźnik sezonowości Q4 = 1,177. O ile procent przeciętnie przychody w Q4 są powyżej trendu?',
+  ans:17.7, tol:0.3, unit:'%',
+  sol:[['Reguła','odchylenie = (S − 1)·100% (dla S>1 sezon wysoki)'],
+       ['Obliczenie','(1,177 − 1)·100% = <span class="calc">17,7%</span>'],
+       ['Sens','Q4 to szczyt — Black Friday i święta']],
+  excel:'=(1,177−1)*100'},
+
+ {theme:'Prognoza · metoda 1', diff:'średnie',
+  title:'Prognoza na 2025 Q1',
+  data:'Trend ŷ = 30,29 + 1,20·t. Okres 2025 Q1 to t = 21, wskaźnik Q1 = 0,857. Policz prognozę (trend · Sᵢ).',
+  ans:47.5, tol:0.6, unit:'mln',
+  sol:[['Trend','ŷ = 30,29 + 1,20·21 = <span class="calc">55,49</span>'],
+       ['Sezon','55,49 · 0,857 = <span class="calc">47,5 mln</span>'],
+       ['Sens','sam trend dałby 55,5 — sezon Q1 ścina to do 47,5']],
+  excel:'=(30,29+1,20*21)*0,857'},
+
+ {theme:'Prognoza · metoda 1', diff:'średnie',
+  title:'Prognoza na 2025 Q4',
+  data:'Ten sam trend. Okres 2025 Q4 to t = 24, wskaźnik Q4 = 1,177. Policz prognozę.',
+  ans:69.5, tol:0.6, unit:'mln',
+  sol:[['Trend','ŷ = 30,29 + 1,20·24 = <span class="calc">59,09</span>'],
+       ['Sezon','59,09 · 1,177 = <span class="calc">69,5 mln</span>'],
+       ['Sens','szczyt roku — trend podbity sezonem Q4']],
+  excel:'=(30,29+1,20*24)*1,177'},
+
+ {theme:'Desezonalizacja', diff:'średnie',
+  title:'Szereg oczyszczony dla 2020 Q4',
+  data:'Przychód 2020 Q4 = 42,1 mln, wskaźnik Q4 = 1,177. Policz wartość oczyszczoną z sezonu (y / Sᵢ).',
+  ans:35.8, tol:0.3, unit:'mln',
+  sol:[['Wzór','wartość oczyszczona = yᵢ / Sᵢ'],
+       ['Podstawienie','= 42,1 / 1,177 = <span class="calc">35,8 mln</span>'],
+       ['Sens','po zdjęciu sezonu Q4 wraca w okolice trendu (~35)']],
+  excel:'=42,1/1,177'},
+
+ {theme:'Szeregi jednoimienne', diff:'trudne',
+  title:'Prognoza Q4 2025 — osobny trend kwartału',
+  data:'Dla samego kwartału Q4 (lata 2020–2024, t=1…5) dopasowano trend y = 36,87 + 5,21·t. Policz prognozę na 2025 (t = 6).',
+  ans:68.1, tol:0.3, unit:'mln',
+  sol:[['Podstawienie','y = 36,87 + 5,21·6 = 36,87 + 31,26'],
+       ['Wynik','= <span class="calc">68,1 mln</span>'],
+       ['Uwaga','metoda 3 — osobna, „gładka" linia dla każdego kwartału (R²≈0,999)']],
+  excel:'=36,87+5,21*6'}
+];
+
+const KEY='unicorner_sezon_v1';
+let solved=JSON.parse(localStorage.getItem(KEY)||'{}');
+const exList=document.getElementById('exList');
+EXS.forEach((e,i)=>{
+  const d=document.createElement('div'); d.className='ex'+(solved['e'+i]?' solved':''); d.id='ex'+i;
+  d.innerHTML=`
+    <div class="ex-top"><span class="ex-theme">${e.theme}</span><span class="ex-diff">${e.diff}</span></div>
+    <h3>${i+1}. ${e.title}</h3>
+    <div class="data">${e.data}</div>
+    <div class="answer-row">
+      <input type="text" inputmode="decimal" placeholder="Twój wynik" aria-label="wynik">
+      ${e.unit?`<span class="unit">${e.unit}</span>`:''}
+      <button class="btn" data-act="check">Sprawdź</button>
+      <button class="btn ghost" data-act="show">Pokaż rozwiązanie</button>
+    </div>
+    <div class="verdict"></div>
+    <div class="solution">
+      <h4>Rozwiązanie</h4>
+      ${e.sol.map(s=>`<div class="step"><b>${s[0]}:</b> ${s[1]}</div>`).join('')}
+      <div class="excel-tag"><span>▦</span><b>W Excelu:</b> ${e.excel}</div>
+    </div>`;
+  const inp=d.querySelector('input'), verd=d.querySelector('.verdict'), sol=d.querySelector('.solution');
+  const reveal=ok=>{ sol.classList.add('show'); if(ok){ d.classList.add('solved'); solved['e'+i]=1; localStorage.setItem(KEY,JSON.stringify(solved)); updateProg(); } };
+  d.querySelector('[data-act=check]').onclick=()=>{
+    const raw=inp.value.replace(',','.').replace(/[^0-9.\-]/g,'');
+    if(raw===''){verd.className='verdict bad';verd.textContent='Wpisz wynik liczbowy.';return;}
+    const v=parseFloat(raw); const ok=Math.abs(v-e.ans)<=(e.tol||0.01)+1e-9;
+    if(ok){verd.className='verdict ok';verd.textContent='✓ Dobrze! Wynik: '+String(e.ans).replace('.',',')+(e.unit?' '+e.unit:'');}
+    else{verd.className='verdict bad';verd.textContent='✗ Nie tym razem — sprawdź rozwiązanie poniżej.';}
+    reveal(ok);
+  };
+  d.querySelector('[data-act=show]').onclick=()=>{ sol.classList.add('show'); };
+  inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')d.querySelector('[data-act=check]').click();});
+  exList.appendChild(d);
+});
+function updateProg(){
+  const done=EXS.filter((_,i)=>solved['e'+i]).length;
+  document.getElementById('exLbl').textContent=done+' / '+EXS.length;
+  document.getElementById('exFill').style.width=(done/EXS.length*100)+'%';
+}
+updateProg();
+
+const QUIZ=[
+ {q:'Wahania sezonowe to:',
+  o:['Wieloletnie wahania o zmiennym rytmie cyklu','Regularne wahania w stałych odstępach','Nieregularne, przypadkowe odchylenia danych','Długookresowy, trwały kierunek zmian zjawiska'],c:1,
+  e:'Sezonowość to <b>regularne, powtarzające się w stałych odstępach</b> wahania (kwartał, miesiąc). Wieloletnie o zmiennym rytmie to cykl, losowe to wahania przypadkowe.'},
+ {q:'Model multiplikatywny (yₜ = T·S·ε) stosujemy, gdy:',
+  o:['Amplituda wahań jest stała w całym okresie','Amplituda rośnie wraz z poziomem trendu','W danych w ogóle nie występuje trend','Dane zbierane są wyłącznie w skali rocznej'],c:1,
+  e:'W multiplikatywnym wahania są <b>proporcjonalne do poziomu zjawiska</b> — im wyższy trend, tym większy bezwzględny skok sezonu. Stała amplituda → model addytywny.'},
+ {q:'Wskaźnik sezonowości S = 1,00 oznacza, że w danym okresie:',
+  o:['Sezon w tym okresie jest bardzo wysoki','Nie ma wahań sezonowych w tym okresie','Wartość trendu wynosi dokładnie zero','Dane są zapewne błędne lub brakujące'],c:1,
+  e:'S = 1,00 → wartość dokładnie na poziomie trendu, czyli <b>brak odchylenia sezonowego</b> w tym okresie.'},
+ {q:'Suma kwartalnych wskaźników sezonowości powinna wynosić:',
+  o:['1','4','12','100'],c:1,
+  e:'Dla danych kwartalnych suma wskaźników = <b>4</b> (miesięcznych = 12). Jeśli odbiega, normalizujesz: każdy ·(4/suma).'},
+ {q:'Wskaźnik S = 1,18 dla danego kwartału interpretujemy jako:',
+  o:['Spadek o 18% poniżej trendu','Wzrost o 18% powyżej trendu','Wartość równą 18% trendu','Brak istotnej sezonowości'],c:1,
+  e:'S > 1 to sezon wysoki: <b>(1,18 − 1)·100% = +18%</b> powyżej poziomu trendu w tym okresie.'},
+ {q:'Który okres ma najsilniejszą sezonowość?',
+  o:['Ten o wskaźniku najbliższym jedynce','Ten o najwyższej wartości przychodu','Ten o największym odchyleniu od 1','Ten o najniższym numerze kwartału'],c:2,
+  e:'Siła sezonowości = <b>odległość wskaźnika od 1</b>. S=0,70 jest silniejsze niż S=1,10, bo dalej od jedynki.'},
+ {q:'Indywidualny wskaźnik sezonowości liczy się jako:',
+  o:['Wartość rzeczywista pomniejszona o trend','Wartość rzeczywista dzielona przez trend','Trend dzielony przez wartość rzeczywistą','Średnia ze wszystkich okresów szeregu'],c:1,
+  e:'W modelu multiplikatywnym wskaźnik indywidualny = <b>yᵢ / ŷᵢ</b>. Sezonowy Sᵢ to średnia tych wartości w obrębie kwartału.'},
+ {q:'Prognoza metodą „trend + wskaźniki" powstaje przez:',
+  o:['Dodanie wskaźnika do wartości trendu','Pomnożenie trendu przez jego wskaźnik','Odjęcie wskaźnika od poziomu danych','Uśrednienie czterech ostatnich okresów'],c:1,
+  e:'Metoda 1: ŷ(T+k) = (a₀ + a₁·(T+k)) <b>· Sᵢ</b>. Ekstrapolujesz trend i mnożysz przez wskaźnik sezonowości kwartału.'},
+ {q:'Szereg „oczyszczony" z sezonowości otrzymujemy, gdy:',
+  o:['Mnożymy dane przez wskaźnik Sᵢ','Dzielimy dane przez wskaźnik Sᵢ','Odejmujemy trend od danych','Sumujemy wartości kolejnych kwartałów'],c:1,
+  e:'Desezonalizacja = <b>yᵢ / Sᵢ</b>. Po podzieleniu znika regularny sezon, zostaje trend i szum — łatwiej porównywać kwartały.'},
+ {q:'Metoda szeregów jednoimiennych polega na tym, że:',
+  o:['Liczy się jeden wspólny trend dla całości','Każdy kwartał ma własną linię trendu','Pomija się okresy o niskim sezonie roku','Uśrednia się wszystkie kwartały łącznie'],c:1,
+  e:'Szeregi jednoimienne = <b>osobna linia trendu dla każdego kwartału</b> (Q1 z kolejnych lat osobno itd.). Każda seria jest gładka, stąd bardzo wysokie R².'},
+ {q:'Dlaczego sezonowość obniża R² trendu liniowego?',
+  o:['Bo psuje surowe dane wejściowe','Bo wahania sezonowe trafiają do reszt','Bo zmienia nachylenie linii trendu','Bo zwiększa liczbę obserwacji w próbie'],c:1,
+  e:'Trend nie modeluje sezonu, więc <b>regularne odchylenia sezonowe lądują w resztach</b> i obniżają R² — choć dane wcale nie są chaotyczne.'},
+ {q:'Model addytywny szeregu z sezonowością ma postać:',
+  o:['yₜ = T · S · ε','yₜ = T + S + ε','yₜ = T / S','yₜ = S − T'],c:1,
+  e:'Addytywny: <b>yₜ = T + S + ε</b> — składowe się dodają, amplituda wahań stała. Multiplikatywny mnoży składowe.'}
+];
+const quizList=document.getElementById('quizList'); let answered=0, correct=0;
+QUIZ.forEach((q,i)=>{
+  const order=q.o.map((t,idx)=>idx).sort(()=>Math.random()-0.5);
+  const card=document.createElement('div'); card.className='quiz-card';
+  card.innerHTML=`<div class="q-no">Pytanie ${i+1} / ${QUIZ.length}</div><div class="q-text">${q.q}</div><div class="opts"></div><div class="q-exp">${q.e}</div>`;
+  const opts=card.querySelector('.opts'), exp=card.querySelector('.q-exp');
+  order.forEach(idx=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=q.o[idx];
+    b.onclick=()=>{
+      opts.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      if(idx===q.c){b.classList.add('correct');correct++;}
+      else{b.classList.add('wrong');opts.querySelectorAll('.opt').forEach(x=>{if(x.textContent===q.o[q.c])x.classList.add('correct');});}
+      exp.classList.add('show'); answered++;
+      if(answered===QUIZ.length){
+        const sc=document.getElementById('quizScore'); sc.style.display='block';
+        document.getElementById('scoreBig').textContent=correct+' / '+QUIZ.length;
+        const pct=correct/QUIZ.length;
+        document.getElementById('scoreMsg').textContent=
+          pct===1?'Komplet — sezon rozpracowany. 🦄':pct>=0.7?'Dobrze. Dopnij metody prognozowania i jesteś gotowy.':'Wróć do kart o wskaźnikach i prognozie — tam siedzi sedno.';
+      }
+    };
+    opts.appendChild(b);
+  });
+  quizList.appendChild(card);
+});
+</script>
+</body>
+</html>
