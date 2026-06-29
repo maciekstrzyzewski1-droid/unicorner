@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="pl">
-<head>
-<meta charset="UTF-8">
+<!-- saved from url=(0053)file:///C:/Users/macie/Downloads/makroekonomia_3.html -->
+<html lang="pl"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Makroekonomia – nauka do egzaminu</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com/">
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+<link href="./makroekonomia_files/css2" rel="stylesheet">
 <style>
   :root{
     --bg:#0c0a18; --bg2:#100d20; --surface:#161230; --surface2:#1c1740;
@@ -200,22 +200,22 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
-  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
-    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
-    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
-  </linearGradient></defs></svg>
+  <lineargradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"></stop><stop offset="0.34" stop-color="#a78bfa"></stop>
+    <stop offset="0.66" stop-color="#f472b6"></stop><stop offset="1" stop-color="#fcd34d"></stop>
+  </lineargradient></defs></svg>
 <header>
   <div class="head-top">
-    <a class="uc-brand" href="index.html" aria-label="Unicorner — strona główna">
+    <a class="uc-brand" href="file:///C:/Users/macie/Downloads/index.html" aria-label="Unicorner — strona główna">
       <svg class="uc-horn" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/>
-        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#0c0a18" stroke-width="1.1" fill="none" opacity="0.55"/>
+        <path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"></path>
+        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#0c0a18" stroke-width="1.1" fill="none" opacity="0.55"></path>
       </svg>
       <span class="uc-wordmark">Uni<span class="ai">corner</span></span>
     </a>
     <span class="uc-sep">/</span>
     <span class="uc-subject">Makroekonomia</span>
-    <a class="uc-back" href="index.html">← Wszystkie przedmioty</a>
+    <a class="uc-back" href="file:///C:/Users/macie/Downloads/index.html">← Wszystkie przedmioty</a>
   </div>
   <nav>
     <button class="tab active" data-view="fiszki">🗂️ Fiszki</button>
@@ -231,34 +231,34 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
     <h2 class="section-title">Fiszki — słownik pojęć</h2>
     <p class="section-intro">Z jednej strony pojęcie, z drugiej definicja. Kliknij kartę, żeby ją obrócić. Zaznacz „Umiem" albo „Nie umiem" — potem możesz powtarzać cały zestaw albo tylko to, czego jeszcze nie ogarniasz.</p>
 
-    <div class="fc-bar" id="fcCats"></div>
+    <div class="fc-bar" id="fcCats"><span class="chip active" data-c="all" onclick="fcSetCat(&#39;all&#39;,this)">Wszystkie kategorie</span><span class="chip" data-c="met" onclick="fcSetCat(&#39;met&#39;,this)">Metoda i pojęcia</span><span class="chip" data-c="mik" onclick="fcSetCat(&#39;mik&#39;,this)">Rynek / mikro</span><span class="chip" data-c="pkb" onclick="fcSetCat(&#39;pkb&#39;,this)">PKB i dochód</span><span class="chip" data-c="bezr" onclick="fcSetCat(&#39;bezr&#39;,this)">Bezrobocie</span><span class="chip" data-c="inf" onclick="fcSetCat(&#39;inf&#39;,this)">Pieniądz i inflacja</span><span class="chip" data-c="wzr" onclick="fcSetCat(&#39;wzr&#39;,this)">Wzrost</span><span class="chip" data-c="fisk" onclick="fcSetCat(&#39;fisk&#39;,this)">Polityka fiskalna</span><span class="chip" data-c="handel" onclick="fcSetCat(&#39;handel&#39;,this)">Handel i kursy</span><span class="chip" data-c="adas" onclick="fcSetCat(&#39;adas&#39;,this)">AD-AS, cykl, mnożnik</span></div>
     <div class="fc-bar">
-      <span class="chip" id="modeAll" onclick="fcSetMode('all')">📚 Wszystkie</span>
-      <span class="chip" id="modeDont" onclick="fcSetMode('dont')">🔁 Tylko nieumiane</span>
+      <span class="chip active" id="modeAll" onclick="fcSetMode(&#39;all&#39;)">📚 Wszystkie</span>
+      <span class="chip" id="modeDont" onclick="fcSetMode(&#39;dont&#39;)">🔁 Tylko nieumiane</span>
       <span class="chip" onclick="fcShuffle()">🔀 Losuj kolejność</span>
       <span class="chip" onclick="fcResetProgress()">♻️ Wyczyść postęp</span>
     </div>
 
     <div class="fc-stats">
-      <span class="stat">W zestawie: <b id="stTotal">0</b></span>
+      <span class="stat">W zestawie: <b id="stTotal">318</b></span>
       <span class="stat know">Umiem: <b id="stKnow">0</b></span>
-      <span class="stat dont">Nie umiem: <b id="stDont">0</b></span>
+      <span class="stat dont">Nie umiem: <b id="stDont">2</b></span>
     </div>
 
     <div class="fc-progress"><div id="fcBar" style="width:0%"></div></div>
 
-    <div id="fcArea">
+    <div id="fcArea" style="display: block;">
       <div class="flashcard" id="flashcard" onclick="fcFlip()">
         <div class="fc-inner">
           <div class="fc-face fc-front">
-            <span class="fc-tag" id="fcTagF"></span>
-            <div class="fc-term" id="fcTerm"></div>
+            <span class="fc-tag" id="fcTagF">Pieniądz i inflacja</span>
+            <div class="fc-term" id="fcTerm">Agregat pieniężny</div>
             <span class="fc-hint">kliknij, aby zobaczyć definicję</span>
           </div>
           <div class="fc-face fc-back">
-            <span class="fc-tag" id="fcTagB"></span>
+            <span class="fc-tag" id="fcTagB">Pieniądz i inflacja</span>
             <div class="fc-deflabel">Definicja</div>
-            <div class="fc-def" id="fcDef"></div>
+            <div class="fc-def" id="fcDef">Ogólna miara podaży pieniądza.</div>
             <span class="fc-hint">kliknij, aby wrócić do pojęcia</span>
           </div>
         </div>
@@ -269,7 +269,7 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
       </div>
       <div class="fc-nav">
         <button class="btn btn-ghost" onclick="fcPrev()">← Poprzednia</button>
-        <span id="fcPos" style="color:var(--muted);font-size:.85rem;font-weight:700;"></span>
+        <span id="fcPos" style="color:var(--muted);font-size:.85rem;font-weight:700;">1 / 318 ✗</span>
         <button class="btn btn-ghost" onclick="fcNext()">Następna →</button>
       </div>
     </div>
@@ -280,7 +280,7 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
       <p id="fcDoneMsg"></p>
       <div class="fc-controls" style="max-width:460px;margin:0 auto;">
         <button class="btn btn-ghost" onclick="fcRestartAll()">🔁 Od początku</button>
-        <button class="btn btn-know" onclick="fcSetMode('dont')">📌 Ćwicz tylko nieumiane</button>
+        <button class="btn btn-know" onclick="fcSetMode(&#39;dont&#39;)">📌 Ćwicz tylko nieumiane</button>
       </div>
     </div>
   </section>
@@ -289,14 +289,340 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
   <section id="zadania" class="view">
     <h2 class="section-title">Zadania z makroekonomii</h2>
     <p class="section-intro">Najpierw Twoje przykładowe zadanie rozłożone na czynniki pierwsze — tłumaczone tak prosto, jak się da. Potem warianty tego samego typu i inne zadania, które lubią wracać na egzaminach. Kliknij zadanie, żeby je rozwinąć, a rozwiązania odsłaniaj przyciskiem.</p>
-    <div id="zadaniaArea"></div>
+    <div id="zadaniaArea">
+   <div class="accordion open">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">★</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">WZORCOWE</span>Twoje zadanie — równowaga dochodu i zapasy</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given"><b>Dane:</b> konsumpcja autonomiczna C₀ = 800 · MPC = 0,75 · wydatki inwestycyjne I = 200.<br><b>Pytania:</b> (a) co dzieje się z zapasami, gdy produkcja PKB = 800? (b) ile wynosi produkcja w stanie równowagi?</div>
+
+<h4>🧒 Wyobraź to sobie jak fabrykę cukierków</h4>
+<div class="eli5"><b>Wyobraź sobie</b>, że cała gospodarka to jedna wielka fabryka. <b>Produkcja (PKB)</b> to ile cukierków fabryka <i>zrobiła</i>. <b>Wydatki zagregowane (AE)</b> to ile cukierków ludzie i firmy <i>chcą kupić</i>.<br><br>
+• Jeśli ludzie chcą kupić <b>więcej</b>, niż fabryka zrobiła → cukierki znikają z magazynu (<b>zapasy spadają</b>), więc następnym razem fabryka zrobi więcej.<br>
+• Jeśli ludzie chcą kupić <b>mniej</b> → cukierki zalegają w magazynie (<b>zapasy rosną</b>), więc fabryka zwolni.<br>
+• <b>Równowaga</b> to magiczny punkt, gdzie fabryka robi DOKŁADNIE tyle, ile ludzie chcą kupić — magazyn się nie zmienia.</div>
+
+<h4>Krok 1 — zbuduję wzór na wydatki (AE)</h4>
+<p>Wydatki zagregowane to konsumpcja + inwestycje. Konsumpcja ma dwie części: część stałą C₀ (kupujemy zawsze, nawet bez dochodu) oraz część rosnącą z dochodem (MPC × Y — z każdej dodatkowej złotówki wydajemy 75 groszy).</p>
+<div class="formula">AE = C₀ + MPC·Y + I = 800 + 0,75·Y + 200 = 1000 + 0,75·Y</div>
+
+<h4>Krok 2 — sprawdzam, co się dzieje przy PKB = 800</h4>
+<p>Podstawiam Y = 800 do wzoru na wydatki:</p>
+<div class="formula">AE = 1000 + 0,75·800 = 1000 + 600 = <b>1600</b></div>
+<p>Fabryka zrobiła <b>800</b>, a ludzie chcą kupić aż <b>1600</b>. Chętnych jest dużo więcej niż towaru!</p>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż odpowiedź (a) ▾</button>
+<div class="sol"><div class="answer">Skoro wydatki (1600) &gt; produkcja (800), ludzie wykupują towar z magazynów. <b>Zapasy nieplanowo SPADAJĄ.</b> To sygnał, że produkcja jest za niska — firmy będą ją zwiększać, aż dojdą do równowagi.</div></div>
+
+<h4>Krok 3 — liczę równowagę (gdzie produkcja = wydatki)</h4>
+<p>W równowadze to, co fabryka zrobiła, równa się temu, co ludzie chcą kupić: Y = AE.</p>
+<div class="formula">Y = 1000 + 0,75·Y &nbsp;→&nbsp; Y − 0,75·Y = 1000 &nbsp;→&nbsp; 0,25·Y = 1000</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż odpowiedź (b) ▾</button>
+<div class="sol"><div class="answer">Y = 1000 / 0,25 = <b>4000</b> — produkcja w stanie równowagi.</div>
+<p class="muted">Sprawdzenie mnożnikiem: mnożnik = 1/(1−MPC) = 1/0,25 = <b>4</b>. Wydatki autonomiczne (800+200 = 1000) × 4 = <b>4000</b>. ✓ Zgadza się.</p></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">1</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">WARIANT</span>Inne liczby — sama równowaga</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given"><b>Dane:</b> C₀ = 400 · MPC = 0,8 · I = 100. <b>Pytanie:</b> ile wynosi produkcja w równowadze i ile wynosi mnożnik?</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">AE = 400 + 0,8·Y + 100 = 500 + 0,8·Y</div>
+<div class="formula">Y = 500 + 0,8·Y → 0,2·Y = 500 → <b>Y = 2500</b></div>
+<div class="answer">Mnożnik = 1/(1−0,8) = 1/0,2 = <b>5</b>. Równowaga: <b>Y = 2500</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Skąd Y = 2500?</b><br>Mamy: AE = 500 + 0,8·Y. W równowadze Y = AE, więc: Y = 500 + 0,8Y. Odejmuję 0,8Y od obu stron: 0,2Y = 500. Dzielę przez 0,2: Y = 2500.<br><br><b>A skąd to 500 na początku?</b><br>To suma wszystkich wydatków autonomicznych — tych, które nie zależą od dochodu: C₀ (400) + I (100) = 500.<br><br><b>Sprawdzenie mnożnikiem:</b><br>Mnożnik = 5, wydatki autonomiczne = 500, więc: 500 × 5 = 2500. ✓ Zgadza się!<br>Mnożnik mówi: każda złotówka "niezależnych" wydatków generuje 5 zł dochodu w całej gospodarce — bo pieniądze krążą i wracają jako dochód innych ludzi.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">2</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">WARIANT</span>Z wydatkami rządowymi (G)</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given"><b>Dane:</b> C₀ = 300 · MPC = 0,6 · I = 200 · zakupy rządowe G = 100. <b>Pytanie:</b> produkcja w równowadze?</div>
+<div class="eli5"><b>Trik:</b> G wrzucamy do wydatków autonomicznych tak samo jak C₀ i I — to po prostu kolejny stały zastrzyk popytu.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">AE = 300 + 0,6·Y + 200 + 100 = 600 + 0,6·Y</div>
+<div class="formula">Y = 600 + 0,6·Y → 0,4·Y = 600 → <b>Y = 1500</b></div>
+<div class="answer">Wydatki autonomiczne = 600, mnożnik = 1/0,4 = 2,5; 600 × 2,5 = <b>1500</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Dlaczego G (wydatki rządowe) wrzucamy po prostu do wzoru?</b><br>Z punktu widzenia popytu, nie ma znaczenia kto wydaje: firma, konsument czy rząd. Każda wydana złotówka to popyt na czyjąś produkcję. Dlatego AE = C₀ + I + G + MPC·Y = 300 + 200 + 100 + 0,6Y = 600 + 0,6Y.<br><br><b>Skąd 1500?</b><br>Mnożnik = 1/(1−0,6) = 1/0,4 = 2,5. Wydatki autonomiczne (wszystko co stałe) = 600. W równowadze: Y = 600 × 2,5 = 1500.<br><br><b>Albo klasycznie:</b> Y = 600 + 0,6Y → 0,4Y = 600 → Y = 1500. Ta sama odpowiedź, inna droga.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">3</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">WARIANT</span>O ile wzrośnie PKB? (efekt mnożnikowy)</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given"><b>Dane:</b> MPC = 0,75. Inwestycje rosną o ΔI = 50. <b>Pytanie:</b> o ile zmieni się produkcja w równowadze?</div>
+<div class="eli5"><b>Dlaczego więcej niż 50?</b> Bo 50 zł wydane na inwestycje staje się czyimś dochodem. Ta osoba wyda z tego 75% dalej, kolejna znów 75%... i tak efekt się „mnoży".</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">ΔY = mnożnik × ΔI = 1/(1−0,75) × 50 = 4 × 50 = <b>200</b></div>
+<div class="answer">PKB wzrośnie o <b>200</b> (cztery razy więcej niż początkowy zastrzyk 50).</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Dlaczego 50 zł inwestycji daje aż 200 zł PKB?</b><br>Wyobraź sobie: firma buduje halę za 50 zł. To 50 zł trafia do kieszeni robotników jako wynagrodzenie. Oni mają MPC = 0,75, więc wydają 37,50 zł w sklepach. Sprzedawcy zarabiają 37,50 i wydają 75% = 28,13 zł. Kolejna osoba wydaje 75% z tego = 21,09 zł... i tak dalej, w nieskończoność.<br><br><b>Suma wszystkich "rund":</b><br>50 + 37,50 + 28,13 + 21,09 + ... = 50 × (1 + 0,75 + 0,75² + 0,75³ + ...) = 50 × 1/(1−0,75) = 50 × 4 = <b>200</b>.<br><br>Wzór mnożnika k = 1/(1−MPC) to matematyczny skrót od tej sumy nieskończonej geometrycznej.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">4</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">WARIANT</span>Powyżej równowagi — co z zapasami?</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given"><b>Dane:</b> równowaga gospodarki to Y* = 2000. Aktualnie produkcja wynosi Y = 2500. <b>Pytanie:</b> co dzieje się z zapasami?</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<p>Produkcja (2500) jest <b>powyżej</b> równowagi (2000), więc ludzie chcą kupić mniej, niż fabryka wyprodukowała.</p>
+<div class="answer">Niesprzedany towar ląduje w magazynie → <b>zapasy nieplanowo ROSNĄ</b>. Firmy zareagują obniżeniem produkcji, aż wróci do Y* = 2000.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Wyobraź sobie piekarnię (= cała gospodarka):</b><br>Dziś piekarz upiekł 2500 bułek. Ale klientów jest na tyle, żeby kupić tylko 2000. Zostaje 500 bułek na półce — nieplanowo. Piekarz widzi to i myśli: "po co piec tyle, skoro i tak nie sprzedaję?" Jutro zamówi mniej mąki i upiecze mniej.<br><br><b>Mechanizm samoregulacji:</b><br>Rosnące zapasy = sygnał dla firm, żeby produkować mniej. Malejące zapasy = sygnał, żeby produkować więcej. Gospodarka "ciągnie" zawsze w kierunku równowagi Y* = 2000, gdzie zapasy się nie zmieniają.<br><br><b>Reguła na pamięć:</b> Y &gt; AE → zapasy rosną → produkcja spada. Y &lt; AE → zapasy maleją → produkcja rośnie. Y = AE → równowaga.</div></div>
+<p class="muted">Reguła do zapamiętania: produkcja &gt; wydatki → zapasy rosną; produkcja &lt; wydatki → zapasy spadają; produkcja = wydatki → równowaga.</p></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">5</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">WARIANT</span>Z podatkiem (poziom trudniejszy)</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given"><b>Dane:</b> C₀ = 500 · MPC = 0,75 · I = 250 · G = 250 · podatek autonomiczny T = 200. <b>Pytanie:</b> produkcja w równowadze?</div>
+<div class="eli5"><b>Uwaga:</b> ludzie konsumują z dochodu <i>po opodatkowaniu</i> (Y − T), a nie z całego Y. Najpierw odejmujemy podatek.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">C = C₀ + MPC·(Y − T) = 500 + 0,75·(Y − 200) = 350 + 0,75·Y</div>
+<div class="formula">AE = 350 + 0,75·Y + 250 + 250 = 850 + 0,75·Y</div>
+<div class="formula">Y = 850 + 0,75·Y → 0,25·Y = 850 → <b>Y = 3400</b></div>
+<div class="answer">Równowaga: <b>Y = 3400</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Skąd się biorą wszystkie te liczby? Krok po kroku:</b><br><br><b>→ Skąd 350 w konsumpcji?</b><br>Wzór C = C₀ + MPC·(Y−T). Rozwijamy nawias: 0,75·(Y−200) = 0,75Y − 150. Dodajemy C₀: 500 + 0,75Y − 150 = <b>350 + 0,75Y</b>. Podatek "zjadł" 150 zł (= 0,75 × 200) z bazowej konsumpcji.<br><br><b>→ Skąd 850 w AE?</b><br>Sumujemy wszystkie stałe: 350 + 250 (inwestycje) + 250 (rząd) = <b>850</b>. Proste dodawanie.<br><br><b>→ Skąd Y = 3400?</b><br>W równowadze Y = AE: Y = 850 + 0,75Y → Y − 0,75Y = 850 → 0,25Y = 850 → Y = 3400.<br><br><b>Dlaczego podatek zmniejszył Y?</b><br>Porównaj z zadaniem bez podatku: tam Y = 4000. Tu Y = 3400, czyli o 600 mniej. Podatek T = 200 obciął bazową konsumpcję, a mnożnik (4) "zwielokrotnił" ten efekt: 200 × 0,75 × 4 = 600. Podatek nie boli tylko o T — boli o T × MPC × mnożnik.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">6</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">WARIANT</span>Odwrotnie — znajdź MPC</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given"><b>Dane:</b> C₀ = 200 · I = 100 · produkcja w równowadze Y = 1500. <b>Pytanie:</b> ile wynosi MPC?</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">W równowadze: Y = (C₀ + I) + MPC·Y → 1500 = 300 + MPC·1500</div>
+<div class="formula">1200 = MPC·1500 → MPC = 1200/1500 = <b>0,8</b></div>
+<div class="answer">MPC = <b>0,8</b> (a MPS = 1 − 0,8 = 0,2).</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>To zadanie "odwrócone" — mamy wynik, szukamy parametru.</b><br>Normalnie: znamy MPC → liczymy Y. Tu: znamy Y → szukamy MPC.<br><br><b>Krok po kroku:</b><br>W równowadze: Y = C₀ + I + MPC·Y (bo AE = wydatki autonomiczne + MPC·Y). Wstawiam liczby: 1500 = 200 + 100 + MPC·1500. Upraszczam: 1500 = 300 + 1500·MPC. Odejmuję 300: 1200 = 1500·MPC. Dzielę: MPC = 1200/1500 = 0,8.<br><br><b>Interpretacja:</b><br>W tej gospodarce z każdej nowej złotówki dochodu 80 groszy idzie na konsumpcję, a 20 groszy (MPS = 0,2) na oszczędności.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">7</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">TYPOWE</span>PKB nominalny, realny i deflator</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given">Gospodarka produkuje 2 dobra. Rok bazowy: <b>2020</b>.
+<table class="mini"><tbody><tr><th>Dobro</th><th>Ilość 2024</th><th>Cena 2020</th><th>Cena 2024</th></tr>
+<tr><td>Chleb</td><td>100</td><td>4 zł</td><td>5 zł</td></tr>
+<tr><td>Książki</td><td>50</td><td>20 zł</td><td>24 zł</td></tr></tbody></table>
+<b>Policz:</b> PKB nominalny 2024, PKB realny 2024 (w cenach 2020) i deflator PKB.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<p><b>PKB nominalny</b> = ilości 2024 × ceny 2024:</p>
+<div class="formula">100·5 + 50·24 = 500 + 1200 = <b>1700 zł</b></div>
+<p><b>PKB realny</b> = ilości 2024 × ceny bazowe 2020:</p>
+<div class="formula">100·4 + 50·20 = 400 + 1000 = <b>1400 zł</b></div>
+<p><b>Deflator PKB</b> = (nominalny / realny) × 100:</p>
+<div class="formula">(1700 / 1400) × 100 ≈ <b>121,4</b></div>
+<div class="answer">Ceny wzrosły średnio o ok. <b>21,4%</b> względem roku bazowego.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Po co w ogóle te dwa rodzaje PKB?</b><br>Problem: PKB nominalny rośnie nawet jeśli nic nie produkujemy więcej — wystarczy, że ceny rosną. Potrzebujemy sposobu, żeby "oddzielić" wzrost ilości od wzrostu cen.<br><br><b>PKB nominalny</b> = tegoroczne ilości × tegoroczne ceny. Jakbyś dziś poszedł na zakupy i zapłacił po dzisiejszych cenach.<br><b>PKB realny</b> = tegoroczne ilości × ceny z roku bazowego. "Co by to kosztowało w 2020?" — usuwasz inflację.<br><b>Deflator</b> = (nominalny ÷ realny) × 100 = ile wynosi inflacja od roku bazowego. Deflator 121,4 → ceny 21,4% wyższe niż w 2020.<br><br><b>Szybkie sprawdzenie:</b> Chleb zdrożał z 4 do 5 zł (+25%), Książki z 20 do 24 zł (+20%). Deflator 121,4 to "średnia ważona" tych wzrostów, gdzie wagami są wielkości produkcji.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">8</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">TYPOWE</span>CPI i stopa inflacji</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given">Koszyk typowej rodziny kosztował <b>2000 zł</b> w roku bazowym i <b>2300 zł</b> w roku bieżącym. <b>Policz:</b> CPI oraz stopę inflacji.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">CPI = (koszt koszyka teraz / koszt w roku bazowym) × 100 = (2300/2000)×100 = <b>115</b></div>
+<div class="formula">Stopa inflacji = (CPI − 100) = <b>15%</b></div>
+<div class="answer">Ceny koszyka wzrosły o <b>15%</b>. (Gdyby pytano o inflację między dwoma latami nie-bazowymi: (CPI₂ − CPI₁)/CPI₁ × 100%.)</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>CPI = termometr cen dla typowej rodziny.</b><br>"Koszyk" to zestaw dóbr, które przeciętna rodzina kupuje każdego miesiąca: chleb, prąd, czynsz, benzyna, ubrania...<br><br><b>Jak działa:</b><br>Rok bazowy → CPI = 100 (to nasz punkt "zero"). Teraz → CPI = 115. Interpretacja: ten sam koszyk kosztuje 15% więcej niż w roku bazowym.<br><br><b>Wzory:</b><br>• CPI = (koszt koszyka dziś ÷ koszt koszyka w roku bazowym) × 100 = (2300 ÷ 2000) × 100 = 115<br>• Inflacja od roku bazowego = CPI − 100 = 15%<br>• Inflacja między dwoma latami niebazowymiCPI₂ − CPI₁)/CPI₁ × 100%<br><br><b>Różnica między CPI a deflatorem PKB:</b> CPI mierzy koszyk <i>konsumenta</i> (stały zestaw dóbr). Deflator mierzy <i>całą produkcję</i> (zmienна kompozycja). Dają podobne wyniki, ale nie identyczne.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">9</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">TYPOWE</span>Stopa wzrostu gospodarczego</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given">PKB realny w 2023 r. = <b>500 mld</b>, w 2024 r. = <b>525 mld</b>. <b>Policz</b> tempo wzrostu gospodarczego.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">stopa wzrostu = (PKB₂ − PKB₁)/PKB₁ × 100% = (525 − 500)/500 × 100% = <b>5%</b></div>
+<div class="answer">Gospodarka urosła o <b>5%</b>. Używamy PKB <b>realnego</b>, bo chcemy wzrost ilości, a nie cen.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Wzór na tempo wzrostu to ogólny wzór na zmianę procentową:</b><br>(wartość końcowa − wartość początkowa) ÷ wartość początkowa × 100% = (525 − 500) ÷ 500 × 100% = 5%.<br><br><b>Dlaczego PKB realny, a nie nominalny?</b><br>Wyobraź sobie kraj, który w 2023 r. produkuje 100 samochodów po 50 000 zł = PKB nominalny 5 mln. W 2024 r. produkuje nadal 100 samochodów, ale ceny wzrosły do 55 000 zł = PKB nominalny 5,5 mln. Wzrost nominalny = 10% — ale przecież nic więcej nie wyprodukowali!<br>PKB realny (w cenach z 2023) = nadal 5 mln → wzrost 0%. To jest prawdziwy wzrost.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">10</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">TYPOWE</span>Stopa bezrobocia i aktywności zawodowej</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given">Ludność w wieku produkcyjnym (16+) = <b>100 tys.</b> Pracujący = <b>60 tys.</b> Bezrobotni = <b>10 tys.</b> Reszta to bierni zawodowo. <b>Policz</b> stopę bezrobocia i wskaźnik aktywności zawodowej.</div>
+<div class="eli5"><b>Pamiętaj:</b> siła robocza = pracujący + bezrobotni (bez biernych!). Bierni — np. studenci, emeryci — nie liczą się do stopy bezrobocia.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">Siła robocza = 60 + 10 = 70 tys.</div>
+<div class="formula">Stopa bezrobocia = bezrobotni / siła robocza × 100% = 10/70 × 100% ≈ <b>14,3%</b></div>
+<div class="formula">Wskaźnik aktywności = siła robocza / ludność 16+ × 100% = 70/100 × 100% = <b>70%</b></div>
+<div class="answer">Stopa bezrobocia ≈ <b>14,3%</b>, aktywność zawodowa = <b>70%</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Kluczowe rozróżnienie: siła robocza ≠ wszyscy ludzie.</b><br>Emeryci, studenci nie szukający pracy, opiekunowie domowi — to osoby bierne zawodowo. Nie wchodzą do siły roboczej i NIE liczą się do stopy bezrobocia.<br><br><b>Struktura 100 osób:</b><br>• 60 pracuje → pracujący<br>• 10 szuka pracy → bezrobotni<br>• 30 nie szuka → bierni zawodowo<br>Siła robocza = 60 + 10 = 70 (bez tych 30 biernych!).<br><br><b>Dlaczego dzielimy przez 70, nie przez 100?</b><br>Stopa bezrobocia pyta: "spośród tych, którzy CHCĄ pracować, ilu nie może?" Dlatego mianownik to siła robocza (70), nie cała populacja. Stopa = 10/70 ≈ 14,3%.<br><br><b>Wskaźnik aktywności</b> = 70/100 = 70% mówi z kolei: jaki procent całej dorosłej populacji w ogóle chce uczestniczyć w rynku pracy.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">11</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">TYPOWE</span>Prawo Okuna</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given">Stopa bezrobocia jest o <b>2 pkt proc.</b> wyższa od naturalnej. Współczynnik Okuna = <b>3</b>. Produkt potencjalny = <b>1000 mld</b>. <b>Policz</b> lukę produktową i rzeczywisty PKB.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<p>Prawo Okuna: każdy 1 pkt proc. bezrobocia powyżej naturalnej stopy = PKB niższy o ok. 3% od potencjału.</p>
+<div class="formula">luka produktowa = −3 × 2 = <b>−6%</b></div>
+<div class="formula">rzeczywisty PKB = 1000 × (1 − 0,06) = <b>940 mld</b></div>
+<div class="answer">PKB jest <b>6% poniżej</b> potencjału (luka recesyjna), czyli wynosi <b>940 mld</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Prawo Okuna to empiryczna reguła (nie prawo matematyczne):</b><br>Każdy 1 punkt procentowy bezrobocia POWYŻEJ naturalnej stopy ≈ PKB niższy o ~2-3% od potencjału.<br><br><b>Intuicja:</b> Jeśli zbyt wiele osób siedzi bezczynnie (bo nie ma pracy), gospodarka produkuje mniej niż mogłaby. Każdy bezrobotny to "zmarnowany" potencjał produkcyjny.<br><br><b>Obliczenie:</b> bezrobocie wyższe o 2 pp, współczynnik = 3 → luka = −3 × 2 = −6%. PKB = 1000 × (1 − 0,06) = 940 mld.<br><br><b>Luka ujemna (recesyjna)</b> = PKB &lt; potencjał = gospodarka pracuje "na niepełnych obrotach". Są wolne moce produkcyjne i niedobrowolnie bezrobotni ludzie.<br><b>Luka dodatnia (inflacyjna)</b> = PKB &gt; potencjał = gospodarka "przegrzana", grozi inflacja.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">12</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">TYPOWE</span>Reguła 70 — czas podwojenia</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given">Gospodarka rośnie w tempie <b>3,5%</b> rocznie. <b>Policz</b>, po ilu latach PKB się podwoi.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">czas podwojenia ≈ 70 / stopa wzrostu = 70 / 3,5 = <b>20 lat</b></div>
+<div class="answer">PKB podwoi się po ok. <b>20 latach</b>. (Przy 7% byłoby to 10 lat, przy 2% — 35 lat.)</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Skąd pochodzi "70"?</b><br>Przy procencie składanym, czas podwojenia = ln(2) ÷ ln(1+g) ≈ 0,693 ÷ g (dla małych g). 0,693 ≈ 0,7, czyli 70% — zaokrąglamy dla łatwości: 70 ÷ g%.<br><br><b>Dlaczego to ważne?</b><br>Drobna różnica w tempie wzrostu robi gigantyczną różnicę w długim terminie:<br>• 1% rocznie → podwojenie po 70 latach<br>• 2% rocznie → 35 lat<br>• 3,5% rocznie → 20 lat<br>• 7% rocznie → 10 lat<br><br>Kraj rosnący 7% podwoi swoje bogactwo gdy kraj rosnący 1% urośnie zaledwie o ~40%. W ciągu 70 lat kraj z 7% będzie <i>128 razy</i> bogatszy (2⁷), kraj z 1% — tylko 2 razy. To właśnie dlatego ekonomiści tak bardzo przejmują się długookresowym wzrostem.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">13</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">TYPOWE</span>Mnożnik pieniężny i kreacja pieniądza</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given">Stopa rezerw obowiązkowych = <b>10%</b>. Bank centralny zwiększa bazę monetarną o <b>200</b>. <b>Policz</b> mnożnik pieniężny i maksymalny wzrost podaży pieniądza.</div>
+<div class="eli5"><b>Jak to działa:</b> wpłacasz 200 do banku, bank zostawia 10% (20) w rezerwie, a 180 pożycza dalej. Te 180 ktoś znów wpłaca, bank pożycza 162... i tak pieniądz się „rozmnaża".</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">mnożnik pieniężny = 1 / stopa rezerw = 1 / 0,10 = <b>10</b></div>
+<div class="formula">max wzrost podaży pieniądza = 200 × 10 = <b>2000</b></div>
+<div class="answer">Podaż pieniądza może wzrosnąć maksymalnie o <b>2000</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Krok po kroku jak "rozmnaża się" pieniądz:</b><br>Bank A dostaje depozyt 200 zł. Musi zostawić 10% = 20 zł (rezerwa obowiązkowa). Pożycza 180 zł.<br>Ktoś bierze 180 zł kredytu, wpłaca do banku B. Bank B zostawia 18 zł, pożycza 162 zł.<br>Ktoś wpłaca 162 do banku C. Bank C zostawia 16,20, pożycza 145,80 zł...<br><br><b>Suma wszystkich tych "rund":</b><br>200 + 180 + 162 + 145,80 + ... = 200 × (1 + 0,9 + 0,9² + 0,9³ + ...) = 200 × 1/(1−0,9) = 200 × 1/0,1 = 200 × 10 = 2000.<br><br><b>Wzór mnożnik = 1/stopa rezerw</b> to skrót od tej sumy nieskończonego szeregu geometrycznego.<br>"Maksymalnie", bo w praktyce ludzie trzymają trochę gotówki w kieszeni (nie wszystko idzie z powrotem do banku), więc realny mnożnik jest niższy.</div></div></div>
+</div>
+   </div>
+   <div class="accordion">
+     <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
+       <span class="acc-num">14</span>
+       <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">TYPOWE</span>Ilościowa teoria pieniądza (MV = PY)</span>
+       <span class="acc-arrow">▸</span>
+     </div>
+     <div class="acc-body">
+<div class="given">Podaż pieniądza M = <b>500</b>, prędkość obiegu V = <b>4</b>. <b>Policz</b> PKB nominalny (P·Y). Dodatkowo: jeśli M rośnie o 10%, V stała, a realny PKB rośnie o 3% — jaka będzie inflacja?</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">M·V = P·Y → PKB nominalny = 500 × 4 = <b>2000</b></div>
+<p>W tempie wzrostu: %ΔM + %ΔV ≈ %ΔP + %ΔY</p>
+<div class="formula">10% + 0% ≈ inflacja + 3% → inflacja ≈ <b>7%</b></div>
+<div class="answer">PKB nominalny = <b>2000</b>; przewidywana inflacja ≈ <b>7%</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>MV = PY — co to w ogóle znaczy?</b><br>Obie strony opisują tę samą kwotę — łączne transakcje w gospodarce w ciągu roku.<br>• <b>MV (lewa)</b>: M = ile pieniędzy jest w obiegu, V = ile razy każda złotówka "zmieniła ręce". Razem: całkowity "obrót pieniądza".<br>• <b>PY (prawa)</b>: P = poziom cen, Y = realna produkcja. Razem: PKB nominalny — łączna wartość wszystkiego co kupiono.<br><br><b>Obliczenia:</b><br>PKB nominalny = M × V = 500 × 4 = 2000.<br>Inflacja: używamy wersji "przyrostowej": %ΔM + %ΔV = %ΔP + %ΔY → 10% + 0% = inflacja + 3% → inflacja = 7%.<br><br><b>Kluczowy wniosek ilościowej teorii pieniądza:</b><br>Jeśli bank centralny podwoi M, a V i Y są stałe, ceny też się podwoją. Więcej pieniędzy "gonić" będzie tę samą ilość towarów → wyższe ceny. To właśnie dlatego nadmierne drukowanie pieniędzy prowadzi do inflacji.</div></div></div>
+</div>
+   </div></div>
   </section>
 
   <!-- ============ SCIANA ============ -->
   <section id="sciana" class="view">
     <h2 class="section-title">Ściana — najważniejsze informacje</h2>
     <p class="section-intro">Najważniejsze wzory, definicje i mechanizmy w jednym miejscu. Wszystko, co warto mieć w głowie wchodząc na egzamin.</p>
-    <div class="wall-grid" id="wallArea"></div>
+    <div class="wall-grid" id="wallArea">
+    <div class="wall-card">
+      <h3><span class="ico">🧮</span>Wzory, które musisz znać</h3>
+      <ul><li><b>Mnożnik wydatków</b> <code>k = 1/(1−MPC)</code></li><li><b>MPC + MPS = 1</b></li><li><b>Równowaga dochodu</b> <code>Y = AE</code>, czyli <code>Y = C₀+I+G + MPC·Y</code></li><li><b>Deflator PKB</b> <code>= PKB nom./PKB realny ×100</code></li><li><b>Stopa inflacji</b> <code>= (CPI₂−CPI₁)/CPI₁ ×100%</code></li><li><b>Stopa bezrobocia</b> <code>= bezrobotni/siła robocza ×100%</code></li><li><b>Reguła 70</b> <code>czas podwojenia ≈ 70/tempo wzrostu</code></li><li><b>Ilościowa teoria</b> <code>M·V = P·Y</code></li><li><b>Mnożnik pieniężny</b> <code>= 1/stopa rezerw</code></li><li><b>Efekt Fishera</b> <code>i ≈ r + oczekiwana inflacja</code></li></ul>
+    </div>
+    <div class="wall-card">
+      <h3><span class="ico">⚖️</span>Równowaga dochodu (krzyż keynesowski)</h3>
+      <ul><li><b>AE</b> = konsumpcja + inwestycje + zakupy rządowe + eksport netto.</li><li>Konsumpcja: <code>C = C₀ + MPC·Yd</code> (część stała + część zależna od dochodu).</li><li>Równowaga = punkt, gdzie krzywa AE przecina linię <b>45°</b> (Y = AE).</li><li><b>Produkcja &lt; wydatki</b> → zapasy <b>spadają</b> → firmy zwiększają produkcję.</li><li><b>Produkcja &gt; wydatki</b> → zapasy <b>rosną</b> → firmy ograniczają produkcję.</li><li>Z podatkiem: konsumujemy z dochodu po opodatkowaniu <code>(Y−T)</code>.</li></ul>
+    </div>
+    <div class="wall-card">
+      <h3><span class="ico">📊</span>PKB i dochód narodowy</h3>
+      <ul><li><b>PKB</b> = wartość rynkowa dóbr i usług <b>finalnych</b> wytworzonych w kraju w roku.</li><li>Liczymy tylko dobra finalne (inaczej podwójne liczenie) lub sumę <b>wartości dodanej</b>.</li><li><b>PKB nominalny</b> — w cenach bieżących; <b>realny</b> — w cenach roku bazowego.</li><li>Realny PKB służy do mierzenia <b>wzrostu</b> (oczyszczony z inflacji).</li><li><b>PKB per capita</b> = PKB / liczba ludności.</li></ul>
+    </div>
+    <div class="wall-card">
+      <h3><span class="ico">📉</span>Bezrobocie</h3>
+      <ul><li><b>Siła robocza</b> = pracujący + bezrobotni (bierni się NIE liczą).</li><li><b>Frykcyjne</b> — czas szukania pracy; <b>strukturalne</b> — niedopasowanie kwalifikacji.</li><li><b>Cykliczne</b> — z powodu recesji (odchylenie od stopy naturalnej).</li><li><b>Naturalna stopa</b> = frykcyjne + strukturalne (cykliczne = 0).</li><li><b>NAIRU</b> — stopa, przy której inflacja się nie zmienia.</li><li><b>Prawo Okuna</b> — wyższe bezrobocie ⇒ luka recesyjna w PKB.</li></ul>
+    </div>
+    <div class="wall-card">
+      <h3><span class="ico">🔥</span>Inflacja i pieniądz</h3>
+      <ul><li><b>Inflacja</b> = wzrost ogólnego poziomu cen; <b>deflacja</b> = spadek; <b>dezinflacja</b> = wolniejszy wzrost.</li><li><b>Stagflacja</b> = inflacja + spadek produkcji jednocześnie (szok podażowy).</li><li>Mierniki: <b>CPI</b> (koszyk konsumenta), <b>PPI</b> (ceny producentów), <b>deflator PKB</b>.</li><li>Koszty inflacji: „zdarte zelówki”, zmiana cenników, podatek inflacyjny.</li><li>Funkcje pieniądza: środek wymiany, jednostka rozrachunkowa, przechowywanie wartości.</li><li><b>Neutralność pieniądza</b> — w długim okresie więcej pieniądza = tylko wyższe ceny.</li></ul>
+    </div>
+    <div class="wall-card">
+      <h3><span class="ico">🏦</span>Bank centralny i polityka monetarna</h3>
+      <ul><li><b>Baza monetarna</b> = gotówka w obiegu + rezerwy banków.</li><li><b>Podaż pieniądza</b> = baza × mnożnik pieniężny.</li><li>Narzędzia: operacje otwartego rynku, stopa rezerw, stopa dyskontowa.</li><li><b>Ekspansywna</b> (luźna) → niższe stopy, więcej pieniądza, wyższy popyt.</li><li><b>Restrykcyjna</b> (ciasna) → wyższe stopy, mniej pieniądza, niższa inflacja.</li><li><b>Pułapka płynności</b> — stopy przy zerze, polityka pieniężna nie działa.</li></ul>
+    </div>
+    <div class="wall-card">
+      <h3><span class="ico">🏛️</span>Polityka fiskalna i budżet</h3>
+      <ul><li><b>Polityka fiskalna</b> = zmiany wydatków rządowych (G) i podatków (T).</li><li><b>Ekspansywna</b>: ↑G lub ↓T → wyższy popyt (walka z recesją).</li><li><b>Restrykcyjna</b>: ↓G lub ↑T → niższy popyt (hamowanie inflacji).</li><li><b>Deficyt</b>: G &gt; T; <b>nadwyżka</b>: G &lt; T.</li><li><b>Automatyczne stabilizatory</b> — zasiłki i podatki działające same.</li><li><b>Efekt wypychania</b> — deficyt ↑ stopy → mniej inwestycji prywatnych.</li></ul>
+    </div>
+    <div class="wall-card">
+      <h3><span class="ico">🚀</span>Wzrost gospodarczy</h3>
+      <ul><li>Źródła: <b>kapitał fizyczny</b>, <b>kapitał ludzki</b>, <b>postęp technologiczny</b>.</li><li><b>Wydajność pracy</b> = produkcja na pracownika — klucz do długookresowego wzrostu.</li><li><b>Malejąca produktywność kapitału</b> — sam kapitał nie wystarczy bez technologii.</li><li><b>Reguła 70</b> — szybko liczy czas podwojenia dochodu.</li><li><b>Hipoteza konwergencji</b> — biedniejsze kraje mogą doganiać bogatsze.</li></ul>
+    </div>
+    <div class="wall-card">
+      <h3><span class="ico">🌍</span>Handel i kursy walut</h3>
+      <ul><li><b>Przewaga komparatywna</b> — produkuj to, co masz najniższym kosztem alternatywnym.</li><li><b>Eksport netto</b> = eksport − import; dodatni = nadwyżka, ujemny = deficyt.</li><li><b>Aprecjacja/deprecjacja</b> — wzrost/spadek wartości waluty (kurs płynny).</li><li><b>Rewaluacja/dewaluacja</b> — to samo, ale przy kursie sztywnym (decyzja rządu).</li><li>Cła i kontyngenty chronią rynek krajowy, ale obniżają całkowitą nadwyżkę.</li></ul>
+    </div>
+    <div class="wall-card">
+      <h3><span class="ico">📈</span>AD-AS i cykl koniunkturalny</h3>
+      <ul><li><b>AD</b> (popyt) opada — niższe ceny → wyższy popyt (efekt majątkowy i stopy proc.).</li><li><b>SRAS</b> (krótka podaż) rośnie; <b>LRAS</b> (długa) pionowa na produkcie potencjalnym.</li><li><b>Szok popytowy</b> przesuwa AD; <b>szok podażowy</b> przesuwa SRAS.</li><li>Cykl: ekspansja → <b>szczyt</b> → recesja → <b>dno</b> → ekspansja.</li><li><b>Luka recesyjna</b>: PKB &lt; potencjał; <b>luka inflacyjna</b>: PKB &gt; potencjał.</li></ul>
+    </div></div>
   </section>
 
   <!-- ============ QUIZ ============ -->
@@ -306,16 +632,16 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
 
     <div id="quizStart" class="card">
       <h3 class="qstep">1 · Wybierz dział</h3>
-      <div class="fc-bar" id="quizCats" style="margin-top:10px;"></div>
+      <div class="fc-bar" id="quizCats" style="margin-top:10px;"><span class="chip active" data-c="all" onclick="quizSetCat(&#39;all&#39;,this)">Wszystko</span><span class="chip" data-c="pkb" onclick="quizSetCat(&#39;pkb&#39;,this)">PKB</span><span class="chip" data-c="adas" onclick="quizSetCat(&#39;adas&#39;,this)">AD-AS / mnożnik</span><span class="chip" data-c="bezr" onclick="quizSetCat(&#39;bezr&#39;,this)">Bezrobocie</span><span class="chip" data-c="inf" onclick="quizSetCat(&#39;inf&#39;,this)">Pieniądz / inflacja</span><span class="chip" data-c="fisk" onclick="quizSetCat(&#39;fisk&#39;,this)">Pol. fiskalna</span><span class="chip" data-c="wzr" onclick="quizSetCat(&#39;wzr&#39;,this)">Wzrost</span><span class="chip" data-c="handel" onclick="quizSetCat(&#39;handel&#39;,this)">Handel</span><span class="chip" data-c="met" onclick="quizSetCat(&#39;met&#39;,this)">Podstawy</span></div>
 
       <h3 class="qstep" style="margin-top:20px;">2 · Długość</h3>
       <div class="fc-bar" id="quizModes" style="margin-top:8px;">
-        <span class="chip active" id="qmFull" onclick="quizSetMode('full')">📋 Cały dział</span>
-        <span class="chip" id="qmBatch" onclick="quizSetMode('batch')">🔟 Zestawy po 10</span>
+        <span class="chip active" id="qmFull" onclick="quizSetMode(&#39;full&#39;)">📋 Cały dział</span>
+        <span class="chip" id="qmBatch" onclick="quizSetMode(&#39;batch&#39;)">🔟 Zestawy po 10</span>
       </div>
       <div class="fc-bar" id="quizBatches" style="margin-top:10px;display:none;"></div>
 
-      <div class="qcount" id="quizCount"></div>
+      <div class="qcount" id="quizCount">Pytań w wybranym zakresie: 75</div>
       <button class="btn btn-know" style="width:100%;" onclick="quizStart()">▶ Rozpocznij quiz</button>
     </div>
 
@@ -709,7 +1035,9 @@ ZADANIA = [
 <div class="sol">
 <div class="formula">AE = 400 + 0,8·Y + 100 = 500 + 0,8·Y</div>
 <div class="formula">Y = 500 + 0,8·Y → 0,2·Y = 500 → <b>Y = 2500</b></div>
-<div class="answer">Mnożnik = 1/(1−0,8) = 1/0,2 = <b>5</b>. Równowaga: <b>Y = 2500</b>.</div></div>
+<div class="answer">Mnożnik = 1/(1−0,8) = 1/0,2 = <b>5</b>. Równowaga: <b>Y = 2500</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Skąd Y = 2500?</b><br>Mamy: AE = 500 + 0,8·Y. W równowadze Y = AE, więc: Y = 500 + 0,8Y. Odejmuję 0,8Y od obu stron: 0,2Y = 500. Dzielę przez 0,2: Y = 2500.<br><br><b>A skąd to 500 na początku?</b><br>To suma wszystkich wydatków autonomicznych — tych, które nie zależą od dochodu: C₀ (400) + I (100) = 500.<br><br><b>Sprawdzenie mnożnikiem:</b><br>Mnożnik = 5, wydatki autonomiczne = 500, więc: 500 × 5 = 2500. ✓ Zgadza się!<br>Mnożnik mówi: każda złotówka "niezależnych" wydatków generuje 5 zł dochodu w całej gospodarce — bo pieniądze krążą i wracają jako dochód innych ludzi.</div></div></div>
 `},
 
 {badge:"WARIANT", num:"2", title:"Z wydatkami rządowymi (G)", html:`
@@ -719,7 +1047,9 @@ ZADANIA = [
 <div class="sol">
 <div class="formula">AE = 300 + 0,6·Y + 200 + 100 = 600 + 0,6·Y</div>
 <div class="formula">Y = 600 + 0,6·Y → 0,4·Y = 600 → <b>Y = 1500</b></div>
-<div class="answer">Wydatki autonomiczne = 600, mnożnik = 1/0,4 = 2,5; 600 × 2,5 = <b>1500</b>.</div></div>
+<div class="answer">Wydatki autonomiczne = 600, mnożnik = 1/0,4 = 2,5; 600 × 2,5 = <b>1500</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Dlaczego G (wydatki rządowe) wrzucamy po prostu do wzoru?</b><br>Z punktu widzenia popytu, nie ma znaczenia kto wydaje: firma, konsument czy rząd. Każda wydana złotówka to popyt na czyjąś produkcję. Dlatego AE = C₀ + I + G + MPC·Y = 300 + 200 + 100 + 0,6Y = 600 + 0,6Y.<br><br><b>Skąd 1500?</b><br>Mnożnik = 1/(1−0,6) = 1/0,4 = 2,5. Wydatki autonomiczne (wszystko co stałe) = 600. W równowadze: Y = 600 × 2,5 = 1500.<br><br><b>Albo klasycznie:</b> Y = 600 + 0,6Y → 0,4Y = 600 → Y = 1500. Ta sama odpowiedź, inna droga.</div></div></div>
 `},
 
 {badge:"WARIANT", num:"3", title:"O ile wzrośnie PKB? (efekt mnożnikowy)", html:`
@@ -728,7 +1058,9 @@ ZADANIA = [
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
 <div class="formula">ΔY = mnożnik × ΔI = 1/(1−0,75) × 50 = 4 × 50 = <b>200</b></div>
-<div class="answer">PKB wzrośnie o <b>200</b> (cztery razy więcej niż początkowy zastrzyk 50).</div></div>
+<div class="answer">PKB wzrośnie o <b>200</b> (cztery razy więcej niż początkowy zastrzyk 50).</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Dlaczego 50 zł inwestycji daje aż 200 zł PKB?</b><br>Wyobraź sobie: firma buduje halę za 50 zł. To 50 zł trafia do kieszeni robotników jako wynagrodzenie. Oni mają MPC = 0,75, więc wydają 37,50 zł w sklepach. Sprzedawcy zarabiają 37,50 i wydają 75% = 28,13 zł. Kolejna osoba wydaje 75% z tego = 21,09 zł... i tak dalej, w nieskończoność.<br><br><b>Suma wszystkich "rund":</b><br>50 + 37,50 + 28,13 + 21,09 + ... = 50 × (1 + 0,75 + 0,75² + 0,75³ + ...) = 50 × 1/(1−0,75) = 50 × 4 = <b>200</b>.<br><br>Wzór mnożnika k = 1/(1−MPC) to matematyczny skrót od tej sumy nieskończonej geometrycznej.</div></div></div>
 `},
 
 {badge:"WARIANT", num:"4", title:"Powyżej równowagi — co z zapasami?", html:`
@@ -737,6 +1069,8 @@ ZADANIA = [
 <div class="sol">
 <p>Produkcja (2500) jest <b>powyżej</b> równowagi (2000), więc ludzie chcą kupić mniej, niż fabryka wyprodukowała.</p>
 <div class="answer">Niesprzedany towar ląduje w magazynie → <b>zapasy nieplanowo ROSNĄ</b>. Firmy zareagują obniżeniem produkcji, aż wróci do Y* = 2000.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Wyobraź sobie piekarnię (= cała gospodarka):</b><br>Dziś piekarz upiekł 2500 bułek. Ale klientów jest na tyle, żeby kupić tylko 2000. Zostaje 500 bułek na półce — nieplanowo. Piekarz widzi to i myśli: "po co piec tyle, skoro i tak nie sprzedaję?" Jutro zamówi mniej mąki i upiecze mniej.<br><br><b>Mechanizm samoregulacji:</b><br>Rosnące zapasy = sygnał dla firm, żeby produkować mniej. Malejące zapasy = sygnał, żeby produkować więcej. Gospodarka "ciągnie" zawsze w kierunku równowagi Y* = 2000, gdzie zapasy się nie zmieniają.<br><br><b>Reguła na pamięć:</b> Y > AE → zapasy rosną → produkcja spada. Y < AE → zapasy maleją → produkcja rośnie. Y = AE → równowaga.</div></div>
 <p class="muted">Reguła do zapamiętania: produkcja &gt; wydatki → zapasy rosną; produkcja &lt; wydatki → zapasy spadają; produkcja = wydatki → równowaga.</p></div>
 `},
 
@@ -748,7 +1082,9 @@ ZADANIA = [
 <div class="formula">C = C₀ + MPC·(Y − T) = 500 + 0,75·(Y − 200) = 350 + 0,75·Y</div>
 <div class="formula">AE = 350 + 0,75·Y + 250 + 250 = 850 + 0,75·Y</div>
 <div class="formula">Y = 850 + 0,75·Y → 0,25·Y = 850 → <b>Y = 3400</b></div>
-<div class="answer">Równowaga: <b>Y = 3400</b>.</div></div>
+<div class="answer">Równowaga: <b>Y = 3400</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Skąd się biorą wszystkie te liczby? Krok po kroku:</b><br><br><b>→ Skąd 350 w konsumpcji?</b><br>Wzór C = C₀ + MPC·(Y−T). Rozwijamy nawias: 0,75·(Y−200) = 0,75Y − 150. Dodajemy C₀: 500 + 0,75Y − 150 = <b>350 + 0,75Y</b>. Podatek "zjadł" 150 zł (= 0,75 × 200) z bazowej konsumpcji.<br><br><b>→ Skąd 850 w AE?</b><br>Sumujemy wszystkie stałe: 350 + 250 (inwestycje) + 250 (rząd) = <b>850</b>. Proste dodawanie.<br><br><b>→ Skąd Y = 3400?</b><br>W równowadze Y = AE: Y = 850 + 0,75Y → Y − 0,75Y = 850 → 0,25Y = 850 → Y = 3400.<br><br><b>Dlaczego podatek zmniejszył Y?</b><br>Porównaj z zadaniem bez podatku: tam Y = 4000. Tu Y = 3400, czyli o 600 mniej. Podatek T = 200 obciął bazową konsumpcję, a mnożnik (4) "zwielokrotnił" ten efekt: 200 × 0,75 × 4 = 600. Podatek nie boli tylko o T — boli o T × MPC × mnożnik.</div></div></div>
 `},
 
 {badge:"WARIANT", num:"6", title:"Odwrotnie — znajdź MPC", html:`
@@ -757,7 +1093,9 @@ ZADANIA = [
 <div class="sol">
 <div class="formula">W równowadze: Y = (C₀ + I) + MPC·Y → 1500 = 300 + MPC·1500</div>
 <div class="formula">1200 = MPC·1500 → MPC = 1200/1500 = <b>0,8</b></div>
-<div class="answer">MPC = <b>0,8</b> (a MPS = 1 − 0,8 = 0,2).</div></div>
+<div class="answer">MPC = <b>0,8</b> (a MPS = 1 − 0,8 = 0,2).</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>To zadanie "odwrócone" — mamy wynik, szukamy parametru.</b><br>Normalnie: znamy MPC → liczymy Y. Tu: znamy Y → szukamy MPC.<br><br><b>Krok po kroku:</b><br>W równowadze: Y = C₀ + I + MPC·Y (bo AE = wydatki autonomiczne + MPC·Y). Wstawiam liczby: 1500 = 200 + 100 + MPC·1500. Upraszczam: 1500 = 300 + 1500·MPC. Odejmuję 300: 1200 = 1500·MPC. Dzielę: MPC = 1200/1500 = 0,8.<br><br><b>Interpretacja:</b><br>W tej gospodarce z każdej nowej złotówki dochodu 80 groszy idzie na konsumpcję, a 20 groszy (MPS = 0,2) na oszczędności.</div></div></div>
 `},
 
 {badge:"TYPOWE", num:"7", title:"PKB nominalny, realny i deflator", html:`
@@ -774,7 +1112,9 @@ ZADANIA = [
 <div class="formula">100·4 + 50·20 = 400 + 1000 = <b>1400 zł</b></div>
 <p><b>Deflator PKB</b> = (nominalny / realny) × 100:</p>
 <div class="formula">(1700 / 1400) × 100 ≈ <b>121,4</b></div>
-<div class="answer">Ceny wzrosły średnio o ok. <b>21,4%</b> względem roku bazowego.</div></div>
+<div class="answer">Ceny wzrosły średnio o ok. <b>21,4%</b> względem roku bazowego.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Po co w ogóle te dwa rodzaje PKB?</b><br>Problem: PKB nominalny rośnie nawet jeśli nic nie produkujemy więcej — wystarczy, że ceny rosną. Potrzebujemy sposobu, żeby "oddzielić" wzrost ilości od wzrostu cen.<br><br><b>PKB nominalny</b> = tegoroczne ilości × tegoroczne ceny. Jakbyś dziś poszedł na zakupy i zapłacił po dzisiejszych cenach.<br><b>PKB realny</b> = tegoroczne ilości × ceny z roku bazowego. "Co by to kosztowało w 2020?" — usuwasz inflację.<br><b>Deflator</b> = (nominalny ÷ realny) × 100 = ile wynosi inflacja od roku bazowego. Deflator 121,4 → ceny 21,4% wyższe niż w 2020.<br><br><b>Szybkie sprawdzenie:</b> Chleb zdrożał z 4 do 5 zł (+25%), Książki z 20 do 24 zł (+20%). Deflator 121,4 to "średnia ważona" tych wzrostów, gdzie wagami są wielkości produkcji.</div></div></div>
 `},
 
 {badge:"TYPOWE", num:"8", title:"CPI i stopa inflacji", html:`
@@ -783,7 +1123,9 @@ ZADANIA = [
 <div class="sol">
 <div class="formula">CPI = (koszt koszyka teraz / koszt w roku bazowym) × 100 = (2300/2000)×100 = <b>115</b></div>
 <div class="formula">Stopa inflacji = (CPI − 100) = <b>15%</b></div>
-<div class="answer">Ceny koszyka wzrosły o <b>15%</b>. (Gdyby pytano o inflację między dwoma latami nie-bazowymi: (CPI₂ − CPI₁)/CPI₁ × 100%.)</div></div>
+<div class="answer">Ceny koszyka wzrosły o <b>15%</b>. (Gdyby pytano o inflację między dwoma latami nie-bazowymi: (CPI₂ − CPI₁)/CPI₁ × 100%.)</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>CPI = termometr cen dla typowej rodziny.</b><br>"Koszyk" to zestaw dóbr, które przeciętna rodzina kupuje każdego miesiąca: chleb, prąd, czynsz, benzyna, ubrania...<br><br><b>Jak działa:</b><br>Rok bazowy → CPI = 100 (to nasz punkt "zero"). Teraz → CPI = 115. Interpretacja: ten sam koszyk kosztuje 15% więcej niż w roku bazowym.<br><br><b>Wzory:</b><br>• CPI = (koszt koszyka dziś ÷ koszt koszyka w roku bazowym) × 100 = (2300 ÷ 2000) × 100 = 115<br>• Inflacja od roku bazowego = CPI − 100 = 15%<br>• Inflacja między dwoma latami niebazowymiCPI₂ − CPI₁)/CPI₁ × 100%<br><br><b>Różnica między CPI a deflatorem PKB:</b> CPI mierzy koszyk <i>konsumenta</i> (stały zestaw dóbr). Deflator mierzy <i>całą produkcję</i> (zmienна kompozycja). Dają podobne wyniki, ale nie identyczne.</div></div></div>
 `},
 
 {badge:"TYPOWE", num:"9", title:"Stopa wzrostu gospodarczego", html:`
@@ -791,7 +1133,9 @@ ZADANIA = [
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
 <div class="formula">stopa wzrostu = (PKB₂ − PKB₁)/PKB₁ × 100% = (525 − 500)/500 × 100% = <b>5%</b></div>
-<div class="answer">Gospodarka urosła o <b>5%</b>. Używamy PKB <b>realnego</b>, bo chcemy wzrost ilości, a nie cen.</div></div>
+<div class="answer">Gospodarka urosła o <b>5%</b>. Używamy PKB <b>realnego</b>, bo chcemy wzrost ilości, a nie cen.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Wzór na tempo wzrostu to ogólny wzór na zmianę procentową:</b><br>(wartość końcowa − wartość początkowa) ÷ wartość początkowa × 100% = (525 − 500) ÷ 500 × 100% = 5%.<br><br><b>Dlaczego PKB realny, a nie nominalny?</b><br>Wyobraź sobie kraj, który w 2023 r. produkuje 100 samochodów po 50 000 zł = PKB nominalny 5 mln. W 2024 r. produkuje nadal 100 samochodów, ale ceny wzrosły do 55 000 zł = PKB nominalny 5,5 mln. Wzrost nominalny = 10% — ale przecież nic więcej nie wyprodukowali!<br>PKB realny (w cenach z 2023) = nadal 5 mln → wzrost 0%. To jest prawdziwy wzrost.</div></div></div>
 `},
 
 {badge:"TYPOWE", num:"10", title:"Stopa bezrobocia i aktywności zawodowej", html:`
@@ -802,7 +1146,9 @@ ZADANIA = [
 <div class="formula">Siła robocza = 60 + 10 = 70 tys.</div>
 <div class="formula">Stopa bezrobocia = bezrobotni / siła robocza × 100% = 10/70 × 100% ≈ <b>14,3%</b></div>
 <div class="formula">Wskaźnik aktywności = siła robocza / ludność 16+ × 100% = 70/100 × 100% = <b>70%</b></div>
-<div class="answer">Stopa bezrobocia ≈ <b>14,3%</b>, aktywność zawodowa = <b>70%</b>.</div></div>
+<div class="answer">Stopa bezrobocia ≈ <b>14,3%</b>, aktywność zawodowa = <b>70%</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Kluczowe rozróżnienie: siła robocza ≠ wszyscy ludzie.</b><br>Emeryci, studenci nie szukający pracy, opiekunowie domowi — to osoby bierne zawodowo. Nie wchodzą do siły roboczej i NIE liczą się do stopy bezrobocia.<br><br><b>Struktura 100 osób:</b><br>• 60 pracuje → pracujący<br>• 10 szuka pracy → bezrobotni<br>• 30 nie szuka → bierni zawodowo<br>Siła robocza = 60 + 10 = 70 (bez tych 30 biernych!).<br><br><b>Dlaczego dzielimy przez 70, nie przez 100?</b><br>Stopa bezrobocia pyta: "spośród tych, którzy CHCĄ pracować, ilu nie może?" Dlatego mianownik to siła robocza (70), nie cała populacja. Stopa = 10/70 ≈ 14,3%.<br><br><b>Wskaźnik aktywności</b> = 70/100 = 70% mówi z kolei: jaki procent całej dorosłej populacji w ogóle chce uczestniczyć w rynku pracy.</div></div></div>
 `},
 
 {badge:"TYPOWE", num:"11", title:"Prawo Okuna", html:`
@@ -812,7 +1158,9 @@ ZADANIA = [
 <p>Prawo Okuna: każdy 1 pkt proc. bezrobocia powyżej naturalnej stopy = PKB niższy o ok. 3% od potencjału.</p>
 <div class="formula">luka produktowa = −3 × 2 = <b>−6%</b></div>
 <div class="formula">rzeczywisty PKB = 1000 × (1 − 0,06) = <b>940 mld</b></div>
-<div class="answer">PKB jest <b>6% poniżej</b> potencjału (luka recesyjna), czyli wynosi <b>940 mld</b>.</div></div>
+<div class="answer">PKB jest <b>6% poniżej</b> potencjału (luka recesyjna), czyli wynosi <b>940 mld</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Prawo Okuna to empiryczna reguła (nie prawo matematyczne):</b><br>Każdy 1 punkt procentowy bezrobocia POWYŻEJ naturalnej stopy ≈ PKB niższy o ~2-3% od potencjału.<br><br><b>Intuicja:</b> Jeśli zbyt wiele osób siedzi bezczynnie (bo nie ma pracy), gospodarka produkuje mniej niż mogłaby. Każdy bezrobotny to "zmarnowany" potencjał produkcyjny.<br><br><b>Obliczenie:</b> bezrobocie wyższe o 2 pp, współczynnik = 3 → luka = −3 × 2 = −6%. PKB = 1000 × (1 − 0,06) = 940 mld.<br><br><b>Luka ujemna (recesyjna)</b> = PKB < potencjał = gospodarka pracuje "na niepełnych obrotach". Są wolne moce produkcyjne i niedobrowolnie bezrobotni ludzie.<br><b>Luka dodatnia (inflacyjna)</b> = PKB > potencjał = gospodarka "przegrzana", grozi inflacja.</div></div></div>
 `},
 
 {badge:"TYPOWE", num:"12", title:"Reguła 70 — czas podwojenia", html:`
@@ -820,7 +1168,9 @@ ZADANIA = [
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
 <div class="formula">czas podwojenia ≈ 70 / stopa wzrostu = 70 / 3,5 = <b>20 lat</b></div>
-<div class="answer">PKB podwoi się po ok. <b>20 latach</b>. (Przy 7% byłoby to 10 lat, przy 2% — 35 lat.)</div></div>
+<div class="answer">PKB podwoi się po ok. <b>20 latach</b>. (Przy 7% byłoby to 10 lat, przy 2% — 35 lat.)</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Skąd pochodzi "70"?</b><br>Przy procencie składanym, czas podwojenia = ln(2) ÷ ln(1+g) ≈ 0,693 ÷ g (dla małych g). 0,693 ≈ 0,7, czyli 70% — zaokrąglamy dla łatwości: 70 ÷ g%.<br><br><b>Dlaczego to ważne?</b><br>Drobna różnica w tempie wzrostu robi gigantyczną różnicę w długim terminie:<br>• 1% rocznie → podwojenie po 70 latach<br>• 2% rocznie → 35 lat<br>• 3,5% rocznie → 20 lat<br>• 7% rocznie → 10 lat<br><br>Kraj rosnący 7% podwoi swoje bogactwo gdy kraj rosnący 1% urośnie zaledwie o ~40%. W ciągu 70 lat kraj z 7% będzie <i>128 razy</i> bogatszy (2⁷), kraj z 1% — tylko 2 razy. To właśnie dlatego ekonomiści tak bardzo przejmują się długookresowym wzrostem.</div></div></div>
 `},
 
 {badge:"TYPOWE", num:"13", title:"Mnożnik pieniężny i kreacja pieniądza", html:`
@@ -830,7 +1180,9 @@ ZADANIA = [
 <div class="sol">
 <div class="formula">mnożnik pieniężny = 1 / stopa rezerw = 1 / 0,10 = <b>10</b></div>
 <div class="formula">max wzrost podaży pieniądza = 200 × 10 = <b>2000</b></div>
-<div class="answer">Podaż pieniądza może wzrosnąć maksymalnie o <b>2000</b>.</div></div>
+<div class="answer">Podaż pieniądza może wzrosnąć maksymalnie o <b>2000</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>Krok po kroku jak "rozmnaża się" pieniądz:</b><br>Bank A dostaje depozyt 200 zł. Musi zostawić 10% = 20 zł (rezerwa obowiązkowa). Pożycza 180 zł.<br>Ktoś bierze 180 zł kredytu, wpłaca do banku B. Bank B zostawia 18 zł, pożycza 162 zł.<br>Ktoś wpłaca 162 do banku C. Bank C zostawia 16,20, pożycza 145,80 zł...<br><br><b>Suma wszystkich tych "rund":</b><br>200 + 180 + 162 + 145,80 + ... = 200 × (1 + 0,9 + 0,9² + 0,9³ + ...) = 200 × 1/(1−0,9) = 200 × 1/0,1 = 200 × 10 = 2000.<br><br><b>Wzór mnożnik = 1/stopa rezerw</b> to skrót od tej sumy nieskończonego szeregu geometrycznego.<br>"Maksymalnie", bo w praktyce ludzie trzymają trochę gotówki w kieszeni (nie wszystko idzie z powrotem do banku), więc realny mnożnik jest niższy.</div></div></div>
 `},
 
 {badge:"TYPOWE", num:"14", title:"Ilościowa teoria pieniądza (MV = PY)", html:`
@@ -840,7 +1192,9 @@ ZADANIA = [
 <div class="formula">M·V = P·Y → PKB nominalny = 500 × 4 = <b>2000</b></div>
 <p>W tempie wzrostu: %ΔM + %ΔV ≈ %ΔP + %ΔY</p>
 <div class="formula">10% + 0% ≈ inflacja + 3% → inflacja ≈ <b>7%</b></div>
-<div class="answer">PKB nominalny = <b>2000</b>; przewidywana inflacja ≈ <b>7%</b>.</div></div>
+<div class="answer">PKB nominalny = <b>2000</b>; przewidywana inflacja ≈ <b>7%</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)" style="margin-top:12px;">🧒 Wytłumaczenie jak dla 10-latka ▾</button>
+<div class="sol"><div class="eli5"><b>MV = PY — co to w ogóle znaczy?</b><br>Obie strony opisują tę samą kwotę — łączne transakcje w gospodarce w ciągu roku.<br>• <b>MV (lewa)</b>: M = ile pieniędzy jest w obiegu, V = ile razy każda złotówka "zmieniła ręce". Razem: całkowity "obrót pieniądza".<br>• <b>PY (prawa)</b>: P = poziom cen, Y = realna produkcja. Razem: PKB nominalny — łączna wartość wszystkiego co kupiono.<br><br><b>Obliczenia:</b><br>PKB nominalny = M × V = 500 × 4 = 2000.<br>Inflacja: używamy wersji "przyrostowej": %ΔM + %ΔV = %ΔP + %ΔY → 10% + 0% = inflacja + 3% → inflacja = 7%.<br><br><b>Kluczowy wniosek ilościowej teorii pieniądza:</b><br>Jeśli bank centralny podwoi M, a V i Y są stałe, ceny też się podwoją. Więcej pieniędzy "gonić" będzie tę samą ilość towarów → wyższe ceny. To właśnie dlatego nadmierne drukowanie pieniędzy prowadzi do inflacji.</div></div></div>
 `}
 ];
 
@@ -1278,5 +1632,6 @@ renderZadania();
 renderWall();
 renderQuizCats();
 </script>
-</body>
-</html>
+
+
+</body></html>
