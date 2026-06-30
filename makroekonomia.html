@@ -217,7 +217,7 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
 /* ===== KWADRACIK ZAMIAST NUMERU (ostatnie zadania) — w kolorach przycisku „Zostaw opinię" ===== */
 .acc-num.acc-sq{background:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);border-radius:4px;box-shadow:0 2px 11px rgba(167,139,250,.45),inset 0 0 0 1px rgba(255,255,255,.12);}
 
-/* ===== INTERAKTYWNE WYKRESY MAKRO (najedź = przesunięcie krzywej + opis) ===== */
+/* ===== INTERAKTYWNE WYKRESY MAKRO (krok po kroku: szok → reakcja, opis + rzut na obie osie) ===== */
 .econ-fig{position:relative;margin:14px 0 4px;background:#0a0818;border:1px solid var(--border2);border-radius:4px;padding:12px 12px 4px;outline:none;}
 .econ-fig svg{display:block;width:100%;height:auto;max-width:440px;margin:0 auto;overflow:visible;}
 .econ-fig .axis{stroke:#6f679a;stroke-width:1.4;}
@@ -231,35 +231,47 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
 .econ-fig .curve-lbl{font:700 11px 'Chakra Petch','Inter',sans-serif;}
 .econ-fig .e-dot{fill:#ffd84a;stroke:#0a0818;stroke-width:1.5;}
 .econ-fig .e-lbl{fill:#ffd84a;font:800 11px 'Chakra Petch','Inter',sans-serif;}
-.econ-fig .ghost{opacity:0;stroke-dasharray:5 5;stroke-width:2;transition:opacity .5s ease;}
+.econ-fig .ghost,.econ-fig .ghost2{opacity:0;stroke-dasharray:5 5;stroke-width:2;transition:opacity .5s ease;}
 .econ-fig .mv{transition:transform .65s cubic-bezier(.45,.05,.2,1);}
-.econ-fig .e2,.econ-fig .guide2,.econ-fig .arrow{opacity:0;transition:opacity .5s ease;}
+.econ-fig .gA,.econ-fig .gB,.econ-fig .eqB,.econ-fig .arrow{opacity:0;transition:opacity .5s ease;}
 .econ-fig .guide2{stroke:#ffd84a;stroke-width:1.2;stroke-dasharray:3 3;}
+.econ-fig .gmark{fill:#ffd84a;font:800 8.5px 'Chakra Petch',sans-serif;}
 .econ-fig .arrow line{stroke:#ffd84a;stroke-width:2.2;}
 .econ-fig .arrow polygon{fill:#ffd84a;stroke:none;}
 .econ-fig .arr-lbl{font:800 9px 'Chakra Petch',sans-serif;fill:#ffd84a;}
 .econ-fig .arrow.fix line{stroke:#5ad1a0;}
 .econ-fig .arrow.fix polygon{fill:#5ad1a0;}
 .econ-fig .arrow.fix .arr-lbl{fill:#5ad1a0;}
-.econ-fig .e1{transition:opacity .5s ease;}
-.econ-fig .fig-hint{position:absolute;top:9px;right:11px;font:700 .6rem 'Chakra Petch',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);transition:opacity .3s;pointer-events:none;}
-.econ-fig .fig-cap{font-size:.85rem;line-height:1.5;margin:10px 2px 6px;border-left:3px solid;padding:8px 12px;border-radius:0 6px 6px 0;}
+.econ-fig .eqA{transition:opacity .5s ease;}
+.econ-fig .fig-cap{font-size:.85rem;line-height:1.5;margin:10px 2px 6px;border-left:3px solid;padding:8px 12px;border-radius:0 6px 6px 0;display:none;}
 .econ-fig .fig-cap b{color:#fff;}
-.econ-fig .fig-cap.init{border-color:#a78bfa;background:rgba(167,139,250,.08);color:#d8d3ee;}
-.econ-fig .fig-cap.move{border-color:#ff2e97;background:rgba(255,46,151,.09);color:#f6dbe8;display:none;}
-/* stan aktywny: najechanie (desktop) lub klasa .act (dotyk) */
-:is(.econ-fig:hover,.econ-fig.act) .mv-sras-left{transform:translate(-46px,0);}
-:is(.econ-fig:hover,.econ-fig.act) .mv-ad-right{transform:translate(46px,0);}
-:is(.econ-fig:hover,.econ-fig.act) .mv-ad-left{transform:translate(-46px,0);}
-:is(.econ-fig:hover,.econ-fig.act) .mv-ae-down{transform:translate(0,34px);}
-:is(.econ-fig:hover,.econ-fig.act) .ghost{opacity:.5;}
-:is(.econ-fig:hover,.econ-fig.act) .e1:not(.keep){opacity:.35;}
-:is(.econ-fig:hover,.econ-fig.act) .e2{opacity:1;}
-:is(.econ-fig:hover,.econ-fig.act) .guide2{opacity:1;}
-:is(.econ-fig:hover,.econ-fig.act) .arrow{opacity:1;}
-:is(.econ-fig:hover,.econ-fig.act) .fig-hint{opacity:0;}
-:is(.econ-fig:hover,.econ-fig.act) .fig-cap.init{display:none;}
-:is(.econ-fig:hover,.econ-fig.act) .fig-cap.move{display:block;}
+.econ-fig .fig-cap.c0{border-color:#a78bfa;background:rgba(167,139,250,.08);color:#d8d3ee;}
+.econ-fig .fig-cap.c1{border-color:#ff2e97;background:rgba(255,46,151,.09);color:#f6dbe8;}
+.econ-fig .fig-cap.c2{border-color:#5ad1a0;background:rgba(90,209,160,.10);color:#d8f3e8;}
+/* pasek sterowania etapami (krok po kroku) */
+.econ-fig .fig-steps{display:flex;align-items:center;gap:10px;margin:8px 2px 4px;flex-wrap:wrap;}
+.econ-fig .fig-btn{font:700 .72rem 'Chakra Petch',sans-serif;letter-spacing:.3px;color:var(--text);background:var(--surface);border:1px solid var(--border2);border-radius:4px;padding:5px 11px;cursor:pointer;transition:border-color .2s,color .2s,opacity .2s;}
+.econ-fig .fig-btn:hover:not(:disabled){color:#fff;border-color:#a78bfa;}
+.econ-fig .fig-btn:disabled{opacity:.32;cursor:default;}
+.econ-fig .fig-track{display:inline-flex;gap:6px;align-items:center;}
+.econ-fig .fig-dot{width:8px;height:8px;border-radius:50%;background:#3a3357;transition:background .3s,transform .3s;}
+.econ-fig .fig-dot.on{background:linear-gradient(115deg,#27e8ff,#a78bfa 60%,#ff2e97);transform:scale(1.15);}
+.econ-fig .fig-now{font:700 .7rem 'Chakra Petch',sans-serif;color:var(--muted);letter-spacing:.3px;}
+/* widoczność i ruch zależne od etapu (data-stage) */
+.econ-fig[data-stage="0"] .fig-cap.c0,
+.econ-fig[data-stage="1"] .fig-cap.c1,
+.econ-fig[data-stage="2"] .fig-cap.c2{display:block;}
+.econ-fig[data-stage="1"] .gB,.econ-fig[data-stage="1"] .eqB{opacity:1;}
+.econ-fig[data-stage="1"] .eqA{opacity:.32;}
+.econ-fig[data-stage="1"] .arrow.shock{opacity:1;}
+.econ-fig[data-stage="1"] .ghost{opacity:.5;}
+.econ-fig[data-stage="2"] .gA{opacity:1;}
+.econ-fig[data-stage="2"] .arrow.fix{opacity:1;}
+.econ-fig[data-stage="2"] .ghost2{opacity:.45;}
+.econ-fig[data-stage="1"] .mv-sras-left{transform:translate(-46px,0);}
+.econ-fig[data-stage="1"] .mv-ad-right{transform:translate(46px,0);}
+.econ-fig[data-stage="1"] .mv-ad-left{transform:translate(-46px,0);}
+.econ-fig[data-stage="1"] .mv-ae-down{transform:translate(0,34px);}
 @media(prefers-reduced-motion:reduce){.econ-fig .mv{transition:none;}}
 </style>
 </head>
@@ -1173,25 +1185,40 @@ function _arrowHead(a){var x1=a[0],y1=a[1],x2=a[2],y2=a[3];
   if(y1===y2) return x2>x1?_tri(x2,y2,x2-7,y2-4,x2-7,y2+4):_tri(x2,y2,x2+7,y2-4,x2+7,y2+4);
   return y2>y1?_tri(x2,y2,x2-4,y2-7,x2+4,y2-7):_tri(x2,y2,x2-4,y2+7,x2+4,y2+7);
 }
-/* wykres AD-SAS-LAS. o.mover='ad'|'sras', o.dir kierunku SZOKU 'left'|'right', o.e2=[x,y] (równowaga w luce),
-   o.shock=[x1,y1,x2,y2] strzałka szoku, o.fix=[...] strzałka korekty/polityki (gdy podana → dwa etapy, E₁ zostaje
-   jako poziom potencjalny/punkt powrotu), o.shockLab/o.fixLab podpisy strzałek */
+/* pasek kroków: names = etykiety etapów [0..max]; etap 0 = stan początkowy */
+function _steps(names){
+  var max=names.length-1, dots='';
+  for(var i=0;i<=max;i++) dots+='<i class="fig-dot'+(i===0?' on':'')+'"></i>';
+  return '<div class="fig-steps">'
+    +'<button type="button" class="fig-btn fig-prev" onclick="figStep(this,-1)" disabled>‹ Cofnij</button>'
+    +'<span class="fig-track" aria-hidden="true">'+dots+'</span>'
+    +'<span class="fig-now">0 / '+max+' · '+names[0]+'</span>'
+    +'<button type="button" class="fig-btn fig-next" onclick="figStep(this,1)">Dalej ›</button>'
+    +'</div>';
+}
+/* wykres AD-SAS-LAS. PRZESUWA SIĘ TYLKO JEDNA krzywa (o.mover='ad'|'sras'); pozostałe dwie statyczne.
+   o.dir = kierunek SZOKU 'left'|'right'. Etap 1 (szok): mover jedzie w o.dir → luka E₂=o.e2 (zmiana P i Y).
+   Etap 2 (reakcja/polityka, gdy podane o.fix): TA SAMA krzywa wraca na miejsce → powrót do E₁ (potencjał).
+   Rzuty przerywane idą na OBIE osie: gB→E₂ (etap 1), gA→E₁ (etap 2). o.shock/o.fix = strzałki, *Lab = podpisy,
+   o.shockName/o.fixName = nazwy etapów na pasku, o.capInit/o.capShock/o.capFix = opisy etapów. */
 function adasFig(o){
-  var mvClass='mv-'+o.mover+'-'+o.dir;
-  var adLine='<line class="curve c-ad" x1="85" y1="55" x2="285" y2="185"/>';
-  var sasLine='<line class="curve c-sras" x1="85" y1="185" x2="285" y2="55"/>';
-  var moverLine=o.mover==='ad'?adLine:sasLine;
-  var ghost=(o.mover==='ad'
-    ?'<line class="curve ghost c-ad" x1="85" y1="55" x2="285" y2="185"/>'
-    :'<line class="curve ghost c-sras" x1="85" y1="185" x2="285" y2="55"/>');
-  var staticLine=o.mover==='ad'?sasLine:adLine;
-  var two=!!o.fix, keep=two?' keep':'';
+  var two=!!o.fix;
+  var names=two?['Start',(o.shockName||'Szok'),(o.fixName||'Reakcja')]:['Start',(o.shockName||'Szok')];
+  var dx=(o.dir==='right'?46:-46);
+  var ad=[85,55,285,185], sas=[85,185,285,55];
+  var base=(o.mover==='ad'?ad:sas), moverCls=(o.mover==='ad'?'c-ad':'c-sras');
+  function L(cls,c){return '<line class="'+cls+'" x1="'+c[0]+'" y1="'+c[1]+'" x2="'+c[2]+'" y2="'+c[3]+'"/>';}
+  var adLine=L('curve c-ad',ad), sasLine=L('curve c-sras',sas);
+  var moverLine=L('curve '+moverCls,base);
+  var staticLine=(o.mover==='ad'?sasLine:adLine);
+  var ghost=L('curve ghost '+moverCls,base);                                  /* pozycja wyjściowa (widoczna w etapie 1) */
+  var ghost2=two?L('curve ghost2 '+moverCls,[base[0]+dx,base[1],base[2]+dx,base[3]]):''; /* pozycja po szoku (widoczna w etapie 2) */
+  var mvClass='mv-'+o.mover+'-'+o.dir, e2x=o.e2[0], e2y=o.e2[1];
   function arrowG(cls,a,lab){
     return '<g class="arrow '+cls+'"><line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+a[2]+'" y2="'+a[3]+'"/>'+_arrowHead(a)
       +(lab?'<text class="arr-lbl" x="'+((a[0]+a[2])/2)+'" y="'+(cls==='fix'?(a[1]+13):(a[1]-6))+'" text-anchor="middle">'+lab+'</text>':'')+'</g>';
   }
-  return '<div class="econ-fig" tabindex="0">'
-   +'<span class="fig-hint">najedź ▸</span>'
+  return '<div class="econ-fig" data-stage="0" data-stages="'+(names.length-1)+'" data-names="'+names.join('|')+'">'
    +'<svg viewBox="0 0 340 250" role="img">'
      +'<line class="axis" x1="40" y1="30" x2="40" y2="210"/>'
      +'<line class="axis" x1="40" y1="210" x2="320" y2="210"/>'
@@ -1199,25 +1226,36 @@ function adasFig(o){
      +'<text class="ax-lbl" x="185" y="236" text-anchor="middle">Y — realny PKB</text>'
      +'<line class="curve c-lras" x1="185" y1="40" x2="185" y2="210"/>'
      +'<text class="curve-lbl" x="185" y="34" text-anchor="middle" fill="#a78bfa">LAS</text>'
-     +ghost+staticLine
+     +ghost+ghost2+staticLine
      +'<g class="mv '+mvClass+'">'+moverLine+'</g>'
      +'<text class="curve-lbl" x="298" y="188" text-anchor="end" fill="#27e8ff">AD</text>'
      +'<text class="curve-lbl" x="298" y="56" text-anchor="end" fill="#ff2e97">SAS</text>'
-     +'<line class="guide2" x1="'+o.e2[0]+'" y1="'+o.e2[1]+'" x2="'+o.e2[0]+'" y2="210"/>'
-     +'<line class="guide2" x1="'+o.e2[0]+'" y1="'+o.e2[1]+'" x2="40" y2="'+o.e2[1]+'"/>'
+     /* rzut E₂ na OBIE osie (etap 1): pion → oś Y, poziom → oś P */
+     +'<line class="guide2 gB" x1="'+e2x+'" y1="'+e2y+'" x2="'+e2x+'" y2="210"/>'
+     +'<line class="guide2 gB" x1="'+e2x+'" y1="'+e2y+'" x2="40" y2="'+e2y+'"/>'
+     +'<text class="gmark gB" x="44" y="'+(e2y-3)+'">P₂</text>'
+     +'<text class="gmark gB" x="'+e2x+'" y="223" text-anchor="middle">Y₂</text>'
+     /* rzut powrotu do E₁ na OBIE osie (etap 2) */
+     +(two?'<line class="guide2 gA" x1="185" y1="120" x2="185" y2="210"/>'
+         +'<line class="guide2 gA" x1="185" y1="120" x2="40" y2="120"/>'
+         +'<text class="gmark gA" x="44" y="117">P₁</text>'
+         +'<text class="gmark gA" x="185" y="223" text-anchor="middle">Y₁</text>':'')
      +arrowG('shock',o.shock,o.shockLab)
      +(two?arrowG('fix',o.fix,o.fixLab):'')
-     +'<circle class="e-dot e1'+keep+'" cx="185" cy="120" r="4.5"/><text class="e-lbl e1'+keep+'" x="192" y="114">E₁</text>'
-     +'<circle class="e-dot e2" cx="'+o.e2[0]+'" cy="'+o.e2[1]+'" r="4.5"/><text class="e-lbl e2" x="'+(o.e2[0]+7)+'" y="'+(o.e2[1]-6)+'">E₂</text>'
+     +'<circle class="e-dot eqA" cx="185" cy="120" r="4.5"/><text class="e-lbl eqA" x="192" y="114">E₁</text>'
+     +'<circle class="e-dot eqB" cx="'+e2x+'" cy="'+e2y+'" r="4.5"/><text class="e-lbl eqB" x="'+(e2x+7)+'" y="'+(e2y-6)+'">E₂</text>'
    +'</svg>'
-   +'<div class="fig-cap init">'+o.capInit+'</div>'
-   +'<div class="fig-cap move">'+o.capMove+'</div>'
+   +'<div class="fig-cap c0">'+o.capInit+'</div>'
+   +'<div class="fig-cap c1">'+o.capShock+'</div>'
+   +(two?'<div class="fig-cap c2">'+o.capFix+'</div>':'')
+   +_steps(names)
   +'</div>';
 }
-/* krzyż keynesowski AE-Y; AE przesuwa się w dół */
+/* krzyż keynesowski AE-Y; jednoetapowy — TYLKO linia AE jedzie równolegle w DÓŁ, linia 45° statyczna.
+   Jedna oś znaczeniowa (produkcja Y); rzut E₂ na oś Y. */
 function kcFig(o){
-  return '<div class="econ-fig" tabindex="0">'
-   +'<span class="fig-hint">najedź ▸</span>'
+  var names=['Start',(o.shockName||'Szok')];
+  return '<div class="econ-fig" data-stage="0" data-stages="1" data-names="'+names.join('|')+'">'
    +'<svg viewBox="0 0 340 250" role="img">'
      +'<line class="axis" x1="40" y1="30" x2="40" y2="210"/>'
      +'<line class="axis" x1="40" y1="210" x2="320" y2="210"/>'
@@ -1228,14 +1266,16 @@ function kcFig(o){
      +'<line class="curve ghost c-ae" x1="40" y1="150" x2="300" y2="80"/>'
      +'<g class="mv mv-ae-down"><line class="curve c-ae" x1="40" y1="150" x2="300" y2="80"/>'
        +'<text class="curve-lbl" x="305" y="82" fill="#27e8ff">AE</text></g>'
-     +'<g class="arrow"><line x1="255" y1="92" x2="255" y2="124"/>'+_arrowHead([255,92,255,124])+'</g>'
-     +'<line class="guide2" x1="76" y1="174" x2="76" y2="210"/>'
-     +'<line class="guide2" x1="76" y1="174" x2="40" y2="174"/>'
-     +'<circle class="e-dot e1" cx="122" cy="128" r="4.5"/><text class="e-lbl e1" x="129" y="123">E₁</text>'
-     +'<circle class="e-dot e2" cx="76" cy="174" r="4.5"/><text class="e-lbl e2" x="83" y="169">E₂</text>'
+     +'<g class="arrow shock"><line x1="255" y1="92" x2="255" y2="124"/>'+_arrowHead([255,92,255,124])+'</g>'
+     +'<line class="guide2 gB" x1="76" y1="174" x2="76" y2="210"/>'
+     +'<line class="guide2 gB" x1="76" y1="174" x2="40" y2="174"/>'
+     +'<text class="gmark gB" x="83" y="205">Y₂</text>'
+     +'<circle class="e-dot eqA" cx="122" cy="128" r="4.5"/><text class="e-lbl eqA" x="129" y="123">E₁</text>'
+     +'<circle class="e-dot eqB" cx="76" cy="174" r="4.5"/><text class="e-lbl eqB" x="83" y="169">E₂</text>'
    +'</svg>'
-   +'<div class="fig-cap init">'+o.capInit+'</div>'
-   +'<div class="fig-cap move">'+o.capMove+'</div>'
+   +'<div class="fig-cap c0">'+o.capInit+'</div>'
+   +'<div class="fig-cap c1">'+o.capShock+'</div>'
+   +_steps(names)
   +'</div>';
 }
 
@@ -1525,8 +1565,9 @@ ZADANIA = [
 {badge:"EGZAMIN", num:"22", sq:true, title:"Paradoks zapobiegliwości (model dochód–wydatki)", html:`
 <div class="given"><b>Sytuacja:</b> gospodarka w równowadze krótkookresowej. Gospodarstwa domowe ze strachu przed kryzysem <b>zwiększają oszczędności</b> (obniżają konsumpcję autonomiczną). Co stanie się z nieplanowanymi inwestycjami w zapasy, produkcją i bezrobociem? Jak nazywa się to zjawisko? (krzyż keynesowski AE–Y)</div>
 `+kcFig({
- capInit:'<b>Stan początkowy:</b> gospodarka w równowadze E₁, gdzie linia planowanych wydatków <b>AE</b> przecina linię <b>45°</b> (Y = AE). Zapasy się nie zmieniają — fabryki produkują dokładnie tyle, ile ludzie chcą kupić.',
- capMove:'<b>Wszyscy naraz oszczędzają więcej</b> → spada konsumpcja autonomiczna → linia <b>AE przesuwa się w DÓŁ</b>. Chwilowo niesprzedany towar zalega → <b>nieplanowane zapasy rosną</b>, firmy tną produkcję. Nowa równowaga <b>E₂</b> leży niżej i w lewo: <b>PKB i dochód spadają, bezrobocie rośnie</b>. To <b>paradoks zapobiegliwości</b> — chcąc odłożyć więcej, społeczeństwo biednieje.'
+ shockName:'AE w dół',
+ capInit:'<b>Etap 0 — stan początkowy:</b> gospodarka w równowadze E₁, gdzie linia planowanych wydatków <b>AE</b> przecina linię <b>45°</b> (Y = AE). Zapasy się nie zmieniają — fabryki produkują dokładnie tyle, ile ludzie chcą kupić. Kliknij <b>Dalej ›</b>.',
+ capShock:'<b>Etap 1 — szok:</b> wszyscy naraz oszczędzają więcej → spada konsumpcja autonomiczna → <b>jedna krzywa AE przesuwa się równolegle w DÓŁ</b> (linia <b>45° stoi w miejscu</b>). Chwilowo niesprzedany towar zalega → <b>nieplanowane zapasy rosną</b>, firmy tną produkcję. Nowa równowaga <b>E₂</b> leży niżej i w lewo — przerywany rzut na oś <b>Y</b> pokazuje <b>spadek produkcji</b>: <b>PKB i dochód spadają, bezrobocie rośnie</b>. To <b>paradoks zapobiegliwości</b> — chcąc odłożyć więcej, społeczeństwo biednieje.'
 })+`
 <div class="eli5"><b>Po ludzku:</b> gdy wszyscy naraz zaczynają mniej wydawać, żeby odłożyć na czarną godzinę, <b>spada popyt</b>. Sklepom zostaje towar na półkach (rosną zapasy), więc tną produkcję i zwalniają ludzi. Dochody spadają — i paradoksalnie społeczeństwo wcale nie odkłada więcej. To <b>paradoks zapobiegliwości</b>.</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
@@ -1555,8 +1596,10 @@ ZADANIA = [
 `+adasFig({
  mover:'sras', dir:'left', e2:[162,105],
  shock:[212,90,166,90], shockLab:'① szok', fix:[166,104,212,104], fixLab:'② długi okres',
- capInit:'<b>Stan początkowy:</b> równowaga długookresowa. <b>AD</b>, <b>SAS</b> i <b>LAS</b> przecinają się w jednym punkcie <b>E₁</b> — produkcja równa potencjałowi (LAS), bezrobocie na poziomie naturalnym.',
- capMove:'<b>① Krótki okres:</b> drożeją surowce → koszty firm ↑ → <b>SAS przesuwa się w LEWO</b>. Nowa równowaga <b>E₂</b>: <b>ceny ↑</b>, <b>produkcja ↓</b> poniżej potencjału, <b>bezrobocie ↑</b> — to <b>stagflacja</b>.<br><b>② Długi okres:</b> wysokie bezrobocie → presja na <b>spadek płac i kosztów</b> → <b>SAS wraca w PRAWO do LAS</b>. Produkcja wraca do potencjału, bezrobocie do naturalnego, ceny w okolice wyjściowych (powrót do <b>E₁</b>). Tylko jedna krzywa (SAS) — najpierw w lewo, potem z powrotem.'
+ shockName:'Krótki okres', fixName:'Długi okres',
+ capInit:'<b>Etap 0 — stan początkowy:</b> równowaga długookresowa. <b>AD</b>, <b>SAS</b> i <b>LAS</b> przecinają się w jednym punkcie <b>E₁</b> — produkcja równa potencjałowi (LAS), bezrobocie naturalne. Kliknij <b>Dalej ›</b>.',
+ capShock:'<b>Etap 1 — krótki okres (szok):</b> drożeją surowce → koszty firm ↑ → <b>jedna krzywa SAS przesuwa się w LEWO</b> (AD i LAS stoją w miejscu). Nowa równowaga <b>E₂</b> zmienia OBIE współrzędne — przerywane rzuty pokazują <b>P₂ (ceny ↑)</b> na osi P oraz <b>Y₂ (produkcja ↓ poniżej potencjału)</b> na osi Y; <b>bezrobocie ↑</b> → <b>stagflacja</b>.',
+ capFix:'<b>Etap 2 — długi okres (samoregulacja):</b> wysokie bezrobocie → presja na <b>spadek płac i kosztów</b> → <b>TA SAMA SAS wraca w PRAWO do LAS</b>. Równowaga wraca do <b>E₁</b> — rzuty <b>P₁/Y₁</b> pokazują powrót cen i produkcji do poziomu wyjściowego. Cały czas jedna krzywa (SAS): najpierw w lewo, potem z powrotem.'
 })+`
 <div class="eli5"><b>Po ludzku:</b> droższa energia = wyższe koszty firm. Przy tych samych cenach firmy produkują mniej → krzywa <b>podaży krótkookresowej (SAS) przesuwa się w lewo</b>. Robi się drogo i mało jednocześnie — to <b>stagflacja</b> (stagnacja + inflacja).</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
@@ -1571,8 +1614,10 @@ ZADANIA = [
 `+adasFig({
  mover:'ad', dir:'right', e2:[208,105],
  shock:[158,166,212,166], shockLab:'① szok', fix:[212,182,158,182], fixLab:'② polityka',
- capInit:'<b>Stan początkowy:</b> równowaga długookresowa w <b>E₁</b> — <b>AD</b> przecina <b>SAS</b> dokładnie na <b>LAS</b>, produkcja równa potencjałowi.',
- capMove:'<b>① Szok:</b> rosną ceny akcji → efekt majątkowy → konsumpcja ↑ → <b>AD przesuwa się w PRAWO</b>. Powstaje <b>luka inflacyjna</b> (<b>E₂</b>): <b>ceny ↑</b>, <b>produkcja ↑</b> powyżej potencjału, <b>bezrobocie ↓</b>.<br><b>② Polityka:</b> skuteczna <b>polityka fiskalna restrykcyjna</b> (↓zakupy rządowe G, ↓transfery, ↑podatki) → <b>AD wraca w LEWO do LAS</b>. Gospodarka wraca do potencjału (powrót do <b>E₁</b>). To wciąż jedna krzywa (AD) — szok w prawo, polityka z powrotem w lewo.'
+ shockName:'Szok', fixName:'Polityka',
+ capInit:'<b>Etap 0 — stan początkowy:</b> równowaga długookresowa w <b>E₁</b> — <b>AD</b> przecina <b>SAS</b> dokładnie na <b>LAS</b>, produkcja równa potencjałowi. Kliknij <b>Dalej ›</b>.',
+ capShock:'<b>Etap 1 — szok:</b> rosną ceny akcji → efekt majątkowy → konsumpcja ↑ → <b>jedna krzywa AD przesuwa się w PRAWO</b> (SAS i LAS stoją w miejscu). Powstaje <b>luka inflacyjna</b> — <b>E₂</b> zmienia OBIE współrzędne: rzuty pokazują <b>P₂ (ceny ↑)</b> na osi P oraz <b>Y₂ (produkcja ↑ powyżej potencjału)</b> na osi Y; <b>bezrobocie ↓</b>.',
+ capFix:'<b>Etap 2 — polityka:</b> skuteczna <b>restrykcyjna polityka fiskalna</b> (↓zakupy rządowe G, ↓transfery, ↑podatki) → <b>TA SAMA AD wraca w LEWO do LAS</b>. Powrót do <b>E₁</b> — rzuty <b>P₁/Y₁</b> pokazują ceny i produkcję z powrotem na poziomie wyjściowym. Wciąż jedna krzywa (AD): szok w prawo, polityka z powrotem w lewo.'
 })+`
 <div class="eli5"><b>Po ludzku:</b> akcje w górę → ludzie czują się bogatsi (<b>efekt majątkowy</b>) → wydają więcej → <b>popyt AD rośnie</b> (w prawo). Gospodarka się „przegrzewa" (produkuje powyżej potencjału). Żeby ją schłodzić, rząd musi <b>zabrać popytu</b> = polityka restrykcyjna.</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
@@ -1588,8 +1633,10 @@ ZADANIA = [
 `+adasFig({
  mover:'ad', dir:'left', e2:[162,135],
  shock:[212,166,158,166], shockLab:'① szok', fix:[158,182,212,182], fixLab:'② polityka',
- capInit:'<b>Stan początkowy:</b> równowaga długookresowa w <b>E₁</b> — produkcja równa potencjałowi (LAS), bezrobocie na poziomie naturalnym.',
- capMove:'<b>① Szok:</b> pesymizm konsumentów → wydatki ↓ → <b>AD przesuwa się w LEWO</b>. Powstaje <b>luka recesyjna</b> (<b>E₂</b>): <b>ceny ↓</b>, <b>produkcja ↓</b> poniżej potencjału, <b>bezrobocie ↑</b>.<br><b>② Polityka:</b> skuteczna <b>polityka pieniężna ekspansywna</b> (↓stóp procentowych, skup obligacji, ↓stopy rezerw) → tańszy kredyt → <b>AD wraca w PRAWO do LAS</b>. Gospodarka wraca do potencjału (powrót do <b>E₁</b>). Wciąż jedna krzywa (AD) — szok w lewo, polityka z powrotem w prawo.'
+ shockName:'Szok', fixName:'Polityka',
+ capInit:'<b>Etap 0 — stan początkowy:</b> równowaga długookresowa w <b>E₁</b> — produkcja równa potencjałowi (LAS), bezrobocie naturalne. Kliknij <b>Dalej ›</b>.',
+ capShock:'<b>Etap 1 — szok:</b> pesymizm konsumentów → wydatki ↓ → <b>jedna krzywa AD przesuwa się w LEWO</b> (SAS i LAS stoją w miejscu). Powstaje <b>luka recesyjna</b> — <b>E₂</b> zmienia OBIE współrzędne: rzuty pokazują <b>P₂ (ceny ↓)</b> na osi P oraz <b>Y₂ (produkcja ↓ poniżej potencjału)</b> na osi Y; <b>bezrobocie ↑</b>.',
+ capFix:'<b>Etap 2 — polityka:</b> skuteczna <b>ekspansywna polityka pieniężna</b> (↓stóp procentowych, skup obligacji, ↓stopy rezerw) → tańszy kredyt → <b>TA SAMA AD wraca w PRAWO do LAS</b>. Powrót do <b>E₁</b> — rzuty <b>P₁/Y₁</b> pokazują ceny i produkcję z powrotem na poziomie wyjściowym. Wciąż jedna krzywa (AD): szok w lewo, polityka z powrotem w prawo.'
 })+`
 <div class="eli5"><b>Po ludzku:</b> ludzie się boją i mniej wydają → <b>popyt AD spada</b> (w lewo). Gospodarka produkuje poniżej potencjału, rośnie bezrobocie. Bank centralny musi <b>pobudzić popyt</b> = polityka ekspansywna (luźna).</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
@@ -1897,10 +1944,23 @@ function renderZadania(){
      </div>
      <div class="acc-body">${z.html}</div>
    </div>`).join('');
-  /* dotyk: brak najechania → tapnięcie przełącza stan wykresu */
-  if(window.matchMedia && window.matchMedia('(hover:none)').matches){
-    wrap.querySelectorAll('.econ-fig').forEach(f=>f.addEventListener('click',()=>f.classList.toggle('act')));
-  }
+  /* wykresy: ustaw stan początkowy paska kroków (działa tak samo na dotyku i myszy) */
+  wrap.querySelectorAll('.econ-fig').forEach(figUpdate);
+}
+/* sterowanie etapami wykresów: szok → reakcja, krok po kroku */
+function figStep(btn,d){
+  const fig=btn.closest('.econ-fig'); if(!fig) return;
+  const max=+fig.dataset.stages, s=Math.max(0,Math.min(max,(+fig.dataset.stage||0)+d));
+  fig.dataset.stage=s; figUpdate(fig);
+}
+function figUpdate(fig){
+  const max=+fig.dataset.stages, s=+fig.dataset.stage||0;
+  const names=(fig.dataset.names||'').split('|');
+  const prev=fig.querySelector('.fig-prev'), next=fig.querySelector('.fig-next'), now=fig.querySelector('.fig-now');
+  if(prev) prev.disabled=s<=0;
+  if(next) next.disabled=s>=max;
+  if(now) now.textContent=s+' / '+max+(names[s]?' · '+names[s]:'');
+  fig.querySelectorAll('.fig-dot').forEach((dot,i)=>dot.classList.toggle('on',i<=s));
 }
 function revealSol(btn){
   const sol=btn.nextElementSibling;
