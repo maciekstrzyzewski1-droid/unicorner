@@ -213,6 +213,55 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
 .chip,.tab,.uc-back,.accordion,.opt{transition:border-color .18s,box-shadow .18s,background .18s,transform .18s !important;}
 .chip:hover,.tab:hover,.uc-back:hover,.accordion:hover,.opt:hover:not(.dis){border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 8px 26px rgba(167,139,250,.22),0 0 14px rgba(39,232,255,.13) !important;}
 </style>
+<style>
+/* ===== KWADRACIK ZAMIAST NUMERU (ostatnie zadania) — w kolorach przycisku „Zostaw opinię" ===== */
+.acc-num.acc-sq{background:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);border-radius:4px;box-shadow:0 2px 11px rgba(167,139,250,.45),inset 0 0 0 1px rgba(255,255,255,.12);}
+
+/* ===== INTERAKTYWNE WYKRESY MAKRO (najedź = przesunięcie krzywej + opis) ===== */
+.econ-fig{position:relative;margin:14px 0 4px;background:#0a0818;border:1px solid var(--border2);border-radius:4px;padding:12px 12px 4px;outline:none;}
+.econ-fig svg{display:block;width:100%;height:auto;max-width:440px;margin:0 auto;overflow:visible;}
+.econ-fig .axis{stroke:#6f679a;stroke-width:1.4;}
+.econ-fig .ax-lbl{fill:var(--muted);font:600 9.5px 'Chakra Petch','Inter',sans-serif;letter-spacing:.2px;}
+.econ-fig .curve{fill:none;stroke-width:2.6;stroke-linecap:round;}
+.econ-fig .c-ad{stroke:#27e8ff;}
+.econ-fig .c-sras{stroke:#ff2e97;}
+.econ-fig .c-lras{stroke:#a78bfa;}
+.econ-fig .c-ae{stroke:#27e8ff;}
+.econ-fig .c-45{stroke:#6f679a;stroke-width:1.5;stroke-dasharray:5 4;}
+.econ-fig .curve-lbl{font:700 11px 'Chakra Petch','Inter',sans-serif;}
+.econ-fig .e-dot{fill:#ffd84a;stroke:#0a0818;stroke-width:1.5;}
+.econ-fig .e-lbl{fill:#ffd84a;font:800 11px 'Chakra Petch','Inter',sans-serif;}
+.econ-fig .ghost{opacity:0;stroke-dasharray:5 5;stroke-width:2;transition:opacity .5s ease;}
+.econ-fig .mv{transition:transform .65s cubic-bezier(.45,.05,.2,1);}
+.econ-fig .e2,.econ-fig .guide2,.econ-fig .arrow{opacity:0;transition:opacity .5s ease;}
+.econ-fig .guide2{stroke:#ffd84a;stroke-width:1.2;stroke-dasharray:3 3;}
+.econ-fig .arrow line{stroke:#ffd84a;stroke-width:2.2;}
+.econ-fig .arrow polygon{fill:#ffd84a;stroke:none;}
+.econ-fig .arr-lbl{font:800 9px 'Chakra Petch',sans-serif;fill:#ffd84a;}
+.econ-fig .arrow.fix line{stroke:#5ad1a0;}
+.econ-fig .arrow.fix polygon{fill:#5ad1a0;}
+.econ-fig .arrow.fix .arr-lbl{fill:#5ad1a0;}
+.econ-fig .e1{transition:opacity .5s ease;}
+.econ-fig .fig-hint{position:absolute;top:9px;right:11px;font:700 .6rem 'Chakra Petch',sans-serif;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);transition:opacity .3s;pointer-events:none;}
+.econ-fig .fig-cap{font-size:.85rem;line-height:1.5;margin:10px 2px 6px;border-left:3px solid;padding:8px 12px;border-radius:0 6px 6px 0;}
+.econ-fig .fig-cap b{color:#fff;}
+.econ-fig .fig-cap.init{border-color:#a78bfa;background:rgba(167,139,250,.08);color:#d8d3ee;}
+.econ-fig .fig-cap.move{border-color:#ff2e97;background:rgba(255,46,151,.09);color:#f6dbe8;display:none;}
+/* stan aktywny: najechanie (desktop) lub klasa .act (dotyk) */
+:is(.econ-fig:hover,.econ-fig.act) .mv-sras-left{transform:translate(-46px,0);}
+:is(.econ-fig:hover,.econ-fig.act) .mv-ad-right{transform:translate(46px,0);}
+:is(.econ-fig:hover,.econ-fig.act) .mv-ad-left{transform:translate(-46px,0);}
+:is(.econ-fig:hover,.econ-fig.act) .mv-ae-down{transform:translate(0,34px);}
+:is(.econ-fig:hover,.econ-fig.act) .ghost{opacity:.5;}
+:is(.econ-fig:hover,.econ-fig.act) .e1:not(.keep){opacity:.35;}
+:is(.econ-fig:hover,.econ-fig.act) .e2{opacity:1;}
+:is(.econ-fig:hover,.econ-fig.act) .guide2{opacity:1;}
+:is(.econ-fig:hover,.econ-fig.act) .arrow{opacity:1;}
+:is(.econ-fig:hover,.econ-fig.act) .fig-hint{opacity:0;}
+:is(.econ-fig:hover,.econ-fig.act) .fig-cap.init{display:none;}
+:is(.econ-fig:hover,.econ-fig.act) .fig-cap.move{display:block;}
+@media(prefers-reduced-motion:reduce){.econ-fig .mv{transition:none;}}
+</style>
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
@@ -1118,6 +1167,78 @@ const FLASHCARDS = [
 var ZADANIA=[], WALL=[], QUIZ=[];
 </script>
 <script id="dataScript">
+/* ===== POMOCNICZE: interaktywne wykresy (krzyż keynesowski + AD-SAS-LAS) ===== */
+function _tri(){var p=[];for(var i=0;i<arguments.length;i+=2)p.push(arguments[i]+','+arguments[i+1]);return '<polygon points="'+p.join(' ')+'"/>';}
+function _arrowHead(a){var x1=a[0],y1=a[1],x2=a[2],y2=a[3];
+  if(y1===y2) return x2>x1?_tri(x2,y2,x2-7,y2-4,x2-7,y2+4):_tri(x2,y2,x2+7,y2-4,x2+7,y2+4);
+  return y2>y1?_tri(x2,y2,x2-4,y2-7,x2+4,y2-7):_tri(x2,y2,x2-4,y2+7,x2+4,y2+7);
+}
+/* wykres AD-SAS-LAS. o.mover='ad'|'sras', o.dir kierunku SZOKU 'left'|'right', o.e2=[x,y] (równowaga w luce),
+   o.shock=[x1,y1,x2,y2] strzałka szoku, o.fix=[...] strzałka korekty/polityki (gdy podana → dwa etapy, E₁ zostaje
+   jako poziom potencjalny/punkt powrotu), o.shockLab/o.fixLab podpisy strzałek */
+function adasFig(o){
+  var mvClass='mv-'+o.mover+'-'+o.dir;
+  var adLine='<line class="curve c-ad" x1="85" y1="55" x2="285" y2="185"/>';
+  var sasLine='<line class="curve c-sras" x1="85" y1="185" x2="285" y2="55"/>';
+  var moverLine=o.mover==='ad'?adLine:sasLine;
+  var ghost=(o.mover==='ad'
+    ?'<line class="curve ghost c-ad" x1="85" y1="55" x2="285" y2="185"/>'
+    :'<line class="curve ghost c-sras" x1="85" y1="185" x2="285" y2="55"/>');
+  var staticLine=o.mover==='ad'?sasLine:adLine;
+  var two=!!o.fix, keep=two?' keep':'';
+  function arrowG(cls,a,lab){
+    return '<g class="arrow '+cls+'"><line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+a[2]+'" y2="'+a[3]+'"/>'+_arrowHead(a)
+      +(lab?'<text class="arr-lbl" x="'+((a[0]+a[2])/2)+'" y="'+(cls==='fix'?(a[1]+13):(a[1]-6))+'" text-anchor="middle">'+lab+'</text>':'')+'</g>';
+  }
+  return '<div class="econ-fig" tabindex="0">'
+   +'<span class="fig-hint">najedź ▸</span>'
+   +'<svg viewBox="0 0 340 250" role="img">'
+     +'<line class="axis" x1="40" y1="30" x2="40" y2="210"/>'
+     +'<line class="axis" x1="40" y1="210" x2="320" y2="210"/>'
+     +'<text class="ax-lbl" x="16" y="120" text-anchor="middle" transform="rotate(-90 16 120)">P — poziom cen</text>'
+     +'<text class="ax-lbl" x="185" y="236" text-anchor="middle">Y — realny PKB</text>'
+     +'<line class="curve c-lras" x1="185" y1="40" x2="185" y2="210"/>'
+     +'<text class="curve-lbl" x="185" y="34" text-anchor="middle" fill="#a78bfa">LAS</text>'
+     +ghost+staticLine
+     +'<g class="mv '+mvClass+'">'+moverLine+'</g>'
+     +'<text class="curve-lbl" x="298" y="188" text-anchor="end" fill="#27e8ff">AD</text>'
+     +'<text class="curve-lbl" x="298" y="56" text-anchor="end" fill="#ff2e97">SAS</text>'
+     +'<line class="guide2" x1="'+o.e2[0]+'" y1="'+o.e2[1]+'" x2="'+o.e2[0]+'" y2="210"/>'
+     +'<line class="guide2" x1="'+o.e2[0]+'" y1="'+o.e2[1]+'" x2="40" y2="'+o.e2[1]+'"/>'
+     +arrowG('shock',o.shock,o.shockLab)
+     +(two?arrowG('fix',o.fix,o.fixLab):'')
+     +'<circle class="e-dot e1'+keep+'" cx="185" cy="120" r="4.5"/><text class="e-lbl e1'+keep+'" x="192" y="114">E₁</text>'
+     +'<circle class="e-dot e2" cx="'+o.e2[0]+'" cy="'+o.e2[1]+'" r="4.5"/><text class="e-lbl e2" x="'+(o.e2[0]+7)+'" y="'+(o.e2[1]-6)+'">E₂</text>'
+   +'</svg>'
+   +'<div class="fig-cap init">'+o.capInit+'</div>'
+   +'<div class="fig-cap move">'+o.capMove+'</div>'
+  +'</div>';
+}
+/* krzyż keynesowski AE-Y; AE przesuwa się w dół */
+function kcFig(o){
+  return '<div class="econ-fig" tabindex="0">'
+   +'<span class="fig-hint">najedź ▸</span>'
+   +'<svg viewBox="0 0 340 250" role="img">'
+     +'<line class="axis" x1="40" y1="30" x2="40" y2="210"/>'
+     +'<line class="axis" x1="40" y1="210" x2="320" y2="210"/>'
+     +'<text class="ax-lbl" x="16" y="120" text-anchor="middle" transform="rotate(-90 16 120)">AE — planowane wydatki</text>'
+     +'<text class="ax-lbl" x="185" y="236" text-anchor="middle">Y — produkcja, dochód</text>'
+     +'<line class="curve c-45" x1="40" y1="210" x2="210" y2="40"/>'
+     +'<text class="curve-lbl" x="214" y="46" fill="#6f679a">45°</text>'
+     +'<line class="curve ghost c-ae" x1="40" y1="150" x2="300" y2="80"/>'
+     +'<g class="mv mv-ae-down"><line class="curve c-ae" x1="40" y1="150" x2="300" y2="80"/>'
+       +'<text class="curve-lbl" x="305" y="82" fill="#27e8ff">AE</text></g>'
+     +'<g class="arrow"><line x1="255" y1="92" x2="255" y2="124"/>'+_arrowHead([255,92,255,124])+'</g>'
+     +'<line class="guide2" x1="76" y1="174" x2="76" y2="210"/>'
+     +'<line class="guide2" x1="76" y1="174" x2="40" y2="174"/>'
+     +'<circle class="e-dot e1" cx="122" cy="128" r="4.5"/><text class="e-lbl e1" x="129" y="123">E₁</text>'
+     +'<circle class="e-dot e2" cx="76" cy="174" r="4.5"/><text class="e-lbl e2" x="83" y="169">E₂</text>'
+   +'</svg>'
+   +'<div class="fig-cap init">'+o.capInit+'</div>'
+   +'<div class="fig-cap move">'+o.capMove+'</div>'
+  +'</div>';
+}
+
 /* =================== DANE: ZADANIA =================== */
 ZADANIA = [
 {badge:"WZORCOWE", num:"★", title:"Twoje zadanie — równowaga dochodu i zapasy", html:`
@@ -1391,7 +1512,7 @@ ZADANIA = [
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż dochód rozporządzalny ▾</button>
 <div class="sol"><div class="answer">YD = <b>710</b>.</div><p class="muted">Kontrola: dochód rozporządzalny dzieli się na konsumpcję i oszczędności: 510 + 200 = 710. ✓</p></div>
 `},
-{badge:"EGZAMIN", num:"21", title:"Kto jest bezrobotny? (definicja)", html:`
+{badge:"EGZAMIN", num:"21", sq:true, title:"Kto jest bezrobotny? (definicja)", html:`
 <div class="given"><b>Pytanie:</b> która osoba zostanie uznana za bezrobotną? Uzasadnij.<br>1) Maciej — zwolniony, <i>przestał szukać pracy</i> (trudno znaleźć w jego wieku).<br>2) Aleksandra — studentka, zaczęła studia dzienne, bo brakowało ofert.<br>3) Anna — zwolniona przez recesję, <i>aktualnie szuka</i> nowej pracy.</div>
 <div class="eli5"><b>Kiedy ktoś jest „bezrobotny" w statystyce?</b> Muszą zachodzić 3 rzeczy naraz: (1) nie ma pracy, (2) <b>aktywnie jej szuka</b>, (3) jest gotów ją podjąć. Kto przestał szukać albo się uczy i nie szuka — wypada z „siły roboczej" i NIE jest liczony jako bezrobotny (jest <b>bierny zawodowo</b>).</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
@@ -1401,8 +1522,12 @@ ZADANIA = [
 <div class="answer"><b>3) Anna — TAK.</b> Bez pracy, gotowa i <b>aktywnie szuka</b> → bezrobotna (typ: bezrobocie cykliczne, bo przyczyną recesja).</div>
 </div>
 `},
-{badge:"EGZAMIN", num:"22", title:"Paradoks zapobiegliwości (model dochód–wydatki)", html:`
+{badge:"EGZAMIN", num:"22", sq:true, title:"Paradoks zapobiegliwości (model dochód–wydatki)", html:`
 <div class="given"><b>Sytuacja:</b> gospodarka w równowadze krótkookresowej. Gospodarstwa domowe ze strachu przed kryzysem <b>zwiększają oszczędności</b> (obniżają konsumpcję autonomiczną). Co stanie się z nieplanowanymi inwestycjami w zapasy, produkcją i bezrobociem? Jak nazywa się to zjawisko? (krzyż keynesowski AE–Y)</div>
+`+kcFig({
+ capInit:'<b>Stan początkowy:</b> gospodarka w równowadze E₁, gdzie linia planowanych wydatków <b>AE</b> przecina linię <b>45°</b> (Y = AE). Zapasy się nie zmieniają — fabryki produkują dokładnie tyle, ile ludzie chcą kupić.',
+ capMove:'<b>Wszyscy naraz oszczędzają więcej</b> → spada konsumpcja autonomiczna → linia <b>AE przesuwa się w DÓŁ</b>. Chwilowo niesprzedany towar zalega → <b>nieplanowane zapasy rosną</b>, firmy tną produkcję. Nowa równowaga <b>E₂</b> leży niżej i w lewo: <b>PKB i dochód spadają, bezrobocie rośnie</b>. To <b>paradoks zapobiegliwości</b> — chcąc odłożyć więcej, społeczeństwo biednieje.'
+})+`
 <div class="eli5"><b>Po ludzku:</b> gdy wszyscy naraz zaczynają mniej wydawać, żeby odłożyć na czarną godzinę, <b>spada popyt</b>. Sklepom zostaje towar na półkach (rosną zapasy), więc tną produkcję i zwalniają ludzi. Dochody spadają — i paradoksalnie społeczeństwo wcale nie odkłada więcej. To <b>paradoks zapobiegliwości</b>.</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
@@ -1413,7 +1538,7 @@ ZADANIA = [
 <p class="muted">Krzyż keynesowski: linia wydatków AE przesuwa się w <b>dół</b> (niższa konsumpcja autonomiczna) → punkt równowagi w lewo → niższe Y.</p>
 </div>
 `},
-{badge:"EGZAMIN", num:"23", title:"Wyjaśnij pojęcia (konwergencja, Fisher, wypychanie…)", html:`
+{badge:"EGZAMIN", num:"23", sq:true, title:"Wyjaśnij pojęcia (konwergencja, Fisher, wypychanie…)", html:`
 <div class="given"><b>Wyjaśnij pojęcia:</b> 1) hipoteza konwergencji, 2) rachunkowość wzrostu, 3) efekt Fishera, 4) efekt wypychania, 5) pułapka płynności.</div>
 <div class="eli5"><b>Po ludzku, w jednym zdaniu każde:</b> konwergencja = biedni doganiają bogatych; rachunkowość wzrostu = z czego składa się wzrost; efekt Fishera = inflacja podbija nominalne stopy; efekt wypychania = rząd „wypycha" prywatne inwestycje; pułapka płynności = polityka pieniężna przestaje działać.</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż wyjaśnienia ▾</button>
@@ -1425,8 +1550,14 @@ ZADANIA = [
 <div class="answer"><b>5) Pułapka płynności</b> — stopy są blisko zera i <b>polityka pieniężna przestaje działać</b>: dodatkowy pieniądz nie obniża już stóp ani nie pobudza wydatków (ludzie wolą trzymać gotówkę).</div>
 </div>
 `},
-{badge:"EGZAMIN", num:"24", title:"Negatywny szok podażowy (drożeją surowce)", html:`
+{badge:"EGZAMIN", num:"24", sq:true, title:"Negatywny szok podażowy (drożeją surowce)", html:`
 <div class="given"><b>Sytuacja:</b> równowaga długookresowa. Rosną ceny surowców energetycznych → spada produkcja. Skutki krótko- i długookresowe dla poziomu cen, produkcji i bezrobocia? (wykres AD–SAS–LAS)</div>
+`+adasFig({
+ mover:'sras', dir:'left', e2:[162,105],
+ shock:[212,90,166,90], shockLab:'① szok', fix:[166,104,212,104], fixLab:'② długi okres',
+ capInit:'<b>Stan początkowy:</b> równowaga długookresowa. <b>AD</b>, <b>SAS</b> i <b>LAS</b> przecinają się w jednym punkcie <b>E₁</b> — produkcja równa potencjałowi (LAS), bezrobocie na poziomie naturalnym.',
+ capMove:'<b>① Krótki okres:</b> drożeją surowce → koszty firm ↑ → <b>SAS przesuwa się w LEWO</b>. Nowa równowaga <b>E₂</b>: <b>ceny ↑</b>, <b>produkcja ↓</b> poniżej potencjału, <b>bezrobocie ↑</b> — to <b>stagflacja</b>.<br><b>② Długi okres:</b> wysokie bezrobocie → presja na <b>spadek płac i kosztów</b> → <b>SAS wraca w PRAWO do LAS</b>. Produkcja wraca do potencjału, bezrobocie do naturalnego, ceny w okolice wyjściowych (powrót do <b>E₁</b>). Tylko jedna krzywa (SAS) — najpierw w lewo, potem z powrotem.'
+})+`
 <div class="eli5"><b>Po ludzku:</b> droższa energia = wyższe koszty firm. Przy tych samych cenach firmy produkują mniej → krzywa <b>podaży krótkookresowej (SAS) przesuwa się w lewo</b>. Robi się drogo i mało jednocześnie — to <b>stagflacja</b> (stagnacja + inflacja).</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
@@ -1435,8 +1566,14 @@ ZADANIA = [
 <p class="muted">Wykres: AD bez zmian; SAS najpierw w lewo (drożej + mniej), potem z powrotem w prawo do przecięcia z LAS.</p>
 </div>
 `},
-{badge:"EGZAMIN", num:"25", title:"Polityka fiskalna — luka inflacyjna (Finstan)", html:`
+{badge:"EGZAMIN", num:"25", sq:true, title:"Polityka fiskalna — luka inflacyjna (Finstan)", html:`
 <div class="given"><b>Sytuacja:</b> równowaga długookresowa. Mocno rosną ceny akcji (główny majątek gospodarstw) → wzrost popytu konsumpcyjnego. Skutki dla cen, produkcji, bezrobocia? Jaka luka? Jaką politykę fiskalną zastosować, żeby ją zamknąć? (wykres AD–SAS–LAS)</div>
+`+adasFig({
+ mover:'ad', dir:'right', e2:[208,105],
+ shock:[158,166,212,166], shockLab:'① szok', fix:[212,182,158,182], fixLab:'② polityka',
+ capInit:'<b>Stan początkowy:</b> równowaga długookresowa w <b>E₁</b> — <b>AD</b> przecina <b>SAS</b> dokładnie na <b>LAS</b>, produkcja równa potencjałowi.',
+ capMove:'<b>① Szok:</b> rosną ceny akcji → efekt majątkowy → konsumpcja ↑ → <b>AD przesuwa się w PRAWO</b>. Powstaje <b>luka inflacyjna</b> (<b>E₂</b>): <b>ceny ↑</b>, <b>produkcja ↑</b> powyżej potencjału, <b>bezrobocie ↓</b>.<br><b>② Polityka:</b> skuteczna <b>polityka fiskalna restrykcyjna</b> (↓zakupy rządowe G, ↓transfery, ↑podatki) → <b>AD wraca w LEWO do LAS</b>. Gospodarka wraca do potencjału (powrót do <b>E₁</b>). To wciąż jedna krzywa (AD) — szok w prawo, polityka z powrotem w lewo.'
+})+`
 <div class="eli5"><b>Po ludzku:</b> akcje w górę → ludzie czują się bogatsi (<b>efekt majątkowy</b>) → wydają więcej → <b>popyt AD rośnie</b> (w prawo). Gospodarka się „przegrzewa" (produkuje powyżej potencjału). Żeby ją schłodzić, rząd musi <b>zabrać popytu</b> = polityka restrykcyjna.</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
@@ -1446,8 +1583,14 @@ ZADANIA = [
 <p class="muted">Wykres: AD najpierw w prawo (luka inflacyjna powyżej LAS), po skutecznej polityce AD wraca w lewo do LAS.</p>
 </div>
 `},
-{badge:"EGZAMIN", num:"26", title:"Polityka pieniężna — luka recesyjna (Albernia)", html:`
+{badge:"EGZAMIN", num:"26", sq:true, title:"Polityka pieniężna — luka recesyjna (Albernia)", html:`
 <div class="given"><b>Sytuacja:</b> równowaga długookresowa. Spadają wydatki konsumpcyjne (pesymizm konsumentów). Skutki dla cen, produkcji, bezrobocia? Jaka luka? Jaką politykę pieniężną zastosować, żeby ją zamknąć? (wykres AD–SAS–LAS)</div>
+`+adasFig({
+ mover:'ad', dir:'left', e2:[162,135],
+ shock:[212,166,158,166], shockLab:'① szok', fix:[158,182,212,182], fixLab:'② polityka',
+ capInit:'<b>Stan początkowy:</b> równowaga długookresowa w <b>E₁</b> — produkcja równa potencjałowi (LAS), bezrobocie na poziomie naturalnym.',
+ capMove:'<b>① Szok:</b> pesymizm konsumentów → wydatki ↓ → <b>AD przesuwa się w LEWO</b>. Powstaje <b>luka recesyjna</b> (<b>E₂</b>): <b>ceny ↓</b>, <b>produkcja ↓</b> poniżej potencjału, <b>bezrobocie ↑</b>.<br><b>② Polityka:</b> skuteczna <b>polityka pieniężna ekspansywna</b> (↓stóp procentowych, skup obligacji, ↓stopy rezerw) → tańszy kredyt → <b>AD wraca w PRAWO do LAS</b>. Gospodarka wraca do potencjału (powrót do <b>E₁</b>). Wciąż jedna krzywa (AD) — szok w lewo, polityka z powrotem w prawo.'
+})+`
 <div class="eli5"><b>Po ludzku:</b> ludzie się boją i mniej wydają → <b>popyt AD spada</b> (w lewo). Gospodarka produkuje poniżej potencjału, rośnie bezrobocie. Bank centralny musi <b>pobudzić popyt</b> = polityka ekspansywna (luźna).</div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
@@ -1743,15 +1886,21 @@ function fcResetProgress(){
 /* ============ ZADANIA ============ */
 function renderZadania(){
   const wrap=document.getElementById('zadaniaArea');
-  wrap.innerHTML=ZADANIA.map((z,i)=>`
+  /* kolejność: zadanie wzorcowe (★) → kolorowe zadania egzaminacyjne (sq) → reszta */
+  const ordered=[ZADANIA[0], ...ZADANIA.slice(1).filter(z=>z.sq), ...ZADANIA.slice(1).filter(z=>!z.sq)];
+  wrap.innerHTML=ordered.map((z,i)=>`
    <div class="accordion${i===0?' open':''}">
      <div class="acc-head" onclick="this.parentElement.classList.toggle('open')">
-       <span class="acc-num">${z.num}</span>
+       ${z.sq?'<span class="acc-num acc-sq" aria-hidden="true"></span>':`<span class="acc-num">${z.num}</span>`}
        <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">${z.badge}</span>${z.title}</span>
        <span class="acc-arrow">▸</span>
      </div>
      <div class="acc-body">${z.html}</div>
    </div>`).join('');
+  /* dotyk: brak najechania → tapnięcie przełącza stan wykresu */
+  if(window.matchMedia && window.matchMedia('(hover:none)').matches){
+    wrap.querySelectorAll('.econ-fig').forEach(f=>f.addEventListener('click',()=>f.classList.toggle('act')));
+  }
 }
 function revealSol(btn){
   const sol=btn.nextElementSibling;
