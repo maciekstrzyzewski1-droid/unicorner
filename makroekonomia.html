@@ -1374,6 +1374,89 @@ ZADANIA = [
 <div class="answer"><b>d)</b> Mniejsze wydatki na obronność → rząd kupuje mniej → <b>AD w lewo</b> (negatywny szok popytowy).</div>
 </div>
 `}
+,
+{badge:"EGZAMIN", num:"20", title:"Obliczanie PKB i dochodu rozporządzalnego", html:`
+<div class="given"><b>Dane:</b> zakupy rządowe 150 · pożyczki rządowe 60 · podatki 100 · transfery rządowe 10 · oszczędności prywatne 200 · wydatki konsumpcyjne 510 · płace/zyski/odsetki/renty 800 · pożyczki dla przedsiębiorstw 110 · wydatki inwestycyjne 110 · eksport 50 · pożyczki dla zagranicy 130 · pożyczki od zagranicy 100 · import 20.<br><b>Pytania:</b> ile wynosi PKB i dochód rozporządzalny?</div>
+<div class="eli5"><b>Cały trik:</b> w danych jest pełno „wabików" — pożyczki, oszczędności. <b>Pożyczka to nie produkcja</b>, tylko przepływ pieniędzy (ktoś komuś pożycza), więc do PKB jej NIE liczymy. PKB liczymy metodą wydatkową: <b>kto i ile wydał na nowe dobra i usługi</b> = konsumpcja + inwestycje + wydatki rządu + (eksport − import).</div>
+<h4>Krok 1 — wybierz właściwe składniki</h4>
+<div class="formula">PKB = C + I + G + (X − M)</div>
+<p>C = 510, I = 110, G = 150, X = 50, M = 20. Pożyczki, oszczędności, podatki i transfery odrzucamy — to nie są wydatki na produkcję.</p>
+<h4>Krok 2 — policz PKB</h4>
+<div class="formula">PKB = 510 + 110 + 150 + (50 − 20) = 510 + 110 + 150 + 30</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż PKB ▾</button>
+<div class="sol"><div class="answer">PKB = <b>800</b>.</div><p class="muted">Kontrola metodą dochodową: płace+zyski+odsetki+renty = 800. ✓ Ta sama liczba.</p></div>
+<h4>Krok 3 — dochód rozporządzalny</h4>
+<p>To, co zostaje ludziom „do ręki": dochód minus podatki plus transfery.</p>
+<div class="formula">YD = PKB − podatki + transfery = 800 − 100 + 10</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż dochód rozporządzalny ▾</button>
+<div class="sol"><div class="answer">YD = <b>710</b>.</div><p class="muted">Kontrola: dochód rozporządzalny dzieli się na konsumpcję i oszczędności: 510 + 200 = 710. ✓</p></div>
+`},
+{badge:"EGZAMIN", num:"21", title:"Kto jest bezrobotny? (definicja)", html:`
+<div class="given"><b>Pytanie:</b> która osoba zostanie uznana za bezrobotną? Uzasadnij.<br>1) Maciej — zwolniony, <i>przestał szukać pracy</i> (trudno znaleźć w jego wieku).<br>2) Aleksandra — studentka, zaczęła studia dzienne, bo brakowało ofert.<br>3) Anna — zwolniona przez recesję, <i>aktualnie szuka</i> nowej pracy.</div>
+<div class="eli5"><b>Kiedy ktoś jest „bezrobotny" w statystyce?</b> Muszą zachodzić 3 rzeczy naraz: (1) nie ma pracy, (2) <b>aktywnie jej szuka</b>, (3) jest gotów ją podjąć. Kto przestał szukać albo się uczy i nie szuka — wypada z „siły roboczej" i NIE jest liczony jako bezrobotny (jest <b>bierny zawodowo</b>).</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>1) Maciej — NIE.</b> Przestał szukać pracy (zniechęcony) → nie spełnia warunku „aktywnie szuka" → bierny zawodowo, nie bezrobotny.</div>
+<div class="answer"><b>2) Aleksandra — NIE.</b> Studiuje dziennie i nie szuka pracy → poza siłą roboczą, nie bezrobotna.</div>
+<div class="answer"><b>3) Anna — TAK.</b> Bez pracy, gotowa i <b>aktywnie szuka</b> → bezrobotna (typ: bezrobocie cykliczne, bo przyczyną recesja).</div>
+</div>
+`},
+{badge:"EGZAMIN", num:"22", title:"Paradoks zapobiegliwości (model dochód–wydatki)", html:`
+<div class="given"><b>Sytuacja:</b> gospodarka w równowadze krótkookresowej. Gospodarstwa domowe ze strachu przed kryzysem <b>zwiększają oszczędności</b> (obniżają konsumpcję autonomiczną). Co stanie się z nieplanowanymi inwestycjami w zapasy, produkcją i bezrobociem? Jak nazywa się to zjawisko? (krzyż keynesowski AE–Y)</div>
+<div class="eli5"><b>Po ludzku:</b> gdy wszyscy naraz zaczynają mniej wydawać, żeby odłożyć na czarną godzinę, <b>spada popyt</b>. Sklepom zostaje towar na półkach (rosną zapasy), więc tną produkcję i zwalniają ludzi. Dochody spadają — i paradoksalnie społeczeństwo wcale nie odkłada więcej. To <b>paradoks zapobiegliwości</b>.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>Zapasy:</b> konsumpcja spada → planowane wydatki (AE) &lt; produkcja → niesprzedany towar → <b>nieplanowane zapasy ROSNĄ</b>.</div>
+<div class="answer"><b>Produkcja:</b> firmy widzą rosnące zapasy → <b>tną produkcję</b> → PKB spada.</div>
+<div class="answer"><b>Bezrobocie:</b> mniejsza produkcja → <b>bezrobocie rośnie</b>.</div>
+<div class="answer"><b>Nazwa zjawiska:</b> paradoks zapobiegliwości (paradox of thrift).</div>
+<p class="muted">Krzyż keynesowski: linia wydatków AE przesuwa się w <b>dół</b> (niższa konsumpcja autonomiczna) → punkt równowagi w lewo → niższe Y.</p>
+</div>
+`},
+{badge:"EGZAMIN", num:"23", title:"Wyjaśnij pojęcia (konwergencja, Fisher, wypychanie…)", html:`
+<div class="given"><b>Wyjaśnij pojęcia:</b> 1) hipoteza konwergencji, 2) rachunkowość wzrostu, 3) efekt Fishera, 4) efekt wypychania, 5) pułapka płynności.</div>
+<div class="eli5"><b>Po ludzku, w jednym zdaniu każde:</b> konwergencja = biedni doganiają bogatych; rachunkowość wzrostu = z czego składa się wzrost; efekt Fishera = inflacja podbija nominalne stopy; efekt wypychania = rząd „wypycha" prywatne inwestycje; pułapka płynności = polityka pieniężna przestaje działać.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż wyjaśnienia ▾</button>
+<div class="sol">
+<div class="answer"><b>1) Hipoteza konwergencji</b> — biedniejsze kraje rosną <b>szybciej</b> i doganiają bogatsze. Bo gdy kapitału jest mało, każda nowa maszyna daje duży przyrost produkcji; w bogatych krajach kapitału jest dużo, więc rosną wolniej.</div>
+<div class="answer"><b>2) Rachunkowość wzrostu</b> — rozłożenie wzrostu PKB na wkład <b>pracy</b>, <b>kapitału</b> i <b>postępu technicznego</b> (to, czego nie tłumaczą same nakłady — „reszta Solowa").</div>
+<div class="answer"><b>3) Efekt Fishera</b> — nominalna stopa procentowa = realna + oczekiwana inflacja. W długim okresie wzrost inflacji o 1 pkt podnosi nominalne stopy o 1 pkt, a realna stopa się nie zmienia.</div>
+<div class="answer"><b>4) Efekt wypychania (crowding out)</b> — gdy rząd dużo pożycza (wydatki/deficyt), <b>rosną stopy procentowe</b>, przez co firmom mniej opłaca się inwestować → wydatki rządowe „wypychają" prywatne inwestycje.</div>
+<div class="answer"><b>5) Pułapka płynności</b> — stopy są blisko zera i <b>polityka pieniężna przestaje działać</b>: dodatkowy pieniądz nie obniża już stóp ani nie pobudza wydatków (ludzie wolą trzymać gotówkę).</div>
+</div>
+`},
+{badge:"EGZAMIN", num:"24", title:"Negatywny szok podażowy (drożeją surowce)", html:`
+<div class="given"><b>Sytuacja:</b> równowaga długookresowa. Rosną ceny surowców energetycznych → spada produkcja. Skutki krótko- i długookresowe dla poziomu cen, produkcji i bezrobocia? (wykres AD–SAS–LAS)</div>
+<div class="eli5"><b>Po ludzku:</b> droższa energia = wyższe koszty firm. Przy tych samych cenach firmy produkują mniej → krzywa <b>podaży krótkookresowej (SAS) przesuwa się w lewo</b>. Robi się drogo i mało jednocześnie — to <b>stagflacja</b> (stagnacja + inflacja).</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>Krótki okres (SAS w lewo):</b> poziom cen <b>rośnie</b>, produkcja <b>spada</b>, bezrobocie <b>rośnie</b> → stagflacja.</div>
+<div class="answer"><b>Długi okres (samoregulacja):</b> wysokie bezrobocie → presja na <b>spadek płac i kosztów</b> → SAS wraca w prawo do LAS. Produkcja wraca do potencjalnej, bezrobocie do naturalnego, a poziom cen w okolice wyjściowego.</div>
+<p class="muted">Wykres: AD bez zmian; SAS najpierw w lewo (drożej + mniej), potem z powrotem w prawo do przecięcia z LAS.</p>
+</div>
+`},
+{badge:"EGZAMIN", num:"25", title:"Polityka fiskalna — luka inflacyjna (Finstan)", html:`
+<div class="given"><b>Sytuacja:</b> równowaga długookresowa. Mocno rosną ceny akcji (główny majątek gospodarstw) → wzrost popytu konsumpcyjnego. Skutki dla cen, produkcji, bezrobocia? Jaka luka? Jaką politykę fiskalną zastosować, żeby ją zamknąć? (wykres AD–SAS–LAS)</div>
+<div class="eli5"><b>Po ludzku:</b> akcje w górę → ludzie czują się bogatsi (<b>efekt majątkowy</b>) → wydają więcej → <b>popyt AD rośnie</b> (w prawo). Gospodarka się „przegrzewa" (produkuje powyżej potencjału). Żeby ją schłodzić, rząd musi <b>zabrać popytu</b> = polityka restrykcyjna.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>Skutki (AD w prawo):</b> poziom cen <b>rośnie</b>, produkcja <b>rośnie</b> powyżej potencjału, bezrobocie <b>spada</b> poniżej naturalnego.</div>
+<div class="answer"><b>Luka:</b> inflacyjna (produkcja powyżej potencjału).</div>
+<div class="answer"><b>Polityka:</b> <b>restrykcyjna (zacieśniająca) fiskalna</b> — zmniejszyć zakupy rządowe G, obniżyć transfery, podnieść podatki. To przesuwa AD <b>w lewo</b>, z powrotem do produkcji potencjalnej (LAS).</div>
+<p class="muted">Wykres: AD najpierw w prawo (luka inflacyjna powyżej LAS), po skutecznej polityce AD wraca w lewo do LAS.</p>
+</div>
+`},
+{badge:"EGZAMIN", num:"26", title:"Polityka pieniężna — luka recesyjna (Albernia)", html:`
+<div class="given"><b>Sytuacja:</b> równowaga długookresowa. Spadają wydatki konsumpcyjne (pesymizm konsumentów). Skutki dla cen, produkcji, bezrobocia? Jaka luka? Jaką politykę pieniężną zastosować, żeby ją zamknąć? (wykres AD–SAS–LAS)</div>
+<div class="eli5"><b>Po ludzku:</b> ludzie się boją i mniej wydają → <b>popyt AD spada</b> (w lewo). Gospodarka produkuje poniżej potencjału, rośnie bezrobocie. Bank centralny musi <b>pobudzić popyt</b> = polityka ekspansywna (luźna).</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>Skutki (AD w lewo):</b> poziom cen <b>spada</b>, produkcja <b>spada</b> poniżej potencjału, bezrobocie <b>rośnie</b>.</div>
+<div class="answer"><b>Luka:</b> recesyjna (produkcja poniżej potencjału).</div>
+<div class="answer"><b>Polityka:</b> <b>ekspansywna (luźna) pieniężna</b> — bank centralny <b>obniża stopy procentowe</b>, <b>skupuje obligacje</b> (operacje otwartego rynku), obniża stopę rezerw. Tańszy kredyt → więcej inwestycji i konsumpcji → AD <b>w prawo</b>, z powrotem do LAS.</div>
+<p class="muted">Wykres: AD najpierw w lewo (luka recesyjna poniżej LAS), po skutecznej polityce pieniężnej AD wraca w prawo do LAS.</p>
+</div>
+`}
 
 ];
 
