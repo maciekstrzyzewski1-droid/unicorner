@@ -272,6 +272,14 @@ h1,h2,h3,h4,h5,h6,.section-title,.head-top h1,.uc-wordmark,.wall-card h3,.acc-he
 .econ-fig[data-stage="1"] .mv-ad-right{transform:translate(46px,0);}
 .econ-fig[data-stage="1"] .mv-ad-left{transform:translate(-46px,0);}
 .econ-fig[data-stage="1"] .mv-ae-down{transform:translate(0,34px);}
+/* wyblakłe etykiety pozycji krzywej (₁ wyjściowa / ₂ po szoku) + znacznik luki produkcyjnej */
+.econ-fig .lbl-g1,.econ-fig .lbl-g2{opacity:0;transition:opacity .5s ease;}
+.econ-fig[data-stage="1"] .lbl-g1{opacity:.55;}
+.econ-fig[data-stage="2"] .lbl-g2{opacity:.5;}
+.econ-fig .gap1{opacity:0;transition:opacity .5s ease;}
+.econ-fig[data-stage="1"] .gap1{opacity:1;}
+.econ-fig .gapln{stroke:#ffd84a;stroke-width:1.3;stroke-linecap:round;}
+.econ-fig .gaptx{fill:#ffd84a;font:800 8px 'Chakra Petch',sans-serif;}
 @media(prefers-reduced-motion:reduce){.econ-fig .mv{transition:none;}}
 </style>
 </head>
@@ -1214,6 +1222,11 @@ function adasFig(o){
   var ghost=L('curve ghost '+moverCls,base);                                  /* pozycja wyjściowa (widoczna w etapie 1) */
   var ghost2=two?L('curve ghost2 '+moverCls,[base[0]+dx,base[1],base[2]+dx,base[3]]):''; /* pozycja po szoku (widoczna w etapie 2) */
   var mvClass='mv-'+o.mover+'-'+o.dir, e2x=o.e2[0], e2y=o.e2[1];
+  /* etykiety: nazwa ruchomej krzywej jedzie z linią (.mv); pozycje ₁/₂ dostają wyblakłe indeksy w stałych punktach */
+  var mvName=(o.mover==='ad'?'AD':'SAS'), stName=(o.mover==='ad'?'SAS':'AD');
+  var mvLY=(o.mover==='ad'?188:56), mvLC=(o.mover==='ad'?'#27e8ff':'#ff2e97');
+  var stLY=(o.mover==='ad'?56:188), stLC=(o.mover==='ad'?'#ff2e97':'#27e8ff');
+  var gapL=Math.min(e2x,185), gapR=Math.max(e2x,185), gapM=(gapL+gapR)/2;
   function arrowG(cls,a,lab){
     return '<g class="arrow '+cls+'"><line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+a[2]+'" y2="'+a[3]+'"/>'+_arrowHead(a)
       +(lab?'<text class="arr-lbl" x="'+((a[0]+a[2])/2)+'" y="'+(cls==='fix'?(a[1]+13):(a[1]-6))+'" text-anchor="middle">'+lab+'</text>':'')+'</g>';
@@ -1227,14 +1240,22 @@ function adasFig(o){
      +'<line class="curve c-lras" x1="185" y1="40" x2="185" y2="210"/>'
      +'<text class="curve-lbl" x="185" y="34" text-anchor="middle" fill="#a78bfa">LAS</text>'
      +ghost+ghost2+staticLine
-     +'<g class="mv '+mvClass+'">'+moverLine+'</g>'
-     +'<text class="curve-lbl" x="298" y="188" text-anchor="end" fill="#27e8ff">AD</text>'
-     +'<text class="curve-lbl" x="298" y="56" text-anchor="end" fill="#ff2e97">SAS</text>'
+     /* indeksy pozycji ruchomej krzywej: ₁ = pozycja wyjściowa (et.1), ₂ = po szoku (et.2) */
+     +'<text class="curve-lbl lbl-g1" x="298" y="'+mvLY+'" text-anchor="end" fill="'+mvLC+'">'+mvName+'₁</text>'
+     +(two?'<text class="curve-lbl lbl-g2" x="'+(298+dx)+'" y="'+mvLY+'" text-anchor="end" fill="'+mvLC+'">'+mvName+'₂</text>':'')
+     +'<g class="mv '+mvClass+'">'+moverLine
+       +'<text class="curve-lbl" x="298" y="'+mvLY+'" text-anchor="end" fill="'+mvLC+'">'+mvName+'</text></g>'
+     +'<text class="curve-lbl" x="298" y="'+stLY+'" text-anchor="end" fill="'+stLC+'">'+stName+'</text>'
      /* rzut E₂ na OBIE osie (etap 1): pion → oś Y, poziom → oś P */
      +'<line class="guide2 gB" x1="'+e2x+'" y1="'+e2y+'" x2="'+e2x+'" y2="210"/>'
      +'<line class="guide2 gB" x1="'+e2x+'" y1="'+e2y+'" x2="40" y2="'+e2y+'"/>'
      +'<text class="gmark gB" x="44" y="'+(e2y-3)+'">P₂</text>'
      +'<text class="gmark gB" x="'+e2x+'" y="223" text-anchor="middle">Y₂</text>'
+     /* luka produkcyjna: rozstęp Y₂ ↔ potencjał (LAS, Y=185); widoczna w et.1, znika w et.2 (luka zamknięta) */
+     +'<g class="gap1"><line class="gapln" x1="'+gapL+'" y1="205" x2="'+gapR+'" y2="205"/>'
+       +'<line class="gapln" x1="'+gapL+'" y1="202" x2="'+gapL+'" y2="208"/>'
+       +'<line class="gapln" x1="'+gapR+'" y1="202" x2="'+gapR+'" y2="208"/>'
+       +'<text class="gaptx" x="'+gapM+'" y="199" text-anchor="middle">luka</text></g>'
      /* rzut powrotu do E₁ na OBIE osie (etap 2) */
      +(two?'<line class="guide2 gA" x1="185" y1="120" x2="185" y2="210"/>'
          +'<line class="guide2 gA" x1="185" y1="120" x2="40" y2="120"/>'
@@ -1264,9 +1285,15 @@ function kcFig(o){
      +'<line class="curve c-45" x1="40" y1="210" x2="210" y2="40"/>'
      +'<text class="curve-lbl" x="214" y="46" fill="#6f679a">45°</text>'
      +'<line class="curve ghost c-ae" x1="40" y1="150" x2="300" y2="80"/>'
+     +'<text class="curve-lbl lbl-g1" x="305" y="82" fill="#27e8ff">AE₁</text>'
      +'<g class="mv mv-ae-down"><line class="curve c-ae" x1="40" y1="150" x2="300" y2="80"/>'
        +'<text class="curve-lbl" x="305" y="82" fill="#27e8ff">AE</text></g>'
      +'<g class="arrow shock"><line x1="255" y1="92" x2="255" y2="124"/>'+_arrowHead([255,92,255,124])+'</g>'
+     /* przy WYJŚCIOWEJ produkcji (Y₁) planowane AE < produkcja → niesprzedany towar = nieplanowany wzrost zapasów */
+     +'<g class="gap1"><line class="gapln" x1="122" y1="129" x2="122" y2="161"/>'
+       +'<line class="gapln" x1="119" y1="129" x2="125" y2="129"/>'
+       +'<line class="gapln" x1="119" y1="161" x2="125" y2="161"/>'
+       +'<text class="gaptx" x="128" y="149">zapasy ↑</text></g>'
      +'<line class="guide2 gB" x1="76" y1="174" x2="76" y2="210"/>'
      +'<line class="guide2 gB" x1="76" y1="174" x2="40" y2="174"/>'
      +'<text class="gmark gB" x="83" y="205">Y₂</text>'
