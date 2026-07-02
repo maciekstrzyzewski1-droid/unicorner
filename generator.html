@@ -58,6 +58,11 @@
   .drop .small{font-size:.84rem;color:var(--muted2);}
   .drop.has{border-style:solid;border-color:var(--ok-line);}
   .filechip{display:none;align-items:center;gap:10px;margin-top:12px;font-family:var(--mono);font-size:.88rem;color:var(--ok);}
+  .thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+  .thumb{position:relative;width:86px;height:86px;border:1px solid var(--ok-line);border-radius:4px;overflow:hidden;background:var(--ink2);}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .thumb .rm{position:absolute;top:3px;right:3px;width:22px;height:22px;line-height:1;border:none;border-radius:3px;background:rgba(7,6,15,.8);color:var(--bad);font-size:.85rem;cursor:pointer;}
+  .thumb .rm:hover{background:var(--bad-bg);}
   .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px;}
   .btn{font-family:var(--mono);font-weight:600;font-size:.95rem;color:#160d2b;background:var(--accent);border:none;border-radius:4px;padding:12px 22px;cursor:pointer;transition:transform .15s,background .2s,opacity .2s;}
   .btn:hover:not(:disabled){transform:translateY(-1px);background:#b9a3fb;}
@@ -129,7 +134,7 @@
   <section class="hero">
     <span class="eyebrow"><span class="dot"></span>Generator AI · beta</span>
     <h1>Z pliku w <span class="grad">fiszki i quiz</span></h1>
-    <p class="lede">Wgraj PDF z wykładem albo notatkami, a AI ułoży z niego <b>fiszki i quiz z wyjaśnieniami</b>. Działa na tekstowych PDF-ach — skany (zdjęcia bez tekstu) na razie nie przejdą.</p>
+    <p class="lede">Wgraj PDF z wykładem <b>albo zdjęcia notatek — także pisanych odręcznie</b> — a AI ułoży z nich fiszki i quiz z wyjaśnieniami.</p>
   </section>
 
   <div class="panel">
@@ -137,13 +142,14 @@
     <label class="fld" for="code">Kod dostępu</label>
     <input type="password" id="code" placeholder="wpisz kod z grupy" autocomplete="off">
 
-    <label class="fld" for="file">Plik PDF</label>
+    <label class="fld" for="file">Materiał — PDF albo zdjęcia notatek</label>
     <div class="drop" id="drop">
-      <div class="big">Przeciągnij PDF tutaj</div>
-      <div class="small">albo kliknij, żeby wybrać · maks. ~1 wykład</div>
+      <div class="big">Przeciągnij PDF lub zdjęcia tutaj</div>
+      <div class="small">albo kliknij, żeby wybrać · 1 PDF (~1 wykład) albo do 4 zdjęć notatek</div>
     </div>
-    <input type="file" id="file" accept="application/pdf,.pdf" style="display:none">
+    <input type="file" id="file" accept="application/pdf,.pdf,image/*" multiple style="display:none">
     <div class="filechip" id="filechip"><span>📄</span><span id="filename"></span></div>
+    <div class="thumbs" id="thumbs"></div>
 
     <div class="row">
       <button class="btn" id="gen" disabled>Generuj fiszki i quiz</button>
@@ -194,35 +200,79 @@ if (window.pdfjsLib) {
 const $ = id => document.getElementById(id);
 const drop=$("drop"), fileInput=$("file"), codeInput=$("code");
 const genBtn=$("gen"), resetBtn=$("reset"), statusEl=$("status");
-let pickedFile=null, lastResult=null;
+const MAX_PHOTOS = 4;
+let pickedPdf=null, pickedImages=[], lastResult=null;
 
 codeInput.value = localStorage.getItem("uc_gen_code") || "";
 
 function setStatus(msg, kind){ statusEl.className="status show "+(kind||""); statusEl.innerHTML = kind==="work" ? '<span class="spinner"></span>'+msg : msg; }
 function clearStatus(){ statusEl.className="status"; statusEl.textContent=""; }
-function refreshBtn(){ genBtn.disabled = !(pickedFile && codeInput.value.trim().length>0); }
+function refreshBtn(){ genBtn.disabled = !((pickedPdf || pickedImages.length) && codeInput.value.trim().length>0); }
 
 codeInput.addEventListener("input", refreshBtn);
 
 drop.addEventListener("click", ()=>fileInput.click());
 drop.addEventListener("dragover", e=>{e.preventDefault();drop.classList.add("over");});
 drop.addEventListener("dragleave", ()=>drop.classList.remove("over"));
-drop.addEventListener("drop", e=>{ e.preventDefault(); drop.classList.remove("over"); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
-fileInput.addEventListener("change", e=>{ if(e.target.files[0]) handleFile(e.target.files[0]); });
+drop.addEventListener("drop", e=>{ e.preventDefault(); drop.classList.remove("over"); if(e.dataTransfer.files.length) handleFiles(e.dataTransfer.files); });
+fileInput.addEventListener("change", e=>{ if(e.target.files.length) handleFiles(e.target.files); fileInput.value=""; });
 
-function handleFile(f){
-  if(f.type!=="application/pdf" && !f.name.toLowerCase().endsWith(".pdf")){ setStatus("To nie jest PDF. Na razie obsługujemy tylko PDF.","err"); return; }
-  pickedFile=f;
-  drop.classList.add("has");
-  drop.querySelector(".big").textContent="Plik gotowy";
-  $("filechip").style.display="flex"; $("filename").textContent=f.name;
+function handleFiles(list){
+  const files=[...list];
+  const pdf = files.find(f=>f.type==="application/pdf"||f.name.toLowerCase().endsWith(".pdf"));
+  const imgs = files.filter(f=>f.type.startsWith("image/"));
+  if(pdf){
+    pickedPdf=pdf; pickedImages=[]; renderThumbs();
+    drop.classList.add("has");
+    drop.querySelector(".big").textContent="Plik gotowy";
+    $("filechip").style.display="flex"; $("filename").textContent=pdf.name;
+  } else if(imgs.length){
+    pickedPdf=null; $("filechip").style.display="none";
+    pickedImages=pickedImages.concat(imgs).slice(0,MAX_PHOTOS);
+    renderThumbs();
+    drop.classList.add("has");
+    drop.querySelector(".big").textContent = pickedImages.length+" zdj. gotowe — możesz dorzucić kolejne";
+    if(imgs.length + pickedImages.length - imgs.length > MAX_PHOTOS) setStatus("Maksymalnie "+MAX_PHOTOS+" zdjęcia naraz — nadmiar pominięty.","err");
+  } else {
+    setStatus("Obsługujemy PDF-y i zdjęcia (JPG/PNG).","err"); return;
+  }
   resetBtn.style.display="inline-block";
-  clearStatus(); refreshBtn();
+  if(pdf) clearStatus();
+  refreshBtn();
+}
+
+function renderThumbs(){
+  const box=$("thumbs"); box.innerHTML="";
+  pickedImages.forEach((f,i)=>{
+    const t=document.createElement("div"); t.className="thumb";
+    const img=document.createElement("img"); img.alt="zdjęcie notatki "+(i+1);
+    img.src=URL.createObjectURL(f); img.onload=()=>URL.revokeObjectURL(img.src);
+    const rm=document.createElement("button"); rm.className="rm"; rm.type="button"; rm.textContent="✕"; rm.setAttribute("aria-label","Usuń zdjęcie "+(i+1));
+    rm.addEventListener("click",()=>{ pickedImages.splice(i,1); renderThumbs();
+      if(!pickedImages.length && !pickedPdf){ drop.classList.remove("has"); drop.querySelector(".big").textContent="Przeciągnij PDF lub zdjęcia tutaj"; }
+      refreshBtn(); });
+    t.appendChild(img); t.appendChild(rm); box.appendChild(t);
+  });
+}
+
+/* zmniejszenie zdjęcia po stronie przeglądarki — mniejsze koszty i szybsza wysyłka */
+async function compressImage(file){
+  const bmp = await createImageBitmap(file);
+  const scale = Math.min(1, 1400/Math.max(bmp.width,bmp.height));
+  const c = document.createElement("canvas");
+  c.width=Math.max(1,Math.round(bmp.width*scale)); c.height=Math.max(1,Math.round(bmp.height*scale));
+  c.getContext("2d").drawImage(bmp,0,0,c.width,c.height);
+  let q=0.82, blob;
+  do{ blob = await new Promise(res=>c.toBlob(res,"image/jpeg",q)); q-=0.12; }
+  while(blob && blob.size>290000 && q>0.4);
+  if(!blob) throw new Error("Nie udało się przetworzyć zdjęcia");
+  const b64 = await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(",")[1]); r.onerror=()=>rej(new Error("Błąd odczytu")); r.readAsDataURL(blob); });
+  return { media_type:"image/jpeg", data:b64 };
 }
 
 resetBtn.addEventListener("click", ()=>{
-  pickedFile=null; fileInput.value=""; drop.classList.remove("has");
-  drop.querySelector(".big").textContent="Przeciągnij PDF tutaj";
+  pickedPdf=null; pickedImages=[]; renderThumbs(); fileInput.value=""; drop.classList.remove("has");
+  drop.querySelector(".big").textContent="Przeciągnij PDF lub zdjęcia tutaj";
   $("filechip").style.display="none"; resetBtn.style.display="none";
   $("tabs").classList.remove("show"); $("tools").style.display="none";
   $("fcGrid").innerHTML=""; $("qzList").innerHTML=""; clearStatus(); refreshBtn();
@@ -246,18 +296,31 @@ genBtn.addEventListener("click", async ()=>{
   localStorage.setItem("uc_gen_code", code);
   genBtn.disabled=true;
   try{
-    setStatus("Czytam PDF…","work");
-    let text=await extractText(pickedFile);
-    if(text.length<MIN_CHARS){ setStatus("Za mało tekstu w pliku. To może być skan (zdjęcia bez warstwy tekstu) — taki PDF na razie nie zadziała.","err"); genBtn.disabled=false; return; }
-    if(text.length>MAX_CHARS) text=text.slice(0,MAX_CHARS);
-
-    setStatus("AI układa fiszki i quiz… to potrwa kilkanaście sekund","work");
+    let payload;
+    if(pickedImages.length){
+      setStatus("Przygotowuję zdjęcia…","work");
+      const images=[];
+      for(const f of pickedImages){
+        try{ images.push(await compressImage(f)); }
+        catch(e){ setStatus("Nie udało się odczytać jednego ze zdjęć — spróbuj JPG/PNG.","err"); genBtn.disabled=false; return; }
+      }
+      setStatus("AI czyta notatki i układa fiszki… to potrwa kilkanaście sekund","work");
+      payload={ code, images, mode:"both" };
+    } else {
+      setStatus("Czytam PDF…","work");
+      let text=await extractText(pickedPdf);
+      if(text.length<MIN_CHARS){ setStatus("Za mało tekstu w pliku — to pewnie skan. Wgraj strony jako zdjęcia (JPG/PNG), generator je odczyta.","err"); genBtn.disabled=false; return; }
+      if(text.length>MAX_CHARS) text=text.slice(0,MAX_CHARS);
+      setStatus("AI układa fiszki i quiz… to potrwa kilkanaście sekund","work");
+      payload={ text, code, mode:"both" };
+    }
     const res=await fetch(WORKER_URL, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({ text, code, mode:"both" })
+      body:JSON.stringify(payload)
     });
     if(res.status===401){ setStatus("Zły kod dostępu.","err"); genBtn.disabled=false; return; }
+    if(res.status===413){ setStatus("Zdjęcia za duże — usuń któreś albo zrób mniej stron naraz.","err"); genBtn.disabled=false; return; }
     if(res.status===429){ setStatus("Za dużo zapytań naraz — spróbuj za chwilę.","err"); genBtn.disabled=false; return; }
     if(!res.ok){ const t=await res.text(); setStatus("Coś poszło nie tak ("+res.status+"). "+t.slice(0,120),"err"); genBtn.disabled=false; return; }
     const data=await res.json();

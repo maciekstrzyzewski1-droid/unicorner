@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zostaw opinię · Unicorner</title>
+<meta name="description" content="Powiedz, co działa, a co poprawić. Twoja opinia trafia na stronę główną Unicornera.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
+    --line:#241d4a; --line2:#3a2e74;
+    --text:#eef0ff; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --accent-d:#8b5cf6;
+    --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
+    --ok:#5ad1a0; --ok-bg:#0c241d; --ok-line:#1d4a3a;
+    --bad:#f87a8e; --bad-bg:#2a0f17; --bad-line:#5a2230;
+    --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+    --disp:'Chakra Petch','Space Grotesk',sans-serif;
+    --mono:'Chakra Petch',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:
+      radial-gradient(900px 520px at 85% -8%, #1a1150 0%, transparent 58%),
+      radial-gradient(720px 480px at -8% 4%, #2a0b3f 0%, transparent 52%),
+      var(--ink);
+    color:var(--text);min-height:100vh;line-height:1.55;letter-spacing:.1px;overflow-x:hidden;position:relative;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      linear-gradient(rgba(39,232,255,.025) 1px, transparent 1px) 0 0/100% 3px,
+      linear-gradient(90deg, rgba(167,139,250,.04) 1px, transparent 1px) 0 0/52px 100%,
+      linear-gradient(rgba(167,139,250,.04) 1px, transparent 1px) 0 0/100% 52px;
+    mix-blend-mode:screen;opacity:.6;
+  }
+  body>*{position:relative;z-index:1;}
+  .wrap{max-width:680px;margin:0 auto;padding:0 20px;}
+  header{padding:22px 0 6px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;}
+  .horn{width:34px;height:34px;flex-shrink:0;display:block;filter:drop-shadow(0 0 7px rgba(39,232,255,.5));}
+  .horn .seg{fill:url(#irisGrad);}
+  @media (prefers-reduced-motion:no-preference){.horn{animation:hornFloat 5s ease-in-out infinite;}}
+  @keyframes hornFloat{50%{transform:translateY(-3px) rotate(-3deg);}}
+  .wordmark{font-family:var(--disp);font-weight:700;font-size:1.5rem;letter-spacing:.5px;text-transform:lowercase;}
+  .wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .back{font-family:var(--mono);font-size:.8rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:7px 13px;border-radius:4px;transition:color .2s,border-color .2s;}
+  .back:hover{color:var(--text);border-color:var(--accent);}
+  .back:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+
+  .hero{padding:34px 0 18px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid var(--line2);background:rgba(39,232,255,.05);padding:7px 14px;border-radius:4px;margin-bottom:18px;box-shadow:inset 0 0 14px rgba(39,232,255,.08);}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(1.9rem,5.5vw,2.9rem);line-height:1.07;letter-spacing:-.3px;margin-bottom:12px;}
+  h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .lede{font-size:1rem;color:var(--muted);max-width:540px;}
+  .lede b{color:var(--text);font-weight:600;}
+
+  /* ===== FORMULARZ ===== */
+  .panel{
+    position:relative;background:linear-gradient(160deg,var(--surface) 0%,var(--ink2) 100%);
+    border:1px solid var(--line);border-radius:4px;padding:26px 24px;margin:16px 0 40px;
+    clip-path:polygon(0 0, calc(100% - 18px) 0, 100% 18px, 100% 100%, 18px 100%, 0 calc(100% - 18px));
+  }
+  .panel::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+  .panel::after{content:"";position:absolute;top:8px;left:8px;width:13px;height:13px;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);opacity:.5;}
+
+  .fld{display:block;font-family:var(--mono);font-size:.74rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin:20px 0 8px;}
+  .fld:first-of-type{margin-top:0;}
+  .fld::before{content:"// ";color:var(--cyan);}
+  .fld .opt-tag{color:var(--muted2);text-transform:none;letter-spacing:.3px;font-weight:400;}
+
+  /* gwiazdki — element charakterystyczny strony */
+  .stars{display:flex;gap:6px;}
+  .star{
+    width:46px;height:46px;font-size:1.7rem;line-height:1;cursor:pointer;
+    background:var(--ink2);border:1px solid var(--line2);border-radius:4px;color:var(--muted2);
+    transition:color .15s ease, border-color .15s ease, text-shadow .15s ease, transform .15s ease;
+  }
+  .star:hover{transform:translateY(-2px);}
+  .star.on{color:var(--gold);border-color:rgba(255,216,74,.5);text-shadow:0 0 14px rgba(255,216,74,.7);}
+  .star:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+  .stars-hint{font-family:var(--mono);font-size:.78rem;color:var(--muted2);margin-top:8px;min-height:1.2em;}
+
+  select,input[type=text],textarea{
+    width:100%;font-family:'Inter',sans-serif;font-size:.95rem;color:var(--text);
+    background:var(--ink2);border:1px solid var(--line2);border-radius:4px;padding:12px 14px;outline:none;
+    transition:border-color .2s, box-shadow .2s;
+  }
+  select:focus,input:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent), 0 0 18px rgba(167,139,250,.18);}
+  select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);background-position:calc(100% - 20px) 50%,calc(100% - 14px) 50%;background-size:6px 6px;background-repeat:no-repeat;cursor:pointer;}
+  textarea{min-height:130px;resize:vertical;}
+  .counter{font-family:var(--mono);font-size:.74rem;color:var(--muted2);text-align:right;margin-top:6px;}
+  .counter.bad{color:var(--bad);}
+
+  /* honeypot — niewidoczne dla ludzi, boty wypełniają */
+  .hp{position:absolute;left:-9999px;top:-9999px;height:0;width:0;opacity:0;pointer-events:none;}
+
+  .send{
+    margin-top:24px;width:100%;font-family:var(--mono);font-weight:700;font-size:.95rem;letter-spacing:1.5px;text-transform:uppercase;
+    color:#07060f;background:var(--iris);border:none;border-radius:4px;padding:15px 22px;cursor:pointer;
+    transition:transform .18s ease, box-shadow .18s ease, opacity .2s;
+  }
+  .send:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 30px rgba(167,139,250,.35);}
+  .send:disabled{opacity:.5;cursor:not-allowed;}
+  .send:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;}
+
+  .status{font-family:var(--mono);font-size:.88rem;margin-top:14px;display:none;}
+  .status.show{display:block;}
+  .status.err{color:var(--bad);}
+  .status.work{color:var(--accent);}
+  .spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:7px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* potwierdzenie */
+  .done{display:none;text-align:center;padding:34px 10px;}
+  .done.show{display:block;}
+  .done .big-ic{font-size:2.6rem;margin-bottom:12px;filter:drop-shadow(0 0 16px rgba(90,209,160,.6));}
+  .done h2{font-family:var(--disp);font-size:1.4rem;margin-bottom:10px;}
+  .done p{color:var(--muted);font-size:.95rem;max-width:420px;margin:0 auto 20px;}
+  .done p b{color:var(--text);}
+  .done a{font-family:var(--mono);font-size:.85rem;color:var(--cyan);}
+
+  footer{border-top:1px solid var(--line);padding:22px 0 46px;}
+  .disclaimer{font-size:.78rem;color:var(--muted2);max-width:560px;line-height:1.6;}
+  .disclaimer b{color:var(--muted);}
+  @media(max-width:480px){.star{width:52px;height:52px;}.panel{padding:22px 18px;}}
+  @media (prefers-reduced-motion: reduce){
+    .star:hover,.send:hover{transform:none;}
+  }
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#27e8ff"/><stop offset="0.38" stop-color="#a78bfa"/>
+    <stop offset="0.72" stop-color="#ff2e97"/><stop offset="1" stop-color="#ffd84a"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wordmark"><span>uni</span><span class="ai">corner</span></span>
+      </a>
+      <a class="back" href="index.html">← strona główna</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>opinie · 2 minuty</span>
+    <h1>Powiedz, jak <span class="grad">Ci to siedzi.</span></h1>
+    <p class="lede">Co działa, co wkurza, czego brakuje. Zatwierdzone opinie lądują na stronie głównej — <b>bez logowania, bez maila</b>.</p>
+  </section>
+
+  <div class="panel" id="panel">
+    <form id="form" novalidate>
+      <label class="fld" id="starsLabel">Ocena</label>
+      <div class="stars" role="radiogroup" aria-labelledby="starsLabel" id="stars">
+        <button type="button" class="star" data-v="1" role="radio" aria-checked="false" aria-label="1 na 5">★</button>
+        <button type="button" class="star" data-v="2" role="radio" aria-checked="false" aria-label="2 na 5">★</button>
+        <button type="button" class="star" data-v="3" role="radio" aria-checked="false" aria-label="3 na 5">★</button>
+        <button type="button" class="star" data-v="4" role="radio" aria-checked="false" aria-label="4 na 5">★</button>
+        <button type="button" class="star" data-v="5" role="radio" aria-checked="false" aria-label="5 na 5">★</button>
+      </div>
+      <div class="stars-hint" id="starsHint">kliknij gwiazdki</div>
+
+      <label class="fld" for="subject">Czego dotyczy <span class="opt-tag">(opcjonalne)</span></label>
+      <select id="subject">
+        <option value="">— wybierz —</option>
+        <option>Ogólnie o stronie</option>
+        <option>Makroekonomia</option>
+        <option>Podstawy marketingu</option>
+        <option>Metody i Techniki Zarządzania</option>
+        <option>Statystyka</option>
+        <option>Generator AI</option>
+      </select>
+
+      <label class="fld" for="text">Twoja opinia</label>
+      <textarea id="text" maxlength="600" placeholder="np. quiz z makro uratował mi kolokwium, ale brakuje zadań z…" required></textarea>
+      <div class="counter" id="counter">0 / 600 · min. 10 znaków</div>
+
+      <label class="fld" for="name">Podpis <span class="opt-tag">(opcjonalne — bez podpisu będzie „Anonim")</span></label>
+      <input type="text" id="name" maxlength="40" placeholder="imię, nick, „ktoś z II roku”…" autocomplete="off">
+
+      <!-- honeypot: ludzie tego nie widzą -->
+      <div class="hp" aria-hidden="true">
+        <label for="website">Website</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <button class="send" id="send" type="submit">Wyślij opinię</button>
+      <div class="status" id="status"></div>
+    </form>
+
+    <div class="done" id="done">
+      <div class="big-ic">✦</div>
+      <h2>Opinia wysłana</h2>
+      <p>Dzięki! Trafiła do krótkiej moderacji — <b>pojawi się na stronie głównej po zatwierdzeniu</b> (zwykle w ciągu dnia).</p>
+      <a href="index.html">← wróć na stronę główną</a>
+    </div>
+  </div>
+
+  <footer>
+    <p class="disclaimer">
+      <b>Projekt studencki.</b> Nie zbieramy maili ani danych osobowych — zapisujemy tylko to, co wpiszesz powyżej.
+      Opinie przechodzą moderację, zanim pojawią się publicznie.
+    </p>
+  </footer>
+</div>
+
+<script>
+const WORKER_URL = "https://red-queen-3002.unicorner.workers.dev";
+const $ = id => document.getElementById(id);
+const loadedAt = Date.now();
+let rating = 0;
+
+const hints = {1:"słabo — powiedz w opinii, co boli",2:"może być lepiej",3:"okej",4:"dobrze",5:"sztos ✦"};
+const starBtns = [...document.querySelectorAll('.star')];
+function paint(v){ starBtns.forEach(b=>b.classList.toggle('on', +b.dataset.v <= v)); }
+starBtns.forEach(b=>{
+  b.addEventListener('mouseenter', ()=>paint(+b.dataset.v));
+  b.addEventListener('mouseleave', ()=>paint(rating));
+  b.addEventListener('click', ()=>{
+    rating = +b.dataset.v;
+    starBtns.forEach(x=>x.setAttribute('aria-checked', x===b ? 'true':'false'));
+    paint(rating);
+    $('starsHint').textContent = hints[rating];
+  });
+});
+
+const txt = $('text'), counter = $('counter');
+txt.addEventListener('input', ()=>{
+  const n = txt.value.trim().length;
+  counter.textContent = n + " / 600" + (n<10 ? " · min. 10 znaków" : "");
+  counter.classList.toggle('bad', n>0 && n<10);
+});
+
+function setStatus(msg, kind){ const s=$('status'); s.className="status show "+(kind||""); s.innerHTML = kind==="work" ? '<span class="spinner"></span>'+msg : msg; }
+function clearStatus(){ const s=$('status'); s.className="status"; s.textContent=""; }
+
+$('form').addEventListener('submit', async e=>{
+  e.preventDefault();
+  clearStatus();
+  const body = {
+    stars: rating,
+    text: txt.value.trim(),
+    name: $('name').value.trim(),
+    subject: $('subject').value,
+    website: $('website').value,      // honeypot
+    t: Date.now() - loadedAt,         // czas od wejścia (filtr botów)
+  };
+  if(!rating){ setStatus("Zaznacz ocenę gwiazdkami.","err"); return; }
+  if(body.text.length < 10){ setStatus("Opinia musi mieć min. 10 znaków.","err"); return; }
+
+  $('send').disabled = true;
+  setStatus("Wysyłam…","work");
+  try{
+    const res = await fetch(WORKER_URL + "/reviews", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(body),
+    });
+    if(res.status===429){ setStatus("Limit opinii na dziś z tego adresu — spróbuj jutro.","err"); $('send').disabled=false; return; }
+    if(!res.ok){ const d = await res.json().catch(()=>({})); setStatus(d.error || ("Coś poszło nie tak ("+res.status+")."),"err"); $('send').disabled=false; return; }
+    $('form').style.display="none";
+    $('done').classList.add('show');
+  }catch{
+    setStatus("Brak połączenia z serwerem — spróbuj za chwilę.","err");
+    $('send').disabled=false;
+  }
+});
+</script>
+</body>
+</html>
