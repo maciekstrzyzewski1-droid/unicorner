@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generator AI — quizy i fiszki z pliku · Unicorner</title>
+<meta name="description" content="Wgraj PDF z wykładem, a AI zrobi z niego fiszki i quiz. Beta.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0c0a18; --ink2:#100d20; --surface:#161230; --surface2:#1c1740;
+    --line:#272050; --line2:#352c66;
+    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --accent-d:#8b5cf6;
+    --ok:#5ad1a0; --ok-bg:#10241d; --ok-line:#1d4a3a;
+    --bad:#f87a8e; --bad-bg:#2a0f17; --bad-line:#5a2230;
+    --iris:linear-gradient(115deg,#5ad1ff 0%,#a78bfa 34%,#f472b6 66%,#fcd34d 100%);
+    --shadow:0 18px 50px rgba(0,0,0,.5);
+    --mono:'Space Grotesk',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:radial-gradient(900px 500px at 85% -8%, #1e1646 0%, transparent 58%),radial-gradient(700px 460px at -8% 4%, #181133 0%, transparent 52%),var(--ink);
+    color:var(--text);min-height:100vh;line-height:1.55;letter-spacing:.1px;overflow-x:hidden;}
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:linear-gradient(rgba(39,232,255,.05) 1px,transparent 1px) 0 0/100% 3px;mix-blend-mode:screen;opacity:.5;}
+  body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px,linear-gradient(rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px;}
+  .wrap{max-width:880px;margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+  header{padding:20px 0 6px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .horn{width:38px;height:38px;flex-shrink:0;display:block;filter:drop-shadow(0 0 7px rgba(39,232,255,.5));}
+  .horn .seg{fill:url(#irisGrad);}
+  @media (prefers-reduced-motion:no-preference){.horn{animation:hornFloat 5s ease-in-out infinite;}}
+  @keyframes hornFloat{50%{transform:translateY(-3px) rotate(-3deg);}}
+  .wordmark{font-family:var(--mono);font-weight:700;font-size:1.72rem;letter-spacing:.5px;}
+  .wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .back{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:7px 13px;border-radius:4px;transition:.2s;}
+  .back:hover{color:var(--text);border-color:#a78bfa;}
+  .hero{padding:30px 0 14px;max-width:680px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);background:var(--ink2);padding:6px 12px;border-radius:999px;margin-bottom:16px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:#fcd34d;box-shadow:0 0 10px #fcd34d;}
+  h1{font-family:'Chakra Petch','Space Grotesk',sans-serif;font-weight:700;font-size:clamp(1.8rem,5vw,2.7rem);line-height:1.07;letter-spacing:.4px;margin-bottom:12px;}
+  h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .lede{font-size:1rem;color:var(--muted);max-width:580px;}
+  .lede b{color:var(--text);font-weight:600;}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:20px;margin:18px 0;}
+  .panel h2{font-family:'Chakra Petch',var(--mono);font-size:1rem;font-weight:600;margin-bottom:14px;letter-spacing:.4px;}
+  label.fld{display:block;font-family:var(--mono);font-size:.78rem;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:6px;}
+  input[type=text],input[type=password]{width:100%;font-family:var(--mono);font-size:1rem;color:var(--text);background:var(--ink2);border:1px solid var(--line2);border-radius:4px;padding:11px 13px;outline:none;transition:border-color .2s;margin-bottom:16px;}
+  input:focus{border-color:var(--accent);}
+  .drop{border:1.5px dashed var(--line2);border-radius:4px;padding:26px 18px;text-align:center;cursor:pointer;transition:.2s;background:var(--ink2);}
+  .drop:hover,.drop.over{border-color:#a78bfa;background:var(--surface2);}
+  .drop .big{font-family:var(--mono);font-weight:600;color:var(--text);margin-bottom:4px;}
+  .drop .small{font-size:.84rem;color:var(--muted2);}
+  .drop.has{border-style:solid;border-color:var(--ok-line);}
+  .filechip{display:none;align-items:center;gap:10px;margin-top:12px;font-family:var(--mono);font-size:.88rem;color:var(--ok);}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px;}
+  .btn{font-family:var(--mono);font-weight:600;font-size:.95rem;color:#160d2b;background:var(--accent);border:none;border-radius:4px;padding:12px 22px;cursor:pointer;transition:transform .15s,background .2s,opacity .2s;}
+  .btn:hover:not(:disabled){transform:translateY(-1px);background:#b9a3fb;}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line2);}
+  .btn.ghost:hover{color:var(--text);border-color:#a78bfa;}
+  .hint{font-size:.8rem;color:var(--muted2);margin-top:10px;}
+  .status{font-family:var(--mono);font-size:.9rem;margin-top:14px;display:none;}
+  .status.show{display:block;}
+  .status.work{color:var(--accent);}
+  .status.err{color:var(--bad);}
+  .spinner{display:inline-block;width:13px;height:13px;border:2px solid var(--line2);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;vertical-align:-2px;margin-right:7px;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  /* tabs */
+  .tabs{display:none;gap:8px;margin:24px 0 14px;}
+  .tabs.show{display:flex;}
+  .tab{font-family:var(--mono);font-size:.88rem;font-weight:600;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:8px 16px;cursor:pointer;transition:.2s;}
+  .tab.active{color:#160d2b;background:var(--accent);border-color:var(--accent);}
+  .pane{display:none;}
+  .pane.active{display:block;}
+  /* flashcards */
+  .fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+  .fc{perspective:1000px;height:150px;cursor:pointer;}
+  .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+  .fc.flip .fc-inner{transform:rotateY(180deg);}
+  .fc-face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:4px;padding:16px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:auto;}
+  .fc-front{background:var(--surface);font-family:'Chakra Petch',var(--mono);font-weight:600;font-size:1.02rem;color:var(--text);}
+  .fc-front::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+  .fc-back{background:var(--surface2);transform:rotateY(180deg);font-size:.9rem;color:var(--muted);}
+  .fc-back b{color:var(--text);}
+  /* quiz */
+  .quiz-card{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:18px;margin-bottom:12px;}
+  .q-no{font-family:var(--mono);font-size:.72rem;color:var(--accent);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .q-text{font-size:1rem;margin:8px 0 14px;font-weight:500;}
+  .opt{display:block;width:100%;text-align:left;background:var(--ink2);border:1px solid var(--line);border-radius:4px;padding:11px 14px;margin-bottom:8px;cursor:pointer;color:var(--text);font-family:inherit;font-size:.93rem;transition:.15s;}
+  .opt:hover:not(:disabled){border-color:#a78bfa;background:var(--surface2);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#cdeede;}
+  .opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#f7c9d1;}
+  .q-exp{display:none;font-size:.88rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:var(--ink2);border-radius:4px;padding:10px 12px;}
+  .q-exp.show{display:block;}
+  .q-exp b{color:var(--text);}
+  .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  footer{border-top:1px solid var(--line);padding:22px 0 50px;margin-top:36px;}
+  .disclaimer{font-size:.78rem;color:var(--muted2);max-width:620px;line-height:1.6;}
+  .disclaimer b{color:var(--muted);}
+  .beta-note{font-size:.82rem;color:#fcd34d;background:rgba(252,211,77,.06);border:1px solid rgba(252,211,77,.2);border-radius:4px;padding:10px 13px;margin-top:14px;}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wordmark">Uni<span class="ai">corner</span></span>
+      </a>
+      <a class="back" href="index.html">← strona główna</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>Generator AI · beta</span>
+    <h1>Z pliku w <span class="grad">fiszki i quiz</span></h1>
+    <p class="lede">Wgraj PDF z wykładem albo notatkami, a AI ułoży z niego <b>fiszki i quiz z wyjaśnieniami</b>. Działa na tekstowych PDF-ach — skany (zdjęcia bez tekstu) na razie nie przejdą.</p>
+  </section>
+
+  <div class="panel">
+    <h2>1 · Kod dostępu i plik</h2>
+    <label class="fld" for="code">Kod dostępu</label>
+    <input type="password" id="code" placeholder="wpisz kod z grupy" autocomplete="off">
+
+    <label class="fld" for="file">Plik PDF</label>
+    <div class="drop" id="drop">
+      <div class="big">Przeciągnij PDF tutaj</div>
+      <div class="small">albo kliknij, żeby wybrać · maks. ~1 wykład</div>
+    </div>
+    <input type="file" id="file" accept="application/pdf,.pdf" style="display:none">
+    <div class="filechip" id="filechip"><span>📄</span><span id="filename"></span></div>
+
+    <div class="row">
+      <button class="btn" id="gen" disabled>Generuj fiszki i quiz</button>
+      <button class="btn ghost" id="reset" style="display:none">Wyczyść</button>
+    </div>
+    <div class="status" id="status"></div>
+    <div class="beta-note">⚠️ To wersja beta. Materiały są generowane automatycznie i <b>mogą zawierać błędy</b> — traktuj jako pomoc, nie wyrocznię. Sprawdzaj z oryginałem.</div>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-pane="fc">Fiszki (<span id="fcCount">0</span>)</button>
+    <button class="tab" data-pane="qz">Quiz (<span id="qzCount">0</span>)</button>
+  </div>
+
+  <div class="pane active" id="pane-fc">
+    <div class="fc-grid" id="fcGrid"></div>
+  </div>
+  <div class="pane" id="pane-qz">
+    <div id="qzList"></div>
+  </div>
+
+  <div class="tools" id="tools" style="display:none">
+    <button class="btn ghost" id="dlJson">Pobierz JSON</button>
+  </div>
+
+  <footer>
+    <p class="disclaimer">
+      <b>Projekt studencki · beta.</b> Pliki wysyłane są do przetworzenia przez model AI wyłącznie w celu wygenerowania materiałów; nie udostępniamy ich publicznie.
+      Nie wgrywaj materiałów, do których nie masz praw. Generowane treści mogą być niedokładne — ucz się też z oryginalnych źródeł.
+    </p>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script>
+/* ====== KONFIGURACJA ======
+   Po wdrożeniu Workera wstaw tutaj jego adres (z instrukcji):           */
+const WORKER_URL = "https://red-queen-3002.unicorner.workers.dev";
+/* =========================== */
+
+const MAX_CHARS = 14000;   // limit długości tekstu wysyłanego do AI (kontrola kosztu)
+const MIN_CHARS = 300;
+
+if (window.pdfjsLib) {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+}
+
+const $ = id => document.getElementById(id);
+const drop=$("drop"), fileInput=$("file"), codeInput=$("code");
+const genBtn=$("gen"), resetBtn=$("reset"), statusEl=$("status");
+let pickedFile=null, lastResult=null;
+
+codeInput.value = localStorage.getItem("uc_gen_code") || "";
+
+function setStatus(msg, kind){ statusEl.className="status show "+(kind||""); statusEl.innerHTML = kind==="work" ? '<span class="spinner"></span>'+msg : msg; }
+function clearStatus(){ statusEl.className="status"; statusEl.textContent=""; }
+function refreshBtn(){ genBtn.disabled = !(pickedFile && codeInput.value.trim().length>0); }
+
+codeInput.addEventListener("input", refreshBtn);
+
+drop.addEventListener("click", ()=>fileInput.click());
+drop.addEventListener("dragover", e=>{e.preventDefault();drop.classList.add("over");});
+drop.addEventListener("dragleave", ()=>drop.classList.remove("over"));
+drop.addEventListener("drop", e=>{ e.preventDefault(); drop.classList.remove("over"); if(e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]); });
+fileInput.addEventListener("change", e=>{ if(e.target.files[0]) handleFile(e.target.files[0]); });
+
+function handleFile(f){
+  if(f.type!=="application/pdf" && !f.name.toLowerCase().endsWith(".pdf")){ setStatus("To nie jest PDF. Na razie obsługujemy tylko PDF.","err"); return; }
+  pickedFile=f;
+  drop.classList.add("has");
+  drop.querySelector(".big").textContent="Plik gotowy";
+  $("filechip").style.display="flex"; $("filename").textContent=f.name;
+  resetBtn.style.display="inline-block";
+  clearStatus(); refreshBtn();
+}
+
+resetBtn.addEventListener("click", ()=>{
+  pickedFile=null; fileInput.value=""; drop.classList.remove("has");
+  drop.querySelector(".big").textContent="Przeciągnij PDF tutaj";
+  $("filechip").style.display="none"; resetBtn.style.display="none";
+  $("tabs").classList.remove("show"); $("tools").style.display="none";
+  $("fcGrid").innerHTML=""; $("qzList").innerHTML=""; clearStatus(); refreshBtn();
+});
+
+async function extractText(file){
+  const buf = await file.arrayBuffer();
+  const pdf = await pdfjsLib.getDocument({data:buf}).promise;
+  let text="";
+  for(let p=1;p<=pdf.numPages;p++){
+    const page=await pdf.getPage(p);
+    const content=await page.getTextContent();
+    text += content.items.map(i=>i.str).join(" ")+"\n";
+    if(text.length>MAX_CHARS+2000) break;
+  }
+  return text.replace(/\s+\n/g,"\n").trim();
+}
+
+genBtn.addEventListener("click", async ()=>{
+  const code=codeInput.value.trim();
+  localStorage.setItem("uc_gen_code", code);
+  genBtn.disabled=true;
+  try{
+    setStatus("Czytam PDF…","work");
+    let text=await extractText(pickedFile);
+    if(text.length<MIN_CHARS){ setStatus("Za mało tekstu w pliku. To może być skan (zdjęcia bez warstwy tekstu) — taki PDF na razie nie zadziała.","err"); genBtn.disabled=false; return; }
+    if(text.length>MAX_CHARS) text=text.slice(0,MAX_CHARS);
+
+    setStatus("AI układa fiszki i quiz… to potrwa kilkanaście sekund","work");
+    const res=await fetch(WORKER_URL, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({ text, code, mode:"both" })
+    });
+    if(res.status===401){ setStatus("Zły kod dostępu.","err"); genBtn.disabled=false; return; }
+    if(res.status===429){ setStatus("Za dużo zapytań naraz — spróbuj za chwilę.","err"); genBtn.disabled=false; return; }
+    if(!res.ok){ const t=await res.text(); setStatus("Coś poszło nie tak ("+res.status+"). "+t.slice(0,120),"err"); genBtn.disabled=false; return; }
+    const data=await res.json();
+    if(!data || (!data.flashcards && !data.quiz)){ setStatus("AI nie zwróciło poprawnych danych. Spróbuj z innym/krótszym fragmentem.","err"); genBtn.disabled=false; return; }
+    lastResult=data;
+    render(data);
+    clearStatus();
+  }catch(err){
+    setStatus("Błąd: "+(err.message||err),"err");
+  }
+  genBtn.disabled=false;
+});
+
+function render(data){
+  const fcs=Array.isArray(data.flashcards)?data.flashcards:[];
+  const qz=Array.isArray(data.quiz)?data.quiz:[];
+  // flashcards
+  const grid=$("fcGrid"); grid.innerHTML="";
+  fcs.forEach(c=>{
+    const el=document.createElement("div"); el.className="fc";
+    el.innerHTML=`<div class="fc-inner"><div class="fc-face fc-front">${esc(c.term||"")}</div><div class="fc-face fc-back">${esc(c.def||c.definition||"")}</div></div>`;
+    el.addEventListener("click", ()=>el.classList.toggle("flip"));
+    grid.appendChild(el);
+  });
+  $("fcCount").textContent=fcs.length;
+  // quiz
+  const list=$("qzList"); list.innerHTML="";
+  qz.forEach((q,i)=>{
+    const opts=Array.isArray(q.options)?q.options:[];
+    const correct=Number.isInteger(q.correct)?q.correct:0;
+    const order=opts.map((_,k)=>k).sort(()=>Math.random()-0.5);
+    const card=document.createElement("div"); card.className="quiz-card";
+    card.innerHTML=`<div class="q-no">Pytanie ${i+1} / ${qz.length}</div><div class="q-text">${esc(q.q||q.question||"")}</div><div class="opts"></div><div class="q-exp">${esc(q.explain||q.explanation||"")}</div>`;
+    const box=card.querySelector(".opts"), exp=card.querySelector(".q-exp");
+    order.forEach(k=>{
+      const b=document.createElement("button"); b.className="opt"; b.textContent=opts[k];
+      b.addEventListener("click", ()=>{
+        box.querySelectorAll(".opt").forEach(x=>x.disabled=true);
+        if(k===correct){ b.classList.add("correct"); }
+        else{ b.classList.add("wrong"); box.querySelectorAll(".opt").forEach(x=>{ if(x.textContent===opts[correct]) x.classList.add("correct"); }); }
+        if(exp.textContent.trim()) exp.classList.add("show");
+      });
+      box.appendChild(b);
+    });
+    list.appendChild(card);
+  });
+  $("qzCount").textContent=qz.length;
+  $("tabs").classList.add("show");
+  $("tools").style.display="flex";
+}
+
+function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+
+// taby
+document.querySelectorAll(".tab").forEach(t=>{
+  t.addEventListener("click", ()=>{
+    document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+    document.querySelectorAll(".pane").forEach(x=>x.classList.remove("active"));
+    t.classList.add("active");
+    $("pane-"+t.dataset.pane).classList.add("active");
+  });
+});
+
+// pobierz JSON
+$("dlJson").addEventListener("click", ()=>{
+  if(!lastResult) return;
+  const blob=new Blob([JSON.stringify(lastResult,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="unicorner_material.json"; a.click();
+});
+</script>
+</body>
+</html>
