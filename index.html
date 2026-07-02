@@ -318,6 +318,9 @@
    status:'live' → karta klikalna (linkuje do file); 'soon' → wyszarzona.
    file: nazwa pliku HTML w TYM SAMYM folderze co ta strona.            */
 const SUBJECTS = [
+  { name:"Generator AI", emoji:"🤖", badge:"beta",
+    desc:"Wgraj swoje notatki albo PDF — AI zrobi z nich fiszki i quiz na podstawie Twojego materiału. Faza beta, wymaga kodu dostępu.",
+    tags:["Fiszki AI","Quiz AI","Beta"], status:"live", file:"generator.html" },
   { name:"Makroekonomia", emoji:"📈",
     desc:"Pieniądz, inflacja, bezrobocie, wzrost, cykl koniunkturalny i polityka banku centralnego.",
     tags:["Fiszki","Zadania","Ściana","Quiz"], status:"live", file:"makroekonomia.html" },
@@ -378,7 +381,7 @@ function cardHtml(s){
   const tagHtml = s.tags.map(t=>`<span class="tag">${t}</span>`).join('');
   const inner = `
     <div class="card-top"><div class="emoji">${s.emoji}</div>
-    <span class="badge ${live?'live':'soon'}">${live?'gotowe':'wkrótce'}</span></div>
+    <span class="badge ${live?'live':'soon'}">${s.badge || (live?'gotowe':'wkrótce')}</span></div>
     <h3>${s.name}</h3><p class="desc">${s.desc}</p>
     <div class="tags">${tagHtml}</div>
     <span class="go">${live?'Otwórz':'W przygotowaniu'} <span class="arr">→</span></span>`;
