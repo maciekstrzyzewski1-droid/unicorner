@@ -106,6 +106,19 @@
   .q-exp.show{display:block;}
   .q-exp b{color:var(--text);}
   .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .tips{margin:16px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:4px;overflow:hidden;}
+  .tips summary{font-family:var(--mono);font-size:.86rem;font-weight:600;color:#fcd34d;padding:13px 16px;cursor:pointer;list-style:none;user-select:none;}
+  .tips summary::-webkit-details-marker{display:none;}
+  .tips summary::before{content:"⚠ ";}
+  .tips summary::after{content:" ▾";color:var(--muted2);}
+  .tips[open] summary::after{content:" ▴";}
+  .tips summary:hover{color:#ffe08a;}
+  .tips-body{padding:2px 18px 16px;font-size:.88rem;color:var(--muted);line-height:1.6;}
+  .tips-body p{margin:10px 0;}
+  .tips-body b{color:var(--text);font-weight:600;}
+  .tips-body ul{margin:8px 0 8px 4px;padding:0;list-style:none;}
+  .tips-body li{position:relative;padding-left:18px;margin:7px 0;}
+  .tips-body li::before{content:"›";position:absolute;left:2px;color:var(--accent);font-weight:700;}
   footer{border-top:1px solid var(--line);padding:22px 0 50px;margin-top:36px;}
   .disclaimer{font-size:.78rem;color:var(--muted2);max-width:620px;line-height:1.6;}
   .disclaimer b{color:var(--muted);}
@@ -172,8 +185,23 @@
   </div>
 
   <div class="tools" id="tools" style="display:none">
+    <button class="btn" id="dlHtml">⬇ Pobierz jako plik (HTML)</button>
     <button class="btn ghost" id="dlJson">Pobierz JSON</button>
+    <button class="btn ghost" id="forget">Usuń zapamiętane</button>
   </div>
+
+  <details class="tips">
+    <summary>Jak nie stracić wygenerowanych materiałów — przeczytaj</summary>
+    <div class="tips-body">
+      <p><b>Ta strona zapamiętuje ostatni wynik w Twojej przeglądarce</b> — jak odświeżysz albo wrócisz później na tym samym urządzeniu i w tej samej przeglądarce, materiał tu będzie. Ale to <b>nie</b> jest trwały schowek:</p>
+      <ul>
+        <li><b>Tryb prywatny / incognito</b> — wynik znika po zamknięciu karty. Nie generuj tam rzeczy, które chcesz zachować.</li>
+        <li><b>Telefon</b> — system (zwłaszcza iPhone) potrafi wyczyścić dane strony po kilku dniach nieużywania. Nie licz, że będzie tu za tydzień.</li>
+        <li><b>„Wyczyść dane przeglądania”</b> albo inna przeglądarka / inne urządzenie = pusto.</li>
+      </ul>
+      <p><b>Chcesz mieć na stałe → kliknij „Pobierz jako plik (HTML)”.</b> Dostajesz jeden plik, który otwierasz w przeglądarce kiedy chcesz — fiszki i quiz działają offline, bez generowania od nowa i bez kodu dostępu. To jedyna wersja, którą naprawdę masz u siebie.</p>
+    </div>
+  </details>
 
   <footer>
     <p class="disclaimer">
@@ -204,6 +232,19 @@ const MAX_PHOTOS = 4;
 let pickedPdf=null, pickedImages=[], lastResult=null;
 
 codeInput.value = localStorage.getItem("uc_gen_code") || "";
+
+const STORE_KEY = "uc_gen_last";
+/* odtworzenie ostatniego wyniku z pamięci przeglądarki */
+(function restoreSaved(){
+  try{
+    const saved = JSON.parse(localStorage.getItem(STORE_KEY) || "null");
+    if(saved && (saved.flashcards || saved.quiz)){
+      lastResult = saved;
+      render(saved);
+      setStatus("Wczytano ostatni materiał z pamięci przeglądarki. Nowy plik go nadpisze.","work");
+    }
+  }catch{ /* uszkodzony zapis — ignorujemy */ }
+})();
 
 function setStatus(msg, kind){ statusEl.className="status show "+(kind||""); statusEl.innerHTML = kind==="work" ? '<span class="spinner"></span>'+msg : msg; }
 function clearStatus(){ statusEl.className="status"; statusEl.textContent=""; }
@@ -370,6 +411,8 @@ function render(data){
   $("qzCount").textContent=qz.length;
   $("tabs").classList.add("show");
   $("tools").style.display="flex";
+  // zapis do pamięci przeglądarki (żeby przetrwało odświeżenie)
+  try{ localStorage.setItem(STORE_KEY, JSON.stringify({flashcards:fcs, quiz:qz})); }catch{ /* brak miejsca / prywatny tryb */ }
 }
 
 function esc(s){ return String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
@@ -384,12 +427,89 @@ document.querySelectorAll(".tab").forEach(t=>{
   });
 });
 
-// pobierz JSON
+// pobierz JSON (dla zaawansowanych / do ponownego wczytania)
 $("dlJson").addEventListener("click", ()=>{
   if(!lastResult) return;
   const blob=new Blob([JSON.stringify(lastResult,null,2)],{type:"application/json"});
   const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="unicorner_material.json"; a.click();
 });
+
+// pobierz jako samodzielny plik HTML — otwiera się offline jako klikalne fiszki + quiz
+$("dlHtml").addEventListener("click", ()=>{
+  if(!lastResult) return;
+  const html = buildStandaloneHtml(lastResult);
+  const blob = new Blob([html], {type:"text/html;charset=utf-8"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob);
+  a.download="unicorner_fiszki_quiz.html"; a.click();
+});
+
+// usuń zapamiętany materiał z tej przeglądarki
+$("forget").addEventListener("click", ()=>{
+  localStorage.removeItem(STORE_KEY);
+  setStatus("Usunięto zapamiętany materiał z tej przeglądarki. Pobrane pliki zostają u Ciebie.","work");
+});
+
+function buildStandaloneHtml(data){
+  const fcs=Array.isArray(data.flashcards)?data.flashcards:[];
+  const qz=Array.isArray(data.quiz)?data.quiz:[];
+  // dane wstrzykiwane jako JSON — zero zależności, działa offline
+  // escape "<" chroni przed przedwczesnym zamknięciem bloku skryptu w pobranym pliku
+  const payload = JSON.stringify({flashcards:fcs, quiz:qz}).replace(/</g,"\\u003c");
+  return `<!DOCTYPE html>
+<html lang="pl"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiszki i quiz · Unicorner</title>
+<style>
+:root{--ink:#0c0a18;--surface:#161230;--surface2:#1c1740;--line:#272050;--text:#ece9f7;--muted:#9b93c4;--accent:#a78bfa;--ok:#5ad1a0;--ok-bg:#10241d;--ok-line:#1d4a3a;--bad:#f87a8e;--bad-bg:#2a0f17;--bad-line:#5a2230;--iris:linear-gradient(115deg,#5ad1ff,#a78bfa 34%,#f472b6 66%,#fcd34d);--mono:'Space Grotesk',ui-monospace,monospace;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:radial-gradient(900px 500px at 85% -8%,#1e1646,transparent 58%),var(--ink);color:var(--text);line-height:1.55;padding:24px 16px;min-height:100vh;}
+.wrap{max-width:860px;margin:0 auto;}
+.head{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.head .dot{width:14px;height:22px;background:var(--iris);clip-path:polygon(50% 0,75% 100%,25% 100%);}
+h1{font-family:var(--mono);font-size:1.5rem;letter-spacing:.5px;}
+.h1 .g{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.sub{color:var(--muted);font-size:.86rem;margin-bottom:22px;}
+.tabs{display:flex;gap:8px;margin:18px 0 16px;}
+.tab{font-family:var(--mono);font-size:.9rem;font-weight:600;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:9px 18px;cursor:pointer;}
+.tab.active{color:#160d2b;background:var(--accent);border-color:var(--accent);}
+.pane{display:none;}.pane.active{display:block;}
+.fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;}
+.fc{perspective:1000px;height:160px;cursor:pointer;}
+.fc-in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
+.fc.flip .fc-in{transform:rotateY(180deg);}
+.face{position:absolute;inset:0;backface-visibility:hidden;border:1px solid var(--line);border-radius:4px;padding:16px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:auto;}
+.front{background:var(--surface);font-family:var(--mono);font-weight:600;font-size:1.02rem;}
+.front::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+.back{background:var(--surface2);transform:rotateY(180deg);font-size:.9rem;color:var(--muted);}
+.qc{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:18px;margin-bottom:12px;}
+.qno{font-family:var(--mono);font-size:.72rem;color:var(--accent);font-weight:600;text-transform:uppercase;letter-spacing:.5px;}
+.qt{font-size:1rem;margin:8px 0 14px;font-weight:500;}
+.opt{display:block;width:100%;text-align:left;background:var(--ink);border:1px solid var(--line);border-radius:4px;padding:11px 14px;margin-bottom:8px;cursor:pointer;color:var(--text);font:inherit;font-size:.93rem;}
+.opt:hover:not(:disabled){border-color:var(--accent);}
+.opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#cdeede;}
+.opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#f7c9d1;}
+.exp{display:none;font-size:.88rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:var(--ink);border-radius:4px;padding:10px 12px;}
+.exp.show{display:block;}
+.foot{margin-top:26px;font-size:.76rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;}
+</style></head>
+<body><div class="wrap">
+<div class="head"><span class="dot"></span><h1 class="h1">Uni<span class="g">corner</span> — Twój materiał</h1></div>
+<div class="sub">Wygenerowane fiszki i quiz. Ten plik działa offline — zapisz go u siebie.</div>
+<div class="tabs"><button class="tab active" data-p="fc">Fiszki</button><button class="tab" data-p="qz">Quiz</button></div>
+<div class="pane active" id="fc"><div class="fc-grid" id="fcg"></div></div>
+<div class="pane" id="qz"><div id="qzl"></div></div>
+<div class="foot">Unicorner · materiał wygenerowany przez AI, może zawierać błędy — sprawdzaj z oryginałem.</div>
+</div>
+<script>
+const D=${payload};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fcg=document.getElementById("fcg");
+(D.flashcards||[]).forEach(c=>{const e=document.createElement("div");e.className="fc";e.innerHTML='<div class="fc-in"><div class="face front">'+esc(c.term||"")+'</div><div class="face back">'+esc(c.def||"")+'</div></div>';e.onclick=()=>e.classList.toggle("flip");fcg.appendChild(e);});
+const qzl=document.getElementById("qzl");
+(D.quiz||[]).forEach((q,i)=>{const opts=q.options||[];const correct=Number.isInteger(q.correct)?q.correct:0;const order=opts.map((_,k)=>k).sort(()=>Math.random()-0.5);const card=document.createElement("div");card.className="qc";card.innerHTML='<div class="qno">Pytanie '+(i+1)+' / '+D.quiz.length+'</div><div class="qt">'+esc(q.q||"")+'</div><div class="opts"></div><div class="exp">'+esc(q.explain||"")+'</div>';const box=card.querySelector(".opts"),exp=card.querySelector(".exp");order.forEach(k=>{const b=document.createElement("button");b.className="opt";b.textContent=opts[k];b.onclick=()=>{box.querySelectorAll(".opt").forEach(x=>x.disabled=true);if(k===correct)b.classList.add("correct");else{b.classList.add("wrong");box.querySelectorAll(".opt").forEach(x=>{if(x.textContent===opts[correct])x.classList.add("correct");});}if(exp.textContent.trim())exp.classList.add("show");};box.appendChild(b);});qzl.appendChild(card);});
+document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));document.querySelectorAll(".pane").forEach(x=>x.classList.remove("active"));t.classList.add("active");document.getElementById(t.dataset.p).classList.add("active");});
+<\/script></body></html>`;
+}
 </script>
 </body>
 </html>
