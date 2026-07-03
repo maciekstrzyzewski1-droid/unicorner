@@ -250,40 +250,52 @@
   /* ===== MEGA STOPKA (wzór BND): jednorożec po lewej nad treścią,
          treść w lewym rogu, wielki wordmark w prawym dolnym ===== */
   .mega-foot{position:relative;margin-top:46px;border-top:1px solid var(--line);min-height:700px;overflow:hidden;}
-  .mega-foot #uniHead{position:absolute;left:-30px;bottom:-50px;width:min(700px,96vw);height:min(700px,96vw);pointer-events:none;z-index:1;display:block;}
+  .mega-foot #uniHead{position:absolute;left:-40px;top:50%;transform:translateY(-50%);width:min(880px,66vw);height:min(880px,66vw);pointer-events:none;z-index:1;display:block;}
   .mf-in{position:relative;min-height:700px;z-index:2;}
-  .mf-left{position:absolute;left:20px;top:40px;max-width:560px;}
-  .mf-left .disclaimer{margin-top:14px;text-shadow:0 1px 10px rgba(7,6,15,.95);}
-  .disclaimer{font-size:.78rem;color:var(--muted2);max-width:560px;line-height:1.6;}
-  .disclaimer b{color:var(--muted);font-weight:600;}
-  .foot-brand{display:flex;align-items:center;gap:9px;color:var(--muted);font-family:var(--disp);font-weight:600;font-size:.95rem;letter-spacing:1px;}
-  .foot-brand .fb-uni{color:var(--muted);}
+  /* górny blok (label → marka → tagline) — zwarty, w rogu */
+  .mf-left{position:absolute;left:24px;top:48px;max-width:430px;display:flex;flex-direction:column;gap:16px;}
+  .mf-eyebrow{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted2);}
+  .mf-eyebrow::before{content:"// ";color:var(--cyan);}
+  .foot-brand{display:flex;align-items:center;gap:11px;color:var(--muted);font-family:var(--disp);font-weight:700;font-size:1.5rem;letter-spacing:.5px;}
+  .foot-brand .horn{width:26px;height:26px;}
+  .foot-brand .fb-uni{color:var(--text);}
   .foot-brand .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .mf-sys{font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin-top:16px;}
+  .mf-tag{font-family:var(--disp);font-size:1.12rem;font-weight:600;letter-spacing:.3px;color:var(--text);line-height:1.4;max-width:360px;text-shadow:0 1px 12px rgba(7,6,15,.95);}
+  .mf-tag b{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  /* dolny blok (nota prawna + copyright) — cienki, przy dolnej krawędzi */
+  .mf-bottom{position:absolute;left:24px;bottom:26px;max-width:540px;display:flex;flex-direction:column;gap:11px;}
+  .disclaimer{font-size:.74rem;color:var(--muted2);line-height:1.7;text-shadow:0 1px 10px rgba(7,6,15,.98);}
+  .disclaimer b{color:var(--muted);font-weight:600;}
+  .mf-sys{font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);text-shadow:0 1px 10px rgba(7,6,15,.98);}
   .mf-sys::before{content:"// ";color:var(--cyan);}
-  .mf-mark{position:absolute;right:20px;bottom:28px;text-align:right;line-height:.88;text-decoration:none;display:block;user-select:none;}
+  /* wielki wordmark w prawym dolnym rogu — powiększony, szerszy rozstaw liter */
+  .mf-mark{position:absolute;right:26px;bottom:34px;text-align:right;line-height:.86;text-decoration:none;display:block;user-select:none;}
+  /* każdy człon podświetla się OSOBNO po najechaniu */
+  .mf-mark .mk-uni, .mf-mark .mk-corner{display:block;width:fit-content;margin-left:auto;cursor:pointer;}
   .mf-mark .mk-uni{
-    display:block;font-family:'Orbitron',var(--disp);font-weight:900;
-    font-size:clamp(4.2rem,11vw,9.5rem);letter-spacing:.01em;color:#fff;
-    transition:filter .25s ease;
+    font-family:'Orbitron',var(--disp);font-weight:900;
+    font-size:clamp(5rem,14vw,12.5rem);letter-spacing:.08em;color:#fff;
+    transition:filter .3s ease;
   }
   .mf-mark .mk-corner{
-    display:block;font-family:'Orbitron',var(--disp);font-weight:800;
-    font-size:clamp(1.85rem,4.85vw,4.2rem);letter-spacing:.045em;
-    color:transparent;-webkit-text-stroke:2px rgba(167,139,250,.42);
-    transition:filter .25s ease;
+    font-family:'Orbitron',var(--disp);font-weight:800;
+    font-size:clamp(2rem,5.6vw,4.8rem);letter-spacing:.34em;text-indent:.34em;
+    color:transparent;-webkit-text-stroke:1.7px rgba(167,139,250,.45);
+    transition:filter .3s ease,-webkit-text-stroke-color .3s ease;
   }
-  .mf-mark:hover .mk-uni{
+  .mf-mark .mk-uni:hover{
     background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 30px rgba(167,139,250,.55));
+    filter:drop-shadow(0 0 34px rgba(167,139,250,.6));
   }
-  .mf-mark:hover .mk-corner{-webkit-text-stroke-color:rgba(238,240,255,.9);filter:drop-shadow(0 0 18px rgba(39,232,255,.45));}
+  .mf-mark .mk-corner:hover{-webkit-text-stroke-color:rgba(238,240,255,.92);filter:drop-shadow(0 0 20px rgba(39,232,255,.5));}
   @media(max-width:760px){
-    .mega-foot{display:flex;flex-direction:column;min-height:0;padding:26px 0 24px;}
-    .mega-foot #uniHead{position:relative;order:2;left:-14px;bottom:0;margin:0 0 -34px;}
+    .mega-foot{display:flex;flex-direction:column;min-height:0;padding:30px 0 24px;}
+    .mega-foot #uniHead{position:relative;order:2;left:-14px;top:auto;transform:none;bottom:0;width:min(560px,96vw);height:min(560px,96vw);margin:6px 0 -24px;}
     .mf-in{display:contents;}
-    .mf-left{position:static;order:1;padding:0 20px;max-width:none;}
-    .mf-mark{position:static;order:3;margin:0 20px;}
+    .mf-left{position:static;order:1;padding:0 22px;max-width:none;gap:16px;}
+    .mf-bottom{position:static;order:3;padding:0 22px;max-width:none;margin-top:10px;}
+    .mf-mark{position:static;order:4;margin:12px 22px 0;align-self:flex-end;}
+    .mf-mark .mk-corner{letter-spacing:.24em;text-indent:.24em;}
   }
 
   @media(max-width:560px){
@@ -387,10 +399,14 @@
   <canvas id="uniHead" aria-hidden="true"></canvas>
   <div class="wrap mf-in">
     <div class="mf-left">
+      <span class="mf-eyebrow">materiały studenckie · UEP</span>
       <div class="foot-brand">
-        <svg class="horn" style="width:18px;height:18px;animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <svg class="horn" style="animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
         <span><span class="fb-uni">uni</span><span class="fb-corner">corner</span></span>
       </div>
+      <p class="mf-tag">Fiszki, zadania i quizy do egzaminów — <b>w jednym miejscu, po ludzku.</b></p>
+    </div>
+    <div class="mf-bottom">
       <p class="disclaimer">
         <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą.
         Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.
@@ -636,10 +652,10 @@ if (renderer) {
   renderer.setClearColor(0x000000, 0);
   const scene = new THREE.Scene();
   const camera = new THREE.PerspectiveCamera(38, 1, 1, 3000);
-  camera.position.set(0, 0, 660);
+  camera.position.set(0, 0, 700);
   const spin = new THREE.Group(); scene.add(spin);
 
-  const size = () => { const s = canvas.clientWidth || 520; renderer.setSize(s, s, false); };
+  const size = () => { const s = canvas.clientWidth || 700; renderer.setSize(s, s, false); };
   size(); addEventListener('resize', size);
 
   /* ----- paleta ----- */
@@ -652,77 +668,144 @@ if (renderer) {
     }
     return IRIS[IRIS.length - 1][1].clone();
   };
-  const VIOLET = new THREE.Color(0x8b5cf6), LILAC = new THREE.Color(0xc4b5fd),
-        CYAN = new THREE.Color(0x27e8ff), MAGENTA = new THREE.Color(0xff2e97), WHITE = new THREE.Color(0xeef0ff);
+  const WHITE = new THREE.Color(0xeef0ff);
+  /* jedna barwa (róż) z tonalnym zróżnicowaniem — jak cząsteczkowy krokodyl, bez "tęczy" */
+  const PINK = new THREE.Color(0xff5fb4), PINK_HI = new THREE.Color(0xffcdeb), PINK_LO = new THREE.Color(0xcf3a8c);
 
-  /* ----- geometria: bryły 3D → punkty na powierzchni -----
-     Układ: głowa patrzy w +X, Y w górę, Z do widza.        */
-  const parts = [];
+  /* ----- geometria: bryły 3D łączone w JEDNĄ powierzchnię (CSG-union) -----
+     Układ: głowa patrzy w +X, Y w górę, Z do widza.
+     Każda bryła ma test inside() i sampler powierzchni. Punkt zakopany
+     w innej bryle 'blend' jest odrzucany → znika efekt "kulek",
+     zostaje ciągła skóra unii brył.                                    */
+  const MOBILE = Math.min(innerWidth, innerHeight) < 700 || window.matchMedia('(pointer:coarse)').matches;
   const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
+  const solids = [];
 
-  const addEllipsoid = (cx, cy, cz, rx, ry, rz, n, region) => {
-    for (let i = 0; i < n; i++) {
-      let vx = gauss(), vy = gauss(), vz = gauss();
-      const L = Math.hypot(vx, vy, vz) || 1;
-      parts.push({ x: cx + vx / L * rx, y: cy + vy / L * ry, z: cz + vz / L * rz, region, t: 0 });
-    }
+  /* Punkty NIE są losowe — leżą na regularnej siatce powierzchni (równoleżniki
+     na elipsoidach, pierścienie wzdłuż osi na kapsułach) → czytelne linie,
+     jak w cząsteczkowym krokodylu ze wzoru.                                   */
+  const ellipsoid = (cx, cy, cz, rx, ry, rz, region, blend = true) => {
+    const o = {
+      region, blend,
+      inside(x, y, z, m) {
+        const f = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 + ((z - cz) / rz) ** 2;
+        return f < (1 - m) * (1 - m);
+      },
+      grid(step, emit) {
+        const nLat = Math.max(3, Math.round(Math.PI * ry / step));
+        for (let i = 0; i < nLat; i++) {
+          const th = Math.PI * (i + 0.5) / nLat, st = Math.sin(th), ct = Math.cos(th);
+          const ringR = (rx + rz) * 0.5 * st;
+          const nLon = Math.max(3, Math.round(2 * Math.PI * ringR / step));
+          for (let j = 0; j < nLon; j++) {
+            const ph = 2 * Math.PI * (j + (i & 1) * 0.5) / nLon; // co drugi rząd przesunięty (splot)
+            emit(cx + rx * st * Math.cos(ph), cy + ry * ct, cz + rz * st * Math.sin(ph), 0);
+          }
+        }
+      }
+    };
+    solids.push(o); return o;
   };
-  const addCone = (x0, y0, z0, x1, y1, z1, r0, r1, n, region) => {
-    const ax = x1 - x0, ay = y1 - y0, az = z1 - z0;
-    const L = Math.hypot(ax, ay, az);
-    const ux = ax / L, uy = ay / L, uz = az / L;
+  const capsule = (x0, y0, z0, x1, y1, z1, r0, r1, region, blend = true) => {
+    const ax = x1 - x0, ay = y1 - y0, az = z1 - z0; const LL = ax * ax + ay * ay + az * az || 1;
+    const len = Math.sqrt(LL);
+    let ux = ax / len, uy = ay / len, uz = az / len;
     let px = -uy, py = ux, pz = 0, pl = Math.hypot(px, py, pz);
     if (pl < .01) { px = 0; py = -uz; pz = uy; pl = Math.hypot(px, py, pz); }
     px /= pl; py /= pl; pz /= pl;
     const qx = uy * pz - uz * py, qy = uz * px - ux * pz, qz = ux * py - uy * px;
-    for (let i = 0; i < n; i++) {
-      const t = Math.random(), r = r0 + (r1 - r0) * t, th = Math.random() * 6.2832;
-      const c = Math.cos(th) * r, s = Math.sin(th) * r;
-      parts.push({ x: x0 + ax * t + px * c + qx * s, y: y0 + ay * t + py * c + qy * s, z: z0 + az * t + pz * c + qz * s, region, t });
-    }
+    const o = {
+      region, blend,
+      inside(x, y, z, m) {
+        let t = ((x - x0) * ax + (y - y0) * ay + (z - z0) * az) / LL; t = Math.max(0, Math.min(1, t));
+        const dx = x - (x0 + ax * t), dy = y - (y0 + ay * t), dz = z - (z0 + az * t);
+        const r = r0 + (r1 - r0) * t;
+        return (dx * dx + dy * dy + dz * dz) < (r * (1 - m)) ** 2;
+      },
+      grid(step, emit) {
+        const nSeg = Math.max(2, Math.round(len / step));
+        for (let i = 0; i <= nSeg; i++) {
+          const t = i / nSeg, r = r0 + (r1 - r0) * t;
+          const bxp = x0 + ax * t, byp = y0 + ay * t, bzp = z0 + az * t;
+          const nTh = Math.max(3, Math.round(2 * Math.PI * r / step));
+          for (let j = 0; j < nTh; j++) {
+            const th = 2 * Math.PI * (j + (i & 1) * 0.5) / nTh, c = Math.cos(th) * r, s = Math.sin(th) * r;
+            emit(bxp + px * c + qx * s, byp + py * c + qy * s, bzp + pz * c + qz * s, t);
+          }
+        }
+      }
+    };
+    solids.push(o); return o;
   };
-  const addTube = (p0, p1, p2, r0, r1, n, region) => {  // tuba po krzywej kwadratowej
-    for (let i = 0; i < n; i++) {
-      const t = Math.random();
-      const ax = p0[0] + (p1[0] - p0[0]) * t, ay = p0[1] + (p1[1] - p0[1]) * t, az = p0[2] + (p1[2] - p0[2]) * t;
-      const bx = p1[0] + (p2[0] - p1[0]) * t, by = p1[1] + (p2[1] - p1[1]) * t, bz = p1[2] + (p2[2] - p1[2]) * t;
-      const x = ax + (bx - ax) * t, y = ay + (by - ay) * t, z = az + (bz - az) * t;
-      const r = r0 + (r1 - r0) * t, th = Math.random() * 6.2832;
-      /* przybliżona rama prostopadła (promień mały — wystarczy) */
-      let dx = bx - ax, dy = by - ay, dz = bz - az; const L = Math.hypot(dx, dy, dz) || 1;
-      dx /= L; dy /= L; dz /= L;
-      let px = -dy, py = dx, pz = 0, pl = Math.hypot(px, py, pz);
-      if (pl < .01) { px = 0; py = -dz; pz = dy; pl = Math.hypot(px, py, pz); }
-      px /= pl; py /= pl; pz /= pl;
-      const qx = dy * pz - dz * py, qy = dz * px - dx * pz, qz = dx * py - dy * px;
-      const c = Math.cos(th) * r, s = Math.sin(th) * r;
-      parts.push({ x: x + px * c + qx * s, y: y + py * c + qy * s, z: z + pz * c + qz * s, region, t });
-    }
+  /* pasmo grzywy — pojedyncza linia po krzywej (leży na wierzchu, bez unii) */
+  const maneStrands = [];
+  const strand = (p0, p1, p2, r0, r1) => maneStrands.push({ p0, p1, p2, r0, r1 });
+
+  /* — GŁOWA KONIA (profil, +X = pysk). Dłuższa i węższa twarz, wydatny
+       policzek/żwacz, wyraźna linia żuchwy, lekko wygięta szyja. — */
+  ellipsoid(6, 20, 0, 33, 34, 31, 'body');          // mózgoczaszka (okrągły tył głowy)
+  ellipsoid(26, 25, 0, 25, 23, 26, 'body');         // czoło
+  ellipsoid(34, 15, 21, 9, 11, 8, 'body', false);   // łuk brwiowy / oczodół (bliższy)
+  ellipsoid(34, 15, -21, 9, 11, 8, 'body', false);  // łuk brwiowy / oczodół (dalszy)
+  capsule(22, 16, 0, 106, -16, 0, 23, 14, 'body');  // grzbiet nosa — zwęża się w środku (profil konia)
+  ellipsoid(116, -19, 0, 21, 22, 20, 'body');       // nozdrza — lekkie rozszerzenie
+  ellipsoid(123, -33, 0, 15, 13, 15, 'body');       // pysk / dolna warga
+  ellipsoid(2, -16, 0, 37, 35, 30, 'body');         // policzek / żwacz (wydatny, okrągły)
+  capsule(-2, -31, 0, 114, -36, 0, 20, 10, 'body'); // żuchwa — od policzka do brody
+  capsule(-10, 8, 0, -44, -42, 0, 37, 47, 'neck');  // szyja górna (grzbiet karku)
+  capsule(-44, -42, 0, -66, -96, 0, 47, 56, 'neck'); // szyja dolna (lekkie wygięcie)
+
+  /* — RÓG + USZY (blend:false → wystają, nie zlewają się) — */
+  capsule(24, 50, 0, 54, 132, 0, 8, 0.5, 'horn', false);     // róg
+  capsule(-10, 46, 13, -20, 90, 20, 8.5, 0.5, 'body', false); // ucho bliższe
+  capsule(-10, 46, -13, -20, 90, -20, 8.5, 0.5, 'body', false); // ucho dalsze
+
+  /* — GRZYWA: pasma wzdłuż karku, płyną w tył-dół — */
+  strand([-14, 50, 0],  [-52, 26, 8],   [-86, -42, 4],   8, 2.5);
+  strand([-20, 38, -12],[-64, 6, -16],  [-94, -70, -10], 7, 2);
+  strand([-20, 38, 12], [-62, 8, 18],   [-90, -64, 14],  7, 2);
+  strand([-4, 54, 0],   [-44, 46, -6],  [-82, 2, -4],     6, 2);
+  strand([18, 50, 6],   [40, 38, 12],   [46, 16, 10],     5, 1.5);
+
+  /* ---- budowa siatki + odrzucanie punktów zakopanych w unii ---- */
+  const parts = [];
+  const STEP = MOBILE ? 5.4 : 4.0;
+  /* lekkie rozrzucenie punktów wokół siatki — struktura zostaje, ale wygląda
+     naturalniej (mniej efektu "świecącej zbroi") */
+  const J = STEP * 0.34;
+  const jit = () => (Math.random() - .5) * 2 * J;
+  const buried = (x, y, z, self) => {
+    for (const b of solids) if (b !== self && b.blend && b.inside(x, y, z, 0.05)) return true;
+    return false;
   };
-
-  /* — głowa (proporcje końskie: prosty grzbiet nosa, głęboki policzek, krótka szyja) — */
-  addEllipsoid(0, 8, 0, 52, 45, 40, 420, 'body');      // czaszka
-  addEllipsoid(18, 30, 0, 34, 28, 30, 160, 'body');    // czoło / korona
-  addEllipsoid(45, 5, 0, 40, 26, 26, 210, 'body');     // grzbiet nosa (prosty!)
-  addEllipsoid(78, -14, 0, 52, 27, 24, 330, 'body');   // pysk
-  addEllipsoid(2, -22, 0, 44, 34, 28, 260, 'body');    // policzek / żuchwa
-  addCone(-8, -12, 0, -42, -80, 0, 42, 52, 430, 'neck'); // krótki kikut szyi (rozszerza się ku dołowi)
-  addCone(-18, 45, 16, -30, 80, 21, 9, 1, 70, 'body');   // ucho bliższe
-  addCone(-18, 45, -16, -30, 80, -21, 9, 1, 70, 'body'); // ucho dalsze
-  addCone(15, 52, 0, 52, 125, 0, 8, .8, 260, 'horn');    // róg
-
-  /* — grzywa: pasma wzdłuż karku, płyną w tył-dół — */
-  addTube([-30, 45, 0],  [-70, 25, 8],   [-95, -35, 4],   7, 2.5, 120, 'mane');
-  addTube([-35, 30, -10],[-80, 5, -16],  [-100, -60, -10], 6, 2, 110, 'mane');
-  addTube([-35, 30, 10], [-78, 8, 18],   [-98, -55, 14],  6, 2, 110, 'mane');
-  addTube([-25, 52, 0],  [-60, 45, -6],  [-90, 5, -4],    5, 2, 90, 'mane');
-  addTube([10, 52, 6],   [35, 40, 12],   [42, 18, 10],    4, 1.5, 60, 'mane'); // grzywka
+  solids.forEach(o => {
+    o.grid(STEP, (x, y, z, t) => {
+      if (buried(x, y, z, o)) return;
+      parts.push({ x: x + jit(), y: y + jit(), z: z + jit(), region: o.region, t });
+    });
+  });
+  /* grzywa jako czyste linie (kilka równoległych nitek dla objętości) */
+  maneStrands.forEach(o => {
+    const len = Math.hypot(o.p1[0]-o.p0[0], o.p1[1]-o.p0[1], o.p1[2]-o.p0[2])
+              + Math.hypot(o.p2[0]-o.p1[0], o.p2[1]-o.p1[1], o.p2[2]-o.p1[2]);
+    const nSeg = Math.max(6, Math.round(len / (STEP * 0.9)));
+    const nThreads = 3;
+    for (let k = 0; k < nThreads; k++) {
+      const off = (k - (nThreads - 1) / 2) * 2.4; // rozsunięcie nitek w Z
+      for (let i = 0; i <= nSeg; i++) {
+        const t = i / nSeg;
+        const ax = o.p0[0]+(o.p1[0]-o.p0[0])*t, ay = o.p0[1]+(o.p1[1]-o.p0[1])*t, az = o.p0[2]+(o.p1[2]-o.p0[2])*t;
+        const bx = o.p1[0]+(o.p2[0]-o.p1[0])*t, by = o.p1[1]+(o.p2[1]-o.p1[1])*t, bz = o.p1[2]+(o.p2[2]-o.p1[2])*t;
+        parts.push({ x: ax+(bx-ax)*t + jit(), y: ay+(by-ay)*t + jit(), z: az+(bz-az)*t + off + jit(), region: 'mane', t });
+      }
+    }
+  });
 
   /* miękkie wygaszenie dolnej krawędzi szyi (popiersie) */
-  const kept = parts.filter(p => !(p.region === 'neck' && p.y < -55 && Math.random() > (p.y + 95) / 40));
+  const kept = parts.filter(p => !(p.region === 'neck' && p.y < -66 && Math.random() > (p.y + 108) / 42));
 
   /* wyśrodkowanie na bbox + skala */
-  const SCALE = 1.3;
+  const SCALE = 1.55;
   let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
   kept.forEach(p => { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); });
   const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
@@ -743,18 +826,9 @@ if (renderer) {
     scatters[i * 3 + 1] = Math.cos(ph) * R * 0.85;
     scatters[i * 3 + 2] = Math.sin(ph) * Math.sin(th) * R;
 
-    let c, size_ = 2.0 + Math.random() * 0.9;
-    if (p.region === 'horn') { c = irisAt(p.t); size_ *= 1.25; }
-    else if (p.region === 'mane') { c = irisAt(Math.pow(Math.random(), 1.35)); }
-    else {
-      const r = Math.random();
-      c = r < .52 ? VIOLET.clone().lerp(LILAC, Math.random())
-        : r < .74 ? LILAC.clone()
-        : r < .86 ? CYAN.clone().lerp(VIOLET, .45)
-        : r < .94 ? MAGENTA.clone().lerp(VIOLET, .6) : WHITE.clone();
-    }
-    if (Math.random() < .02) { c = WHITE.clone(); size_ *= 1.6; twinkles[i] = 1.6 + Math.random() * 1.6; }
-    else twinkles[i] = Math.random() * .6;
+    /* jednolity biały — bez zróżnicowania barwy, bez migotania; nieco większe kropki */
+    const c = WHITE, size_ = 2.8 + Math.random() * 0.6;
+    twinkles[i] = 0;
 
     colors.set([c.r, c.g, c.b], i * 3);
     sizes[i] = size_;
@@ -791,11 +865,11 @@ if (renderer) {
                  + vec3(sin(aSeed*6.2832)*60.0, cos(aSeed*4.7)*45.0, sin(aSeed*9.1)*50.0) * (1.0-p);
         vec3 pos = mix(mix(aScatter, mid, p), mix(mid, position, p), p);
 
-        /* delikatny szmer punktów — bryła zostaje sztywna */
+        /* ledwie wyczuwalny szmer — na tyle mały, że linie siatki zostają czytelne */
         pos += vec3(
           sin(uTime*0.9 + aSeed*21.0),
           cos(uTime*0.8 + aSeed*14.0),
-          sin(uTime*0.7 + aSeed*33.0)) * 1.1 * uMotion * p;
+          sin(uTime*0.7 + aSeed*33.0)) * 0.4 * uMotion * p;
 
         /* grzywa płynie: powolna fala w tył-dół */
         float fl = aFlow * (0.6 + 0.4*sin(uTime*0.7 + position.y*0.04 + aSeed*3.0));
@@ -809,8 +883,8 @@ if (renderer) {
         gl_Position = projectionMatrix * mv;
         gl_PointSize = clamp(aSize * uPixelRatio * (900.0 / -mv.z), 0.7, 26.0);
 
-        float tw = 0.78 + 0.22*sin(uTime*(0.5 + aTwinkle*2.2) + aSeed*40.0);
-        vAlpha = p * tw;
+        /* brak migotania — stała jasność (bez efektu "mienienia się") */
+        vAlpha = p * 0.72;
         vColor = aColor;
       }`,
     fragmentShader: /* glsl */`
@@ -819,7 +893,7 @@ if (renderer) {
         float r = length(gl_PointCoord - 0.5);
         if (r > 0.5) discard;
         float a = pow(1.0 - r*2.0, 1.7);
-        gl_FragColor = vec4(vColor * (1.1 + 0.5*a), a * vAlpha);
+        gl_FragColor = vec4(vColor, a * vAlpha);
       }`
   });
   spin.add(new THREE.Points(geo, mat));
@@ -842,8 +916,9 @@ if (renderer) {
       mat.uniforms.uProgress.value = Math.min(1, mat.uniforms.uProgress.value + dt / 2.4);
     mat.uniforms.uTime.value = t;
     /* kołysanie bryły: między profilem a lekkim 3/4 (frontalny widok jest nieczytelny) */
-    spin.rotation.y = -0.22 + Math.sin(t * 0.26) * 0.24 + tx * 0.4;
-    spin.rotation.x = -0.02 + Math.sin(t * 0.19) * 0.07 + ty * 0.22;
+    /* pozostaje głównie w profilu (jak we wzorze BND), z lekkim odchyleniem do 3/4 */
+    spin.rotation.y = -0.05 + Math.sin(t * 0.24) * 0.17 + tx * 0.35;
+    spin.rotation.x = 0.0 + Math.sin(t * 0.19) * 0.05 + ty * 0.18;
     renderer.render(scene, camera);
   };
   const io = new IntersectionObserver(es => {
