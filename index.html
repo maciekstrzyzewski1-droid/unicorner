@@ -247,31 +247,44 @@
   .faq-a p{padding:0 22px 20px 56px;font-size:.92rem;color:var(--muted);}
   .faq-a p b{color:var(--text);font-weight:600;}
 
-  /* ===== GIANT FOOTER WORDMARK ===== */
-  .giant{position:relative;width:100vw;left:50%;margin-left:-50vw;overflow:hidden;line-height:.9;user-select:none;pointer-events:none;margin-bottom:28px;padding:10px 0;}
-  .giant span{
-    display:block;font-family:'Orbitron',var(--disp);font-weight:800;
-    font-size:clamp(2.4rem,13.5vw,12rem);letter-spacing:.14em;text-indent:.14em;
-    text-align:center;white-space:nowrap;
-    color:transparent;-webkit-text-stroke:1.5px rgba(167,139,250,.32);
-    text-shadow:0 0 40px rgba(39,232,255,.12);
-  }
-  @supports (-webkit-background-clip:text){
-    .giant span{
-      background:linear-gradient(180deg,rgba(167,139,250,.22) 0%, rgba(20,17,46,.15) 100%);
-      -webkit-background-clip:text;background-clip:text;
-      -webkit-text-stroke:1.5px rgba(167,139,250,.3);
-    }
-  }
-
-  /* ===== FOOTER ===== */
-  footer{border-top:1px solid var(--line);padding:26px 0 50px;}
-  .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+  /* ===== MEGA STOPKA (wzór BND): jednorożec po lewej nad treścią,
+         treść w lewym rogu, wielki wordmark w prawym dolnym ===== */
+  .mega-foot{position:relative;margin-top:46px;border-top:1px solid var(--line);min-height:700px;overflow:hidden;}
+  .mega-foot #uniHead{position:absolute;left:-30px;bottom:-50px;width:min(700px,96vw);height:min(700px,96vw);pointer-events:none;z-index:1;display:block;}
+  .mf-in{position:relative;min-height:700px;z-index:2;}
+  .mf-left{position:absolute;left:20px;top:40px;max-width:560px;}
+  .mf-left .disclaimer{margin-top:14px;text-shadow:0 1px 10px rgba(7,6,15,.95);}
   .disclaimer{font-size:.78rem;color:var(--muted2);max-width:560px;line-height:1.6;}
   .disclaimer b{color:var(--muted);font-weight:600;}
   .foot-brand{display:flex;align-items:center;gap:9px;color:var(--muted);font-family:var(--disp);font-weight:600;font-size:.95rem;letter-spacing:1px;}
   .foot-brand .fb-uni{color:var(--muted);}
   .foot-brand .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .mf-sys{font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);margin-top:16px;}
+  .mf-sys::before{content:"// ";color:var(--cyan);}
+  .mf-mark{position:absolute;right:20px;bottom:28px;text-align:right;line-height:.88;text-decoration:none;display:block;user-select:none;}
+  .mf-mark .mk-uni{
+    display:block;font-family:'Orbitron',var(--disp);font-weight:900;
+    font-size:clamp(4.2rem,11vw,9.5rem);letter-spacing:.01em;color:#fff;
+    transition:filter .25s ease;
+  }
+  .mf-mark .mk-corner{
+    display:block;font-family:'Orbitron',var(--disp);font-weight:800;
+    font-size:clamp(1.85rem,4.85vw,4.2rem);letter-spacing:.045em;
+    color:transparent;-webkit-text-stroke:2px rgba(167,139,250,.42);
+    transition:filter .25s ease;
+  }
+  .mf-mark:hover .mk-uni{
+    background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;
+    filter:drop-shadow(0 0 30px rgba(167,139,250,.55));
+  }
+  .mf-mark:hover .mk-corner{-webkit-text-stroke-color:rgba(238,240,255,.9);filter:drop-shadow(0 0 18px rgba(39,232,255,.45));}
+  @media(max-width:760px){
+    .mega-foot{display:flex;flex-direction:column;min-height:0;padding:26px 0 24px;}
+    .mega-foot #uniHead{position:relative;order:2;left:-14px;bottom:0;margin:0 0 -34px;}
+    .mf-in{display:contents;}
+    .mf-left{position:static;order:1;padding:0 20px;max-width:none;}
+    .mf-mark{position:static;order:3;margin:0 20px;}
+  }
 
   @media(max-width:560px){
     .hero{padding:34px 0 24px;}
@@ -281,63 +294,33 @@
     .horn{width:34px;height:34px;}
   }
 
-  /* ============================================================
-     CINEMATIC HERO — particle unicorn + scroll narrative
-     warstwy: słowa (z1) < canvas (z2) < treść (z4) < header (z5)
-     ============================================================ */
-  .site-top{position:absolute;top:0;left:0;right:0;z-index:5;}
-  #heroStage{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:0;}
-  #heroStage canvas{width:100%;height:100%;display:block;}
-
-  .hero-scroll{position:relative;z-index:1;height:750vh;}
-
-  /* hero copy — pierwszy viewport */
-  .hero-copy{position:absolute;top:0;left:0;width:100%;height:100vh;display:flex;align-items:center;}
-  .hero-copy .hero{padding:0;}
+  /* ===== CTA w hero ===== */
   .hero-cta{
     display:inline-flex;align-items:center;gap:10px;margin-top:26px;
     font-family:var(--mono);font-size:.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
     color:var(--text);text-decoration:none;border:1px solid var(--line2);border-radius:4px;
-    background:rgba(16,13,34,.55);backdrop-filter:blur(6px);padding:13px 20px;
+    background:rgba(16,13,34,.55);padding:13px 20px;
     transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    animation:riseIn var(--dur-3) var(--ease-out) both;animation-delay:.24s;
   }
   .hero-cta:hover{border-color:var(--accent);box-shadow:0 0 22px rgba(167,139,250,.25);transform:translateY(-2px);}
   .hero-cta .arr{color:var(--cyan);}
-  .hero-cta{animation:riseIn var(--dur-3) var(--ease-out) both;animation-delay:.24s;}
 
-  /* wielkie słowa-obrysy — narracja przewijania */
-  .hw{position:absolute;left:0;width:100%;height:100vh;display:flex;align-items:center;justify-content:center;pointer-events:none;visibility:hidden;}
-  .hw span{
+  /* ===== dekoracyjne słowa-obrysy (lekki parallax 1:1 ze scrollem) ===== */
+  .ow{display:flex;justify-content:center;margin:4px 0 26px;pointer-events:none;user-select:none;overflow:visible;}
+  .ow span{
     font-family:'Orbitron',var(--disp);font-weight:800;
-    font-size:clamp(3.2rem,11.5vw,12rem);letter-spacing:.08em;white-space:nowrap;
-    color:transparent;-webkit-text-stroke:1.5px rgba(167,139,250,.16);
-    text-shadow:0 0 70px rgba(39,232,255,.05);will-change:transform;
+    font-size:clamp(2.6rem,9vw,8rem);letter-spacing:.1em;white-space:nowrap;
+    color:transparent;-webkit-text-stroke:1.5px rgba(167,139,250,.30);
+    text-shadow:0 0 46px rgba(39,232,255,.08);will-change:transform;
   }
-  .hw:nth-child(odd) span{-webkit-text-stroke-color:rgba(39,232,255,.12);}
-  .hw:nth-child(4n) span{-webkit-text-stroke-color:rgba(255,46,151,.10);}
-
-  /* wskazówka przewijania */
-  .scroll-hint{
-    position:absolute;top:calc(100vh - 86px);left:50%;transform:translateX(-50%);
-    display:flex;flex-direction:column;align-items:center;gap:9px;
-    font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted2);
-  }
-  .scroll-hint .sh-line{width:1px;height:34px;background:linear-gradient(180deg,transparent,var(--cyan));overflow:hidden;position:relative;}
-  @media (prefers-reduced-motion: no-preference){
-    .scroll-hint .sh-line::after{content:"";position:absolute;top:-34px;left:0;width:1px;height:14px;background:#fff;animation:shDrop 2.2s ease-in-out infinite;}
-  }
-  @keyframes shDrop{60%,100%{transform:translateY(68px);}}
-
-  /* treść nad canvasem */
-  .z-content{position:relative;z-index:4;}
+  .ow.cy span{-webkit-text-stroke-color:rgba(39,232,255,.24);}
 
   @media(max-width:560px){
-    .hero-copy .hero{padding:0;}
-    .hw span{-webkit-text-stroke-width:1px;}
+    .ow span{-webkit-text-stroke-width:1px;}
   }
   @media (prefers-reduced-motion: reduce){
     .hero-cta{animation:none;}
-    .hero-scroll{height:420vh;}
   }
 </style>
 </head>
@@ -365,33 +348,14 @@
   </div>
 </header>
 
-<!-- ===== CINEMATIC HERO: particle unicorn (Three.js) + scroll narrative ===== -->
-<div id="heroStage" aria-hidden="true"><canvas id="uniCanvas"></canvas></div>
+<div class="wrap">
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>materiały studenckie · UEP</span>
+    <h1>Egzaminy ogarnięte <span class="grad" data-text="po ludzku.">po ludzku.</span></h1>
+    <p class="lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
+    <a class="hero-cta" href="#przedmioty">Przeglądaj przedmioty <span class="arr">↓</span></a>
+  </section>
 
-<section class="hero-scroll" id="heroScroll">
-  <div class="hero-copy">
-    <div class="wrap">
-      <section class="hero">
-        <span class="eyebrow"><span class="dot"></span>materiały studenckie · UEP</span>
-        <h1>Egzaminy ogarnięte <span class="grad" data-text="po ludzku.">po ludzku.</span></h1>
-        <p class="lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
-        <a class="hero-cta" id="heroCta" href="#przedmioty">Przeglądaj przedmioty <span class="arr">↓</span></a>
-      </section>
-    </div>
-  </div>
-
-  <div class="hw" style="top:6vh"><span>CONTEXT</span></div>
-  <div class="hw" style="top:94vh"><span>ENGINEERING</span></div>
-  <div class="hw" style="top:208vh"><span>ARCHITECTURE</span></div>
-  <div class="hw" style="top:297vh"><span>INTELLIGENCE</span></div>
-  <div class="hw" style="top:406vh"><span>ORCHESTRATION</span></div>
-  <div class="hw" style="top:495vh"><span>AUTOMATION</span></div>
-  <div class="hw" style="top:603vh"><span>TRANSFORMATION</span></div>
-
-  <div class="scroll-hint" aria-hidden="true"><span class="sh-line"></span>scroll</div>
-</section>
-
-<div class="wrap z-content">
   <!-- OPINIE — pasek przewijany (czyta reviews.json; gdy brak opinii → napis-placeholder) -->
   <section class="reviews" id="reviews" style="display:none">
     <div class="reviews-head">
@@ -400,6 +364,8 @@
     </div>
     <div class="marquee"><div class="marquee-track" id="reviewTrack"></div></div>
   </section>
+
+  <div class="ow" aria-hidden="true"><span>CONTEXT</span></div>
 
   <div class="row-label" data-rev id="przedmioty"><h2>Przedmioty</h2><span class="count" id="count"></span><span class="line"></span></div>
   <div class="grid" id="grid"></div>
@@ -410,28 +376,35 @@
     <div class="item"><h4>Skąd się bierze</h4><p>To nasze własne opracowania na bazie zajęć. Robione, bo sami się z tego uczymy — i bo działa.</p></div>
   </div>
 
+  <div class="ow cy" aria-hidden="true"><span>INTELLIGENCE</span></div>
+
   <div class="row-label" data-rev><h2>FAQ</h2><span class="line"></span></div>
   <div class="faq" id="faq"></div>
 </div>
 
-<div class="giant z-content" aria-hidden="true"><span>UNICORNER</span></div>
-
-<div class="wrap z-content">
-  <footer>
-    <div class="foot-grid">
+<!-- ===== MEGA STOPKA (wzór BND): jednorożec po lewej nad treścią, wordmark w prawym dolnym ===== -->
+<footer class="mega-foot">
+  <canvas id="uniHead" aria-hidden="true"></canvas>
+  <div class="wrap mf-in">
+    <div class="mf-left">
+      <div class="foot-brand">
+        <svg class="horn" style="width:18px;height:18px;animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span><span class="fb-uni">uni</span><span class="fb-corner">corner</span></span>
+      </div>
       <p class="disclaimer">
         <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą.
         Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.
         Opinie są dobrowolne; publikujemy podane imię i treść, nie zbieramy adresów e-mail.
         Bez gwarancji kompletności: ucz się też z oryginalnych źródeł.
       </p>
-      <div class="foot-brand">
-        <svg class="horn" style="width:18px;height:18px;animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
-        <span><span class="fb-uni">uni</span><span class="fb-corner">corner</span></span>
-      </div>
+      <p class="mf-sys">© 2026 unicorner · system online</p>
     </div>
-  </footer>
-</div>
+    <a class="mf-mark" href="#" id="mfMark" aria-label="unicorner — wróć na górę strony">
+      <span class="mk-uni">Uni</span>
+      <span class="mk-corner">corner</span>
+    </a>
+  </div>
+</footer>
 
 <script>
 /* ===== PRZEDMIOTY — dodanie nowego = jeden wpis =====
@@ -613,204 +586,180 @@ fetch(REVIEWS_URL)
 </script>
 
 <!-- ============================================================
-     CINEMATIC HERO ENGINE
-     Three.js (cząsteczkowy jednorożec, własny shader, additive glow)
-     + GSAP ScrollTrigger (narracja scrollowa) + Lenis (smooth scroll)
+     BRYŁA 3D Z CZĄSTECZEK — animacja w miejscu (canvas #uniHead)
+     + lekki parallax słów-obrysów (bez bibliotek scrollowych)
      ============================================================ -->
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/lenis@1.1.14/dist/lenis.min.js"></script>
+<script>
+/* parallax słów-obrysów: transform 1:1 ze scrollem (kompozytor, zero opóźnień) */
+(function(){
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var els = Array.prototype.slice.call(document.querySelectorAll('.ow'));
+  if (!els.length) return;
+  var tick = false;
+  function upd(){
+    tick = false;
+    var vh = window.innerHeight;
+    for (var i = 0; i < els.length; i++){
+      var r = els[i].getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) continue;
+      var p = (r.top + r.height/2 - vh/2) / (vh/2 + r.height/2); /* -1..1 */
+      els[i].firstElementChild.style.transform = 'translateX(' + (p * (i % 2 ? -14 : 14)).toFixed(2) + 'vw)';
+    }
+  }
+  window.addEventListener('scroll', function(){ if(!tick){ tick = true; requestAnimationFrame(upd); } }, {passive:true});
+  window.addEventListener('resize', upd);
+  upd();
+})();
+</script>
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
 </script>
 <script type="module">
 import * as THREE from 'three';
 
+/* ============================================================
+   GŁOWA JEDNOROŻCA Z CZĄSTECZEK — bryła przestrzenna (jak sześcian)
+   złożona z brył 3D: elipsoidy (czaszka/nos/pysk/policzek),
+   stożki (róg/uszy/szyja), tuby (grzywa). Punkty próbkowane
+   z POWIERZCHNI brył → czytelny kształt z każdego kąta.
+   Bryła sztywna: kołysze się w całości; tylko grzywa lekko płynie.
+   ============================================================ */
 const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const MOBILE = Math.min(innerWidth, innerHeight) < 700 || window.matchMedia('(pointer:coarse)').matches;
-gsap.registerPlugin(ScrollTrigger);
+const canvas = document.getElementById('uniHead');
+let renderer = null;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'high-performance' });
+} catch (e) { canvas.style.display = 'none'; }
 
-/* ---------- Lenis smooth scroll (pomijany przy reduced motion) ---------- */
-let lenis = null;
-if (!RM && typeof Lenis !== 'undefined') {
-  lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
-  lenis.on('scroll', ScrollTrigger.update);
-  gsap.ticker.add(t => lenis.raf(t * 1000));
-  gsap.ticker.lagSmoothing(0);
-}
-const cta = document.getElementById('heroCta');
-if (cta && lenis) cta.addEventListener('click', e => {
-  e.preventDefault();
-  lenis.scrollTo('#przedmioty', { offset: -28, duration: 1.6 });
-});
+if (renderer) {
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25));
+  renderer.setClearColor(0x000000, 0);
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(38, 1, 1, 3000);
+  camera.position.set(0, 0, 660);
+  const spin = new THREE.Group(); scene.add(spin);
 
-/* ---------- sylwetka jednorożca: rysowana warstwowo, próbkowana do cząsteczek ----------
-   Trzy warstwy 1024×1024: korpus / grzywa+ogon / róg.
-   Warstwa decyduje o kolorze, amplitudzie "wiatru" i głębi (z).            */
-function buildSilhouette() {
-  const S = 1024;
-  const mk = () => {
-    const c = document.createElement('canvas'); c.width = c.height = S;
-    const x = c.getContext('2d', { willReadFrequently: true });
-    x.fillStyle = '#fff'; return x;
+  const size = () => { const s = canvas.clientWidth || 520; renderer.setSize(s, s, false); };
+  size(); addEventListener('resize', size);
+
+  /* ----- paleta ----- */
+  const IRIS = [[0, 0x27e8ff], [.38, 0xa78bfa], [.72, 0xff2e97], [1, 0xffd84a]].map(([t, h]) => [t, new THREE.Color(h)]);
+  const irisAt = t => {
+    t = Math.min(1, Math.max(0, t));
+    for (let i = 1; i < IRIS.length; i++) if (t <= IRIS[i][0]) {
+      const [t0, c0] = IRIS[i - 1], [t1, c1] = IRIS[i];
+      return c0.clone().lerp(c1, (t - t0) / (t1 - t0));
+    }
+    return IRIS[IRIS.length - 1][1].clone();
   };
-  const dot = (x, cx, cy, r) => { x.beginPath(); x.arc(cx, cy, Math.max(r, .5), 0, 6.2832); x.fill(); };
-  const tube = (x, x1, y1, x2, y2, w1, w2, n = 30) => {
-    for (let i = 0; i <= n; i++) { const t = i / n; dot(x, x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, (w1 + (w2 - w1) * t) / 2); }
+  const VIOLET = new THREE.Color(0x8b5cf6), LILAC = new THREE.Color(0xc4b5fd),
+        CYAN = new THREE.Color(0x27e8ff), MAGENTA = new THREE.Color(0xff2e97), WHITE = new THREE.Color(0xeef0ff);
+
+  /* ----- geometria: bryły 3D → punkty na powierzchni -----
+     Układ: głowa patrzy w +X, Y w górę, Z do widza.        */
+  const parts = [];
+  const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
+
+  const addEllipsoid = (cx, cy, cz, rx, ry, rz, n, region) => {
+    for (let i = 0; i < n; i++) {
+      let vx = gauss(), vy = gauss(), vz = gauss();
+      const L = Math.hypot(vx, vy, vz) || 1;
+      parts.push({ x: cx + vx / L * rx, y: cy + vy / L * ry, z: cz + vz / L * rz, region, t: 0 });
+    }
   };
-  const blob = (x, cx, cy, rx, ry, rot = 0) => {
-    x.save(); x.translate(cx, cy); x.rotate(rot); x.scale(1, ry / rx); dot(x, 0, 0, rx); x.restore();
+  const addCone = (x0, y0, z0, x1, y1, z1, r0, r1, n, region) => {
+    const ax = x1 - x0, ay = y1 - y0, az = z1 - z0;
+    const L = Math.hypot(ax, ay, az);
+    const ux = ax / L, uy = ay / L, uz = az / L;
+    let px = -uy, py = ux, pz = 0, pl = Math.hypot(px, py, pz);
+    if (pl < .01) { px = 0; py = -uz; pz = uy; pl = Math.hypot(px, py, pz); }
+    px /= pl; py /= pl; pz /= pl;
+    const qx = uy * pz - uz * py, qy = uz * px - ux * pz, qz = ux * py - uy * px;
+    for (let i = 0; i < n; i++) {
+      const t = Math.random(), r = r0 + (r1 - r0) * t, th = Math.random() * 6.2832;
+      const c = Math.cos(th) * r, s = Math.sin(th) * r;
+      parts.push({ x: x0 + ax * t + px * c + qx * s, y: y0 + ay * t + py * c + qy * s, z: z0 + az * t + pz * c + qz * s, region, t });
+    }
   };
-  // pasmo po krzywej kwadratowej z falowaniem (grzywa/ogon)
-  const strand = (x, p0, p1, p2, w1, w2, wave, waves, phase, n = 70) => {
-    for (let i = 0; i <= n; i++) {
-      const t = i / n;
-      const ax = p0[0] + (p1[0] - p0[0]) * t, ay = p0[1] + (p1[1] - p0[1]) * t;
-      const bx = p1[0] + (p2[0] - p1[0]) * t, by = p1[1] + (p2[1] - p1[1]) * t;
-      const px = ax + (bx - ax) * t, py = ay + (by - ay) * t;
-      let dx = bx - ax, dy = by - ay; const L = Math.hypot(dx, dy) || 1;
-      const off = Math.sin(t * Math.PI * waves + phase) * wave;
-      dot(x, px + (-dy / L) * off, py + (dx / L) * off, (w1 + (w2 - w1) * t) / 2);
+  const addTube = (p0, p1, p2, r0, r1, n, region) => {  // tuba po krzywej kwadratowej
+    for (let i = 0; i < n; i++) {
+      const t = Math.random();
+      const ax = p0[0] + (p1[0] - p0[0]) * t, ay = p0[1] + (p1[1] - p0[1]) * t, az = p0[2] + (p1[2] - p0[2]) * t;
+      const bx = p1[0] + (p2[0] - p1[0]) * t, by = p1[1] + (p2[1] - p1[1]) * t, bz = p1[2] + (p2[2] - p1[2]) * t;
+      const x = ax + (bx - ax) * t, y = ay + (by - ay) * t, z = az + (bz - az) * t;
+      const r = r0 + (r1 - r0) * t, th = Math.random() * 6.2832;
+      /* przybliżona rama prostopadła (promień mały — wystarczy) */
+      let dx = bx - ax, dy = by - ay, dz = bz - az; const L = Math.hypot(dx, dy, dz) || 1;
+      dx /= L; dy /= L; dz /= L;
+      let px = -dy, py = dx, pz = 0, pl = Math.hypot(px, py, pz);
+      if (pl < .01) { px = 0; py = -dz; pz = dy; pl = Math.hypot(px, py, pz); }
+      px /= pl; py /= pl; pz /= pl;
+      const qx = dy * pz - dz * py, qy = dz * px - dx * pz, qz = dx * py - dy * px;
+      const c = Math.cos(th) * r, s = Math.sin(th) * r;
+      parts.push({ x: x + px * c + qx * s, y: y + py * c + qy * s, z: z + pz * c + qz * s, region, t });
     }
   };
 
-  const body = mk(), mane = mk(), horn = mk();
+  /* — głowa (proporcje końskie: prosty grzbiet nosa, głęboki policzek, krótka szyja) — */
+  addEllipsoid(0, 8, 0, 52, 45, 40, 420, 'body');      // czaszka
+  addEllipsoid(18, 30, 0, 34, 28, 30, 160, 'body');    // czoło / korona
+  addEllipsoid(45, 5, 0, 40, 26, 26, 210, 'body');     // grzbiet nosa (prosty!)
+  addEllipsoid(78, -14, 0, 52, 27, 24, 330, 'body');   // pysk
+  addEllipsoid(2, -22, 0, 44, 34, 28, 260, 'body');    // policzek / żuchwa
+  addCone(-8, -12, 0, -42, -80, 0, 42, 52, 430, 'neck'); // krótki kikut szyi (rozszerza się ku dołowi)
+  addCone(-18, 45, 16, -30, 80, 21, 9, 1, 70, 'body');   // ucho bliższe
+  addCone(-18, 45, -16, -30, 80, -21, 9, 1, 70, 'body'); // ucho dalsze
+  addCone(15, 52, 0, 52, 125, 0, 8, .8, 260, 'horn');    // róg
 
-  /* korpus (profil, głowa w prawo) */
-  blob(body, 470, 545, 180, 100, -0.08);        // tułów
-  dot(body, 605, 525, 80);                       // klatka
-  dot(body, 335, 545, 92);                       // zad
-  dot(body, 470, 590, 70);                       // brzuch
-  tube(body, 600, 500, 700, 380, 100, 60);       // szyja dolna
-  tube(body, 700, 380, 762, 300, 60, 44);        // szyja górna
-  dot(body, 778, 282, 42);                       // głowa
-  dot(body, 795, 270, 30);                       // czoło
-  tube(body, 790, 278, 862, 308, 44, 16);        // pysk
-  dot(body, 862, 310, 10);                       // nozdrza
-  tube(body, 775, 318, 838, 330, 24, 9);         // żuchwa
-  tube(body, 752, 244, 728, 196, 14, 2);         // ucho
-  tube(body, 590, 610, 640, 690, 42, 22);        // przednia noga (uniesiona)
-  tube(body, 640, 690, 628, 770, 20, 12);
-  tube(body, 628, 770, 618, 800, 11, 9); dot(body, 616, 806, 11);
-  tube(body, 560, 615, 535, 715, 38, 20);        // przednia noga 2
-  tube(body, 535, 715, 545, 800, 18, 10); dot(body, 546, 806, 10);
-  tube(body, 350, 600, 315, 700, 52, 22);        // tylna noga
-  tube(body, 315, 700, 345, 795, 20, 11); dot(body, 348, 802, 11);
-  tube(body, 400, 615, 408, 715, 40, 18);        // tylna noga 2
-  tube(body, 408, 715, 390, 800, 16, 9); dot(body, 388, 806, 10);
+  /* — grzywa: pasma wzdłuż karku, płyną w tył-dół — */
+  addTube([-30, 45, 0],  [-70, 25, 8],   [-95, -35, 4],   7, 2.5, 120, 'mane');
+  addTube([-35, 30, -10],[-80, 5, -16],  [-100, -60, -10], 6, 2, 110, 'mane');
+  addTube([-35, 30, 10], [-78, 8, 18],   [-98, -55, 14],  6, 2, 110, 'mane');
+  addTube([-25, 52, 0],  [-60, 45, -6],  [-90, 5, -4],    5, 2, 90, 'mane');
+  addTube([10, 52, 6],   [35, 40, 12],   [42, 18, 10],    4, 1.5, 60, 'mane'); // grzywka
 
-  /* grzywa + ogon (warstwa "flow") */
-  for (let s = 0; s < 6; s++)
-    strand(mane, [768 - 6 * s, 236 + 10 * s], [700 - 14 * s, 300 + 18 * s], [586 - 18 * s, 420 + 14 * s], 13, 2, 6 + 2 * s, 2.5, s * 1.3);
-  strand(mane, [776, 246], [742, 258], [716, 286], 9, 2, 4, 2, 0.5);   // grzywka
-  for (let s = 0; s < 5; s++)
-    strand(mane, [310, 500 + 6 * s], [216 - 8 * s, 560 + 14 * s], [158 - 10 * s, 668 + 22 * s], 11, 2, 8 + 3 * s, 2, s * 0.9);
+  /* miękkie wygaszenie dolnej krawędzi szyi (popiersie) */
+  const kept = parts.filter(p => !(p.region === 'neck' && p.y < -55 && Math.random() > (p.y + 95) / 40));
 
-  /* róg — sygnatura marki, iris gradient */
-  tube(horn, 790, 246, 866, 132, 13, 2); dot(horn, 790, 248, 7);
+  /* wyśrodkowanie na bbox + skala */
+  const SCALE = 1.3;
+  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
+  kept.forEach(p => { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); });
+  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
 
-  /* próbkowanie pikseli → pule punktów wg regionu */
-  const dB = body.getImageData(0, 0, S, S).data;
-  const dM = mane.getImageData(0, 0, S, S).data;
-  const dH = horn.getImageData(0, 0, S, S).data;
-  const pools = { body: [], mane: [], horn: [] };
-  for (let y = 0; y < S; y += 2) for (let x = 0; x < S; x += 2) {
-    const a = (y * S + x) * 4 + 3;
-    if (dH[a] > 60) pools.horn.push(x, y);
-    else if (dM[a] > 60) pools.mane.push(x, y);
-    else if (dB[a] > 60) pools.body.push(x, y);
-  }
-  return pools;
-}
-
-/* ---------- paleta (spójna z siteową: cyan/fiolet/magenta/złoto) ---------- */
-const IRIS = [[0, 0x27e8ff], [.38, 0xa78bfa], [.72, 0xff2e97], [1, 0xffd84a]].map(([t, h]) => [t, new THREE.Color(h)]);
-function irisAt(t) {
-  for (let i = 1; i < IRIS.length; i++) if (t <= IRIS[i][0]) {
-    const [t0, c0] = IRIS[i - 1], [t1, c1] = IRIS[i];
-    return c0.clone().lerp(c1, (t - t0) / (t1 - t0));
-  }
-  return IRIS[IRIS.length - 1][1].clone();
-}
-const VIOLET = new THREE.Color(0x8b5cf6), LILAC = new THREE.Color(0xc4b5fd),
-      CYAN = new THREE.Color(0x27e8ff), MAGENTA = new THREE.Color(0xff2e97), WHITE = new THREE.Color(0xeef0ff);
-
-/* ---------- inicjalizacja WebGL (z bezpiecznym wycofaniem) ---------- */
-const stage = document.getElementById('heroStage');
-let renderer = null;
-try {
-  renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('uniCanvas'), alpha: true, antialias: false, powerPreference: 'high-performance' });
-} catch (e) { stage.remove(); }
-
-if (renderer) {
-  renderer.setPixelRatio(Math.min(devicePixelRatio, MOBILE ? 1.6 : 1.75));
-  renderer.setSize(innerWidth, innerHeight);
-  renderer.setClearColor(0x000000, 0);
-
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, innerWidth / innerHeight, 1, 4000);
-  camera.position.set(0, 70, 920);
-  const rig = new THREE.Group();   // scroll (GSAP)
-  const aim = new THREE.Group();   // orientacja kadru (portret)
-  const sway = new THREE.Group();  // pointer parallax (lerp)
-  aim.add(sway); rig.add(aim); scene.add(rig);
-
-  /* ----- geometria cząsteczek ----- */
-  const pools = buildSilhouette();
-  const BUDGET = MOBILE ? 6500 : 15000;
-  const share = { body: .68, mane: .245, horn: .075 };
-  const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
-  const pick = (arr, n) => { // losowe n punktów (x,y) z puli
-    const out = []; const m = arr.length / 2;
-    for (let i = 0; i < n; i++) { const j = (Math.random() * m) | 0; out.push(arr[j * 2], arr[j * 2 + 1]); }
-    return out;
-  };
-  const parts = [];
-  for (const [region, frac] of Object.entries(share)) {
-    const pts = pick(pools[region], Math.round(BUDGET * frac));
-    const depth = region === 'body' ? 38 : region === 'mane' ? 22 : 7;
-    for (let i = 0; i < pts.length; i += 2) parts.push({ px: pts[i], py: pts[i + 1], region, depth });
-  }
-  const N = parts.length;
+  const N = kept.length;
   const targets = new Float32Array(N * 3), scatters = new Float32Array(N * 3),
         colors = new Float32Array(N * 3), sizes = new Float32Array(N),
         seeds = new Float32Array(N), flows = new Float32Array(N), twinkles = new Float32Array(N);
-  const HORN_Y0 = 250, HORN_Y1 = 132; // baza→szpic rogu (px)
-  // środek ramki (bbox), nie centroid — gęste nogi/ogon ściągałyby kadr w lewo
-  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
-  parts.forEach(p => { x0 = Math.min(x0, p.px); x1 = Math.max(x1, p.px); y0 = Math.min(y0, p.py); y1 = Math.max(y1, p.py); });
-  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
 
   for (let i = 0; i < N; i++) {
-    const p = parts[i];
-    const jx = (Math.random() - .5) * 2.2, jy = (Math.random() - .5) * 2.2;
-    targets[i * 3]     = (p.px + jx - cx) * 0.5;
-    targets[i * 3 + 1] = (cy - p.py - jy) * 0.5;
-    targets[i * 3 + 2] = gauss() * p.depth;
+    const p = kept[i];
+    targets[i * 3]     = (p.x - cx) * SCALE;
+    targets[i * 3 + 1] = (p.y - cy) * SCALE;
+    targets[i * 3 + 2] = p.z * SCALE;
 
-    // chmura startowa: sfera wokół sceny
-    const th = Math.random() * 6.2832, ph = Math.acos(2 * Math.random() - 1), R = 480 + Math.random() * 430;
+    const th = Math.random() * 6.2832, ph = Math.acos(2 * Math.random() - 1), R = 260 + Math.random() * 300;
     scatters[i * 3]     = Math.sin(ph) * Math.cos(th) * R;
-    scatters[i * 3 + 1] = Math.cos(ph) * R * 0.8;
-    scatters[i * 3 + 2] = Math.sin(ph) * Math.sin(th) * R * 0.7;
+    scatters[i * 3 + 1] = Math.cos(ph) * R * 0.85;
+    scatters[i * 3 + 2] = Math.sin(ph) * Math.sin(th) * R;
 
-    let c, size = 1.3 + Math.random() * 1.3;
-    if (p.region === 'horn') { c = irisAt(1 - (p.py - HORN_Y1) / (HORN_Y0 - HORN_Y1)); size *= 1.35; }
+    let c, size_ = 2.0 + Math.random() * 0.9;
+    if (p.region === 'horn') { c = irisAt(p.t); size_ *= 1.25; }
     else if (p.region === 'mane') { c = irisAt(Math.pow(Math.random(), 1.35)); }
     else {
       const r = Math.random();
-      c = r < .5 ? VIOLET.clone().lerp(LILAC, Math.random())
-        : r < .72 ? LILAC.clone()
-        : r < .84 ? CYAN.clone().lerp(VIOLET, .45)
-        : r < .93 ? MAGENTA.clone().lerp(VIOLET, .6) : WHITE.clone();
+      c = r < .52 ? VIOLET.clone().lerp(LILAC, Math.random())
+        : r < .74 ? LILAC.clone()
+        : r < .86 ? CYAN.clone().lerp(VIOLET, .45)
+        : r < .94 ? MAGENTA.clone().lerp(VIOLET, .6) : WHITE.clone();
     }
-    if (Math.random() < .025) { c = WHITE.clone(); size *= 1.9; twinkles[i] = 1.6 + Math.random() * 1.6; }
+    if (Math.random() < .02) { c = WHITE.clone(); size_ *= 1.6; twinkles[i] = 1.6 + Math.random() * 1.6; }
     else twinkles[i] = Math.random() * .6;
-    if (MOBILE) size *= 1.25;
+
     colors.set([c.r, c.g, c.b], i * 3);
-    sizes[i] = size;
+    sizes[i] = size_;
     seeds[i] = Math.random();
-    flows[i] = p.region === 'mane' ? .65 + Math.random() * .35 : p.region === 'horn' ? .08 : Math.random() * .16;
+    flows[i] = p.region === 'mane' ? .7 + Math.random() * .3 : p.region === 'horn' ? .03 : .05 + Math.random() * .05;
   }
 
   const geo = new THREE.BufferGeometry();
@@ -825,81 +774,43 @@ if (renderer) {
   const mat = new THREE.ShaderMaterial({
     transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
     uniforms: {
-      uTime: { value: 0 }, uProgress: { value: 0 }, uDissolve: { value: 0 },
-      uPixelRatio: { value: Math.min(devicePixelRatio, 2) }, uMotion: { value: RM ? 0.12 : 1 }
+      uTime: { value: 0 }, uProgress: { value: RM ? 1 : 0 },
+      uPixelRatio: { value: Math.min(devicePixelRatio, 1.25) }, uMotion: { value: RM ? 0.12 : 1 }
     },
     vertexShader: /* glsl */`
       attribute vec3 aScatter; attribute vec3 aColor;
       attribute float aSize, aSeed, aFlow, aTwinkle;
-      uniform float uTime, uProgress, uDissolve, uPixelRatio, uMotion;
+      uniform float uTime, uProgress, uPixelRatio, uMotion;
       varying vec3 vColor; varying float vAlpha;
 
-      vec3 mod289(vec3 x){return x-floor(x*(1.0/289.0))*289.0;}
-      vec4 mod289(vec4 x){return x-floor(x*(1.0/289.0))*289.0;}
-      vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
-      vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
-      float snoise(vec3 v){
-        const vec2 C=vec2(1.0/6.0,1.0/3.0); const vec4 D=vec4(0.0,0.5,1.0,2.0);
-        vec3 i=floor(v+dot(v,C.yyy)); vec3 x0=v-i+dot(i,C.xxx);
-        vec3 g=step(x0.yzx,x0.xyz); vec3 l=1.0-g;
-        vec3 i1=min(g.xyz,l.zxy); vec3 i2=max(g.xyz,l.zxy);
-        vec3 x1=x0-i1+C.xxx; vec3 x2=x0-i2+C.yyy; vec3 x3=x0-D.yyy;
-        i=mod289(i);
-        vec4 p=permute(permute(permute(i.z+vec4(0.0,i1.z,i2.z,1.0))+i.y+vec4(0.0,i1.y,i2.y,1.0))+i.x+vec4(0.0,i1.x,i2.x,1.0));
-        float n_=0.142857142857; vec3 ns=n_*D.wyz-D.xzx;
-        vec4 j=p-49.0*floor(p*ns.z*ns.z);
-        vec4 x_=floor(j*ns.z); vec4 y_=floor(j-7.0*x_);
-        vec4 x=x_*ns.x+ns.yyyy; vec4 y=y_*ns.x+ns.yyyy;
-        vec4 h=1.0-abs(x)-abs(y);
-        vec4 b0=vec4(x.xy,y.xy); vec4 b1=vec4(x.zw,y.zw);
-        vec4 s0=floor(b0)*2.0+1.0; vec4 s1=floor(b1)*2.0+1.0;
-        vec4 sh=-step(h,vec4(0.0));
-        vec4 a0=b0.xzyw+s0.xzyw*sh.xxyy; vec4 a1=b1.xzyw+s1.xzyw*sh.zzww;
-        vec3 p0=vec3(a0.xy,h.x); vec3 p1=vec3(a0.zw,h.y);
-        vec3 p2=vec3(a1.xy,h.z); vec3 p3=vec3(a1.zw,h.w);
-        vec4 norm=taylorInvSqrt(vec4(dot(p0,p0),dot(p1,p1),dot(p2,p2),dot(p3,p3)));
-        p0*=norm.x;p1*=norm.y;p2*=norm.z;p3*=norm.w;
-        vec4 m=max(0.6-vec4(dot(x0,x0),dot(x1,x1),dot(x2,x2),dot(x3,x3)),0.0); m=m*m;
-        return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
-      }
-
       void main(){
-        /* montaż: kaskadowo wg ziarna, po łuku (quasi-bezier) */
+        /* montaż: kaskadowo wg ziarna, po łuku */
         float p = clamp(uProgress*1.7 - aSeed*0.7, 0.0, 1.0);
         p = p*p*(3.0-2.0*p);
         vec3 mid = mix(aScatter, position, 0.5)
-                 + vec3(sin(aSeed*6.2832)*90.0, cos(aSeed*4.7)*70.0, sin(aSeed*9.1)*80.0) * (1.0-p);
+                 + vec3(sin(aSeed*6.2832)*60.0, cos(aSeed*4.7)*45.0, sin(aSeed*9.1)*50.0) * (1.0-p);
         vec3 pos = mix(mix(aScatter, mid, p), mix(mid, position, p), p);
 
-        /* organiczny dryf — grzywa/ogon najmocniej ("wiatr") */
-        vec3 np = position*0.012;
-        vec3 dr = vec3(
-          snoise(np + vec3(0.0, uTime*0.16, 0.0)),
-          snoise(np + vec3(13.7, uTime*0.13, 5.1)),
-          snoise(np + vec3(-8.2, uTime*0.11, 21.3)));
-        dr.x -= aFlow * (0.55 + 0.45*sin(uTime*0.6 + position.y*0.02));
-        float amp = mix(1.1, 7.5, aFlow) * uMotion;
-        pos += dr * amp * p;
+        /* delikatny szmer punktów — bryła zostaje sztywna */
+        pos += vec3(
+          sin(uTime*0.9 + aSeed*21.0),
+          cos(uTime*0.8 + aSeed*14.0),
+          sin(uTime*0.7 + aSeed*33.0)) * 1.1 * uMotion * p;
 
-        /* oddech */
-        pos *= 1.0 + 0.006*sin(uTime*0.8)*p*uMotion;
+        /* grzywa płynie: powolna fala w tył-dół */
+        float fl = aFlow * (0.6 + 0.4*sin(uTime*0.7 + position.y*0.04 + aSeed*3.0));
+        pos.x -= fl * 6.0 * uMotion * p;
+        pos.z += aFlow * sin(uTime*0.5 + aSeed*6.2832) * 3.0 * uMotion * p;
 
-        /* pojedyncze cząsteczki odrywają się i wracają */
-        float wander = smoothstep(0.986, 1.0, sin(uTime*0.07 + aSeed*6.2832)) * uMotion;
-        pos += normalize(dr + vec3(0.001)) * wander * 26.0 * p;
-
-        /* rozpad: unoszenie i rozproszenie */
-        float d = clamp(uDissolve*1.7 - aSeed*0.7, 0.0, 1.0);
-        d = d*d*(3.0-2.0*d);
-        vec3 gone = position + dr*90.0 + vec3(dr.x*130.0, 130.0 + aSeed*170.0, dr.z*50.0);
-        pos = mix(pos, gone, d);
+        /* oddech całej bryły */
+        pos *= 1.0 + 0.010*sin(uTime*0.8)*p*uMotion;
 
         vec4 mv = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mv;
-        gl_PointSize = clamp(aSize * uPixelRatio * (480.0 / -mv.z), 0.7, 30.0);
+        gl_PointSize = clamp(aSize * uPixelRatio * (900.0 / -mv.z), 0.7, 26.0);
 
-        float tw = 0.72 + 0.28*sin(uTime*(0.5 + aTwinkle*2.2) + aSeed*40.0);
-        vAlpha = mix(0.14, 1.0, p) * (1.0 - d) * tw;
+        float tw = 0.78 + 0.22*sin(uTime*(0.5 + aTwinkle*2.2) + aSeed*40.0);
+        vAlpha = p * tw;
         vColor = aColor;
       }`,
     fragmentShader: /* glsl */`
@@ -911,103 +822,38 @@ if (renderer) {
         gl_FragColor = vec4(vColor * (1.1 + 0.5*a), a * vAlpha);
       }`
   });
-  sway.add(new THREE.Points(geo, mat));
+  spin.add(new THREE.Points(geo, mat));
 
-  /* ----- kadr responsywny (portret: mniejsza sylwetka, uniesiona do środka) ----- */
-  const frame = () => {
-    camera.aspect = innerWidth / innerHeight;
-    camera.updateProjectionMatrix();
-    const a = camera.aspect;
-    rig.scale.setScalar(a < 0.62 ? 0.46 : a < 0.8 ? 0.56 : a < 1.15 ? 0.82 : 1);
-    rig.position.y = a < 0.8 ? 26 : 0;
-    aim.rotation.y = a < 0.8 ? 0.38 : 0;  // portret: łeb lekko ku kamerze, węższy rzut
-    renderer.setSize(innerWidth, innerHeight);
-  };
-  frame();
-  addEventListener('resize', frame);
-  window.__uniDebug = () => {
-    const proj = (lx, ly, lz) => {
-      sway.updateWorldMatrix(true, false);
-      const v = new THREE.Vector3(lx, ly, lz).applyMatrix4(sway.matrixWorld).project(camera);
-      return { sx: Math.round((v.x * .5 + .5) * innerWidth), sy: Math.round((-v.y * .5 + .5) * innerHeight) };
-    };
-    const hornTip = { x: (866 - cx) * 0.5, y: (cy - 132) * 0.5 };
-    const tailTip = { x: (148 - cx) * 0.5, y: (cy - 690) * 0.5 };
-    const cr = renderer.domElement.getBoundingClientRect();
-    return {
-      canvasRect: { x: Math.round(cr.x), y: Math.round(cr.y), w: Math.round(cr.width), h: Math.round(cr.height) },
-      camX: +camera.position.x.toFixed(2), camRot: camera.rotation.toArray().slice(0,3).map(v => +(+v).toFixed(3)),
-      swayRot: [+sway.rotation.x.toFixed(3), +sway.rotation.y.toFixed(3)],
-      cam: { y: +camera.position.y.toFixed(1), z: +camera.position.z.toFixed(1) },
-      rigScale: +rig.scale.x.toFixed(2), rigY: rig.position.y, rotY: +rig.rotation.y.toFixed(2), aspect: +camera.aspect.toFixed(2),
-      assemble: +mat.uniforms.uProgress.value.toFixed(2), n: N,
-      origin: proj(0, 0, 0), horn: proj(hornTip.x, hornTip.y, 0), tail: proj(tailTip.x, tailTip.y, 0)
-    };
-  };
-
-  /* ----- parallax wskaźnika (delikatny, tylko desktop) ----- */
+  /* ----- interakcja wskaźnika (delikatna, tylko desktop) ----- */
   let tx = 0, ty = 0;
-  if (!RM && !MOBILE) addEventListener('pointermove', e => {
-    tx = (e.clientX / innerWidth - .5);
-    ty = (e.clientY / innerHeight - .5);
-  }, { passive: true });
+  if (!RM && window.matchMedia('(pointer:fine)').matches)
+    addEventListener('pointermove', e => {
+      tx = e.clientX / innerWidth - .5;
+      ty = e.clientY / innerHeight - .5;
+    }, { passive: true });
 
-  /* ----- narracja scrollowa (scrub po całym #heroScroll) ----- */
-  const U = { assemble: 0, dissolve: 0 };
-  const intro = { v: 0 };
-  gsap.to(intro, { v: 1, duration: 2.6, ease: 'power2.out', delay: .2 });
-  gsap.to(stage, { opacity: 1, duration: 1.4, delay: .1 });
-
-  const tl = gsap.timeline({
-    scrollTrigger: { trigger: '#heroScroll', start: 'top top', end: 'bottom bottom', scrub: 1.2 }
-  });
-  tl.to(U, { assemble: 1, duration: 2.2, ease: 'none' }, 0)
-    .fromTo(camera.position, { z: 920, y: 70 }, { z: 640, y: 12, duration: 2.6, ease: 'power1.out' }, 0)
-    .fromTo(rig.rotation, { y: -0.30 }, { y: 0.22, duration: 7.5, ease: 'none' }, 0)
-    .to(camera.position, { z: 596, y: 2, duration: 2.4, ease: 'sine.inOut' }, 2.8)
-    .to(U, { dissolve: 1, duration: 1.7, ease: 'none' }, 5.6)
-    .to(camera.position, { z: 860, y: -50, duration: 1.9, ease: 'sine.in' }, 5.6);
-
-  /* canvas znika zanim treść wejdzie (fromTo: odporne na wczytanie strony w połowie scrolla) */
-  gsap.fromTo(stage, { autoAlpha: 1 }, {
-    autoAlpha: 0, ease: 'none', immediateRender: false,
-    scrollTrigger: { trigger: '#heroScroll', start: 'bottom 118%', end: 'bottom 96%', scrub: true }
-  });
-
-  /* ----- render ----- */
-  gsap.ticker.add(() => {
+  /* ----- pętla: tylko gdy canvas widoczny ----- */
+  let raf = null, prev = 0;
+  const loop = () => {
+    raf = requestAnimationFrame(loop);
     const t = performance.now() / 1000;
+    const dt = Math.min(t - prev, .05); prev = t;
+    if (mat.uniforms.uProgress.value < 1)
+      mat.uniforms.uProgress.value = Math.min(1, mat.uniforms.uProgress.value + dt / 2.4);
     mat.uniforms.uTime.value = t;
-    mat.uniforms.uProgress.value = Math.max(U.assemble, intro.v * 0.16);
-    mat.uniforms.uDissolve.value = U.dissolve;
-    sway.rotation.y += (tx * 0.07 - sway.rotation.y) * 0.045;
-    sway.rotation.x += (ty * 0.045 - sway.rotation.x) * 0.045;
+    /* kołysanie bryły: między profilem a lekkim 3/4 (frontalny widok jest nieczytelny) */
+    spin.rotation.y = -0.22 + Math.sin(t * 0.26) * 0.24 + tx * 0.4;
+    spin.rotation.x = -0.02 + Math.sin(t * 0.19) * 0.07 + ty * 0.22;
     renderer.render(scene, camera);
-  });
+  };
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (e.isIntersecting && raf === null) { prev = performance.now() / 1000; loop(); }
+      else if (!e.isIntersecting && raf !== null) { cancelAnimationFrame(raf); raf = null; }
+    });
+  }, { rootMargin: '60px' });
+  io.observe(canvas);
 }
-
-/* ---------- typografia: parallax poziomy + wygaszanie na krawędziach ----------
-   Jedna oś czasu na słowo (wejście→hold→zejście) — dwa osobne tweeny na tej samej
-   właściwości łapały zły stan początkowy przy wymuszonym refresh() ScrollTriggera. */
-document.querySelectorAll('.hw').forEach((w, i) => {
-  const span = w.querySelector('span');
-  const dir = i % 2 ? 1 : -1;
-  gsap.fromTo(span, { xPercent: dir * 24 }, {
-    xPercent: dir * -24, ease: 'none',
-    scrollTrigger: { trigger: w, start: 'top bottom', end: 'bottom top', scrub: 0.6 + (i % 3) * 0.55 }
-  });
-  gsap.timeline({
-    scrollTrigger: { trigger: w, start: 'top bottom', end: 'bottom top', scrub: true }
-  })
-    .fromTo(w, { autoAlpha: 0 }, { autoAlpha: 1, duration: .3, ease: 'none' }, .10)
-    .to(w, { autoAlpha: 0, duration: .3, ease: 'none' }, .62);
-});
-
-/* ---------- hero copy + wskazówka: wygaszenie na starcie scrolla ---------- */
-gsap.to(['.hero-copy', '.scroll-hint'], {
-  autoAlpha: 0, y: -60, ease: 'none',
-  scrollTrigger: { trigger: '#heroScroll', start: 'top top', end: () => '+=' + innerHeight * 0.8, scrub: true }
-});
 </script>
 </body>
 </html>
