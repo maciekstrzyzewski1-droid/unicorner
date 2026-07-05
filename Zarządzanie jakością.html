@@ -603,7 +603,14 @@ const RAW = [
   {set:9,q:"Koszty braków ZEWNĘTRZNYCH to te, które...",opts:["ujawnia klient — reklamacje, naprawy gwarancyjne, wycofanie wyrobu z rynku","wykrywane są wewnątrz zakładu podczas kontroli, jeszcze przed wysyłką wyrobu do klienta","ponosi się z góry na szkolenia pracowników i planowanie jakości","dotyczą kontroli materiałów wejściowych i prób odbiorczych"],ans:0,exp:"Braki wewnętrzne = wykryte w zakładzie (selekcja, złom, przerób). Zewnętrzne = wykryte przez klienta (reklamacje, gwarancje, koszty wizerunkowe)."},
   {set:9,q:"Metafora 'góry lodowej' kosztów jakości podkreśla, że...",opts:["większość kosztów jest ukryta pod powierzchnią (utrata klientów, reputacja, koszty społeczne)","wszystkie koszty jakości są w pełni widoczne i łatwe do wychwycenia w standardowych księgach rachunkowych","koszty jakości są zawsze wielokrotnie niższe od osiąganych zysków","koszty ukryte można w praktyce całkowicie pominąć w analizie"],ans:0,exp:"Nad powierzchnią = koszty księgowe (widoczne). Pod powierzchnią (większość!) = koszty ukryte: utrata klientów, reputacja, koszty społeczne."},
   {set:9,q:"Pożądana — z punktu widzenia optymalizacji — zależność między kosztami jakości to...",opts:["(koszty zapobiegania + koszty oceny) większe niż koszty niezgodności","koszty niezgodności większe niż wszystkie pozostałe kategorie razem","całkowicie zerowe koszty zapobiegania i oceny jakości","idealna równość wszystkich czterech kategorii kosztów jakości"],ans:0,exp:"Pożądane: (zapobieganie + ocena) > niezgodności. Inwestować w prewencję, by ograniczać straty wewnętrzne i zewnętrzne."},
-  {set:9,q:"Ile funkcji pełni rachunek kosztów jakości (informacyjna, analityczna, optymalizacyjna, kontrolna, motywacyjna)?",opts:["5","3","7","10"],ans:0,exp:"5 funkcji: informacyjna, analityczna, optymalizacyjna, kontrolna, motywacyjna. Pojawia się często na kolokwium."}
+  {set:9,q:"Ile funkcji pełni rachunek kosztów jakości (informacyjna, analityczna, optymalizacyjna, kontrolna, motywacyjna)?",opts:["5","3","7","10"],ans:0,exp:"5 funkcji: informacyjna, analityczna, optymalizacyjna, kontrolna, motywacyjna. Pojawia się często na kolokwium."},
+
+  // ===== DZIAŁ 11: Narzędzia i techniki Lean (70-74) =====
+  {set:10,q:"Która kombinacja metod jest najbardziej odpowiednia do identyfikacji i priorytetyzacji głównych przyczyn problemu jakościowego?",opts:["Ishikawa + 5 Why + Pareto","Zarządzanie wizualne + brainstorming","Kaizen + Poka-Yoke","PDPC + 5W2H"],ans:0,exp:"Ishikawa identyfikuje kategorie przyczyn, 5 Why drąży do przyczyny źródłowej, a Pareto priorytetyzuje, które przyczyny odpowiadają za największy udział problemu — klasyczna sekwencja do tego celu."},
+  {set:10,q:"Które z poniższych działań najbardziej narusza założenia klasycznej burzy mózgów Osborna?",opts:["Natychmiastowa ocena wykonalności każdego pomysłu","Generowanie maksymalnej liczby pomysłów w krótkim czasie","Łączenie i rozwijanie pomysłów uczestników","Zachęcanie do niestandardowych i odważnych idei"],ans:0,exp:"Podstawowa zasada burzy mózgów to odroczenie oceny — żadnej krytyki na etapie generowania pomysłów. Ocena wykonalności wprost łamie tę zasadę; pozostałe trzy to cele klasycznego brainstormingu."},
+  {set:10,q:"W metodzie 5S, co jest głównym celem etapu 'Seiri' (Selekcja)?",opts:["Usunięcie ze stanowiska pracy wszystkich niepotrzebnych przedmiotów","Wyznaczenie stałych miejsc dla narzędzi","Utrzymanie dyscypliny wśród pracowników","Opracowanie standardów czyszczenia"],ans:0,exp:"Seiri = selekcja = oddzielenie potrzebnego od niepotrzebnego i eliminacja zbędnych rzeczy. Wyznaczanie miejsc dla narzędzi to już 2S — Seiton."},
+  {set:10,q:"Jak najlepiej opisać relację między Kaizen a Poka-Yoke?",opts:["Poka-Yoke jest narzędziem wspierającym Kaizen w eliminacji błędów","Są to metody konkurencyjne","Kaizen dotyczy tylko strategii, a Poka-Yoke tylko produkcji","Kaizen eliminuje potrzebę stosowania Poka-Yoke"],ans:0,exp:"Poka-Yoke to konkretne narzędzie zapobiegania błędom, wpisujące się w filozofię ciągłego doskonalenia Kaizen — jedno nie konkuruje z drugim, Poka-Yoke realizuje Kaizen na poziomie operacyjnym."},
+  {set:10,q:"Czym jest 'Strategia Czerwonej Etykiety' w kontekście metody 5S?",opts:["Metodą znakowania przedmiotów, co do których nie ma pewności, czy są potrzebne","Oznaczaniem dróg ewakuacyjnych","Oznaczaniem produktów o najwyższej jakości","Sygnalizacją awarii maszyny (system Andon)"],ans:0,exp:"Czerwona etykieta (red tag) przykleja się do przedmiotów wątpliwych podczas etapu Seiri — trafiają do strefy kwarantanny, gdzie decyduje się o ich zachowaniu, przeniesieniu lub utylizacji."}
 ];
 
 const SETS = [
@@ -617,7 +624,8 @@ const SETS = [
   {name:"Znormalizowane systemy zarządzania",range:[51,57]},
   {name:"Akredytacja i certyfikacja",range:[57,64]},
   {name:"Koszty jakości",range:[64,70]},
-  {name:"Wszystkie pytania (cały materiał)",range:[0,70]}
+  {name:"Narzędzia i techniki Lean (5S, Kaizen, Poka-Yoke)",range:[70,75]},
+  {name:"Wszystkie pytania (cały materiał)",range:[0,75]}
 ];
 
 /* ============ KOMPENDIUM render ============ */
