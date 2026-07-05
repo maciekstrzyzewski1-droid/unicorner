@@ -7,7 +7,7 @@
 <meta name="description" content="Fiszki, zadania i quizy do egzaminów. Zrobione po ludzku przez studentów, dla studentów.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@600;700;800;900&family=Audiowide&family=Syncopate:wght@700&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
@@ -247,55 +247,154 @@
   .faq-a p{padding:0 22px 20px 56px;font-size:.92rem;color:var(--muted);}
   .faq-a p b{color:var(--text);font-weight:600;}
 
-  /* ===== MEGA STOPKA (wzór BND): jednorożec po lewej nad treścią,
-         treść w lewym rogu, wielki wordmark w prawym dolnym ===== */
-  .mega-foot{position:relative;margin-top:46px;border-top:1px solid var(--line);min-height:700px;overflow:hidden;}
-  .mega-foot #uniHead{position:absolute;left:-40px;top:50%;transform:translateY(-50%);width:min(880px,66vw);height:min(880px,66vw);pointer-events:none;z-index:1;display:block;}
-  .mf-in{position:relative;min-height:700px;z-index:2;}
-  /* górny blok (label → marka → tagline) — zwarty, w rogu */
-  .mf-left{position:absolute;left:24px;top:48px;max-width:430px;display:flex;flex-direction:column;gap:16px;}
-  .mf-eyebrow{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--muted2);}
-  .mf-eyebrow::before{content:"// ";color:var(--cyan);}
-  .foot-brand{display:flex;align-items:center;gap:11px;color:var(--muted);font-family:var(--disp);font-weight:700;font-size:1.5rem;letter-spacing:.5px;}
-  .foot-brand .horn{width:26px;height:26px;}
+  /* ============================================================
+     GENERATOR AI — feature radialny: chip-przycisk w centrum,
+     opis rozproszony wokół, cienkie linie zbiegające do przycisku
+     ============================================================ */
+  .ai-feature{
+    position:relative;margin:14px 0 36px;border:1px solid var(--line2);border-radius:4px;overflow:hidden;
+    background:
+      radial-gradient(760px 340px at 50% 48%, rgba(39,232,255,.05), transparent 62%),
+      radial-gradient(560px 300px at 6% 108%, rgba(255,46,151,.05), transparent 55%),
+      linear-gradient(160deg,var(--surface) 0%,var(--ink2) 100%);
+    padding:18px 22px 20px;
+    clip-path:polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
+  }
+  .ai-feature::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);z-index:6;}
+  .ai-feature::after{content:"";position:absolute;top:8px;left:8px;width:14px;height:14px;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);opacity:.55;z-index:6;}
+  .aif-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative;z-index:5;}
+  .aif-badge{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid var(--line2);background:rgba(39,232,255,.05);padding:6px 12px;border-radius:3px;box-shadow:inset 0 0 14px rgba(39,232,255,.08);}
+  .aif-dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);animation:aifPulse 1.8s ease-in-out infinite;}
+  @keyframes aifPulse{50%{opacity:.3;box-shadow:0 0 4px var(--cyan);}}
+  .aif-ver{font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted2);}
+
+  /* scena radialna */
+  .aif-stage{position:relative;height:430px;}
+  .aif-links{position:absolute;inset:0;width:100%;height:100%;z-index:2;pointer-events:none;overflow:visible;}
+  .aif-links .lk{fill:none;stroke:url(#aifLink);stroke-width:2;vector-effect:non-scaling-stroke;stroke-linejoin:round;stroke-linecap:round;
+    filter:drop-shadow(0 0 5px rgba(255,216,74,.45));
+    stroke-dasharray:1600;stroke-dashoffset:1600;animation:aifDraw 1.2s var(--ease-out,ease) forwards;animation-delay:var(--ld,.25s);}
+  @keyframes aifDraw{to{stroke-dashoffset:0;}}
+
+  /* węzły opisu (tytuł + krótki opis) — koniec linii je podkreśla */
+  .aif-nodes{display:contents;}
+  .aif-node{position:absolute;z-index:3;width:23%;opacity:0;animation:aifFade .7s ease forwards;animation-delay:var(--nd,.6s);}
+  .aif-node.l{text-align:right;} .aif-node.r{text-align:left;}
+  .nd-title{font-family:'Syncopate',var(--disp);font-weight:700;font-size:.8rem;letter-spacing:2px;text-transform:uppercase;line-height:1.2;
+    background:linear-gradient(90deg,#fff0bf,#ffd84a 55%,#e6b53f);-webkit-background-clip:text;background-clip:text;color:transparent;
+    text-shadow:0 0 20px rgba(255,216,74,.16);}
+  .nd-desc{font-family:'Inter',sans-serif;font-size:.82rem;line-height:1.55;color:var(--muted);margin-top:15px;min-height:2.4em;text-shadow:0 1px 10px rgba(7,6,15,.95);}
+  @keyframes aifFade{to{opacity:1;}}
+
+  /* rdzeń: soczysty przycisk + podpis pod nim */
+  .aif-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:4;display:flex;flex-direction:column;align-items:center;gap:16px;}
+  .aic-btn{position:relative;width:196px;height:178px;display:grid;place-items:center;text-decoration:none;
+    filter:
+      drop-shadow(0 0 26px rgba(167,139,250,.5))
+      drop-shadow(11px 14px 26px rgba(255,46,151,.42))
+      drop-shadow(-13px 12px 26px rgba(39,232,255,.42))
+      drop-shadow(0 16px 22px rgba(0,0,0,.5));
+    transition:transform .2s ease, filter .3s ease;}
+  .hx{position:absolute;inset:0;clip-path:polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);}
+  /* wyciekające barwy — rozmyty, większy heksagon w kolorach strony */
+  .hx-leak{inset:-15%;z-index:0;filter:blur(17px);opacity:.85;
+    background:conic-gradient(from 210deg,#27e8ff,#a78bfa,#ff2e97,#ffd84a,#27e8ff);animation:aicSpin 17s linear infinite;}
+  /* soczysta twarz przycisku — pełny gradient iris */
+  .hx-face{z-index:1;background:linear-gradient(135deg,#3bf0ff 0%,#a78bfa 38%,#ff4fb0 66%,#ffd84a 100%);
+    background-size:220% 220%;animation:aicSweep 8s ease-in-out infinite;}
+  .hx-inner{inset:4px;z-index:2;mix-blend-mode:multiply;opacity:.55;
+    background:radial-gradient(95% 75% at 50% 96%, rgba(8,5,22,.7), transparent 55%);}
+  .hx-gloss{inset:0;z-index:3;mix-blend-mode:screen;
+    background:radial-gradient(78% 52% at 50% 1%, rgba(255,255,255,.6), rgba(255,255,255,0) 60%);}
+  @keyframes aicSpin{to{transform:rotate(360deg);}}
+  @keyframes aicSweep{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+  .aic-ic{position:relative;z-index:4;width:64px;height:64px;color:#0b0820;filter:drop-shadow(0 1px 1px rgba(255,255,255,.55));}
+  .aic-btn:hover{transform:translateY(-4px) scale(1.02);
+    filter:drop-shadow(0 0 34px rgba(167,139,250,.7)) drop-shadow(15px 18px 30px rgba(255,46,151,.55)) drop-shadow(-17px 16px 30px rgba(39,232,255,.55)) drop-shadow(0 20px 26px rgba(0,0,0,.55));}
+  .aic-btn:active{transform:translateY(2px) scale(.985);}
+  .aic-btn:focus-visible{outline:2px solid var(--cyan);outline-offset:10px;border-radius:12px;}
+  .aic-label{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;}
+  .aic-name{font-family:'Syncopate',var(--disp);font-weight:700;font-size:1rem;letter-spacing:2px;text-transform:uppercase;min-height:1.1em;
+    background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .aic-cta{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--cyan);display:inline-flex;align-items:center;gap:6px;text-shadow:0 0 10px rgba(39,232,255,.4);transition:color .2s ease;}
+  .aif-core:hover .aic-cta{color:#fff;}
+  .aic-cta .arr{transition:transform .2s ease;}
+  .aif-core:hover .aic-cta .arr{transform:translate(2px,-2px);}
+
+  /* scramble/decoder — wspólny wygląd generowania */
+  .scr{color:var(--muted2);opacity:.8;}
+  .rz{color:#fff;text-shadow:0 0 10px var(--cyan),0 0 4px var(--cyan);}
+  .cursor{color:var(--cyan);text-shadow:0 0 8px var(--cyan);animation:aifCaret .8s steps(1) infinite;}
+  @keyframes aifCaret{50%{opacity:0;}}
+
+  @media(max-width:760px){
+    .aif-stage{height:auto;display:flex;flex-direction:column;align-items:center;gap:18px;padding:14px 0 4px;}
+    .aif-links{display:none;}
+    .aif-core{position:static;transform:none;order:1;}
+    .aif-nodes{display:flex;flex-direction:column;gap:10px;width:100%;order:2;}
+    .aif-node{position:static;width:100%;opacity:1;animation:none;text-align:left!important;
+      border:1px solid var(--line);border-left:2px solid var(--gold);background:rgba(11,9,24,.5);border-radius:4px;padding:12px 15px;}
+    .nd-desc{margin-top:6px;min-height:0;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .hx-leak,.hx-face{animation:none!important;}
+    .aif-links .lk{animation:none!important;stroke-dashoffset:0!important;}
+    .aif-node{opacity:1!important;animation:none!important;}
+  }
+
+  /* ============================================================
+     STOPKA — wielki napis UNICORNER (cyberpunk) + prosta stopka
+     ============================================================ */
+  .site-foot{position:relative;margin-top:54px;border-top:1px solid var(--line);padding-top:28px;overflow:hidden;}
+  .giant-deco{display:flex;align-items:center;gap:16px;max-width:1040px;margin:0 auto 2px;padding:0 20px;}
+  .giant-deco .gd-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent);}
+  .giant-deco .gd-tag{font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);text-shadow:0 0 10px rgba(39,232,255,.45);white-space:nowrap;}
+  .giant{position:relative;width:100vw;left:50%;margin-left:-50vw;line-height:.82;user-select:none;pointer-events:none;text-align:center;padding:6px 0 2px;}
+  .giant span.gw{
+    position:relative;display:inline-block;
+    font-family:'Audiowide',var(--disp);font-weight:400;
+    font-size:clamp(2.2rem,12.5vw,11rem);letter-spacing:.02em;white-space:nowrap;
+    background:linear-gradient(100deg,#27e8ff 0%,#a78bfa 32%,#ff2e97 64%,#ffd84a 100%);
+    background-size:220% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    -webkit-text-stroke:1px rgba(167,139,250,.22);
+    filter:drop-shadow(0 0 26px rgba(167,139,250,.3));
+    animation:giantSweep 9s linear infinite;
+  }
+  @keyframes giantSweep{to{background-position:220% 0;}}
+  .giant span.gw::before,.giant span.gw::after{
+    content:attr(data-text);position:absolute;left:0;top:0;pointer-events:none;opacity:0;mix-blend-mode:screen;-webkit-text-stroke:0;
+  }
+  .giant span.gw::before{color:var(--cyan);}
+  .giant span.gw::after{color:var(--magenta);}
+  .giant-scan{position:absolute;left:0;right:0;top:0;height:34%;pointer-events:none;z-index:2;
+    background:linear-gradient(180deg,rgba(39,232,255,.16),transparent);mix-blend-mode:screen;opacity:0;
+    animation:giantScan 6s ease-in-out infinite;}
+  @keyframes giantScan{0%,100%{transform:translateY(-40%);opacity:0;}12%{opacity:.9;}52%{transform:translateY(240%);opacity:.5;}64%{opacity:0;}}
+  @media (prefers-reduced-motion: no-preference){
+    .giant:hover span.gw::before{animation:giantGl 1.4s steps(1) 1;}
+    .giant:hover span.gw::after{animation:giantGl2 1.4s steps(1) 1;}
+  }
+  @keyframes giantGl{0%,100%{opacity:0;transform:none;}20%{opacity:.75;transform:translate(-5px,2px);clip-path:inset(8% 0 60% 0);}45%{opacity:.75;transform:translate(4px,-2px);clip-path:inset(62% 0 6% 0);}60%{opacity:0;}}
+  @keyframes giantGl2{0%,100%{opacity:0;transform:none;}30%{opacity:.7;transform:translate(6px,1px);clip-path:inset(34% 0 40% 0);}55%{opacity:.7;transform:translate(-5px,-1px);clip-path:inset(72% 0 4% 0);}70%{opacity:0;}}
+
+  .foot-simple{padding:14px 20px 48px;}
+  .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:26px;flex-wrap:wrap;}
+  .disclaimer{font-size:.76rem;color:var(--muted2);max-width:560px;line-height:1.7;}
+  .disclaimer b{color:var(--muted);font-weight:600;}
+  .foot-side{display:flex;flex-direction:column;align-items:flex-end;gap:9px;text-align:right;}
+  .foot-brand{display:flex;align-items:center;gap:10px;color:var(--muted);font-family:var(--disp);font-weight:700;font-size:1.15rem;letter-spacing:.5px;}
+  .foot-brand .horn{width:22px;height:22px;}
   .foot-brand .fb-uni{color:var(--text);}
   .foot-brand .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  .mf-tag{font-family:var(--disp);font-size:1.12rem;font-weight:600;letter-spacing:.3px;color:var(--text);line-height:1.4;max-width:360px;text-shadow:0 1px 12px rgba(7,6,15,.95);}
-  .mf-tag b{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
-  /* dolny blok (nota prawna + copyright) — cienki, przy dolnej krawędzi */
-  .mf-bottom{position:absolute;left:24px;bottom:26px;max-width:540px;display:flex;flex-direction:column;gap:11px;}
-  .disclaimer{font-size:.74rem;color:var(--muted2);line-height:1.7;text-shadow:0 1px 10px rgba(7,6,15,.98);}
-  .disclaimer b{color:var(--muted);font-weight:600;}
-  .mf-sys{font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted2);text-shadow:0 1px 10px rgba(7,6,15,.98);}
-  .mf-sys::before{content:"// ";color:var(--cyan);}
-  /* wielki wordmark w prawym dolnym rogu — powiększony, szerszy rozstaw liter */
-  .mf-mark{position:absolute;right:26px;bottom:34px;text-align:right;line-height:.86;text-decoration:none;display:block;user-select:none;}
-  /* każdy człon podświetla się OSOBNO po najechaniu */
-  .mf-mark .mk-uni, .mf-mark .mk-corner{display:block;width:fit-content;margin-left:auto;cursor:pointer;}
-  .mf-mark .mk-uni{
-    font-family:'Orbitron',var(--disp);font-weight:900;
-    font-size:clamp(5rem,14vw,12.5rem);letter-spacing:.08em;color:#fff;
-    transition:filter .3s ease;
+  .foot-sys{font-family:var(--mono);font-size:.68rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
+  .foot-sys::before{content:"// ";color:var(--cyan);}
+  @media(max-width:640px){
+    .foot-grid{flex-direction:column;}
+    .foot-side{align-items:flex-start;text-align:left;}
   }
-  .mf-mark .mk-corner{
-    font-family:'Orbitron',var(--disp);font-weight:800;
-    font-size:clamp(2rem,5.6vw,4.8rem);letter-spacing:.34em;text-indent:.34em;
-    color:transparent;-webkit-text-stroke:1.7px rgba(167,139,250,.45);
-    transition:filter .3s ease,-webkit-text-stroke-color .3s ease;
-  }
-  .mf-mark .mk-uni:hover{
-    background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;
-    filter:drop-shadow(0 0 34px rgba(167,139,250,.6));
-  }
-  .mf-mark .mk-corner:hover{-webkit-text-stroke-color:rgba(238,240,255,.92);filter:drop-shadow(0 0 20px rgba(39,232,255,.5));}
-  @media(max-width:760px){
-    .mega-foot{display:flex;flex-direction:column;min-height:0;padding:30px 0 24px;}
-    .mega-foot #uniHead{position:relative;order:2;left:-14px;top:auto;transform:none;bottom:0;width:min(560px,96vw);height:min(560px,96vw);margin:6px 0 -24px;}
-    .mf-in{display:contents;}
-    .mf-left{position:static;order:1;padding:0 22px;max-width:none;gap:16px;}
-    .mf-bottom{position:static;order:3;padding:0 22px;max-width:none;margin-top:10px;}
-    .mf-mark{position:static;order:4;margin:12px 22px 0;align-self:flex-end;}
-    .mf-mark .mk-corner{letter-spacing:.24em;text-indent:.24em;}
+  @media (prefers-reduced-motion: reduce){
+    .giant span.gw,.giant-scan,.aif-dot,.ai-hex .trail{animation:none!important;}
   }
 
   @media(max-width:560px){
@@ -368,6 +467,75 @@
     <a class="hero-cta" href="#przedmioty">Przeglądaj przedmioty <span class="arr">↓</span></a>
   </section>
 
+  <!-- ===== GENERATOR AI — najnowsza aktualizacja (radialny feature) ===== -->
+  <section class="ai-feature" data-rev aria-labelledby="aic-name">
+    <div class="aif-head">
+      <span class="aif-badge"><span class="aif-dot"></span>Najnowsza aktualizacja</span>
+      <span class="aif-ver">v1.0 · solidny krok naprzód</span>
+    </div>
+
+    <div class="aif-stage">
+      <!-- wyraziste linie z zagięciem, które podkreślają tekst -->
+      <svg class="aif-links" viewBox="0 0 1000 430" preserveAspectRatio="none" aria-hidden="true">
+        <defs>
+          <radialGradient id="aifLink" cx="500" cy="185" r="470" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#eafcff" stop-opacity=".95"/>
+            <stop offset=".5" stop-color="#a78bfa" stop-opacity=".85"/>
+            <stop offset="1" stop-color="#ffd84a" stop-opacity=".85"/>
+          </radialGradient>
+        </defs>
+        <polyline class="lk" style="--ld:.30s" points="424,150 300,86 92,86"/>
+        <polyline class="lk" style="--ld:.55s" points="424,238 300,292 92,292"/>
+        <polyline class="lk" style="--ld:.42s" points="576,150 700,86 908,86"/>
+        <polyline class="lk" style="--ld:.67s" points="576,238 700,292 908,292"/>
+      </svg>
+
+      <!-- opisy rozproszone wokół (koniec linii je podkreśla) -->
+      <div class="aif-nodes">
+        <div class="aif-node l" style="left:7%;top:15%;--nd:.55s">
+          <div class="nd-title" data-scramble>Materiał</div>
+          <div class="nd-desc" data-scramble>Wrzucasz własne notatki, skrypt albo PDF — nic nie przepisujesz.</div>
+        </div>
+        <div class="aif-node l" style="left:7%;top:63%;--nd:.80s">
+          <div class="nd-title" data-scramble>Fiszki AI</div>
+          <div class="nd-desc" data-scramble>Pojęcia i definicje wyciągnięte prosto z Twojego materiału.</div>
+        </div>
+        <div class="aif-node r" style="left:70%;top:15%;--nd:.68s">
+          <div class="nd-title" data-scramble>Quiz AI</div>
+          <div class="nd-desc" data-scramble>Pytania z natychmiastową informacją zwrotną po każdej odpowiedzi.</div>
+        </div>
+        <div class="aif-node r" style="left:70%;top:63%;--nd:.92s">
+          <div class="nd-title" data-scramble>Pod egzamin</div>
+          <div class="nd-desc" data-scramble>Uczysz się dokładnie tego, co realnie masz na swoim egzaminie.</div>
+        </div>
+      </div>
+
+      <!-- rdzeń: soczysty chip-przycisk + podpis pod nim -->
+      <div class="aif-core">
+        <a class="aic-btn" href="generator.html" aria-label="Uruchom Generator AI">
+          <span class="hx hx-leak" aria-hidden="true"></span>
+          <span class="hx hx-face" aria-hidden="true"></span>
+          <span class="hx hx-inner" aria-hidden="true"></span>
+          <span class="hx hx-gloss" aria-hidden="true"></span>
+          <svg class="aic-ic" viewBox="0 0 48 48" fill="none" aria-hidden="true">
+            <rect x="16" y="16" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2.4"/>
+            <rect x="21" y="21" width="6" height="6" rx="1.2" fill="currentColor"/>
+            <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <path d="M19 16v-5M24 16v-6M29 16v-5"/>
+              <path d="M19 32v5M24 32v6M29 32v5"/>
+              <path d="M16 19h-5M16 24h-6M16 29h-5"/>
+              <path d="M32 19h5M32 24h6M32 29h5"/>
+            </g>
+          </svg>
+        </a>
+        <span class="aic-label">
+          <span class="aic-name" id="aic-name" data-scramble>Generator AI</span>
+          <span class="aic-cta">Uruchom generator <span class="arr">↗</span></span>
+        </span>
+      </div>
+    </div>
+  </section>
+
   <!-- OPINIE — pasek przewijany (czyta reviews.json; gdy brak opinii → napis-placeholder) -->
   <section class="reviews" id="reviews" style="display:none">
     <div class="reviews-head">
@@ -394,31 +562,33 @@
   <div class="faq" id="faq"></div>
 </div>
 
-<!-- ===== MEGA STOPKA (wzór BND): jednorożec po lewej nad treścią, wordmark w prawym dolnym ===== -->
-<footer class="mega-foot">
-  <canvas id="uniHead" aria-hidden="true"></canvas>
-  <div class="wrap mf-in">
-    <div class="mf-left">
-      <span class="mf-eyebrow">materiały studenckie · UEP</span>
-      <div class="foot-brand">
-        <svg class="horn" style="animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
-        <span><span class="fb-uni">uni</span><span class="fb-corner">corner</span></span>
-      </div>
-      <p class="mf-tag">Fiszki, zadania i quizy do egzaminów — <b>w jednym miejscu, po ludzku.</b></p>
-    </div>
-    <div class="mf-bottom">
+<!-- ===== STOPKA: wielki napis UNICORNER (cyberpunk) + prosta stopka ===== -->
+<footer class="site-foot">
+  <div class="giant-deco" aria-hidden="true">
+    <span class="gd-line"></span>
+    <span class="gd-tag">// system online · unicorner_os</span>
+    <span class="gd-line"></span>
+  </div>
+  <div class="giant">
+    <span class="gw" data-text="UNICORNER">UNICORNER</span>
+    <span class="giant-scan" aria-hidden="true"></span>
+  </div>
+  <div class="wrap foot-simple">
+    <div class="foot-grid">
       <p class="disclaimer">
         <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą.
         Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.
         Opinie są dobrowolne; publikujemy podane imię i treść, nie zbieramy adresów e-mail.
         Bez gwarancji kompletności: ucz się też z oryginalnych źródeł.
       </p>
-      <p class="mf-sys">© 2026 unicorner · system online</p>
+      <div class="foot-side">
+        <div class="foot-brand">
+          <svg class="horn" style="animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+          <span><span class="fb-uni">uni</span><span class="fb-corner">corner</span></span>
+        </div>
+        <p class="foot-sys">© 2026 unicorner · system online</p>
+      </div>
     </div>
-    <a class="mf-mark" href="#" id="mfMark" aria-label="unicorner — wróć na górę strony">
-      <span class="mk-uni">Uni</span>
-      <span class="mk-corner">corner</span>
-    </a>
   </div>
 </footer>
 
@@ -602,8 +772,7 @@ fetch(REVIEWS_URL)
 </script>
 
 <!-- ============================================================
-     BRYŁA 3D Z CZĄSTECZEK — animacja w miejscu (canvas #uniHead)
-     + lekki parallax słów-obrysów (bez bibliotek scrollowych)
+     Lekki parallax dekoracyjnych słów-obrysów (bez bibliotek scrollowych)
      ============================================================ -->
 <script>
 /* parallax słów-obrysów: transform 1:1 ze scrollem (kompozytor, zero opóźnień) */
@@ -627,308 +796,41 @@ fetch(REVIEWS_URL)
   upd();
 })();
 </script>
-<script type="importmap">
-{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
-</script>
-<script type="module">
-import * as THREE from 'three';
-
-/* ============================================================
-   GŁOWA JEDNOROŻCA Z CZĄSTECZEK — bryła przestrzenna (jak sześcian)
-   złożona z brył 3D: elipsoidy (czaszka/nos/pysk/policzek),
-   stożki (róg/uszy/szyja), tuby (grzywa). Punkty próbkowane
-   z POWIERZCHNI brył → czytelny kształt z każdego kąta.
-   Bryła sztywna: kołysze się w całości; tylko grzywa lekko płynie.
-   ============================================================ */
-const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const canvas = document.getElementById('uniHead');
-let renderer = null;
-try {
-  renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: false, powerPreference: 'high-performance' });
-} catch (e) { canvas.style.display = 'none'; }
-
-if (renderer) {
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.25));
-  renderer.setClearColor(0x000000, 0);
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(38, 1, 1, 3000);
-  camera.position.set(0, 0, 700);
-  const spin = new THREE.Group(); scene.add(spin);
-
-  const size = () => { const s = canvas.clientWidth || 700; renderer.setSize(s, s, false); };
-  size(); addEventListener('resize', size);
-
-  /* ----- paleta ----- */
-  const IRIS = [[0, 0x27e8ff], [.38, 0xa78bfa], [.72, 0xff2e97], [1, 0xffd84a]].map(([t, h]) => [t, new THREE.Color(h)]);
-  const irisAt = t => {
-    t = Math.min(1, Math.max(0, t));
-    for (let i = 1; i < IRIS.length; i++) if (t <= IRIS[i][0]) {
-      const [t0, c0] = IRIS[i - 1], [t1, c1] = IRIS[i];
-      return c0.clone().lerp(c1, (t - t0) / (t1 - t0));
+<script>
+/* ===== Generator AI — animacja „generowanego kodu": znak po znaku od lewej,
+   z krótkim błyskiem gdy litera się ustala (per-char reveal + flash) ===== */
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var GL = "ΞΔΣΨΩλØ¥§¤µ†‡/\\|=+<>^?#%$@01".split("");
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function glyph(){ return GL[(Math.random() * GL.length) | 0]; }
+  function run(el) {
+    var full = el.getAttribute('data-final') || el.textContent;
+    el.setAttribute('data-final', full);
+    var n = full.length, start = null;
+    var per = n > 16 ? 26 : 40;   // ms na kolejny znak (dłuższy tekst = szybciej)
+    var flash = 150;              // czas błysku po ustaleniu znaku
+    var win = 6;                  // ile znaków przed czołem "szumi"
+    function frame(ts) {
+      if (start === null) start = ts;
+      var t = ts - start, out = '', done = true, i, front = t / per;
+      for (i = 0; i < n; i++) {
+        var ch = full[i], rt = i * per;
+        if (ch === ' ') { out += ' '; continue; }
+        if (t >= rt + flash) { out += esc(ch); }                              // ustalony
+        else if (t >= rt) { out += '<span class="rz">' + esc(ch) + '</span>'; done = false; } // błysk
+        else { done = false; out += (i < front + win) ? '<span class="scr">' + glyph() + '</span>' : ''; }
+      }
+      el.innerHTML = out + (done ? '' : '<span class="cursor">▍</span>');
+      if (!done) requestAnimationFrame(frame); else el.textContent = full;
     }
-    return IRIS[IRIS.length - 1][1].clone();
-  };
-  const WHITE = new THREE.Color(0xeef0ff);
-  /* jedna barwa (róż) z tonalnym zróżnicowaniem — jak cząsteczkowy krokodyl, bez "tęczy" */
-  const PINK = new THREE.Color(0xff5fb4), PINK_HI = new THREE.Color(0xffcdeb), PINK_LO = new THREE.Color(0xcf3a8c);
-
-  /* ----- geometria: bryły 3D łączone w JEDNĄ powierzchnię (CSG-union) -----
-     Układ: głowa patrzy w +X, Y w górę, Z do widza.
-     Każda bryła ma test inside() i sampler powierzchni. Punkt zakopany
-     w innej bryle 'blend' jest odrzucany → znika efekt "kulek",
-     zostaje ciągła skóra unii brył.                                    */
-  const MOBILE = Math.min(innerWidth, innerHeight) < 700 || window.matchMedia('(pointer:coarse)').matches;
-  const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
-  const solids = [];
-
-  /* Punkty NIE są losowe — leżą na regularnej siatce powierzchni (równoleżniki
-     na elipsoidach, pierścienie wzdłuż osi na kapsułach) → czytelne linie,
-     jak w cząsteczkowym krokodylu ze wzoru.                                   */
-  const ellipsoid = (cx, cy, cz, rx, ry, rz, region, blend = true) => {
-    const o = {
-      region, blend,
-      inside(x, y, z, m) {
-        const f = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 + ((z - cz) / rz) ** 2;
-        return f < (1 - m) * (1 - m);
-      },
-      grid(step, emit) {
-        const nLat = Math.max(3, Math.round(Math.PI * ry / step));
-        for (let i = 0; i < nLat; i++) {
-          const th = Math.PI * (i + 0.5) / nLat, st = Math.sin(th), ct = Math.cos(th);
-          const ringR = (rx + rz) * 0.5 * st;
-          const nLon = Math.max(3, Math.round(2 * Math.PI * ringR / step));
-          for (let j = 0; j < nLon; j++) {
-            const ph = 2 * Math.PI * (j + (i & 1) * 0.5) / nLon; // co drugi rząd przesunięty (splot)
-            emit(cx + rx * st * Math.cos(ph), cy + ry * ct, cz + rz * st * Math.sin(ph), 0);
-          }
-        }
-      }
-    };
-    solids.push(o); return o;
-  };
-  const capsule = (x0, y0, z0, x1, y1, z1, r0, r1, region, blend = true) => {
-    const ax = x1 - x0, ay = y1 - y0, az = z1 - z0; const LL = ax * ax + ay * ay + az * az || 1;
-    const len = Math.sqrt(LL);
-    let ux = ax / len, uy = ay / len, uz = az / len;
-    let px = -uy, py = ux, pz = 0, pl = Math.hypot(px, py, pz);
-    if (pl < .01) { px = 0; py = -uz; pz = uy; pl = Math.hypot(px, py, pz); }
-    px /= pl; py /= pl; pz /= pl;
-    const qx = uy * pz - uz * py, qy = uz * px - ux * pz, qz = ux * py - uy * px;
-    const o = {
-      region, blend,
-      inside(x, y, z, m) {
-        let t = ((x - x0) * ax + (y - y0) * ay + (z - z0) * az) / LL; t = Math.max(0, Math.min(1, t));
-        const dx = x - (x0 + ax * t), dy = y - (y0 + ay * t), dz = z - (z0 + az * t);
-        const r = r0 + (r1 - r0) * t;
-        return (dx * dx + dy * dy + dz * dz) < (r * (1 - m)) ** 2;
-      },
-      grid(step, emit) {
-        const nSeg = Math.max(2, Math.round(len / step));
-        for (let i = 0; i <= nSeg; i++) {
-          const t = i / nSeg, r = r0 + (r1 - r0) * t;
-          const bxp = x0 + ax * t, byp = y0 + ay * t, bzp = z0 + az * t;
-          const nTh = Math.max(3, Math.round(2 * Math.PI * r / step));
-          for (let j = 0; j < nTh; j++) {
-            const th = 2 * Math.PI * (j + (i & 1) * 0.5) / nTh, c = Math.cos(th) * r, s = Math.sin(th) * r;
-            emit(bxp + px * c + qx * s, byp + py * c + qy * s, bzp + pz * c + qz * s, t);
-          }
-        }
-      }
-    };
-    solids.push(o); return o;
-  };
-  /* pasmo grzywy — pojedyncza linia po krzywej (leży na wierzchu, bez unii) */
-  const maneStrands = [];
-  const strand = (p0, p1, p2, r0, r1) => maneStrands.push({ p0, p1, p2, r0, r1 });
-
-  /* — GŁOWA KONIA (profil, +X = pysk). Dłuższa i węższa twarz, wydatny
-       policzek/żwacz, wyraźna linia żuchwy, lekko wygięta szyja. — */
-  ellipsoid(6, 20, 0, 33, 34, 31, 'body');          // mózgoczaszka (okrągły tył głowy)
-  ellipsoid(26, 25, 0, 25, 23, 26, 'body');         // czoło
-  ellipsoid(34, 15, 21, 9, 11, 8, 'body', false);   // łuk brwiowy / oczodół (bliższy)
-  ellipsoid(34, 15, -21, 9, 11, 8, 'body', false);  // łuk brwiowy / oczodół (dalszy)
-  capsule(22, 16, 0, 106, -16, 0, 23, 14, 'body');  // grzbiet nosa — zwęża się w środku (profil konia)
-  ellipsoid(116, -19, 0, 21, 22, 20, 'body');       // nozdrza — lekkie rozszerzenie
-  ellipsoid(123, -33, 0, 15, 13, 15, 'body');       // pysk / dolna warga
-  ellipsoid(2, -16, 0, 37, 35, 30, 'body');         // policzek / żwacz (wydatny, okrągły)
-  capsule(-2, -31, 0, 114, -36, 0, 20, 10, 'body'); // żuchwa — od policzka do brody
-  capsule(-10, 8, 0, -44, -42, 0, 37, 47, 'neck');  // szyja górna (grzbiet karku)
-  capsule(-44, -42, 0, -66, -96, 0, 47, 56, 'neck'); // szyja dolna (lekkie wygięcie)
-
-  /* — RÓG + USZY (blend:false → wystają, nie zlewają się) — */
-  capsule(24, 50, 0, 54, 132, 0, 8, 0.5, 'horn', false);     // róg
-  capsule(-10, 46, 13, -20, 90, 20, 8.5, 0.5, 'body', false); // ucho bliższe
-  capsule(-10, 46, -13, -20, 90, -20, 8.5, 0.5, 'body', false); // ucho dalsze
-
-  /* — GRZYWA: pasma wzdłuż karku, płyną w tył-dół — */
-  strand([-14, 50, 0],  [-52, 26, 8],   [-86, -42, 4],   8, 2.5);
-  strand([-20, 38, -12],[-64, 6, -16],  [-94, -70, -10], 7, 2);
-  strand([-20, 38, 12], [-62, 8, 18],   [-90, -64, 14],  7, 2);
-  strand([-4, 54, 0],   [-44, 46, -6],  [-82, 2, -4],     6, 2);
-  strand([18, 50, 6],   [40, 38, 12],   [46, 16, 10],     5, 1.5);
-
-  /* ---- budowa siatki + odrzucanie punktów zakopanych w unii ---- */
-  const parts = [];
-  const STEP = MOBILE ? 5.4 : 4.0;
-  /* lekkie rozrzucenie punktów wokół siatki — struktura zostaje, ale wygląda
-     naturalniej (mniej efektu "świecącej zbroi") */
-  const J = STEP * 0.34;
-  const jit = () => (Math.random() - .5) * 2 * J;
-  const buried = (x, y, z, self) => {
-    for (const b of solids) if (b !== self && b.blend && b.inside(x, y, z, 0.05)) return true;
-    return false;
-  };
-  solids.forEach(o => {
-    o.grid(STEP, (x, y, z, t) => {
-      if (buried(x, y, z, o)) return;
-      parts.push({ x: x + jit(), y: y + jit(), z: z + jit(), region: o.region, t });
-    });
-  });
-  /* grzywa jako czyste linie (kilka równoległych nitek dla objętości) */
-  maneStrands.forEach(o => {
-    const len = Math.hypot(o.p1[0]-o.p0[0], o.p1[1]-o.p0[1], o.p1[2]-o.p0[2])
-              + Math.hypot(o.p2[0]-o.p1[0], o.p2[1]-o.p1[1], o.p2[2]-o.p1[2]);
-    const nSeg = Math.max(6, Math.round(len / (STEP * 0.9)));
-    const nThreads = 3;
-    for (let k = 0; k < nThreads; k++) {
-      const off = (k - (nThreads - 1) / 2) * 2.4; // rozsunięcie nitek w Z
-      for (let i = 0; i <= nSeg; i++) {
-        const t = i / nSeg;
-        const ax = o.p0[0]+(o.p1[0]-o.p0[0])*t, ay = o.p0[1]+(o.p1[1]-o.p0[1])*t, az = o.p0[2]+(o.p1[2]-o.p0[2])*t;
-        const bx = o.p1[0]+(o.p2[0]-o.p1[0])*t, by = o.p1[1]+(o.p2[1]-o.p1[1])*t, bz = o.p1[2]+(o.p2[2]-o.p1[2])*t;
-        parts.push({ x: ax+(bx-ax)*t + jit(), y: ay+(by-ay)*t + jit(), z: az+(bz-az)*t + off + jit(), region: 'mane', t });
-      }
-    }
-  });
-
-  /* miękkie wygaszenie dolnej krawędzi szyi (popiersie) */
-  const kept = parts.filter(p => !(p.region === 'neck' && p.y < -66 && Math.random() > (p.y + 108) / 42));
-
-  /* wyśrodkowanie na bbox + skala */
-  const SCALE = 1.55;
-  let x0 = 1e9, x1 = -1e9, y0 = 1e9, y1 = -1e9;
-  kept.forEach(p => { x0 = Math.min(x0, p.x); x1 = Math.max(x1, p.x); y0 = Math.min(y0, p.y); y1 = Math.max(y1, p.y); });
-  const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
-
-  const N = kept.length;
-  const targets = new Float32Array(N * 3), scatters = new Float32Array(N * 3),
-        colors = new Float32Array(N * 3), sizes = new Float32Array(N),
-        seeds = new Float32Array(N), flows = new Float32Array(N), twinkles = new Float32Array(N);
-
-  for (let i = 0; i < N; i++) {
-    const p = kept[i];
-    targets[i * 3]     = (p.x - cx) * SCALE;
-    targets[i * 3 + 1] = (p.y - cy) * SCALE;
-    targets[i * 3 + 2] = p.z * SCALE;
-
-    const th = Math.random() * 6.2832, ph = Math.acos(2 * Math.random() - 1), R = 260 + Math.random() * 300;
-    scatters[i * 3]     = Math.sin(ph) * Math.cos(th) * R;
-    scatters[i * 3 + 1] = Math.cos(ph) * R * 0.85;
-    scatters[i * 3 + 2] = Math.sin(ph) * Math.sin(th) * R;
-
-    /* jednolity biały — bez zróżnicowania barwy, bez migotania; nieco większe kropki */
-    const c = WHITE, size_ = 2.8 + Math.random() * 0.6;
-    twinkles[i] = 0;
-
-    colors.set([c.r, c.g, c.b], i * 3);
-    sizes[i] = size_;
-    seeds[i] = Math.random();
-    flows[i] = p.region === 'mane' ? .7 + Math.random() * .3 : p.region === 'horn' ? .03 : .05 + Math.random() * .05;
+    requestAnimationFrame(frame);
   }
-
-  const geo = new THREE.BufferGeometry();
-  geo.setAttribute('position', new THREE.BufferAttribute(targets, 3));
-  geo.setAttribute('aScatter', new THREE.BufferAttribute(scatters, 3));
-  geo.setAttribute('aColor', new THREE.BufferAttribute(colors, 3));
-  geo.setAttribute('aSize', new THREE.BufferAttribute(sizes, 1));
-  geo.setAttribute('aSeed', new THREE.BufferAttribute(seeds, 1));
-  geo.setAttribute('aFlow', new THREE.BufferAttribute(flows, 1));
-  geo.setAttribute('aTwinkle', new THREE.BufferAttribute(twinkles, 1));
-
-  const mat = new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
-    uniforms: {
-      uTime: { value: 0 }, uProgress: { value: RM ? 1 : 0 },
-      uPixelRatio: { value: Math.min(devicePixelRatio, 1.25) }, uMotion: { value: RM ? 0.12 : 1 }
-    },
-    vertexShader: /* glsl */`
-      attribute vec3 aScatter; attribute vec3 aColor;
-      attribute float aSize, aSeed, aFlow, aTwinkle;
-      uniform float uTime, uProgress, uPixelRatio, uMotion;
-      varying vec3 vColor; varying float vAlpha;
-
-      void main(){
-        /* montaż: kaskadowo wg ziarna, po łuku */
-        float p = clamp(uProgress*1.7 - aSeed*0.7, 0.0, 1.0);
-        p = p*p*(3.0-2.0*p);
-        vec3 mid = mix(aScatter, position, 0.5)
-                 + vec3(sin(aSeed*6.2832)*60.0, cos(aSeed*4.7)*45.0, sin(aSeed*9.1)*50.0) * (1.0-p);
-        vec3 pos = mix(mix(aScatter, mid, p), mix(mid, position, p), p);
-
-        /* ledwie wyczuwalny szmer — na tyle mały, że linie siatki zostają czytelne */
-        pos += vec3(
-          sin(uTime*0.9 + aSeed*21.0),
-          cos(uTime*0.8 + aSeed*14.0),
-          sin(uTime*0.7 + aSeed*33.0)) * 0.4 * uMotion * p;
-
-        /* grzywa płynie: powolna fala w tył-dół */
-        float fl = aFlow * (0.6 + 0.4*sin(uTime*0.7 + position.y*0.04 + aSeed*3.0));
-        pos.x -= fl * 6.0 * uMotion * p;
-        pos.z += aFlow * sin(uTime*0.5 + aSeed*6.2832) * 3.0 * uMotion * p;
-
-        /* oddech całej bryły */
-        pos *= 1.0 + 0.010*sin(uTime*0.8)*p*uMotion;
-
-        vec4 mv = modelViewMatrix * vec4(pos, 1.0);
-        gl_Position = projectionMatrix * mv;
-        gl_PointSize = clamp(aSize * uPixelRatio * (900.0 / -mv.z), 0.7, 26.0);
-
-        /* brak migotania — stała jasność (bez efektu "mienienia się") */
-        vAlpha = p * 0.72;
-        vColor = aColor;
-      }`,
-    fragmentShader: /* glsl */`
-      varying vec3 vColor; varying float vAlpha;
-      void main(){
-        float r = length(gl_PointCoord - 0.5);
-        if (r > 0.5) discard;
-        float a = pow(1.0 - r*2.0, 1.7);
-        gl_FragColor = vec4(vColor, a * vAlpha);
-      }`
-  });
-  spin.add(new THREE.Points(geo, mat));
-
-  /* ----- interakcja wskaźnika (delikatna, tylko desktop) ----- */
-  let tx = 0, ty = 0;
-  if (!RM && window.matchMedia('(pointer:fine)').matches)
-    addEventListener('pointermove', e => {
-      tx = e.clientX / innerWidth - .5;
-      ty = e.clientY / innerHeight - .5;
-    }, { passive: true });
-
-  /* ----- pętla: tylko gdy canvas widoczny ----- */
-  let raf = null, prev = 0;
-  const loop = () => {
-    raf = requestAnimationFrame(loop);
-    const t = performance.now() / 1000;
-    const dt = Math.min(t - prev, .05); prev = t;
-    if (mat.uniforms.uProgress.value < 1)
-      mat.uniforms.uProgress.value = Math.min(1, mat.uniforms.uProgress.value + dt / 2.4);
-    mat.uniforms.uTime.value = t;
-    /* kołysanie bryły: między profilem a lekkim 3/4 (frontalny widok jest nieczytelny) */
-    /* pozostaje głównie w profilu (jak we wzorze BND), z lekkim odchyleniem do 3/4 */
-    spin.rotation.y = -0.05 + Math.sin(t * 0.24) * 0.17 + tx * 0.35;
-    spin.rotation.x = 0.0 + Math.sin(t * 0.19) * 0.05 + ty * 0.18;
-    renderer.render(scene, camera);
-  };
-  const io = new IntersectionObserver(es => {
-    es.forEach(e => {
-      if (e.isIntersecting && raf === null) { prev = performance.now() / 1000; loop(); }
-      else if (!e.isIntersecting && raf !== null) { cancelAnimationFrame(raf); raf = null; }
-    });
-  }, { rootMargin: '60px' });
-  io.observe(canvas);
-}
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } });
+  }, { threshold: .3 });
+  document.querySelectorAll('[data-scramble]').forEach(function (el) { io.observe(el); });
+})();
 </script>
 </body>
 </html>
