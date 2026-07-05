@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zarządzanie Jakością — Unicorner</title>
+<meta name="description" content="Kompendium i quiz z zarządzania jakością: ewolucja QI→QC→QA→TQM, guru jakości, 7 zasad, TQM/Lean/Six Sigma, ISO 9001, normalizacja, akredytacja i koszty jakości.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
+    --line:#241d4a; --line2:#3a2e74;
+    --text:#eef0ff; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --accent-d:#8b5cf6;
+    --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
+    --ok:#5ad1a0; --ok-bg:#0c241d; --ok-line:#1d4a3a;
+    --bad:#ff6b8b; --bad-bg:#2a0d18; --bad-line:#5a2233;
+    --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+    --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
+    --glow-cyan:0 0 16px rgba(39,232,255,.55);
+    --glow-mag:0 0 16px rgba(255,46,151,.5);
+    --glow-gold:0 0 18px rgba(255,216,74,.4);
+    --shadow:0 18px 60px rgba(0,0,0,.6);
+    --disp:'Chakra Petch','Space Grotesk',sans-serif;
+    --mono:'Chakra Petch',ui-monospace,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:
+      radial-gradient(900px 520px at 85% -8%, #1a1150 0%, transparent 58%),
+      radial-gradient(720px 480px at -8% 4%, #2a0b3f 0%, transparent 52%),
+      radial-gradient(600px 600px at 50% 120%, #0d2440 0%, transparent 60%),
+      var(--ink);
+    color:var(--text);min-height:100vh;line-height:1.55;letter-spacing:.1px;overflow-x:hidden;position:relative;
+  }
+  /* scanlines + grid HUD */
+  body::before{
+    content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      linear-gradient(rgba(39,232,255,.025) 1px, transparent 1px) 0 0/100% 3px,
+      linear-gradient(90deg, rgba(167,139,250,.04) 1px, transparent 1px) 0 0/52px 100%,
+      linear-gradient(rgba(167,139,250,.04) 1px, transparent 1px) 0 0/100% 52px;
+    mix-blend-mode:screen;opacity:.6;
+  }
+  /* slow diagonal light sweep (luxury) */
+  body::after{
+    content:"";position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;
+    background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(39,232,255,.05) 52%,transparent 60%);
+    transform:translateX(-30%);
+  }
+  @media (prefers-reduced-motion: no-preference){
+    body::after{animation:sweep 14s ease-in-out infinite;}
+  }
+  @keyframes sweep{0%,100%{transform:translateX(-30%);}50%{transform:translateX(30%);}}
+  main,header.top,.giant,footer{position:relative;z-index:1;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 20px;}
+
+  /* animated scan line at very top */
+  .scanbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:var(--iris);background-size:200% 100%;opacity:.9;}
+  @media (prefers-reduced-motion: no-preference){.scanbar{animation:shimmer 6s linear infinite;}}
+  @keyframes shimmer{to{background-position:200% 0;}}
+
+  /* ===== TOP BAR ===== */
+  header.top{position:sticky;top:0;z-index:50;backdrop-filter:blur(9px);
+    background:linear-gradient(180deg,rgba(7,6,15,.92),rgba(7,6,15,.6));
+    border-bottom:1px solid var(--line);}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:12px 0;}
+  .uc-back{display:inline-flex;align-items:center;gap:9px;text-decoration:none;color:var(--muted);
+    font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;
+    border:1px solid var(--line);border-radius:4px;padding:8px 13px;transition:.2s;
+    clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+  .uc-back:hover{color:var(--text);border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.2);}
+  .uc-back .arr{color:var(--cyan);}
+  .brand{display:inline-flex;align-items:center;gap:10px;}
+  .horn{width:26px;height:26px;flex-shrink:0;display:block;filter:drop-shadow(0 0 6px rgba(39,232,255,.5));}
+  .horn .seg{fill:url(#irisGrad);}
+  .wordmark{font-family:var(--disp);font-weight:700;font-size:1.12rem;letter-spacing:.5px;text-transform:lowercase;}
+  .wordmark .uni{color:var(--text);}
+  .wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% 100%;}
+  @media (prefers-reduced-motion: no-preference){.wordmark .ai{animation:shimmer 7s linear infinite;} .horn{animation:hornFloat 5s ease-in-out infinite;}}
+  @keyframes hornFloat{50%{transform:translateY(-2px) rotate(-3deg);}}
+
+  /* ===== HERO ===== */
+  .hero{padding:46px 0 26px;max-width:820px;position:relative;}
+  .eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid var(--line2);background:rgba(39,232,255,.05);padding:7px 14px;border-radius:4px;margin-bottom:22px;box-shadow:inset 0 0 14px rgba(39,232,255,.08);}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+  @media (prefers-reduced-motion: no-preference){.eyebrow .dot{animation:pulse 2.4s ease-in-out infinite;}}
+  @keyframes pulse{50%{opacity:.35;transform:scale(.7);}}
+  h1{font-family:var(--disp);font-weight:700;font-size:clamp(2rem,6vw,3.3rem);line-height:1.05;letter-spacing:-.5px;margin-bottom:16px;}
+  h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(167,139,250,.3);}
+  .lede{font-size:1.05rem;color:var(--muted);max-width:640px;}
+  .lede b{color:var(--text);font-weight:600;}
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px;}
+  .chip{font-family:var(--mono);font-size:.72rem;letter-spacing:.6px;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:6px 11px;}
+  .chip b{color:var(--gold);font-weight:700;}
+  /* deco corner brackets floating in hero */
+  .hero .brk{position:absolute;width:26px;height:26px;opacity:.5;pointer-events:none;}
+  .hero .brk.tr{top:4px;right:0;border-top:1.5px solid var(--cyan);border-right:1.5px solid var(--cyan);}
+  .hero .brk.bl{bottom:2px;left:-8px;border-bottom:1.5px solid var(--magenta);border-left:1.5px solid var(--magenta);}
+
+  /* ===== TABS ===== */
+  .tabs{display:flex;gap:8px;margin:6px 0 26px;flex-wrap:wrap;}
+  .tab{font-family:var(--mono);font-size:.82rem;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;
+    color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:11px 20px;cursor:pointer;transition:.2s;
+    clip-path:polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,10px 100%,0 calc(100% - 10px));}
+  .tab .ic{color:var(--cyan);margin-right:7px;}
+  .tab:hover{color:var(--text);border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.18);}
+  .tab.active{color:#fff;border-color:transparent;background:linear-gradient(160deg,var(--surface2),var(--ink2));position:relative;}
+  .tab.active::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+
+  .section{display:none;}
+  .section.active{display:block;animation:fade .35s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+  /* ===== ROW LABEL ===== */
+  .row-label{display:flex;align-items:center;gap:14px;margin:8px 0 18px;font-family:var(--mono);}
+  .row-label h2{font-size:.9rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--text);}
+  .row-label h2::before{content:"// ";color:var(--cyan);}
+  .row-label .count{font-size:.76rem;color:var(--muted2);letter-spacing:1px;}
+  .row-label .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line2),transparent);}
+
+  /* ===== KOMPENDIUM ACCORDION ===== */
+  .komp{display:flex;flex-direction:column;gap:12px;margin-bottom:40px;}
+  .lec{position:relative;background:linear-gradient(160deg,var(--surface) 0%,var(--ink2) 100%);border:1px solid var(--line);border-radius:4px;overflow:hidden;transition:border-color .2s;
+    clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+  .lec.open{border-color:var(--line2);}
+  .lec::after{content:"";position:absolute;top:7px;left:7px;width:12px;height:12px;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);opacity:.45;}
+  .lec-head{display:flex;align-items:center;gap:15px;width:100%;text-align:left;background:none;border:0;color:inherit;font-family:inherit;cursor:pointer;padding:17px 20px;}
+  .lec-num{font-family:var(--mono);font-weight:700;font-size:.78rem;letter-spacing:1px;color:var(--gold);border:1px solid var(--line2);border-radius:3px;padding:5px 9px;flex-shrink:0;background:rgba(255,216,74,.05);box-shadow:inset 0 0 10px rgba(255,216,74,.06);}
+  .lec-t{flex:1;}
+  .lec-t h3{font-family:var(--disp);font-size:1.08rem;font-weight:600;letter-spacing:.2px;}
+  .lec-t p{font-size:.8rem;color:var(--muted2);margin-top:2px;}
+  .lec-ic{width:18px;height:18px;flex-shrink:0;position:relative;}
+  .lec-ic::before,.lec-ic::after{content:"";position:absolute;background:var(--cyan);border-radius:2px;transition:transform .25s;box-shadow:0 0 8px rgba(39,232,255,.5);}
+  .lec-ic::before{top:8px;left:1px;width:16px;height:2px;}
+  .lec-ic::after{top:1px;left:8px;width:2px;height:16px;}
+  .lec.open .lec-ic::after{transform:rotate(90deg);opacity:0;}
+  .lec-body{max-height:0;overflow:hidden;transition:max-height .4s ease;}
+  .lec.open .lec-body{max-height:3200px;}
+  .lec-inner{padding:2px 22px 22px;font-size:.9rem;color:var(--text);}
+  .lec-inner p{color:var(--muted);margin:9px 0;}
+  .lec-inner b, .lec-inner strong{color:var(--text);font-weight:600;}
+  .lec-inner .hl{color:var(--gold);font-weight:600;}
+  .lec-inner ul{list-style:none;margin:9px 0;padding:0;display:flex;flex-direction:column;gap:5px;}
+  .lec-inner ul li{position:relative;padding-left:18px;color:var(--muted);font-size:.87rem;}
+  .lec-inner ul li::before{content:"▸";position:absolute;left:0;color:var(--cyan);}
+  .lec-inner ul li b{color:var(--text);}
+  .ktable{width:100%;border-collapse:collapse;margin:12px 0;font-size:.82rem;border:1px solid var(--line);}
+  .ktable th{background:rgba(167,139,250,.08);color:var(--text);font-family:var(--mono);font-size:.7rem;letter-spacing:1px;text-transform:uppercase;text-align:left;padding:8px 11px;border:1px solid var(--line);}
+  .ktable td{padding:8px 11px;border:1px solid var(--line);color:var(--muted);vertical-align:top;}
+  .ktable td b{color:var(--text);}
+  .exam{margin-top:14px;border:1px solid var(--line2);border-radius:4px;background:radial-gradient(500px 120px at 10% 0%,rgba(255,216,74,.06),transparent 60%),var(--ink2);padding:13px 15px;position:relative;}
+  .exam::before{content:"";position:absolute;top:0;left:0;bottom:0;width:2px;background:var(--gold-line);}
+  .exam .tag{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold);display:block;margin-bottom:5px;}
+  .exam p{font-size:.84rem;color:var(--muted);margin:0;}
+  .exam p b{color:#fff;}
+
+  /* ===== QUIZ ===== */
+  .quiz-intro{border:1px solid var(--line2);border-radius:4px;background:radial-gradient(600px 200px at 12% 0%,rgba(39,232,255,.07),transparent 60%),linear-gradient(160deg,var(--surface),var(--ink2));padding:20px 22px;margin-bottom:20px;position:relative;overflow:hidden;
+    clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));}
+  .quiz-intro::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+  .quiz-intro h3{font-family:var(--disp);font-size:1.15rem;font-weight:700;margin-bottom:6px;}
+  .quiz-intro p{font-size:.88rem;color:var(--muted);}
+  .quiz-intro p b{color:var(--text);}
+
+  #quiz-container{margin-bottom:44px;}
+  .picker{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:620px){.picker{grid-template-columns:1fr;}}
+  .set-btn{position:relative;text-align:left;background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line);border-radius:4px;color:inherit;font-family:inherit;cursor:pointer;padding:15px 16px;transition:.2s;overflow:hidden;
+    clip-path:polygon(0 0,calc(100% - 11px) 0,100% 11px,100% 100%,11px 100%,0 calc(100% - 11px));}
+  .set-btn::before{content:"";position:absolute;top:0;left:0;width:100%;height:2px;transform:scaleX(0);transform-origin:left;background:var(--iris);transition:transform .25s;}
+  .set-btn:hover{border-color:var(--accent);box-shadow:0 8px 26px rgba(167,139,250,.18);transform:translateY(-2px);}
+  .set-btn:hover::before{transform:scaleX(1);}
+  .set-btn:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+  .set-btn .sb-n{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:1px;color:var(--cyan);}
+  .set-btn .sb-t{font-family:var(--disp);font-size:1rem;font-weight:600;margin:5px 0 3px;}
+  .set-btn .sb-c{font-size:.76rem;color:var(--muted2);}
+  .set-btn.all{grid-column:1/-1;border-color:var(--line2);background:radial-gradient(500px 120px at 90% 0%,rgba(255,216,74,.07),transparent 60%),linear-gradient(160deg,var(--surface),var(--ink2));}
+  .set-btn.all .sb-n{color:var(--gold);}
+
+  .progress-bar{height:5px;background:var(--ink2);border:1px solid var(--line);border-radius:20px;overflow:hidden;margin-bottom:14px;}
+  .progress-fill{height:100%;background:var(--iris);transition:width .35s ease;box-shadow:0 0 10px rgba(39,232,255,.5);}
+  .qcard{position:relative;background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line);border-radius:4px;padding:22px;overflow:hidden;
+    clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));}
+  .qcard::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);opacity:.85;}
+  .qmeta{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted2);margin-bottom:14px;}
+  .qmeta .sc{color:var(--gold);}
+  .quiz-q{font-family:var(--disp);font-size:1.16rem;font-weight:600;line-height:1.4;margin-bottom:16px;}
+  .quiz-opts{display:flex;flex-direction:column;gap:9px;}
+  .opt{position:relative;text-align:left;width:100%;background:var(--ink2);border:1px solid var(--line);border-radius:4px;color:var(--text);font-family:inherit;font-size:.92rem;padding:13px 15px 13px 44px;cursor:pointer;transition:.15s;line-height:1.4;}
+  .opt::before{content:"";position:absolute;left:14px;top:50%;transform:translateY(-50%);width:16px;height:16px;border:1.5px solid var(--line2);border-radius:50%;transition:.15s;}
+  .opt:hover:not(.correct):not(.wrong):not(.locked){border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.15);}
+  .opt:hover:not(.correct):not(.wrong):not(.locked)::before{border-color:var(--cyan);box-shadow:0 0 8px rgba(39,232,255,.4);}
+  .opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#c9f5e2;}
+  .opt.correct::before{border-color:var(--ok);background:var(--ok);box-shadow:0 0 10px rgba(90,209,160,.5);}
+  .opt.correct::after{content:"✓";position:absolute;left:16.5px;top:50%;transform:translateY(-50%);font-size:.72rem;color:var(--ink);font-weight:900;}
+  .opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#ffc4d1;}
+  .opt.wrong::before{border-color:var(--bad);background:var(--bad);box-shadow:0 0 10px rgba(255,107,139,.4);}
+  .opt.wrong::after{content:"✕";position:absolute;left:16.5px;top:50%;transform:translateY(-50%);font-size:.7rem;color:var(--ink);font-weight:900;}
+  .opt.locked{cursor:default;opacity:.72;}
+  .feedback{margin-top:14px;border-radius:4px;padding:13px 15px;font-size:.86rem;line-height:1.5;border:1px solid;}
+  .feedback.ok{border-color:var(--ok-line);background:var(--ok-bg);color:#bff3d3;}
+  .feedback.fail{border-color:var(--bad-line);background:var(--bad-bg);color:#ffcdd8;}
+  .feedback b{color:#fff;}
+  .qnav{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:18px;flex-wrap:wrap;}
+  .qnav .left{display:flex;gap:8px;}
+  .btn{font-family:var(--mono);font-size:.76rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:10px 16px;cursor:pointer;transition:.2s;
+    clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+  .btn:hover{color:var(--text);border-color:var(--accent);box-shadow:0 0 12px rgba(167,139,250,.18);}
+  .btn.primary{color:#fff;border-color:transparent;background:linear-gradient(115deg,rgba(39,232,255,.18),rgba(167,139,250,.22),rgba(255,46,151,.18));position:relative;}
+  .btn.primary::before{content:"";position:absolute;inset:0;border-radius:4px;padding:1px;background:var(--iris);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
+
+  /* score screen */
+  .score-card{position:relative;text-align:center;background:radial-gradient(600px 260px at 50% -10%,rgba(167,139,250,.12),transparent 60%),linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line2);border-radius:4px;padding:36px 26px;overflow:hidden;
+    clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));}
+  .score-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+  .score-label{font-family:var(--mono);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);}
+  .score-big{font-family:'Orbitron',var(--disp);font-size:3.6rem;font-weight:800;margin:10px 0 4px;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .score-pct{font-family:var(--mono);color:var(--muted);letter-spacing:1px;}
+  .score-msg{font-size:.95rem;color:var(--text);margin:14px 0 22px;}
+  .score-actions{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+  .ring{width:118px;height:118px;margin:6px auto 4px;}
+
+  /* ===== GIANT WORDMARK ===== */
+  .giant{position:relative;width:100vw;left:50%;margin-left:-50vw;overflow:hidden;line-height:.9;user-select:none;pointer-events:none;margin:14px 0 24px;padding:8px 0;}
+  .giant span{display:block;font-family:'Orbitron',var(--disp);font-weight:800;font-size:clamp(2rem,12vw,10rem);letter-spacing:.14em;text-indent:.14em;text-align:center;white-space:nowrap;color:transparent;-webkit-text-stroke:1.5px rgba(167,139,250,.3);text-shadow:0 0 40px rgba(39,232,255,.1);}
+  @supports (-webkit-background-clip:text){.giant span{background:linear-gradient(180deg,rgba(167,139,250,.2) 0%,rgba(20,17,46,.12) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-stroke:1.5px rgba(167,139,250,.28);}}
+
+  footer{border-top:1px solid var(--line);padding:24px 0 46px;}
+  .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+  .disclaimer{font-size:.77rem;color:var(--muted2);max-width:560px;line-height:1.6;}
+  .disclaimer b{color:var(--muted);font-weight:600;}
+  .foot-brand{display:flex;align-items:center;gap:9px;color:var(--muted);font-family:var(--disp);font-weight:600;font-size:.92rem;letter-spacing:1px;}
+  .foot-brand .fb-uni{color:var(--muted);}
+  .foot-brand .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+
+  @media(max-width:560px){
+    .hero{padding:32px 0 20px;}
+    .quiz-q{font-size:1.06rem;}
+    .opt{font-size:.88rem;}
+  }
+</style>
+</head>
+<body>
+
+<div class="scanbar" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#27e8ff"/><stop offset="0.38" stop-color="#a78bfa"/>
+    <stop offset="0.72" stop-color="#ff2e97"/><stop offset="1" stop-color="#ffd84a"/>
+  </linearGradient>
+</defs></svg>
+
+<header class="top">
+  <div class="wrap topbar">
+    <a class="uc-back" href="index.html"><span class="arr">←</span> Wszystkie przedmioty</a>
+    <div class="brand">
+      <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+      <span class="wordmark"><span class="uni">uni</span><span class="ai">corner</span></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <section class="hero">
+    <span class="brk tr" aria-hidden="true"></span>
+    <span class="brk bl" aria-hidden="true"></span>
+    <span class="eyebrow"><span class="dot"></span>Zarządzanie Jakością · UEP</span>
+    <h1>Jakość, ogarnięta <span class="grad">od PAF do TQM.</span></h1>
+    <p class="lede">Kompletne kompendium i quiz z zarządzania jakością — od podstawowych pojęć, przez guru jakości i 7 zasad ISO, po normalizację, ISO 9001, akredytację i koszty jakości. <b>Ściąga do przeczytania i test, który się sprawdza po każdym pytaniu.</b></p>
+    <div class="meta">
+      <span class="chip"><b>10</b> działów</span>
+      <span class="chip"><b>70</b> pytań</span>
+      <span class="chip">QI→QC→QA→TQM</span>
+      <span class="chip">ISO 9001 · PAF · Lean</span>
+      <span class="chip">odpowiedzi tasowane</span>
+    </div>
+  </section>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="komp"><span class="ic">§</span>Kompendium</button>
+    <button class="tab" data-tab="quiz"><span class="ic">◈</span>Quiz</button>
+  </div>
+
+  <!-- ================= KOMPENDIUM ================= -->
+  <div class="section active" id="komp">
+    <div class="row-label"><h2>Kompendium</h2><span class="count">10 działów · kliknij, aby rozwinąć</span><span class="line"></span></div>
+    <div class="komp" id="komp-list"></div>
+  </div>
+
+  <!-- ================= QUIZ ================= -->
+  <div class="section" id="quiz">
+    <div class="row-label"><h2>Quiz</h2><span class="count">70 pytań · natychmiastowa informacja zwrotna</span><span class="line"></span></div>
+    <div class="quiz-intro">
+      <h3>Jak to działa</h3>
+      <p>Wybierz dział albo cały materiał. <b>Kolejność odpowiedzi jest losowana przy każdym podejściu</b>, a dystraktory są pisane tak, by były równie wiarygodne co poprawna — nie zgadniesz „po strukturze”, tylko wiedzą. Po każdym pytaniu zobaczysz wyjaśnienie.</p>
+    </div>
+    <div id="quiz-container"></div>
+  </div>
+
+</main>
+
+<div class="giant" aria-hidden="true"><span>JAKOŚĆ</span></div>
+
+<div class="wrap">
+  <footer>
+    <div class="foot-grid">
+      <p class="disclaimer"><b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą. Materiały to własne opracowania na bazie zajęć — ucz się też z oryginalnych źródeł. Bez gwarancji kompletności.</p>
+      <div class="foot-brand">
+        <svg class="horn" style="width:16px;height:16px;animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span><span class="fb-uni">uni</span><span class="fb-corner">corner</span></span>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script>
+/* =====================================================================
+   KOMPENDIUM — 10 działów. num = etykieta, t = tytuł, s = podtytuł,
+   html = treść (ściąga). exam = "najczęściej na kolokwium".
+   ===================================================================== */
+const LECTURES = [
+  { num:"01", t:"Podstawowe pojęcia jakości", s:"Produkt i usługa · wyznaczniki · SERVQUAL · jakość życia",
+    html:`
+    <p><b>Produkt wg ISO 9000:2015</b> = wyrób (materialny) lub usługa (niematerialna). <span class="hl">Kluczowa różnica:</span> wyrób może powstać bez transakcji z klientem; <b>usługa</b> zakłada co najmniej jedno działanie realizowane między organizacją a klientem.</p>
+    <ul>
+      <li><b>Wyznaczniki jakości wyrobu:</b> funkcjonalność, niezawodność, trwałość, estetyka, zgodność ze specyfikacją (konformancja), bezpieczeństwo, ergonomia, serwis, marka, ekologiczność, innowacyjność.</li>
+      <li><b>Planowane postarzanie</b> (planned obsolescence) — celowe skracanie żywotności produktu (klasyk: „spisek żarówkowy”).</li>
+    </ul>
+    <p><b>Klasyfikacja jakości:</b> obiektywna / subiektywna; projektowa (zamierzona) / wykonania (rzeczywista) / zgodności; oczekiwana / postrzegana / ukryta; wg ISO 9000: jakość wyrobu, procesu, organizacji.</p>
+    <p class="hl">Model SERVQUAL — 5 wymiarów jakości usług:</p>
+    <table class="ktable"><tr><th>Wymiar</th><th>Znaczenie</th></tr>
+      <tr><td><b>Niezawodność</b></td><td>usługa wykonana dokładnie, zgodnie z obietnicą, za każdym razem</td></tr>
+      <tr><td><b>Reagowanie</b></td><td>gotowość do szybkiej i sprawnej pomocy</td></tr>
+      <tr><td><b>Pewność</b></td><td>kompetencje, uprzejmość, wzbudzanie zaufania</td></tr>
+      <tr><td><b>Empatia</b></td><td>indywidualne podejście, zrozumienie potrzeb</td></tr>
+      <tr><td><b>Elementy materialne</b></td><td>wygląd miejsca, sprzętu, personelu — „otoczka”</td></tr>
+    </table>
+    <p><b>Cechy usług:</b> niematerialność, nierozłączność (produkcja=konsumpcja), zmienność, nietrwałość (brak magazynowania), niemożliwość przywłaszczania, indywidualizacja.</p>
+    <p><b>Jakość życia (WHO)</b> — indywidualny sposób postrzegania własnej pozycji życiowej w danym systemie wartości. Płaszczyzny: obiektywna (ekonomia, zdrowie) i subiektywna (zadowolenie).</p>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>Definicja wyrobu / usługi wg ISO 9000 (różnica = <b>transakcja z klientem</b>). 5 wymiarów SERVQUAL. Podział jakości: projektowa / wykonania / zgodności. Cechy usług (niematerialność, nietrwałość, nierozłączność).</p></div>`},
+
+  { num:"02", t:"Ewolucja podejścia do jakości", s:"QI → QC → QA → TQM · definicje ISO 9000",
+    html:`
+    <p class="hl">Cztery etapy rozwoju zarządzania jakością (zakres rośnie: produkt → produkcja → procesy → organizacja):</p>
+    <table class="ktable"><tr><th>Etap</th><th>Skrót</th><th>Skupia się na</th></tr>
+      <tr><td>Inspekcja jakości</td><td><b>QI</b> (do lat 30.)</td><td>jakości produktów — sortowanie, złomowanie</td></tr>
+      <tr><td>Sterowanie jakością</td><td><b>QC</b> (lata 40.–50.)</td><td>jakości produkcji — statystyka, samokontrola</td></tr>
+      <tr><td>Zapewnienie jakości</td><td><b>QA</b> (lata 60.–70.)</td><td>jakości procesów — systemy, certyfikacja, koszty</td></tr>
+      <tr><td>Kompleksowe zarządzanie</td><td><b>TQM</b> (od lat 80.)</td><td>jakości organizacji — klient, zaangażowanie, doskonalenie</td></tr>
+    </table>
+    <p><b>Ujęcie „kiedy”:</b> inspection = PO procesie · control = W CZASIE procesu · assurance = PRZED procesem · management = przed, w trakcie i po.</p>
+    <ul>
+      <li><b>Jakość (ISO 9000:2015):</b> stopień, w jakim zbiór inherentnych właściwości obiektu spełnia wymagania.</li>
+      <li><b>Zarządzanie jakością:</b> ustanowienie polityki i celów jakości oraz procesów ich osiągania — przez planowanie, zapewnienie, sterowanie i doskonalenie jakości.</li>
+      <li><b>Sterowanie vs zapewnienie:</b> sterowanie = spełnianie wymagań; zapewnienie = budowanie zaufania, że wymagania będą spełnione.</li>
+    </ul>
+    <p>Punkt zwrotny: odbudowa przemysłu <b>Japonii</b> (Deming, Juran). Nagroda Deminga w Japonii od 1965 r.</p>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>Kolejność <b>QI→QC→QA→TQM</b> z okresami i zakresem. Różnica sterowanie vs zapewnienie. Definicja jakości i zarządzania jakością wg ISO 9000:2015.</p></div>`},
+
+  { num:"03", t:"Prekursorzy — guru jakości", s:"Shewhart · Deming · Juran · Ishikawa · Feigenbaum · Crosby · Taguchi",
+    html:`
+    <table class="ktable"><tr><th>Guru</th><th>Z czym się kojarzy</th></tr>
+      <tr><td><b>Shewhart</b></td><td>karta kontrolna, statystyczne sterowanie jakością; od niego pomysł cyklu przejął Deming</td></tr>
+      <tr><td><b>Deming</b></td><td>cykl <b>PDCA</b>, 14 zasad, teza „94% problemów z winy kierownictwa”; przeciwnik masowej kontroli</td></tr>
+      <tr><td><b>Juran</b></td><td>trylogia jakości, 10 kroków do TQM, reguła 20/80 (Pareto); akcent na planowanie</td></tr>
+      <tr><td><b>Ishikawa</b></td><td>diagram przyczynowo-skutkowy (rybia ość), koła jakości, prekursor TQM</td></tr>
+      <tr><td><b>Feigenbaum</b></td><td>„ojciec” Total Quality Control (TQC), koncepcja „ukrytej rośliny”, koszty jakości</td></tr>
+      <tr><td><b>Crosby</b></td><td>„zero defektów”, 4 absoluty jakości, „Quality is free”</td></tr>
+      <tr><td><b>Taguchi</b></td><td>funkcja strat jakości, sterowanie off-line, projektowanie eksperymentów</td></tr>
+    </table>
+    <p><b>PDCA</b> — Plan → Do → Check → Act. Podstawa zarządzania procesowego i ciągłego doskonalenia.</p>
+    <p><b>4 absoluty Crosby'ego:</b> jakość = zgodność ze specyfikacją; osiągana przez profilaktykę; standard = zero defektów; mierzona kosztem braku zgodności.</p>
+    <p><b>Deming vs Juran:</b> Deming — bez kompromisów, akcent na sterowanie. Juran — kompromis naturalny, akcent na planowanie.</p>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>Kto stworzył co: Shewhart=karta kontrolna, Deming=PDCA/14 zasad, Juran=trylogia/20-80, Ishikawa=rybia ość/koła jakości, Feigenbaum=TQC, Crosby=zero defektów, Taguchi=funkcja strat. Różnica Deming vs Juran.</p></div>`},
+
+  { num:"04", t:"7 zasad zarządzania jakością", s:"ISO 9000:2015 · podejście procesowe",
+    html:`
+    <p class="hl">7 zasad wg ISO 9000:2015:</p>
+    <ul>
+      <li><b>1. Orientacja na klienta</b> — spełnianie wymagań i wykraczanie poza oczekiwania.</li>
+      <li><b>2. Przywództwo</b> — wizja, kultura zaufania, zasoby i szkolenia.</li>
+      <li><b>3. Zaangażowanie ludzi</b> — kompetentni, uprawnieni, zaangażowani na wszystkich poziomach.</li>
+      <li><b>4. Podejście procesowe</b> — systematyczne zarządzanie procesami i ich powiązaniami.</li>
+      <li><b>5. Ciągłe doskonalenie</b> — metafora „lwa i gazeli”; nacisk na przyczynę źródłową.</li>
+      <li><b>6. Decyzje na podstawie dowodów</b> — dane i analizy, nie sama intuicja.</li>
+      <li><b>7. Zarządzanie relacjami</b> — dostawcy, partnerzy, strony zainteresowane.</li>
+    </ul>
+    <p>Uwaga: w wersji 2015 jest <b>7</b> zasad (wcześniej 8 — zniknęło „podejście systemowe”, wchłonięte przez procesowe).</p>
+    <p><b>Proces</b> = zbiór powiązanych działań przekształcających wejścia w zamierzone wyjście (wejścia procesu to zwykle wyjścia innych procesów). <span class="hl">Każdy proces musi mieć właściciela.</span></p>
+    <p><b>Podział procesów:</b> zarządzania · główne (realizacji: od wymagań do zadowolonego klienta) · pomocnicze (wsparcia).</p>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>Wymień <b>7 zasad</b>. Definicja procesu i podejścia procesowego. „Każdy proces ma właściciela”. Podział procesów. Zasada 6 = decyzje na podstawie <b>dowodów</b> (nie intuicji).</p></div>`},
+
+  { num:"05", t:"Koncepcje zarządzania jakością", s:"TQM · Kaizen · Lean · Six Sigma · DMAIC",
+    html:`
+    <p><b>TQM = Total Quality Management</b> — Total (cała organizacja), Quality (spełnienie wymagań klienta), Management (zarządzanie zmieniające procesy). System wartości + narzędzi + metod, cel: wzrost satysfakcji klienta przy mniejszym zużyciu zasobów.</p>
+    <p><b>Kaizen</b> (改善, „zmiana na lepsze”) — filozofia ciągłego, drobnego doskonalenia angażująca wszystkich. Zasada <b>„5 razy Dlaczego?” (5 Why)</b> → dochodzenie do przyczyny źródłowej.</p>
+    <p><b>Lean</b> — wywodzi się z <b>Toyoty (TPS)</b> od lat 50. 5 zasad: wartość → strumień wartości → przepływ → wyciąganie (pull) → doskonałość.</p>
+    <ul>
+      <li><b>3M:</b> Muda (marnotrawstwo), Muri (nadmierne obciążenie), Mura (nieregularność).</li>
+      <li><b>DOWNTIME</b> — 8 rodzajów marnotrawstwa: Defects, Overproduction, Waiting, Non-utilized talent, Transportation, Inventory, Motion, Extra processing.</li>
+      <li>Narzędzia: 5S, Just in Time, Poka-Yoke, SMED, TPM, Kanban, VSM, Heijunka.</li>
+    </ul>
+    <p><b>Six Sigma</b> — statystyczna optymalizacja procesów; <span class="hl">maks. 3,4 wady na milion</span>. Oparta na rozkładzie normalnym.</p>
+    <p><b>DMAIC:</b> Define → Measure → Analyze → Improve → Control. Lean Six Sigma = szybkość Lean + jakość Six Sigma.</p>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>Rozwinięcie <b>TQM</b>. Kaizen = ciągłe doskonalenie + 5 Why. 5 zasad Lean, 3M, DOWNTIME. Six Sigma = <b>3,4 wady/mln</b>. Kolejność <b>DMAIC</b>. Lean z Toyoty (TPS).</p></div>`},
+
+  { num:"06", t:"Normalizacja", s:"Norma · szczeble · ISO / CEN / PKN · rodzina 9000",
+    html:`
+    <p><b>Norma</b> — dokument przyjęty na zasadzie konsensusu, zatwierdzony przez upoważnioną jednostkę, do powszechnego i wielokrotnego stosowania.</p>
+    <p class="hl">Cechy normy:</p>
+    <ul>
+      <li><b>Dobrowolność</b> stosowania (charakter nieobowiązujący).</li>
+      <li><b>Konsensus</b> — treść uzgodniona przez zainteresowanych.</li>
+      <li><b>Powszechna dostępność</b> ≠ bezpłatna (pełna treść PN jest odpłatna, chroniona prawem autorskim).</li>
+      <li>Zaakceptowana przez uznaną jednostkę, wolna od ingerencji administracyjnej.</li>
+    </ul>
+    <p><b>ISO</b> — nie skrót, od greckiego <b>„isos” = równy</b>. Założona 1946 (Londyn), sekretariat w Genewie. 3 zasady ISO: konsensus, szeroki (globalny) zakres, dobrowolność.</p>
+    <table class="ktable"><tr><th>Szczebel</th><th>Organizacje</th></tr>
+      <tr><td>Międzynarodowy</td><td><b>ISO</b>, IEC (elektro), ITU (telekom)</td></tr>
+      <tr><td>Regionalny (europejski)</td><td><b>CEN</b>, CENELEC, ETSI</td></tr>
+      <tr><td>Krajowy</td><td><b>PKN</b> (PL), BSI (UK), DIN (DE)</td></tr>
+    </table>
+    <p><b>Oznaczenia:</b> PN = krajowa · PN-EN = europejska wdrożona do PN · PN-ISO = norma ISO jako PN.</p>
+    <p class="hl">Rodzina ISO 9000:</p>
+    <ul><li><b>ISO 9000</b> — podstawy i terminologia.</li><li><b>ISO 9001</b> — wymagania (podstawa certyfikacji).</li><li><b>ISO 9004</b> — trwały sukces organizacji.</li><li><b>ISO 19011</b> — wytyczne auditowania.</li></ul>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>Cechy normy (dobrowolność, konsensus, dostępność ≠ bezpłatna). ISO = od greckiego <b>„isos”</b> (nie skrót!). Szczeble ISO/CEN/PKN. Oznaczenia PN / PN-EN / PN-ISO. Rodzina 9000 (9001 = wymagania).</p></div>`},
+
+  { num:"07", t:"System ISO 9001", s:"PDCA · struktura 10 punktów (HLS) · SMART · ryzyko",
+    html:`
+    <p><b>PDCA w ISO 9001:</b> Planuj (cele, zasoby, ryzyka i szanse) → Wykonaj → Sprawdź (monitoruj i mierz) → Działaj (doskonal).</p>
+    <p class="hl">Struktura normy — 10 punktów (High Level Structure):</p>
+    <table class="ktable"><tr><th>Pkt</th><th>Nazwa</th><th>PDCA</th></tr>
+      <tr><td>1–3</td><td>Zakres · Powołania · Terminy</td><td>—</td></tr>
+      <tr><td>4</td><td>Kontekst organizacji</td><td>Plan</td></tr>
+      <tr><td>5</td><td>Przywództwo</td><td>Plan</td></tr>
+      <tr><td>6</td><td>Planowanie</td><td>Plan</td></tr>
+      <tr><td>7</td><td>Wsparcie</td><td>Do</td></tr>
+      <tr><td>8</td><td>Działania operacyjne</td><td>Do</td></tr>
+      <tr><td>9</td><td>Ocena efektów działania</td><td>Check</td></tr>
+      <tr><td>10</td><td>Doskonalenie</td><td>Act</td></tr>
+    </table>
+    <ul>
+      <li><b>Pkt 6 — podejście oparte na ryzyku:</b> unikanie, podjęcie dla szansy, usunięcie źródła, zmiana prawdopodobieństwa, dzielenie się, zatrzymanie.</li>
+      <li><b>Cele jakościowe = SMART:</b> Skonkretyzowane · Mierzalne · Akceptowalne · Realne · Terminowe.</li>
+      <li><b>Procedura</b> = co robimy; <b>instrukcja</b> = jak to robimy. Dokumentacja: strategiczny → taktyczny → operacyjny.</li>
+      <li><b>Pkt 9:</b> audit wewnętrzny + przegląd zarządzania.</li>
+    </ul>
+    <p>Najwięcej certyfikatów ISO 9001 (ISO Survey 2022): <b>Chiny</b> (~551 tys.), potem Włochy, Indie, Niemcy. Polska ~9,5 tys.</p>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>10 punktów i przypisanie do PDCA (<b>4-6=Plan, 7-8=Do, 9=Check, 10=Act</b>). Cele = <b>SMART</b>. Podejście oparte na ryzyku (pkt 6). Procedura vs instrukcja. ISO 9001 = wymagania.</p></div>`},
+
+  { num:"08", t:"Znormalizowane systemy zarządzania", s:"HLS · normy branżowe · żywność · IATF 16949",
+    html:`
+    <p><b>Znormalizowany system zarządzania</b> = narzędzie ustanawiające minimalny zestaw wymagań umożliwiających osiągnięcie zaplanowanych wyników zgodnych z wymaganiami klientów.</p>
+    <p><b>Wspólna struktura HLS</b> — wszystkie nowe normy ISO systemów zarządzania mają tę samą strukturę 10 punktów (opartą na PDCA) → łatwa integracja. Trzon: 9001 (jakość) + 14001 (środowisko) + 45001 (BHP).</p>
+    <p class="hl">Przyporządkowanie norm:</p>
+    <table class="ktable"><tr><th>Norma</th><th>System</th></tr>
+      <tr><td>ISO 9001</td><td>jakość (SZJ)</td></tr>
+      <tr><td>ISO 14001</td><td>środowisko</td></tr>
+      <tr><td>ISO 45001</td><td>BHP</td></tr>
+      <tr><td>ISO/IEC 27001</td><td>bezpieczeństwo informacji</td></tr>
+      <tr><td>ISO 22000</td><td>bezpieczeństwo żywności</td></tr>
+      <tr><td>ISO 50001</td><td>energia</td></tr>
+      <tr><td>ISO 37001</td><td>antykorupcja</td></tr>
+    </table>
+    <p><b>Reguła 1–10–100(–1000):</b> koszt usunięcia usterki rośnie z fazą — projektowanie (1) → produkcja (10) → kontrola (100) → serwis (1000). „Lepiej zapobiegać niż leczyć”.</p>
+    <p><b>Żywność:</b> ISO 22000 = norma międzynarodowa; BRC, IFS, GLOBALG.A.P., FSSC = standardy prywatne. <b>IATF 16949</b> = motoryzacja (obejmuje ISO 9001 + wymagania branżowe; FMEA, APQP, PPAP, MSA, SPC).</p>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>HLS = 10 punktów → łatwa integracja. Przyporządkowanie: 14001=środowisko, 45001=BHP, 27001=informacje, 22000=żywność, 50001=energia. IATF 16949=motoryzacja. Reguła <b>1-10-100-1000</b>.</p></div>`},
+
+  { num:"09", t:"Akredytacja i certyfikacja", s:"Ocena zgodności · PCA · CE · New Approach · proces",
+    html:`
+    <p class="hl">Certyfikacja vs akredytacja (nie mylić!):</p>
+    <table class="ktable"><tr><th>Pojęcie</th><th>Czego dotyczy</th></tr>
+      <tr><td><b>Certyfikacja</b></td><td>WYROBU / SYSTEMU / ORGANIZACJI — robi jednostka certyfikująca</td></tr>
+      <tr><td><b>Akredytacja</b></td><td>KOMPETENCJI JEDNOSTKI oceniającej zgodność — „certyfikacja certyfikujących”</td></tr>
+    </table>
+    <p>W Polsce jedynym organem akredytacyjnym jest <b>PCA</b> (Polskie Centrum Akredytacji). Akredytacja w UE jest transgraniczna („badany raz, wszędzie akceptowany”).</p>
+    <ul>
+      <li><b>Oznakowanie CE</b> — deklaracja <b>producenta na własną odpowiedzialność</b>, że wyrób spełnia zasadnicze wymagania dyrektyw. Znak min. <b>5 mm</b>, z zachowaniem proporcji. „Przepustka” na Jednolity Rynek.</li>
+      <li><b>New Approach:</b> przepisy = tylko zasadnicze wymagania; szczegóły techniczne w <b>normach zharmonizowanych</b> (EN) → domniemanie zgodności.</li>
+    </ul>
+    <p><b>Proces certyfikacji:</b> wniosek → Audit etapu 1 (przegląd dokumentacji, ocena gotowości) → Audit etapu 2 (ocena wdrożenia i skuteczności) → <b>certyfikat ważny 3 lata</b> → audity nadzoru min. raz/rok → ponowna certyfikacja. Jednostki certyfikujące działają wg <b>ISO/IEC 17021</b>.</p>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>Różnica certyfikacja vs akredytacja (wyrób/system vs kompetencje jednostki). <b>PCA</b> = jedyny organ w PL. CE = deklaracja producenta, min. 5 mm. New Approach = zasadnicze wymagania + normy zharmonizowane. Certyfikat <b>3 lata</b>, audit etap 1 i 2.</p></div>`},
+
+  { num:"10", t:"Koszty jakości", s:"Model PAF · koszty zgodności i niezgodności · góra lodowa",
+    html:`
+    <p><b>Model PAF</b> (Walter Masser, 1957) — podstawa większości modeli kosztów jakości:</p>
+    <ul>
+      <li><b>P</b>revention — zapobieganie (prewencja)</li>
+      <li><b>A</b>ppraisal — ocena</li>
+      <li><b>F</b>ailure — niezgodności: wewnętrzne (Internal) i zewnętrzne (External)</li>
+    </ul>
+    <table class="ktable"><tr><th>Grupa</th><th>Przykłady</th></tr>
+      <tr><td><b>Zgodności — zapobieganie</b></td><td>badania rynku, walidacja projektu, szkolenia, planowanie jakości, audity, utrzymanie SZJ</td></tr>
+      <tr><td><b>Zgodności — ocena</b></td><td>kontrola materiałów wejściowych, próby odbiorcze, badania produktów, dział kontroli</td></tr>
+      <tr><td><b>Niezgodności — braki wewn.</b></td><td>selekcja, złom i utylizacja, przerób, powtórne kontrole (wykryte w zakładzie)</td></tr>
+      <tr><td><b>Niezgodności — braki zewn.</b></td><td>reklamacje, naprawy gwarancyjne, wycofanie z rynku, kary, koszty wizerunkowe (wykryte przez klienta)</td></tr>
+    </table>
+    <p><b>Góra lodowa:</b> nad powierzchnią = koszty księgowe (widoczne); pod powierzchnią (większość!) = koszty ukryte (utrata klientów, reputacja, koszty społeczne).</p>
+    <p><span class="hl">Pożądana zależność:</span> (koszty zapobiegania + oceny) &gt; koszty niezgodności — inwestować w prewencję.</p>
+    <p><b>5 funkcji rachunku kosztów jakości:</b> informacyjna, analityczna, optymalizacyjna, kontrolna, motywacyjna.</p>
+    <div class="exam"><span class="tag">Najczęściej na kolokwium</span><p>Model <b>PAF</b> (Masser, 1957). Koszty zgodności (zapobieganie + ocena) vs niezgodności (braki wewn. + zewn.). Wewnętrzne = wykryte w zakładzie; zewnętrzne = przez klienta. Góra lodowa. Pożądane: (zapobieganie+ocena) &gt; niezgodności. <b>5 funkcji</b> rachunku.</p></div>`}
+];
+
+/* =====================================================================
+   QUIZ — RAW: q=pytanie, opts=opcje (poprawna zawsze jako pierwsza w źródle),
+   ans=indeks poprawnej w źródle, exp=wyjaśnienie.
+   PRZED WYŚWIETLENIEM opcje są tasowane (patrz shuffle) — pozycja poprawnej
+   jest losowa. Dystraktory pisane tak, by nie były krótsze/uboższe od poprawnej.
+   ===================================================================== */
+const RAW = [
+  // ===== DZIAŁ 1: Podstawowe pojęcia (0-6) =====
+  {set:0,q:"Wg ISO 9000:2015 kluczowa różnica między wyrobem a usługą polega na tym, że...",opts:["usługa wymaga co najmniej jednego działania wykonanego między organizacją a klientem","usługa jest z zasady droższa i znacznie bardziej pracochłonna w realizacji niż wyrób materialny","wyrób może być wytworzony wyłącznie w zakładzie produkcyjnym danej firmy","wyrób jest z definicji niematerialny, a usługa zawsze materialna"],ans:0,exp:"Wyrób może powstać bez transakcji z klientem; usługa zakłada co najmniej jedno działanie realizowane na styku organizacja–klient."},
+  {set:0,q:"W modelu SERVQUAL wymiar 'reagowanie' (responsiveness) oznacza przede wszystkim...",opts:["gotowość do szybkiej i sprawnej pomocy klientowi","wykonanie usługi dokładnie tak, jak zostało obiecane","kompetencje i uprzejmość budujące zaufanie klienta","estetyczny wygląd miejsca, sprzętu i personelu"],ans:0,exp:"Reagowanie = gotowość do szybkiej pomocy. Niezawodność = zgodność z obietnicą, pewność = zaufanie/kompetencje, elementy materialne = 'otoczka'."},
+  {set:0,q:"Który z poniższych NIE jest jednym z pięciu wymiarów jakości usług w modelu SERVQUAL?",opts:["konkurencyjna cena świadczonej usługi","empatia wobec indywidualnych potrzeb klienta","pewność wynikająca z kompetencji personelu","niezawodność powtarzalnego wykonania usługi"],ans:0,exp:"5 wymiarów SERVQUAL: niezawodność, reagowanie, pewność, empatia, elementy materialne. Cena nie jest wymiarem SERVQUAL."},
+  {set:0,q:"'Nierozłączność' jako cecha usługi oznacza, że...",opts:["usługa jest produkowana i konsumowana w tym samym momencie","usługę można wygodnie magazynować i sprzedać później","każda usługa jest identyczna niezależnie od wykonawcy","klient może stać się formalnym właścicielem usługi"],ans:0,exp:"Nierozłączność: produkcja = konsumpcja (fryzjer strzyże, gdy klient siedzi). Nietrwałość = brak magazynowania; zmienność = różna jakość."},
+  {set:0,q:"Jakość wykonania (rzeczywista) w klasyfikacji jakości to...",opts:["zgodność faktycznie wykonanego wyrobu z projektem lub wzorcem","poziom jakości zamierzony jeszcze na etapie projektowania","subiektywne odczucie klienta ukształtowane po zakupie","zgodność wyrobu wyłącznie z obowiązującymi przepisami prawa"],ans:0,exp:"Projektowa = zamierzona (etap projektu), wykonania = rzeczywista (zgodność z wzorcem), zgodności = spełnienie wymagań."},
+  {set:0,q:"Planowane postarzanie produktu (planned obsolescence) polega na...",opts:["celowym skracaniu żywotności produktu, aby wymusić ponowny zakup","stopniowym podnoszeniu jakości każdej kolejnej wersji produktu","wydłużaniu okresu gwarancji wraz z wiekiem danego produktu","dopasowywaniu ceny produktu do jego aktualnego wieku rynkowego"],ans:0,exp:"Klasyczny przykład: 'spisek żarówkowy' — celowe ograniczanie trwałości, żeby wymusić szybszą wymianę i ponowny zakup."},
+  {set:0,q:"Zgodnie z definicją WHO jakość życia jest przede wszystkim...",opts:["indywidualnym sposobem postrzegania własnej pozycji życiowej w danym systemie wartości","obiektywnym, mierzalnym wskaźnikiem produktu krajowego brutto przypadającego na jednego mieszkańca","wyłącznie miarą aktualnego stanu zdrowia fizycznego jednostki","średnim poziomem miesięcznych dochodów w gospodarstwie domowym"],ans:0,exp:"WHO akcentuje subiektywne postrzeganie własnej pozycji w kontekście kultury i wartości. Rozpatrywana na płaszczyźnie obiektywnej i subiektywnej."},
+
+  // ===== DZIAŁ 2: Ewolucja (7-12) =====
+  {set:1,q:"Prawidłowa chronologiczna kolejność etapów rozwoju zarządzania jakością to...",opts:["QI → QC → QA → TQM","QC → QI → TQM → QA","QA → QC → QI → TQM","TQM → QA → QC → QI"],ans:0,exp:"Inspekcja (QI) → sterowanie (QC) → zapewnienie (QA) → kompleksowe zarządzanie (TQM). Zakres rośnie: produkt → produkcja → procesy → organizacja."},
+  {set:1,q:"Etap sterowania jakością (QC) skupia się przede wszystkim na...",opts:["jakości produkcji — statystyce i samokontroli w trakcie procesu","sortowaniu i złomowaniu gotowych wyrobów po ich wykonaniu","jakości całej organizacji i zaangażowaniu wszystkich pracowników","certyfikacji systemów zarządzania i rachunku kosztów jakości"],ans:0,exp:"QC (lata 40.-50.) = jakość produkcji, sterowanie w czasie procesu. QI = sortowanie, QA = procesy/systemy, TQM = cała organizacja."},
+  {set:1,q:"Quality assurance (zapewnienie jakości) w ujęciu 'kiedy' oznacza działania...",opts:["podejmowane przed rozpoczęciem procesu produkcyjnego","realizowane dopiero po zakończeniu procesu produkcyjnego","prowadzone wyłącznie w trakcie trwania procesu produkcyjnego","uruchamiane dopiero po zgłoszeniu reklamacji przez klienta"],ans:0,exp:"Inspection = PO procesie, control = W CZASIE procesu, assurance = PRZED procesem, management = przed, w trakcie i po."},
+  {set:1,q:"Definicja jakości wg ISO 9000:2015 to...",opts:["stopień, w jakim zbiór inherentnych właściwości obiektu spełnia wymagania","całkowity brak jakichkolwiek wad i usterek w produkcie końcowym","zgodność ceny produktu z bieżącymi oczekiwaniami rynku","poziom zadowolenia klienta mierzony wyłącznie liczbą złożonych i uznanych reklamacji"],ans:0,exp:"Jakość = stopień spełnienia wymagań przez inherentne właściwości obiektu. Kluczowe słowa: stopień, inherentne właściwości, wymagania."},
+  {set:1,q:"Różnica między sterowaniem a zapewnieniem jakości polega na tym, że...",opts:["sterowanie skupia się na spełnianiu wymagań, a zapewnienie na budowaniu zaufania, że będą spełnione","sterowanie jakością dotyczy wyłącznie świadczonych usług, a zapewnienie wyłącznie wyrobów materialnych","sterowanie wykonuje zawsze klient, a zapewnienie zawsze dostawca produktu","sterowanie jest dobrowolne, a zapewnienie jakości obowiązkowe z mocy prawa"],ans:0,exp:"Sterowanie = ukierunkowane na spełnianie wymagań. Zapewnienie = na budowanie zaufania, że wymagania będą spełnione."},
+  {set:1,q:"Punktem zwrotnym w rozwoju zarządzania jakością po II wojnie światowej była odbudowa przemysłu...",opts:["Japonii, m.in. przy pomocy Deminga i Jurana","Niemiec, głównie dzięki normom technicznym DIN","Wielkiej Brytanii, w oparciu o standardy BSI","Polski, dzięki wprowadzeniu znaku jakości Q"],ans:0,exp:"Japonia = punkt zwrotny; Amerykanie (Deming, Juran) pomogli odbudować przemysł. Nagroda Deminga w Japonii od 1965 r."},
+
+  // ===== DZIAŁ 3: Prekursorzy (13-21) =====
+  {set:2,q:"Za twórcę karty kontrolnej i statystycznego sterowania jakością uznaje się...",opts:["Waltera A. Shewharta","W. Edwardsa Deminga","Josepha M. Jurana","Kaoru Ishikawę"],ans:0,exp:"Shewhart ('od niego wszystko się zaczęło') — karta kontrolna i SPC. Pomysł cyklu (PDCA) przejął od niego Deming."},
+  {set:2,q:"Cykl PDCA (Plan-Do-Check-Act) rozpowszechnił, choć zaczerpnął go od Shewharta...",opts:["W. Edwards Deming","Philip B. Crosby","Armand V. Feigenbaum","Genichi Taguchi"],ans:0,exp:"Deming: PDCA, 14 zasad, teza że 94% problemów jakościowych wynika z winy kierownictwa. Przeciwnik masowej kontroli."},
+  {set:2,q:"Zdaniem Deminga zdecydowana większość (ok. 94%) problemów jakościowych wynika z...",opts:["winy kierownictwa i wadliwego systemu, a nie pojedynczych pracowników","błędów popełnianych przez szeregowych operatorów maszyn","niskiej jakości surowców dostarczanych przez dostawców","zbyt wygórowanych i nierealnych wymagań stawianych przez klientów"],ans:0,exp:"Deming: 94% problemów to wina kierownictwa/systemu. Stąd nacisk na zmianę zarządzania, a nie karanie pracowników."},
+  {set:2,q:"Trylogia jakości Jurana obejmuje...",opts:["planowanie, sterowanie i usprawnianie jakości","planowanie, wykonanie i kontrolę produkcji","prewencję, ocenę oraz naprawę niezgodności","define, measure i control w cyklu projektu"],ans:0,exp:"Trylogia Jurana: planowanie – sterowanie – usprawnianie jakości. Juran akcentował planowanie i regułę 20/80 (Pareto)."},
+  {set:2,q:"Diagram przyczynowo-skutkowy ('rybia ość') oraz koła jakości kojarzone są z osobą...",opts:["Kaoru Ishikawy","Waltera Massera","Philipa Crosby'ego","Armanda Feigenbauma"],ans:0,exp:"Ishikawa: diagram rybiej ości, koła jakości, 'Total Quality Control — The Japanese Way'. Prekursor TQM."},
+  {set:2,q:"'Ojcem' pojęcia Total Quality Control (TQC) i koncepcji 'ukrytej rośliny' jest...",opts:["Armand V. Feigenbaum","Joseph M. Juran","Genichi Taguchi","Walter A. Shewhart"],ans:0,exp:"Feigenbaum: TQC, 'ukryta roślina' (marnowana część mocy fabryki, bo wynik nie za pierwszym razem), opracował koszty jakości."},
+  {set:2,q:"Hasło 'zero defektów' oraz książka 'Quality is free' to dorobek...",opts:["Philipa B. Crosby'ego","W. Edwardsa Deminga","Kaoru Ishikawy","Genichiego Taguchiego"],ans:0,exp:"Crosby: 'zero defektów', 4 absoluty jakości, 'Quality is free'. Jakość = zgodność ze specyfikacją, osiągana przez profilaktykę."},
+  {set:2,q:"Funkcja strat jakości oraz sterowanie jakością 'off-line' to koncepcje autorstwa...",opts:["Genichiego Taguchiego","Josepha M. Jurana","Armanda Feigenbauma","Waltera Shewharta"],ans:0,exp:"Taguchi mówił raczej o stracie jakości niż o samej jakości. Funkcja strat + projektowanie eksperymentów (off-line)."},
+  {set:2,q:"Kluczowa różnica w podejściu Deminga i Jurana polega na tym, że...",opts:["Deming nie uznawał kompromisów i akcentował sterowanie, a Juran dopuszczał kompromis i akcentował planowanie","Deming zajmował się wyłącznie sektorem usług i administracji, a Juran jedynie przemysłem ciężkim","Deming stworzył diagram rybiej ości, a Juran opracował kartę kontrolną","Deming działał głównie w Europie, a Juran wyłącznie w Japonii"],ans:0,exp:"Deming — bez kompromisów, akcent na sterowanie jakością. Juran — kompromis naturalny, akcent na planowanie jakości."},
+
+  // ===== DZIAŁ 4: 7 zasad (22-28) =====
+  {set:3,q:"Ile zasad zarządzania jakością definiuje aktualna norma ISO 9000:2015?",opts:["7","8","5","14"],ans:0,exp:"Od 2015 r. jest 7 zasad (wcześniej 8 — zniknęło 'podejście systemowe', wchłonięte przez procesowe)."},
+  {set:3,q:"Która z poniższych NIE należy do 7 zasad zarządzania jakością wg ISO 9000:2015?",opts:["podejście systemowe do zarządzania","orientacja na klienta","podejście procesowe","zarządzanie relacjami ze stronami zainteresowanymi"],ans:0,exp:"'Podejście systemowe' było 8. zasadą do 2008 r. — w wersji 2015 usunięte (wchłonięte przez procesowe). 7 zasad: klient, przywództwo, ludzie, procesy, doskonalenie, dowody, relacje."},
+  {set:3,q:"Proces w rozumieniu ISO to...",opts:["zbiór powiązanych działań, które przekształcają wejścia w zamierzone wyjście","pojedyncza czynność wykonywana samodzielnie przez jednego pracownika","sformalizowany dokument opisujący pełną strukturę organizacyjną i hierarchię całej firmy","etap kontroli końcowej realizowany wyłącznie na gotowym wyrobie"],ans:0,exp:"Proces = powiązane działania przekształcające wejścia w wyjścia. Wejścia procesu to zwykle wyjścia innych procesów. Każdy proces musi mieć właściciela."},
+  {set:3,q:"W podejściu procesowym obowiązuje zasada, że...",opts:["każdy proces musi mieć przypisanego właściciela odpowiedzialnego za jego przebieg","procesy nie wymagają przypisania żadnej konkretnej odpowiedzialności","właścicielem wszystkich procesów w firmie jest zawsze jej prezes","proces działa najskuteczniej wtedy, gdy nikt go bezpośrednio nie nadzoruje"],ans:0,exp:"Każdy proces musi mieć właściciela odpowiedzialnego za jego przebieg i doskonalenie. Elementy: wejście → działanie → wyjście."},
+  {set:3,q:"Procesy w systemie zarządzania jakością dzieli się na...",opts:["procesy zarządzania, główne (realizacji) i pomocnicze (wsparcia)","procesy stałe, zmienne oraz sezonowe zależne od pory roku","procesy jawne, ukryte i mieszane w zależności od widoczności","procesy krajowe, europejskie i międzynarodowe według zasięgu"],ans:0,exp:"Podział: zarządzania (zarządzanie), główne (od wymagań klienta do zadowolonego klienta), pomocnicze (wsparcie)."},
+  {set:3,q:"Zasada 'podejmowania decyzji na podstawie dowodów' zaleca opieranie decyzji przede wszystkim na...",opts:["analizie danych i faktów, wspieranej doświadczeniem i intuicją","wyłącznie intuicji najbardziej doświadczonych menedżerów firmy","opinii najliczniejszej grupy pracowników w danym dziale","dotychczasowej tradycji i utrwalonych przyzwyczajeniach organizacji"],ans:0,exp:"Zasada 6 = decyzje na podstawie badań, analiz i metod statystycznych; dane równoważone doświadczeniem — ale nie 'na wyczucie'."},
+  {set:3,q:"Podstawowym celem zasady orientacji na klienta jest...",opts:["spełnianie wymagań klienta oraz wykraczanie poza jego oczekiwania","maksymalizacja marży osiąganej na pojedynczej transakcji","ograniczenie kontaktu z klientem do niezbędnego minimum","dostosowanie się wyłącznie do obowiązujących wymagań prawnych"],ans:0,exp:"Orientacja na klienta: spełnić wymagania i wyjść poza oczekiwania → lojalność, reputacja, wzrost udziału w rynku."},
+
+  // ===== DZIAŁ 5: Koncepcje (29-36) =====
+  {set:4,q:"Skrót TQM rozwija się jako...",opts:["Total Quality Management","Total Quality Measurement","Technical Quality Model","Total Quantity Management"],ans:0,exp:"TQM = Total (cała organizacja) Quality (spełnienie wymagań klienta) Management (zarządzanie zmieniające procesy)."},
+  {set:4,q:"Kaizen to...",opts:["filozofia ciągłego, drobnego doskonalenia angażująca wszystkich pracowników","jednorazowa, radykalna restrukturyzacja przeprowadzana odgórnie w firmie","metoda końcowej kontroli jakości gotowych wyrobów przed wysyłką","japoński system premiowego wynagradzania za wysoką wydajność pracy"],ans:0,exp:"Kaizen (改善, 'zmiana na lepsze') = ciągłe doskonalenie małymi krokami, wszyscy pracownicy, zasada '5 razy Dlaczego?' (5 Why)."},
+  {set:4,q:"Zasada '5 razy Dlaczego?' (5 Why) służy przede wszystkim do...",opts:["dochodzenia do źródłowej przyczyny występującego problemu","liczenia kosztów jakości w pięciu kolejnych krokach","jednoczesnej oceny pięciu dostawców tego samego surowca","planowania pięcioletniej strategii jakości przedsiębiorstwa"],ans:0,exp:"5 Why (element Kaizen): wielokrotne pytanie 'dlaczego?' prowadzi od objawu do rzeczywistej przyczyny źródłowej."},
+  {set:4,q:"Koncepcja Lean wywodzi się z...",opts:["systemu produkcyjnego Toyoty (TPS) z branży motoryzacyjnej","japońskiego przemysłu spożywczego z połowy XX wieku","amerykańskiego sektora technologii informatycznych","brytyjskiego przemysłu lotniczego okresu powojennego"],ans:0,exp:"Lean = Toyota Production System (TPS) od lat 50. XX w. (pierwotnie 'Lean production'). Cel: eliminacja marnotrawstwa."},
+  {set:4,q:"Japońskie '3M' w koncepcji Lean (elementy do ograniczenia) to...",opts:["Muda, Muri, Mura","Measure, Model, Manage","Man, Machine, Method","Mono, Multi, Mega"],ans:0,exp:"Muda = marnotrawstwo, Muri = nadmierne obciążenie ludzi/maszyn, Mura = nieregularność i niezgodności działań."},
+  {set:4,q:"Model DOWNTIME w Lean opisuje...",opts:["8 rodzajów marnotrawstwa","8 kolejnych etapów cyklu PDCA","8 zasad zarządzania jakością","8 poziomów odchylenia sigma"],ans:0,exp:"DOWNTIME: Defects, Overproduction, Waiting, Non-utilized talent, Transportation, Inventory, Motion, Extra processing — 8 rodzajów marnotrawstwa."},
+  {set:4,q:"Poziom 'sześciu sigm' (Six Sigma) oznacza maksymalnie...",opts:["3,4 wady na milion możliwości","34 wady na każdy tysiąc sztuk","6 wad na każde sto wyrobów","całkowity brak jakichkolwiek wad"],ans:0,exp:"Six Sigma: maks. 3,4 wady na milion. Im wyższa sigma, tym mniejsze prawdopodobieństwo wady. Oparta na rozkładzie normalnym."},
+  {set:4,q:"Prawidłowa kolejność etapów cyklu DMAIC to...",opts:["Define → Measure → Analyze → Improve → Control","Design → Make → Analyze → Inspect → Close","Define → Manage → Adjust → Improve → Check","Discover → Measure → Act → Innovate → Control"],ans:0,exp:"DMAIC: Define (zdefiniuj) → Measure (zmierz) → Analyze (analizuj) → Improve (udoskonal) → Control (sprawdź skuteczność)."},
+
+  // ===== DZIAŁ 6: Normalizacja (37-43) =====
+  {set:5,q:"Podstawową cechą normy (np. ISO) jest...",opts:["dobrowolność jej stosowania","prawny obowiązek stosowania przez wszystkich","całkowicie bezpłatny dostęp do pełnej treści","narzucanie w trybie decyzji administracyjnej"],ans:0,exp:"Norma: dobrowolna, uzgodniona przez konsensus, powszechnie dostępna (≠ bezpłatna), zaakceptowana przez uznaną jednostkę."},
+  {set:5,q:"'Powszechna dostępność' normy oznacza, że...",opts:["nie ma ograniczeń w dostępie do niej, ale nie znaczy to, że jest bezpłatna","każdy może pobrać jej pełną treść całkowicie za darmo","dostęp do niej mają wyłącznie akredytowane jednostki certyfikujące","jest ona publikowana i udostępniana tylko w jednym języku urzędowym"],ans:0,exp:"Powszechna dostępność = brak ograniczeń w dostępie, ale pełna treść (np. PN) jest odpłatna i chroniona prawem autorskim."},
+  {set:5,q:"Nazwa 'ISO' pochodzi od...",opts:["greckiego słowa 'isos' oznaczającego 'równy'","skrótu International Standards Organization","nazwiska pierwszego założyciela organizacji","łacińskiego słowa 'iso' oznaczającego 'norma'"],ans:0,exp:"ISO to NIE skrót — pochodzi od greckiego 'isos' (równy). Organizacja założona w 1946 r. w Londynie, sekretariat w Genewie."},
+  {set:5,q:"Poprawne przyporządkowanie organizacji do szczebli międzynarodowy – regionalny – krajowy to...",opts:["ISO – CEN – PKN","CEN – ISO – DIN","PKN – ISO – CEN","ISO – PKN – BSI"],ans:0,exp:"Międzynarodowy: ISO/IEC/ITU; regionalny (europejski): CEN/CENELEC/ETSI; krajowy: PKN (PL), BSI (UK), DIN (DE)."},
+  {set:5,q:"Oznaczenie 'PN-EN' na normie wskazuje na...",opts:["normę europejską wdrożoną do polskiego systemu normalizacyjnego","czystą normę krajową opracowaną przez polskie organy techniczne","międzynarodową normę ISO wprowadzoną bezpośrednio jako Polska Norma","branżową normę motoryzacyjną obowiązującą u dostawców"],ans:0,exp:"PN = czysta krajowa; PN-EN = europejska wdrożona do PN (najczęściej przez tłumaczenie); PN-ISO = norma ISO jako PN."},
+  {set:5,q:"W rodzinie norm ISO 9000 normą zawierającą wymagania (podstawą certyfikacji) jest...",opts:["ISO 9001","ISO 9000","ISO 9004","ISO 19011"],ans:0,exp:"ISO 9000 = terminologia, ISO 9001 = wymagania (certyfikacja), ISO 9004 = trwały sukces, ISO 19011 = auditowanie."},
+  {set:5,q:"Do trzech zasad, którymi kieruje się ISO — obok konsensusu i szerokiego zakresu stosowania — należy...",opts:["dobrowolność zaangażowania stron","prawny obowiązek stosowania rozwiązań","poufność prowadzonych prac normalizacyjnych","odpłatność samego członkostwa w organizacji"],ans:0,exp:"ISO kieruje się: konsensusem, szerokim (globalnym) zakresem stosowania i dobrowolnością zaangażowania stron."},
+
+  // ===== DZIAŁ 7: ISO 9001 (44-50) =====
+  {set:6,q:"W strukturze ISO 9001 punkty 7 (Wsparcie) i 8 (Działania operacyjne) odpowiadają fazie cyklu PDCA...",opts:["Do (Wykonaj)","Plan (Planuj)","Check (Sprawdź)","Act (Działaj)"],ans:0,exp:"Plan = pkt 4-6, Do = pkt 7-8, Check = pkt 9, Act = pkt 10."},
+  {set:6,q:"Audit wewnętrzny oraz przegląd zarządzania są opisane w punkcie ISO 9001 dotyczącym...",opts:["oceny efektów działania (pkt 9 — faza Check)","kontekstu organizacji (pkt 4 — faza Plan)","wsparcia i zasobów (pkt 7 — faza Do)","doskonalenia systemu (pkt 10 — faza Act)"],ans:0,exp:"Pkt 9 (Ocena efektów, faza Check): monitorowanie i pomiary, audit wewnętrzny, przegląd zarządzania."},
+  {set:6,q:"Cele jakościowe wg ISO 9001 powinny być SMART, czyli m.in....",opts:["skonkretyzowane, mierzalne, akceptowalne, realne i terminowe","szybkie, masowe, atrakcyjne, rynkowe oraz możliwie tanie","strategiczne, marketingowe, autorskie, roczne i poufne","standardowe, modułowe, adaptacyjne, ryzykowne i trwałe"],ans:0,exp:"SMART: Skonkretyzowane, Mierzalne, Akceptowalne, Realne, Terminowe. Cele jakościowe muszą też być spójne z polityką i monitorowane."},
+  {set:6,q:"Które postępowanie z ryzykiem jest zgodne z podejściem opartym na ryzyku w ISO 9001?",opts:["unikanie ryzyka lub świadome podjęcie go w celu wykorzystania szansy","całkowite ignorowanie zidentyfikowanych ryzyk oraz szans","przenoszenie wszystkich możliwych ryzyk wyłącznie na klienta","samo udokumentowanie ryzyka bez podejmowania żadnych działań"],ans:0,exp:"Postępowanie z ryzykiem (pkt 6): unikanie, podjęcie dla szansy, usunięcie źródła, zmiana prawdopodobieństwa, dzielenie się, zatrzymanie."},
+  {set:6,q:"Różnica między procedurą a instrukcją w dokumentacji SZJ polega na tym, że...",opts:["procedura mówi CO robimy, a instrukcja opisuje JAK to robimy","procedura dotyczy usług, a instrukcja wyłącznie wyrobów materialnych","procedura jest przekazywana ustnie, a instrukcja zawsze pisemnie","procedura obowiązuje kierownictwo, a instrukcja dotyczy klientów"],ans:0,exp:"Procedura = co robimy (poziom taktyczny), instrukcja = jak to robimy (poziom operacyjny). Nad nimi: polityka i cele (strategiczny)."},
+  {set:6,q:"Punkt 4 normy ISO 9001 ('Kontekst organizacji') wymaga między innymi...",opts:["zrozumienia czynników wewnętrznych i zewnętrznych oraz potrzeb stron zainteresowanych","natychmiastowej certyfikacji wszystkich wyrobów firmy przed wdrożeniem","stałego zatrudnienia zewnętrznego audytora na cały okres ważności certyfikatu","publikacji szczegółowych rocznych sprawozdań finansowych oraz raportów zarządu przedsiębiorstwa"],ans:0,exp:"Pkt 4: zrozumienie organizacji i jej kontekstu (4.1), potrzeb stron zainteresowanych (4.2), zakres SZJ (4.3), procesy (4.4)."},
+  {set:6,q:"Wg raportu ISO Survey najwięcej certyfikatów ISO 9001 na świecie posiada...",opts:["Chiny","Polska","Niemcy","Stany Zjednoczone"],ans:0,exp:"Wg ISO Survey (31.12.2022) liderem są Chiny (ok. 551 tys.), dalej Włochy, Indie, Niemcy. Polska ~9,5 tys."},
+
+  // ===== DZIAŁ 8: Znormalizowane systemy (51-56) =====
+  {set:7,q:"Wspólna struktura HLS (High Level Structure) oznacza, że wszystkie nowe normy ISO systemów zarządzania...",opts:["mają tę samą strukturę 10 punktów opartą na cyklu PDCA","są wzajemnie sprzeczne i wykluczają możliwość integracji","dotyczą wyłącznie zarządzania jakością samego wyrobu","obowiązują jedynie w branży motoryzacyjnej i lotniczej"],ans:0,exp:"HLS = jednolita struktura 10 punktów (jak ISO 9001) → łatwa integracja systemów, np. 9001 (jakość) + 14001 (środowisko) + 45001 (BHP)."},
+  {set:7,q:"Norma ISO 14001 dotyczy systemu zarządzania...",opts:["środowiskowego","bezpieczeństwem informacji","bezpieczeństwem żywności","energią"],ans:0,exp:"ISO 14001 = środowisko, 45001 = BHP, 27001 = informacje, 22000 = żywność, 50001 = energia, 37001 = antykorupcja."},
+  {set:7,q:"System zarządzania bezpieczeństwem i higieną pracy (BHP) opisuje norma...",opts:["ISO 45001","ISO 27001","ISO 22000","ISO 13485"],ans:0,exp:"ISO 45001 = BHP (well-being, udział pracowników). 13485 = wyroby medyczne, 27001 = informacje, 22000 = żywność."},
+  {set:7,q:"Norma IATF 16949 dotyczy branży...",opts:["motoryzacyjnej i obejmuje całe ISO 9001 wraz z wymaganiami branżowymi","lotniczej i cywilnej, funkcjonując jako odpowiednik normy AS 9100","spożywczej, stanowiąc rozwinięcie systemu HACCP dla producentów","kolejowej, będąc europejskim odpowiednikiem standardu IRIS"],ans:0,exp:"IATF 16949 = motoryzacja (dawniej ISO/TS 16949). Obejmuje ISO 9001 + wymagania branżowe. Procesy: FMEA, APQP, PPAP, MSA, SPC."},
+  {set:7,q:"Reguła 1–10–100(–1000) mówi, że koszt usunięcia usterki...",opts:["rośnie, im później w cyklu (projekt→produkcja→kontrola→serwis) zostanie wykryta","pozostaje stały i całkowicie niezależny od fazy cyklu, w której daną usterkę wykryto","maleje wraz z upływem czasu i przechodzeniem do kolejnych faz","zależy wyłącznie od wielkości i obrotów danego przedsiębiorstwa"],ans:0,exp:"1-10-100-1000: projektowanie (1) → produkcja (10) → kontrola (100) → serwis (1000). 'Lepiej zapobiegać niż leczyć'."},
+  {set:7,q:"Wśród standardów bezpieczeństwa żywności normą MIĘDZYNARODOWĄ (a nie prywatną) jest...",opts:["ISO 22000","BRC","IFS Food","GLOBALG.A.P."],ans:0,exp:"ISO 22000 = norma międzynarodowa dla całego łańcucha żywnościowego (certyfikat 3 lata). BRC/IFS/GLOBALG.A.P./FSSC = standardy prywatne."},
+
+  // ===== DZIAŁ 9: Akredytacja i certyfikacja (57-63) =====
+  {set:8,q:"Kluczowa różnica: certyfikacja dotyczy wyrobu/systemu/organizacji, natomiast akredytacja...",opts:["potwierdza kompetencje jednostki oceniającej zgodność ('certyfikacja certyfikujących')","dotyczy wyłącznie wyrobów z branży spożywczej, rolnej i farmaceutycznej wprowadzanych na rynek UE","jest przeprowadzana samodzielnie przez producenta wyrobu","całkowicie zastępuje obowiązek naniesienia oznakowania CE"],ans:0,exp:"Certyfikacja = wyrób/system/organizacja (robi jednostka certyfikująca). Akredytacja = kompetencje JEDNOSTKI oceniającej (robi jednostka akredytująca)."},
+  {set:8,q:"Jedynym organem akredytacyjnym w Polsce jest...",opts:["Polskie Centrum Akredytacji (PCA)","Polski Komitet Normalizacyjny (PKN)","Urząd Ochrony Konkurencji i Konsumentów (UOKiK)","Ministerstwo Rozwoju i Technologii"],ans:0,exp:"PCA = jedyny krajowy organ akredytacyjny (państwowa osoba prawna). PKN opracowuje normy, UOKiK to nadzór rynku."},
+  {set:8,q:"Oznakowanie CE jest przede wszystkim deklaracją...",opts:["producenta na jego wyłączną odpowiedzialność, że wyrób spełnia zasadnicze wymagania","niezależnej jednostki akredytującej, która po przeprowadzonych badaniach potwierdza zgodność wyrobu","Komisji Europejskiej gwarantującej najwyższą jakość danego wyrobu","organu nadzoru rynku wydawaną po przeprowadzeniu kontroli w sklepie"],ans:0,exp:"CE = deklaracja PRODUCENTA na własną odpowiedzialność (zgodność z zasadniczymi wymaganiami dyrektyw). Znak min. 5 mm."},
+  {set:8,q:"Znak CE naniesiony na wyrób musi mieć wysokość co najmniej...",opts:["5 mm, z zachowaniem właściwych proporcji","10 mm i być zawsze w kolorze zielonym","2 mm oraz zawierać numer jednostki notyfikowanej","dowolną — norma nie określa minimalnych wymiarów"],ans:0,exp:"CE min. 5 mm, z zachowaniem proporcji (decyzja Rady 93/465/WE). To 'przepustka' na Jednolity Rynek Europejski."},
+  {set:8,q:"'New Approach' (Nowe Podejście) w systemie oceny zgodności UE polega na tym, że...",opts:["przepisy określają tylko zasadnicze wymagania, a szczegóły techniczne są w normach zharmonizowanych","każdy pojedynczy produkt wymaga uchwalenia odrębnej, szczegółowej ustawy krajowej przed dopuszczeniem do obrotu","normy techniczne stają się obowiązkowe i są narzucane administracyjnie","ocenę zgodności wszystkich wyrobów prowadzi wyłącznie Komisja Europejska"],ans:0,exp:"New Approach: dyrektywy = zasadnicze wymagania (np. bezpieczeństwo); szczegóły w normach zharmonizowanych (EN) → domniemanie zgodności."},
+  {set:8,q:"Certyfikat systemu zarządzania (np. ISO 9001) jest zwykle ważny...",opts:["3 lata, z auditami nadzoru przeprowadzanymi co najmniej raz w roku","bezterminowo i nie wymaga żadnych auditów kontrolnych","1 rok i nie podlega procedurze odnowienia","6 miesięcy, z obowiązkowym auditem przeprowadzanym co miesiąc"],ans:0,exp:"Certyfikat ważny 3 lata; audity kontrolne/nadzoru min. raz w roku; potem ponowna certyfikacja. Audit etapu 1 (dokumentacja) i etapu 2 (wdrożenie)."},
+  {set:8,q:"Audit etapu 1 w procesie certyfikacji polega głównie na...",opts:["przeglądzie udokumentowanych informacji i ocenie gotowości do etapu 2","ocenie praktycznej skuteczności już wdrożonego systemu zarządzania","wystawieniu certyfikatu potwierdzającego zgodność z normą","kontroli wyrobów znajdujących się już w obrocie w punktach sprzedaży"],ans:0,exp:"Etap 1 = przegląd dokumentacji + ocena gotowości. Etap 2 = ocena wdrożenia i skuteczności systemu (audity wewnętrzne, przegląd zarządzania)."},
+
+  // ===== DZIAŁ 10: Koszty jakości (64-69) =====
+  {set:9,q:"Model PAF grupuje koszty jakości na koszty...",opts:["prewencji (Prevention), oceny (Appraisal) i niezgodności (Failure)","planowania, analizy oraz obsługi finansowej przedsiębiorstwa","produkcji, administracji i sprzedaży wyrobów gotowych","personelu, aparatury pomiarowej oraz logistyki wewnętrznej"],ans:0,exp:"PAF (Walter Masser, 1957): Prevention (zapobieganie), Appraisal (ocena), Failure (niezgodności — wewnętrzne i zewnętrzne). Podstawa większości modeli."},
+  {set:9,q:"Do kosztów ZGODNOŚCI (sterowania jakością) zalicza się...",opts:["koszty zapobiegania oraz koszty oceny jakości","koszty braków wewnętrznych i braków zewnętrznych","koszty reklamacji, napraw gwarancyjnych i kar umownych","koszty utraty klientów oraz utraconej reputacji firmy"],ans:0,exp:"Koszty zgodności = zapobieganie (prewencja) + ocena. Koszty niezgodności = braki wewnętrzne + zewnętrzne."},
+  {set:9,q:"Koszty braków ZEWNĘTRZNYCH to te, które...",opts:["ujawnia klient — reklamacje, naprawy gwarancyjne, wycofanie wyrobu z rynku","wykrywane są wewnątrz zakładu podczas kontroli, jeszcze przed wysyłką wyrobu do klienta","ponosi się z góry na szkolenia pracowników i planowanie jakości","dotyczą kontroli materiałów wejściowych i prób odbiorczych"],ans:0,exp:"Braki wewnętrzne = wykryte w zakładzie (selekcja, złom, przerób). Zewnętrzne = wykryte przez klienta (reklamacje, gwarancje, koszty wizerunkowe)."},
+  {set:9,q:"Metafora 'góry lodowej' kosztów jakości podkreśla, że...",opts:["większość kosztów jest ukryta pod powierzchnią (utrata klientów, reputacja, koszty społeczne)","wszystkie koszty jakości są w pełni widoczne i łatwe do wychwycenia w standardowych księgach rachunkowych","koszty jakości są zawsze wielokrotnie niższe od osiąganych zysków","koszty ukryte można w praktyce całkowicie pominąć w analizie"],ans:0,exp:"Nad powierzchnią = koszty księgowe (widoczne). Pod powierzchnią (większość!) = koszty ukryte: utrata klientów, reputacja, koszty społeczne."},
+  {set:9,q:"Pożądana — z punktu widzenia optymalizacji — zależność między kosztami jakości to...",opts:["(koszty zapobiegania + koszty oceny) większe niż koszty niezgodności","koszty niezgodności większe niż wszystkie pozostałe kategorie razem","całkowicie zerowe koszty zapobiegania i oceny jakości","idealna równość wszystkich czterech kategorii kosztów jakości"],ans:0,exp:"Pożądane: (zapobieganie + ocena) > niezgodności. Inwestować w prewencję, by ograniczać straty wewnętrzne i zewnętrzne."},
+  {set:9,q:"Ile funkcji pełni rachunek kosztów jakości (informacyjna, analityczna, optymalizacyjna, kontrolna, motywacyjna)?",opts:["5","3","7","10"],ans:0,exp:"5 funkcji: informacyjna, analityczna, optymalizacyjna, kontrolna, motywacyjna. Pojawia się często na kolokwium."}
+];
+
+const SETS = [
+  {name:"Podstawowe pojęcia jakości",range:[0,7]},
+  {name:"Ewolucja QI→QC→QA→TQM",range:[7,13]},
+  {name:"Prekursorzy — guru jakości",range:[13,22]},
+  {name:"7 zasad zarządzania jakością",range:[22,29]},
+  {name:"Koncepcje: TQM, Lean, Six Sigma",range:[29,37]},
+  {name:"Normalizacja i ISO",range:[37,44]},
+  {name:"System ISO 9001",range:[44,51]},
+  {name:"Znormalizowane systemy zarządzania",range:[51,57]},
+  {name:"Akredytacja i certyfikacja",range:[57,64]},
+  {name:"Koszty jakości",range:[64,70]},
+  {name:"Wszystkie pytania (cały materiał)",range:[0,70]}
+];
+
+/* ============ KOMPENDIUM render ============ */
+const kl=document.getElementById('komp-list');
+kl.innerHTML=LECTURES.map(l=>`
+  <div class="lec">
+    <button class="lec-head" aria-expanded="false">
+      <span class="lec-num">${l.num}</span>
+      <span class="lec-t"><h3>${l.t}</h3><p>${l.s}</p></span>
+      <span class="lec-ic"></span>
+    </button>
+    <div class="lec-body"><div class="lec-inner">${l.html}</div></div>
+  </div>`).join('');
+kl.querySelectorAll('.lec-head').forEach(h=>{
+  h.addEventListener('click',()=>{
+    const lec=h.closest('.lec');
+    const open=lec.classList.toggle('open');
+    h.setAttribute('aria-expanded',open);
+  });
+});
+
+/* ============ TABS ============ */
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+    t.classList.add('active');
+    const id=t.dataset.tab;
+    document.getElementById(id).classList.add('active');
+    if(id==='quiz'&&activeSet===null) renderSetPicker();
+    window.scrollTo({top:0,behavior:'smooth'});
+  });
+});
+
+/* ============ QUIZ ENGINE ============ */
+function shuffle(q){
+  const idxs=[0,1,2,3];
+  for(let i=idxs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idxs[i],idxs[j]]=[idxs[j],idxs[i]];}
+  return{opts:idxs.map(i=>q.opts[i]),ans:idxs.indexOf(q.ans)};
+}
+
+let activeSet=null, questions=[], shuffled=[], current=0, score=0, answered=[];
+
+function startSet(si){
+  const s=SETS[si];
+  questions=RAW.slice(s.range[0],s.range[1]);
+  shuffled=questions.map(shuffle);
+  current=0;score=0;answered=new Array(questions.length).fill(null);
+  activeSet=si;
+  renderQuiz();
+}
+
+function renderSetPicker(){
+  activeSet=null;
+  const c=document.getElementById('quiz-container');
+  const btns=SETS.map((s,i)=>{
+    const n=s.range[1]-s.range[0];
+    const all=i===SETS.length-1;
+    return `<button class="set-btn ${all?'all':''}" onclick="startSet(${i})">
+      <span class="sb-n">${all?'▚ CAŁOŚĆ':'DZIAŁ '+String(i+1).padStart(2,'0')}</span>
+      <span class="sb-t">${s.name}</span>
+      <span class="sb-c">${n} ${n===1?'pytanie':(n<5?'pytania':'pytań')}</span>
+    </button>`;
+  }).join('');
+  c.innerHTML=`<div class="picker">${btns}</div>`;
+}
+
+function ringSVG(pct){
+  const r=52,circ=2*Math.PI*r,off=circ*(1-pct/100);
+  return `<svg class="ring" viewBox="0 0 120 120">
+    <circle cx="60" cy="60" r="${r}" fill="none" stroke="#241d4a" stroke-width="9"/>
+    <circle cx="60" cy="60" r="${r}" fill="none" stroke="url(#irisGrad)" stroke-width="9" stroke-linecap="round"
+      stroke-dasharray="${circ}" stroke-dashoffset="${off}" transform="rotate(-90 60 60)"/>
+  </svg>`;
+}
+
+function renderQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(current>=questions.length){
+    const pct=Math.round(score/questions.length*100);
+    const msg=pct>=80?'✅ Solidna znajomość materiału — jesteś gotów na kolokwium.':pct>=60?'⚠️ Nieźle, ale kilka rzeczy warto powtórzyć w kompendium.':'❌ Wróć do kompendium i spróbuj ponownie — dasz radę.';
+    c.innerHTML=`<div class="score-card">
+      <div class="score-label">${SETS[activeSet].name}</div>
+      ${ringSVG(pct)}
+      <div class="score-big">${score}/${questions.length}</div>
+      <div class="score-pct">${pct}% poprawnych odpowiedzi</div>
+      <div class="score-msg">${msg}</div>
+      <div class="score-actions">
+        <button class="btn primary" onclick="startSet(${activeSet})">↻ Powtórz (nowa kolejność)</button>
+        <button class="btn" onclick="renderSetPicker()">← Zmień dział</button>
+      </div>
+    </div>`;
+    window.scrollTo({top:0,behavior:'smooth'});
+    return;
+  }
+  const q=questions[current], sh=shuffled[current];
+  const isAns=answered[current]!==null;
+  const pct=Math.round((current/questions.length)*100);
+  c.innerHTML=`
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div style="margin-bottom:12px"><button class="btn" onclick="renderSetPicker()">← Działy</button></div>
+    <div class="qcard">
+      <div class="qmeta">
+        <span>${SETS[activeSet].name} · ${current+1}/${questions.length}</span>
+        <span class="sc">Wynik: ${score} pkt</span>
+      </div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-opts">
+        ${sh.opts.map((o,i)=>{
+          let cls='opt';
+          if(isAns){cls+=' locked';if(i===sh.ans)cls+=' correct';else if(i===answered[current])cls+=' wrong';}
+          const oc=isAns?'':` onclick="pick(${i})"`;
+          return `<button class="${cls}"${oc}>${o}</button>`;
+        }).join('')}
+      </div>
+      ${isAns?`<div class="feedback ${answered[current]===sh.ans?'ok':'fail'}">${answered[current]===sh.ans?'✅ Dobrze. ':'❌ Niepoprawnie. '}${q.exp}</div>`:''}
+      <div class="qnav">
+        <div class="left">${current>0?`<button class="btn" onclick="prevQ()">← Wstecz</button>`:''}</div>
+        ${isAns?`<button class="btn primary" onclick="nextQ()">${current<questions.length-1?'Dalej →':'Pokaż wynik →'}</button>`:'<span style="font-family:var(--mono);font-size:.72rem;color:var(--muted2);letter-spacing:1px">wybierz odpowiedź</span>'}
+      </div>
+    </div>`;
+}
+
+function pick(i){
+  if(answered[current]!==null)return;
+  answered[current]=i;
+  if(i===shuffled[current].ans)score++;
+  renderQuiz();
+}
+function nextQ(){current++;renderQuiz();}
+function prevQ(){if(current>0){current--;renderQuiz();}}
+</script>
+</body>
+</html>
