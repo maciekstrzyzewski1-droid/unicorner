@@ -7,18 +7,18 @@
 <meta name="description" content="Szeregi czasowe i modele trendu: trend liniowy MNK, miary dopasowania (R², φ², błąd szacunku), trend potęgowy i wykładniczy, prognozowanie. Materiały, ściąga Excela, zadania i quiz.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
-    --ink:#0c0a18; --ink2:#100d20; --surface:#161230; --surface2:#1c1740;
-    --line:#272050; --line2:#352c66;
+    --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
+    --line:#241d4a; --line2:#3a2e74;
     --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
     --accent:#a78bfa; --accent-d:#8b5cf6;
     --ok:#5ad1a0; --ok-bg:#10241d; --ok-line:#1d4a3a;
     --bad:#f87a8e; --bad-bg:#2a0f17; --bad-line:#5a2230;
-    --iris:linear-gradient(115deg,#5ad1ff 0%,#a78bfa 34%,#f472b6 66%,#fcd34d 100%);
+    --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
     --shadow:0 18px 50px rgba(0,0,0,.5);
-    --mono:'Space Grotesk',ui-monospace,monospace;
+    --mono:'Chakra Petch','Space Grotesk',ui-monospace,monospace; --disp:'Chakra Petch','Space Grotesk',sans-serif; --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a; --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   html{scroll-behavior:smooth;}
@@ -152,8 +152,35 @@ nav.pills a,.mcard,.ex,.quiz-card,.opt,.quiz-score,.xtable-wrap,.eyebrow,.back{b
 nav.pills a,.opt,.back{transition:border-color .18s,box-shadow .18s,background .18s !important;}
 nav.pills a:hover,.back:hover,.opt:hover:not(:disabled){border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 8px 26px rgba(167,139,250,.22),0 0 14px rgba(39,232,255,.13) !important;}
 </style>
+<style>
+/* ===== PELNY MOTYW — doszlifowanie do wzorca (scanbar, sweep, HUD, gigant) ===== */
+.scanbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:var(--iris);background-size:200% 100%;opacity:.9;}
+@media (prefers-reduced-motion:no-preference){.scanbar{animation:ucshim 6s linear infinite;}}
+@keyframes ucshim{to{background-position:200% 0;}}
+.uc-sweep{position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(39,232,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
+@media (prefers-reduced-motion:no-preference){.uc-sweep{animation:ucsweep 14s ease-in-out infinite;}}
+@keyframes ucsweep{0%,100%{transform:translateX(-30%);}50%{transform:translateX(30%);}}
+.wrap{position:relative;z-index:1;}
+.wordmark .ai,.wordmark{font-family:var(--disp) !important;}
+.eyebrow{color:var(--cyan) !important;border-color:var(--line2) !important;background:rgba(39,232,255,.05) !important;}
+.eyebrow .dot{background:var(--cyan) !important;box-shadow:0 0 10px var(--cyan) !important;}
+.sec-head .num{color:#0b0918 !important;background:var(--iris) !important;border:none !important;font-family:var(--disp);font-weight:800;box-shadow:0 0 14px rgba(39,232,255,.3);}
+.mcard,.ex,.quiz-card,.quiz-score,.xtable-wrap{clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+.ex{position:relative;}
+.mcard::after,.ex::after{content:"";position:absolute;top:7px;left:7px;width:12px;height:12px;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);opacity:.4;pointer-events:none;}
+.mcard::before{background:var(--iris) !important;opacity:.9 !important;}
+.btn{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.quiz-score .big{font-family:'Orbitron','Chakra Petch',sans-serif;font-weight:800;}
+.giant{position:relative;z-index:1;text-align:center;overflow:hidden;line-height:.9;user-select:none;pointer-events:none;margin:26px auto 18px;padding:0 16px;}
+.giant span{display:inline-block;max-width:100%;font-family:'Orbitron','Chakra Petch',sans-serif;font-weight:800;font-size:clamp(1.7rem,11vw,6.2rem);letter-spacing:.04em;line-height:1;white-space:nowrap;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px rgba(39,232,255,.5)) drop-shadow(0 0 34px rgba(167,139,250,.4));}
+@media (prefers-reduced-motion:no-preference){.giant span{animation:ucshim 8s linear infinite;}}
+.foot-brand{display:flex;align-items:center;gap:9px;color:var(--muted);font-family:var(--disp);font-weight:600;font-size:.92rem;letter-spacing:1px;margin-top:14px;}
+.foot-brand .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+</style>
 </head>
 <body>
+<div class="scanbar" aria-hidden="true"></div><div class="uc-sweep" aria-hidden="true"></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
@@ -330,6 +357,8 @@ nav.pills a:hover,.back:hover,.opt:hover:not(:disabled){border-color:#a78bfa !im
       <div id="scoreMsg" style="color:var(--muted);margin-top:6px"></div>
     </div>
   </section>
+
+  <div class="giant" aria-hidden="true"><span>TREND</span></div>
 
   <footer>
     <p class="disclaimer">
