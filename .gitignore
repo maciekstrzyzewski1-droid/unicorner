@@ -1,0 +1,10 @@
+# Materiały źródłowe wykładowców — NIE publikować (patrz stopka strony)
+*.pdf
+jakość claude/
+
+# Odpady po "Zapisz stronę jako" w przeglądarce (nowe; już-śledzone zostają)
+*_files/
+
+# System / edytor
+.DS_Store
+Thumbs.db

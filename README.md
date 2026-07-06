@@ -39,17 +39,16 @@ z natychmiastową informacją zwrotną. Bez logowania, działa na telefonie.
 
 | Plik | Uwaga |
 | --- | --- |
-| `Zarządzanie jakością.html` | Gotowa strona przedmiotu, ale **nazwa ma spacje i polskie znaki** → brzydki, kruchy URL (`Zarz%C4%85dzanie%20jako%C5%9Bci%C4%85.html`). Nie ma jej w `SUBJECTS`. Do ujednolicenia nazwy (np. `zarzadzanie-jakoscia.html`) i podlinkowania. |
+| `Zarządzanie jakością.html` | Gotowa strona przedmiotu, ale **nazwa ma spacje i polskie znaki** → brzydki, kruchy URL. Nie ma jej w `SUBJECTS`. Do ujednolicenia nazwy (np. `zarzadzanie-jakoscia.html`) i podlinkowania. |
 | `korelacja.html` | Statystyka — korelacja. Nielinkowana. |
 | `sezonowosc.html` | Statystyka — wahania sezonowe (trend.html o niej wspomina). Nielinkowana. |
 
-### Do sprzątnięcia (patrz sekcja niżej)
+### Pliki pomocnicze (zostają — są w użyciu)
 
-| Ścieżka | Problem |
+| Ścieżka | Uwaga |
 | --- | --- |
-| `jakość claude/` (9× PDF wykładów PZJ) | **Publicznie dostępne materiały wykładowców — sprzeczne ze stopką strony i ryzykowne (IP).** |
-| `makroekonomia_files/css2` | Śmieć po „Zapisz stronę jako" (plik fontów Google). |
-| `reviews.json` | Pusty `[]`, nieużywany relikt — opinie idą przez Worker/KV. |
+| `makroekonomia_files/css2` | Lokalny arkusz fontów — `makroekonomia.html` ładuje z niego czcionki. NIE usuwać bez przepięcia na CDN. |
+| `reviews.json` | Pusty `[]`, ale `index.html` używa go jako fallback, gdy Worker leży. Zostawić. |
 
 ---
 
@@ -64,7 +63,7 @@ z natychmiastową informacją zwrotną. Bez logowania, działa na telefonie.
 ## Wdrożenie i pułapki
 
 - **Deploy:** każdy push na `main` odpala workflow `pages-build-deployment`. Nowy plik **musi** być zacommitowany (`git status` → nie zostawiaj „untracked"). `git add .` łapie wszystko nowe.
-- **Cache 404:** jeśli linkujesz do pliku, którego jeszcze nie ma, CDN potrafi zapamiętać 404 dla tego adresu nawet po dodaniu pliku. Obejście: dopisz `?v=1` do linku (świeży adres omija stary cache). Tak jest zrobiony link do generatora w `index.html`.
+- **Cache 404:** jeśli linkujesz do pliku, którego jeszcze nie ma, CDN potrafi zapamiętać 404 dla tego adresu nawet po dodaniu pliku. Obejście: dopisz `?v=1` do linku. Tak jest zrobiony link do generatora w `index.html`.
 - **Nazwy plików:** GitHub Pages jest wrażliwy na wielkość liter i ścieżki (Linux). Trzymaj się małych liter i myślników — bez spacji, wielkich liter i polskich znaków.
 - Szczegóły backendu: `WDROZENIE.md`.
 
