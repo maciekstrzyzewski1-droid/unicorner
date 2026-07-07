@@ -202,6 +202,9 @@
   .opt.wrong::before{border-color:var(--bad);background:var(--bad);box-shadow:0 0 10px rgba(255,107,139,.4);}
   .opt.wrong::after{content:"✕";position:absolute;left:16.5px;top:50%;transform:translateY(-50%);font-size:.7rem;color:var(--ink);font-weight:900;}
   .opt.locked{cursor:default;opacity:.72;}
+  .opt.multi::before{border-radius:3px;}
+  .opt.selected::before{border-color:var(--accent);background:var(--accent);box-shadow:0 0 8px rgba(167,139,250,.5);}
+  .opt.selected::after{content:"✓";position:absolute;left:16.5px;top:50%;transform:translateY(-50%);font-size:.72rem;color:var(--ink);font-weight:900;}
   .feedback{margin-top:14px;border-radius:4px;padding:13px 15px;font-size:.86rem;line-height:1.5;border:1px solid;}
   .feedback.ok{border-color:var(--ok-line);background:var(--ok-bg);color:#bff3d3;}
   .feedback.fail{border-color:var(--bad-line);background:var(--bad-bg);color:#ffcdd8;}
@@ -605,41 +608,56 @@ const RAW = [
   {set:9,q:"Pożądana — z punktu widzenia optymalizacji — zależność między kosztami jakości to...",opts:["(koszty zapobiegania + koszty oceny) większe niż koszty niezgodności","koszty niezgodności większe niż wszystkie pozostałe kategorie razem","całkowicie zerowe koszty zapobiegania i oceny jakości","idealna równość wszystkich czterech kategorii kosztów jakości"],ans:0,exp:"Pożądane: (zapobieganie + ocena) > niezgodności. Inwestować w prewencję, by ograniczać straty wewnętrzne i zewnętrzne."},
   {set:9,q:"Ile funkcji pełni rachunek kosztów jakości (informacyjna, analityczna, optymalizacyjna, kontrolna, motywacyjna)?",opts:["5","3","7","10"],ans:0,exp:"5 funkcji: informacyjna, analityczna, optymalizacyjna, kontrolna, motywacyjna. Pojawia się często na kolokwium."},
 
-  // ===== DZIAŁ 11: Narzędzia i techniki Lean (70-74) =====
-  {set:10,q:"Która kombinacja metod jest najbardziej odpowiednia do identyfikacji i priorytetyzacji głównych przyczyn problemu jakościowego?",opts:["Ishikawa + 5 Why + Pareto","Zarządzanie wizualne + brainstorming","Kaizen + Poka-Yoke","PDPC + 5W2H"],ans:0,exp:"Ishikawa identyfikuje kategorie przyczyn, 5 Why drąży do przyczyny źródłowej, a Pareto priorytetyzuje, które przyczyny odpowiadają za największy udział problemu — klasyczna sekwencja do tego celu."},
-  {set:10,q:"Które z poniższych działań najbardziej narusza założenia klasycznej burzy mózgów Osborna?",opts:["Natychmiastowa ocena wykonalności każdego pomysłu","Generowanie maksymalnej liczby pomysłów w krótkim czasie","Łączenie i rozwijanie pomysłów uczestników","Zachęcanie do niestandardowych i odważnych idei"],ans:0,exp:"Podstawowa zasada burzy mózgów to odroczenie oceny — żadnej krytyki na etapie generowania pomysłów. Ocena wykonalności wprost łamie tę zasadę; pozostałe trzy to cele klasycznego brainstormingu."},
-  {set:10,q:"W metodzie 5S, co jest głównym celem etapu 'Seiri' (Selekcja)?",opts:["Usunięcie ze stanowiska pracy wszystkich niepotrzebnych przedmiotów","Wyznaczenie stałych miejsc dla narzędzi","Utrzymanie dyscypliny wśród pracowników","Opracowanie standardów czyszczenia"],ans:0,exp:"Seiri = selekcja = oddzielenie potrzebnego od niepotrzebnego i eliminacja zbędnych rzeczy. Wyznaczanie miejsc dla narzędzi to już 2S — Seiton."},
-  {set:10,q:"Jak najlepiej opisać relację między Kaizen a Poka-Yoke?",opts:["Poka-Yoke jest narzędziem wspierającym Kaizen w eliminacji błędów","Są to metody konkurencyjne","Kaizen dotyczy tylko strategii, a Poka-Yoke tylko produkcji","Kaizen eliminuje potrzebę stosowania Poka-Yoke"],ans:0,exp:"Poka-Yoke to konkretne narzędzie zapobiegania błędom, wpisujące się w filozofię ciągłego doskonalenia Kaizen — jedno nie konkuruje z drugim, Poka-Yoke realizuje Kaizen na poziomie operacyjnym."},
-  {set:10,q:"Czym jest 'Strategia Czerwonej Etykiety' w kontekście metody 5S?",opts:["Metodą znakowania przedmiotów, co do których nie ma pewności, czy są potrzebne","Oznaczaniem dróg ewakuacyjnych","Oznaczaniem produktów o najwyższej jakości","Sygnalizacją awarii maszyny (system Andon)"],ans:0,exp:"Czerwona etykieta (red tag) przykleja się do przedmiotów wątpliwych podczas etapu Seiri — trafiają do strefy kwarantanny, gdzie decyduje się o ich zachowaniu, przeniesieniu lub utylizacji."},
-  {set:10,q:"Który z poniższych problemów najlepiej analizować za pomocą diagramu Ishikawy?",opts:["wzrost liczby reklamacji jakościowych","spadek sprzedaży w regionie","ustalanie budżetu marketingowego","planowanie harmonogramu projektu"],ans:0,exp:"Diagram Ishikawy (przyczynowo-skutkowy) służy do analizy przyczyn problemów jakościowych — nie do zagadnień budżetowych, sprzedażowych czy harmonogramowych, które wymagają innych narzędzi."},
-  {set:10,q:"Który z poniższych przykładów jest typowym rozwiązaniem Poka-Yoke?",opts:["kolorowe oznaczenia przewodów elektrycznych","raport miesięczny o jakości","analiza kosztów produkcji","szkolenie pracowników z obsługi maszyn"],ans:0,exp:"Poka-Yoke to fizyczne/wizualne rozwiązania zapobiegające błędom w miejscu ich powstawania — np. kolorowe oznaczenia uniemożliwiające złe podłączenie przewodów. Raporty, analizy kosztów i szkolenia to działania organizacyjne, nie mechanizmy zapobiegania błędom."},
-  {set:10,q:"Podstawową ideą Poka-Yoke jest takie zaprojektowanie procesu, aby błędy były niemożliwe lub przynajmniej łatwe do wykrycia i poprawienia.",opts:["Prawda","Fałsz"],ans:0,exp:"To dokładnie definicja Poka-Yoke — zaprojektowanie procesu tak, by błąd był niemożliwy do popełnienia albo natychmiast wykrywalny."},
-  {set:10,q:"Czym jest system Andon w nowoczesnym zakładzie produkcyjnym?",opts:["sygnalizacją świetlną informującą o statusie maszyn lub linii","robotem do transportu palet","automatycznym systemem naliczania premii","rodzajem regału magazynowego"],ans:0,exp:"Andon to wizualny system sygnalizacji (najczęściej świetlnej) informujący w czasie rzeczywistym o statusie linii lub maszyn, np. o zatrzymaniu produkcji z powodu problemu jakościowego."},
-  {set:10,q:"W Diagramie Ishikawy (rybia ość), kategoria 'Metoda' odnosi się do:",opts:["niewłaściwych procedur lub instrukcji pracy","niewłaściwej temperatury lub wilgotności w hali","braków kompetencyjnych personelu","awarii i parametrów pracy maszyn"],ans:0,exp:"Kategoria 'Metoda' obejmuje procedury, instrukcje i sposób wykonywania pracy. Temperatura/wilgotność to kategoria 'Środowisko', kompetencje to 'Ludzie', a awarie maszyn to kategoria 'Maszyny'."},
-  {set:10,q:"Jak interpretować wykres Pareto - Lorenza?",opts:["niewielka liczba przyczyn odpowiada za większość skutków","każda przyczyna jest trudna do wyeliminowania","problem jest wynikiem przypadkowych zdarzeń","wszystkie przyczyny mają równy wpływ na problem"],ans:0,exp:"Zasada Pareto (80/20): niewielka liczba przyczyn (ok. 20%) odpowiada za większość skutków (ok. 80%). Wykres Pareto-Lorenza pozwala priorytetyzować, którymi przyczynami zająć się najpierw."},
-  {set:10,q:"Zjawisko 'Muda' związane z 'Nadmiernym przetwarzaniem' (Overprocessing) występuje, gdy:",opts:["wykonujemy czynności, za które klient nie chce płacić, bo nie dodają one wartości","pracownik musi daleko chodzić po narzędzia","czekamy na materiał od dostawcy","produkujemy więcej towaru niż zamówił klient"],ans:0,exp:"Overprocessing to wykonywanie zbędnych czynności, które nie dodają wartości z punktu widzenia klienta. Chodzenie po narzędzia to Motion, czekanie to Waiting, a nadprodukcja to Overproduction — inne rodzaje Muda."},
-  {set:10,q:"W metodzie 5 Why (5x Dlaczego), dlaczego liczba 5 jest traktowana tylko jako drogowskaz?",opts:["ponieważ do przyczyny źródłowej można dotrzeć po 3 lub np. 7 pytaniach","ponieważ zawsze trzeba zadać dokładnie 5 pytań","ponieważ w języku japońskim 5 oznacza \"nieskończoność\"","ponieważ po 5 pytaniu mózg ludzki przestaje pracować kreatywnie"],ans:0,exp:"Liczba 5 to umowna wskazówka, nie sztywna reguła — do przyczyny źródłowej można dotrzeć szybciej (np. po 3 pytaniach) lub wolniej (np. po 7), w zależności od złożoności problemu."},
-  {set:10,q:"Które z poniższych stwierdzeń jest NIEprawdziwe dla 5Why:",opts:["Przyczyna może leżeć po stronie człowieka","5Why ma za zadanie znaleźć przyczynę źródłową problemu","Przyczyna może leżeć po stronie organizacji, systemu lub procesu","5Why ma działać jak lejek zawężający temat"],ans:0,exp:"5 Why koncentruje się na przyczynach systemowych, procesowych i organizacyjnych, a nie na obwinianiu konkretnej osoby — szukanie 'winnego człowieka' zaprzecza idei tej metody."},
-  {set:10,q:"Które z poniższych stwierdzeń jest zgodne z zasadą Kaizen?",opts:["każdy pracownik może zgłaszać pomysły usprawnień","doskonalenie jest procesem jednorazowym","zmiany powinny być duże i kosztowne","Kaizen dotyczy tylko działu produkcji"],ans:0,exp:"Kaizen to filozofia ciągłego doskonalenia małymi krokami, angażująca wszystkich pracowników niezależnie od działu — nie jest to jednorazowa ani wyłącznie produkcyjna inicjatywa."},
-  {set:10,q:"Metody heurystyczne to:",opts:["sposób rozwiązywania problemów, w którym wykorzystuje się doświadczenie, intuicję i kreatywne myślenie, aby znaleźć dobre, choć niekoniecznie optymalne rozwiązania","metody pozwalające przetwarzać potrzeby odbiorców na poszczególne charakterystyki wyrobów","sposób rozwiązywania problemów, w którym wykorzystuje się analizę do określania zjawiska o największej częstotliwości występowania lub przyczyny największych kosztów"],ans:0,exp:"Metody heurystyczne (np. burza mózgów) opierają się na doświadczeniu, intuicji i kreatywności, dając dobre, choć niekoniecznie optymalne rozwiązania. Drugi opis dotyczy QFD, trzeci — analizy Pareto."},
-  {set:10,q:"Odmiana burzy mózgów 635 polega na generowaniu:",opts:["3 pomysłów w czasie 5 minut przez 6 osób","6 pomysłów w czasie 3 minut przez 5 osób"],ans:0,exp:"Metoda 635: 6 uczestników, każdy zapisuje 3 pomysły w ciągu 5 minut, następnie przekazuje kartkę kolejnej osobie — stąd nazwa 6-3-5."},
-  {set:10,q:"Narzędzie zarządzania, służące do oceny satysfakcji klienta i identyfikacji obszarów wymagających poprawy. Pomaga firmom zrozumieć atrybuty produktu lub usługi, które są ważne dla klientów i jak dobrze są postrzegane jako wykonane.",opts:["Analiza istotności-osiągnięć","Analiza ABCD","Macierzowa analiza danych","Analiza pola sił"],ans:0,exp:"Analiza istotności-osiągnięć (Importance-Performance Analysis) zestawia, jak ważny jest dany atrybut dla klienta z tym, jak dobrze firma go realizuje — pozwala zidentyfikować priorytety do poprawy."},
-  {set:10,q:"Które z poniższych stwierdzeń nie można zaklasyfikować do sił napędzających w Analizie pola sił:",opts:["Firma ma przestrzegać surowych przepisów bezpieczeństwa i ochrony środowiska, które mogą zwiększyć jej koszty.","Firma ma wykwalifikowanych i zmotywowanych pracowników, którzy są chętni do nauki i adaptacji","Firma ma dostęp do nowych technologii i sprzętu, które mogą poprawić wydajność i jakość."],ans:0,exp:"Siły napędzające to czynniki sprzyjające zmianie. Surowe przepisy zwiększające koszty to siła hamująca (restraining force), nie napędzająca."}
+  // ===== DZIAŁ 11: Narzędzia i techniki Lean =====
+  {set:10,q:"Jaki zestaw narzędzi najlepiej sprawdzi się, gdy trzeba zarówno znaleźć, jak i uszeregować pod względem ważności przyczyny problemu z jakością?",opts:["Ishikawa + 5 Why + Pareto","Tablice wizualne + burza mózgów","Poka-Yoke + Kaizen","PDPC + 5W2H"],ans:0,exp:"Diagram Ishikawy porządkuje przyczyny w kategorie, 5 Why prowadzi do przyczyny źródłowej, a wykres Pareto pokazuje, które z nich mają największy udział w problemie — to typowe połączenie narzędzi do tego celu."},
+  {set:10,q:"Które zachowanie stoi w największej sprzeczności z zasadami klasycznego brainstormingu wg Osborna?",opts:["Krytykowanie i ocenianie wykonalności pomysłu zaraz po jego zgłoszeniu","Dążenie do jak największej liczby pomysłów w krótkim czasie","Rozbudowywanie i łączenie pomysłów zgłoszonych przez innych uczestników","Otwartość na nietypowe, odważne propozycje"],ans:0,exp:"Fundamentalna zasada brainstormingu to odroczenie oceny — na etapie generowania pomysłów nie ma miejsca na krytykę. Ocenianie wykonalności od razu łamie tę zasadę; pozostałe zachowania to właśnie cele tej metody."},
+  {set:10,q:"Jaki jest podstawowy cel pierwszego etapu metody 5S — Seiri (Selekcja)?",opts:["Pozbycie się ze stanowiska pracy rzeczy, które nie są potrzebne","Ustalenie stałego miejsca przechowywania dla każdego narzędzia","Egzekwowanie dyscypliny pracy w zespole","Stworzenie standardów sprzątania stanowiska"],ans:0,exp:"Seiri (selekcja) polega na oddzieleniu tego, co potrzebne, od tego, co zbędne, i usunięciu zbędnych rzeczy ze stanowiska. Ustalanie stałych miejsc dla narzędzi to już kolejny etap — Seiton."},
+  {set:10,q:"Która odpowiedź najtrafniej opisuje zależność między Kaizen a Poka-Yoke?",opts:["Poka-Yoke to praktyczne narzędzie, które realizuje cele Kaizen poprzez eliminację błędów","To dwa konkurujące ze sobą podejścia","Kaizen odnosi się wyłącznie do strategii, a Poka-Yoke tylko do produkcji","Wdrożenie Kaizen sprawia, że stosowanie Poka-Yoke staje się zbędne"],ans:0,exp:"Poka-Yoke to konkretne narzędzie zapobiegania błędom, wpisujące się w filozofię ciągłego doskonalenia Kaizen. Jedno nie wyklucza drugiego — Poka-Yoke urzeczywistnia Kaizen na poziomie operacyjnym."},
+  {set:10,q:"Co oznacza 'Strategia Czerwonej Etykiety' stosowana w metodzie 5S?",opts:["Sposób oznaczania rzeczy, których przydatność budzi wątpliwości","Znakowanie tras ewakuacyjnych","Wyróżnianie wyrobów najwyższej jakości","Sygnalizowanie awarii maszyn w systemie Andon"],ans:0,exp:"Czerwoną etykietą oznacza się w trakcie etapu Seiri przedmioty o niepewnej przydatności — trafiają one do strefy kwarantanny, gdzie zapada decyzja o ich losie."},
+  {set:10,q:"Do analizy którego z poniższych zagadnień najlepiej nadaje się diagram Ishikawy?",opts:["rosnącej liczby reklamacji dotyczących jakości","malejącej sprzedaży w danym regionie","planowania budżetu na działania marketingowe","układania harmonogramu realizacji projektu"],ans:0,exp:"Diagram przyczynowo-skutkowy Ishikawy służy do analizy przyczyn problemów jakościowych, a nie zagadnień budżetowych, sprzedażowych czy harmonogramowych — do tego stosuje się inne narzędzia."},
+  {set:10,q:"Które z poniższych rozwiązań jest klasycznym przykładem zastosowania Poka-Yoke?",opts:["system kolorowego kodowania przewodów elektrycznych, uniemożliwiający pomyłkę","comiesięczne zestawienie danych o jakości","kalkulacja kosztów wytworzenia","kurs obsługi maszyn dla pracowników"],ans:0,exp:"Poka-Yoke to fizyczne lub wizualne rozwiązanie zapobiegające błędom w miejscu ich powstawania. Zestawienia, kalkulacje kosztów i szkolenia to działania organizacyjne, nie mechanizmy zapobiegania błędom."},
+  {set:10,q:"Poka-Yoke opiera się na takim projektowaniu procesu, by popełnienie błędu było niemożliwe albo dało się go od razu wychwycić i skorygować.",opts:["Prawda","Fałsz"],ans:0,exp:"To sedno idei Poka-Yoke — proces zaprojektowany tak, by błąd był niemożliwy do popełnienia albo natychmiast wykrywalny."},
+  {set:10,q:"Jak działa system Andon we współczesnym zakładzie produkcyjnym?",opts:["jako wizualny sygnał pokazujący bieżący stan maszyn lub linii produkcyjnej","jako urządzenie transportujące palety","jako system automatycznie wyliczający premie","jako typ regału w magazynie"],ans:0,exp:"Andon to system wizualnej sygnalizacji (najczęściej świetlnej), informujący w czasie rzeczywistym o stanie linii lub maszyn — np. o zatrzymaniu produkcji z powodu problemu jakościowego."},
+  {set:10,q:"W diagramie rybiej ości (Ishikawy) kategoria 'Metoda' dotyczy:",opts:["błędnych procedur lub instrukcji roboczych","nieodpowiedniej temperatury lub wilgotności w hali produkcyjnej","luk kompetencyjnych wśród pracowników","usterek i parametrów działania maszyn"],ans:0,exp:"Kategoria 'Metoda' obejmuje procedury i sposób wykonywania pracy. Temperatura/wilgotność to kategoria 'Środowisko', kompetencje to 'Ludzie', a usterki maszyn to kategoria 'Maszyny'."},
+  {set:10,q:"Jak należy odczytywać wykres Pareto-Lorenza?",opts:["mała grupa przyczyn generuje większość skutków","każdą przyczynę trudno jest wyeliminować","problem powstaje w wyniku losowych zdarzeń","każda przyczyna ma taki sam wpływ na problem"],ans:0,exp:"Zasada Pareto (80/20): niewielka grupa przyczyn odpowiada za większość skutków. Wykres Pareto-Lorenza pozwala priorytetyzować, którymi przyczynami zająć się najpierw."},
+  {set:10,q:"Kiedy występuje 'Muda' w postaci 'Nadmiernego przetwarzania' (Overprocessing)?",opts:["gdy realizujemy działania, za które klient nie zamierza płacić, bo nie wnoszą wartości","gdy pracownik pokonuje długą drogę po potrzebne narzędzia","gdy oczekujemy na dostawę materiału od kontrahenta","gdy wytwarzamy większą ilość towaru niż wynika z zamówienia"],ans:0,exp:"Overprocessing to zbędne czynności, które nie dodają wartości z punktu widzenia klienta. Chodzenie po narzędzia to Motion, oczekiwanie to Waiting, a nadprodukcja to Overproduction — inne rodzaje Muda."},
+  {set:10,q:"Dlaczego w metodzie 5 Why liczba 5 pełni rolę jedynie orientacyjną?",opts:["bo przyczynę źródłową można znaleźć zarówno po 3, jak i po 7 pytaniach","bo liczba pytań musi zawsze wynosić dokładnie 5","bo cyfra 5 w języku japońskim symbolizuje nieskończoność","bo po piątym pytaniu kreatywność mózgu rzekomo się wyczerpuje"],ans:0,exp:"Liczba 5 to umowna wskazówka, nie sztywna reguła — do przyczyny źródłowej można dotrzeć szybciej lub wolniej, zależnie od złożoności problemu."},
+  {set:10,q:"Które z poniższych twierdzeń o metodzie 5Why jest fałszywe:",opts:["Źródłem problemu zawsze może być konkretny pracownik","Celem 5Why jest dotarcie do przyczyny źródłowej","Przyczyna może tkwić w organizacji, systemie lub procesie","5Why działa niczym lejek, zawężający analizowany temat"],ans:0,exp:"5 Why koncentruje się na przyczynach systemowych i procesowych, a nie na obwinianiu konkretnej osoby — szukanie 'winnego człowieka' jest sprzeczne z ideą tej metody."},
+  {set:10,q:"Które z poniższych twierdzeń jest spójne z filozofią Kaizen?",opts:["dowolny pracownik ma prawo zgłosić pomysł na usprawnienie","doskonalenie to działanie wykonywane raz na jakiś czas","zmiany muszą być duże i kosztowne","Kaizen obejmuje wyłącznie dział produkcyjny"],ans:0,exp:"Kaizen to filozofia ciągłego doskonalenia małymi krokami, angażująca wszystkich pracowników niezależnie od działu — nie jest to jednorazowa ani wyłącznie produkcyjna inicjatywa."},
+  {set:10,q:"Metodami heurystycznymi określamy:",opts:["sposób poszukiwania rozwiązań oparty na doświadczeniu, intuicji i kreatywności, dający rozwiązania dobre, lecz niekoniecznie optymalne","metody przekładające oczekiwania klientów na konkretne cechy produktu","sposób analizy wskazujący zjawisko występujące najczęściej lub przyczynę generującą największe koszty"],ans:0,exp:"Metody heurystyczne (np. burza mózgów) bazują na doświadczeniu, intuicji i kreatywności — dają dobre, choć niekoniecznie optymalne rozwiązania. Drugi opis dotyczy QFD, trzeci — analizy Pareto."},
+  {set:10,q:"Na czym polega wariant burzy mózgów nazywany metodą 635?",opts:["6 osób zapisuje po 3 pomysły w ciągu 5 minut","5 osób zapisuje po 6 pomysłów w ciągu 3 minut"],ans:0,exp:"Metoda 635: 6 uczestników, każdy zapisuje 3 pomysły w ciągu 5 minut, po czym przekazuje kartkę dalej — stąd nazwa 6-3-5."},
+  {set:10,q:"Narzędzie pozwalające ocenić poziom zadowolenia klienta i wskazać obszary do poprawy — pokazuje, które cechy produktu lub usługi są dla klientów istotne oraz jak firma radzi sobie z ich realizacją. Jak nazywa się to narzędzie?",opts:["Analiza istotności-osiągnięć","Analiza ABCD","Macierzowa metoda analizy danych","Analiza pola sił"],ans:0,exp:"Analiza istotności-osiągnięć (Importance-Performance Analysis) zestawia wagę danego atrybutu dla klienta z jakością jego realizacji — pozwala to wskazać priorytety do poprawy."},
+  {set:10,q:"Które z poniższych stwierdzeń NIE jest przykładem siły napędzającej w Analizie pola sił:",opts:["Organizacja musi stosować się do restrykcyjnych przepisów bezpieczeństwa i ochrony środowiska, co podnosi jej koszty","Organizacja dysponuje kompetentnym, zmotywowanym zespołem otwartym na naukę i zmiany","Organizacja ma dostęp do nowoczesnych technologii i sprzętu, co może zwiększyć wydajność i jakość"],ans:0,exp:"Siły napędzające to czynniki sprzyjające zmianie. Restrykcyjne przepisy podnoszące koszty to siła hamująca (restraining force), a nie napędzająca."},
+
+  // ===== Dodatkowe pytania z materiałów egzaminacyjnych (rozmieszczone w istniejących działach) =====
+  {set:0,q:"Jak zgodnie z normą ISO można zdefiniować zarządzanie jakością?",opts:["Zarządzanie odnoszące się do jakości: obejmuje określenie polityki i celów jakościowych oraz procesów potrzebnych do ich realizacji poprzez planowanie, zapewnienie, sterowanie i doskonalenie jakości","Poziom, w jakim zestaw właściwości nieodłącznie związanych z obiektem spełnia stawiane wymagania","Zarządzanie skupione na wyznaczaniu celów jakościowych oraz określaniu procesów operacyjnych i zasobów potrzebnych do ich osiągnięcia","Zarządzanie mające na celu zapewnienie pewności, że wymagania jakościowe zostaną spełnione"],ans:0,exp:"To definicja zarządzania jakością wg ISO 9000 — obejmuje politykę, cele i procesy realizowane przez planowanie, zapewnienie, sterowanie i doskonalenie jakości. Pozostałe opcje to definicje pokrewnych, ale odrębnych pojęć: samej 'jakości', 'planowania jakości' i 'zapewnienia jakości'."},
+  {set:6,q:"Planując program audytów w systemie zarządzania jakością, warto wziąć pod uwagę przede wszystkim:",opts:["zmiany, które mają wpływ na funkcjonowanie organizacji","oczekiwania zgłaszane przez wszystkie strony zainteresowane","oddziaływanie danego procesu na środowisko naturalne","stopień istotności procesów objętych audytem"],ans:0,exp:"Wg wytycznych dotyczących audytowania systemów zarządzania, zmiany mające wpływ na organizację to jeden z kluczowych czynników uwzględnianych przy planowaniu programu audytów, obok znaczenia procesów i wyników poprzednich audytów."},
+  {set:6,q:"Co zawiera norma ISO 9004?",opts:["wytyczne dotyczące zwiększania zdolności organizacji do osiągnięcia trwałego sukcesu, z uwzględnieniem interesów wszystkich zainteresowanych stron","wytyczne w zakresie audytowania systemów zarządzania","wymagania dotyczące wdrożenia systemu zarządzania jakością","wytyczne w zakresie zarządzania ryzykiem"],ans:0,exp:"ISO 9004 rozszerza podejście znane z ISO 9001 o wytyczne dla organizacji dążących do trwałego sukcesu, uwzględniając potrzeby wszystkich interesariuszy, nie tylko klientów."},
+  {set:7,q:"Czego dotyczy norma ISO 27001?",opts:["zarządzania bezpieczeństwem informacji","zarządzania bezpieczeństwem i higieną pracy","zarządzania ryzykiem i bezpieczeństwem ogólnym","zarządzania bezpieczeństwem żywności"],ans:0,exp:"ISO 27001 określa wymagania dla systemu zarządzania bezpieczeństwem informacji (SZBI) — obejmuje ochronę poufności, integralności i dostępności danych."},
+  {set:8,q:"Jak można zdefiniować akredytację?",opts:["Formalne potwierdzenie wydane przez upoważnioną jednostkę akredytującą, dotyczące kompetencji podmiotu działającego w obszarze oceny zgodności","Zakwalifikowanie przez właściwego ministra lub kierownika urzędu centralnego jednostki albo laboratorium zgłaszającego się do procesu notyfikacji","Wykazanie przez jednostkę, że zidentyfikowany wyrób lub proces jego wytworzenia spełnia zasadnicze bądź szczegółowe wymagania","Formalne potwierdzenie wydane przez upoważnioną jednostkę certyfikującą, dotyczące kompetencji podmiotu działającego w obszarze oceny zgodności"],ans:0,exp:"Akredytacja to potwierdzenie kompetencji przez jednostkę AKREDYTUJĄCĄ (nie certyfikującą — to częsta pułapka w tym pytaniu). Pozostałe opcje opisują inne pojęcia: notyfikację i certyfikację wyrobu."},
+  {set:8,q:"W której normie znajdziemy wytyczne dotyczące auditowania systemów zarządzania?",opts:["ISO 19011","ISO 17021","ISO 17021-1","ISO 17025"],ans:0,exp:"ISO 19011 zawiera wytyczne do audytowania systemów zarządzania, niezależnie od ich typu (jakość, środowisko, BHP itd.)."},
+  {set:8,q:"W której normie zawarto wymagania dla jednostek prowadzących audyty i certyfikację systemów zarządzania?",opts:["ISO/IEC 17021","ISO/IEC 19011","ISO/IEC 17025","ISO/IEC 21021"],ans:0,exp:"ISO/IEC 17021 (aktualnie 17021-1) określa wymagania dla jednostek certyfikujących systemy zarządzania. ISO 19011 to wytyczne dla audytorów, a ISO 17025 dotyczy laboratoriów badawczych."},
+
+  // ===== Pytania wielokrotnego wyboru (zaznacz wszystkie poprawne) =====
+  {set:0,type:"multi",q:"Jakość życia to pojęcie, które można opisać jako:",opts:["stopień, w jakim jednostka zaspokaja swoje potrzeby","fundusz konsumpcji zbiorowej w danej jednostce czasu i przestrzeni","integralny element wyłącznie warunków klimatycznych panujących w danym miejscu","zbiór potrzeb i oczekiwań klientów oraz wymagań prawnych stawianych wyrobowi","warunki budowania autentycznej egzystencji, pozbawionej poczucia wartości własnej osoby"],correct:[0,1],exp:"Jakość życia bywa ujmowana subiektywnie — jako stopień zaspokojenia potrzeb odczuwany przez jednostkę — oraz obiektywnie, jako fundusz konsumpcji zbiorowej dostępny w danym czasie i miejscu. Pozostałe stwierdzenia mieszają to pojęcie z definicją jakości wyrobu albo są wewnętrznie sprzeczne."},
+  {set:0,type:"multi",q:"Do cech charakterystycznych usług zalicza się:",opts:["niematerialność, heterogeniczność oraz to, że usługa jest czynnością lub procesem","równoczesność procesów produkcji, dystrybucji i konsumpcji","niematerialność połączoną z homogenicznością wykonania","materialność oraz heterogeniczność procesu","niematerialność oraz to, że usługa stanowi rzecz, a nie proces"],correct:[0,1],exp:"Usługi są niematerialne, niejednorodne (heterogeniczne — każde wykonanie jest inne) i nierozłączne (produkcja i konsumpcja zachodzą równocześnie). Pozostałe opcje odwracają te cechy — mówią o homogeniczności, materialności lub traktują usługę jako 'rzecz', co przeczy jej naturze."},
+  {set:2,type:"multi",q:"Które z poniższych stwierdzeń o Williamie Edwardsie Demingu są prawdziwe:",opts:["współpracował z Shewhartem","jako pierwszy amerykański ekspert w sposób metodyczny przekazywał japońskim menedżerom wiedzę o jakości","utrzymywał bliskie relacje zawodowe z Juranem","twierdził, że ok. 94% problemów jakościowych wynika z winy kierownictwa","przeciwstawiał się masowej kontroli, a swoje podejście opisał w dziesięciu zasadach zarządzania"],correct:[0,1,2,3],exp:"Deming współpracował z Shewhartem, uczył japońskich menedżerów podejścia do jakości od lat 50., znał i współpracował z Juranem, i rzeczywiście przypisywał ok. 94% problemów systemowi/kierownictwu. Pułapka w ostatniej opcji: swoje podejście opisał w słynnych 14 ZASADACH (punktach) zarządzania, a nie w dziesięciu."},
+  {set:4,type:"multi",q:"Do głównych składników TQM zalicza się:",opts:["motywatory","narzędzia","systemy","zespoły","finanse"],correct:[0,1,2,3],exp:"TQM opiera się na czterech filarach: motywatorach (zaangażowanie i przywództwo), narzędziach (techniki analizy i doskonalenia), systemach (udokumentowane procesy) oraz zespołach (praca grupowa). Finanse nie są traktowane jako odrębny, główny składnik TQM w tym ujęciu."}
 ];
 
 const SETS = [
-  {name:"Podstawowe pojęcia jakości",range:[0,7]},
-  {name:"Ewolucja QI→QC→QA→TQM",range:[7,13]},
-  {name:"Prekursorzy — guru jakości",range:[13,22]},
-  {name:"7 zasad zarządzania jakością",range:[22,29]},
-  {name:"Koncepcje: TQM, Lean, Six Sigma",range:[29,37]},
-  {name:"Normalizacja i ISO",range:[37,44]},
-  {name:"System ISO 9001",range:[44,51]},
-  {name:"Znormalizowane systemy zarządzania",range:[51,57]},
-  {name:"Akredytacja i certyfikacja",range:[57,64]},
-  {name:"Koszty jakości",range:[64,70]},
-  {name:"Narzędzia i techniki Lean (5S, Kaizen, Poka-Yoke)",range:[70,89]},
-  {name:"Wszystkie pytania (cały materiał)",range:[0,89]}
+  {name:"Podstawowe pojęcia jakości"},
+  {name:"Ewolucja QI→QC→QA→TQM"},
+  {name:"Prekursorzy — guru jakości"},
+  {name:"7 zasad zarządzania jakością"},
+  {name:"Koncepcje: TQM, Lean, Six Sigma"},
+  {name:"Normalizacja i ISO"},
+  {name:"System ISO 9001"},
+  {name:"Znormalizowane systemy zarządzania"},
+  {name:"Akredytacja i certyfikacja"},
+  {name:"Koszty jakości"},
+  {name:"Narzędzia i techniki Lean (5S, Kaizen, Poka-Yoke)"},
+  {name:"Wszystkie pytania (cały materiał)"}
 ];
 
 /* ============ KOMPENDIUM render ============ */
@@ -678,16 +696,27 @@ document.querySelectorAll('.tab').forEach(t=>{
 function shuffle(q){
   const idxs=q.opts.map((_,i)=>i);
   for(let i=idxs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idxs[i],idxs[j]]=[idxs[j],idxs[i]];}
-  return{opts:idxs.map(i=>q.opts[i]),ans:idxs.indexOf(q.ans)};
+  const opts=idxs.map(i=>q.opts[i]);
+  if(q.type==='multi'){
+    const correct=idxs.map((origIdx,newPos)=>q.correct.includes(origIdx)?newPos:-1).filter(x=>x!==-1);
+    return{opts,correct};
+  }
+  return{opts,ans:idxs.indexOf(q.ans)};
 }
 
-let activeSet=null, questions=[], shuffled=[], current=0, score=0, answered=[];
+function setsEqual(a,b){
+  if(a.length!==b.length)return false;
+  const sa=[...a].sort((x,y)=>x-y), sb=[...b].sort((x,y)=>x-y);
+  return sa.every((v,i)=>v===sb[i]);
+}
+
+let activeSet=null, questions=[], shuffled=[], current=0, score=0, answered=[], multiSel=[];
 
 function startSet(si){
-  const s=SETS[si];
-  questions=RAW.slice(s.range[0],s.range[1]);
+  questions=si===SETS.length-1?RAW.slice():RAW.filter(q=>q.set===si);
   shuffled=questions.map(shuffle);
   current=0;score=0;answered=new Array(questions.length).fill(null);
+  multiSel=[];
   activeSet=si;
   renderQuiz();
 }
@@ -696,7 +725,7 @@ function renderSetPicker(){
   activeSet=null;
   const c=document.getElementById('quiz-container');
   const btns=SETS.map((s,i)=>{
-    const n=s.range[1]-s.range[0];
+    const n=i===SETS.length-1?RAW.length:RAW.filter(q=>q.set===i).length;
     const all=i===SETS.length-1;
     return `<button class="set-btn ${all?'all':''}" onclick="startSet(${i})">
       <span class="sb-n">${all?'▚ CAŁOŚĆ':'DZIAŁ '+String(i+1).padStart(2,'0')}</span>
@@ -736,8 +765,24 @@ function renderQuiz(){
     return;
   }
   const q=questions[current], sh=shuffled[current];
+  const isMulti=q.type==='multi';
   const isAns=answered[current]!==null;
   const pct=Math.round((current/questions.length)*100);
+  const optsHtml=isMulti?sh.opts.map((o,i)=>{
+      let cls='opt multi';
+      const isCorrectOpt=sh.correct.includes(i);
+      const wasSelected=isAns?answered[current].includes(i):multiSel.includes(i);
+      if(isAns){cls+=' locked';if(isCorrectOpt)cls+=' correct';else if(wasSelected)cls+=' wrong';}
+      else if(wasSelected)cls+=' selected';
+      const oc=isAns?'':` onclick="toggleMulti(${i})"`;
+      return `<button class="${cls}"${oc}>${o}</button>`;
+    }).join(''):sh.opts.map((o,i)=>{
+      let cls='opt';
+      if(isAns){cls+=' locked';if(i===sh.ans)cls+=' correct';else if(i===answered[current])cls+=' wrong';}
+      const oc=isAns?'':` onclick="pick(${i})"`;
+      return `<button class="${cls}"${oc}>${o}</button>`;
+    }).join('');
+  const isOk=isMulti?(isAns&&setsEqual(answered[current],sh.correct)):(answered[current]===sh.ans);
   c.innerHTML=`
     <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
     <div style="margin-bottom:12px"><button class="btn" onclick="renderSetPicker()">← Działy</button></div>
@@ -746,19 +791,13 @@ function renderQuiz(){
         <span>${SETS[activeSet].name} · ${current+1}/${questions.length}</span>
         <span class="sc">Wynik: ${score} pkt</span>
       </div>
-      <div class="quiz-q">${q.q}</div>
-      <div class="quiz-opts">
-        ${sh.opts.map((o,i)=>{
-          let cls='opt';
-          if(isAns){cls+=' locked';if(i===sh.ans)cls+=' correct';else if(i===answered[current])cls+=' wrong';}
-          const oc=isAns?'':` onclick="pick(${i})"`;
-          return `<button class="${cls}"${oc}>${o}</button>`;
-        }).join('')}
-      </div>
-      ${isAns?`<div class="feedback ${answered[current]===sh.ans?'ok':'fail'}">${answered[current]===sh.ans?'✅ Dobrze. ':'❌ Niepoprawnie. '}${q.exp}</div>`:''}
+      <div class="quiz-q">${q.q}${isMulti&&!isAns?'<div style="font-family:var(--mono);font-size:.7rem;color:var(--muted2);letter-spacing:.5px;margin-top:6px">zaznacz wszystkie poprawne odpowiedzi</div>':''}</div>
+      <div class="quiz-opts">${optsHtml}</div>
+      ${isMulti&&!isAns?`<div class="qnav"><button class="btn primary" onclick="submitMulti()" ${multiSel.length===0?'disabled':''}>Sprawdź odpowiedź</button></div>`:''}
+      ${isAns?`<div class="feedback ${isOk?'ok':'fail'}">${isOk?'✅ Dobrze. ':'❌ Niepoprawnie. '}${q.exp}</div>`:''}
       <div class="qnav">
         <div class="left">${current>0?`<button class="btn" onclick="prevQ()">← Wstecz</button>`:''}</div>
-        ${isAns?`<button class="btn primary" onclick="nextQ()">${current<questions.length-1?'Dalej →':'Pokaż wynik →'}</button>`:'<span style="font-family:var(--mono);font-size:.72rem;color:var(--muted2);letter-spacing:1px">wybierz odpowiedź</span>'}
+        ${isAns?`<button class="btn primary" onclick="nextQ()">${current<questions.length-1?'Dalej →':'Pokaż wynik →'}</button>`:(isMulti?'':'<span style="font-family:var(--mono);font-size:.72rem;color:var(--muted2);letter-spacing:1px">wybierz odpowiedź</span>')}
       </div>
     </div>`;
 }
@@ -769,8 +808,21 @@ function pick(i){
   if(i===shuffled[current].ans)score++;
   renderQuiz();
 }
-function nextQ(){current++;renderQuiz();}
-function prevQ(){if(current>0){current--;renderQuiz();}}
+function toggleMulti(i){
+  if(answered[current]!==null)return;
+  const idx=multiSel.indexOf(i);
+  if(idx===-1)multiSel.push(i);else multiSel.splice(idx,1);
+  renderQuiz();
+}
+function submitMulti(){
+  if(answered[current]!==null||multiSel.length===0)return;
+  answered[current]=multiSel.slice().sort((a,b)=>a-b);
+  if(setsEqual(answered[current],shuffled[current].correct))score++;
+  multiSel=[];
+  renderQuiz();
+}
+function nextQ(){current++;multiSel=[];renderQuiz();}
+function prevQ(){if(current>0){current--;multiSel=[];renderQuiz();}}
 </script>
 </body>
 </html>
