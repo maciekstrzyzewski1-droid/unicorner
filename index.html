@@ -273,14 +273,14 @@
 
   .aif-h{font-family:'Orbitron',var(--disp);font-weight:900;text-transform:uppercase;letter-spacing:0;line-height:1.0;
     font-size:clamp(2.4rem,6.8vw,5.7rem);color:var(--text);margin-bottom:30px;}
-  .aif-h .hl{color:transparent;-webkit-text-stroke:1.6px #27e8ff;}
+  .aif-h .hl{color:transparent;-webkit-text-stroke:1.6px #b347ff;}
 
-  .aif-lead{font-family:var(--mono);font-size:clamp(.95rem,1.45vw,1.16rem);line-height:1.8;color:var(--cyan);max-width:730px;margin-bottom:58px;}
+  .aif-lead{font-family:var(--mono);font-size:clamp(.95rem,1.45vw,1.16rem);line-height:1.8;color:#b347ff;max-width:730px;margin-bottom:58px;}
   .aif-lead b{color:#eafcff;}
 
   .aif-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-bottom:66px;}
   .aif-item{position:relative;padding-top:22px;border-top:1px solid var(--line2);--ac:#27e8ff;}
-  .aif-item:nth-child(1){--ac:#27e8ff;} .aif-item:nth-child(2){--ac:#a78bfa;}
+  .aif-item:nth-child(1){--ac:#27e8ff;} .aif-item:nth-child(2){--ac:#b347ff;}
   .aif-item:nth-child(3){--ac:#ff2e97;} .aif-item:nth-child(4){--ac:#ffd84a;}
   .aif-item::before{content:"";position:absolute;top:-1px;left:0;width:40px;height:2px;background:var(--ac);box-shadow:0 0 8px var(--ac);}
   .aif-item .num{font-family:'Orbitron',var(--disp);font-weight:800;font-size:1.55rem;color:transparent;-webkit-text-stroke:1px var(--ac);letter-spacing:1px;}
@@ -307,8 +307,8 @@
 
   /* scramble/decoder — wspólny wygląd generowania */
   .scr{color:var(--muted2);opacity:.8;}
-  .rz{color:#eafcff;text-shadow:0 0 10px var(--cyan),0 0 4px var(--cyan);}
-  .cursor{color:var(--cyan);text-shadow:0 0 8px var(--cyan);animation:aifCaret .8s steps(1) infinite;}
+  .rz{color:#f3e6ff;text-shadow:0 0 10px #b347ff,0 0 4px #b347ff;}
+  .cursor{color:#b347ff;text-shadow:0 0 8px #b347ff;animation:aifCaret .8s steps(1) infinite;}
   @keyframes aifCaret{50%{opacity:0;}}
 
   @media(max-width:860px){ .aif-grid{grid-template-columns:repeat(2,1fr);gap:28px 26px;} .aif-bg{display:none;} }
@@ -402,8 +402,7 @@
   .ow span{
     font-family:'Orbitron',var(--disp);font-weight:800;
     font-size:clamp(2.6rem,9vw,8rem);letter-spacing:.1em;white-space:nowrap;
-    color:transparent;-webkit-text-stroke:1.6px rgba(167,139,250,.62);
-    text-shadow:0 0 26px rgba(167,139,250,.35),0 0 60px rgba(167,139,250,.15);will-change:transform;
+    color:transparent;-webkit-text-stroke:1.8px rgba(179,71,255,.95);will-change:transform;
   }
   .ow.cy span{-webkit-text-stroke-color:rgba(39,232,255,.6);
     text-shadow:0 0 26px rgba(39,232,255,.32),0 0 60px rgba(39,232,255,.14);}
@@ -765,7 +764,7 @@ fetch(REVIEWS_URL)
     var full = el.getAttribute('data-final') || el.textContent;
     el.setAttribute('data-final', full);
     var n = full.length, start = null;
-    var per = n > 16 ? 26 : 40;   // ms na kolejny znak (dłuższy tekst = szybciej)
+    var per = n > 100 ? 12 : (n > 16 ? 26 : 40);   // ms na kolejny znak (im dłuższy tekst, tym szybciej)
     var flash = 150;              // czas błysku po ustaleniu znaku
     var win = 6;                  // ile znaków przed czołem "szumi"
     function frame(ts) {
