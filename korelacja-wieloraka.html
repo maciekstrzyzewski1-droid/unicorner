@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Sezonowość — analiza szeregów czasowych · Unicorner</title>
-<meta name="description" content="Wahania sezonowe: składowe szeregu czasowego, model addytywny i multiplikatywny, wskaźniki sezonowości, oczyszczanie i prognozowanie. Materiały, ściąga Excela, zadania i quiz.">
+<title>Korelacja wieloraka i cząstkowa · Unicorner</title>
+<meta name="description" content="Korelacja cząstkowa i wieloraka: współzależność jednej cechy z kompleksem innych, eliminacja wpływu zmiennych, współczynnik korelacji wielorakiej R i determinacji R². Materiały, ściąga Excela, zadania i quiz.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
@@ -220,8 +220,8 @@ nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8p
 
   <section class="hero">
     <span class="eyebrow"><span class="dot"></span>Statystyka · UEP</span>
-    <h1>Analiza <span class="grad">sezonowości</span></h1>
-    <p class="lede">Regularne wahania w szeregu czasowym: składowe szeregu, model <b>addytywny i multiplikatywny</b>, <b>wskaźniki sezonowości</b> (Sᵢ = yᵢ/ŷᵢ), oczyszczanie z sezonowości oraz prognozowanie trend + wskaźniki.</p>
+    <h1>Korelacja <span class="grad">wieloraka</span></h1>
+    <p class="lede">Gdy na jedną cechę wpływa kilka innych naraz: <b>korelacja cząstkowa</b> (dwie zmienne z wyłączeniem wpływu pozostałych) i <b>korelacja wieloraka</b> (jedna cecha z kompleksem innych łącznie) — wraz ze współczynnikiem determinacji wielorakiej R².</p>
   </section>
 
   <nav class="pills">
@@ -234,96 +234,96 @@ nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8p
   <!-- ===================== MATERIAŁY ===================== -->
   <section class="block" id="materialy">
     <div class="sec-head"><span class="num">01</span><h2>Materiały</h2><span class="line"></span></div>
-    <p class="sub-note">Szereg czasowy to nie tylko trend. Na wartość w danym okresie składają się: długookresowa <b>tendencja</b>, powtarzalne <b>wahania sezonowe</b>, wolne <b>wahania cykliczne</b> i losowy „szum”. Sezonowość opisujemy <b>wskaźnikami sezonowości</b>.</p>
+    <p class="sub-note">W rzeczywistości zmienna zależna Y rzadko zależy od jednej cechy. Dwa spojrzenia: <b>cząstkowe</b> — izolujemy jedną parę zmiennych, „mrożąc” resztę; <b>wieloraka</b> — pytamy o łączną siłę związku Y ze wszystkimi zmiennymi objaśniającymi razem.</p>
 
     <div class="cards">
 
       <div class="mcard">
-        <h3>Składowe szeregu czasowego</h3>
-        <div class="tagline">z czego składa się yₜ</div>
+        <h3>Korelacja cząstkowa</h3>
+        <div class="tagline">związek pary · reszta zamrożona</div>
+        <p>Siła związku między <b>dwiema</b> zmiennymi przy <b>wyeliminowaniu</b> wpływu pozostałych (ustalonych jako stałe).</p>
+        <span class="fml"><span class="v">r₁₂.₃ = (r₁₂ − r₁₃·r₂₃) / √[(1−r₁₃²)(1−r₂₃²)]</span></span>
         <ul>
-          <li><b>T — tendencja</b>: długookresowy kierunek zmian</li>
-          <li><b>S — sezonowość</b>: regularne wahania w stałych odstępach (kwartał, miesiąc)</li>
-          <li><b>C — wahania cykliczne</b>: długie cykle o zmiennym rytmie (koniunktura)</li>
-          <li><b>ε — wahania przypadkowe</b>: losowy, nieprzewidywalny szum</li>
+          <li>Indeks po kropce (<b>.3</b>) = zmienna wyeliminowana</li>
+          <li>r₁₂.₃ — korelacja 1 i 2 przy ustalonej zmiennej 3</li>
+          <li>Wartości z przedziału ⟨−1; 1⟩ — <b>ma kierunek</b></li>
         </ul>
       </div>
 
       <div class="mcard">
-        <h3>Addytywna vs multiplikatywna</h3>
-        <div class="tagline">dwa modele sezonowości</div>
-        <span class="fml">addytywny: <span class="v">yₜ = T + S + ε</span></span>
-        <span class="fml">multiplikatywny ★: <span class="v">yₜ = T · S · ε</span></span>
+        <h3>Korelacja wieloraka</h3>
+        <div class="tagline">jedna cecha ↔ kompleks cech</div>
+        <p>Ścisłość związku między zmienną zależną a <b>wszystkimi</b> zmiennymi niezależnymi <b>łącznie</b>.</p>
+        <span class="fml"><span class="v">R₁.₂₃ = √[(r₁₂² + r₁₃² − 2·r₁₂·r₁₃·r₂₃) / (1−r₂₃²)]</span></span>
         <ul>
-          <li><b>Addytywny</b>: amplituda wahań stała, niezależna od trendu</li>
-          <li><b>Multiplikatywny</b>: amplituda rośnie wraz z trendem (wahania proporcjonalne)</li>
-          <li>W multiplikatywnym wskaźniki to ilorazy, ich średnia = 1</li>
+          <li>Indeks przed kropką (<b>1</b>) = zmienna zależna</li>
+          <li>Po kropce (<b>23</b>) = zmienne objaśniające</li>
         </ul>
       </div>
 
       <div class="mcard">
-        <h3>Wskaźnik sezonowości Sᵢ</h3>
-        <div class="tagline">model multiplikatywny</div>
-        <span class="fml"><span class="v">Sᵢ = yᵢ / ŷᵢ</span> (średnia jednoimiennych)</span>
-        <div class="scale">
-          <div class="row"><span class="bar" style="width:70px;background:#f472b6"></span><span class="lbl"><b>S &gt; 1</b> — sezon wysoki (S=1,18 → +18% nad trendem)</span></div>
-          <div class="row"><span class="bar" style="width:46px;background:#a78bfa"></span><span class="lbl"><b>S = 1</b> — brak wahań sezonowych</span></div>
-          <div class="row"><span class="bar" style="width:30px;background:#3a2e74"></span><span class="lbl"><b>S &lt; 1</b> — sezon niski (S=0,86 → −14% pod trendem)</span></div>
-        </div>
-      </div>
-
-      <div class="mcard">
-        <h3>Zasady wskaźników</h3>
-        <div class="tagline">warunki kontrolne</div>
+        <h3>Własności R wielorakiej</h3>
+        <div class="tagline">co trzeba zapamiętać</div>
         <ul>
-          <li>Suma wskaźników <b>kwartalnych = 4,000</b></li>
-          <li>Suma wskaźników <b>miesięcznych = 12,000</b></li>
-          <li>Największa sezonowość = <b>największe odchylenie od 1</b> (S=0,70 silniejsza niż S=1,10)</li>
-        </ul>
-        <div class="callout">Jeśli suma nie wychodzi równa 4/12 — <b>normalizujemy</b>: każdy Sᵢ × (4 / suma wskaźników).</div>
-      </div>
-
-      <div class="mcard">
-        <h3>Procedura — metoda trendu</h3>
-        <div class="tagline">krok po kroku</div>
-        <ul>
-          <li><b>1.</b> Dopasuj trend ŷ = a₀ + a₁·t</li>
-          <li><b>2.</b> Policz wskaźniki indywidualne yᵢ/ŷᵢ</li>
-          <li><b>3.</b> Uśrednij jednoimienne okresy → Sᵢ (Q1, Q2, …)</li>
-          <li><b>4.</b> Sprawdź sumę (=4) i w razie potrzeby znormalizuj</li>
+          <li>Przyjmuje wartości z przedziału <b>⟨0; 1⟩</b> (nieujemny)</li>
+          <li>Mierzy <b>tylko siłę</b> zależności</li>
+          <li><b>Nie wskazuje kierunku</b> (bo łączy wiele wpływów)</li>
+          <li>Im bliżej 1 — tym silniejszy związek łączny</li>
         </ul>
       </div>
 
       <div class="mcard">
-        <h3>Prognozowanie — trend + SI</h3>
-        <div class="tagline">metoda 1</div>
-        <span class="fml"><span class="v">ŷ(T+k) = (a₀ + a₁·(T+k)) · Sᵢ</span></span>
+        <h3>Determinacja wieloraka R²</h3>
+        <div class="tagline">jak w regresji</div>
+        <span class="fml"><span class="v">R² ∈ ⟨0; 1⟩</span> &nbsp; φ² = 1 − R²</span>
         <ul>
-          <li>Policz wartość trendu dla przyszłego okresu</li>
-          <li>Przemnóż przez wskaźnik sezonowości danego kwartału</li>
-        </ul>
-        <div class="callout">Inne metody: <b>szereg oczyszczony</b> (usuń S, prognozuj trend, dołóż S z powrotem) oraz <b>szeregi jednoimienne</b> (osobny trend dla każdego kwartału).</div>
-      </div>
-
-      <div class="mcard">
-        <h3>Oczyszczanie z sezonowości</h3>
-        <div class="tagline">deseasonalizacja</div>
-        <span class="fml"><span class="v">y_oczyszczone = yᵢ / Sᵢ</span></span>
-        <ul>
-          <li>Usuwa wahania sezonowe — zostaje trend + szum</li>
-          <li>Pozwala porównać okresy „w oderwaniu” od sezonu</li>
-          <li>W modelu addytywnym: y − S</li>
+          <li><b>R²</b> — jaka część zmienności Y jest wyjaśniona przez <b>zestaw</b> zmiennych objaśniających</li>
+          <li>R wieloraka = <b>„Wielokrotność R”</b> w wydruku regresji</li>
+          <li>R wieloraka = korelacja między Y a wartościami teoretycznymi ŷ z modelu</li>
         </ul>
       </div>
 
       <div class="mcard">
-        <h3>Przykład — PolShop Online</h3>
-        <div class="tagline">przychody kwartalne 2020–2024</div>
-        <p>Trend: ŷ = 30,29 + 1,20·t (R² = 0,625 — sezonowość zaniża dopasowanie).</p>
+        <h3>Cząstkowa vs prosta vs wieloraka</h3>
+        <div class="tagline">nie pomyl ich</div>
         <ul>
-          <li>Q1 = <b>0,857</b> (−14,3%) · Q2 = <b>1,033</b> (+3,3%)</li>
-          <li>Q3 = <b>0,934</b> (−6,6%) · Q4 = <b>1,177</b> (+17,7%)</li>
-          <li>Suma = 4,001 ≈ 4 ✓ · najsilniejszy sezon: <b>Q4</b> (Black Friday, święta)</li>
+          <li><b>Prosta</b> r₁₂ — dwie zmienne, nic nie eliminujemy</li>
+          <li><b>Cząstkowa</b> r₁₂.₃ — dwie zmienne, wpływ trzeciej usunięty</li>
+          <li><b>Wieloraka</b> R₁.₂₃ — jedna cecha kontra wszystkie pozostałe łącznie</li>
+        </ul>
+        <div class="callout">Cząstkowa bywa <b>wyższa</b> niż prosta — usunięcie zakłócającej zmiennej „odsłania” czysty związek.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Przykład — wydatki na żywność</h3>
+        <div class="tagline">dane z wykładu</div>
+        <p>Y = wydatki, X₁ = ceny, X₂ = dochód. Korelacje proste:</p>
+        <ul>
+          <li>r(Y,X₁) = 0,7505 · r(Y,X₂) = 0,8541 · r(X₁,X₂) = 0,4388</li>
+          <li>Wieloraka <b>R = 0,951</b> → R² = <b>0,904</b></li>
+          <li>Cząstkowa dochód–wydatki (bez cen): <b>0,8837</b></li>
+        </ul>
+        <div class="callout">Model: ŷ = 7,55 + 0,455·X₁ + 0,460·X₂; wspólnie tłumaczy 90,4% zmienności wydatków.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Po co korelacja cząstkowa</h3>
+        <div class="tagline">sedno interpretacji</div>
+        <p>Prosta korelacja może być <b>zawyżona/zaniżona</b> przez trzecią zmienną. Cząstkowa pokazuje związek „w czystej postaci”.</p>
+        <ul>
+          <li>Przykład: cena i wydatki wyglądają na powiązane, ale częściowo przez wspólny wpływ dochodu</li>
+          <li>Po wyeliminowaniu dochodu widać związek rzeczywisty</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Podsumowanie doboru miary</h3>
+        <div class="tagline">cała analiza zależności</div>
+        <ul>
+          <li>Ilościowe, liniowo, 2 zmienne → <b>Pearson</b></li>
+          <li>Porządkowe / mała próba → <b>Spearman</b></li>
+          <li>Para z kontrolą innych → <b>cząstkowa</b></li>
+          <li>Jedna cecha vs wiele → <b>wieloraka R</b></li>
         </ul>
       </div>
 
@@ -333,18 +333,18 @@ nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8p
   <!-- ===================== ŚCIĄGA EXCEL ===================== -->
   <section class="block" id="excel">
     <div class="sec-head"><span class="num">02</span><h2>Ściąga funkcji Excela</h2><span class="line"></span></div>
-    <p class="sub-note">Najpierw trend (nachylenie + wyraz wolny), potem wskaźniki indywidualne, uśrednienie okresów jednoimiennych, kontrola sumy i ewentualna normalizacja. Prognoza to trend przemnożony przez wskaźnik.</p>
+    <p class="sub-note">Korelacji cząstkowej nie policzysz jedną funkcją — najpierw wyznacz korelacje proste (albo całą <b>macierz korelacji</b>), potem podstaw do wzoru. Wieloraką R i R² odczytasz wprost z raportu regresji wielorakiej.</p>
     <div class="xtable-wrap">
       <table class="xt">
         <thead><tr><th>Co liczysz</th><th>Funkcja Excela</th><th>Uwaga</th></tr></thead>
         <tbody>
-          <tr><td class="measure"><b>Trend ŷ = a₀ + a₁·t</b></td><td class="fn">=REGLINX(t;Y;okresy)</td><td>Lub NACHYLENIE(a₁) i ODCIĘTA(a₀)</td></tr>
-          <tr><td class="measure"><b>Wskaźnik indywidualny yᵢ/ŷᵢ</b></td><td class="fn">=yᵢ/ŷᵢ</td><td>Dla każdego okresu osobno</td></tr>
-          <tr><td class="measure"><b>Wskaźnik sezonowości Sᵢ</b></td><td class="fn">=ŚREDNIA.JEŻELI(kwartały;"Q1";wsk)</td><td>Średnia z okresów jednoimiennych</td></tr>
-          <tr><td class="measure"><b>Kontrola sumy</b></td><td class="fn">=SUMA(S1:S4)</td><td>Powinno wyjść 4 (kwartały)</td></tr>
-          <tr><td class="measure"><b>Normalizacja</b></td><td class="fn">=Sᵢ*4/SUMA(S1:S4)</td><td>Gdy suma ≠ 4</td></tr>
-          <tr><td class="measure"><b>Prognoza (trend + SI)</b></td><td class="fn">=(a₀+a₁*t)*Sᵢ</td><td>Model multiplikatywny</td></tr>
-          <tr><td class="measure"><b>Oczyszczanie z sezonowości</b></td><td class="fn">=yᵢ/Sᵢ</td><td>Szereg bez wahań sezonowych</td></tr>
+          <tr><td class="measure"><b>Korelacje proste (pary)</b></td><td class="fn">=WSP.KORELACJI(zakres1;zakres2)</td><td>Dla każdej pary zmiennych</td></tr>
+          <tr><td class="measure"><b>Macierz wszystkich korelacji</b></td><td class="fn">Dane → Analiza danych → Korelacja</td><td>Od razu wszystkie r naraz</td></tr>
+          <tr><td class="measure"><b>Korelacja wieloraka R</b></td><td class="fn">Raport regresji: „Wielokrotność R”</td><td>Lub <span style="font-family:var(--mono)">=PIERWIASTEK(R.KWADRAT(...))</span></td></tr>
+          <tr><td class="measure"><b>Determinacja wieloraka R²</b></td><td class="fn">Raport regresji: „R kwadrat”</td><td>Część zmienności Y wyjaśniona łącznie</td></tr>
+          <tr><td class="measure"><b>Korelacja cząstkowa</b></td><td class="fn">brak funkcji — ze wzoru</td><td>Z korelacji prostych</td></tr>
+          <tr><td class="measure"><b>Parametry modelu (a, a₁, a₂)</b></td><td class="fn">=REGLINP(Y;X1:X2;PRAWDA;PRAWDA)</td><td>Funkcja tablicowa (wiele zmiennych X)</td></tr>
+          <tr><td class="measure"><b>Cały raport regresji wielorakiej</b></td><td class="fn">Dane → Analiza danych → Regresja</td><td>Zaznacz kilka kolumn X naraz</td></tr>
         </tbody>
       </table>
     </div>
@@ -353,7 +353,7 @@ nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8p
   <!-- ===================== ZADANIA ===================== -->
   <section class="block" id="zadania">
     <div class="sec-head"><span class="num">03</span><h2>Zadania krok po kroku</h2><span class="line"></span></div>
-    <p class="sub-note">Dane PolShop Online: trend ŷ = 30,29 + 1,20·t; wskaźniki Q1 = 0,857 · Q2 = 1,033 · Q3 = 0,934 · Q4 = 1,177. Model multiplikatywny. Akceptuję przecinek/kropkę i drobne zaokrąglenia.</p>
+    <p class="sub-note">Zestaw z wykładu (Y = wydatki, X₁ = ceny, X₂ = dochód): r(Y,X₁) = 0,7505 • r(Y,X₂) = 0,8541 • r(X₁,X₂) = 0,4388. Plus czyste zestawy do wprawy. Akceptuję przecinek/kropkę i drobne zaokrąglenia.</p>
     <div id="exList"></div>
     <div class="progress"><span class="lbl" id="exLbl">0 / 0</span><div class="bar"><i id="exFill"></i></div></div>
   </section>
@@ -361,7 +361,7 @@ nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8p
   <!-- ===================== QUIZ ===================== -->
   <section class="block" id="quiz">
     <div class="sec-head"><span class="num">04</span><h2>Quiz teoretyczny</h2><span class="line"></span></div>
-    <p class="sub-note">Składowe szeregu, modele addytywny/multiplikatywny, wskaźniki i ich interpretacja, oczyszczanie i prognozowanie.</p>
+    <p class="sub-note">Różnica cząstkowa/wieloraka, notacja indeksów, własności R, związek z regresją i determinacją.</p>
     <div id="quizList"></div>
     <div class="quiz-score" id="quizScore" style="display:none">
       <div class="big" id="scoreBig">0 / 0</div>
@@ -369,7 +369,7 @@ nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8p
     </div>
   </section>
 
-  <div class="giant" aria-hidden="true"><span>SEZONOWOSC</span></div>
+  <div class="giant" aria-hidden="true"><span>WIELORAKA</span></div>
 
   <footer>
     <p class="disclaimer">
@@ -381,94 +381,84 @@ nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8p
 
 <script>
 const EXS=[
- {theme:'Wskaźnik indyw.', diff:'łatwe',
-  title:'Wskaźnik indywidualny yᵢ/ŷᵢ',
-  data:'2020 Q4: wartość rzeczywista yᵢ = 42,1 mln PLN, wartość z trendu ŷᵢ = 35,08 mln PLN. Policz wskaźnik indywidualny.',
-  ans:1.20, tol:0.01, unit:'',
-  sol:[['Wzór','wskaźnik indywidualny = yᵢ / ŷᵢ'],
-       ['Podstawienie','= 42,1 / 35,08 = <span class="calc">1,200</span>'],
-       ['Sens','ten kwartał leży 20% powyżej linii trendu']],
-  excel:'=42,1/35,08'},
+ {theme:'Wieloraka', diff:'trudne',
+  title:'Współczynnik korelacji wielorakiej R',
+  data:'Y = wydatki, objaśniające X₁ = ceny, X₂ = dochód. r(Y,X₁) = 0,7505, r(Y,X₂) = 0,8541, r(X₁,X₂) = 0,4388. Policz R (siłę łącznego związku).',
+  ans:0.951, tol:0.004, unit:'',
+  sol:[['Wzór','R = √[(r²_YX1 + r²_YX2 − 2·r_YX1·r_YX2·r_X1X2) / (1 − r²_X1X2)]'],
+       ['Licznik','0,7505² + 0,8541² − 2·0,7505·0,8541·0,4388 = 0,5632 + 0,7295 − 0,5625 = 0,7302'],
+       ['Mianownik','1 − 0,4388² = 1 − 0,1925 = 0,8075'],
+       ['Wynik','R = √(0,7302 / 0,8075) = √0,9043 = <span class="calc">0,951</span> → związek bardzo silny']],
+  excel:'Raport regresji: „Wielokrotność R”'},
 
- {theme:'Wskaźnik sez.', diff:'średnie',
-  title:'Wskaźnik sezonowości jako średnia',
-  data:'Indywidualne wskaźniki dla Q1 z pięciu lat: 0,905 · 0,866 · 0,847 · 0,839 · 0,827. Policz wskaźnik sezonowości Q1.',
-  ans:0.857, tol:0.003, unit:'',
-  sol:[['Wzór','Sᵢ = średnia arytmetyczna wskaźników jednoimiennych'],
-       ['Suma','0,905 + 0,866 + 0,847 + 0,839 + 0,827 = 4,284'],
-       ['Wynik','= 4,284 / 5 = <span class="calc">0,857</span>']],
-  excel:'=ŚREDNIA(0,905;0,866;0,847;0,839;0,827)'},
+ {theme:'Determinacja', diff:'łatwe',
+  title:'Determinacja wieloraka R²',
+  data:'Współczynnik korelacji wielorakiej R = 0,951. Policz R² (współczynnik determinacji wielorakiej).',
+  ans:0.904, tol:0.005, unit:'',
+  sol:[['Wzór','R² = R²'],
+       ['Podstawienie','= 0,951² = <span class="calc">0,904</span>'],
+       ['Sens','ceny i dochód razem wyjaśniają ok. 90,4% zmienności wydatków']],
+  excel:'Raport regresji: „R kwadrat”'},
 
- {theme:'Kontrola', diff:'łatwe',
-  title:'Suma wskaźników kwartalnych',
-  data:'Wskaźniki: Q1 = 0,857, Q2 = 1,033, Q3 = 0,934, Q4 = 1,177. Policz ich sumę (warunek kontrolny).',
-  ans:4.001, tol:0.003, unit:'',
-  sol:[['Dodawanie','0,857 + 1,033 + 0,934 + 1,177 = <span class="calc">4,001</span>'],
-       ['Wniosek','≈ 4,000 → warunek spełniony (dla kwartałów suma = 4)']],
-  excel:'=SUMA(S1:S4)'},
+ {theme:'Determinacja', diff:'łatwe',
+  title:'Część niewyjaśniona φ²',
+  data:'Determinacja wieloraka R² = 0,904. Policz współczynnik zbieżności φ².',
+  ans:0.096, tol:0.005, unit:'',
+  sol:[['Wzór','φ² = 1 − R²'],
+       ['Podstawienie','= 1 − 0,904 = <span class="calc">0,096</span>'],
+       ['Sens','ok. 9,6% zmienności wydatków pozostaje niewyjaśnione']],
+  excel:'=1 − R.KWADRAT(...)'},
 
- {theme:'Interpretacja', diff:'łatwe',
-  title:'O ile procent powyżej trendu',
-  data:'Wskaźnik sezonowości Q4 wynosi S = 1,177. O ile procent sprzedaż w Q4 jest przeciętnie powyżej trendu?',
-  ans:17.7, tol:0.2, unit:'%',
-  sol:[['Wzór','(S − 1) · 100%'],
-       ['Podstawienie','= (1,177 − 1) · 100% = <span class="calc">17,7%</span>'],
-       ['Sens','Q4 to najsilniejszy sezon (Black Friday, święta)']],
-  excel:'=(1,177−1)*100'},
+ {theme:'Cząstkowa', diff:'trudne',
+  title:'Korelacja cząstkowa dochód–wydatki (bez cen)',
+  data:'r(Y,X₂) = 0,8541, r(Y,X₁) = 0,7505, r(X₁,X₂) = 0,4388. Policz korelację cząstkową Y i X₂ przy wyeliminowaniu X₁.',
+  ans:0.884, tol:0.006, unit:'',
+  sol:[['Wzór','r_YX2.X1 = (r_YX2 − r_YX1·r_X1X2) / √[(1−r²_YX1)(1−r²_X1X2)]'],
+       ['Licznik','0,8541 − 0,7505·0,4388 = 0,8541 − 0,3293 = 0,5248'],
+       ['Mianownik','√[(1−0,5633)(1−0,1925)] = √(0,4367·0,8075) = √0,3527 = 0,5939'],
+       ['Wynik','= 0,5248 / 0,5939 = <span class="calc">0,884</span>']],
+  excel:'ze wzoru na podstawie korelacji prostych'},
 
- {theme:'Interpretacja', diff:'łatwe',
-  title:'O ile procent poniżej trendu',
-  data:'Wskaźnik sezonowości Q1 wynosi S = 0,857. O ile procent sprzedaż w Q1 jest przeciętnie poniżej trendu?',
-  ans:14.3, tol:0.2, unit:'%',
-  sol:[['Wzór','(1 − S) · 100%'],
-       ['Podstawienie','= (1 − 0,857) · 100% = <span class="calc">14,3%</span>'],
-       ['Sens','Q1 to sezon niski — spowolnienie po świętach']],
-  excel:'=(1−0,857)*100'},
+ {theme:'Cząstkowa', diff:'trudne',
+  title:'Korelacja cząstkowa ceny–wydatki (bez dochodu)',
+  data:'r(Y,X₁) = 0,7505, r(Y,X₂) = 0,8541, r(X₁,X₂) = 0,4388. Policz korelację cząstkową Y i X₁ przy wyeliminowaniu X₂.',
+  ans:0.804, tol:0.006, unit:'',
+  sol:[['Wzór','r_YX1.X2 = (r_YX1 − r_YX2·r_X1X2) / √[(1−r²_YX2)(1−r²_X1X2)]'],
+       ['Licznik','0,7505 − 0,8541·0,4388 = 0,7505 − 0,3748 = 0,3757'],
+       ['Mianownik','√[(1−0,7295)(1−0,1925)] = √(0,2705·0,8075) = √0,2184 = 0,4674'],
+       ['Wynik','= 0,3757 / 0,4674 = <span class="calc">0,804</span>']],
+  excel:'ze wzoru na podstawie korelacji prostych'},
 
- {theme:'Trend', diff:'średnie',
-  title:'Wartość trendu dla przyszłego okresu',
-  data:'Trend ŷ = 30,29 + 1,20·t. Policz wartość trendu dla 2025 Q1, czyli t = 21.',
-  ans:55.49, tol:0.3, unit:'mln zł',
-  sol:[['Podstawienie','ŷ = 30,29 + 1,20·21 = 30,29 + 25,20'],
-       ['Wynik','ŷ = <span class="calc">55,49</span> mln zł (to jeszcze bez sezonowości)']],
-  excel:'=30,29+1,20*21'},
+ {theme:'Wieloraka · od zera', diff:'trudne',
+  title:'R wieloraka dla czystych danych',
+  data:'r(Y,X₁) = 0,6, r(Y,X₂) = 0,7, r(X₁,X₂) = 0,3. Policz współczynnik korelacji wielorakiej R.',
+  ans:0.811, tol:0.01, unit:'',
+  sol:[['Licznik','0,6² + 0,7² − 2·0,6·0,7·0,3 = 0,36 + 0,49 − 0,252 = 0,598'],
+       ['Mianownik','1 − 0,3² = 1 − 0,09 = 0,91'],
+       ['Wynik','R = √(0,598 / 0,91) = √0,6571 = <span class="calc">0,811</span>']],
+  excel:'=PIERWIASTEK((0,36+0,49−2*0,6*0,7*0,3)/(1−0,3^2))'},
 
- {theme:'Prognoza', diff:'trudne',
-  title:'Prognoza metodą trend + wskaźniki (Q4)',
-  data:'Dla 2025 Q4 wartość trendu wynosi 59,07 mln zł, a wskaźnik sezonowości Q4 to S = 1,177. Policz prognozę.',
-  ans:69.5, tol:0.6, unit:'mln zł',
-  sol:[['Wzór','ŷ = (a₀ + a₁·t) · Sᵢ'],
-       ['Podstawienie','= 59,07 · 1,177 = <span class="calc">69,5</span> mln zł'],
-       ['Sens','trend pomnożony przez wysoki sezon Q4']],
-  excel:'=59,07*1,177'},
+ {theme:'Cząstkowa · od zera', diff:'średnie',
+  title:'Korelacja cząstkowa dla czystych danych',
+  data:'r₁₂ = 0,8, r₁₃ = 0,5, r₂₃ = 0,4. Policz korelację cząstkową r₁₂.₃ (między 1 i 2 z eliminacją 3).',
+  ans:0.756, tol:0.01, unit:'',
+  sol:[['Wzór','r₁₂.₃ = (r₁₂ − r₁₃·r₂₃) / √[(1−r₁₃²)(1−r₂₃²)]'],
+       ['Licznik','0,8 − 0,5·0,4 = 0,8 − 0,2 = 0,6'],
+       ['Mianownik','√[(1−0,25)(1−0,16)] = √(0,75·0,84) = √0,63 = 0,7937'],
+       ['Wynik','= 0,6 / 0,7937 = <span class="calc">0,756</span>']],
+  excel:'=(0,8−0,5*0,4)/PIERWIASTEK((1−0,5^2)*(1−0,4^2))'},
 
- {theme:'Szeregi jednoim.', diff:'średnie',
-  title:'Prognoza — szeregi jednoimienne (Q1)',
-  data:'Osobny trend dla Q1: y = 24,85 + 3,39·t (t = numer roku). Dla 2025 rok ma numer t = 6. Policz prognozę Q1 2025.',
-  ans:45.2, tol:0.3, unit:'mln zł',
-  sol:[['Podstawienie','y = 24,85 + 3,39·6 = 24,85 + 20,34'],
-       ['Wynik','y = <span class="calc">45,2</span> mln zł']],
-  excel:'=24,85+3,39*6'},
-
- {theme:'Oczyszczanie', diff:'średnie',
-  title:'Oczyszczanie z sezonowości',
-  data:'2024 Q4: wartość rzeczywista yᵢ = 63,1 mln zł, wskaźnik sezonowości S = 1,177. Policz wartość oczyszczoną z sezonowości.',
-  ans:53.6, tol:0.3, unit:'mln zł',
-  sol:[['Wzór','y_oczyszczone = yᵢ / Sᵢ'],
-       ['Podstawienie','= 63,1 / 1,177 = <span class="calc">53,6</span> mln zł'],
-       ['Sens','usuwamy efekt świątecznego sezonu — zostaje trend + szum']],
-  excel:'=63,1/1,177'},
-
- {theme:'Porównanie', diff:'łatwe',
-  title:'Średnia z dwóch prognoz',
-  data:'Prognoza Q1 2025 metodą 1 = 47,5 mln zł, metodą 2 = 45,2 mln zł. Policz średnią z obu metod.',
-  ans:46.35, tol:0.1, unit:'mln zł',
-  sol:[['Dodawanie','(47,5 + 45,2) / 2 = 92,7 / 2'],
-       ['Wynik','= <span class="calc">46,35</span> mln zł']],
-  excel:'=ŚREDNIA(47,5;45,2)'}
+ {theme:'Determinacja', diff:'łatwe',
+  title:'Z R² policz R',
+  data:'Z raportu regresji wielorakiej „R kwadrat” = 0,64. Ile wynosi współczynnik korelacji wielorakiej R?',
+  ans:0.8, tol:0.005, unit:'',
+  sol:[['Wzór','R = √R²'],
+       ['Podstawienie','= √0,64 = <span class="calc">0,8</span>'],
+       ['Uwaga','R wieloraka jest zawsze nieujemna (0 ≤ R ≤ 1)']],
+  excel:'=PIERWIASTEK(0,64)'}
 ];
 
-const KEY='unicorner_sezon_v1';
+const KEY='unicorner_korelw_v1';
 let solved=JSON.parse(localStorage.getItem(KEY)||'{}');
 const exList=document.getElementById('exList');
 EXS.forEach((e,i)=>{
@@ -511,42 +501,42 @@ function updateProg(){
 updateProg();
 
 const QUIZ=[
- {q:'Na wartość szeregu czasowego yₜ składają się:',
-  o:['Tylko tendencja i szum','Tendencja, wahania sezonowe, cykliczne i przypadkowe','Wyłącznie wahania sezonowe','Średnia i mediana'],c:1,
-  e:'Klasyczny rozkład szeregu: <b>T</b> (tendencja), <b>S</b> (sezonowość), <b>C</b> (cykl) i <b>ε</b> (wahania przypadkowe).'},
- {q:'Wahania sezonowe to:',
-  o:['Nieregularne, losowe odchylenia','Regularne wahania powtarzające się w stałych odstępach','Długookresowy kierunek zmian','Cykle koniunkturalne trwające kilka lat'],c:1,
-  e:'Sezonowość = <b>regularne, powtarzalne</b> wahania w stałych odstępach (kwartał, miesiąc), w odróżnieniu od losowego szumu.'},
- {q:'Model multiplikatywny sezonowości ma postać:',
-  o:['yₜ = T + S + ε','yₜ = T · S · ε','yₜ = T − S','yₜ = S / T'],c:1,
-  e:'Model multiplikatywny: <b>yₜ = T · S · ε</b>. Amplituda wahań rośnie wraz z poziomem trendu.'},
- {q:'W modelu addytywnym amplituda wahań sezonowych:',
-  o:['Rośnie wraz z trendem','Jest stała, niezależna od poziomu trendu','Zawsze maleje','Jest zawsze zerowa'],c:1,
-  e:'Addytywny (yₜ = T + S + ε): wahania mają <b>stałą amplitudę</b>, niezależną od poziomu zjawiska.'},
- {q:'Wskaźnik sezonowości S = 1,18 oznacza, że w danym okresie wartość jest:',
-  o:['O 18% powyżej trendu','O 18% poniżej trendu','Równa trendowi','1,18 raza niższa'],c:0,
-  e:'S = 1,18 → wartość <b>18% powyżej</b> poziomu trendu (sezon wysoki). S = 0,86 oznaczałoby 14% poniżej.'},
- {q:'Suma kwartalnych wskaźników sezonowości powinna wynosić:',
-  o:['1','4','12','100'],c:1,
-  e:'Dla danych kwartalnych suma wskaźników = <b>4,000</b> (dla miesięcznych = 12,000). Ich średnia to 1.'},
- {q:'Który wskaźnik oznacza silniejszą sezonowość?',
-  o:['S = 1,10','S = 0,70','oba tak samo','żaden — sezonowości nie ma'],c:1,
-  e:'Siłę sezonowości mierzy <b>odchylenie od 1</b>: |0,70 − 1| = 0,30 &gt; |1,10 − 1| = 0,10, więc S = 0,70 to silniejsza sezonowość.'},
- {q:'Wskaźnik sezonowości (multiplikatywny) liczymy jako:',
-  o:['Różnicę yᵢ − ŷᵢ','Iloraz yᵢ / ŷᵢ uśredniony dla okresów jednoimiennych','Sumę wszystkich yᵢ','Nachylenie trendu'],c:1,
-  e:'Sᵢ = <b>yᵢ / ŷᵢ</b>, a następnie uśredniamy te ilorazy dla tych samych kwartałów z kolejnych lat.'},
- {q:'Oczyszczanie szeregu z sezonowości (model multiplikatywny) polega na:',
-  o:['Podzieleniu wartości przez wskaźnik sezonowości yᵢ/Sᵢ','Pomnożeniu przez wskaźnik','Dodaniu trendu','Odjęciu średniej'],c:0,
-  e:'Deseasonalizacja: <b>yᵢ / Sᵢ</b> usuwa wahania sezonowe, zostaje trend i szum.'},
- {q:'Prognozę metodą „trend + wskaźniki sezonowości” liczymy jako:',
-  o:['Sam trend a₀ + a₁·t','(a₀ + a₁·t) · Sᵢ','Sᵢ / trend','Średnią z wartości historycznych'],c:1,
-  e:'Prognoza = <b>wartość trendu przemnożona przez wskaźnik sezonowości</b> danego kwartału: (a₀ + a₁·t) · Sᵢ.'},
- {q:'Dlaczego przy silnej sezonowości trend liniowy ma niskie R²?',
-  o:['Bo dane są błędne','Bo wahania sezonowe zwiększają zmienność reszt wokół trendu','Bo trend jest zawsze zły','Bo R² nie zależy od sezonowości'],c:1,
-  e:'Sam trend nie „łapie” wahań sezonowych — one pozostają w resztach i zaniżają R² (w przykładzie tylko 0,625).'},
- {q:'Metoda szeregów jednoimiennych polega na:',
-  o:['Jednym wspólnym trendzie dla całości','Osobnym trendzie dla każdego kwartału (te same kwartały kolejnych lat)','Uśrednieniu wszystkich wartości','Pominięciu trendu'],c:1,
-  e:'Dla każdego kwartału budujemy <b>osobną linię trendu</b> tylko z wartości tego kwartału z kolejnych lat, a potem prognozujemy.'}
+ {q:'Korelacja cząstkowa mierzy:',
+  o:['Związek dwóch zmiennych z wyłączeniem wpływu pozostałych','Związek jednej cechy ze wszystkimi łącznie','Zawsze związek dodatni','Kierunek zależności bez jej siły'],c:0,
+  e:'Korelacja cząstkowa to siła związku <b>dwóch</b> zmiennych przy <b>ustaleniu pozostałych jako stałych</b> (eliminacja ich wpływu).'},
+ {q:'Korelacja wieloraka mierzy:',
+  o:['Związek dwóch wybranych zmiennych','Współzależność jednej cechy ze wszystkimi pozostałymi łącznie','Tylko związek między zmiennymi niezależnymi','Różnicę między korelacjami prostymi'],c:1,
+  e:'Korelacja wieloraka to ścisłość związku zmiennej zależnej z <b>kompleksem</b> zmiennych objaśniających razem.'},
+ {q:'Współczynnik korelacji wielorakiej R przyjmuje wartości:',
+  o:['Od −1 do 1','Od 0 do 1','Od −∞ do +∞','Od 0 do 100'],c:1,
+  e:'R wieloraka jest <b>nieujemna</b> i mieści się w przedziale <b>⟨0; 1⟩</b>.'},
+ {q:'Współczynnik korelacji wielorakiej R:',
+  o:['Wskazuje siłę i kierunek','Mierzy tylko siłę, bez kierunku','Zawsze jest ujemny','Jest równy sumie korelacji prostych'],c:1,
+  e:'R mierzy <b>tylko siłę</b> łącznego związku. Nie ma znaku, bo łączy wpływy wielu zmiennych o różnych kierunkach.'},
+ {q:'W zapisie r₁₂.₃ liczba po kropce (3) oznacza zmienną:',
+  o:['Zależną','Wyeliminowaną (ustaloną jako stała)','Najsilniej skorelowaną','Nominalną'],c:1,
+  e:'Indeks po kropce to zmienna, której wpływ <b>wyeliminowano</b> — r₁₂.₃ to korelacja 1 i 2 przy ustalonej 3.'},
+ {q:'Współczynnik determinacji wielorakiej R² informuje o tym:',
+  o:['Jaka część zmienności Y jest wyjaśniona przez zestaw zmiennych','Ile wynosi nachylenie modelu','Jaki jest kierunek zależności','Ile jest zmiennych objaśniających'],c:0,
+  e:'<b>R²</b> to udział zmienności Y wyjaśniony <b>łącznie</b> przez wszystkie zmienne objaśniające.'},
+ {q:'W wydruku regresji wielorakiej pozycja „Wielokrotność R” to:',
+  o:['Współczynnik korelacji wielorakiej R','Wyraz wolny a₀','Błąd standardowy','Liczba obserwacji'],c:0,
+  e:'„Wielokrotność R” w raporcie regresji to właśnie <b>współczynnik korelacji wielorakiej</b>. Jego kwadrat to R².'},
+ {q:'R = 0,951. Ile wynosi determinacja wieloraka R²?',
+  o:['0,904','0,975','0,999','0,478'],c:0,
+  e:'R² = 0,951² = <b>0,904</b> — czyli ok. 90,4% zmienności Y wyjaśnione przez zestaw zmiennych.'},
+ {q:'Czym korelacja cząstkowa różni się od prostej?',
+  o:['Niczym, to synonimy','Cząstkowa eliminuje wpływ pozostałych zmiennych','Prosta zawsze jest wyższa','Cząstkowa nie ma znaku'],c:1,
+  e:'Prosta bierze parę „jak jest”, cząstkowa <b>usuwa wpływ innych zmiennych</b> i pokazuje związek w czystej postaci.'},
+ {q:'Aby ocenić łączny wpływ ceny i dochodu na wydatki, użyjemy:',
+  o:['Korelacji prostej','Korelacji wielorakiej','Współczynnika zmienności','Mediany'],c:1,
+  e:'Łączny wpływ wielu zmiennych na jedną cechę mierzy <b>korelacja wieloraka R</b>.'},
+ {q:'Korelacja wieloraka R jest równa:',
+  o:['Sumie korelacji prostych','Korelacji między Y a wartościami teoretycznymi ŷ z modelu','Średniej korelacji cząstkowych','Zawsze największej z korelacji prostych'],c:1,
+  e:'R wieloraka = korelacja między obserwowanymi Y a <b>wartościami teoretycznymi ŷ</b> z modelu regresji wielorakiej.'},
+ {q:'Korelacja cząstkowa bywa wyższa od prostej, ponieważ:',
+  o:['Zawsze zawyża wynik','Usunięcie zakłócającej zmiennej odsłania czysty związek','Liczy się ją na rangach','Ignoruje zmienną zależną'],c:1,
+  e:'Gdy trzecia zmienna maskowała związek, jej <b>wyeliminowanie</b> może ujawnić silniejszą, rzeczywistą zależność pary.'}
 ];
 const quizList=document.getElementById('quizList'); let answered=0, correct=0;
 QUIZ.forEach((q,i)=>{
@@ -566,7 +556,7 @@ QUIZ.forEach((q,i)=>{
         document.getElementById('scoreBig').textContent=correct+' / '+QUIZ.length;
         const pct=correct/QUIZ.length;
         document.getElementById('scoreMsg').textContent=
-          pct===1?'Komplet — sezonowość opanowana. 🦄':pct>=0.7?'Dobrze. Dopnij interpretację wskaźników i metody prognozowania.':'Wróć do kart o wskaźnikach sezonowości i modelach — tam sedno.';
+          pct===1?'Komplet — korelacja wieloraka opanowana. 🦄':pct>=0.7?'Dobrze. Dopnij różnicę cząstkowa/wieloraka i notację indeksów.':'Wróć do kart o korelacji cząstkowej i wielorakiej — tam sedno.';
       }
     };
     opts.appendChild(b);
