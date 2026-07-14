@@ -90,13 +90,21 @@ h2.section-title{font-size:1.7rem;font-weight:700;letter-spacing:-.3px;margin-bo
 
 /* FISZKI */
 .fc-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px;}
+.fc-label{font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted2);margin:0 6px 0 2px;opacity:.75;}
 .chip{font-family:var(--mono);padding:7px 13px;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:4px;cursor:pointer;font-size:.76rem;font-weight:600;letter-spacing:.5px;transition:.2s;}
 .chip:hover{border-color:var(--accent);color:var(--text);box-shadow:0 0 12px rgba(167,139,250,.15);}
 .chip.active{background:var(--iris);border-color:transparent;color:#0b0918;font-weight:700;}
-.fc-stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px;font-size:.8rem;}
-.stat{font-family:var(--mono);background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:7px 12px;color:var(--muted);letter-spacing:.3px;}
-.stat b{color:var(--text);font-size:.95rem;}
-.stat.know b{color:var(--cyan);} .stat.dont b{color:var(--gold);}
+.chip-action{font-family:var(--mono);padding:7px 13px 7px 11px;border:1px solid rgba(39,232,255,.28);background:rgba(39,232,255,.04);color:var(--muted);border-radius:4px;cursor:pointer;font-size:.72rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;transition:.2s;border-left-width:3px;border-left-color:var(--cyan);}
+.chip-action:hover{background:rgba(39,232,255,.10);color:var(--text);box-shadow:0 0 12px rgba(39,232,255,.18);}
+.chip-action.active{background:rgba(39,232,255,.14);color:var(--text);border-color:rgba(39,232,255,.55);border-left-color:var(--cyan);}
+.fc-stats{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;}
+.stat{font-family:var(--mono);background:linear-gradient(180deg,rgba(15,12,32,.6),rgba(7,6,15,.75));border:1px solid var(--line);border-radius:6px;padding:8px 16px;color:var(--muted2);letter-spacing:1px;text-transform:uppercase;font-size:.6rem;font-weight:700;display:flex;flex-direction:column;gap:2px;min-width:96px;cursor:default;position:relative;overflow:hidden;}
+.stat::before{content:"";position:absolute;top:0;left:0;width:2px;height:100%;background:var(--muted2);opacity:.4;}
+.stat b{color:var(--text);font-size:1.15rem;font-family:'Orbitron',var(--disp);letter-spacing:1px;font-weight:800;}
+.stat.know::before{background:var(--cyan);opacity:1;box-shadow:0 0 8px var(--cyan);}
+.stat.know b{color:var(--cyan);}
+.stat.dont::before{background:var(--gold);opacity:1;box-shadow:0 0 8px var(--gold);}
+.stat.dont b{color:var(--gold);}
 .flashcard{perspective:1600px;width:100%;height:340px;margin:0 auto 14px;cursor:pointer;}
 .fc-inner{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d;}
 .flashcard.flipped .fc-inner{transform:rotateY(180deg);}
@@ -145,8 +153,11 @@ h2.section-title{font-size:1.7rem;font-weight:700;letter-spacing:-.3px;margin-bo
 .formula{background:#0a0818;border:1px dashed var(--line2);border-radius:4px;padding:12px 14px;margin:10px 0;font-family:'Cambria Math','Georgia',serif;font-size:1.05rem;color:var(--mint);text-align:center;overflow-x:auto;}
 .answer{background:var(--ok-bg);border-left:3px solid var(--ok);border-radius:0 4px 4px 0;padding:12px 14px;margin:12px 0;font-size:.94rem;}
 .answer b{color:var(--cyan);}
-.eli5{background:rgba(255,216,74,.07);border-left:3px solid var(--gold);border-radius:0 4px 4px 0;padding:12px 14px;margin:12px 0;font-size:.92rem;color:#f0e4c4;}
+.eli5{background:rgba(255,216,74,.07);border-left:3px solid var(--gold);border-radius:0 4px 4px 0;padding:14px 16px;margin:12px 0;font-size:.92rem;color:#f0e4c4;line-height:1.55;}
 .eli5 b{color:var(--gold);}
+.eli5 .step{display:block;margin-top:9px;}
+.eli5 .step:first-child{margin-top:6px;}
+.eli5 .step-lbl{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);opacity:.85;margin-right:6px;}
 .reveal-btn{font-family:var(--mono);margin-top:10px;background:var(--surface2);border:1px solid var(--line2);color:var(--mint);padding:9px 16px;border-radius:4px;cursor:pointer;font-weight:700;font-size:.78rem;letter-spacing:.5px;text-transform:uppercase;transition:.2s;}
 .reveal-btn:hover{background:#241a44;border-color:var(--accent);}
 .sol{display:none;margin-top:10px;}
@@ -346,18 +357,19 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
     <h2 class="section-title">Fiszki — słownik pojęć</h2>
     <p class="section-intro">Z jednej strony pojęcie, z drugiej definicja. Kliknij kartę, żeby ją obrócić. Zaznacz „Umiem" albo „Nie umiem" — potem możesz powtarzać cały zestaw albo tylko to, czego jeszcze nie ogarniasz.</p>
 
-    <div class="fc-bar" id="fcCats"><span class="chip active" data-c="all" onclick="fcSetCat(&#39;all&#39;,this)">Wszystkie kategorie</span><span class="chip" data-c="met" onclick="fcSetCat(&#39;met&#39;,this)">Metoda i pojęcia</span><span class="chip" data-c="mik" onclick="fcSetCat(&#39;mik&#39;,this)">Rynek / mikro</span><span class="chip" data-c="pkb" onclick="fcSetCat(&#39;pkb&#39;,this)">PKB i dochód</span><span class="chip" data-c="bezr" onclick="fcSetCat(&#39;bezr&#39;,this)">Bezrobocie</span><span class="chip" data-c="inf" onclick="fcSetCat(&#39;inf&#39;,this)">Pieniądz i inflacja</span><span class="chip" data-c="wzr" onclick="fcSetCat(&#39;wzr&#39;,this)">Wzrost</span><span class="chip" data-c="fisk" onclick="fcSetCat(&#39;fisk&#39;,this)">Polityka fiskalna</span><span class="chip" data-c="handel" onclick="fcSetCat(&#39;handel&#39;,this)">Handel i kursy</span><span class="chip" data-c="adas" onclick="fcSetCat(&#39;adas&#39;,this)">AD-AS, cykl, mnożnik</span></div>
+    <div class="fc-bar" id="fcCats"><span class="fc-label">Działy</span><span class="chip active" data-c="all" onclick="fcSetCat(&#39;all&#39;,this)">Wszystkie kategorie</span><span class="chip" data-c="met" onclick="fcSetCat(&#39;met&#39;,this)">Metoda i pojęcia</span><span class="chip" data-c="mik" onclick="fcSetCat(&#39;mik&#39;,this)">Rynek / mikro</span><span class="chip" data-c="pkb" onclick="fcSetCat(&#39;pkb&#39;,this)">PKB i dochód</span><span class="chip" data-c="bezr" onclick="fcSetCat(&#39;bezr&#39;,this)">Bezrobocie</span><span class="chip" data-c="inf" onclick="fcSetCat(&#39;inf&#39;,this)">Pieniądz i inflacja</span><span class="chip" data-c="wzr" onclick="fcSetCat(&#39;wzr&#39;,this)">Wzrost</span><span class="chip" data-c="fisk" onclick="fcSetCat(&#39;fisk&#39;,this)">Polityka fiskalna</span><span class="chip" data-c="handel" onclick="fcSetCat(&#39;handel&#39;,this)">Handel i kursy</span><span class="chip" data-c="adas" onclick="fcSetCat(&#39;adas&#39;,this)">AD-AS, cykl, mnożnik</span></div>
     <div class="fc-bar">
-      <span class="chip active" id="modeAll" onclick="fcSetMode(&#39;all&#39;)">📚 Wszystkie</span>
-      <span class="chip" id="modeDont" onclick="fcSetMode(&#39;dont&#39;)">🔁 Tylko nieumiane</span>
-      <span class="chip" onclick="fcShuffle()">🔀 Losuj kolejność</span>
-      <span class="chip" onclick="fcResetProgress()">♻️ Wyczyść postęp</span>
+      <span class="fc-label">Nauka</span>
+      <span class="chip-action active" id="modeAll" onclick="fcSetMode(&#39;all&#39;)">📚 Wszystkie</span>
+      <span class="chip-action" id="modeDont" onclick="fcSetMode(&#39;dont&#39;)">🔁 Tylko nieumiane</span>
+      <span class="chip-action" onclick="fcShuffle()">🔀 Losuj kolejność</span>
+      <span class="chip-action" onclick="fcResetProgress()">♻️ Wyczyść postęp</span>
     </div>
 
     <div class="fc-stats">
-      <span class="stat">W zestawie: <b id="stTotal">318</b></span>
-      <span class="stat know">Umiem: <b id="stKnow">0</b></span>
-      <span class="stat dont">Nie umiem: <b id="stDont">2</b></span>
+      <span class="stat">W zestawie<b id="stTotal">318</b></span>
+      <span class="stat know">Umiem<b id="stKnow">0</b></span>
+      <span class="stat dont">Nie umiem<b id="stDont">2</b></span>
     </div>
 
     <div class="fc-progress"><div id="fcBar" style="width:0%"></div></div>
@@ -1638,7 +1650,11 @@ ZADANIA = [
  capInit:'<b>Etap 0 — stan początkowy:</b> gospodarka w równowadze E₁, gdzie linia planowanych wydatków <b>AE</b> przecina linię <b>45°</b> (Y = AE). Zapasy się nie zmieniają — fabryki produkują dokładnie tyle, ile ludzie chcą kupić. Kliknij <b>Dalej ›</b>.',
  capShock:'<b>Etap 1 — szok:</b> wszyscy naraz oszczędzają więcej → spada konsumpcja autonomiczna → <b>jedna krzywa AE przesuwa się równolegle w DÓŁ</b> (linia <b>45° stoi w miejscu</b>). Chwilowo niesprzedany towar zalega → <b>nieplanowane zapasy rosną</b>, firmy tną produkcję. Nowa równowaga <b>E₂</b> leży niżej i w lewo — przerywany rzut na oś <b>Y</b> pokazuje <b>spadek produkcji</b>: <b>PKB i dochód spadają, bezrobocie rośnie</b>. To <b>paradoks zapobiegliwości</b> — chcąc odłożyć więcej, społeczeństwo biednieje.'
 })+`
-<div class="eli5"><b>Po ludzku:</b> gdy wszyscy naraz zaczynają mniej wydawać, żeby odłożyć na czarną godzinę, <b>spada popyt</b>. Sklepom zostaje towar na półkach (rosną zapasy), więc tną produkcję i zwalniają ludzi. Dochody spadają — i paradoksalnie społeczeństwo wcale nie odkłada więcej. To <b>paradoks zapobiegliwości</b>.</div>
+<div class="eli5"><b>Po ludzku:</b>
+<span class="step"><span class="step-lbl">Krok 1.</span>W gospodarce narasta strach przed kryzysem, więc wszyscy naraz zaczynają odkładać więcej pieniędzy na czarną godzinę. To oznacza jednocześnie, że mniej wydają — spada <b>łączny popyt</b> na produkty i usługi.</span>
+<span class="step"><span class="step-lbl">Krok 2.</span>Sklepy i fabryki zostają z towarem, którego nikt nie kupuje. Magazyny się zapełniają.</span>
+<span class="step"><span class="step-lbl">Krok 3.</span>Firmy widzą, że zapasy rosną, więc ograniczają produkcję i zwalniają pracowników. Efektem tego jest spadek dochodów w całym społeczeństwie.</span>
+<span class="step"><span class="step-lbl">Paradoks.</span>Chociaż każdy indywidualnie chciał odłożyć więcej pieniędzy, to zbiorowo wszyscy zarabiają mniej — finalnie oszczędności wcale nie rosną. Właśnie dlatego to zjawisko nazywa się <b>paradoksem zapobiegliwości</b>.</span></div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
 <div class="answer"><b>Zapasy:</b> konsumpcja spada → planowane wydatki (AE) &lt; produkcja → niesprzedany towar → <b>nieplanowane zapasy ROSNĄ</b>.</div>
@@ -1650,7 +1666,12 @@ ZADANIA = [
 `},
 {badge:"EGZAMIN", num:"23", sq:true, title:"Wyjaśnij pojęcia (konwergencja, Fisher, wypychanie…)", html:`
 <div class="given"><b>Wyjaśnij pojęcia:</b> 1) hipoteza konwergencji, 2) rachunkowość wzrostu, 3) efekt Fishera, 4) efekt wypychania, 5) pułapka płynności.</div>
-<div class="eli5"><b>Po ludzku, w jednym zdaniu każde:</b> konwergencja = biedni doganiają bogatych; rachunkowość wzrostu = z czego składa się wzrost; efekt Fishera = inflacja podbija nominalne stopy; efekt wypychania = rząd „wypycha" prywatne inwestycje; pułapka płynności = polityka pieniężna przestaje działać.</div>
+<div class="eli5"><b>Po ludzku, każde pojęcie osobno:</b>
+<span class="step"><span class="step-lbl">Konwergencja.</span>Kraje biedniejsze rosną szybciej niż bogatsze i z czasem je doganiają. Działa to najlepiej, kiedy państwo importuje technologie z zagranicy i inwestuje w edukację.</span>
+<span class="step"><span class="step-lbl">Rachunkowość wzrostu.</span>Metoda, która rozkłada wzrost PKB na trzy składniki: ile z niego dała <b>praca</b>, ile <b>kapitał</b>, a ile <b>postęp techniczny</b> (to, czego nie tłumaczą same nakłady, nazywa się „resztą Solowa").</span>
+<span class="step"><span class="step-lbl">Efekt Fishera.</span>Kiedy inflacja rośnie, banki podnoszą nominalne stopy procentowe mniej więcej o tyle samo — w efekcie <b>realna stopa</b> (nominalna minus inflacja) w długim okresie się nie zmienia.</span>
+<span class="step"><span class="step-lbl">Efekt wypychania.</span>Kiedy rząd finansuje wydatki dużymi pożyczkami, na rynku rośnie popyt na pieniądz, co podnosi stopy procentowe. Wyższe stopy sprawiają, że firmom mniej opłaca się inwestować — część inwestycji zostaje „wypchnięta" przez wydatki rządu.</span>
+<span class="step"><span class="step-lbl">Pułapka płynności.</span>Sytuacja, w której stopy procentowe są już blisko zera i bank centralny nie może ich obniżyć niżej. Dosypywanie pieniądza do gospodarki przestaje działać, bo ludzie i tak wolą trzymać gotówkę zamiast wydawać albo inwestować.</span></div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż wyjaśnienia ▾</button>
 <div class="sol">
 <div class="answer"><b>1) Hipoteza konwergencji</b> — biedniejsze kraje rosną <b>szybciej</b> i doganiają bogatsze. Bo gdy kapitału jest mało, każda nowa maszyna daje duży przyrost produkcji; w bogatych krajach kapitału jest dużo, więc rosną wolniej.</div>
@@ -1670,7 +1691,11 @@ ZADANIA = [
  capShock:'<b>Etap 1 — krótki okres (szok):</b> drożeją surowce → koszty firm ↑ → <b>jedna krzywa SAS przesuwa się w LEWO</b> (AD i LAS stoją w miejscu). Nowa równowaga <b>E₂</b> zmienia OBIE współrzędne — przerywane rzuty pokazują <b>P₂ (ceny ↑)</b> na osi P oraz <b>Y₂ (produkcja ↓ poniżej potencjału)</b> na osi Y; <b>bezrobocie ↑</b> → <b>stagflacja</b>.',
  capFix:'<b>Etap 2 — długi okres (samoregulacja):</b> wysokie bezrobocie → presja na <b>spadek płac i kosztów</b> → <b>TA SAMA SAS wraca w PRAWO do LAS</b>. Równowaga wraca do <b>E₁</b> — rzuty <b>P₁/Y₁</b> pokazują powrót cen i produkcji do poziomu wyjściowego. Cały czas jedna krzywa (SAS): najpierw w lewo, potem z powrotem.'
 })+`
-<div class="eli5"><b>Po ludzku:</b> droższa energia = wyższe koszty firm. Przy tych samych cenach firmy produkują mniej → krzywa <b>podaży krótkookresowej (SAS) przesuwa się w lewo</b>. Robi się drogo i mało jednocześnie — to <b>stagflacja</b> (stagnacja + inflacja).</div>
+<div class="eli5"><b>Po ludzku:</b>
+<span class="step"><span class="step-lbl">Krok 1.</span>Nagle drożeją surowce (np. energia, paliwa). Automatycznie rosną <b>koszty produkcji</b> we wszystkich firmach jednocześnie.</span>
+<span class="step"><span class="step-lbl">Krok 2.</span>Przy dotychczasowych cenach sprzedaży firmom mniej opłaca się produkować, więc ograniczają produkcję. To właśnie oznacza przesunięcie <b>krzywej krótkookresowej podaży (SAS) w lewo</b>.</span>
+<span class="step"><span class="step-lbl">Krok 3.</span>Efekt jest paskudny, bo dzieją się dwie zwykle wykluczające się rzeczy naraz: w sklepach jest drożej (inflacja ↑), a jednocześnie produkcja spada i rośnie bezrobocie (stagnacja). To zjawisko nazywa się <b>stagflacją</b> — nazwa łączy słowa „stagnacja" i „inflacja".</span>
+<span class="step"><span class="step-lbl">Co dalej.</span>Gospodarka z czasem sama się z tego wygrzebie. Wysokie bezrobocie wywiera presję na spadek płac (bezrobotni godzą się na niższe stawki, żeby dostać pracę). Niższe płace to niższe koszty firm, dzięki czemu SAS wraca na miejsce. Ale ten proces trwa długo.</span></div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
 <div class="answer"><b>Krótki okres (SAS w lewo):</b> poziom cen <b>rośnie</b>, produkcja <b>spada</b>, bezrobocie <b>rośnie</b> → stagflacja.</div>
@@ -1688,7 +1713,11 @@ ZADANIA = [
  capShock:'<b>Etap 1 — szok:</b> rosną ceny akcji → efekt majątkowy → konsumpcja ↑ → <b>jedna krzywa AD przesuwa się w PRAWO</b> (SAS i LAS stoją w miejscu). Powstaje <b>luka inflacyjna</b> — <b>E₂</b> zmienia OBIE współrzędne: rzuty pokazują <b>P₂ (ceny ↑)</b> na osi P oraz <b>Y₂ (produkcja ↑ powyżej potencjału)</b> na osi Y; <b>bezrobocie ↓</b>.',
  capFix:'<b>Etap 2 — polityka:</b> skuteczna <b>restrykcyjna polityka fiskalna</b> (↓zakupy rządowe G, ↓transfery, ↑podatki) → <b>TA SAMA AD wraca w LEWO do LAS</b>. Powrót do <b>E₁</b> — rzuty <b>P₁/Y₁</b> pokazują ceny i produkcję z powrotem na poziomie wyjściowym. Wciąż jedna krzywa (AD): szok w prawo, polityka z powrotem w lewo.'
 })+`
-<div class="eli5"><b>Po ludzku:</b> akcje w górę → ludzie czują się bogatsi (<b>efekt majątkowy</b>) → wydają więcej → <b>popyt AD rośnie</b> (w prawo). Gospodarka się „przegrzewa" (produkuje powyżej potencjału). Żeby ją schłodzić, rząd musi <b>zabrać popytu</b> = polityka restrykcyjna.</div>
+<div class="eli5"><b>Po ludzku:</b>
+<span class="step"><span class="step-lbl">Krok 1.</span>Mocno rosną ceny akcji, a że akcje to spora część majątku gospodarstw domowych, ich posiadacze czują, że są bogatsi. To zjawisko nazywa się <b>efektem majątkowym</b> — samo poczucie zamożności skłania ludzi do większych wydatków, nawet jeśli realny dochód się nie zmienił.</span>
+<span class="step"><span class="step-lbl">Krok 2.</span>Zwiększona konsumpcja podnosi <b>zagregowany popyt (AD)</b> i przesuwa jego krzywą w prawo. Gospodarka zaczyna produkować powyżej swojego potencjału — powstaje <b>luka inflacyjna</b>.</span>
+<span class="step"><span class="step-lbl">Krok 3.</span>Fabryki pracują na maksa, bezrobocie spada poniżej naturalnego poziomu (bezrobocie ↓), ale za to mocno rosną ceny (inflacja ↑).</span>
+<span class="step"><span class="step-lbl">Co robi rząd.</span>Żeby ostudzić przegrzaną gospodarkę, sięga po <b>restrykcyjną politykę fiskalną</b>: obniża własne wydatki, tnie transfery i podnosi podatki. Cel jest prosty — zabrać z obiegu część popytu, żeby produkcja wróciła do poziomu potencjalnego, a inflacja przestała się rozkręcać.</span></div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
 <div class="answer"><b>Skutki (AD w prawo):</b> poziom cen <b>rośnie</b>, produkcja <b>rośnie</b> powyżej potencjału, bezrobocie <b>spada</b> poniżej naturalnego.</div>
@@ -1707,7 +1736,11 @@ ZADANIA = [
  capShock:'<b>Etap 1 — szok:</b> pesymizm konsumentów → wydatki ↓ → <b>jedna krzywa AD przesuwa się w LEWO</b> (SAS i LAS stoją w miejscu). Powstaje <b>luka recesyjna</b> — <b>E₂</b> zmienia OBIE współrzędne: rzuty pokazują <b>P₂ (ceny ↓)</b> na osi P oraz <b>Y₂ (produkcja ↓ poniżej potencjału)</b> na osi Y; <b>bezrobocie ↑</b>.',
  capFix:'<b>Etap 2 — polityka:</b> skuteczna <b>ekspansywna polityka pieniężna</b> (↓stóp procentowych, skup obligacji, ↓stopy rezerw) → tańszy kredyt → <b>TA SAMA AD wraca w PRAWO do LAS</b>. Powrót do <b>E₁</b> — rzuty <b>P₁/Y₁</b> pokazują ceny i produkcję z powrotem na poziomie wyjściowym. Wciąż jedna krzywa (AD): szok w lewo, polityka z powrotem w prawo.'
 })+`
-<div class="eli5"><b>Po ludzku:</b> ludzie się boją i mniej wydają → <b>popyt AD spada</b> (w lewo). Gospodarka produkuje poniżej potencjału, rośnie bezrobocie. Bank centralny musi <b>pobudzić popyt</b> = polityka ekspansywna (luźna).</div>
+<div class="eli5"><b>Po ludzku:</b>
+<span class="step"><span class="step-lbl">Krok 1.</span>W gospodarce narasta pesymizm — ludzie boją się o pracę, martwią się o przyszłość i wstrzymują większe zakupy. Spada konsumpcja gospodarstw domowych.</span>
+<span class="step"><span class="step-lbl">Krok 2.</span>Mniejsze wydatki oznaczają spadek <b>zagregowanego popytu (AD)</b> i przesunięcie jego krzywej w lewo. Powstaje <b>luka recesyjna</b> — gospodarka produkuje poniżej swojego potencjału.</span>
+<span class="step"><span class="step-lbl">Krok 3.</span>Firmy widzą, że towar się nie sprzedaje, więc ograniczają produkcję, zwalniają pracowników i wstrzymują inwestycje. Bezrobocie rośnie powyżej naturalnego poziomu (bezrobocie ↑).</span>
+<span class="step"><span class="step-lbl">Co robi bank centralny.</span>Uruchamia <b>ekspansywną (luźną) politykę pieniężną</b>: obniża stopy procentowe, skupuje obligacje na rynku (operacje otwartego rynku) oraz obniża stopę rezerw obowiązkowych. Efektem jest tańszy kredyt, który zachęca ludzi i firmy do większych wydatków i inwestycji — AD stopniowo wraca w prawo, a gospodarka do produkcji potencjalnej.</span></div>
 <button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
 <div class="sol">
 <div class="answer"><b>Skutki (AD w lewo):</b> poziom cen <b>spada</b>, produkcja <b>spada</b> poniżej potencjału, bezrobocie <b>rośnie</b>.</div>

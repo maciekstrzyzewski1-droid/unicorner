@@ -236,6 +236,8 @@
   .about .item h4{font-family:var(--disp);font-size:.95rem;font-weight:600;margin-bottom:5px;}
   .about .item h4::before{content:"▸ ";color:var(--cyan);}
   .about .item p{font-size:.85rem;color:var(--muted);}
+  .about .item .ilink{color:var(--cyan);text-decoration:none;border-bottom:1px dashed rgba(39,232,255,.4);transition:.2s;font-family:var(--mono);font-size:.82rem;}
+  .about .item .ilink:hover{color:#eafcff;border-bottom-color:var(--cyan);text-shadow:0 0 6px rgba(39,232,255,.5);}
   @media(max-width:640px){.about{grid-template-columns:1fr;}}
 
   .faq{display:flex;flex-direction:column;gap:12px;margin-bottom:60px;}
@@ -254,7 +256,7 @@
   .faq-ic::after{top:2px;left:9px;width:2px;height:16px;}
   .faq-item.open .faq-ic::after{transform:rotate(90deg);opacity:0;}
   .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
-  .faq-item.open .faq-a{max-height:300px;}
+  .faq-item.open .faq-a{max-height:600px;}
   .faq-a p{padding:0 22px 20px 56px;font-size:.92rem;color:var(--muted);}
   .faq-a p b{color:var(--text);font-weight:600;}
 
@@ -494,7 +496,7 @@
   <div class="about">
     <div class="item"><h4>Po co to jest</h4><p>Wkuwanie definicji rzadko wystarcza — egzaminy lubią przykłady i zastosowanie. Materiały są pod to ułożone.</p></div>
     <div class="item"><h4>Jak korzystać</h4><p>Wybierz przedmiot, przejdź fiszki, rozwiąż zadania, sprawdź się quizem. Postęp zapisuje się w przeglądarce.</p></div>
-    <div class="item"><h4>Skąd się bierze</h4><p>To nasze własne opracowania na bazie zajęć. Robione, bo sami się z tego uczymy — i bo działa.</p></div>
+    <div class="item"><h4>Skąd się bierze</h4><p>To nasze własne opracowania na bazie zajęć. Robione, bo sami się z tego uczymy — i bo działa. Masz swoje notatki i chcesz je dorzucić? Wyślij je na <a href="mailto:unicornernotatki@gmail.com" class="ilink">unicornernotatki@gmail.com</a>.</p></div>
   </div>
 
   <div class="ow" aria-hidden="true"><span>LEARNING</span></div>
@@ -575,17 +577,17 @@ const STAT_GROUP = {
 
 const FAQS = [
   { q:"Co to jest Unicorner?",
-    a:"Zbiór materiałów do egzaminów: fiszki, zadania i quizy z natychmiastową informacją zwrotną. Wszystko w jednym miejscu, bez logowania, działa na telefonie." },
+    a:"Zbiór materiałów do egzaminów: fiszki, zadania z omówieniem krok po kroku i quizy z natychmiastową informacją zwrotną. Wszystko w jednym miejscu — bez logowania, bez opłat, bez reklam. Działa w przeglądarce, na telefonie i na komputerze. Pomysł jest prosty: chcesz się nauczyć jednego przedmiotu — otwierasz zakładkę i się uczysz." },
   { q:"Czy to oficjalna strona UEP?",
-    a:"<b>Nie.</b> To projekt studencki, niepowiązany z uczelnią ani żadną katedrą. Robiony przez studentów, dla studentów." },
+    a:"<b>Nie.</b> To projekt studencki, niepowiązany z uczelnią, żadną katedrą ani konkretnym wykładowcą. Robiony przez studentów, dla studentów. Wszystkie materiały to nasze własne opracowania — nie znajdziesz tu prezentacji ani skanów notatek wykładowców." },
   { q:"Skąd biorą się materiały?",
-    a:"To <b>nasze własne opracowania</b> na bazie zajęć — nie udostępniamy tu prezentacji ani materiałów wykładowców. Traktuj to jako dodatek do nauki, a nie zamiennik oryginalnych źródeł." },
+    a:"To <b>nasze własne opracowania</b> na bazie zajęć, notatek i literatury — układane pod to, co realnie sprawdzają na kolokwiach i egzaminach. Traktuj Unicornera jako dodatek do nauki i szybką powtórkę przed egzaminem, a nie zamiennik oryginalnych źródeł. Slajdów i skryptów z UEP tu nie kopiujemy." },
   { q:"Czy to darmowe?",
-    a:"Tak. Otwierasz i się uczysz — bez kont, bez opłat, bez reklam." },
+    a:"Tak. Otwierasz i się uczysz — bez kont, bez opłat, bez reklam. Nie zbieramy adresów e-mail, nie sprzedajemy danych, nie mamy żadnego produktu premium. Cały projekt utrzymujemy sami, bo sami się z niego uczymy." },
   { q:"Czy postęp się zapisuje?",
-    a:"W quizach i fiszkach postęp trzymany jest w Twojej przeglądarce. Wyczyścisz dane przeglądarki — zacznie się od zera. Nic nie wysyłamy na żaden serwer." },
-  { q:"Chcę dorzucić swój przedmiot albo pomóc — jak?",
-    a:"Super. Odezwij się — dorzucanie kolejnych przedmiotów to dokładnie kierunek, w którym to idzie." }
+    a:"Tak, ale tylko lokalnie. W quizach i fiszkach postęp (co odznaczyłeś jako „Umiem\", jaki masz wynik quizu) trzymany jest w Twojej przeglądarce (localStorage). Nic nie wysyłamy na żaden serwer. Wyczyścisz dane przeglądarki lub otworzysz stronę w trybie incognito — zacznie się od zera. Jeśli chcesz uczyć się na dwóch urządzeniach, postęp się między nimi nie zsynchronizuje." },
+  { q:"Mam własne notatki albo materiały — jak je dorzucić?",
+    a:"Wyślij mi je na <a href=\"mailto:unicornernotatki@gmail.com\" style=\"color:var(--cyan);text-decoration:none;border-bottom:1px dashed rgba(39,232,255,.4);\">unicornernotatki@gmail.com</a>. Notatki, skany, skrypty, opracowania — cokolwiek. Jeżeli materiał jest dobrej jakości, dorzucę go do odpowiedniego przedmiotu albo zrobię z niego osobną zakładkę. Jak nie masz notatek, ale znasz przedmiot, który powinien tu być — też się odezwij." }
 ];
 
 const grid = document.getElementById('grid');
