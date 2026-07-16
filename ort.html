@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3JWNYJ5EN4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3JWNYJ5EN4');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Obsługa Ruchu Turystycznego · Unicorner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
+  --line:#241d4a; --line2:#3a2e74;
+  --text:#eef0ff; --muted:#9b93c4; --muted2:#6f679a;
+  --accent:#a78bfa; --accent-d:#8b5cf6;
+  --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
+  --ok:#5ad1a0; --ok-bg:#0c241d; --ok-line:#1d4a3a;
+  --bad:#ff6b8b; --bad-bg:#2a0d18; --bad-line:#5a2233;
+  --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+  --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
+  --shadow:0 18px 60px rgba(0,0,0,.6);
+  --disp:'Chakra Petch','Space Grotesk',sans-serif;
+  --mono:'Chakra Petch',ui-monospace,monospace;
+  /* aliasy dla starej struktury marketing */
+  --cream:#07060f; --cream-dark:#171132; --green:#a78bfa; --green-mid:#8b5cf6; --green-light:#3a2e74; --green-faint:#171132;
+  --ink-mid:#cfc9e8; --ink-light:#9b93c4;
+  --red-bg:#2a0d18; --red-text:#ffb3c1; --red-border:#5a2233;
+  --amber-bg:#211a08; --amber-text:#ffd84a;
+  --blue-bg:#0a1c2e; --blue-text:#7fe3ff;
+  --purple-bg:#171132; --purple-text:#c4b5fd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;padding:0 0 3rem;overflow-x:hidden;position:relative;line-height:1.6;
+  background:
+    radial-gradient(900px 520px at 85% -8%, #1a1150 0%, transparent 58%),
+    radial-gradient(720px 480px at -8% 4%, #2a0b3f 0%, transparent 52%),
+    radial-gradient(600px 600px at 50% 120%, #0d2440 0%, transparent 60%),
+    var(--ink);}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(39,232,255,.025) 1px,transparent 1px) 0 0/100% 3px,linear-gradient(90deg,rgba(167,139,250,.04) 1px,transparent 1px) 0 0/52px 100%,linear-gradient(rgba(167,139,250,.04) 1px,transparent 1px) 0 0/100% 52px;mix-blend-mode:screen;opacity:.6;}
+body::after{content:"";position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(39,232,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
+@media (prefers-reduced-motion:no-preference){body::after{animation:sweep 14s ease-in-out infinite;}}
+@keyframes sweep{0%,100%{transform:translateX(-30%);}50%{transform:translateX(30%);}}
+.uc-head,.page-intro,.container,.giant,footer.uc-foot{position:relative;z-index:1;}
+h1,h2,h3,h4,h5,h6{font-family:var(--disp);letter-spacing:.2px;}
+
+.scanbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:var(--iris);background-size:200% 100%;opacity:.9;}
+@media (prefers-reduced-motion:no-preference){.scanbar{animation:shimmer 6s linear infinite;}}
+@keyframes shimmer{to{background-position:200% 0;}}
+
+/* brand bar */
+.uc-head{position:sticky;top:0;z-index:50;backdrop-filter:blur(9px);background:linear-gradient(180deg,rgba(7,6,15,.92),rgba(7,6,15,.6));border-bottom:1px solid var(--line);margin-bottom:1.6rem;}
+.uc-head-in{max-width:980px;margin:0 auto;padding:12px 1.5rem;display:flex;align-items:center;gap:11px;flex-wrap:wrap;}
+.uc-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.uc-horn{width:32px;height:32px;flex-shrink:0;display:block;filter:drop-shadow(0 0 6px rgba(39,232,255,.5));}
+@media (prefers-reduced-motion:no-preference){.uc-horn{animation:hornFloat 5s ease-in-out infinite;}}
+@keyframes hornFloat{50%{transform:translateY(-2px) rotate(-3deg);}}
+.uc-wordmark{font-family:var(--disp);font-weight:700;font-size:1.34rem;letter-spacing:.4px;color:var(--text);text-transform:lowercase;}
+.uc-wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% 100%;}
+@media (prefers-reduced-motion:no-preference){.uc-wordmark .ai{animation:shimmer 7s linear infinite;}}
+.uc-sep{color:var(--muted2);font-weight:300;font-size:1.1rem;}
+.uc-subject{font-family:var(--mono);font-weight:600;font-size:.82rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.uc-back{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.76rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:8px 13px;transition:.2s;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.uc-back:hover{color:var(--text);border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.2);}
+@media(max-width:560px){.uc-back{display:none;}}
+
+/* hero */
+.page-intro{max-width:980px;margin:0 auto 1.4rem;padding:0 1.5rem;}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid var(--line2);background:rgba(39,232,255,.05);padding:7px 14px;border-radius:4px;margin-bottom:16px;box-shadow:inset 0 0 14px rgba(39,232,255,.08);}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+@media (prefers-reduced-motion:no-preference){.eyebrow .dot{animation:pulse 2.4s ease-in-out infinite;}}
+@keyframes pulse{50%{opacity:.35;transform:scale(.7);}}
+.page-intro h1{font-family:var(--disp);font-size:clamp(1.9rem,5vw,2.9rem);font-weight:700;letter-spacing:-.5px;line-height:1.06;margin-bottom:12px;color:var(--text);}
+.page-intro h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(167,139,250,.3);}
+.page-intro p{font-size:1.02rem;color:var(--muted);text-transform:none;letter-spacing:normal;}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+.chip{font-family:var(--mono);font-size:.72rem;letter-spacing:.6px;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:6px 11px;}
+.chip b{color:var(--gold);font-weight:700;}
+
+.container{max-width:980px;margin:0 auto;padding:0 1.5rem;}
+
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.6rem;border-bottom:1px solid var(--line);padding-bottom:1rem;}
+.tab{font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:10px 18px;cursor:pointer;color:var(--muted);background:var(--surface);border:1px solid var(--line);transition:.2s;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));}
+.tab:hover:not(.active){color:var(--text);border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.18);}
+.tab.active{color:#fff;border-color:transparent;background:linear-gradient(160deg,var(--surface2),var(--ink2));position:relative;}
+.tab.active::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+.section{display:none;}.section.active{display:block;animation:fade .35s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* karty materialow */
+.card{position:relative;background:linear-gradient(160deg,var(--surface) 0%,var(--ink2) 100%);border:1px solid var(--line);border-radius:4px;padding:1.4rem 1.6rem;margin-bottom:1rem;overflow:hidden;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+.card::after{content:"";position:absolute;top:8px;left:8px;width:12px;height:12px;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);opacity:.4;}
+.card-label{font-family:var(--mono);font-size:.66rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:7px;}
+.card-title{font-family:var(--disp);font-size:1.28rem;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.3;}
+.card-body{font-size:14.5px;color:var(--muted);line-height:1.75;}
+.card-body strong,.card-body b{color:var(--text);}
+/* tagi / przyklady */
+.tags{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;line-height:1.5;letter-spacing:.3px;}
+.tag-green{background:var(--ok-bg);color:#bff3d3;border:1px solid var(--ok-line);}
+.tag-red{background:var(--bad-bg);color:#ffb3c1;border:1px solid var(--bad-line);}
+.tag-amber{background:rgba(255,216,74,.08);color:var(--gold);border:1px solid rgba(255,216,74,.3);}
+.tag-blue{background:rgba(39,232,255,.07);color:var(--cyan);border:1px solid rgba(39,232,255,.28);}
+.note-box{position:relative;background:radial-gradient(500px 120px at 8% 0%,rgba(255,216,74,.08),transparent 60%),var(--ink2);border:1px solid var(--line2);border-radius:4px;padding:1rem 1.2rem 1rem 1.3rem;margin-bottom:1rem;font-size:14px;color:var(--muted);line-height:1.65;}
+.note-box::before{content:"";position:absolute;top:0;left:0;bottom:0;width:2px;background:var(--gold-line);}
+.note-box b,.note-box strong{color:#fff;}
+
+/* steps */
+.steps{counter-reset:step;}
+.step{display:flex;gap:14px;padding:.8rem 0;border-bottom:1px solid var(--line);}
+.step:last-child{border-bottom:none;}
+.step-num{width:30px;height:30px;border-radius:8px;background:var(--iris);color:#0b0918;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px;box-shadow:0 0 12px rgba(39,232,255,.3);}
+.step-title{font-family:var(--disp);font-size:1.05rem;font-weight:600;margin-bottom:4px;color:var(--text);}
+.step-desc{font-size:14px;color:var(--muted);line-height:1.7;}
+
+/* tabele */
+table{width:100%;border-collapse:collapse;margin:8px 0;}
+td,th{padding:9px 12px;text-align:left;font-size:13.5px;border:1px solid var(--line);vertical-align:top;color:var(--muted);}
+th{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text);font-weight:600;background:rgba(167,139,250,.08);}
+td b,td strong{color:var(--text);}
+tr:nth-child(even) td{background:rgba(255,255,255,.015);}
+
+/* pros-cons */
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.5rem;}
+.pros-cons ul{padding-left:1.1rem;}
+.pros-cons li{font-size:14px;color:var(--muted);margin-bottom:6px;line-height:1.6;}
+.col-head{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.col-head.green{color:var(--ok);}
+.col-head.red{color:var(--bad);}
+
+/* maslow */
+.maslow-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);}
+.maslow-row:last-child{border-bottom:none;}
+.maslow-dot{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:12px;font-weight:800;flex-shrink:0;margin-top:1px;color:#0b0918;background:var(--iris);box-shadow:0 0 10px rgba(39,232,255,.28);}
+.maslow-name{font-family:var(--disp);font-size:14px;font-weight:600;min-width:160px;color:var(--text);}
+.maslow-ex{font-size:14px;color:var(--muted);line-height:1.6;}
+
+/* cialdini */
+.cialdini-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.75rem;}
+.cbox{position:relative;background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line);border-radius:4px;padding:.8rem 1rem;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));}
+.cbox-title{font-family:var(--disp);font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.cbox-body{font-size:13.5px;color:var(--muted);line-height:1.62;}
+
+/* QUIZ */
+.quiz-q{font-family:var(--disp);font-size:1.2rem;font-weight:600;line-height:1.45;margin-bottom:1rem;color:var(--text);}
+.quiz-opts{display:flex;flex-direction:column;gap:9px;}
+.opt{padding:12px 16px;border:1px solid var(--line);border-radius:4px;font-family:'Inter',system-ui,sans-serif;font-size:14px;cursor:pointer;text-align:left;background:var(--ink2);color:var(--text);transition:.15s;line-height:1.5;width:100%;}
+.opt:hover:not(.correct):not(.wrong){border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.15);}
+.opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#c9f5e2;}
+.opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#ffc4d1;}
+.quiz-feedback{margin-top:12px;padding:12px 15px;border-radius:4px;font-size:14px;line-height:1.65;border:1px solid;}
+.quiz-feedback.ok{background:var(--ok-bg);color:#bff3d3;border-color:var(--ok-line);}
+.quiz-feedback.fail{background:var(--bad-bg);color:#ffcdd8;border-color:var(--bad-line);}
+.quiz-nav{display:flex;gap:9px;margin-top:1rem;align-items:center;flex-wrap:wrap;}
+.quiz-counter{font-family:var(--mono);font-size:12px;letter-spacing:.5px;color:var(--muted2);flex:1;}
+.nav-btn{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:9px 16px;border:1px solid var(--line);border-radius:4px;cursor:pointer;background:var(--surface);color:var(--muted);transition:.2s;
+  clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));}
+.nav-btn:hover{color:var(--text);border-color:var(--accent);box-shadow:0 0 12px rgba(167,139,250,.18);}
+.nav-btn.primary{color:#fff;border-color:transparent;background:linear-gradient(115deg,rgba(39,232,255,.2),rgba(167,139,250,.24),rgba(255,46,151,.2));position:relative;}
+.nav-btn.primary::before{content:"";position:absolute;inset:0;border-radius:4px;padding:1px;background:var(--iris);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
+.score-big{font-family:'Orbitron',var(--disp);font-size:3.6rem;font-weight:800;margin:1rem 0 .5rem;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.progress-bar{height:5px;background:var(--ink2);border:1px solid var(--line);border-radius:20px;margin-bottom:1.25rem;overflow:hidden;}
+.progress-fill{height:100%;background:var(--iris);border-radius:20px;transition:width .35s;box-shadow:0 0 10px rgba(39,232,255,.5);}
+@media(max-width:600px){.cialdini-grid{grid-template-columns:1fr;}.pros-cons{grid-template-columns:1fr;}}
+
+/* giant + footer */
+.giant{position:relative;z-index:1;text-align:center;overflow:hidden;line-height:.9;user-select:none;pointer-events:none;margin:20px auto 24px;padding:0 16px;}
+.giant span{display:inline-block;max-width:100%;font-family:'Orbitron',var(--disp);font-weight:800;font-size:clamp(1.8rem,11vw,6.5rem);letter-spacing:.04em;line-height:1;white-space:nowrap;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px rgba(39,232,255,.5)) drop-shadow(0 0 34px rgba(167,139,250,.4));}
+@media (prefers-reduced-motion:no-preference){.giant span{animation:shimmer 8s linear infinite;}}
+footer.uc-foot{border-top:1px solid var(--line);padding:24px 0 40px;}
+footer.uc-foot .fwrap{max-width:980px;margin:0 auto;padding:0 1.5rem;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+footer.uc-foot .disclaimer{font-size:.77rem;color:var(--muted2);max-width:560px;line-height:1.6;}
+footer.uc-foot .disclaimer b{color:var(--muted);}
+footer.uc-foot .foot-brand{display:flex;align-items:center;gap:9px;color:var(--muted);font-family:var(--disp);font-weight:600;font-size:.92rem;letter-spacing:1px;}
+footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+<style>
+/* ===== GIGA-NAPIS: sama obwodka, bez poswiaty, czysta szeroka czcionka ===== */
+.giant span{
+  font-family:'Michroma','Orbitron','Chakra Petch',sans-serif !important;
+  font-weight:400 !important;
+  font-size:clamp(1.25rem,7.8vw,4rem) !important;
+  letter-spacing:.12em !important;
+  background:var(--iris) !important;
+  -webkit-background-clip:text !important;background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  color:transparent !important;
+  -webkit-text-stroke:0 !important;
+  filter:none !important;
+  animation:none !important;
+}
+</style>
+</head>
+<body>
+<div class="scanbar" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient></defs></svg>
+<header class="uc-head">
+  <div class="uc-head-in">
+    <a class="uc-brand" href="index.html" aria-label="Unicorner — strona główna">
+      <svg class="uc-horn" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/>
+        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#0c0a18" stroke-width="1.1" fill="none" opacity="0.55"/>
+      </svg>
+      <span class="uc-wordmark">Uni<span class="ai">corner</span></span>
+    </a>
+    <span class="uc-sep">/</span>
+    <span class="uc-subject">Obsługa Ruchu Turystycznego</span>
+    <a class="uc-back" href="index.html">← Wszystkie przedmioty</a>
+  </div>
+</header>
+<div class="page-intro">
+  <span class="eyebrow"><span class="dot"></span>Obsługa Ruchu Turystycznego · US</span>
+  <h1>Ruch turystyczny, <span class="grad">ogarnięty od kuchni.</span></h1>
+  <p>Ruch turystyczny i jego determinanty, rodzaje turystyki, obsługa na etapach podróży, organizacja imprez oraz praca pilota i przewodnika — pojęcia i klasyfikacje plus quiz ze sprawdzaniem po każdej odpowiedzi.</p>
+  <div class="meta">
+    <span class="chip"><b>5</b> działów</span>
+    <span class="chip">Ruch · Obsługa</span>
+    <span class="chip">Imprezy</span>
+    <span class="chip">Pilot i grupa</span>
+  </div>
+</div>
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('ruch',this)">Ruch turystyczny</button>
+    <button class="tab" onclick="switchTab('rodzaje',this)">Rodzaje turystyki</button>
+    <button class="tab" onclick="switchTab('obsluga',this)">Obsługa</button>
+    <button class="tab" onclick="switchTab('imprezy',this)">Imprezy</button>
+    <button class="tab" onclick="switchTab('pilot',this)">Pilot i grupa</button>
+    <button class="tab" onclick="switchTab('quiz',this)">Quiz</button>
+  </div>
+
+  <!-- ============ RUCH TURYSTYCZNY ============ -->
+  <div class="section active" id="ruch">
+    <div class="card">
+      <div class="card-label">Definicja</div>
+      <div class="card-title">Ruch turystyczny</div>
+      <div class="card-body">Zjawisko przemieszczania się turystów — jego wielkość, strukturę i charakter kształtuje wiele czynników. Rozwija się dzięki determinantom popytowym (potrzeby, zamożność, czas wolny) i podażowym (walory, infrastruktura, transport).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Determinanty rozwoju</div>
+      <div class="card-title">Co napędza ruch turystyczny</div>
+      <div class="card-body">Potrzeby turystów i walory; rozwój transportu i infrastruktury; wzrost czasu wolnego i zamożności; świadomość wartości wyjazdów; powstanie biur podróży; polityka państw; korzyści ekonomiczne z turystyki; urbanizacja; łatwy dostęp do informacji i mediów społecznościowych; ułatwienia w obrocie pieniężnym; globalizacja; sytuacja polityczno-gospodarcza i środowiskowa.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Problem</div>
+      <div class="card-title">Overtourism</div>
+      <div class="card-body">Wg UN Tourism to <strong>nadmierny i negatywny wpływ turystyki</strong> na jakość życia mieszkańców oraz jakość doświadczeń odwiedzających. Skutek zbyt dużej koncentracji ruchu turystycznego.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Badania — 1</div>
+      <div class="card-title">Badania pierwotne ruchu turystycznego</div>
+      <div class="card-body"><strong>Bezpośrednie</strong> (badanie turystów): pełne — metoda hotelowa i graniczna; częściowe — badania ankietowe. <strong>Pośrednie</strong> — wnioskowanie o ruchu na podstawie zjawisk pośrednio związanych z turystyką.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Badania — 2</div>
+      <div class="card-title">Badania wtórne</div>
+      <div class="card-body">Czerpanie informacji z publikacji statystycznych. Najczęstsze źródła: <strong>UN Tourism</strong> (Światowa Organizacja Turystyki), <strong>EUROSTAT</strong>, <strong>WTTC</strong> (Światowa Rada Podróży i Turystyki), <strong>ETC</strong> (Europejska Komisja Turystyki).</div>
+    </div>
+  </div>
+
+  <!-- ============ RODZAJE TURYSTYKI ============ -->
+  <div class="section" id="rodzaje">
+    <div class="card">
+      <div class="card-label">Turystyka masowa</div>
+      <div class="card-title">Cechy</div>
+      <div class="card-body">Koncentracja przestrzenna i czasowa (sezonowość); małe zróżnicowanie zewnętrzne produktu przy dużym urozmaiceniu wewnętrznym; uzależnienie regionu recepcji od turystyki; dominacja dużych przedsiębiorstw; rosnący udział wydatków na turystykę; <strong>degradacyjny wpływ na środowisko</strong> przyrodnicze i antropogeniczne.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Turystyka alternatywna</div>
+      <div class="card-title">Przeciwieństwo masowej</div>
+      <div class="card-body">Samodzielna organizacja (czasem z pomocą biur), charakter krajoznawczy, podróże w <strong>małych, nieformalnych grupach</strong> lub indywidualnie; wymaga zdolności organizacyjnych, wiedzy o obszarze, odporności psychicznej i przygotowania fizycznego.</div>
+      <div class="tags">
+        <span class="tag tag-green">Ekoturystyka (zielona, przyrodnicza, ekoetnoturystyka)</span>
+        <span class="tag tag-green">Agroturystyka</span>
+        <span class="tag tag-green">Turystyka aktywna (speleologia, wspinaczka)</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Turystyka aktywna / kwalifikowana</div>
+      <div class="card-title">Aktywności ekstremalne wg żywiołu</div>
+      <div class="card-body">Podział wg środowiska:</div>
+      <div class="tags">
+        <span class="tag tag-amber">Powietrze: base jumping, bungee, paragliding, ballooning, skysurfing</span>
+        <span class="tag tag-amber">Ziemia: climbing, zorbing, streetluge, mountainboarding, paintball</span>
+        <span class="tag tag-amber">Woda: surfing, windsurfing, kitesurfing, rafting, canoeing</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Idea przewodnia</div>
+      <div class="card-title">Zrównoważony rozwój turystyki</div>
+      <div class="card-body">Rozwój turystyki uwzględniający równowagę między korzyściami ekonomicznymi, dobrostanem mieszkańców i ochroną środowiska — tak, by zaspokajać potrzeby dziś, nie niszcząc możliwości przyszłych pokoleń.</div>
+    </div>
+  </div>
+
+  <!-- ============ OBSŁUGA ============ -->
+  <div class="section" id="obsluga">
+    <div class="card">
+      <div class="card-label">Definicja</div>
+      <div class="card-title">Obsługa ruchu turystycznego</div>
+      <div class="card-body">Obejmuje <strong>wszystkie świadczenia na rzecz turystów</strong> związane z realizacją podróży turystycznej oraz zaspokojeniem innych potrzeb zgłaszanych podczas jej trwania.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Etap 1</div>
+      <div class="card-title">Przygotowanie podróży</div>
+      <div class="card-body">Podstawowe formy obsługi: <strong>informacja, poradnictwo, pośrednictwo, organizacja imprez turystycznych</strong>. To etap przed wyruszeniem — planowanie i rezerwacje.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Etap 2</div>
+      <div class="card-title">Przejazd (do celu i z powrotem)</div>
+      <div class="card-body">Podstawowe formy: <strong>transport, pilotaż, przewodnictwo, informacja</strong>. Dodatkowe: nocleg, wyżywienie. To obsługa w trakcie przemieszczania.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Etap 3</div>
+      <div class="card-title">Pobyt w miejscu docelowym</div>
+      <div class="card-body">Obsługa na miejscu: nocleg, wyżywienie, przewodnictwo, animacja, udostępnianie walorów oraz poradnictwo i pośrednictwo (usługi dodatkowe).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Logistyka</div>
+      <div class="card-title">Elementy logistyki obsługi</div>
+      <div class="card-body">Informacja; poradnictwo i pośrednictwo; transport; hotelarstwo i gastronomia; udostępnienie walorów turystycznych. To one łącznie umożliwiają sprawną obsługę ruchu.</div>
+    </div>
+  </div>
+
+  <!-- ============ IMPREZY ============ -->
+  <div class="section" id="imprezy">
+    <div class="card">
+      <div class="card-label">Fazy organizacji</div>
+      <div class="card-title">Cztery fazy imprezy turystycznej</div>
+      <div class="card-body"><strong>1. Przygotowanie</strong> (planowanie, programowanie, kalkulacja, zamawianie świadczeń) → <strong>2. Sprzedaż</strong> → <strong>3. Realizacja</strong> → <strong>4. Rozliczenie</strong>.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Faza przygotowania</div>
+      <div class="card-title">Programowanie i kalkulacja</div>
+      <div class="card-body"><strong>Programowanie</strong> — ustalenie celu, terminu i elementów imprezy. <strong>Kalkulacja</strong> — obliczenie kosztów i ceny. Następnie <strong>zamawianie świadczeń</strong> u producentów usług cząstkowych.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Zamawianie świadczeń</div>
+      <div class="card-title">Umowa z usługodawcami</div>
+      <div class="card-body">Zawarcie umowy między producentami usług cząstkowych a organizatorem na określony rodzaj świadczeń. Podstawą zamówienia może być <strong>stała umowa</strong> albo <strong>każdorazowe zapytanie o usługę</strong>.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rodzaje umów</div>
+      <div class="card-title">Czarterowa vs allotment</div>
+      <div class="card-body"><strong>Umowa czarterowa</strong> — zakup określonej liczby usług w danym terminie za z góry ustaloną kwotę; <strong>brak możliwości zwrotu</strong>, więc ceny są niższe.<br><strong>Umowa allotmentu</strong> — dysponowanie uzgodnioną liczbą usług przez określony czas z <strong>prawem rezygnacji bez kosztów</strong> do wyznaczonego terminu.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Umowy w biurze podróży</div>
+      <div class="card-title">Z kim biuro zawiera umowy</div>
+      <div class="card-body">Z kontrahentami (usługodawcami), z turystami — <strong>umowa o imprezę turystyczną</strong>, umowy agencyjne oraz umowy z pilotami i przewodnikami.</div>
+    </div>
+  </div>
+
+  <!-- ============ PILOT I GRUPA ============ -->
+  <div class="section" id="pilot">
+    <div class="card">
+      <div class="card-label">Kompetencje</div>
+      <div class="card-title">Cechy i umiejętności pilota/przewodnika</div>
+      <div class="card-body"><strong>Kompetencja</strong> — merytoryczne i formalne przygotowanie do realizacji imprezy. <strong>Cechy osobowościowe</strong> — sumienność, otwartość na doświadczenia, ekstrawersja, empatia (u pilota: niski neurotyzm, średnia ugodowość). <strong>Sprawność organizacyjna</strong> — dobry plan dnia, orientacja w terenie.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Przekaz</div>
+      <div class="card-title">Jaka powinna być treść informacji</div>
+      <div class="card-body">Prawdziwa, aktualna, obiektywna; dostosowana do wieku, wiedzy i oczekiwań turystów; podawana od ogółu do szczegółu; z anegdotami, analogiami i ciekawostkami; kwestie etniczne, religijne i kulturowe prezentowane z szacunkiem i delikatnie.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Role</div>
+      <div class="card-title">Pilot trasowy vs rezydent</div>
+      <div class="card-body"><strong>Pilot (trasowy)</strong> — towarzyszy grupie w trakcie podróży. <strong>Rezydent</strong> — przebywa czasowo w regionie recepcji i obsługuje turystów na miejscu (zbieżne zadania, ale stacjonarnie w destynacji).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Obsługa imprezy przez pilota</div>
+      <div class="card-title">Trzy części</div>
+      <div class="card-body"><strong>Odprawa u referenta</strong> (program, lista uczestników i rooming-list, bilety, vouchery, kopie rezerwacji i umów, polisa, fundusz awaryjny) → <strong>realizacja imprezy</strong> → <strong>rozliczenie</strong> (podpisane vouchery, sprawozdanie, uaktualniona lista, rozliczenie gotówki, rachunek za pracę i diety).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Typy turystów — 1</div>
+      <div class="card-title">Wg przygotowania do wyjazdu</div>
+      <div class="card-body"><strong>Przygotowani</strong> (miłośnicy historii, gotyku, znawcy poloników), <strong>nieprzygotowani</strong> (wrażliwi entuzjaści, turyści pasywni, snobi turystyczni) oraz <strong>pseudoturyści</strong>.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Typy turystów — 2</div>
+      <div class="card-title">Wg zachowania (Cohen)</div>
+      <div class="card-body">Zorganizowany turysta masowy, indywidualny turysta masowy, <strong>explorer</strong> i <strong>drifter</strong> — od najbardziej zinstytucjonalizowanego po całkowicie samodzielnego wędrowca.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Konflikty</div>
+      <div class="card-title">Konflikty w grupie i ich rozwiązywanie</div>
+      <div class="card-body">Konflikt interpersonalny = działania jednej osoby utrudniają działania innej. Źródła: <strong>konflikt interesów, adaptacyjny, postaw</strong>. Metody rozwiązywania: <strong>mediacja</strong> (pilot jako trzecia strona), <strong>kompromis</strong> (wzajemne ustępstwa), <strong>arbitraż</strong> (pilot narzuca rozwiązanie), negocjacje.</div>
+    </div>
+  </div>
+
+  <!-- ============ QUIZ ============ -->
+  <div class="section" id="quiz">
+    <div id="quiz-container"></div>
+  </div>
+
+</div>
+
+<div class="giant" aria-hidden="true"><span>OBSŁUGA</span></div>
+
+<footer class="uc-foot">
+  <div class="fwrap">
+    <p class="disclaimer"><b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą. Materiały to własne opracowania na bazie zajęć — ucz się też z oryginalnych źródeł. Bez gwarancji kompletności.</p>
+    <div class="foot-brand">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/></svg>
+      <span>uni<span class="fb-corner">corner</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const RAW = [
+  // ZESTAW 1 — Ruch turystyczny (9)
+  {set:0,q:"Który czynnik jest determinantą rozwoju ruchu turystycznego?",opts:["Spadek ilości czasu wolnego","Wzrost zamożności społeczeństw i rozwój transportu","Zamykanie biur podróży","Ograniczanie dostępu do informacji"],ans:1,exp:"Ruch turystyczny napędzają m.in.: potrzeby i walory, rozwój transportu i infrastruktury, wzrost czasu wolnego i zamożności, biura podróży, globalizacja i łatwy dostęp do informacji."},
+  {set:0,q:"Overtourism wg UN Tourism to...",opts:["Turystyka poza sezonem","Nadmierny i negatywny wpływ turystyki na jakość życia mieszkańców i doświadczeń odwiedzających","Turystyka wyłącznie zagraniczna","Brak ruchu turystycznego w regionie"],ans:1,exp:"Overtourism = nadmierny, negatywny wpływ zbyt dużej koncentracji ruchu turystycznego na mieszkańców i na jakość doświadczeń samych turystów."},
+  {set:0,q:"Badania pierwotne ruchu turystycznego to...",opts:["Czerpanie danych z publikacji statystycznych","Badania bezpośrednie turystów (np. metoda hotelowa, graniczna, ankiety) i pośrednie","Wyłącznie dane z EUROSTAT-u","Analiza sprawozdań finansowych biur podróży"],ans:1,exp:"Pierwotne = zbierane samodzielnie: bezpośrednie (metoda hotelowa, graniczna, ankiety) oraz pośrednie (wnioskowanie ze zjawisk związanych z turystyką)."},
+  {set:0,q:"Metoda hotelowa i graniczna to przykłady...",opts:["Badań wtórnych","Bezpośrednich badań pełnych ruchu turystycznego","Metod kalkulacji imprezy","Form animacji"],ans:1,exp:"Metoda hotelowa i graniczna to bezpośrednie badania pełne turystów (badania pierwotne). Ankieta to badanie częściowe."},
+  {set:0,q:"Badania wtórne ruchu turystycznego polegają na...",opts:["Ankietowaniu turystów na granicy","Czerpaniu informacji z publikacji statystycznych","Obserwacji grupy przez pilota","Kalkulacji kosztów imprezy"],ans:1,exp:"Wtórne = korzystanie z gotowych publikacji statystycznych, np. UN Tourism, EUROSTAT, WTTC, ETC."},
+  {set:0,q:"Które z poniższych to źródło danych w badaniach wtórnych?",opts:["Rooming-list pilota","EUROSTAT i WTTC","Voucher hotelowy","Fundusz awaryjny imprezy"],ans:1,exp:"Najczęstsze źródła wtórne: UN Tourism (Światowa Organizacja Turystyki), EUROSTAT, WTTC (Światowa Rada Podróży i Turystyki), ETC (Europejska Komisja Turystyki)."},
+  {set:0,q:"Skrót WTTC oznacza...",opts:["Światową Organizację Turystyki","Europejską Komisję Turystyki","Światową Radę Podróży i Turystyki","Światowy Trust Transportu Cywilnego"],ans:2,exp:"WTTC = World Travel & Tourism Council — Światowa Rada Podróży i Turystyki. UN Tourism to Światowa Organizacja Turystyki."},
+  {set:0,q:"Ruch turystyczny kształtują czynniki wpływające na jego...",opts:["Wyłącznie cenę biletów lotniczych","Wielkość, strukturę i charakter","Tylko sezonowość","Wyłącznie długość pobytu"],ans:1,exp:"Determinanty kształtują wielkość, strukturę i charakter ruchu turystycznego oraz jego rozwój w czasie."},
+  {set:0,q:"Globalizacja i media społecznościowe jako determinanty ruchu turystycznego działają przez...",opts:["Utrudnianie dostępu do informacji","Ułatwianie dostępu do informacji i inspiracji do podróży","Zmniejszanie mobilności","Ograniczanie obrotu pieniężnego"],ans:1,exp:"Łatwy dostęp do informacji, media społecznościowe, ułatwienia w obrocie pieniężnym i globalizacja obniżają barierę wyjazdu i napędzają ruch turystyczny."},
+
+  // ZESTAW 2 — Rodzaje turystyki (8)
+  {set:1,q:"Która cecha jest typowa dla turystyki masowej?",opts:["Podróże w małych, nieformalnych grupach","Samodzielna organizacja wyjazdu","Silna koncentracja czasowa (sezonowość) i degradacyjny wpływ na środowisko","Dominacja bardzo małych przedsiębiorstw"],ans:2,exp:"Turystyka masowa: koncentracja przestrzenna i czasowa, dominacja dużych przedsiębiorstw, uzależnienie regionu recepcji, degradacyjny wpływ na środowisko."},
+  {set:1,q:"Turystyka alternatywna charakteryzuje się...",opts:["Masowymi wyjazdami przez wielkie biura","Podróżami w małych, nieformalnych grupach i samodzielną organizacją","Całkowitym brakiem wiedzy o obszarze","Dominacją dużych przedsiębiorstw"],ans:1,exp:"Alternatywna = przeciwieństwo masowej: samodzielna organizacja, małe/nieformalne grupy lub indywidualnie, wymaga wiedzy, przygotowania i odporności."},
+  {set:1,q:"Ekoturystyka i agroturystyka to formy...",opts:["Turystyki masowej","Turystyki alternatywnej","Turystyki biznesowej","Turystyki tranzytowej"],ans:1,exp:"Turystyka alternatywna obejmuje najczęściej ekoturystykę (zieloną, przyrodniczą), agroturystykę i turystykę aktywną (np. speleologia, wspinaczka)."},
+  {set:1,q:"Base jumping i paragliding to aktywności ekstremalne w środowisku...",opts:["Wody","Ziemi","Powietrza","Miejskim"],ans:2,exp:"Podział wg żywiołu: powietrze (base jumping, bungee, paragliding), ziemia (climbing, zorbing, streetluge), woda (surfing, rafting, canoeing)."},
+  {set:1,q:"Rafting i kitesurfing zaliczamy do aktywności...",opts:["Powietrznych","Wodnych","Lądowych","Halowych"],ans:1,exp:"Rafting, canoeing, surfing, windsurfing i kitesurfing to aktywności ekstremalne w środowisku wodnym."},
+  {set:1,q:"Zrównoważony rozwój turystyki oznacza...",opts:["Maksymalizację liczby turystów bez ograniczeń","Równowagę między korzyściami ekonomicznymi, dobrostanem mieszkańców i ochroną środowiska","Rezygnację z jakiejkolwiek turystyki","Turystykę wyłącznie krajową"],ans:1,exp:"Zrównoważony rozwój = zaspokajanie potrzeb turystycznych dziś bez niszczenia środowiska i możliwości przyszłych pokoleń; równowaga trzech filarów."},
+  {set:1,q:"Małe zróżnicowanie zewnętrzne produktu przy dużym urozmaiceniu wewnętrznym to cecha...",opts:["Turystyki alternatywnej","Turystyki masowej","Agroturystyki","Turystyki kwalifikowanej"],ans:1,exp:"To jedna z cech turystyki masowej — produkty są do siebie podobne z zewnątrz, ale bogate wewnętrznie; obok sezonowości i koncentracji przestrzennej."},
+  {set:1,q:"Turystyka alternatywna zwykle wymaga od uczestnika...",opts:["Braku jakiegokolwiek przygotowania","Zdolności organizacyjnych, wiedzy o obszarze i odporności psychicznej","Wyłącznie dużego budżetu","Podróżowania tylko w dużych grupach"],ans:1,exp:"Samodzielny charakter turystyki alternatywnej wymaga zdolności organizacyjnych, wiedzy o odwiedzanym obszarze, odporności psychicznej i przygotowania fizycznego."},
+
+  // ZESTAW 3 — Obsługa ruchu turystycznego (7)
+  {set:2,q:"Obsługa ruchu turystycznego obejmuje...",opts:["Wyłącznie transport turystów","Wszystkie świadczenia na rzecz turystów związane z podróżą i zaspokojeniem ich potrzeb podczas jej trwania","Tylko organizację imprez","Wyłącznie usługi noclegowe"],ans:1,exp:"Obsługa ruchu turystycznego = wszystkie świadczenia na rzecz turystów związane z realizacją podróży i zaspokojeniem potrzeb zgłaszanych podczas jej trwania."},
+  {set:2,q:"Podstawową formą obsługi na etapie przygotowania podróży jest...",opts:["Pilotaż w autokarze","Informacja, poradnictwo, pośrednictwo i organizacja imprez","Wyżywienie w hotelu","Animacja czasu wolnego"],ans:1,exp:"Na etapie przygotowania obsługa to informacja, poradnictwo, pośrednictwo oraz organizacja imprez turystycznych — jeszcze przed wyjazdem."},
+  {set:2,q:"Pilotaż i przewodnictwo to podstawowe formy obsługi na etapie...",opts:["Przygotowania podróży","Przejazdu i pobytu","Rozliczenia imprezy","Kalkulacji"],ans:1,exp:"Transport, pilotaż, przewodnictwo i informacja to formy obsługi na etapie przejazdu; przewodnictwo i animacja dochodzą podczas pobytu."},
+  {set:2,q:"Które elementy należą do logistyki obsługi ruchu turystycznego?",opts:["Wyłącznie transport","Informacja, poradnictwo i pośrednictwo, transport, hotelarstwo i gastronomia, udostępnienie walorów","Tylko hotelarstwo","Kalkulacja i rozliczenie imprezy"],ans:1,exp:"Logistyka obsługi obejmuje: informację, poradnictwo i pośrednictwo, transport, hotelarstwo i gastronomię oraz udostępnienie walorów turystycznych."},
+  {set:2,q:"Nocleg i wyżywienie to na etapie przejazdu formy obsługi...",opts:["Podstawowe","Dodatkowe","Zakazane","Rozliczeniowe"],ans:1,exp:"Na etapie przejazdu podstawowe formy to transport, pilotaż, przewodnictwo i informacja, a nocleg i wyżywienie są formami dodatkowymi."},
+  {set:2,q:"Udostępnianie walorów turystycznych w obsłudze ruchu to...",opts:["Element logistyki obsługi","Rodzaj umowy czarterowej","Faza rozliczenia imprezy","Metoda badań wtórnych"],ans:0,exp:"Udostępnianie walorów turystycznych to jeden z elementów logistyki obsługi ruchu, obok informacji, transportu, hotelarstwa i gastronomii."},
+  {set:2,q:"Głównym celem obsługi ruchu turystycznego jest...",opts:["Sprzedaż jak największej liczby biletów","Zaspokojenie potrzeb turystów na wszystkich etapach podróży","Ograniczenie liczby turystów","Prowadzenie badań statystycznych"],ans:1,exp:"Obsługa ma zapewnić świadczenia zaspokajające potrzeby turystów na etapach przygotowania, przejazdu i pobytu — kompleksowo w całej podróży."},
+
+  // ZESTAW 4 — Imprezy turystyczne (8)
+  {set:3,q:"Prawidłowa kolejność faz organizacji imprezy turystycznej to...",opts:["Sprzedaż → przygotowanie → rozliczenie → realizacja","Przygotowanie → sprzedaż → realizacja → rozliczenie","Realizacja → sprzedaż → przygotowanie → rozliczenie","Rozliczenie → realizacja → sprzedaż → przygotowanie"],ans:1,exp:"Fazy: 1. przygotowanie (planowanie, programowanie, kalkulacja, zamawianie świadczeń) → 2. sprzedaż → 3. realizacja → 4. rozliczenie."},
+  {set:3,q:"Programowanie imprezy to...",opts:["Obliczenie kosztów i ceny","Ustalenie celu, terminu i elementów imprezy","Podpisanie umowy z turystą","Rozliczenie gotówki po imprezie"],ans:1,exp:"Programowanie = ustalenie celu, terminu i elementów imprezy. Obliczanie kosztów i ceny to kalkulacja."},
+  {set:3,q:"Kalkulacja w organizacji imprezy oznacza...",opts:["Zamawianie świadczeń u usługodawców","Obliczenie kosztów i ustalenie ceny imprezy","Rozliczenie pilota z gotówki","Programowanie trasy"],ans:1,exp:"Kalkulacja = etap fazy przygotowania, w którym oblicza się koszty i ustala cenę imprezy."},
+  {set:3,q:"Zamawianie świadczeń polega na...",opts:["Sprzedaży imprezy klientom","Zawarciu umowy między producentami usług cząstkowych a organizatorem imprezy","Rozliczeniu voucherów","Animacji podczas pobytu"],ans:1,exp:"Zamawianie świadczeń = umowa organizatora z producentami usług cząstkowych; podstawą jest stała umowa albo każdorazowe zapytanie o usługę."},
+  {set:3,q:"Umowa czarterowa charakteryzuje się tym, że...",opts:["Można zrezygnować z usług bez kosztów do określonego terminu","Zamawiający kupuje określoną liczbę usług bez możliwości zwrotu, dlatego ceny są niższe","Dotyczy tylko umów z turystami","Nie określa terminu ani standardu"],ans:1,exp:"Czarter = zakup z góry określonej liczby usług za ustaloną kwotę, bez możliwości zwrotu — stąd ceny są niższe niż przy innych formach."},
+  {set:3,q:"Umowa allotmentu pozwala zamawiającemu...",opts:["Kupić usługi bez prawa rezygnacji","Dysponować usługami przez określony czas z prawem rezygnacji bez kosztów do wyznaczonego terminu","Zamówić tylko jedną usługę","Sprzedać imprezę bez kalkulacji"],ans:1,exp:"Allotment = dysponowanie uzgodnioną liczbą usług przez określony czas z prawem rezygnacji (całości lub części) bez kosztów do umówionego terminu."},
+  {set:3,q:"Umowa zawierana między biurem podróży a turystą to...",opts:["Umowa czarterowa","Umowa allotmentu","Umowa o imprezę turystyczną","Umowa agencyjna"],ans:2,exp:"Biuro zawiera z turystami umowę o imprezę turystyczną; z kontrahentami — umowy na świadczenia; osobno umowy agencyjne oraz z pilotami i przewodnikami."},
+  {set:3,q:"Która z poniższych czynności należy do fazy przygotowania imprezy?",opts:["Rozliczenie diet pilota","Kalkulacja i zamawianie świadczeń","Sprzedaż wycieczek klientom","Sprawozdanie po powrocie"],ans:1,exp:"Faza przygotowania obejmuje planowanie, programowanie, kalkulację i zamawianie świadczeń. Sprzedaż, realizacja i rozliczenie to kolejne fazy."},
+
+  // ZESTAW 5 — Pilot i grupa (9)
+  {set:4,q:"Kompetencja pilota/przewodnika oznacza...",opts:["Umiejętność sprzedaży wycieczek","Merytoryczne i formalne przygotowanie do realizacji imprezy","Znajomość wyłącznie języków obcych","Posiadanie własnego autokaru"],ans:1,exp:"Kompetencja = merytoryczne i formalne przygotowanie do realizacji imprezy; obok cech osobowościowych i sprawności organizacyjnej."},
+  {set:4,q:"Które cechy osobowości są pożądane u pilota/przewodnika?",opts:["Neurotyczność i zamknięcie na doświadczenia","Sumienność, otwartość na doświadczenia, ekstrawersja i empatia","Introwersja i wysoka konfliktowość","Obojętność wobec turystów"],ans:1,exp:"Pożądane: sumienność, otwartość na doświadczenia, ekstrawersja, empatia; u pilota dodatkowo niski poziom neurotyczności i średni poziom ugodowości."},
+  {set:4,q:"Rezydent w obsłudze ruchu turystycznego to osoba, która...",opts:["Towarzyszy grupie wyłącznie w autokarze na trasie","Przebywa czasowo w regionie recepcji i obsługuje turystów na miejscu","Zajmuje się tylko kalkulacją imprez","Prowadzi badania statystyczne"],ans:1,exp:"Rezydent przebywa czasowo w regionie recepcji turystycznej i obsługuje tam turystów; zadania zbieżne z pilotem, ale realizowane stacjonarnie w destynacji."},
+  {set:4,q:"Odprawa pilota u referenta obejmuje m.in....",opts:["Rozliczenie diet i rachunek za pracę","Program imprezy, listę uczestników, vouchery, polisę i fundusz awaryjny","Sprawozdanie z realizacji","Uaktualnioną listę uczestników po powrocie"],ans:1,exp:"Na odprawie pilot pobiera: program i warunki uczestnictwa, listę uczestników (rooming-list), bilety, vouchery, kopie rezerwacji i umów, polisę i fundusz awaryjny."},
+  {set:4,q:"Rozliczenie imprezy przez pilota obejmuje...",opts:["Programowanie kolejnej imprezy","Podpisane vouchery, sprawozdanie, rozliczenie gotówki oraz rachunek za pracę i diety","Zamawianie świadczeń","Kalkulację ceny"],ans:1,exp:"Rozliczenie: podpisane przez obie strony vouchery (z uwagami), sprawozdanie i notatki, uaktualniona lista uczestników, rozliczenie pobranej gotówki, rachunek za pracę i diety."},
+  {set:4,q:"Explorer i drifter to typy turystów wyróżnione ze względu na...",opts:["Merytoryczne przygotowanie do wyjazdu","Sposób zachowania w odwiedzanym środowisku (stopień samodzielności)","Wiek turysty","Rodzaj transportu"],ans:1,exp:"Wg zachowania (typologia Cohena): zorganizowany turysta masowy, indywidualny turysta masowy, explorer i drifter — od zinstytucjonalizowanego po samodzielnego."},
+  {set:4,q:"Snob turystyczny i wrażliwy entuzjasta to podtypy turystów...",opts:["Przygotowanych","Nieprzygotowanych","Pseudoturystów","Zorganizowanych masowych"],ans:1,exp:"Wg przygotowania: przygotowani (miłośnicy historii, gotyku), nieprzygotowani (wrażliwi entuzjaści, turyści pasywni, snobi turystyczni) oraz pseudoturyści."},
+  {set:4,q:"Źródłem konfliktów w grupie turystycznej NIE jest zwykle...",opts:["Konflikt interesów","Konflikt adaptacyjny","Konflikt postaw","Kalkulacja imprezy"],ans:3,exp:"Konflikty w grupie wynikają najczęściej z konfliktu interesów, adaptacyjnego i postaw. Kalkulacja to etap organizacji imprezy, nie źródło konfliktu."},
+  {set:4,q:"Metoda rozwiązywania konfliktu, w której pilot narzuca skłóconym stronom rozwiązanie, to...",opts:["Mediacja","Kompromis","Arbitraż","Negocjacje"],ans:2,exp:"Arbitraż — w sytuacjach wyjątkowych pilot narzuca rozwiązanie. Mediacja = pomoc trzeciej strony, kompromis = wzajemne ustępstwa."}
+];
+
+const SETS = [
+  {name:"Zestaw 1 – Ruch turystyczny",range:[0,9]},
+  {name:"Zestaw 2 – Rodzaje turystyki",range:[9,17]},
+  {name:"Zestaw 3 – Obsługa ruchu",range:[17,24]},
+  {name:"Zestaw 4 – Imprezy turystyczne",range:[24,32]},
+  {name:"Zestaw 5 – Pilot i grupa",range:[32,41]},
+  {name:"Wszystkie (41 pytań)",range:[0,41]},
+];
+// Tasowanie opcji – zwraca {opts, ans} z pomieszaną kolejnością
+function shuffle(q){
+  const idxs=[0,1,2,3];
+  for(let i=idxs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idxs[i],idxs[j]]=[idxs[j],idxs[i]];}
+  const newOpts=idxs.map(i=>q.opts[i]);
+  const newAns=idxs.indexOf(q.ans);
+  return{opts:newOpts,ans:newAns};
+}
+
+let activeSet=null; // null = wybór zestawu
+let questions=[];
+let shuffled=[];
+let current=0,score=0,answered=[];
+
+function switchTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='quiz')renderSetPicker();
+}
+
+function startSet(si){
+  const s=SETS[si];
+  questions=RAW.slice(s.range[0],s.range[1]);
+  shuffled=questions.map(q=>shuffle(q));
+  current=0;score=0;answered=new Array(questions.length).fill(null);
+  activeSet=si;
+  renderQuiz();
+}
+
+function renderSetPicker(){
+  activeSet=null;
+  const c=document.getElementById('quiz-container');
+  c.innerHTML=`<div class="card"><div class="card-label">Wybierz zestaw pytań</div><div class="card-title" style="font-size:1.1rem;margin-bottom:1rem">Z czego chcesz się teraz pouczyć?</div>`+
+  SETS.map((s,i)=>`<button class="opt" style="margin-bottom:6px" onclick="startSet(${i})">${s.name}</button>`).join('')+`</div>`;
+}
+
+function renderQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(current>=questions.length){
+    const pct=Math.round(score/questions.length*100);
+    c.innerHTML=`<div class="card" style="text-align:center;padding:2.5rem">
+      <div class="card-label">${SETS[activeSet].name}</div>
+      <div class="score-big">${score}/${questions.length}</div>
+      <div class="card-body" style="margin-bottom:1.5rem">
+        ${pct>=80?'✅ Solidna znajomość materiału.':pct>=60?'⚠️ Kilka rzeczy warto powtórzyć.':'❌ Wróć do notatek i spróbuj ponownie.'}
+        <br><span style="color:var(--ink-light)">${pct}% poprawnych odpowiedzi</span>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="nav-btn primary" onclick="startSet(${activeSet})">Powtórz zestaw</button>
+        <button class="nav-btn" onclick="renderSetPicker()">← Zmień zestaw</button>
+      </div>
+    </div>`;
+    return;
+  }
+  const q=questions[current];
+  const sh=shuffled[current];
+  const isAnswered=answered[current]!==null;
+  const pct=Math.round((current/questions.length)*100);
+  c.innerHTML=`
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div style="margin-bottom:.5rem"><button class="nav-btn" style="font-size:11px;padding:4px 12px" onclick="renderSetPicker()">← Zestawy</button></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-label">${SETS[activeSet].name.split('–')[1]||SETS[activeSet].name} · pytanie ${current+1}/${questions.length}</span>
+        <span class="card-label">Wynik: ${score} pkt</span>
+      </div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-opts">
+        ${sh.opts.map((o,i)=>{
+          let cls='opt';
+          if(isAnswered){if(i===sh.ans)cls+=' correct';else if(i===answered[current]&&i!==sh.ans)cls+=' wrong';}
+          const oc=isAnswered?'':` onclick="pickAnswer(${i})"`;
+          return `<button class="${cls}"${oc}>${o}</button>`;
+        }).join('')}
+      </div>
+      ${isAnswered?`<div class="quiz-feedback ${answered[current]===sh.ans?'ok':'fail'}">${answered[current]===sh.ans?'✅':'❌'} ${q.exp}</div>`:''}
+      <div class="quiz-nav">
+        <span class="quiz-counter">${current+1} / ${questions.length}</span>
+        ${current>0?`<button class="nav-btn" onclick="prevQ()">← Wstecz</button>`:''}
+        ${isAnswered&&current<questions.length-1?`<button class="nav-btn primary" onclick="nextQ()">Dalej →</button>`:''}
+        ${isAnswered&&current===questions.length-1?`<button class="nav-btn primary" onclick="nextQ()">Pokaż wynik</button>`:''}
+      </div>
+    </div>`;
+}
+
+function pickAnswer(i){
+  if(answered[current]!==null)return;
+  answered[current]=i;
+  if(i===shuffled[current].ans)score++;
+  renderQuiz();
+}
+function nextQ(){current++;renderQuiz();}
+function prevQ(){if(current>0){current--;renderQuiz();}}
+
+// inicjalizacja
+document.addEventListener('DOMContentLoaded',()=>{
+  const quizTab=document.querySelector('.tab[onclick*="quiz"]');
+  if(quizTab) quizTab.addEventListener('click',renderSetPicker);
+});
+</script>
+</body>
+</html>

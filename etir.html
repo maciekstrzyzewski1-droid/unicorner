@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3JWNYJ5EN4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3JWNYJ5EN4');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ekonomika Turystyki i Rekreacji · Unicorner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
+  --line:#241d4a; --line2:#3a2e74;
+  --text:#eef0ff; --muted:#9b93c4; --muted2:#6f679a;
+  --accent:#a78bfa; --accent-d:#8b5cf6;
+  --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
+  --ok:#5ad1a0; --ok-bg:#0c241d; --ok-line:#1d4a3a;
+  --bad:#ff6b8b; --bad-bg:#2a0d18; --bad-line:#5a2233;
+  --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+  --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
+  --shadow:0 18px 60px rgba(0,0,0,.6);
+  --disp:'Chakra Petch','Space Grotesk',sans-serif;
+  --mono:'Chakra Petch',ui-monospace,monospace;
+  /* aliasy dla starej struktury marketing */
+  --cream:#07060f; --cream-dark:#171132; --green:#a78bfa; --green-mid:#8b5cf6; --green-light:#3a2e74; --green-faint:#171132;
+  --ink-mid:#cfc9e8; --ink-light:#9b93c4;
+  --red-bg:#2a0d18; --red-text:#ffb3c1; --red-border:#5a2233;
+  --amber-bg:#211a08; --amber-text:#ffd84a;
+  --blue-bg:#0a1c2e; --blue-text:#7fe3ff;
+  --purple-bg:#171132; --purple-text:#c4b5fd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;padding:0 0 3rem;overflow-x:hidden;position:relative;line-height:1.6;
+  background:
+    radial-gradient(900px 520px at 85% -8%, #1a1150 0%, transparent 58%),
+    radial-gradient(720px 480px at -8% 4%, #2a0b3f 0%, transparent 52%),
+    radial-gradient(600px 600px at 50% 120%, #0d2440 0%, transparent 60%),
+    var(--ink);}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(39,232,255,.025) 1px,transparent 1px) 0 0/100% 3px,linear-gradient(90deg,rgba(167,139,250,.04) 1px,transparent 1px) 0 0/52px 100%,linear-gradient(rgba(167,139,250,.04) 1px,transparent 1px) 0 0/100% 52px;mix-blend-mode:screen;opacity:.6;}
+body::after{content:"";position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(39,232,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
+@media (prefers-reduced-motion:no-preference){body::after{animation:sweep 14s ease-in-out infinite;}}
+@keyframes sweep{0%,100%{transform:translateX(-30%);}50%{transform:translateX(30%);}}
+.uc-head,.page-intro,.container,.giant,footer.uc-foot{position:relative;z-index:1;}
+h1,h2,h3,h4,h5,h6{font-family:var(--disp);letter-spacing:.2px;}
+
+.scanbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:var(--iris);background-size:200% 100%;opacity:.9;}
+@media (prefers-reduced-motion:no-preference){.scanbar{animation:shimmer 6s linear infinite;}}
+@keyframes shimmer{to{background-position:200% 0;}}
+
+/* brand bar */
+.uc-head{position:sticky;top:0;z-index:50;backdrop-filter:blur(9px);background:linear-gradient(180deg,rgba(7,6,15,.92),rgba(7,6,15,.6));border-bottom:1px solid var(--line);margin-bottom:1.6rem;}
+.uc-head-in{max-width:980px;margin:0 auto;padding:12px 1.5rem;display:flex;align-items:center;gap:11px;flex-wrap:wrap;}
+.uc-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.uc-horn{width:32px;height:32px;flex-shrink:0;display:block;filter:drop-shadow(0 0 6px rgba(39,232,255,.5));}
+@media (prefers-reduced-motion:no-preference){.uc-horn{animation:hornFloat 5s ease-in-out infinite;}}
+@keyframes hornFloat{50%{transform:translateY(-2px) rotate(-3deg);}}
+.uc-wordmark{font-family:var(--disp);font-weight:700;font-size:1.34rem;letter-spacing:.4px;color:var(--text);text-transform:lowercase;}
+.uc-wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% 100%;}
+@media (prefers-reduced-motion:no-preference){.uc-wordmark .ai{animation:shimmer 7s linear infinite;}}
+.uc-sep{color:var(--muted2);font-weight:300;font-size:1.1rem;}
+.uc-subject{font-family:var(--mono);font-weight:600;font-size:.82rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.uc-back{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.76rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:8px 13px;transition:.2s;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.uc-back:hover{color:var(--text);border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.2);}
+@media(max-width:560px){.uc-back{display:none;}}
+
+/* hero */
+.page-intro{max-width:980px;margin:0 auto 1.4rem;padding:0 1.5rem;}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid var(--line2);background:rgba(39,232,255,.05);padding:7px 14px;border-radius:4px;margin-bottom:16px;box-shadow:inset 0 0 14px rgba(39,232,255,.08);}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+@media (prefers-reduced-motion:no-preference){.eyebrow .dot{animation:pulse 2.4s ease-in-out infinite;}}
+@keyframes pulse{50%{opacity:.35;transform:scale(.7);}}
+.page-intro h1{font-family:var(--disp);font-size:clamp(1.9rem,5vw,2.9rem);font-weight:700;letter-spacing:-.5px;line-height:1.06;margin-bottom:12px;color:var(--text);}
+.page-intro h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(167,139,250,.3);}
+.page-intro p{font-size:1.02rem;color:var(--muted);text-transform:none;letter-spacing:normal;}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+.chip{font-family:var(--mono);font-size:.72rem;letter-spacing:.6px;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:6px 11px;}
+.chip b{color:var(--gold);font-weight:700;}
+
+.container{max-width:980px;margin:0 auto;padding:0 1.5rem;}
+
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.6rem;border-bottom:1px solid var(--line);padding-bottom:1rem;}
+.tab{font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:10px 18px;cursor:pointer;color:var(--muted);background:var(--surface);border:1px solid var(--line);transition:.2s;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));}
+.tab:hover:not(.active){color:var(--text);border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.18);}
+.tab.active{color:#fff;border-color:transparent;background:linear-gradient(160deg,var(--surface2),var(--ink2));position:relative;}
+.tab.active::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+.section{display:none;}.section.active{display:block;animation:fade .35s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* karty materialow */
+.card{position:relative;background:linear-gradient(160deg,var(--surface) 0%,var(--ink2) 100%);border:1px solid var(--line);border-radius:4px;padding:1.4rem 1.6rem;margin-bottom:1rem;overflow:hidden;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+.card::after{content:"";position:absolute;top:8px;left:8px;width:12px;height:12px;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);opacity:.4;}
+.card-label{font-family:var(--mono);font-size:.66rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:7px;}
+.card-title{font-family:var(--disp);font-size:1.28rem;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.3;}
+.card-body{font-size:14.5px;color:var(--muted);line-height:1.75;}
+.card-body strong,.card-body b{color:var(--text);}
+/* tagi / przyklady */
+.tags{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;line-height:1.5;letter-spacing:.3px;}
+.tag-green{background:var(--ok-bg);color:#bff3d3;border:1px solid var(--ok-line);}
+.tag-red{background:var(--bad-bg);color:#ffb3c1;border:1px solid var(--bad-line);}
+.tag-amber{background:rgba(255,216,74,.08);color:var(--gold);border:1px solid rgba(255,216,74,.3);}
+.tag-blue{background:rgba(39,232,255,.07);color:var(--cyan);border:1px solid rgba(39,232,255,.28);}
+.note-box{position:relative;background:radial-gradient(500px 120px at 8% 0%,rgba(255,216,74,.08),transparent 60%),var(--ink2);border:1px solid var(--line2);border-radius:4px;padding:1rem 1.2rem 1rem 1.3rem;margin-bottom:1rem;font-size:14px;color:var(--muted);line-height:1.65;}
+.note-box::before{content:"";position:absolute;top:0;left:0;bottom:0;width:2px;background:var(--gold-line);}
+.note-box b,.note-box strong{color:#fff;}
+
+/* steps */
+.steps{counter-reset:step;}
+.step{display:flex;gap:14px;padding:.8rem 0;border-bottom:1px solid var(--line);}
+.step:last-child{border-bottom:none;}
+.step-num{width:30px;height:30px;border-radius:8px;background:var(--iris);color:#0b0918;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px;box-shadow:0 0 12px rgba(39,232,255,.3);}
+.step-title{font-family:var(--disp);font-size:1.05rem;font-weight:600;margin-bottom:4px;color:var(--text);}
+.step-desc{font-size:14px;color:var(--muted);line-height:1.7;}
+
+/* tabele */
+table{width:100%;border-collapse:collapse;margin:8px 0;}
+td,th{padding:9px 12px;text-align:left;font-size:13.5px;border:1px solid var(--line);vertical-align:top;color:var(--muted);}
+th{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text);font-weight:600;background:rgba(167,139,250,.08);}
+td b,td strong{color:var(--text);}
+tr:nth-child(even) td{background:rgba(255,255,255,.015);}
+
+/* pros-cons */
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.5rem;}
+.pros-cons ul{padding-left:1.1rem;}
+.pros-cons li{font-size:14px;color:var(--muted);margin-bottom:6px;line-height:1.6;}
+.col-head{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.col-head.green{color:var(--ok);}
+.col-head.red{color:var(--bad);}
+
+/* maslow */
+.maslow-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);}
+.maslow-row:last-child{border-bottom:none;}
+.maslow-dot{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:12px;font-weight:800;flex-shrink:0;margin-top:1px;color:#0b0918;background:var(--iris);box-shadow:0 0 10px rgba(39,232,255,.28);}
+.maslow-name{font-family:var(--disp);font-size:14px;font-weight:600;min-width:160px;color:var(--text);}
+.maslow-ex{font-size:14px;color:var(--muted);line-height:1.6;}
+
+/* cialdini */
+.cialdini-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.75rem;}
+.cbox{position:relative;background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line);border-radius:4px;padding:.8rem 1rem;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));}
+.cbox-title{font-family:var(--disp);font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.cbox-body{font-size:13.5px;color:var(--muted);line-height:1.62;}
+
+/* QUIZ */
+.quiz-q{font-family:var(--disp);font-size:1.2rem;font-weight:600;line-height:1.45;margin-bottom:1rem;color:var(--text);}
+.quiz-opts{display:flex;flex-direction:column;gap:9px;}
+.opt{padding:12px 16px;border:1px solid var(--line);border-radius:4px;font-family:'Inter',system-ui,sans-serif;font-size:14px;cursor:pointer;text-align:left;background:var(--ink2);color:var(--text);transition:.15s;line-height:1.5;width:100%;}
+.opt:hover:not(.correct):not(.wrong){border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.15);}
+.opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#c9f5e2;}
+.opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#ffc4d1;}
+.quiz-feedback{margin-top:12px;padding:12px 15px;border-radius:4px;font-size:14px;line-height:1.65;border:1px solid;}
+.quiz-feedback.ok{background:var(--ok-bg);color:#bff3d3;border-color:var(--ok-line);}
+.quiz-feedback.fail{background:var(--bad-bg);color:#ffcdd8;border-color:var(--bad-line);}
+.quiz-nav{display:flex;gap:9px;margin-top:1rem;align-items:center;flex-wrap:wrap;}
+.quiz-counter{font-family:var(--mono);font-size:12px;letter-spacing:.5px;color:var(--muted2);flex:1;}
+.nav-btn{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:9px 16px;border:1px solid var(--line);border-radius:4px;cursor:pointer;background:var(--surface);color:var(--muted);transition:.2s;
+  clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));}
+.nav-btn:hover{color:var(--text);border-color:var(--accent);box-shadow:0 0 12px rgba(167,139,250,.18);}
+.nav-btn.primary{color:#fff;border-color:transparent;background:linear-gradient(115deg,rgba(39,232,255,.2),rgba(167,139,250,.24),rgba(255,46,151,.2));position:relative;}
+.nav-btn.primary::before{content:"";position:absolute;inset:0;border-radius:4px;padding:1px;background:var(--iris);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
+.score-big{font-family:'Orbitron',var(--disp);font-size:3.6rem;font-weight:800;margin:1rem 0 .5rem;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.progress-bar{height:5px;background:var(--ink2);border:1px solid var(--line);border-radius:20px;margin-bottom:1.25rem;overflow:hidden;}
+.progress-fill{height:100%;background:var(--iris);border-radius:20px;transition:width .35s;box-shadow:0 0 10px rgba(39,232,255,.5);}
+@media(max-width:600px){.cialdini-grid{grid-template-columns:1fr;}.pros-cons{grid-template-columns:1fr;}}
+
+/* giant + footer */
+.giant{position:relative;z-index:1;text-align:center;overflow:hidden;line-height:.9;user-select:none;pointer-events:none;margin:20px auto 24px;padding:0 16px;}
+.giant span{display:inline-block;max-width:100%;font-family:'Orbitron',var(--disp);font-weight:800;font-size:clamp(1.8rem,11vw,6.5rem);letter-spacing:.04em;line-height:1;white-space:nowrap;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px rgba(39,232,255,.5)) drop-shadow(0 0 34px rgba(167,139,250,.4));}
+@media (prefers-reduced-motion:no-preference){.giant span{animation:shimmer 8s linear infinite;}}
+footer.uc-foot{border-top:1px solid var(--line);padding:24px 0 40px;}
+footer.uc-foot .fwrap{max-width:980px;margin:0 auto;padding:0 1.5rem;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+footer.uc-foot .disclaimer{font-size:.77rem;color:var(--muted2);max-width:560px;line-height:1.6;}
+footer.uc-foot .disclaimer b{color:var(--muted);}
+footer.uc-foot .foot-brand{display:flex;align-items:center;gap:9px;color:var(--muted);font-family:var(--disp);font-weight:600;font-size:.92rem;letter-spacing:1px;}
+footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+<style>
+/* ===== GIGA-NAPIS: sama obwodka, bez poswiaty, czysta szeroka czcionka ===== */
+.giant span{
+  font-family:'Michroma','Orbitron','Chakra Petch',sans-serif !important;
+  font-weight:400 !important;
+  font-size:clamp(1.25rem,7.8vw,4rem) !important;
+  letter-spacing:.12em !important;
+  background:var(--iris) !important;
+  -webkit-background-clip:text !important;background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  color:transparent !important;
+  -webkit-text-stroke:0 !important;
+  filter:none !important;
+  animation:none !important;
+}
+</style>
+</head>
+<body>
+<div class="scanbar" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient></defs></svg>
+<header class="uc-head">
+  <div class="uc-head-in">
+    <a class="uc-brand" href="index.html" aria-label="Unicorner — strona główna">
+      <svg class="uc-horn" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/>
+        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#0c0a18" stroke-width="1.1" fill="none" opacity="0.55"/>
+      </svg>
+      <span class="uc-wordmark">Uni<span class="ai">corner</span></span>
+    </a>
+    <span class="uc-sep">/</span>
+    <span class="uc-subject">Ekonomika Turystyki i Rekreacji</span>
+    <a class="uc-back" href="index.html">← Wszystkie przedmioty</a>
+  </div>
+</header>
+<div class="page-intro">
+  <span class="eyebrow"><span class="dot"></span>Ekonomika Turystyki i Rekreacji · US</span>
+  <h1>Turystyka, <span class="grad">rozłożona na czynniki.</span></h1>
+  <p>Rynek turystyczny, produkt turystyczny, podaż, turystyka międzynarodowa i gospodarka turystyczna — pojęcia, klasyfikacje i przykłady, plus quiz ze sprawdzaniem po każdej odpowiedzi.</p>
+  <div class="meta">
+    <span class="chip"><b>5</b> działów</span>
+    <span class="chip">Rynek · Produkt</span>
+    <span class="chip">Podaż</span>
+    <span class="chip">Tur. międzynarodowa</span>
+  </div>
+</div>
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('rynek',this)">Rynek</button>
+    <button class="tab" onclick="switchTab('produkt',this)">Produkt</button>
+    <button class="tab" onclick="switchTab('podaz',this)">Podaż</button>
+    <button class="tab" onclick="switchTab('miedzynar',this)">Tur. międzynarodowa</button>
+    <button class="tab" onclick="switchTab('gospodarka',this)">Gospodarka</button>
+    <button class="tab" onclick="switchTab('quiz',this)">Quiz</button>
+  </div>
+
+  <!-- ================= RYNEK ================= -->
+  <div class="section active" id="rynek">
+    <div class="card">
+      <div class="card-label">Definicja</div>
+      <div class="card-title">Rynek turystyczny</div>
+      <div class="card-body">Ogół stosunków i relacji między nabywcami (zgłaszają <strong>popyt</strong>) a sprzedawcami (tworzą <strong>podaż</strong>) — system współzależnych transakcji kupna i sprzedaży dóbr i usług turystycznych.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Dwa ujęcia</div>
+      <div class="card-title">Rynek usług turystycznych: przedmiotowe vs podmiotowe</div>
+      <div class="card-body"><strong>Przedmiotowe</strong> — proces, w którym usługobiorcy i usługodawcy ustalają, co kupić/sprzedać i na jakich warunkach. <strong>Podmiotowe</strong> — zbiór nabywców i wytwórców usług dokonujących transakcji.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Cechy szczególne</div>
+      <div class="card-title">Rynek usług turystycznych</div>
+      <div class="card-body">Rynek towarów i usług z <strong>przewagą usług</strong>; popyt łączny (sprzedaż wzajemnie się uzupełnia); konsumpcja w miejscu podaży <strong>równocześnie z produkcją</strong> usługi; występuje przed wyjazdem, w trakcie pobytu i po powrocie.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Struktura</div>
+      <div class="card-title">Przedmiotowa i podmiotowa</div>
+      <div class="card-body"><strong>Przedmiotowa:</strong> popyt turystyczny, podaż/produkt turystyczny, cena i jakość produktu.<br><strong>Podmiotowa:</strong> nabywcy (indywidualni i instytucjonalni), oferenci (przedsiębiorstwa turystyczne), podmioty polityki turystycznej (organy centralne, JST, organizacje branżowe).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Zakres</div>
+      <div class="card-title">Subrynki rynku turystycznego</div>
+      <div class="card-body">Na rynek turystyczny składają się:</div>
+      <div class="tags">
+        <span class="tag tag-green">Rynek dóbr turystycznych (walory i atrakcje + towary kupowane przez turystów)</span>
+        <span class="tag tag-green">Rynek usług turystycznych</span>
+        <span class="tag tag-green">Rynek środków i warunków do uprawiania turystyki (infrastruktura, informacja, wypożyczalnie)</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Modele rynku</div>
+      <div class="card-title">Cztery struktury konkurencji</div>
+      <div class="card-body"><strong>Konkurencja doskonała</strong> (dużo firm, produkt standardowy, brak kontroli ceny) → <strong>konkurencja monopolistyczna</strong> (wielu, produkt zróżnicowany) → <strong>oligopol</strong> (kilku, współzależność) → <strong>monopol</strong> (jeden, brak substytutów, znaczna kontrola ceny).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Model rynku turystycznego</div>
+      <div class="card-title">Wysoka, lecz ograniczona konkurencyjność</div>
+      <div class="card-body">Rynek turystyczny łączy cechy <strong>konkurencji monopolistycznej</strong>, <strong>oligopolu</strong> oraz monopolu (niejednoznacznego) — konkurencja jest wysoka, ale nieraz ograniczona.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Pojęcia</div>
+      <div class="card-title">Konkurencja, współpraca, koopetycja</div>
+      <div class="card-body"><strong>Konkurencja</strong> — walka o rynek. <strong>Konkurencyjność</strong> — umiejętność konkurowania. <strong>Współpraca</strong> — kooperacja, działanie wspólne. <strong>Koopetycja</strong> — współkonkurowanie (jednocześnie konkurencja i współpraca).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Polityka konkurencji</div>
+      <div class="card-title">Ochrona konkurencji i konsumenta</div>
+      <div class="card-body">Elementy składowe: <strong>liberalizacja</strong> (znoszenie barier wejścia), <strong>decentralizacja</strong> państwa, <strong>restrukturyzacja i prywatyzacja</strong>, <strong>deregulacja</strong>. Narzędzia: swoboda działalności, eliminowanie porozumień ograniczających konkurencję i nadużyć pozycji dominującej, pomoc publiczna.</div>
+    </div>
+  </div>
+
+  <!-- ================= PRODUKT ================= -->
+  <div class="section" id="produkt">
+    <div class="card">
+      <div class="card-label">Definicja</div>
+      <div class="card-title">Produkt turystyczny</div>
+      <div class="card-body">Wszystkie dobra i usługi tworzone i kupowane w związku z wyjazdem poza miejsce stałego zamieszkania — przed podróżą, w jej trakcie i podczas pobytu.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Dwa ujęcia</div>
+      <div class="card-title">Sensu stricte vs sensu largo</div>
+      <div class="card-body"><strong>Wąskie (stricte):</strong> wszystko, co turyści kupują oddzielnie lub w pakiecie (konferencja, wycieczka, pobyt w uzdrowisku).<br><strong>Szerokie (largo):</strong> kompozycja tego, co turyści robią oraz walorów, urządzeń i usług — plus sfera wrażeń i odczuć.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rodzaje</div>
+      <div class="card-title">Od rzeczy do obszaru</div>
+      <div class="card-body">Produkt turystyczny występuje jako:</div>
+      <div class="tags">
+        <span class="tag tag-green">RZECZ — dobro materialne (mapa, przewodnik, sprzęt)</span>
+        <span class="tag tag-green">USŁUGA — pojedyncza usługa (nocleg, warsztaty)</span>
+        <span class="tag tag-green">IMPREZA — ≥2 usługi, wspólna cena (= pakiet)</span>
+        <span class="tag tag-green">WYDARZENIE — spójne tematycznie, wyjątkowe, cykliczne</span>
+        <span class="tag tag-green">OBIEKT — jedna główna atrakcja (muzeum, hotel, jaskinia)</span>
+        <span class="tag tag-green">SZLAK — miejsca połączone trasą i infrastrukturą</span>
+        <span class="tag tag-green">OBSZAR — region/miejscowość, zdeterminowany geograficznie</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Kluczowa równość</div>
+      <div class="card-title">Impreza turystyczna = pakiet</div>
+      <div class="card-body">Co najmniej <strong>dwie usługi turystyczne</strong> tworzące jednolity program, objęte <strong>wspólną ceną</strong>, jeśli obejmują nocleg lub trwają ponad 24 godziny albo program przewiduje zmianę pobytu.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Budowa</div>
+      <div class="card-title">Trzy warstwy produktu</div>
+      <div class="card-body"><strong>Rdzeń</strong> — niematerialny, podstawowa potrzeba turysty (poznanie, zadowolenie). <strong>Produkt rzeczywisty</strong> — podstawowe elementy pakietu (posiłki, przejazdy, noclegi). <strong>Produkt poszerzony</strong> — dodatki wyróżniające ofertę (np. warsztaty, wyjątkowe atrakcje).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Szczególne wymiary</div>
+      <div class="card-title">Strona producenta i konsumenta</div>
+      <div class="card-body"><strong>Producent:</strong> produkt <strong>potencjalny</strong> — elementy, które w przyszłości mogą wejść do oferty.<br><strong>Konsument:</strong> produkt <strong>oczekiwany</strong> (cechy, jakich oczekuje nabywca) oraz <strong>psychologiczny</strong> (co zostaje w pamięci klienta).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Cechy</div>
+      <div class="card-title">Specyfika produktu turystycznego</div>
+      <div class="card-body">Konsumpcja <strong>jednorazowa</strong>; <strong>różnorodność</strong> (brak standaryzacji, każde świadczenie unikalne); <strong>abstrakcyjność</strong> (nie da się wypróbować przed zakupem); <strong>nietrwałość</strong> i <strong>brak magazynowania</strong> (można tylko rezerwować); <strong>komplementarność</strong> i jednoczesność świadczenia i konsumpcji.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Poziom obszaru</div>
+      <div class="card-title">Zintegrowany produkt turystyczny</div>
+      <div class="card-body">Oferta turystyczna obszaru tworzona wspólnie przez podmioty gospodarki turystycznej, JST i organizacje turystyczne (np. lokalne i regionalne organizacje turystyczne) — forma współpracy usługodawców i samorządu.</div>
+    </div>
+  </div>
+
+  <!-- ================= PODAŻ ================= -->
+  <div class="section" id="podaz">
+    <div class="card">
+      <div class="card-label">Definicja</div>
+      <div class="card-title">Podaż turystyczna</div>
+      <div class="card-body">Wolumen dóbr i usług (produktu turystycznego) oferowany na sprzedaż turystom przy danej cenie i w danym okresie — całokształt działań podmiotów zmierzających do zaspokojenia popytu turystów.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Dwa punkty widzenia</div>
+      <div class="card-title">Przedsiębiorstwo vs obszar recepcji</div>
+      <div class="card-body"><strong>Przedsiębiorstwo</strong> — wszystkie dobra i usługi oferowane na rynku (odpłatnie i nieodpłatnie). <strong>Obszar recepcji turystycznej</strong> — układ czynników: atrakcje i środowisko, infrastruktura i usługi, dostępność miejsca docelowego.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rodzaje</div>
+      <div class="card-title">Podaż pierwotna vs wtórna</div>
+      <div class="card-body"><strong>Pierwotna:</strong> warunki naturalne (plaża, góry, lasy), środowisko społeczno-kulturowe (zabytki, tradycje), infrastruktura ogólna (transport, gosp. komunalne).<br><strong>Wtórna:</strong> infrastruktura turystyczna — hotelarstwo, urządzenia wypoczynkowe, gastronomia, pośrednictwo i organizacja podróży.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Podmioty podaży</div>
+      <div class="card-title">Elementy produktu turystycznego</div>
+      <div class="card-body">Baza noclegowa, baza transportowa, sektor atrakcji turystycznych, baza gastronomiczna, biura podróży oraz organizacje i informacja turystyczna.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Cechy</div>
+      <div class="card-title">Specyfika podaży turystycznej</div>
+      <div class="card-body">Część elementów nie służy wyłącznie turystyce; silnie zależna od sytuacji gospodarczej państwa; <strong>łączny charakter</strong> (jeden komponent pociąga podaż innego); <strong>duży udział kosztów stałych</strong>, niski zmiennych; <strong>sztywna przestrzennie</strong> (o lokalizacji decydują walory); <strong>sezonowość</strong>; zależność od innych sektorów gospodarki.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Syntetyczny miernik</div>
+      <div class="card-title">Atrakcyjność turystyczna</div>
+      <div class="card-body">Suma obiektywnych i subiektywnych ocen elementów podaży — wypadkowa walorów turystycznych, zagospodarowania (baza noclegowa, gastronomiczna, uzupełniająca), dostępności komunikacyjnej i stanu środowiska.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Mierniki</div>
+      <div class="card-title">Jak mierzy się podaż</div>
+      <div class="card-body">Szczeble badania: lokalny, regionalny, krajowy, międzynarodowy. Grupy mierników: walory turystyczne, baza noclegowa (liczba obiektów i miejsc), transport (sieć, środki, częstotliwość, jakość dróg), baza uzupełniająca (pływalnie, pola golfowe, wypożyczalnie).</div>
+    </div>
+  </div>
+
+  <!-- ================= TURYSTYKA MIĘDZYNARODOWA ================= -->
+  <div class="section" id="miedzynar">
+    <div class="card">
+      <div class="card-label">Definicja</div>
+      <div class="card-title">Turystyka międzynarodowa</div>
+      <div class="card-body">Ogół czynności osób podróżujących i przebywających <strong>poza krajem stałego zamieszkania</strong> w celach wypoczynkowych, służbowych lub innych — dłużej niż 24 godziny i nie dłużej niż rok.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rodzaje</div>
+      <div class="card-title">Przyjazdowa vs wyjazdowa</div>
+      <div class="card-body"><strong>Przyjazdowa (incoming)</strong> — przyjazdy zagranicznych turystów do kraju. <strong>Wyjazdowa (outgoing)</strong> — wyjazdy obywateli danego kraju za granicę.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Bilans</div>
+      <div class="card-title">Eksport i import turystyczny</div>
+      <div class="card-body"><strong>Eksport turystyczny</strong> — sprzedaż produktu i innych dóbr/usług cudzoziemcom w czasie ich wizyty (= suma wydatków turystów zagranicznych w danym kraju).<br><strong>Import turystyczny</strong> — zakup produktu za granicą przez turystów krajowych (ich wydatki w krajach odwiedzanych).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Wpływ na gospodarkę</div>
+      <div class="card-title">PKB: efekt bezpośredni i pośredni</div>
+      <div class="card-body"><strong>Bezpośredni</strong> — wartość dodana branż w bezpośrednim kontakcie z turystą (zakwaterowanie, gastronomia, transport, atrakcje). <strong>Pośredni</strong> — „druga fala": pieniądze turysty pracują dalej w łańcuchu dostaw (hotel kupuje żywność od rolnika, biuro zamawia reklamę).</div>
+      <div class="tags">
+        <span class="tag tag-amber">2024: bezpośredni PKB z turystyki ≈ 3,4 bln USD (ok. 3% globalnego PKB)</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">UNWTO</div>
+      <div class="card-title">Wskaźniki ruchu turystycznego</div>
+      <div class="card-body"><strong>Liczba przyjazdów</strong> (international tourist arrivals), <strong>przychody z turystyki międzynarodowej</strong> (receipts — bez kosztów transportu między krajami), <strong>wydatki turystyczne obywateli</strong> (expenditure).</div>
+      <div class="tags">
+        <span class="tag tag-green">2024: ok. 1,3 mld przyjazdów turystów międzynarodowych</span>
+        <span class="tag tag-green">Najczęściej odwiedzany region świata: Europa</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Zjawisko</div>
+      <div class="card-title">Monokultury turystyczne</div>
+      <div class="card-body">Małe państwa/terytoria, w których udział turystyki w PKB jest bardzo wysoki, często <strong>ponad 40%</strong> — gospodarka ukierunkowana na eksport usług turystycznych.</div>
+      <div class="tags">
+        <span class="tag tag-red">Antigua i Barbuda 78,5% · Aruba 78,0% · Makao 65,9%</span>
+        <span class="tag tag-red">Malediwy 63,4% · Barbados 48,1% · Seszele 46,4%</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-label">Trendy</div>
+      <div class="card-title">Co jest na czasie w turystyce</div>
+      <div class="card-body">Turystyka kulinarna (gastroturystyka), city hopping, turystyka zrównoważona, turystyka regeneratywna, autentyczność, indywidualizm, storytelling.</div>
+    </div>
+  </div>
+
+  <!-- ================= GOSPODARKA ================= -->
+  <div class="section" id="gospodarka">
+    <div class="card">
+      <div class="card-label">Definicja</div>
+      <div class="card-title">Gospodarka turystyczna</div>
+      <div class="card-body">Element gospodarki narodowej (głównie sektora usług), którego zadaniem jest zaspokajanie materialnych i niematerialnych potrzeb turystycznych. <strong>Nie jest samodzielnym sektorem</strong> — obejmuje te fragmenty gospodarki, które tworzą dobra i usługi na rzecz turystyki.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Ujęcie WTTC</div>
+      <div class="card-title">Rynek wytworzony przez popyt turystyczny</div>
+      <div class="card-body">Światowa Rada Podróży i Turystyki (WTTC): rynek obejmujący nie tylko dobra i usługi konsumpcji turystycznej, ale też działalności ściśle lub częściowo zależne od ruchu podróżnych (transport, handel, rekreacja, kultura).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Struktura</div>
+      <div class="card-title">Bezpośrednia vs pośrednia</div>
+      <div class="card-body"><strong>Bezpośrednia</strong> — podmioty, których funkcjonowanie wynika z zapotrzebowania turystów (dzieli się na typową i uzupełniającą). <strong>Pośrednia</strong> — jednostki, które zaspokajając potrzeby mieszkańców destynacji, zaspokajają też potrzeby turystów.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Bezpośrednia — typowa</div>
+      <div class="card-title">Typowe przedsiębiorstwa turystyczne</div>
+      <div class="card-body">Hotelarstwo, gastronomia w obiektach noclegowych, transport pasażerski turystyczny, biura podróży (touroperatorzy, agenci, pośrednicy), udostępnianie walorów i atrakcji, związki i organizacje turystyczne.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Bezpośrednia — uzupełniająca</div>
+      <div class="card-title">Poza branżą, ale na rzecz turystyki</div>
+      <div class="card-body">Produkcja pamiątek, map, sprzętu turystycznego; ubezpieczenia turystyczne; usługi finansowe dla turystów; obiekty kulturalne, rozrywkowe i sportowe; działalność JST w zakresie turystyki.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Pośrednia</div>
+      <div class="card-title">Nietypowa działalność turystyczna</div>
+      <div class="card-body">Bankowość, ubezpieczenia, pozostały transport pasażerski, poczta i telekomunikacja, ochrona środowiska, gospodarka komunalna, handel, produkcja (sprzęt fotograficzny, kosmetyki, odzież).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Pojęcia</div>
+      <div class="card-title">Gospodarka a przemysł turystyczny</div>
+      <div class="card-body">Wg W.W. Gaworeckiego <strong>gospodarkę turystyczną i przemysł turystyczny można traktować jako synonimy</strong>. Biznes turystyczny = bezpośrednia gospodarka turystyczna (przedsiębiorstwa typowo turystyczne).</div>
+    </div>
+  </div>
+
+  <!-- ================= QUIZ ================= -->
+  <div class="section" id="quiz">
+    <div id="quiz-container"></div>
+  </div>
+
+</div>
+
+<div class="giant" aria-hidden="true"><span>TURYSTYKA</span></div>
+
+<footer class="uc-foot">
+  <div class="fwrap">
+    <p class="disclaimer"><b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą. Materiały to własne opracowania na bazie zajęć — ucz się też z oryginalnych źródeł. Bez gwarancji kompletności.</p>
+    <div class="foot-brand">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/></svg>
+      <span>uni<span class="fb-corner">corner</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const RAW = [
+  // ZESTAW 1 — Rynek turystyczny (10)
+  {set:0,q:"Rynek turystyczny to...",opts:["Miejsce, w którym sprzedaje się wyłącznie wycieczki zagraniczne","Ogół relacji między nabywcami zgłaszającymi popyt a sprzedawcami tworzącymi podaż","Zbiór biur podróży działających w danym kraju","Lista atrakcji turystycznych regionu"],ans:1,exp:"Rynek to system współzależnych transakcji kupna i sprzedaży — relacje między popytem (nabywcy) a podażą (sprzedawcy)."},
+  {set:0,q:"Ujęcie podmiotowe rynku usług turystycznych to...",opts:["Zbiór nabywców i wytwórców usług dokonujących transakcji","Proces ustalania, co kupić i sprzedać","Zestaw walorów i atrakcji obszaru","Cena i jakość produktu turystycznego"],ans:0,exp:"Podmiotowe = kto (zbiór nabywców i wytwórców). Przedmiotowe = proces ustalania warunków transakcji."},
+  {set:0,q:"Którą cechę ma rynek usług turystycznych?",opts:["Przewagę dóbr materialnych nad usługami","Konsumpcję wyłącznie po powrocie z podróży","Konsumpcję w miejscu podaży, równocześnie z produkcją usługi","Brak popytu łącznego"],ans:2,exp:"Usługa turystyczna jest konsumowana tam, gdzie jest wytwarzana i w tym samym czasie. Dominują usługi, a popyt jest łączny."},
+  {set:0,q:"Do struktury przedmiotowej rynku turystycznego należą...",opts:["Nabywcy indywidualni i instytucjonalni","Organy polityki turystycznej","Popyt, podaż/produkt, cena i jakość produktu","JST i organizacje branżowe"],ans:2,exp:"Struktura przedmiotowa = elementy transakcji: popyt turystyczny, podaż/produkt, cena i jakość. Podmioty to struktura podmiotowa."},
+  {set:0,q:"Który element NIE jest subrynkiem rynku turystycznego?",opts:["Rynek dóbr turystycznych","Rynek usług turystycznych","Rynek środków i warunków do uprawiania turystyki","Rynek pracy sezonowej"],ans:3,exp:"Rynek turystyczny tworzą trzy subrynki: dóbr, usług oraz środków i warunków do uprawiania turystyki."},
+  {set:0,q:"Konkurencja doskonała charakteryzuje się...",opts:["Jednym producentem i brakiem substytutów","Dużą liczbą producentów, produktem standardowym i brakiem kontroli nad ceną","Kilkoma firmami silnie współzależnymi","Znacznym naciskiem na reklamę i markę"],ans:1,exp:"Konkurencja doskonała: dużo firm, produkt standardowy, żadna firma nie kontroluje ceny, bardzo łatwe wejście na rynek."},
+  {set:0,q:"Monopol to model rynku, w którym...",opts:["Jest wielu producentów z produktem zróżnicowanym","Kilku producentów kontroluje się wzajemnie","Jest jeden producent, brak bliskich substytutów i znaczna kontrola ceny","Wejście na rynek jest bardzo łatwe"],ans:2,exp:"Monopol: jeden producent, produkt niepowtarzalny, brak bliskich substytutów, znaczna kontrola ceny, bardzo trudne wejście (np. wodociągi)."},
+  {set:0,q:"Rynek turystyczny najlepiej opisują modele...",opts:["Wyłącznie konkurencji doskonałej","Konkurencji monopolistycznej i oligopolu (wysoka, lecz ograniczona konkurencyjność)","Wyłącznie czystego monopolu","Braku jakiejkolwiek konkurencji"],ans:1,exp:"Rynek turystyczny ma wysoki, ale nieraz ograniczony poziom konkurencyjności — łączy cechy konkurencji monopolistycznej, oligopolu i (niejednoznacznego) monopolu."},
+  {set:0,q:"Koopetycja to...",opts:["Walka o rynek z konkurentem","Umiejętność konkurowania","Współkonkurowanie — jednoczesna konkurencja i współpraca","Całkowita rezygnacja z konkurencji"],ans:2,exp:"Koopetycja = koalicja słów kooperacja + konkurencja: podmioty jednocześnie konkurują i współpracują."},
+  {set:0,q:"Który element należy do polityki konkurencji?",opts:["Liberalizacja, deregulacja i prywatyzacja","Zwiększanie barier wejścia na rynek","Centralizacja decyzji gospodarczych","Ograniczanie swobody działalności gospodarczej"],ans:0,exp:"Polityka konkurencji obejmuje m.in. liberalizację (znoszenie barier), decentralizację, restrukturyzację i prywatyzację oraz deregulację — chroni konkurencję i konsumenta."},
+
+  // ZESTAW 2 — Produkt turystyczny (10)
+  {set:1,q:"Produkt turystyczny w ujęciu wąskim (sensu stricte) to...",opts:["Kompozycja tego, co turyści robią, plus sfera ich wrażeń","Wszystko to, co turyści kupują oddzielnie lub w formie pakietu","Wyłącznie walory przyrodnicze obszaru","Tylko usługa noclegowa"],ans:1,exp:"Sensu stricte = to, co turysta kupuje (osobno lub w pakiecie): konferencja, wycieczka, pobyt w uzdrowisku. Sensu largo dokłada wrażenia i odczucia."},
+  {set:1,q:"Impreza turystyczna to...",opts:["Pojedyncza usługa hotelarska","Co najmniej dwie usługi tworzące jednolity program, objęte wspólną ceną","Dobro materialne typu mapa lub przewodnik","Region zdeterminowany geograficznie"],ans:1,exp:"Impreza = pakiet: co najmniej dwie usługi, wspólny program i wspólna cena, jeśli obejmują nocleg lub trwają ponad 24 h."},
+  {set:1,q:"Który rodzaj produktu turystycznego ma charakter punktowy — jedna główna atrakcja w jednym miejscu?",opts:["Szlak","Obszar","Obiekt","Impreza"],ans:2,exp:"OBIEKT — jedna główna atrakcja i kilka usług towarzyszących w jednym miejscu (muzeum, hotel, hala, jaskinia)."},
+  {set:1,q:"Szlak jako rodzaj produktu turystycznego to...",opts:["Pojedyncza usługa transportowa","Miejsca/obiekty połączone wytyczoną trasą i infrastrukturą wzdłuż niej","Dobro materialne sprzedawane turyście","Wydarzenie o charakterze cyklicznym"],ans:1,exp:"SZLAK = szereg miejsc lub obiektów połączonych nadrzędną ideą i oznakowaną trasą (pieszą, rowerową, wodną) oraz infrastrukturą wzdłuż niej."},
+  {set:1,q:"Rdzeń produktu turystycznego to...",opts:["Podstawowe elementy pakietu (posiłki, noclegi, przejazdy)","Dodatki wyróżniające ofertę na tle konkurencji","Niematerialna, podstawowa potrzeba turysty decydująca o wyborze","Materialne opakowanie usługi"],ans:2,exp:"Rdzeń ma charakter niematerialny — to podstawowa potrzeba (poznania, zadowolenia), która ostatecznie decyduje o wyborze."},
+  {set:1,q:"Produkt poszerzony (powiększony) to...",opts:["Sama istota potrzeby turysty","Podstawowe elementy umożliwiające realizację produktu","Dodatkowe świadczenia, które wyróżniają ofertę i czynią ją atrakcyjniejszą","Potencjalne elementy przyszłej oferty"],ans:2,exp:"Produkt poszerzony = dodatki wyróżniające ofertę (np. pobyt w gospodarstwie ekoturystycznym z nauką robienia przetworów)."},
+  {set:1,q:"Produkt potencjalny dotyczy strony...",opts:["Konsumenta (jego oczekiwań)","Producenta — elementów, które w przyszłości mogą wejść do oferty","Pośrednika finansowego","Organów polityki turystycznej"],ans:1,exp:"Produkt potencjalny to wymiar od strony producenta — elementy, które obecnie (z przyczyn ekonomicznych, technologicznych) jeszcze nie są w ofercie."},
+  {set:1,q:"Produkt psychologiczny to...",opts:["Zbiór cech oczekiwanych przez nabywcę przed zakupem","Wszystko, co pozostaje w pamięci klienta od pierwszego kontaktu po konsumpcję","Rdzeń niematerialnej potrzeby","Materialny element pakietu"],ans:1,exp:"Produkt psychologiczny (strona konsumenta) = to, co zostaje w świadomości i pamięci klienta. Oczekiwany = czego oczekuje przed zakupem."},
+  {set:1,q:"Która cecha jest typowa dla produktu turystycznego?",opts:["Można go magazynować na zapas","Jest trwały i niezależny od miejsca","Jest nietrwały i nie może być magazynowany (można go tylko rezerwować)","Jest w pełni standaryzowalny"],ans:2,exp:"Produkt turystyczny jest nietrwały, nie da się go magazynować (tylko rezerwować), a brak standaryzacji sprawia, że o jakości decyduje sposób świadczenia usługi."},
+  {set:1,q:"Zintegrowany produkt turystyczny to...",opts:["Pojedyncza impreza jednego touroperatora","Oferta obszaru tworzona wspólnie przez podmioty gospodarki turystycznej, JST i organizacje turystyczne","Wyłącznie dobro materialne","Produkt sprzedawany bez udziału samorządu"],ans:1,exp:"Zintegrowany produkt turystyczny to oferta obszaru kreowana we współpracy usługodawców, JST i organizacji turystycznych (np. lokalnych i regionalnych organizacji turystycznych)."},
+
+  // ZESTAW 3 — Podaż turystyczna (8)
+  {set:2,q:"Podaż turystyczna to...",opts:["Wielkość zapotrzebowania turystów na dobra i usługi","Wolumen dóbr i usług oferowany turystom przy danej cenie i w danym okresie","Suma wydatków turystów zagranicznych","Liczba przyjazdów do kraju"],ans:1,exp:"Podaż = to, co jest oferowane na sprzedaż (wolumen dóbr i usług produktu turystycznego) przy danej cenie i w danym okresie."},
+  {set:2,q:"Podaż pierwotna obejmuje...",opts:["Hotelarstwo i gastronomię","Biura podróży i pośrednictwo","Warunki naturalne, środowisko społeczno-kulturowe i infrastrukturę ogólną","Wypożyczalnie sprzętu i parki rozrywki"],ans:2,exp:"Podaż pierwotna: walory naturalne (plaża, góry), środowisko społeczno-kulturowe (zabytki, tradycje) i infrastruktura ogólna (transport, gosp. komunalne)."},
+  {set:2,q:"Podaż wtórna to...",opts:["Naturalne walory turystyczne","Infrastruktura turystyczna: hotelarstwo, gastronomia, organizacja podróży","Środowisko kulturowe obszaru","Klimat i ukształtowanie terenu"],ans:1,exp:"Podaż wtórna = urządzenia i instytucje infrastruktury turystycznej: hotelarstwo, urządzenia wypoczynkowe, gastronomia, pośrednictwo i organizacja podróży."},
+  {set:2,q:"Która cecha jest typowa dla podaży turystycznej?",opts:["Niski udział kosztów stałych","Pełna elastyczność przestrzenna","Sztywność przestrzenna i sezonowość","Całkowita niezależność od innych sektorów gospodarki"],ans:2,exp:"Podaż jest sztywna przestrzennie (o lokalizacji decydują walory), sezonowa, ma duży udział kosztów stałych i zależy od sytuacji gospodarczej i innych sektorów."},
+  {set:2,q:"Syntetycznym miernikiem podaży turystycznej jest...",opts:["Liczba przyjazdów turystów","Atrakcyjność turystyczna","Stopa bezrobocia w regionie","Saldo bilansu płatniczego"],ans:1,exp:"Atrakcyjność turystyczna = suma ocen elementów podaży: walory, zagospodarowanie (baza noclegowa, gastronomiczna, uzupełniająca), dostępność, stan środowiska."},
+  {set:2,q:"Sztywność przestrzenna podaży turystycznej oznacza, że...",opts:["Ceny nie zmieniają się w czasie","O lokalizacji decyduje występowanie walorów, a turysta musi się do nich przemieścić","Podaż jest taka sama w każdym kraju","Nie można jej rezerwować"],ans:1,exp:"Podaż jest przywiązana do miejsca występowania walorów i obiektów — to turysta przemieszcza się do produktu, a nie odwrotnie."},
+  {set:2,q:"Obszar recepcji turystycznej jako punkt widzenia podaży to układ...",opts:["Wyłącznie bazy noclegowej","Atrakcji i środowiska, infrastruktury i usług oraz dostępności miejsca docelowego","Tylko biur podróży","Wyłącznie transportu lotniczego"],ans:1,exp:"Z perspektywy obszaru recepcji podaż to układ: atrakcje i środowisko, infrastruktura i usługi, dostępność miejsca docelowego."},
+  {set:2,q:"Do mierników podaży turystycznej NIE zalicza się bezpośrednio...",opts:["Liczby miejsc noclegowych","Liczby walorów przyrodniczych i kulturowych","Gęstości i jakości sieci transportowej","Kursu waluty krajowej"],ans:3,exp:"Mierniki podaży dotyczą walorów, bazy noclegowej, transportu i bazy uzupełniającej. Kurs waluty nie jest miernikiem podaży turystycznej."},
+
+  // ZESTAW 4 — Turystyka międzynarodowa (9)
+  {set:3,q:"Definicja turystyki międzynarodowej różni się od ogólnej definicji turystyki tym, że dodaje określenie...",opts:["Dłużej niż rok","Poza krajem stałego zamieszkania","Wyłącznie w celach służbowych","Krócej niż 24 godziny"],ans:1,exp:"Turystyka międzynarodowa = ta sama definicja co turystyka, ale z dodaniem warunku wyjazdu poza kraj stałego zamieszkania (24 h – 1 rok)."},
+  {set:3,q:"Turystyka przyjazdowa (incoming) obejmuje...",opts:["Wyjazdy obywateli danego kraju za granicę","Przyjazdy zagranicznych turystów do kraju","Podróże krajowe w obrębie jednego państwa","Wyłącznie podróże służbowe"],ans:1,exp:"Incoming = przyjazdy cudzoziemców do kraju. Outgoing = wyjazdy obywateli za granicę."},
+  {set:3,q:"Eksport turystyczny to...",opts:["Zakup produktu turystycznego za granicą przez turystów krajowych","Suma wydatków turystów zagranicznych na terenie danego państwa","Wywóz pamiątek przez turystów","Sprzedaż biletów lotniczych za granicę"],ans:1,exp:"Eksport turystyczny = sprzedaż produktu i innych dóbr/usług cudzoziemcom w czasie ich wizyty, czyli suma wydatków turystów zagranicznych w danym kraju."},
+  {set:3,q:"Import turystyczny to...",opts:["Wydatki turystów krajowych na terenie krajów odwiedzanych","Przychody kraju od turystów zagranicznych","Liczba przyjazdów cudzoziemców","Zakup usług turystycznych przez cudzoziemców w naszym kraju"],ans:0,exp:"Import turystyczny = zakup produktu za granicą przez turystów krajowych, czyli ich wydatki w krajach, które odwiedzają."},
+  {set:3,q:"Bezpośredni wpływ turystyki na PKB to...",opts:["Efekt drugiej fali w łańcuchu dostaw","Wartość dodana branż mających bezpośredni kontakt z turystą","Wydatki rządu na promocję turystyki","Wpływ turystyki na kurs waluty"],ans:1,exp:"Bezpośredni: zakwaterowanie, gastronomia, transport pasażerski, atrakcje — pieniądze płyną wprost od turysty do usługodawcy."},
+  {set:3,q:"Pośredni wpływ turystyki na PKB (efekt drugiej fali) polega na tym, że...",opts:["Turysta płaci bezpośrednio w hotelu","Pieniądze turysty pracują dalej w łańcuchu dostaw (hotel kupuje od rolnika)","Rząd dotuje linie lotnicze","Turystyka nie wpływa na inne branże"],ans:1,exp:"Pośredni: wydatki turysty w hotelu trafiają do dostawców i kooperantów (rolnictwo, agencje reklamowe, pralnie) — turystyka napędza inne sektory."},
+  {set:3,q:"Który wskaźnik UNWTO NIE obejmuje kosztów transportu między krajami?",opts:["Liczba przyjazdów turystycznych","Przychody z turystyki międzynarodowej (receipts)","Liczba miejsc noclegowych","Powierzchnia obszarów chronionych"],ans:1,exp:"Przychody z turystyki międzynarodowej obejmują wyżywienie, nocleg, zakupy i rozrywkę, ale NIE koszty transportu między krajami."},
+  {set:3,q:"Monokultura turystyczna to kraj/terytorium, w którym...",opts:["Turystyka jest zakazana","Udział turystyki w PKB jest bardzo wysoki, często ponad 40%","Nie ma żadnych walorów turystycznych","Turyści przyjeżdżają tylko zimą"],ans:1,exp:"Monokultury turystyczne (np. Antigua i Barbuda 78,5%, Aruba 78%, Malediwy 63,4%) mają gospodarkę ukierunkowaną na eksport usług turystycznych."},
+  {set:3,q:"Który z poniższych to nowy trend w turystyce?",opts:["Turystyka regeneratywna i gastroturystyka","Wyłącznie turystyka masowa","Rezygnacja z autentyczności","Powrót do biur stacjonarnych zamiast online"],ans:0,exp:"Nowe trendy: gastroturystyka, city hopping, turystyka zrównoważona i regeneratywna, autentyczność, indywidualizm, storytelling."},
+
+  // ZESTAW 5 — Gospodarka turystyczna (7)
+  {set:4,q:"Gospodarka turystyczna to...",opts:["Samodzielny sektor gospodarki narodowej","Element gospodarki narodowej (głównie usług) zaspokajający potrzeby turystyczne","Wyłącznie działalność biur podróży","Rynek pracy w hotelarstwie"],ans:1,exp:"Gospodarka turystyczna nie jest samodzielnym sektorem — obejmuje te fragmenty gospodarki narodowej, które tworzą dobra i usługi na rzecz turystyki."},
+  {set:4,q:"Bezpośrednia gospodarka turystyczna dzieli się na...",opts:["Krajową i zagraniczną","Typową i uzupełniającą","Publiczną i prywatną","Sezonową i całoroczną"],ans:1,exp:"Bezpośrednia gospodarka turystyczna obejmuje część typową (typowe przedsiębiorstwa turystyczne) i uzupełniającą (podmioty spoza branży działające na rzecz turystyki)."},
+  {set:4,q:"Do typowej gospodarki turystycznej należy...",opts:["Bankowość i telekomunikacja","Hotelarstwo, biura podróży i transport pasażerski turystyczny","Produkcja kosmetyków","Ochrona środowiska"],ans:1,exp:"Typowa gospodarka turystyczna: hotelarstwo, gastronomia w obiektach noclegowych, transport turystyczny, biura podróży, udostępnianie walorów, organizacje turystyczne."},
+  {set:4,q:"Uzupełniająca gospodarka turystyczna obejmuje np...",opts:["Bankowość i pocztę","Produkcję pamiątek i map, ubezpieczenia turystyczne","Wyłącznie hotelarstwo","Gospodarkę komunalną"],ans:1,exp:"Uzupełniająca (wciąż bezpośrednia): produkcja pamiątek, map, sprzętu; ubezpieczenia turystyczne; usługi finansowe dla turystów; obiekty kultury i sportu; działania JST."},
+  {set:4,q:"Pośrednia gospodarka turystyczna to...",opts:["Typowe biura podróży","Bankowość, handel, telekomunikacja — zaspokajające też potrzeby turystów","Wyłącznie hotelarstwo i gastronomia","Organizacje turystyczne"],ans:1,exp:"Pośrednia (nietypowa) gospodarka turystyczna: bankowość, ubezpieczenia, transport, poczta, handel, produkcja — realizując potrzeby mieszkańców, obsługuje też turystów."},
+  {set:4,q:"Według W.W. Gaworeckiego gospodarka turystyczna i przemysł turystyczny to...",opts:["Dwa różne, wykluczające się pojęcia","Synonimy","Pojęcia dotyczące różnych krajów","Terminy odnoszące się tylko do transportu"],ans:1,exp:"Wg Gaworeckiego gospodarkę turystyczną i przemysł turystyczny można traktować jako synonimy."},
+  {set:4,q:"Biznes turystyczny należy utożsamiać z...",opts:["Pośrednią gospodarką turystyczną","Bezpośrednią gospodarką turystyczną — przedsiębiorstwami branży typowo turystycznej","Gospodarką komunalną","Wyłącznie sektorem publicznym"],ans:1,exp:"Biznes turystyczny = bezpośrednia gospodarka turystyczna, czyli przedsiębiorstwa działające w branży typowo turystycznej."}
+];
+
+const SETS = [
+  {name:"Zestaw 1 – Rynek turystyczny",range:[0,10]},
+  {name:"Zestaw 2 – Produkt turystyczny",range:[10,20]},
+  {name:"Zestaw 3 – Podaż turystyczna",range:[20,28]},
+  {name:"Zestaw 4 – Turystyka międzynarodowa",range:[28,37]},
+  {name:"Zestaw 5 – Gospodarka turystyczna",range:[37,44]},
+  {name:"Wszystkie (44 pytania)",range:[0,44]},
+];
+// Tasowanie opcji – zwraca {opts, ans} z pomieszaną kolejnością
+function shuffle(q){
+  const idxs=[0,1,2,3];
+  for(let i=idxs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idxs[i],idxs[j]]=[idxs[j],idxs[i]];}
+  const newOpts=idxs.map(i=>q.opts[i]);
+  const newAns=idxs.indexOf(q.ans);
+  return{opts:newOpts,ans:newAns};
+}
+
+let activeSet=null; // null = wybór zestawu
+let questions=[];
+let shuffled=[];
+let current=0,score=0,answered=[];
+
+function switchTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='quiz')renderSetPicker();
+}
+
+function startSet(si){
+  const s=SETS[si];
+  questions=RAW.slice(s.range[0],s.range[1]);
+  shuffled=questions.map(q=>shuffle(q));
+  current=0;score=0;answered=new Array(questions.length).fill(null);
+  activeSet=si;
+  renderQuiz();
+}
+
+function renderSetPicker(){
+  activeSet=null;
+  const c=document.getElementById('quiz-container');
+  c.innerHTML=`<div class="card"><div class="card-label">Wybierz zestaw pytań</div><div class="card-title" style="font-size:1.1rem;margin-bottom:1rem">Z czego chcesz się teraz pouczyć?</div>`+
+  SETS.map((s,i)=>`<button class="opt" style="margin-bottom:6px" onclick="startSet(${i})">${s.name}</button>`).join('')+`</div>`;
+}
+
+function renderQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(current>=questions.length){
+    const pct=Math.round(score/questions.length*100);
+    c.innerHTML=`<div class="card" style="text-align:center;padding:2.5rem">
+      <div class="card-label">${SETS[activeSet].name}</div>
+      <div class="score-big">${score}/${questions.length}</div>
+      <div class="card-body" style="margin-bottom:1.5rem">
+        ${pct>=80?'✅ Solidna znajomość materiału.':pct>=60?'⚠️ Kilka rzeczy warto powtórzyć.':'❌ Wróć do notatek i spróbuj ponownie.'}
+        <br><span style="color:var(--ink-light)">${pct}% poprawnych odpowiedzi</span>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="nav-btn primary" onclick="startSet(${activeSet})">Powtórz zestaw</button>
+        <button class="nav-btn" onclick="renderSetPicker()">← Zmień zestaw</button>
+      </div>
+    </div>`;
+    return;
+  }
+  const q=questions[current];
+  const sh=shuffled[current];
+  const isAnswered=answered[current]!==null;
+  const pct=Math.round((current/questions.length)*100);
+  c.innerHTML=`
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div style="margin-bottom:.5rem"><button class="nav-btn" style="font-size:11px;padding:4px 12px" onclick="renderSetPicker()">← Zestawy</button></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-label">${SETS[activeSet].name.split('–')[1]||SETS[activeSet].name} · pytanie ${current+1}/${questions.length}</span>
+        <span class="card-label">Wynik: ${score} pkt</span>
+      </div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-opts">
+        ${sh.opts.map((o,i)=>{
+          let cls='opt';
+          if(isAnswered){if(i===sh.ans)cls+=' correct';else if(i===answered[current]&&i!==sh.ans)cls+=' wrong';}
+          const oc=isAnswered?'':` onclick="pickAnswer(${i})"`;
+          return `<button class="${cls}"${oc}>${o}</button>`;
+        }).join('')}
+      </div>
+      ${isAnswered?`<div class="quiz-feedback ${answered[current]===sh.ans?'ok':'fail'}">${answered[current]===sh.ans?'✅':'❌'} ${q.exp}</div>`:''}
+      <div class="quiz-nav">
+        <span class="quiz-counter">${current+1} / ${questions.length}</span>
+        ${current>0?`<button class="nav-btn" onclick="prevQ()">← Wstecz</button>`:''}
+        ${isAnswered&&current<questions.length-1?`<button class="nav-btn primary" onclick="nextQ()">Dalej →</button>`:''}
+        ${isAnswered&&current===questions.length-1?`<button class="nav-btn primary" onclick="nextQ()">Pokaż wynik</button>`:''}
+      </div>
+    </div>`;
+}
+
+function pickAnswer(i){
+  if(answered[current]!==null)return;
+  answered[current]=i;
+  if(i===shuffled[current].ans)score++;
+  renderQuiz();
+}
+function nextQ(){current++;renderQuiz();}
+function prevQ(){if(current>0){current--;renderQuiz();}}
+
+// inicjalizacja
+document.addEventListener('DOMContentLoaded',()=>{
+  const quizTab=document.querySelector('.tab[onclick*="quiz"]');
+  if(quizTab) quizTab.addEventListener('click',renderSetPicker);
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3JWNYJ5EN4"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-3JWNYJ5EN4');
+</script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Geografia atrakcji turystycznych · Unicorner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
+  --line:#241d4a; --line2:#3a2e74;
+  --text:#eef0ff; --muted:#9b93c4; --muted2:#6f679a;
+  --accent:#a78bfa; --accent-d:#8b5cf6;
+  --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
+  --ok:#5ad1a0; --ok-bg:#0c241d; --ok-line:#1d4a3a;
+  --bad:#ff6b8b; --bad-bg:#2a0d18; --bad-line:#5a2233;
+  --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+  --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
+  --shadow:0 18px 60px rgba(0,0,0,.6);
+  --disp:'Chakra Petch','Space Grotesk',sans-serif;
+  --mono:'Chakra Petch',ui-monospace,monospace;
+  /* aliasy dla starej struktury marketing */
+  --cream:#07060f; --cream-dark:#171132; --green:#a78bfa; --green-mid:#8b5cf6; --green-light:#3a2e74; --green-faint:#171132;
+  --ink-mid:#cfc9e8; --ink-light:#9b93c4;
+  --red-bg:#2a0d18; --red-text:#ffb3c1; --red-border:#5a2233;
+  --amber-bg:#211a08; --amber-text:#ffd84a;
+  --blue-bg:#0a1c2e; --blue-text:#7fe3ff;
+  --purple-bg:#171132; --purple-text:#c4b5fd;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html{scroll-behavior:smooth;}
+body{font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;padding:0 0 3rem;overflow-x:hidden;position:relative;line-height:1.6;
+  background:
+    radial-gradient(900px 520px at 85% -8%, #1a1150 0%, transparent 58%),
+    radial-gradient(720px 480px at -8% 4%, #2a0b3f 0%, transparent 52%),
+    radial-gradient(600px 600px at 50% 120%, #0d2440 0%, transparent 60%),
+    var(--ink);}
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:linear-gradient(rgba(39,232,255,.025) 1px,transparent 1px) 0 0/100% 3px,linear-gradient(90deg,rgba(167,139,250,.04) 1px,transparent 1px) 0 0/52px 100%,linear-gradient(rgba(167,139,250,.04) 1px,transparent 1px) 0 0/100% 52px;mix-blend-mode:screen;opacity:.6;}
+body::after{content:"";position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(39,232,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
+@media (prefers-reduced-motion:no-preference){body::after{animation:sweep 14s ease-in-out infinite;}}
+@keyframes sweep{0%,100%{transform:translateX(-30%);}50%{transform:translateX(30%);}}
+.uc-head,.page-intro,.container,.giant,footer.uc-foot{position:relative;z-index:1;}
+h1,h2,h3,h4,h5,h6{font-family:var(--disp);letter-spacing:.2px;}
+
+.scanbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:var(--iris);background-size:200% 100%;opacity:.9;}
+@media (prefers-reduced-motion:no-preference){.scanbar{animation:shimmer 6s linear infinite;}}
+@keyframes shimmer{to{background-position:200% 0;}}
+
+/* brand bar */
+.uc-head{position:sticky;top:0;z-index:50;backdrop-filter:blur(9px);background:linear-gradient(180deg,rgba(7,6,15,.92),rgba(7,6,15,.6));border-bottom:1px solid var(--line);margin-bottom:1.6rem;}
+.uc-head-in{max-width:980px;margin:0 auto;padding:12px 1.5rem;display:flex;align-items:center;gap:11px;flex-wrap:wrap;}
+.uc-brand{display:flex;align-items:center;gap:10px;text-decoration:none;flex-shrink:0;}
+.uc-horn{width:32px;height:32px;flex-shrink:0;display:block;filter:drop-shadow(0 0 6px rgba(39,232,255,.5));}
+@media (prefers-reduced-motion:no-preference){.uc-horn{animation:hornFloat 5s ease-in-out infinite;}}
+@keyframes hornFloat{50%{transform:translateY(-2px) rotate(-3deg);}}
+.uc-wordmark{font-family:var(--disp);font-weight:700;font-size:1.34rem;letter-spacing:.4px;color:var(--text);text-transform:lowercase;}
+.uc-wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:220% 100%;}
+@media (prefers-reduced-motion:no-preference){.uc-wordmark .ai{animation:shimmer 7s linear infinite;}}
+.uc-sep{color:var(--muted2);font-weight:300;font-size:1.1rem;}
+.uc-subject{font-family:var(--mono);font-weight:600;font-size:.82rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.uc-back{margin-left:auto;display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.76rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:8px 13px;transition:.2s;
+  clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.uc-back:hover{color:var(--text);border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.2);}
+@media(max-width:560px){.uc-back{display:none;}}
+
+/* hero */
+.page-intro{max-width:980px;margin:0 auto 1.4rem;padding:0 1.5rem;}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);border:1px solid var(--line2);background:rgba(39,232,255,.05);padding:7px 14px;border-radius:4px;margin-bottom:16px;box-shadow:inset 0 0 14px rgba(39,232,255,.08);}
+.eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);}
+@media (prefers-reduced-motion:no-preference){.eyebrow .dot{animation:pulse 2.4s ease-in-out infinite;}}
+@keyframes pulse{50%{opacity:.35;transform:scale(.7);}}
+.page-intro h1{font-family:var(--disp);font-size:clamp(1.9rem,5vw,2.9rem);font-weight:700;letter-spacing:-.5px;line-height:1.06;margin-bottom:12px;color:var(--text);}
+.page-intro h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 30px rgba(167,139,250,.3);}
+.page-intro p{font-size:1.02rem;color:var(--muted);text-transform:none;letter-spacing:normal;}
+.meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px;}
+.chip{font-family:var(--mono);font-size:.72rem;letter-spacing:.6px;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:6px 11px;}
+.chip b{color:var(--gold);font-weight:700;}
+
+.container{max-width:980px;margin:0 auto;padding:0 1.5rem;}
+
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1.6rem;border-bottom:1px solid var(--line);padding-bottom:1rem;}
+.tab{font-family:var(--mono);font-size:.78rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;padding:10px 18px;cursor:pointer;color:var(--muted);background:var(--surface);border:1px solid var(--line);transition:.2s;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));}
+.tab:hover:not(.active){color:var(--text);border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.18);}
+.tab.active{color:#fff;border-color:transparent;background:linear-gradient(160deg,var(--surface2),var(--ink2));position:relative;}
+.tab.active::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+.section{display:none;}.section.active{display:block;animation:fade .35s ease;}
+@keyframes fade{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
+/* karty materialow */
+.card{position:relative;background:linear-gradient(160deg,var(--surface) 0%,var(--ink2) 100%);border:1px solid var(--line);border-radius:4px;padding:1.4rem 1.6rem;margin-bottom:1rem;overflow:hidden;
+  clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+.card::after{content:"";position:absolute;top:8px;left:8px;width:12px;height:12px;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);opacity:.4;}
+.card-label{font-family:var(--mono);font-size:.66rem;letter-spacing:1.5px;text-transform:uppercase;color:var(--cyan);margin-bottom:7px;}
+.card-title{font-family:var(--disp);font-size:1.28rem;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.3;}
+.card-body{font-size:14.5px;color:var(--muted);line-height:1.75;}
+.card-body strong,.card-body b{color:var(--text);}
+/* tagi / przyklady */
+.tags{margin-top:12px;display:flex;flex-wrap:wrap;gap:6px;}
+.tag{display:inline-block;font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:3px;line-height:1.5;letter-spacing:.3px;}
+.tag-green{background:var(--ok-bg);color:#bff3d3;border:1px solid var(--ok-line);}
+.tag-red{background:var(--bad-bg);color:#ffb3c1;border:1px solid var(--bad-line);}
+.tag-amber{background:rgba(255,216,74,.08);color:var(--gold);border:1px solid rgba(255,216,74,.3);}
+.tag-blue{background:rgba(39,232,255,.07);color:var(--cyan);border:1px solid rgba(39,232,255,.28);}
+.note-box{position:relative;background:radial-gradient(500px 120px at 8% 0%,rgba(255,216,74,.08),transparent 60%),var(--ink2);border:1px solid var(--line2);border-radius:4px;padding:1rem 1.2rem 1rem 1.3rem;margin-bottom:1rem;font-size:14px;color:var(--muted);line-height:1.65;}
+.note-box::before{content:"";position:absolute;top:0;left:0;bottom:0;width:2px;background:var(--gold-line);}
+.note-box b,.note-box strong{color:#fff;}
+
+/* steps */
+.steps{counter-reset:step;}
+.step{display:flex;gap:14px;padding:.8rem 0;border-bottom:1px solid var(--line);}
+.step:last-child{border-bottom:none;}
+.step-num{width:30px;height:30px;border-radius:8px;background:var(--iris);color:#0b0918;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:13px;font-weight:800;flex-shrink:0;margin-top:2px;box-shadow:0 0 12px rgba(39,232,255,.3);}
+.step-title{font-family:var(--disp);font-size:1.05rem;font-weight:600;margin-bottom:4px;color:var(--text);}
+.step-desc{font-size:14px;color:var(--muted);line-height:1.7;}
+
+/* tabele */
+table{width:100%;border-collapse:collapse;margin:8px 0;}
+td,th{padding:9px 12px;text-align:left;font-size:13.5px;border:1px solid var(--line);vertical-align:top;color:var(--muted);}
+th{font-family:var(--mono);font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--text);font-weight:600;background:rgba(167,139,250,.08);}
+td b,td strong{color:var(--text);}
+tr:nth-child(even) td{background:rgba(255,255,255,.015);}
+
+/* pros-cons */
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:.5rem;}
+.pros-cons ul{padding-left:1.1rem;}
+.pros-cons li{font-size:14px;color:var(--muted);margin-bottom:6px;line-height:1.6;}
+.col-head{font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;}
+.col-head.green{color:var(--ok);}
+.col-head.red{color:var(--bad);}
+
+/* maslow */
+.maslow-row{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line);}
+.maslow-row:last-child{border-bottom:none;}
+.maslow-dot{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:var(--disp);font-size:12px;font-weight:800;flex-shrink:0;margin-top:1px;color:#0b0918;background:var(--iris);box-shadow:0 0 10px rgba(39,232,255,.28);}
+.maslow-name{font-family:var(--disp);font-size:14px;font-weight:600;min-width:160px;color:var(--text);}
+.maslow-ex{font-size:14px;color:var(--muted);line-height:1.6;}
+
+/* cialdini */
+.cialdini-grid{display:grid;grid-template-columns:1fr 1fr;gap:.7rem;margin-top:.75rem;}
+.cbox{position:relative;background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line);border-radius:4px;padding:.8rem 1rem;
+  clip-path:polygon(0 0,calc(100% - 9px) 0,100% 9px,100% 100%,9px 100%,0 calc(100% - 9px));}
+.cbox-title{font-family:var(--disp);font-size:13.5px;font-weight:600;color:var(--text);margin-bottom:4px;}
+.cbox-body{font-size:13.5px;color:var(--muted);line-height:1.62;}
+
+/* QUIZ */
+.quiz-q{font-family:var(--disp);font-size:1.2rem;font-weight:600;line-height:1.45;margin-bottom:1rem;color:var(--text);}
+.quiz-opts{display:flex;flex-direction:column;gap:9px;}
+.opt{padding:12px 16px;border:1px solid var(--line);border-radius:4px;font-family:'Inter',system-ui,sans-serif;font-size:14px;cursor:pointer;text-align:left;background:var(--ink2);color:var(--text);transition:.15s;line-height:1.5;width:100%;}
+.opt:hover:not(.correct):not(.wrong){border-color:var(--accent);box-shadow:0 0 14px rgba(167,139,250,.15);}
+.opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#c9f5e2;}
+.opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#ffc4d1;}
+.quiz-feedback{margin-top:12px;padding:12px 15px;border-radius:4px;font-size:14px;line-height:1.65;border:1px solid;}
+.quiz-feedback.ok{background:var(--ok-bg);color:#bff3d3;border-color:var(--ok-line);}
+.quiz-feedback.fail{background:var(--bad-bg);color:#ffcdd8;border-color:var(--bad-line);}
+.quiz-nav{display:flex;gap:9px;margin-top:1rem;align-items:center;flex-wrap:wrap;}
+.quiz-counter{font-family:var(--mono);font-size:12px;letter-spacing:.5px;color:var(--muted2);flex:1;}
+.nav-btn{font-family:var(--mono);font-size:12px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;padding:9px 16px;border:1px solid var(--line);border-radius:4px;cursor:pointer;background:var(--surface);color:var(--muted);transition:.2s;
+  clip-path:polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));}
+.nav-btn:hover{color:var(--text);border-color:var(--accent);box-shadow:0 0 12px rgba(167,139,250,.18);}
+.nav-btn.primary{color:#fff;border-color:transparent;background:linear-gradient(115deg,rgba(39,232,255,.2),rgba(167,139,250,.24),rgba(255,46,151,.2));position:relative;}
+.nav-btn.primary::before{content:"";position:absolute;inset:0;border-radius:4px;padding:1px;background:var(--iris);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;}
+.score-big{font-family:'Orbitron',var(--disp);font-size:3.6rem;font-weight:800;margin:1rem 0 .5rem;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.progress-bar{height:5px;background:var(--ink2);border:1px solid var(--line);border-radius:20px;margin-bottom:1.25rem;overflow:hidden;}
+.progress-fill{height:100%;background:var(--iris);border-radius:20px;transition:width .35s;box-shadow:0 0 10px rgba(39,232,255,.5);}
+@media(max-width:600px){.cialdini-grid{grid-template-columns:1fr;}.pros-cons{grid-template-columns:1fr;}}
+
+/* giant + footer */
+.giant{position:relative;z-index:1;text-align:center;overflow:hidden;line-height:.9;user-select:none;pointer-events:none;margin:20px auto 24px;padding:0 16px;}
+.giant span{display:inline-block;max-width:100%;font-family:'Orbitron',var(--disp);font-weight:800;font-size:clamp(1.8rem,11vw,6.5rem);letter-spacing:.04em;line-height:1;white-space:nowrap;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px rgba(39,232,255,.5)) drop-shadow(0 0 34px rgba(167,139,250,.4));}
+@media (prefers-reduced-motion:no-preference){.giant span{animation:shimmer 8s linear infinite;}}
+footer.uc-foot{border-top:1px solid var(--line);padding:24px 0 40px;}
+footer.uc-foot .fwrap{max-width:980px;margin:0 auto;padding:0 1.5rem;display:flex;justify-content:space-between;align-items:flex-start;gap:20px;flex-wrap:wrap;}
+footer.uc-foot .disclaimer{font-size:.77rem;color:var(--muted2);max-width:560px;line-height:1.6;}
+footer.uc-foot .disclaimer b{color:var(--muted);}
+footer.uc-foot .foot-brand{display:flex;align-items:center;gap:9px;color:var(--muted);font-family:var(--disp);font-weight:600;font-size:.92rem;letter-spacing:1px;}
+footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+</style>
+<link href="https://fonts.googleapis.com/css2?family=Michroma&display=swap" rel="stylesheet">
+<style>
+/* ===== GIGA-NAPIS: sama obwodka, bez poswiaty, czysta szeroka czcionka ===== */
+.giant span{
+  font-family:'Michroma','Orbitron','Chakra Petch',sans-serif !important;
+  font-weight:400 !important;
+  font-size:clamp(1.25rem,7.8vw,4rem) !important;
+  letter-spacing:.12em !important;
+  background:var(--iris) !important;
+  -webkit-background-clip:text !important;background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  color:transparent !important;
+  -webkit-text-stroke:0 !important;
+  filter:none !important;
+  animation:none !important;
+}
+</style>
+</head>
+<body>
+<div class="scanbar" aria-hidden="true"></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient></defs></svg>
+<header class="uc-head">
+  <div class="uc-head-in">
+    <a class="uc-brand" href="index.html" aria-label="Unicorner — strona główna">
+      <svg class="uc-horn" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/>
+        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#0c0a18" stroke-width="1.1" fill="none" opacity="0.55"/>
+      </svg>
+      <span class="uc-wordmark">Uni<span class="ai">corner</span></span>
+    </a>
+    <span class="uc-sep">/</span>
+    <span class="uc-subject">Geografia atrakcji turystycznych</span>
+    <a class="uc-back" href="index.html">← Wszystkie przedmioty</a>
+  </div>
+</header>
+<div class="page-intro">
+  <span class="eyebrow"><span class="dot"></span>Geografia atrakcji turystycznych · US</span>
+  <h1>Świat, <span class="grad">kontynent po kontynencie.</span></h1>
+  <p>Środowisko przyrodnicze sześciu kontynentów — ukształtowanie, góry i szczyty, rzeki, jeziora, wulkany i pustynie oraz świat roślin i zwierząt. Fakty, rekordy i atrakcje, plus quiz ze sprawdzaniem po każdej odpowiedzi.</p>
+  <div class="meta">
+    <span class="chip"><b>6</b> kontynentów</span>
+    <span class="chip">Góry · Rzeki · Jeziora</span>
+    <span class="chip">Wulkany</span>
+    <span class="chip">Rekordy natury</span>
+  </div>
+</div>
+<div class="container">
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('europa',this)">Europa</button>
+    <button class="tab" onclick="switchTab('azja',this)">Azja</button>
+    <button class="tab" onclick="switchTab('afryka',this)">Afryka</button>
+    <button class="tab" onclick="switchTab('amerykapn',this)">Ameryka Płn.</button>
+    <button class="tab" onclick="switchTab('amerykapd',this)">Ameryka Płd.</button>
+    <button class="tab" onclick="switchTab('australia',this)">Australia i Oceania</button>
+    <button class="tab" onclick="switchTab('quiz',this)">Quiz</button>
+  </div>
+
+  <!-- ============ EUROPA ============ -->
+  <div class="section active" id="europa">
+    <div class="card">
+      <div class="card-label">Podstawy</div>
+      <div class="card-title">Europa — położenie</div>
+      <div class="card-body">Część Eurazji, drugi najmniejszy kontynent. Granica z Azją biegnie przez <strong>Ural</strong>, rzekę Ural, Morze Kaspijskie i Kaukaz. Najniższy punkt: <strong>Nizina Nadkaspijska (−28 m p.p.m.)</strong>.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Góry i szczyty</div>
+      <div class="card-title">Od Alp po Kaukaz</div>
+      <div class="card-body">Najwyższy szczyt Europy: <strong>Elbrus (5642 m n.p.m.)</strong> w Kaukazie. Najwyższy szczyt Alp: <strong>Mont Blanc (4808 m)</strong>. Główne pasma: Alpy (1200 km), Góry Skandynawskie (1800 km), Ural (2100 km), Karpaty, Pireneje.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rzeki</div>
+      <div class="card-title">Wołga i Dunaj</div>
+      <div class="card-body"><strong>Wołga (3531 km)</strong> — najdłuższa rzeka Europy, uchodzi do Morza Kaspijskiego. <strong>Dunaj (2850 km)</strong> — do Morza Czarnego, przepływa przez najwięcej państw. Ważne też: Ren, Łaba, Wisła.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Wulkany</div>
+      <div class="card-title">Obszary wulkaniczne Europy</div>
+      <div class="card-body">Włochy: <strong>Wezuwiusz, Etna, Stromboli</strong>. Islandia: 22 czynne wulkany (m.in. <strong>Hekla</strong>, Eyjafjallajökull). Grecja: <strong>Santoryn</strong>. Azory (7 czynnych wulkanów) — styk płyt na Grzbiecie Śródatlantyckim.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Przyroda</div>
+      <div class="card-title">Świat roślin i zwierząt</div>
+      <div class="card-body">Strefy roślinne od tundry na północy po roślinność śródziemnomorską na południu. Charakterystyczne zwierzęta: <strong>żubr, koziorożec alpejski, orzeł bielik, jeleń europejski</strong>, żółw błotny.</div>
+    </div>
+  </div>
+
+  <!-- ============ AZJA ============ -->
+  <div class="section" id="azja">
+    <div class="card">
+      <div class="card-label">Podstawy</div>
+      <div class="card-title">Azja — kontynent rekordów</div>
+      <div class="card-body"><strong>Największy kontynent świata</strong> (ok. 30% lądów). Skrajnie kontynentalna — największa odległość od morza sięga <strong>ok. 2400 km</strong>, stąd ogromne amplitudy temperatur i rozległe pustynie w głębi lądu.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Góry i szczyty</div>
+      <div class="card-title">Himalaje i dach świata</div>
+      <div class="card-body"><strong>Mount Everest (8848 m n.p.m.)</strong> w Himalajach — najwyższy szczyt Ziemi. Azja skupia większość najwyższych gór świata (Himalaje, Karakorum, Hindukusz, Tybet).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Jeziora</div>
+      <div class="card-title">Kaspijskie, Bajkał, Aralskie</div>
+      <div class="card-body"><strong>Morze Kaspijskie (376 000 km²)</strong> — największe jezioro świata (reliktowe, słone). <strong>Bajkał</strong> — najgłębsze jezioro świata (<strong>1741 m</strong>, tektoniczne). <strong>Jezioro Aralskie</strong> — dawniej 4. jezioro świata, dziś przykład katastrofy ekologicznej (niemal wyschło).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rzeki i pustynie</div>
+      <div class="card-title">Jangcy i Gobi</div>
+      <div class="card-body"><strong>Jangcy (6300 km)</strong> — najdłuższa rzeka Azji. Inne wielkie rzeki: Ganges, Ob, Jenisej, Mekong. Pustynie: <strong>Gobi</strong> (chłodna, kontynentalna), Takla Makan, Ar-Rub al-Chali.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Przyroda</div>
+      <div class="card-title">Od tundry po tropiki</div>
+      <div class="card-body">Wszystkie strefy klimatyczne — od arktycznej (renifer, chrobotek reniferowy) po równikową (dżungla). Największy archipelag świata — Archipelag Malajski.</div>
+    </div>
+  </div>
+
+  <!-- ============ AFRYKA ============ -->
+  <div class="section" id="afryka">
+    <div class="card">
+      <div class="card-label">Podstawy</div>
+      <div class="card-title">Afryka — kontynent gorąca</div>
+      <div class="card-body">Drugi co do wielkości kontynent, w większości w strefie międzyzwrotnikowej (równik przez środek) — najcieplejszy kontynent świata. Przez wschód biegnie <strong>Wielki Rów Afrykański</strong> (sejsmika i wulkanizm).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Góry i szczyty</div>
+      <div class="card-title">Kilimandżaro</div>
+      <div class="card-body">Najwyższy szczyt Afryki: <strong>Kibo/Kilimandżaro (5895 m n.p.m.)</strong> — wygasły wulkan w Tanzanii. Inne: Kenia, Ruwenzori, Atlas (na północy).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Pustynie</div>
+      <div class="card-title">Sahara i inne</div>
+      <div class="card-body"><strong>Sahara</strong> — największa gorąca pustynia świata (ok. 9 mln km²). Na południu: <strong>Kalahari</strong> i <strong>Namib</strong> (nadmorska, jedna z najstarszych).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rzeki, jeziora, wodospady</div>
+      <div class="card-title">Nil, Wiktoria, Wodospady Wiktorii</div>
+      <div class="card-body"><strong>Nil</strong> — najdłuższa rzeka Afryki (i jedna z najdłuższych świata); <strong>Kongo</strong> — najzasobniejsza w wodę. Jeziora: <strong>Wiktoria</strong> (największe w Afryce), <strong>Tanganika</strong> (bardzo głębokie, w Rowie Afrykańskim). <strong>Wodospady Wiktorii</strong> na Zambezi.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Przyroda</div>
+      <div class="card-title">Sawanna i endemity</div>
+      <div class="card-body">Symetryczny układ stref: wilgotne lasy równikowe → sawanny → pustynie → strefa śródziemnomorska. Zwierzęta: <strong>żyrafa, słoń, lew, krokodyl nilowy</strong>. Wyspy: Madagaskar, Zanzibar, Maskareny (Reunion, Mauritius).</div>
+    </div>
+  </div>
+
+  <!-- ============ AMERYKA PÓŁNOCNA ============ -->
+  <div class="section" id="amerykapn">
+    <div class="card">
+      <div class="card-label">Podstawy</div>
+      <div class="card-title">Ameryka Północna</div>
+      <div class="card-body">Rozciąga się od Arktyki po tropiki. <strong>Grenlandia</strong> — największa wyspa świata (pustynia lodowa). Na zachodzie młode <strong>Kordyliery</strong>, na wschodzie stare Appalachy.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Góry i szczyty</div>
+      <div class="card-title">Denali</div>
+      <div class="card-body">Najwyższy szczyt Ameryki Północnej: <strong>McKinley / Denali (6194 m n.p.m.)</strong> w Górach Alaska. Kordyliera Wulkaniczna — pas aktywności sejsmicznej i wulkanicznej.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rzeki</div>
+      <div class="card-title">Missisipi-Missouri</div>
+      <div class="card-body"><strong>Missisipi z Missouri (5970 km)</strong> — najdłuższy system rzeczny kontynentu, uchodzi deltą do Zatoki Meksykańskiej. Inne: Mackenzie (z Athabaską), Rio Grande, Kolorado.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Atrakcje natury</div>
+      <div class="card-title">Wielki Kanion, Niagara, fiordy</div>
+      <div class="card-body"><strong>Wielki Kanion Kolorado</strong>, <strong>Wodospad Niagara (60 m)</strong> — jeden z najsłynniejszych na świecie, oraz <strong>Fiord Scoresby Sund</strong> na Grenlandii — najdłuższy fiord świata (313 km).</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Przyroda</div>
+      <div class="card-title">Od tundry po tropiki</div>
+      <div class="card-body">Strefy od arktycznej (tundra) przez tajgę, prerie i pustynie po tropiki. Zwierzęta: <strong>niedźwiedź grizzly, bizon, wapiti</strong>. Wyspy Karaibów: Kuba, Barbados, Grenada.</div>
+    </div>
+  </div>
+
+  <!-- ============ AMERYKA POŁUDNIOWA ============ -->
+  <div class="section" id="amerykapd">
+    <div class="card">
+      <div class="card-label">Góry i szczyty</div>
+      <div class="card-title">Andy — najdłuższe pasmo świata</div>
+      <div class="card-body"><strong>Andy</strong> — najdłuższe pasmo górskie świata (ponad <strong>9000 km</strong>). Punkt kulminacyjny: <strong>Aconcagua (6960 m n.p.m.)</strong> — najwyższy szczyt obu Ameryk i najwyższy poza Azją. Towarzyszą im wulkanizm i trzęsienia ziemi.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Rzeki</div>
+      <div class="card-title">Amazonka</div>
+      <div class="card-body"><strong>Amazonka</strong> — najzasobniejsza w wodę rzeka świata i największe dorzecze; przepływa przez największą puszczę tropikalną (Amazonię). Inne: Parana, Orinoko.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Wodospady i jeziora</div>
+      <div class="card-title">Angel, Iguazú, Titicaca</div>
+      <div class="card-body"><strong>Salto Ángel</strong> (Wenezuela) — najwyższy wodospad świata. <strong>Iguazú</strong> — potężny system wodospadów na granicy Brazylii i Argentyny. <strong>Titicaca</strong> — najwyżej położone żeglowne jezioro świata.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Pustynie i przyroda</div>
+      <div class="card-title">Atacama i fauna Andów</div>
+      <div class="card-body"><strong>Atacama</strong> (Chile) — najsuchsza pustynia świata. Zwierzęta: <strong>niedźwiedź andyjski, lama, alpaka, kondor</strong>. Pampa (step) na południu, wilgotne lasy w dorzeczu Amazonki.</div>
+    </div>
+  </div>
+
+  <!-- ============ AUSTRALIA I OCEANIA ============ -->
+  <div class="section" id="australia">
+    <div class="card">
+      <div class="card-label">Podstawy</div>
+      <div class="card-title">Australia i Oceania</div>
+      <div class="card-body">Najmniejszy i najsuchszy zamieszkany kontynent; Oceania to tysiące wysp (wyspy kontynentalne, wulkaniczne i koralowe — atole). Wielka izolacja sprzyjała powstaniu endemitów.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Góry i szczyty</div>
+      <div class="card-title">Kościuszko i Jaya</div>
+      <div class="card-body">Najwyższy szczyt Australii: <strong>Góra Kościuszki (2228 / 2230 m n.p.m.)</strong>. Najwyższy szczyt Oceanii: <strong>Góra Jaya (Puncak Jaya, 4884 m)</strong> na Nowej Gwinei.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Depresja i rzeki</div>
+      <div class="card-title">Jezioro Eyre i Murray-Darling</div>
+      <div class="card-body">Najniższy punkt Australii: <strong>Jezioro Eyre (−12 m p.p.m.)</strong> — bezodpływowe, słone, okresowo wysychające. Największy system rzeczny: <strong>Murray-Darling</strong>.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Atrakcje natury</div>
+      <div class="card-title">Wielka Rafa Koralowa i Uluru</div>
+      <div class="card-body"><strong>Wielka Rafa Koralowa</strong> u wschodnich wybrzeży — największa rafa świata. <strong>Uluru (Ayers Rock)</strong> — słynny monolit w centrum Australii. Wody: Wielka Zatoka Australijska, Cieśnina Torresa.</div>
+    </div>
+    <div class="card">
+      <div class="card-label">Przyroda</div>
+      <div class="card-title">Torbacze i endemity</div>
+      <div class="card-body">Świat zwierząt zdominowany przez torbacze: <strong>kangur, koala, diabeł tasmański</strong>, a także dziobak. Roślinność: eukaliptusy, buszowe zarośla (scrub), pustynie w głębi lądu.</div>
+    </div>
+  </div>
+
+  <!-- ============ QUIZ ============ -->
+  <div class="section" id="quiz">
+    <div id="quiz-container"></div>
+  </div>
+
+</div>
+
+<div class="giant" aria-hidden="true"><span>GEOGRAFIA</span></div>
+
+<footer class="uc-foot">
+  <div class="fwrap">
+    <p class="disclaimer"><b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą. Materiały to własne opracowania na bazie zajęć — ucz się też z oryginalnych źródeł. Bez gwarancji kompletności.</p>
+    <div class="foot-brand">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 1 L15 22 H9 Z" fill="url(#irisGrad)"/></svg>
+      <span>uni<span class="fb-corner">corner</span></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+const RAW = [
+  // ZESTAW 1 — Europa (7)
+  {set:0,q:"Najwyższy szczyt Europy to...",opts:["Mont Blanc (4808 m)","Elbrus (5642 m)","Matterhorn (4478 m)","Mount Everest (8848 m)"],ans:1,exp:"Najwyższy szczyt Europy to Elbrus (5642 m n.p.m.) w Kaukazie. Mont Blanc (4808 m) jest najwyższy w Alpach."},
+  {set:0,q:"Najwyższy szczyt Alp to...",opts:["Elbrus","Mont Blanc","Kilimandżaro","Aconcagua"],ans:1,exp:"Mont Blanc (4808 m) to najwyższy szczyt Alp. Elbrus (Kaukaz) jest najwyższy w całej Europie."},
+  {set:0,q:"Najdłuższa rzeka Europy to...",opts:["Dunaj","Ren","Wołga","Wisła"],ans:2,exp:"Wołga (3531 km) to najdłuższa rzeka Europy; uchodzi do Morza Kaspijskiego. Dunaj (2850 km) uchodzi do Morza Czarnego."},
+  {set:0,q:"Wezuwiusz, Etna i Stromboli to wulkany położone w...",opts:["Grecji","Islandii","Włoszech","Hiszpanii"],ans:2,exp:"To wulkany włoskie. Islandia ma m.in. Heklę (22 czynne wulkany), Grecja — Santoryn."},
+  {set:0,q:"Które państwo ma najwięcej czynnych wulkanów w Europie?",opts:["Islandia","Polska","Francja","Niemcy"],ans:0,exp:"Islandia leży na Grzbiecie Śródatlantyckim i ma 22 czynne wulkany (m.in. Hekla, Eyjafjallajökull)."},
+  {set:0,q:"Charakterystycznym dużym ssakiem europejskich puszcz jest...",opts:["Żyrafa","Żubr","Kangur","Lama"],ans:1,exp:"Żubr to największy lądowy ssak Europy; obok niego koziorożec alpejski, jeleń europejski, orzeł bielik."},
+  {set:0,q:"Najniżej położony punkt Europy to...",opts:["Nizina Nadkaspijska (−28 m)","Dolina Śmierci","Jezioro Eyre","Morze Martwe"],ans:0,exp:"Nizina Nadkaspijska leży ok. 28 m p.p.m. — to depresja przy Morzu Kaspijskim, najniższy punkt Europy."},
+
+  // ZESTAW 2 — Azja (7)
+  {set:1,q:"Najwyższy szczyt Ziemi to...",opts:["K2","Mount Everest (8848 m)","Elbrus","Aconcagua"],ans:1,exp:"Mount Everest (8848 m n.p.m.) w Himalajach to najwyższy szczyt Ziemi, położony w Azji."},
+  {set:1,q:"Który kontynent jest największy na Ziemi?",opts:["Afryka","Ameryka Północna","Azja","Europa"],ans:2,exp:"Azja to największy kontynent świata (ok. 30% powierzchni lądów); skrajnie kontynentalna — do 2400 km od morza."},
+  {set:1,q:"Największym jeziorem świata jest...",opts:["Bajkał","Morze Kaspijskie","Wiktoria","Titicaca"],ans:1,exp:"Morze Kaspijskie (376 000 km²) to największe jezioro świata — reliktowe i słone."},
+  {set:1,q:"Najgłębszym jeziorem świata jest...",opts:["Bajkał (1741 m)","Tanganika","Morze Kaspijskie","Aralskie"],ans:0,exp:"Bajkał to najgłębsze jezioro świata (1741 m) — pochodzenia tektonicznego, w Azji."},
+  {set:1,q:"Jezioro Aralskie jest dziś przykładem...",opts:["Największego jeziora świata","Katastrofy ekologicznej (niemal wyschło)","Najgłębszego jeziora","Sztucznego zbiornika zaporowego"],ans:1,exp:"Dawniej 4. jezioro świata, przez pobór wody na nawadnianie niemal wyschło — jedna z największych katastrof ekologicznych."},
+  {set:1,q:"Najdłuższa rzeka Azji to...",opts:["Ganges","Mekong","Jangcy (6300 km)","Ob"],ans:2,exp:"Jangcy (6300 km) to najdłuższa rzeka Azji i trzecia najdłuższa na świecie."},
+  {set:1,q:"Pustynia Gobi znajduje się w...",opts:["Afryce","Azji","Australii","Ameryce Południowej"],ans:1,exp:"Gobi to rozległa, chłodna pustynia kontynentalna w głębi Azji (Mongolia i Chiny)."},
+
+  // ZESTAW 3 — Afryka (7)
+  {set:2,q:"Najwyższy szczyt Afryki to...",opts:["Kenia","Kilimandżaro / Kibo (5895 m)","Atlas","Ruwenzori"],ans:1,exp:"Kibo w masywie Kilimandżaro (5895 m n.p.m.) to najwyższy szczyt Afryki — wygasły wulkan w Tanzanii."},
+  {set:2,q:"Największa gorąca pustynia świata to...",opts:["Kalahari","Namib","Sahara","Gobi"],ans:2,exp:"Sahara (ok. 9 mln km²) to największa gorąca pustynia świata, w północnej Afryce."},
+  {set:2,q:"Najdłuższa rzeka Afryki to...",opts:["Kongo","Niger","Nil","Zambezi"],ans:2,exp:"Nil to najdłuższa rzeka Afryki (i jedna z najdłuższych na świecie). Kongo jest najzasobniejsza w wodę."},
+  {set:2,q:"Największe jezioro Afryki to...",opts:["Tanganika","Wiktoria","Malawi","Czad"],ans:1,exp:"Jezioro Wiktoria to największe jezioro Afryki. Tanganika jest znacznie głębsze (leży w Wielkim Rowie Afrykańskim)."},
+  {set:2,q:"Wodospady Wiktorii leżą na rzece...",opts:["Nil","Kongo","Zambezi","Niger"],ans:2,exp:"Wodospady Wiktorii znajdują się na rzece Zambezi, na granicy Zambii i Zimbabwe."},
+  {set:2,q:"Wielki Rów Afrykański to obszar...",opts:["Bez aktywności geologicznej","Sejsmiki i wulkanizmu we wschodniej Afryce","Pustynny na północy","Podmorski na Atlantyku"],ans:1,exp:"Wielki Rów Afrykański biegnie przez wschodnią Afrykę — strefa rozłamu, wzmożonej sejsmiki i wulkanizmu; leżą tam głębokie jeziora."},
+  {set:2,q:"Największą wyspą Afryki jest...",opts:["Zanzibar","Madagaskar","Mauritius","Reunion"],ans:1,exp:"Madagaskar to największa wyspa Afryki, znana z licznych endemitów. Mniejsze: Zanzibar, Maskareny (Reunion, Mauritius)."},
+
+  // ZESTAW 4 — Ameryka Północna (6)
+  {set:3,q:"Najwyższy szczyt Ameryki Północnej to...",opts:["McKinley / Denali (6194 m)","Mount Whitney","Aconcagua","Logan"],ans:0,exp:"McKinley (Denali) — 6194 m n.p.m. w Górach Alaska — najwyższy szczyt Ameryki Północnej."},
+  {set:3,q:"Największą wyspą świata jest...",opts:["Nowa Gwinea","Grenlandia","Borneo","Madagaskar"],ans:1,exp:"Grenlandia to największa wyspa świata — w większości pokryta lądolodem (pustynia lodowa), należy do Ameryki Północnej."},
+  {set:3,q:"Najdłuższy system rzeczny Ameryki Północnej to...",opts:["Rio Grande","Kolorado","Missisipi z Missouri (5970 km)","Mackenzie"],ans:2,exp:"Missisipi z Missouri (5970 km) — najdłuższy system rzeczny kontynentu; uchodzi deltą do Zatoki Meksykańskiej."},
+  {set:3,q:"Słynny wodospad na granicy USA i Kanady o wysokości ok. 60 m to...",opts:["Niagara","Angel","Iguazú","Wiktorii"],ans:0,exp:"Wodospad Niagara (ok. 60 m) — jeden z najsłynniejszych na świecie, na granicy USA i Kanady."},
+  {set:3,q:"Wielki Kanion wyżłobiła rzeka...",opts:["Missisipi","Kolorado","Rio Grande","Mackenzie"],ans:1,exp:"Wielki Kanion w Arizonie został wyżłobiony przez rzekę Kolorado."},
+  {set:3,q:"Najdłuższy fiord świata (313 km) to...",opts:["Sognefjord w Norwegii","Scoresby Sund na Grenlandii","Milford Sound","Fiord Ailuk"],ans:1,exp:"Scoresby Sund na Grenlandii (313 km) to najdłuższy fiord świata."},
+
+  // ZESTAW 5 — Ameryka Południowa (7)
+  {set:4,q:"Najdłuższe pasmo górskie świata to...",opts:["Himalaje","Andy (ponad 9000 km)","Kordyliery","Alpy"],ans:1,exp:"Andy ciągną się ponad 9000 km wzdłuż zachodniego wybrzeża Ameryki Południowej — najdłuższe pasmo górskie świata."},
+  {set:4,q:"Najwyższy szczyt obu Ameryk to...",opts:["Denali","Aconcagua (6960 m)","Chimborazo","Cotopaxi"],ans:1,exp:"Aconcagua (6960 m n.p.m.) w Andach — najwyższy szczyt obu Ameryk i najwyższy poza Azją."},
+  {set:4,q:"Najzasobniejsza w wodę rzeka świata to...",opts:["Nil","Amazonka","Jangcy","Missisipi"],ans:1,exp:"Amazonka to najzasobniejsza w wodę rzeka świata i ma największe dorzecze; płynie przez puszczę amazońską."},
+  {set:4,q:"Najwyższy wodospad świata to...",opts:["Salto Ángel (Wenezuela)","Iguazú","Niagara","Wodospady Wiktorii"],ans:0,exp:"Salto Ángel w Wenezueli to najwyższy wodospad świata. Iguazú słynie z szerokości i liczby kaskad."},
+  {set:4,q:"Wodospady Iguazú leżą na granicy...",opts:["Chile i Peru","Brazylii i Argentyny","Wenezueli i Kolumbii","Boliwii i Paragwaju"],ans:1,exp:"System wodospadów Iguazú znajduje się na granicy Brazylii i Argentyny."},
+  {set:4,q:"Najsuchsza pustynia świata to...",opts:["Sahara","Atacama (Chile)","Gobi","Namib"],ans:1,exp:"Atacama w Chile to najsuchsza pustynia świata — miejscami opady praktycznie nie występują."},
+  {set:4,q:"Titicaca to jezioro znane jako...",opts:["Największe jezioro świata","Najwyżej położone żeglowne jezioro świata","Najgłębsze jezioro świata","Największe słone jezioro"],ans:1,exp:"Titicaca w Andach (granica Peru i Boliwii) to najwyżej położone żeglowne jezioro świata."},
+
+  // ZESTAW 6 — Australia i Oceania (6)
+  {set:5,q:"Najwyższy szczyt Australii to...",opts:["Góra Jaya","Góra Kościuszki (2228 m)","Mount Cook","Uluru"],ans:1,exp:"Góra Kościuszki (2228/2230 m n.p.m.) to najwyższy szczyt kontynentu australijskiego."},
+  {set:5,q:"Najwyższy szczyt Oceanii to...",opts:["Góra Kościuszki","Góra Jaya / Puncak Jaya (4884 m)","Mauna Kea","Mount Cook"],ans:1,exp:"Puncak Jaya (Góra Jaya, 4884 m) na Nowej Gwinei to najwyższy szczyt Oceanii."},
+  {set:5,q:"Najniższy punkt Australii to...",opts:["Jezioro Eyre (−12 m)","Dolina Śmierci","Nizina Nadkaspijska","Morze Martwe"],ans:0,exp:"Jezioro Eyre (−12 m p.p.m.) — bezodpływowe, słone, okresowo wysychające — to najniższy punkt Australii."},
+  {set:5,q:"Największa rafa koralowa świata to...",opts:["Rafa Belize","Wielka Rafa Koralowa","Rafa Androsa","Rafa Nowej Kaledonii"],ans:1,exp:"Wielka Rafa Koralowa u wschodnich wybrzeży Australii to największa rafa świata."},
+  {set:5,q:"Słynny czerwony monolit w centrum Australii to...",opts:["Uluru (Ayers Rock)","Kata Tjuta","Mount Augustus","Devils Marbles"],ans:0,exp:"Uluru (Ayers Rock) to słynny monolit w centralnej Australii, święte miejsce Aborygenów."},
+  {set:5,q:"Świat zwierzęcy Australii zdominowany jest przez...",opts:["Torbacze (kangur, koala, diabeł tasmański)","Wielkie koty","Naczelne","Niedźwiedzie"],ans:0,exp:"Izolacja kontynentu sprzyjała dominacji torbaczy: kangur, koala, diabeł tasmański, a także dziobak."}
+];
+
+const SETS = [
+  {name:"Zestaw 1 – Europa",range:[0,7]},
+  {name:"Zestaw 2 – Azja",range:[7,14]},
+  {name:"Zestaw 3 – Afryka",range:[14,21]},
+  {name:"Zestaw 4 – Ameryka Północna",range:[21,27]},
+  {name:"Zestaw 5 – Ameryka Południowa",range:[27,34]},
+  {name:"Zestaw 6 – Australia i Oceania",range:[34,40]},
+  {name:"Wszystkie (40 pytań)",range:[0,40]},
+];
+// Tasowanie opcji – zwraca {opts, ans} z pomieszaną kolejnością
+function shuffle(q){
+  const idxs=[0,1,2,3];
+  for(let i=idxs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idxs[i],idxs[j]]=[idxs[j],idxs[i]];}
+  const newOpts=idxs.map(i=>q.opts[i]);
+  const newAns=idxs.indexOf(q.ans);
+  return{opts:newOpts,ans:newAns};
+}
+
+let activeSet=null; // null = wybór zestawu
+let questions=[];
+let shuffled=[];
+let current=0,score=0,answered=[];
+
+function switchTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  if(id==='quiz')renderSetPicker();
+}
+
+function startSet(si){
+  const s=SETS[si];
+  questions=RAW.slice(s.range[0],s.range[1]);
+  shuffled=questions.map(q=>shuffle(q));
+  current=0;score=0;answered=new Array(questions.length).fill(null);
+  activeSet=si;
+  renderQuiz();
+}
+
+function renderSetPicker(){
+  activeSet=null;
+  const c=document.getElementById('quiz-container');
+  c.innerHTML=`<div class="card"><div class="card-label">Wybierz zestaw pytań</div><div class="card-title" style="font-size:1.1rem;margin-bottom:1rem">Z czego chcesz się teraz pouczyć?</div>`+
+  SETS.map((s,i)=>`<button class="opt" style="margin-bottom:6px" onclick="startSet(${i})">${s.name}</button>`).join('')+`</div>`;
+}
+
+function renderQuiz(){
+  const c=document.getElementById('quiz-container');
+  if(current>=questions.length){
+    const pct=Math.round(score/questions.length*100);
+    c.innerHTML=`<div class="card" style="text-align:center;padding:2.5rem">
+      <div class="card-label">${SETS[activeSet].name}</div>
+      <div class="score-big">${score}/${questions.length}</div>
+      <div class="card-body" style="margin-bottom:1.5rem">
+        ${pct>=80?'✅ Solidna znajomość materiału.':pct>=60?'⚠️ Kilka rzeczy warto powtórzyć.':'❌ Wróć do notatek i spróbuj ponownie.'}
+        <br><span style="color:var(--ink-light)">${pct}% poprawnych odpowiedzi</span>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap">
+        <button class="nav-btn primary" onclick="startSet(${activeSet})">Powtórz zestaw</button>
+        <button class="nav-btn" onclick="renderSetPicker()">← Zmień zestaw</button>
+      </div>
+    </div>`;
+    return;
+  }
+  const q=questions[current];
+  const sh=shuffled[current];
+  const isAnswered=answered[current]!==null;
+  const pct=Math.round((current/questions.length)*100);
+  c.innerHTML=`
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+    <div style="margin-bottom:.5rem"><button class="nav-btn" style="font-size:11px;padding:4px 12px" onclick="renderSetPicker()">← Zestawy</button></div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;margin-bottom:1rem">
+        <span class="card-label">${SETS[activeSet].name.split('–')[1]||SETS[activeSet].name} · pytanie ${current+1}/${questions.length}</span>
+        <span class="card-label">Wynik: ${score} pkt</span>
+      </div>
+      <div class="quiz-q">${q.q}</div>
+      <div class="quiz-opts">
+        ${sh.opts.map((o,i)=>{
+          let cls='opt';
+          if(isAnswered){if(i===sh.ans)cls+=' correct';else if(i===answered[current]&&i!==sh.ans)cls+=' wrong';}
+          const oc=isAnswered?'':` onclick="pickAnswer(${i})"`;
+          return `<button class="${cls}"${oc}>${o}</button>`;
+        }).join('')}
+      </div>
+      ${isAnswered?`<div class="quiz-feedback ${answered[current]===sh.ans?'ok':'fail'}">${answered[current]===sh.ans?'✅':'❌'} ${q.exp}</div>`:''}
+      <div class="quiz-nav">
+        <span class="quiz-counter">${current+1} / ${questions.length}</span>
+        ${current>0?`<button class="nav-btn" onclick="prevQ()">← Wstecz</button>`:''}
+        ${isAnswered&&current<questions.length-1?`<button class="nav-btn primary" onclick="nextQ()">Dalej →</button>`:''}
+        ${isAnswered&&current===questions.length-1?`<button class="nav-btn primary" onclick="nextQ()">Pokaż wynik</button>`:''}
+      </div>
+    </div>`;
+}
+
+function pickAnswer(i){
+  if(answered[current]!==null)return;
+  answered[current]=i;
+  if(i===shuffled[current].ans)score++;
+  renderQuiz();
+}
+function nextQ(){current++;renderQuiz();}
+function prevQ(){if(current>0){current--;renderQuiz();}}
+
+// inicjalizacja
+document.addEventListener('DOMContentLoaded',()=>{
+  const quizTab=document.querySelector('.tab[onclick*="quiz"]');
+  if(quizTab) quizTab.addEventListener('click',renderSetPicker);
+});
+</script>
+</body>
+</html>
