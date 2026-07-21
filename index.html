@@ -22,7 +22,7 @@
     --line:#241d4a; --line2:#3a2e74;
     --text:#eef0ff; --muted:#9b93c4; --muted2:#6f679a;
     --accent:#a78bfa; --accent-d:#8b5cf6;
-    --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
+    --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a; --wmark:#bd8bff;
     --ok:#5ad1a0; --ok-bg:#0c241d;
     --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
     --glow-cyan:0 0 16px rgba(39,232,255,.55);
@@ -321,23 +321,77 @@
     .aif-inner::after,.hexbtn .ring,.aif-bg .r1,.aif-bg .r2,.aif-eyebrow .ed{animation:none!important;}
   }
 
-  .site-foot{position:relative;margin-top:54px;border-top:1px solid var(--line);padding-top:28px;overflow:hidden;}
+  /* Opaque background is REQUIRED: .site-foot forms its own stacking context,
+     so the clip's `mix-blend-mode:screen` needs a painted backdrop inside it —
+     otherwise the video's black frame shows as a visible rectangle. */
+  .site-foot{position:relative;margin-top:96px;border-top:1px solid var(--line);padding-top:52px;overflow:hidden;
+    background:radial-gradient(760px 460px at 80% 116%, #16263f 0%, transparent 62%),
+               radial-gradient(620px 420px at 12% 8%, #1d1046 0%, transparent 58%),
+               var(--ink);}
   .giant-deco{display:flex;align-items:center;gap:16px;max-width:1040px;margin:0 auto 2px;padding:0 20px;}
   .giant-deco .gd-line{flex:1;height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent);}
-  .giant-deco .gd-tag{font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);text-shadow:0 0 10px rgba(39,232,255,.45);white-space:nowrap;}
-  .giant{position:relative;width:100vw;left:50%;margin-left:-50vw;line-height:.82;user-select:none;pointer-events:none;text-align:center;padding:6px 0 2px;}
+  .giant-deco .gd-tag{font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+    color:var(--wmark);text-shadow:0 0 10px rgba(189,139,255,.8),0 0 26px rgba(168,85,247,.45);white-space:nowrap;}
+  .giant-deco .gd-line{background:linear-gradient(90deg,transparent,rgba(189,139,255,.4),transparent);}
+  /* hazard stripes — same violet as the wordmark / "system online" tag */
+  .uf-haz{filter:drop-shadow(0 0 5px rgba(189,139,255,.9)) drop-shadow(0 0 14px rgba(168,85,247,.45));}
+
+  /* ---- stage: wordmark left, unicorn clip right, telemetry behind ---- */
+  .uf-stage{position:relative;max-width:1480px;margin:20px auto 0;
+    padding:0 clamp(16px,4vw,48px);min-height:clamp(230px,33vw,430px);
+    display:flex;flex-direction:column;justify-content:center;}
+
+  .uf-deco{position:absolute;left:0;top:0;bottom:0;width:min(64%,780px);
+    z-index:1;pointer-events:none;}
+  .uf-deco svg{position:absolute;inset:0;width:100%;height:100%;transform:scaleX(-1);}
+  .uf-read{position:absolute;left:clamp(14px,4vw,52px);top:16px;
+    font-family:var(--mono);font-size:.58rem;letter-spacing:.2em;color:#8a83b4;line-height:2.1;}
+  .uf-read b{color:var(--cyan);font-weight:400;text-shadow:0 0 10px rgba(39,232,255,.45);}
+  .uf-read .mg{color:var(--magenta);text-shadow:0 0 10px rgba(255,46,151,.4);}
+  .uf-eq{position:absolute;left:clamp(14px,4vw,52px);bottom:14px;
+    display:flex;gap:2px;align-items:flex-end;height:34px;}
+  .uf-eq i{display:block;width:2px;border-radius:1px;transform-origin:bottom;
+    animation:ufEq var(--d,1s) ease-in-out var(--dl,0s) infinite alternate;}
+  @keyframes ufEq{from{transform:scaleY(var(--lo,.25));}to{transform:scaleY(1);}}
+
+  /* the looping unicorn — black bg removed by screen blend, bottom feathered */
+  .uf-clip{position:absolute;z-index:2;pointer-events:none;
+    width:clamp(190px,30vw,460px);left:84%;top:49%;transform:translate(-50%,-50%);
+    mix-blend-mode:screen;filter:brightness(.82);
+    /* feather the bottom AND the right frame edge so the mane dissolves
+       instead of being cut off by the video's own boundary */
+    -webkit-mask-image:linear-gradient(to bottom,#000 58%,transparent 100%),
+                       linear-gradient(to right,#000 84%,transparent 100%);
+    -webkit-mask-composite:source-in;
+    mask-image:linear-gradient(to bottom,#000 58%,transparent 100%),
+               linear-gradient(to right,#000 84%,transparent 100%);
+    mask-composite:intersect;}
+  .uf-clip video{display:block;width:100%;height:auto;}
+
+  .uf-sub{margin:12px 0 0;font-family:var(--mono);font-size:.64rem;letter-spacing:.42em;
+    text-transform:uppercase;color:#6b6592;position:relative;z-index:3;}
+
+  .giant{position:relative;line-height:.95;user-select:none;pointer-events:none;
+    text-align:left;padding:0;z-index:3;}
   .giant span.gw{
     position:relative;display:inline-block;
-    font-family:'Audiowide',var(--disp);font-weight:400;
-    font-size:clamp(2.2rem,12.5vw,11rem);letter-spacing:.02em;white-space:nowrap;
-    background:linear-gradient(100deg,#27e8ff 0%,#a78bfa 32%,#ff2e97 64%,#ffd84a 100%);
-    background-size:220% 100%;
-    -webkit-background-clip:text;background-clip:text;color:transparent;
-    -webkit-text-stroke:1px rgba(167,139,250,.22);
-    filter:drop-shadow(0 0 26px rgba(167,139,250,.3));
-    animation:giantSweep 9s linear infinite;
+    font-family:'Chakra Petch',var(--disp);font-weight:700;
+    font-size:clamp(2rem,9.4vw,8.6rem);letter-spacing:.13em;white-space:nowrap;
+    background:none;-webkit-background-clip:border-box;background-clip:border-box;
+    color:#bd8bff;-webkit-text-fill-color:#bd8bff;-webkit-text-stroke:0;
+    text-shadow:0 0 14px rgba(168,85,247,.8),0 0 42px rgba(147,72,235,.45),
+                0 0 90px rgba(196,132,252,.22);
   }
-  @keyframes giantSweep{to{background-position:220% 0;}}
+  @media(max-width:900px){
+    .uf-clip{left:79%;width:clamp(150px,40vw,300px);}
+    .uf-deco{width:100%;opacity:.55;}
+  }
+  @media(max-width:560px){
+    .uf-stage{min-height:270px;}
+    .uf-clip{left:68%;top:40%;width:58vw;}
+    .giant span.gw{font-size:12.5vw;letter-spacing:.07em;}
+    .uf-hud{grid-template-columns:1fr 1fr;font-size:.55rem;}
+  }
   .giant span.gw::before,.giant span.gw::after{
     content:attr(data-text);position:absolute;left:0;top:0;pointer-events:none;opacity:0;mix-blend-mode:screen;-webkit-text-stroke:0;
   }
@@ -353,10 +407,17 @@
   }
   @keyframes giantGl{0%,100%{opacity:0;transform:none;}20%{opacity:.75;transform:translate(-5px,2px);clip-path:inset(8% 0 60% 0);}45%{opacity:.75;transform:translate(4px,-2px);clip-path:inset(62% 0 6% 0);}60%{opacity:0;}}
   @keyframes giantGl2{0%,100%{opacity:0;transform:none;}30%{opacity:.7;transform:translate(6px,1px);clip-path:inset(34% 0 40% 0);}55%{opacity:.7;transform:translate(-5px,-1px);clip-path:inset(72% 0 4% 0);}70%{opacity:0;}}
-  .foot-simple{padding:14px 20px 48px;}
+  /* wider than .wrap so the note lines up with the wordmark, not indented */
+  .foot-simple{max-width:1480px;padding:20px clamp(16px,4vw,48px) 48px;}
   .foot-grid{display:flex;justify-content:space-between;align-items:flex-start;gap:26px;flex-wrap:wrap;}
-  .disclaimer{font-size:.76rem;color:var(--muted2);max-width:560px;line-height:1.7;}
-  .disclaimer b{color:var(--muted);font-weight:600;}
+  /* broken into separate statements with // markers instead of one grey block */
+  .foot-note{display:flex;flex-direction:column;gap:8px;max-width:640px;}
+  .foot-note p{position:relative;margin:0;padding-left:20px;
+    font-size:.74rem;line-height:1.6;color:var(--muted2);}
+  .foot-note p::before{content:"//";position:absolute;left:0;top:1px;
+    font-family:var(--mono);font-size:.6rem;color:#3f3768;}
+  .foot-note p:first-child::before{color:var(--wmark);opacity:.85;}
+  .foot-note b{color:var(--muted);font-weight:600;}
   .foot-side{display:flex;flex-direction:column;align-items:flex-end;gap:9px;text-align:right;}
   .foot-brand{display:flex;align-items:center;gap:10px;color:var(--muted);font-family:var(--disp);font-weight:700;font-size:1.15rem;letter-spacing:.5px;}
   .foot-brand .horn{width:22px;height:22px;}
@@ -511,18 +572,68 @@
     <span class="gd-tag">// system online · unicorner_os</span>
     <span class="gd-line"></span>
   </div>
-  <div class="giant">
-    <span class="gw" data-text="UNICORNER">UNICORNER</span>
-    <span class="giant-scan" aria-hidden="true"></span>
+  <div class="uf-stage">
+    <div class="uf-deco" aria-hidden="true">
+      <svg viewBox="0 0 700 420" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="ufA" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#27e8ff" stop-opacity="0"/><stop offset="1" stop-color="#27e8ff" stop-opacity=".45"/>
+          </linearGradient>
+          <linearGradient id="ufB" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ff2e97" stop-opacity="0"/><stop offset="1" stop-color="#ff2e97" stop-opacity=".4"/>
+          </linearGradient>
+        </defs>
+        <line x1="0" y1="96" x2="700" y2="96" stroke="url(#ufA)"/>
+        <line x1="120" y1="150" x2="700" y2="150" stroke="url(#ufB)"/>
+        <line x1="0" y1="286" x2="640" y2="286" stroke="url(#ufA)"/>
+        <path d="M700 40 H640 V16" fill="none" stroke="#a78bfa" stroke-opacity=".45"/>
+        <path d="M700 380 H620 V404" fill="none" stroke="#a78bfa" stroke-opacity=".3"/>
+        <g fill="none" stroke="#a78bfa" stroke-opacity=".2">
+          <circle cx="470" cy="215" r="120"/><circle cx="470" cy="215" r="168"/>
+          <circle cx="470" cy="215" r="72" stroke-dasharray="3 7"/>
+        </g>
+        <g stroke="#3b3560">
+          <line x1="60" y1="196" x2="60" y2="330"/>
+          <line x1="55" y1="196" x2="66" y2="196"/><line x1="55" y1="240" x2="66" y2="240"/>
+          <line x1="58" y1="218" x2="64" y2="218"/><line x1="55" y1="286" x2="66" y2="286"/>
+          <line x1="58" y1="262" x2="64" y2="262"/><line x1="55" y1="330" x2="66" y2="330"/>
+        </g>
+        <g class="uf-haz" stroke="#bd8bff" stroke-opacity=".85" stroke-width="6">
+          <line x1="200" y1="404" x2="228" y2="374"/><line x1="220" y1="404" x2="248" y2="374"/>
+          <line x1="240" y1="404" x2="268" y2="374"/>
+        </g>
+        <path d="M300 96 V130 H392 V186 H470" fill="none" stroke="#27e8ff" stroke-opacity=".3"/>
+        <circle cx="470" cy="186" r="3" fill="#27e8ff" fill-opacity=".65"/>
+        <path d="M20 250 H96 V318 H176" fill="none" stroke="#a78bfa" stroke-opacity=".25"/>
+        <circle cx="176" cy="318" r="2.5" fill="#a78bfa" fill-opacity=".5"/>
+      </svg>
+      <div class="uf-read">
+        <div>NODE <b>UNICORNER</b> / PL</div>
+        <div>STATUS <b>&#9679; ONLINE</b></div>
+        <div>SESJA <span class="mg">0xA7-2F9</span></div>
+      </div>
+      <div class="uf-eq" id="ufEq"></div>
+    </div>
+
+    <div class="uf-clip" aria-hidden="true">
+      <video id="ufClip" src="assets/unicorn-loop.mp4" muted loop playsinline autoplay preload="metadata"></video>
+    </div>
+
+    <div class="giant">
+      <span class="gw" data-text="UNICORNER">UNICORNER</span>
+      <span class="giant-scan" aria-hidden="true"></span>
+    </div>
+    <p class="uf-sub">materiały do nauki</p>
   </div>
+
   <div class="wrap foot-simple">
     <div class="foot-grid">
-      <p class="disclaimer">
-        <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą.
-        Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.
-        Opinie są dobrowolne; publikujemy podane imię i treść, nie zbieramy adresów e-mail.
-        Bez gwarancji kompletności: ucz się też z oryginalnych źródeł.
-      </p>
+      <div class="foot-note">
+        <p><b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą.</p>
+        <p>Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.</p>
+        <p>Opinie są dobrowolne; publikujemy podane imię i treść, nie zbieramy adresów e-mail.</p>
+        <p>Bez gwarancji kompletności — ucz się też z oryginalnych źródeł.</p>
+      </div>
       <div class="foot-side">
         <div class="foot-brand">
           <svg class="horn" style="animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
@@ -533,6 +644,42 @@
     </div>
   </div>
 </footer>
+
+<script>
+/* footer equalizer + motion guard */
+(function(){
+  var eq = document.getElementById('ufEq');
+  var clip = document.getElementById('ufClip');
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (eq && !calm) {
+    var N = 46, html = '';
+    for (var i = 0; i < N; i++) {
+      var t = i / (N - 1), col;
+      if (t < .5) col = 'rgba(' + (167 + 88 * t * 2 | 0) + ',' + (139 - 93 * t * 2 | 0) + ',' + (250 - 99 * t * 2 | 0) + ',.9)';
+      else        col = 'rgba(' + (255 - 216 * (t - .5) * 2 | 0) + ',' + (46 + 186 * (t - .5) * 2 | 0) + ',' + (151 + 104 * (t - .5) * 2 | 0) + ',.9)';
+      html += '<i style="height:' + (14 + Math.random() * 20 | 0) + 'px;background:' + col +
+              ';box-shadow:0 0 6px ' + col + ';--d:' + (.5 + Math.random() * .9).toFixed(2) +
+              's;--dl:' + (Math.random() * .8).toFixed(2) + 's;--lo:' + (.15 + Math.random() * .35).toFixed(2) + '"></i>';
+    }
+    eq.innerHTML = html;
+  }
+  if (clip) {
+    if (calm) { clip.removeAttribute('autoplay'); clip.pause(); }
+    else {
+      var p = clip.play(); if (p && p.catch) p.catch(function(){});
+      /* don't decode video while the footer is off-screen */
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function(es){
+          es.forEach(function(e){
+            if (e.isIntersecting) { var q = clip.play(); if (q && q.catch) q.catch(function(){}); }
+            else clip.pause();
+          });
+        }, { rootMargin: '200px' }).observe(clip);
+      }
+    }
+  }
+})();
+</script>
 
 <script>
 const SUBJECTS = [
