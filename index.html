@@ -240,24 +240,41 @@
   .about .item .ilink:hover{color:#eafcff;border-bottom-color:var(--cyan);text-shadow:0 0 6px rgba(39,232,255,.5);}
   @media(max-width:640px){.about{grid-template-columns:1fr;}}
 
-  .faq{display:flex;flex-direction:column;gap:12px;margin-bottom:60px;}
-  .faq-item{position:relative;width:100%;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:4px;cursor:pointer;color:inherit;font-family:inherit;overflow:hidden;transition:border-color .2s ease, background .2s ease;}
-  .faq-item:hover, .faq-item.open{border-color:transparent;background:var(--surface2);}
-  .faq-item:hover::before, .faq-item.open::before{
-    content:"";position:absolute;inset:0;border-radius:4px;padding:1px;background:var(--iris);
-    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-    -webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;
-  }
-  .faq-item:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
-  .faq-q{display:flex;align-items:center;gap:14px;padding:18px 22px;font-family:var(--disp);font-weight:600;font-size:1.02rem;}
-  .faq-ic{width:20px;height:20px;flex-shrink:0;position:relative;}
-  .faq-ic::before,.faq-ic::after{content:"";position:absolute;background:var(--cyan);border-radius:2px;transition:transform .25s ease;box-shadow:0 0 8px rgba(39,232,255,.5);}
-  .faq-ic::before{top:9px;left:2px;width:16px;height:2px;}
-  .faq-ic::after{top:2px;left:9px;width:2px;height:16px;}
-  .faq-item.open .faq-ic::after{transform:rotate(90deg);opacity:0;}
-  .faq-a{max-height:0;overflow:hidden;transition:max-height .3s ease;}
+  .faq{display:flex;flex-direction:column;gap:10px;margin-bottom:60px;}
+  /* EDGE-LIT: interior is pure page-black; the 1px edge is bright at the
+     top-left and fades toward the bottom-right, like light catching a bevel.
+     The two stacked clip-paths (outer = edge, inner inset 1px = fill) are what
+     let the hairline follow the cut corners — a plain border cannot. */
+  .faq-item{position:relative;width:100%;text-align:left;cursor:pointer;color:inherit;
+    font-family:inherit;border:0;border-radius:0;padding:0;--cut:10px;
+    background:linear-gradient(135deg,
+      rgba(205,135,255,1) 0%,
+      rgba(190,110,255,.51) 42%,
+      rgba(50,235,255,.29) 100%);
+    clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));
+    transition:filter .28s ease;}
+  .faq-item::after{content:"";position:absolute;inset:1px;z-index:0;--cut:9px;
+    background:linear-gradient(160deg,#0a0817 0%,var(--ink) 55%);
+    clip-path:polygon(var(--cut) 0,100% 0,100% calc(100% - var(--cut)),calc(100% - var(--cut)) 100%,0 100%,0 var(--cut));}
+  .faq-item:hover,.faq-item.open{filter:drop-shadow(0 0 10px rgba(205,135,255,.46));}
+  .faq-item:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;}
+  .faq-q{display:flex;align-items:center;gap:16px;padding:19px 26px;position:relative;z-index:2;}
+  .faq-t{font-family:var(--disp);font-weight:500;font-size:.83rem;letter-spacing:.15em;
+    text-transform:uppercase;color:#e4dcff;transition:color .25s ease;}
+  .faq-item.open .faq-t{color:#fff;}
+  .faq-num{font-family:var(--disp);font-weight:400;font-size:.66rem;letter-spacing:.18em;
+    color:var(--muted2);margin-right:13px;transition:color .25s ease;}
+  .faq-item.open .faq-num{color:#d6b3ff;}
+  .faq-ic{width:11px;height:11px;flex-shrink:0;position:relative;opacity:.9;}
+  .faq-ic::before,.faq-ic::after{content:"";position:absolute;background:#cd87ff;
+    transition:transform .3s ease,opacity .3s ease;box-shadow:0 0 7px rgba(205,135,255,.5);}
+  .faq-ic::before{top:5px;left:0;width:11px;height:1px;}
+  .faq-ic::after{top:0;left:5px;width:1px;height:11px;}
+  .faq-item.open .faq-ic::after{transform:scaleY(0);opacity:0;}
+  .faq-a{max-height:0;overflow:hidden;transition:max-height .34s ease;position:relative;z-index:2;}
   .faq-item.open .faq-a{max-height:600px;}
-  .faq-a p{padding:0 22px 20px 56px;font-size:.92rem;color:var(--muted);}
+  .faq-a p{margin:0;padding:0 26px 21px 54px;font-size:.87rem;font-weight:300;
+    line-height:1.75;color:var(--muted);}
   .faq-a p b{color:var(--text);font-weight:600;}
 
   .ai-feature{position:relative;width:100vw;left:50%;margin-left:-50vw;padding:78px 0 84px;overflow:hidden;}
@@ -809,9 +826,9 @@ grid.innerHTML =
   soonSubjects.map(cardHtml).join('');
 
 const faq = document.getElementById('faq');
-faq.innerHTML = FAQS.map(f=>`
+faq.innerHTML = FAQS.map((f,i)=>`
   <button class="faq-item" data-rev aria-expanded="false">
-    <div class="faq-q"><span class="faq-ic"></span><span>${f.q}</span></div>
+    <div class="faq-q"><span class="faq-ic"></span><span class="faq-t"><span class="faq-num">${String(i+1).padStart(2,'0')}</span>${f.q}</span></div>
     <div class="faq-a"><p>${f.a}</p></div>
   </button>`).join('');
 faq.querySelectorAll('.faq-item').forEach(it=>{
