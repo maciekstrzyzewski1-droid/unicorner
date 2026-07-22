@@ -642,20 +642,43 @@ const RAW = [
   {set:5,q:"Współczynnik korelacji cząstkowej:",opts:["obliczany jest na podstawie współczynników korelacji wielorakiej", "pozwala ocenić siłę związku korelacyjnego między dwiema zmiennymi – daną zmienną zależną (Y) oraz jedną zmienną niezależną (X1), z wyłączeniem wpływu pozostałych zmiennych","przyjmuje wartości od -100 do +100","przyjmuje wartości z przedziału od 0 do +1"],ans:1,exp:"Korelacja cząstkowa izoluje związek Y z jedną konkretną zmienną X1, „oczyszczając” go z wpływu pozostałych zmiennych objaśniających."},
   {set:5,q:"Regresja wieloraka:",opts:["może opierać się wyłącznie na szeregach czasowych","może opierać się na szeregach przekrojowych lub na szeregach czasowych","może opierać się wyłącznie na danych miesięcznych","może opierać się wyłącznie na szeregach przekrojowych"],ans:1,exp:"Regresja wieloraka nie jest ograniczona do jednego typu danych — działa zarówno na danych przekrojowych, jak i na szeregach czasowych."},
   {set:5,q:"Współczynnik zbieżności:",opts:["wskazuje, jaka część zmienności zmiennej zależnej Y pozostaje niewyjaśniona przez funkcję regresji wielorakiej","wskazuje, jaka część zmienności zmiennej zależnej Y jest wyjaśniona przez funkcję regresji wielorakiej","przyjmuje wartości od -1 do +1","jest wyrażony w tych samych jednostkach co zmienna zależna Y"],ans:0,exp:"Współczynnik zbieżności = 1 − R² — to „druga strona” współczynnika determinacji: część niewyjaśnioną."},
+
+  // ===== Zestaw 7: dodatkowe pytania z bazy Studocu (nowe, niesprawdzone wcześniej) =====
+  {set:6,q:"Wartość cechy jednostki, która dzieli zbiorowość na dwie części tak, że 50% jednostek zbiorowości przyjmuje wartości mniejsze lub równe, a 50% – większe lub równe to:",opts:["dominanta","średnia harmoniczna","mediana","średnia arytmetyczna"],ans:2,exp:"Definicja mediany — wartości środkowej dzielącej zbiorowość dokładnie na pół."},
+  {set:6,q:"Do miar klasycznych tendencji centralnej należą:",opts:["Kwartyl pierwszy (Q1) - wartość dzieląca uporządkowany zbiór na dwie części, gdzie 25% wartości jest mniejszych lub równe, a 75% większych lub równe.","Kwartyl trzeci (Q3) - wartość dzieląca uporządkowany zbiór na dwie części, gdzie 75% wartości jest mniejszych lub równe, a 25% większych lub równe.","Dominanta - wartość występująca najczęściej w zbiorze.","Średnia arytmetyczna - suma wszystkich wartości podzielona przez liczbę wartości."],ans:3,exp:"Miary klasyczne tendencji centralnej to średnie: arytmetyczna, geometryczna, harmoniczna. Kwartyle i dominanta to miary pozycyjne, nie klasyczne."},
+  {set:6,q:"Współczynnik zmienności przyjmuje wartość 45%. Oznacza to",opts:["niskie zróżnicowanie","bardzo duże zróżnicowanie","umiarkowane zróżnicowanie","duże zróżnicowanie"],ans:3,exp:"Umowna skala: do 20% niskie, 20–40% umiarkowane, 40–60% duże, 60%+ bardzo duże zróżnicowanie. 45% mieści się w przedziale dużego zróżnicowania."},
+  {set:6,q:"Do pozycyjnych miar dyspersji należy",opts:["odchylenie ćwiartkowe","odchylenie przeciętne","odchylenie standardowe","współczynnik zmienności klasyczny"],ans:0,exp:"Miary dyspersji dzielą się na klasyczne (wariancja, odchylenie standardowe, odchylenie przeciętne, współczynnik zmienności klasyczny) i pozycyjne (rozstęp, odchylenie ćwiartkowe, pozycyjny współczynnik zmienności)."},
+  {set:6,q:"Do klasycznych miar dyspersji należy",opts:["odchylenie ćwiartkowe","mediana","odchylenie standardowe","rozstęp międzykwartylowy"],ans:2,exp:"Odchylenie standardowe to klasyczna miara dyspersji. Odchylenie ćwiartkowe i rozstęp międzykwartylowy to miary pozycyjne, a mediana to miara tendencji centralnej, nie dyspersji."},
+  {set:6,q:"Miary asymetrii mają na celu:",opts:["określenie, jakie jest zróżnicowanie badanej cechy w populacji","określenie, jaka jest koncentracja poszczególnych wartości wokół wartości średniej","określenie, jaki jest przeciętny poziom badanej cechy","określenie, w którym kierunku dany rozkład odchyla się od rozkładu symetrycznego i jak silne jest to odchylenie"],ans:3,exp:"Miary asymetrii (skośności) informują o kierunku i sile odchylenia rozkładu od symetrii."},
+  {set:6,q:"Wartość współczynnika asymetrii α3 = 1,25 wskazuje na:",opts:["rozkład platokurtyczny","asymetrię lewostronną","rozkład leptokurtyczny","asymetrię prawostronną"],ans:3,exp:"α3 > 0 oznacza asymetrię prawostronną (dodatnią)."},
+  {set:6,q:"Indeks łańcuchowy (w ujęciu procentowym) dla 2020 roku przyjmuje wartość 109,3, a dla 2021 roku wynosi 108,7. Jaką wartość przyjmie w 2021 roku indeks jednopodstawowy, dla którego okresem bazowym jest 2020 rok?",opts:["108,7","118,8","109,3","118,0"],ans:0,exp:"Skoro okresem bazowym jest 2020, indeks jednopodstawowy dla 2021 roku pokrywa się z indeksem łańcuchowym dla 2021 roku (bo baza i poprzedni okres to ten sam rok) — czyli 108,7."},
+  {set:6,q:"Indeks łańcuchowy wyznaczony dla 2022 roku przyjmuje wartość 1,086 (w ujęciu dziesiętnym). Na podstawie uzyskanej wartości indeksu można stwierdzić, że",opts:["w 2022 roku zjawisko było wyższe o 1,086% w porównaniu do poprzedniego roku","w 2022 roku zjawisko było wyższe o 108,6% w porównaniu do poprzedniego roku","w 2022 roku zjawisko było wyższe o 0,86% w porównaniu do poprzedniego roku","w 2022 roku zjawisko było wyższe o 8,6% w porównaniu do poprzedniego roku"],ans:3,exp:"(1,086 − 1) × 100% = 8,6% wzrostu względem poprzedniego roku."},
+  {set:6,q:"Na podstawie danych w ujęciu rocznym wyznaczono średniookresowe tempo zmian, które wynosi 1,07 (w ujęciu dziesiętnym). Oznacza to, że",opts:["co roku analizowane zjawisko wzrastało przeciętnie o 1,07%","co roku analizowane zjawisko wzrastało przeciętnie o 7%","co roku analizowane zjawisko wzrastało przeciętnie o 0,7%","co roku analizowane zjawisko wzrastało przeciętnie o 0,07%"],ans:1,exp:"(1,07 − 1) × 100% = 7% przeciętnego wzrostu rocznego."},
+  {set:6,q:"Indeks jednopodstawowy wyznaczony dla 2022 roku przyjmuje wartość 122,3 (w ujęciu procentowym). Wiadomo, że za okres bazowy przyjęto 2010 rok. Na podstawie uzyskanej wartości indeksu można stwierdzić, że",opts:["w 2022 roku zjawisko było wyższe o 22,3% w porównaniu do poprzedniego roku","w 2022 roku zjawisko było wyższe o 122,3% w porównaniu do poprzedniego roku","w 2022 roku zjawisko było wyższe o 22,3% w porównaniu do 2010 roku","w 2022 roku zjawisko było wyższe o 122,3% w porównaniu do 2010 roku"],ans:2,exp:"Indeks jednopodstawowy porównuje zawsze do okresu bazowego (tu: 2010), nie do poprzedniego roku. 122,3% oznacza wzrost o 22,3% względem 2010 roku."},
+  {set:6,q:"Wiadomo, że w latach 2018-2022 indeksy łańcuchowe przyjmowały następujące wartości: 2018→112,7; 2019→109,9; 2020→106,8; 2021→102,7; 2022→104,3. Jaką wartość przyjmuje średniookresowe tempo zmian w latach 2018-2022?",opts:["106,8","136,4","107,5","107,2"],ans:3,exp:"Średniookresowe tempo zmian to średnia geometryczna z indeksów łańcuchowych: (1,127×1,099×1,068×1,027×1,043)^(1/5) ≈ 1,072, czyli 107,2."},
+  {set:6,q:"Które z poniżej zamieszczonych stwierdzeń jest prawdziwe?",opts:["Indeks cen Fishera można wyznaczyć na podstawie indeksu ilości Paaschego oraz indeksu cen Laspeyresa","Indeks cen Fishera można wyznaczyć tylko na podstawie danych dotyczących wielkości sprzedaży oraz cen poszczególnych produktów w okresie podstawowym oraz w okresie badanym","Indeks cen Fishera można wyznaczyć na podstawie indeksu cen Paaschego oraz indeksu cen Laspeyresa","Indeks cen Fishera można wyznaczyć na podstawie indeksu ilości Paaschego oraz indeksu ilości Laspeyresa"],ans:2,exp:"Indeks CEN Fishera to średnia geometryczna z indeksu cen Paaschego oraz indeksu cen Laspeyresa (analogicznie jak indeks ilości Fishera łączy indeksy ilości)."},
+  {set:6,q:"Trend liniowy opisuje kształtowanie się zjawiska na podstawie danych rocznych w latach 2011-2022. Aby wyznaczyć prognozę na rok 2024, do równania trendu należy podstawić jako wartość zmiennej czasowej t",opts:["2","2024","14","24"],ans:2,exp:"Lata 2011-2022 to 12 okresów (t=1..12), rok 2024 jest o 2 lata dalej niż 2022 (t=12), więc t=14."},
+  {set:6,q:"Suma wskaźników sezonowości addytywnej dla danych kwartalnych zawsze wynosi:",opts:["400%","4","0","400"],ans:2,exp:"Suma wskaźników sezonowości addytywnej zawsze wynosi 0 — dodatnie i ujemne odchylenia od trendu muszą się znosić w skali roku."},
+  {set:6,q:"W szeregu czasowym, w ramach składowej okresowej można wyróżnić:",opts:["wahania cykliczne, wahania sezonowe","wahania sezonowe, wahania przypadkowe","wahania cykliczne, wahania przypadkowe","tendencję rozwojową, wahania sezonowe"],ans:0,exp:"Składowa okresowa (periodyczna) szeregu czasowego obejmuje wahania cykliczne (dłuższe, nieregularne cykle) oraz wahania sezonowe (regularne, w ramach roku)."},
+  {set:6,q:"Współczynnik korelacji liniowej Pearsona dla zmiennych X i Y przyjmuje wartość 0,95. Oznacza to, że:",opts:["występuje słaba zależność między zmiennymi","występuje bardzo silna dodatnia zależność między zmiennymi","występuje silna dodatnia zależność między zmiennymi"],ans:1,exp:"Wartość współczynnika korelacji bliska 1 (0,95) oznacza bardzo silną dodatnią zależność liniową między zmiennymi."},
+  {set:6,q:"Współczynnik korelacji rang Spearmana może być stosowany do oceny",opts:["zależności między zmienną nominalną i porządkową","zależności między dwiema zmiennymi porządkowymi","zależności między dwiema zmiennymi ilościowymi","zależności między dwiema zmiennymi nominalnymi"],ans:1,exp:"Współczynnik rang Spearmana służy do oceny zależności między zmiennymi porządkowymi (lub ilościowymi zamienionymi na rangi)."},
+  {set:6,q:"Funkcja REGLINP oblicza",opts:["standardowy błąd szacunku","współczynnik zbieżności","prognozę zmiennej objaśniającej X","prognozę zmiennej zależnej Y"],ans:2,exp:"Uwaga: w oryginalnym materiale poprawną odpowiedzią zaznaczono „prognozę zmiennej objaśniającej X” — funkcja REGLINP w Excelu zwraca zwykle parametry regresji (w tym można z nich wyliczyć prognozę Y), więc warto zweryfikować to pytanie z własnymi materiałami z kursu."},
+  {set:6,q:"Współczynnik korelacji wielorakiej można wyznaczyć na podstawie",opts:["współczynnika korelacji rang Spearmana","współczynników korelacji liniowej Pearsona","współczynników korelacji cząstkowej","współczynników korelacji liniowej Pearsona oraz współczynników korelacji cząstkowej"],ans:3,exp:"Współczynnik korelacji wielorakiej wyznacza się na podstawie współczynników korelacji liniowej Pearsona (między Y i poszczególnymi X) oraz współczynników korelacji cząstkowej."},
 ];
 
 const SETS = [
-  {name:"Zestaw 1 – Skale i szeregi",range:[0,5]},
-  {name:"Zestaw 2 – Pozycyjne i wykresy",range:[5,15]},
-  {name:"Zestaw 3 – Zmienność i asymetria",range:[15,25]},
-  {name:"Zestaw 4 – Indeksy agregatowe",range:[25,30]},
-  {name:"Zestaw 5 – Trend i sezonowość",range:[30,38]},
-  {name:"Zestaw 6 – Korelacja i regresja",range:[38,50]},
-  {name:"Wszystkie (50 pytań)",range:[0,50]},
+  {name:"Zestaw 1 – Skale i szeregi"},
+  {name:"Zestaw 2 – Pozycyjne i wykresy"},
+  {name:"Zestaw 3 – Zmienność i asymetria"},
+  {name:"Zestaw 4 – Indeksy agregatowe"},
+  {name:"Zestaw 5 – Trend i sezonowość"},
+  {name:"Zestaw 6 – Korelacja i regresja"},
+  {name:"Zestaw 7 – Dodatkowe (baza Studocu)"},
+  {name:"Wszystkie (70 pytań)"},
 ];
 
 function shuffle(q){
-  const idxs=[0,1,2,3];
+  const idxs=q.opts.map((_,i)=>i);
   for(let i=idxs.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[idxs[i],idxs[j]]=[idxs[j],idxs[i]];}
   const newOpts=idxs.map(i=>q.opts[i]);
   const newAns=idxs.indexOf(q.ans);
@@ -676,8 +699,7 @@ function switchTab(id,btn){
 }
 
 function startSet(si){
-  const s=SETS[si];
-  questions=RAW.slice(s.range[0],s.range[1]);
+  questions=si===SETS.length-1?RAW.slice():RAW.filter(q=>q.set===si);
   shuffled=questions.map(q=>shuffle(q));
   current=0;score=0;answered=new Array(questions.length).fill(null);
   activeSet=si;

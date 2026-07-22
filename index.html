@@ -616,7 +616,7 @@
     </div>
 
     <div class="uf-clip" aria-hidden="true">
-      <video id="ufClip" src="assets/unicorn-loop.mp4" muted loop playsinline autoplay preload="metadata"></video>
+      <video id="ufClip" src="assets/unicorn-loop.mp4" muted loop playsinline autoplay preload="auto"></video>
     </div>
 
     <div class="giant">
@@ -664,7 +664,13 @@
     eq.innerHTML = html;
   }
   if (clip) {
-    if (calm) { clip.removeAttribute('autoplay'); clip.pause(); }
+    if (calm) {
+      clip.removeAttribute('autoplay'); clip.pause();
+      /* wymuś dekodowanie i pokazanie pierwszej klatki, mimo braku odtwarzania —
+         bez tego mix-blend-mode:screen renderuje pustą klatkę jako całkowicie niewidoczną */
+      clip.addEventListener('loadeddata', function(){ clip.currentTime = 0.1; }, { once:true });
+      if (clip.readyState >= 2) clip.currentTime = 0.1;
+    }
     else {
       var p = clip.play(); if (p && p.catch) p.catch(function(){});
       /* don't decode video while the footer is off-screen */
@@ -728,8 +734,8 @@ const STAT_GROUP = {
       desc:"Model Y=a+bX, metoda najmniejszych kwadratów, R² i φ², prognozowanie." },
     { ic:"🧮", name:"Korelacja wieloraka", file:"korelacja-wieloraka.html",
       desc:"Korelacja cząstkowa i wieloraka, współczynnik R i determinacja R²." },
-    { ic:"📝", name:"Statystyka — kurs Navoica", file:"Statystyka_Navoica_Egzamin.html",
-      desc:"Indeksy, trend, sezonowość, korelacja i regresja — pytania wprost z testów Navoica, quiz 50 pytań." }
+    { ic:"📝", name:"Statystyka — kurs Navoica + AI", file:"Statystyka_Navoica_Egzamin.html",
+      desc:"Indeksy, trend, sezonowość, korelacja i regresja — pytania wprost z testów Navoica, quiz 70 pytań." }
   ]
 };
 
