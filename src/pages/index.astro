@@ -2,16 +2,654 @@
 import Base from '../layouts/Base.astro';
 ---
 
-<Base title="Unicorner — fundament Astro">
-  <main class="min-h-dvh grid place-items-center bg-[#07060f] p-8 text-center text-neutral-200">
-    <div class="max-w-xl">
-      <p class="font-mono text-xs uppercase tracking-[0.22em] text-fuchsia-400">Faza 0 · fundament</p>
-      <h1 class="mt-3 text-4xl font-bold text-white">Astro + Tailwind + React stoi ✅</h1>
-      <p class="mt-4 leading-relaxed text-neutral-400">
-        Build i dev działają. Dalej: design-system do <code class="text-cyan-300">Base.astro</code>,
-        potem landing (hero three.js jako wyspa React), potem 15 przedmiotów w content collection —
-        fundament pod docelowe 200.
-      </p>
+<Base>
+<div class="glow-drift" aria-hidden="true"></div>
+<div class="site-grid" id="siteGrid"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+      <stop offset="0" stop-color="#27e8ff"/><stop offset="0.38" stop-color="#a78bfa"/>
+      <stop offset="0.72" stop-color="#ff2e97"/><stop offset="1" stop-color="#ffd84a"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ===== INTRO: czaszka x-ray + panorama (skull-hero -> pan klub->nauka) ===== -->
+<!-- Model 3D szkieletu: "three-skull" (Cullen Webber) — licencja MIT. -->
+<div class="hero-screen" id="heroScreen">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="hero-fx"><div class="scan"></div><div class="vig"></div></div>
+  <div class="title" id="hudTitle">
+    <div class="eb">◢ OPEN STUDENT WORKSPACE</div>
+    <div class="ttl">unicorner</div>
+    <div class="sub">egzaminy ogarnięte po ludzku</div>
+    <div class="meta">v.2026 · UEP · materiały do nauki</div>
+    <p class="hero-lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
+  </div>
+  <div class="telem br" id="hudTelemBR">RUSZAJ MYSZĄ ✕</div>
+  <div class="skull-cap" id="hudCap">psssssst… tak skończysz, jak będziesz próbował ogarnąć materiał z podręczników. tak tylko mówię :)</div>
+  <a class="scroll-hint" id="hudHint" href="#przedmioty">Zobacz, o co chodzi <span class="arr">↓</span></a>
+
+  <!-- WIDOK 2: kula + generator (wchodzi crossfadem przy scrollu, na tym samym tunelu) -->
+  <div class="gen-screen" id="genScreen">
+    <div class="gen-top">
+      <h2 class="aif-h gen-h">Twoje notatki.<br><span class="hl">Gotowa nauka.</span></h2>
+      <p class="gen-lead">Wrzuć notatki albo PDF, a sztuczna inteligencja rozbije materiał na <b>fiszki i quiz pod Twój egzamin</b> — bez przepisywania.</p>
     </div>
-  </main>
+    <a class="aif-launch gen-launch" id="genLaunch" href="generator.html?v=1" aria-label="Uruchom Generator AI">
+      <span class="hexbtn" aria-hidden="true">
+        <svg class="rings" viewBox="0 0 100 100">
+          <defs><linearGradient id="hexRing" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#27e8ff"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#ff2e97"/>
+          </linearGradient></defs>
+          <polygon class="ring" points="50,7 90,28.5 90,71.5 50,93 10,71.5 10,28.5"/>
+          <polygon class="ring ring2" points="50,22 77,37 77,63 50,78 23,63 23,37"/>
+        </svg>
+        <svg class="chip" viewBox="0 0 48 48" fill="none">
+          <rect x="16" y="16" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2.4"/>
+          <rect x="21" y="21" width="6" height="6" rx="1.2" fill="currentColor"/>
+          <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <path d="M19 16v-5M24 16v-6M29 16v-5"/><path d="M19 32v5M24 32v6M29 32v5"/>
+            <path d="M16 19h-5M16 24h-6M16 29h-5"/><path d="M32 19h5M32 24h6M32 29h5"/>
+          </g>
+        </svg>
+      </span>
+      <span class="lx-wrap">
+        <span class="lx-tx">Uruchom generator</span>
+        <span class="lx-sub">generator.html · faza beta</span>
+      </span>
+    </a>
+  </div>
+</div>
+<div class="hero-spacer"></div>
+
+<div class="wrap">
+  <div class="ow" aria-hidden="true"><span>NEXT LEVEL</span></div>
+
+  <div class="row-label" data-rev id="przedmioty"><h2>Przedmioty</h2><span class="count" id="count"></span><span class="line"></span></div>
+  <div class="grid" id="grid"></div>
+
+  <div class="about">
+    <div class="item"><h4>Po co to jest</h4><p>Wkuwanie definicji rzadko wystarcza — egzaminy lubią przykłady i zastosowanie. Materiały są pod to ułożone.</p></div>
+    <div class="item"><h4>Jak korzystać</h4><p>Wybierz przedmiot, przejdź fiszki, rozwiąż zadania, sprawdź się quizem. Postęp zapisuje się w przeglądarce.</p></div>
+    <div class="item"><h4>Skąd się bierze</h4><p>To nasze własne opracowania na bazie zajęć. Robione, bo sami się z tego uczymy — i bo działa. Masz swoje notatki i chcesz je dorzucić? Wyślij je na <a href="mailto:unicornernotatki@gmail.com" class="ilink">unicornernotatki@gmail.com</a>.</p></div>
+  </div>
+
+  <div class="ow" aria-hidden="true"><span>LEARNING</span></div>
+
+  <div class="row-label" data-rev><h2>FAQ</h2><span class="line"></span></div>
+  <div class="faq" id="faq"></div>
+
+  <section class="reviews" id="reviews" style="display:none">
+    <div class="reviews-head">
+      <span class="lbl">Opinie</span>
+      <a class="btn-review" href="recenzje.html">★ Zostaw opinię</a>
+    </div>
+    <div class="marquee"><div class="marquee-track" id="reviewTrack"></div></div>
+  </section>
+</div>
+
+<footer class="site-foot">
+  <div class="giant-deco" aria-hidden="true">
+    <span class="gd-line"></span>
+    <span class="gd-tag">// system online · unicorner_os</span>
+    <span class="gd-line"></span>
+  </div>
+  <div class="uf-stage">
+    <div class="uf-deco" aria-hidden="true">
+      <svg viewBox="0 0 700 420" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="ufA" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#27e8ff" stop-opacity="0"/><stop offset="1" stop-color="#27e8ff" stop-opacity=".45"/>
+          </linearGradient>
+          <linearGradient id="ufB" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stop-color="#ff2e97" stop-opacity="0"/><stop offset="1" stop-color="#ff2e97" stop-opacity=".4"/>
+          </linearGradient>
+        </defs>
+        <line x1="0" y1="96" x2="700" y2="96" stroke="url(#ufA)"/>
+        <line x1="120" y1="150" x2="700" y2="150" stroke="url(#ufB)"/>
+        <line x1="0" y1="286" x2="640" y2="286" stroke="url(#ufA)"/>
+        <path d="M700 40 H640 V16" fill="none" stroke="#a78bfa" stroke-opacity=".45"/>
+        <path d="M700 380 H620 V404" fill="none" stroke="#a78bfa" stroke-opacity=".3"/>
+        <g fill="none" stroke="#a78bfa" stroke-opacity=".2">
+          <circle cx="470" cy="215" r="120"/><circle cx="470" cy="215" r="168"/>
+          <circle cx="470" cy="215" r="72" stroke-dasharray="3 7"/>
+        </g>
+        <g stroke="#3b3560">
+          <line x1="60" y1="196" x2="60" y2="330"/>
+          <line x1="55" y1="196" x2="66" y2="196"/><line x1="55" y1="240" x2="66" y2="240"/>
+          <line x1="58" y1="218" x2="64" y2="218"/><line x1="55" y1="286" x2="66" y2="286"/>
+          <line x1="58" y1="262" x2="64" y2="262"/><line x1="55" y1="330" x2="66" y2="330"/>
+        </g>
+        <g class="uf-haz" stroke="#bd8bff" stroke-opacity=".85" stroke-width="6">
+          <line x1="200" y1="404" x2="228" y2="374"/><line x1="220" y1="404" x2="248" y2="374"/>
+          <line x1="240" y1="404" x2="268" y2="374"/>
+        </g>
+        <path d="M300 96 V130 H392 V186 H470" fill="none" stroke="#27e8ff" stroke-opacity=".3"/>
+        <circle cx="470" cy="186" r="3" fill="#27e8ff" fill-opacity=".65"/>
+        <path d="M20 250 H96 V318 H176" fill="none" stroke="#a78bfa" stroke-opacity=".25"/>
+        <circle cx="176" cy="318" r="2.5" fill="#a78bfa" fill-opacity=".5"/>
+      </svg>
+      <div class="uf-read">
+        <div>NODE <b>UNICORNER</b> / PL</div>
+        <div>STATUS <b>&#9679; ONLINE</b></div>
+        <div>SESJA <span class="mg">0xA7-2F9</span></div>
+      </div>
+      <div class="uf-eq" id="ufEq"></div>
+    </div>
+
+    <div class="uf-clip" aria-hidden="true">
+      <video id="ufClip" src="assets/unicorn-loop.mp4" muted loop playsinline autoplay preload="auto"></video>
+    </div>
+
+    <div class="giant">
+      <span class="gw" data-text="UNICORNER">UNICORNER</span>
+      <span class="giant-scan" aria-hidden="true"></span>
+    </div>
+    <p class="uf-sub">materiały do nauki</p>
+  </div>
+
+  <div class="wrap foot-simple">
+    <div class="foot-grid">
+      <div class="foot-note">
+        <p><b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą.</p>
+        <p>Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.</p>
+        <p>Opinie są dobrowolne; publikujemy podane imię i treść, nie zbieramy adresów e-mail.</p>
+        <p>Bez gwarancji kompletności — ucz się też z oryginalnych źródeł.</p>
+        <p>Model 3D szkieletu w intro: „three-skull" (Cullen Webber) — licencja MIT.</p>
+      </div>
+      <div class="foot-side">
+        <div class="foot-brand">
+          <svg class="horn" style="animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+          <span><span class="fb-uni">uni</span><span class="fb-corner">corner</span></span>
+        </div>
+        <p class="foot-sys">© 2026 unicorner · system online</p>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+<script is:inline>
+/* footer equalizer + motion guard */
+(function(){
+  var eq = document.getElementById('ufEq');
+  var clip = document.getElementById('ufClip');
+  var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (eq && !calm) {
+    var N = 46, html = '';
+    for (var i = 0; i < N; i++) {
+      var t = i / (N - 1), col;
+      if (t < .5) col = 'rgba(' + (167 + 88 * t * 2 | 0) + ',' + (139 - 93 * t * 2 | 0) + ',' + (250 - 99 * t * 2 | 0) + ',.9)';
+      else        col = 'rgba(' + (255 - 216 * (t - .5) * 2 | 0) + ',' + (46 + 186 * (t - .5) * 2 | 0) + ',' + (151 + 104 * (t - .5) * 2 | 0) + ',.9)';
+      html += '<i style="height:' + (14 + Math.random() * 20 | 0) + 'px;background:' + col +
+              ';box-shadow:0 0 6px ' + col + ';--d:' + (.5 + Math.random() * .9).toFixed(2) +
+              's;--dl:' + (Math.random() * .8).toFixed(2) + 's;--lo:' + (.15 + Math.random() * .35).toFixed(2) + '"></i>';
+    }
+    eq.innerHTML = html;
+  }
+  if (clip) {
+    if (calm) {
+      clip.removeAttribute('autoplay'); clip.pause();
+      /* wymuś dekodowanie i pokazanie pierwszej klatki, mimo braku odtwarzania —
+         bez tego mix-blend-mode:screen renderuje pustą klatkę jako całkowicie niewidoczną */
+      clip.addEventListener('loadeddata', function(){ clip.currentTime = 0.1; }, { once:true });
+      if (clip.readyState >= 2) clip.currentTime = 0.1;
+    }
+    else {
+      var p = clip.play(); if (p && p.catch) p.catch(function(){});
+      /* don't decode video while the footer is off-screen */
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(function(es){
+          es.forEach(function(e){
+            if (e.isIntersecting) { var q = clip.play(); if (q && q.catch) q.catch(function(){}); }
+            else clip.pause();
+          });
+        }, { rootMargin: '200px' }).observe(clip);
+      }
+    }
+  }
+})();
+
+</script>
+
+<script is:inline>
+const SUBJECTS = [
+  { name:"Makroekonomia", emoji:"📈",
+    desc:"Pieniądz, inflacja, bezrobocie, wzrost, cykl koniunkturalny i polityka banku centralnego.",
+    tags:["Fiszki","Zadania","Ściana","Quiz"], status:"live", file:"makroekonomia.html" },
+  { name:"Podstawy marketingu", emoji:"🎯",
+    desc:"Reguły Cialdiniego, marketing mix (4P/7P/4C), proces decyzyjny konsumenta, segmentacja i perswazja.",
+    tags:["Materiały","Quiz 55 pytań"], status:"live", file:"marketing.html" },
+  { name:"Metody i Techniki Zarządzania", emoji:"⚙️",
+    desc:"VUCA, narzędzia jakości, analiza przyczyn źródłowych (RCA), kreatywność i praca zespołowa.",
+    tags:["Kompendium","Quiz"], status:"live", file:"mitz.html" },
+  { name:"Zarządzanie Jakością", emoji:"🏅",
+    desc:"Ewolucja QI→QC→QA→TQM, guru jakości, 7 zasad ISO, TQM/Lean/Six Sigma, normalizacja, ISO 9001, akredytacja i koszty jakości.",
+    tags:["Kompendium","Quiz 100 pytań"], status:"live", file:"zarzadzanie-jakoscia.html" },
+  { name:"Ekonomika Turystyki i Rekreacji", emoji:"🧳",
+    desc:"Rynek turystyczny, produkt, podaż, turystyka międzynarodowa i gospodarka turystyczna.",
+    tags:["Kompendium","Quiz 44 pytania"], status:"live", file:"etir.html" },
+  { name:"Obsługa Ruchu Turystycznego", emoji:"🧭",
+    desc:"Ruch turystyczny, rodzaje turystyki, obsługa na etapach podróży, organizacja imprez, praca pilota i przewodnika.",
+    tags:["Kompendium","Quiz 41 pytań"], status:"live", file:"ort.html" },
+  { name:"Geografia atrakcji turystycznych", emoji:"🗺️",
+    desc:"Środowisko przyrodnicze sześciu kontynentów — góry, rzeki, jeziora, wulkany, pustynie i rekordy natury.",
+    tags:["6 kontynentów","Quiz 40 pytań"], status:"live", file:"geografia.html" },
+  { name:"Kolejne przedmioty", emoji:"✦",
+    desc:"Dochodzą po kolei. Masz przedmiot, który chcesz tu zobaczyć następny? Daj znać.",
+    tags:["Wkrótce"], status:"soon", file:null }
+];
+
+const STAT_GROUP = {
+  name:"Statystyka",
+  emoji:"📊",
+  desc:"Powiązane działy w jednym miejscu — od miar opisowych, przez dynamikę i szeregi czasowe, po korelację i regresję. Kompletny materiał ze statystyki.",
+  parts:[
+    { ic:"📊", name:"Statystyka opisowa", file:"statystyka.html",
+      desc:"Miary średnie, pozycyjne i zróżnicowania, asymetria i koncentracja." },
+    { ic:"📉", name:"Analiza dynamiki", file:"dynamika.html",
+      desc:"Przyrosty, indeksy indywidualne i agregatowe (Laspeyres, Paasche, Fisher)." },
+    { ic:"📐", name:"Tendencja rozwojowa", file:"trend.html",
+      desc:"Szeregi czasowe, trend liniowy (MNK), dopasowanie R²/φ², prognozowanie." },
+    { ic:"🌊", name:"Sezonowość", file:"sezonowosc.html",
+      desc:"Wahania sezonowe, wskaźniki sezonowości i prognozowanie szeregów czasowych." },
+    { ic:"🔗", name:"Analiza korelacji", file:"korelacja.html",
+      desc:"Współczynnik Pearsona i korelacja rang Spearmana, siła i kierunek zależności." },
+    { ic:"📈", name:"Analiza regresji", file:"regresja.html",
+      desc:"Model Y=a+bX, metoda najmniejszych kwadratów, R² i φ², prognozowanie." },
+    { ic:"🧮", name:"Korelacja wieloraka", file:"korelacja-wieloraka.html",
+      desc:"Korelacja cząstkowa i wieloraka, współczynnik R i determinacja R²." },
+    { ic:"📝", name:"Statystyka — kurs Navoica + AI", file:"Statystyka_Navoica_Egzamin.html",
+      desc:"Indeksy, trend, sezonowość, korelacja i regresja — pytania wprost z testów Navoica, quiz 70 pytań." }
+  ]
+};
+
+const FAQS = [
+  { q:"Co to jest Unicorner?",
+    a:"Zbiór materiałów do egzaminów: fiszki, zadania z omówieniem krok po kroku i quizy z natychmiastową informacją zwrotną. Wszystko w jednym miejscu — bez logowania, bez opłat, bez reklam. Działa w przeglądarce, na telefonie i na komputerze. Pomysł jest prosty: chcesz się nauczyć jednego przedmiotu — otwierasz zakładkę i się uczysz." },
+  { q:"Czy to oficjalna strona UEP?",
+    a:"<b>Nie.</b> To projekt studencki, niepowiązany z uczelnią, żadną katedrą ani konkretnym wykładowcą. Robiony przez studentów, dla studentów. Wszystkie materiały to nasze własne opracowania — nie znajdziesz tu prezentacji ani skanów notatek wykładowców." },
+  { q:"Skąd biorą się materiały?",
+    a:"To <b>nasze własne opracowania</b> na bazie zajęć, notatek i literatury — układane pod to, co realnie sprawdzają na kolokwiach i egzaminach. Traktuj Unicornera jako dodatek do nauki i szybką powtórkę przed egzaminem, a nie zamiennik oryginalnych źródeł. Slajdów i skryptów z UEP tu nie kopiujemy." },
+  { q:"Czy to darmowe?",
+    a:"Tak. Otwierasz i się uczysz — bez kont, bez opłat, bez reklam. Nie zbieramy adresów e-mail, nie sprzedajemy danych, nie mamy żadnego produktu premium. Cały projekt utrzymujemy sami, bo sami się z niego uczymy." },
+  { q:"Czy postęp się zapisuje?",
+    a:"Tak, ale tylko lokalnie. W quizach i fiszkach postęp (co odznaczyłeś jako „Umiem\", jaki masz wynik quizu) trzymany jest w Twojej przeglądarce (localStorage). Nic nie wysyłamy na żaden serwer. Wyczyścisz dane przeglądarki lub otworzysz stronę w trybie incognito — zacznie się od zera. Jeśli chcesz uczyć się na dwóch urządzeniach, postęp się między nimi nie zsynchronizuje." },
+  { q:"Mam własne notatki albo materiały — jak je dorzucić?",
+    a:"Wyślij mi je na <a href=\"mailto:unicornernotatki@gmail.com\" style=\"color:var(--cyan);text-decoration:none;border-bottom:1px dashed rgba(39,232,255,.4);\">unicornernotatki@gmail.com</a>. Notatki, skany, skrypty, opracowania — cokolwiek. Jeżeli materiał jest dobrej jakości, dorzucę go do odpowiedniego przedmiotu albo zrobię z niego osobną zakładkę. Jak nie masz notatek, ale znasz przedmiot, który powinien tu być — też się odezwij." }
+];
+
+const grid = document.getElementById('grid');
+const statParts = STAT_GROUP.parts.length;
+const liveCount = SUBJECTS.filter(s=>s.status==='live').length + statParts;
+document.getElementById('count').textContent =
+  liveCount + (liveCount===1?' gotowy':(liveCount>=2&&liveCount<=4?' gotowe':' gotowych'));
+
+function cardHtml(s){
+  const live = s.status==='live';
+  const tagHtml = s.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  const inner = `
+    <div class="card-top"><div class="emoji">${s.emoji}</div>
+    <span class="badge ${live?'live':'soon'}">${s.badge || (live?'gotowe':'wkrótce')}</span></div>
+    <h3>${s.name}</h3><p class="desc">${s.desc}</p>
+    <div class="tags">${tagHtml}</div>
+    <span class="go">${live?'Otwórz':'W przygotowaniu'} <span class="arr">→</span></span>`;
+  return live ? `<a class="card live" href="${s.file}">${inner}</a>`
+              : `<div class="card soon">${inner}</div>`;
+}
+
+function statHubHtml(g){
+  const links = g.parts.map(p=>`
+    <a class="stat-link" href="${p.file}">
+      <span class="sl-ic">${p.ic}</span>
+      <span class="sl-name">${p.name}</span>
+      <span class="sl-desc">${p.desc}</span>
+      <span class="sl-go">Otwórz <span class="arr">→</span></span>
+    </a>`).join('');
+  return `<div class="stat-hub">
+    <div class="stat-head">
+      <div class="emoji">${g.emoji}</div>
+      <div>
+        <h3>${g.name} <span class="fb-tag">— FINAL BOSS</span></h3>
+        <p class="desc">${g.desc}</p>
+      </div>
+      <span class="badge live">${g.parts.length} ${g.parts.length>=2&&g.parts.length<=4?'działy':'działów'}</span>
+    </div>
+    <div class="stat-divider">działy statystyki</div>
+    <div class="stat-links">
+      <div class="stat-shards" aria-hidden="true">
+        <span class="shard"></span><span class="shard"></span><span class="shard"></span><span class="shard"></span>
+        <span class="shard"></span><span class="shard"></span><span class="shard"></span><span class="shard"></span>
+      </div>
+      ${links}
+    </div>
+  </div>`;
+}
+
+const liveSubjects = SUBJECTS.filter(s=>s.status==='live');
+const soonSubjects = SUBJECTS.filter(s=>s.status!=='live');
+grid.innerHTML =
+  liveSubjects.map(cardHtml).join('') +
+  statHubHtml(STAT_GROUP) +
+  soonSubjects.map(cardHtml).join('');
+
+const faq = document.getElementById('faq');
+faq.innerHTML = FAQS.map((f,i)=>`
+  <button class="faq-item" data-rev aria-expanded="false">
+    <div class="faq-q"><span class="faq-ic"></span><span class="faq-t"><span class="faq-num">${String(i+1).padStart(2,'0')}</span>${f.q}</span></div>
+    <div class="faq-a"><p>${f.a}</p></div>
+  </button>`).join('');
+faq.querySelectorAll('.faq-item').forEach(it=>{
+  it.addEventListener('click',()=>{
+    const open = it.classList.toggle('open');
+    it.setAttribute('aria-expanded', open);
+  });
+});
+
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+(function(){
+  const targets=[...document.querySelectorAll('.card, .stat-hub, [data-rev]')];
+  if(reduce){ targets.forEach(t=>t.classList.add('in')); return; }
+  const groups=new Map();
+  targets.forEach(t=>{
+    const key=t.parentElement;
+    const n=(groups.get(key)||0); groups.set(key,n+1);
+    t.style.setProperty('--rev-d',(n*0.08)+'s');
+    if(!t.hasAttribute('data-rev')) t.style.transitionDelay=(n*0.08)+'s';
+  });
+  const io=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+  },{threshold:.12,rootMargin:'0px 0px -8% 0px'});
+  targets.forEach(t=>io.observe(t));
+})();
+
+(function(){
+  if(reduce || innerWidth<760) return;
+  const g=document.querySelector('.glow-drift'); if(!g) return;
+  let last=-1, ticking=false;
+  function move(){
+    const y=scrollY*0.12;
+    if(y!==last){ g.style.transform='translate3d(0,'+y+'px,0)'; last=y; }
+    ticking=false;
+  }
+  addEventListener('scroll',()=>{ if(!ticking){ ticking=true; requestAnimationFrame(move); } },{passive:true});
+})();
+
+const escR = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));
+function starRow(n){ n=Math.max(1,Math.min(5,Math.round(n||5))); return '★'.repeat(n)+'☆'.repeat(5-n); }
+function buildReviews(list){
+  const track = document.getElementById('reviewTrack');
+  const has = Array.isArray(list) && list.length;
+  const chip = r => `<div class="review-chip">
+      <div class="stars" aria-label="${(r.stars||5)} na 5">${starRow(r.stars)}</div>
+      <div class="rtext">${escR(r.text||'')}</div>
+      <div class="rname">— <b>${escR(r.name||'Anonim')}</b>${r.subject?' · '+escR(r.subject):''}</div>
+    </div>`;
+  const half = has
+    ? list.map(chip).join('')
+    : '<span class="rev-ph">✦ Tu będą Wasze opinie ✦</span>'.repeat(6);
+  track.innerHTML = reduce ? half : half + half;
+  if(!reduce){ track.style.animationDuration = (has ? Math.max(20, list.length*7) : 30) + 's'; }
+  document.getElementById('reviews').style.display = 'block';
+}
+const REVIEWS_URL = "https://red-queen-3002.unicorner.workers.dev/reviews";
+fetch(REVIEWS_URL)
+  .then(r=>r.ok?r.json():Promise.reject())
+  .then(buildReviews)
+  .catch(()=>fetch('reviews.json',{cache:'no-store'})
+    .then(r=>r.ok?r.json():[])
+    .then(buildReviews)
+    .catch(()=>buildReviews([])));
+
+</script>
+
+<script is:inline>
+(function(){
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var els = Array.prototype.slice.call(document.querySelectorAll('.ow'));
+  if (!els.length) return;
+  var tick = false;
+  function upd(){
+    tick = false;
+    var vh = window.innerHeight;
+    for (var i = 0; i < els.length; i++){
+      var r = els[i].getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) continue;
+      var p = (r.top + r.height/2 - vh/2) / (vh/2 + r.height/2);
+      els[i].firstElementChild.style.transform = 'translateX(' + (p * (i % 2 ? -14 : 14)).toFixed(2) + 'vw)';
+    }
+  }
+  window.addEventListener('scroll', function(){ if(!tick){ tick = true; requestAnimationFrame(upd); } }, {passive:true});
+  window.addEventListener('resize', upd);
+  upd();
+})();
+
+</script>
+
+<script is:inline>
+(function () {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var GL = "ΞΔΣΨΩλØ¥§¤µ†‡/\\|=+<>^?#%$@01".split("");
+  function esc(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function glyph(){ return GL[(Math.random() * GL.length) | 0]; }
+  function run(el) {
+    var full = el.getAttribute('data-final') || el.textContent;
+    el.setAttribute('data-final', full);
+    var n = full.length, start = null;
+    var per = n > 100 ? 12 : (n > 16 ? 26 : 40);
+    var flash = 150;
+    var win = 6;
+    function frame(ts) {
+      if (start === null) start = ts;
+      var t = ts - start, out = '', done = true, i, front = t / per;
+      for (i = 0; i < n; i++) {
+        var ch = full[i], rt = i * per;
+        if (ch === ' ') { out += ' '; continue; }
+        if (t >= rt + flash) { out += esc(ch); }
+        else if (t >= rt) { out += '<span class="rz">' + esc(ch) + '</span>'; done = false; }
+        else { done = false; out += (i < front + win) ? '<span class="scr">' + glyph() + '</span>' : ''; }
+      }
+      el.innerHTML = out + (done ? '' : '<span class="cursor">▍</span>');
+      if (!done) requestAnimationFrame(frame); else el.textContent = full;
+    }
+    requestAnimationFrame(frame);
+  }
+  var io = new IntersectionObserver(function (es) {
+    es.forEach(function (e) { if (e.isIntersecting) { run(e.target); io.unobserve(e.target); } });
+  }, { threshold: .3 });
+  document.querySelectorAll('[data-scramble]').forEach(function (el) { io.observe(el); });
+})();
+
+</script>
+
+<script is:inline type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+}}
+
+</script>
+
+<script is:inline type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const canvas = document.getElementById('gl');
+if (canvas) {
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.setClearColor(0x000000, 0);
+  let W=innerWidth, H=innerHeight;
+  const wireMats=[]; let bloomComposer, finalComposer, bloomPass;
+
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(42, W/H, 0.1, 100);
+  cam.position.set(0, 0.15, 5.2);
+  function size(){ W=innerWidth; H=innerHeight; renderer.setSize(W,H,false); cam.aspect=W/H; cam.updateProjectionMatrix();
+    wireMats.forEach(m=>m.resolution.set(W,H));
+    if(bloomComposer){ bloomComposer.setSize(W,H); finalComposer.setSize(W,H); bloomPass.setSize(W,H); } }
+  addEventListener('resize', size);
+
+  const ballGroup = new THREE.Group(); scene.add(ballGroup);
+  const cluster = new THREE.Group(); ballGroup.add(cluster);
+
+  // ---- WIDOK 1: SZKIELET (x-ray fresnel + additive), fade przez uOpacity ----
+  const skullGroup = new THREE.Group(); scene.add(skullGroup);
+  const xrayMat = new THREE.ShaderMaterial({
+    uniforms:{ uRim:{value:new THREE.Color(0x27e8ff)}, uMid:{value:new THREE.Color(0xa78bfa)},
+      uBase:{value:new THREE.Color(0x181042)}, uPower:{value:2.2}, uOpacity:{value:1.0} },
+    transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide,
+    vertexShader:`varying vec3 vN; varying vec3 vV;
+      void main(){ vec4 wp=modelMatrix*vec4(position,1.0);
+        vN=normalize(mat3(modelMatrix)*normal); vV=normalize(cameraPosition-wp.xyz);
+        gl_Position=projectionMatrix*viewMatrix*wp; }`,
+    fragmentShader:`uniform vec3 uRim,uMid,uBase; uniform float uPower,uOpacity;
+      varying vec3 vN; varying vec3 vV;
+      void main(){
+        float f=pow(1.0-abs(dot(normalize(vN),normalize(vV))),uPower);
+        vec3 col=mix(uBase,uMid,smoothstep(0.0,0.5,f));
+        col=mix(col,uRim,smoothstep(0.45,1.0,f));
+        col*=(0.5+f);
+        gl_FragColor=vec4(col*uOpacity,1.0);
+      }`
+  });
+  const draco = new DRACOLoader();
+  draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/libs/draco/');
+  const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
+  loader.load('assets/skeleton.glb', (g)=>{
+    const root=g.scene;
+    root.traverse(o=>{ if(o.isMesh) o.material=xrayMat; });
+    const box=new THREE.Box3().setFromObject(root);
+    const c=box.getCenter(new THREE.Vector3()), s=box.getSize(new THREE.Vector3());
+    root.position.sub(c);
+    const target=3.7, k=target/Math.max(s.x,s.y,s.z);
+    root.scale.setScalar(k);
+    root.position.y -= target*0.56;
+    skullGroup.add(root);
+  }, undefined, (e)=>console.error('skull load error', e));
+
+  // RURA-tunel wzdluz osi patrzenia — fioletowa siatka, jasne brzegi, ciemny rdzen. Wartosci zablokowane.
+  const tun = { dens:30, thick:0.70, line:2.65, edge:1.0, fade:0.10, y:0.4, z:-15, par:0.15 };
+  const tunB1 = new THREE.Color(0x5a2fbf);   // WIDOK 1: niebiesko-fioletowy (jak bylo)
+  const tunB2 = new THREE.Color(0x8a4af0);   // WIDOK 2: fiolet kuli
+  const gridMat = new THREE.ShaderMaterial({
+    uniforms:{
+      uA:{value:new THREE.Color(0xa855ff)}, uB:{value:tunB1.clone()},
+      uDens:{value:tun.dens}, uThick:{value:tun.thick},
+      uLine:{value:tun.line}, uEdge:{value:tun.edge}, uFade:{value:tun.fade}
+    },
+    transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.BackSide,
+    vertexShader:`varying float vDepth; varying vec2 vUv;
+      void main(){ vUv=uv; vec4 mv=modelViewMatrix*vec4(position,1.0); vDepth=-mv.z;
+        gl_Position=projectionMatrix*mv; }`,
+    fragmentShader:`uniform vec3 uA,uB; uniform float uDens,uThick,uLine,uEdge,uFade;
+      varying float vDepth; varying vec2 vUv;
+      float gl(float c, float w){ float l=abs(fract(c-0.5)-0.5)/fwidth(c); return 1.0-min(l/w,1.0); }
+      void main(){
+        float g   = max(gl(vUv.x*uDens, uThick), gl(vUv.y*uDens, uThick));
+        float fog = exp(-max(vDepth-3.0,0.0)*uFade);
+        vec3  col = mix(uA, uB, smoothstep(5.0, 20.0, vDepth));
+        float a   = g*fog*uLine + fog*fog*uEdge;
+        gl_FragColor = vec4(col, a);
+      }`
+  });
+  const tunnel = new THREE.Mesh(new THREE.CylinderGeometry(4.8, 4.8, 52, 64, 1, true), gridMat);
+  tunnel.rotation.x = Math.PI/2;
+  tunnel.position.set(0, tun.y, tun.z);
+  scene.add(tunnel);
+
+  // KULA-KLASTER (zamiast szkieletu): ikozaedr -> zewnetrzne trojkaty odlamkow, gruby jednolity fioletowy drut
+  function buildEdges(baseGeo,e){ const pos=baseGeo.getAttribute('position').array,out=[];
+    const c=new THREE.Vector3(),d=new THREE.Vector3(); const seg=(a,b)=>{out.push(a[0],a[1],a[2],b[0],b[1],b[2]);};
+    for(let i=0;i<pos.length;i+=9){
+      const p1=[pos[i],pos[i+1],pos[i+2]],p2=[pos[i+3],pos[i+4],pos[i+5]],p3=[pos[i+6],pos[i+7],pos[i+8]];
+      c.set(p1[0]+p2[0]+p3[0],p1[1]+p2[1]+p3[1],p1[2]+p2[2]+p3[2]).divideScalar(3); d.copy(c).normalize();
+      const p4=[p1[0]+d.x*e,p1[1]+d.y*e,p1[2]+d.z*e],p5=[p2[0]+d.x*e,p2[1]+d.y*e,p2[2]+d.z*e],p6=[p3[0]+d.x*e,p3[1]+d.y*e,p3[2]+d.z*e];
+      seg(p4,p5); seg(p5,p6); seg(p6,p4);
+    } return out; }
+  const baseIco=new THREE.IcosahedronGeometry(1,1);
+  const wireGeo=new LineSegmentsGeometry(); wireGeo.setPositions(buildEdges(baseIco,0.5));
+  function wireMat(color,lw,op){ const m=new LineMaterial({color,linewidth:lw,transparent:true,opacity:op||1.0,blending:THREE.NormalBlending,depthWrite:false,alphaToCoverage:false}); m.resolution.set(W,H);
+    m.onBeforeCompile=(sh)=>{ sh.fragmentShader=sh.fragmentShader.replace('if ( len2 > 1.0 ) discard;','discard;'); }; wireMats.push(m); return m; }
+  const ballMat = wireMat(0xa855ff, 4.0, 0.0);   // start ukryta (WIDOK 1)
+  const ballLine=new LineSegments2(wireGeo, ballMat);
+  ballLine.layers.enable(1);                 // warstwa dla selektywnego bloomu
+  cluster.add(ballLine);
+
+  // selektywny bloom: swieci TYLKO kula; tunel i tlo zostaja dokladnie takie jak byly (przezroczysty canvas)
+  const BLOOM_LAYER=1;
+  bloomComposer=new EffectComposer(renderer); bloomComposer.renderToScreen=false;
+  bloomComposer.addPass(new RenderPass(scene,cam));
+  bloomPass=new UnrealBloomPass(new THREE.Vector2(W,H), 0.95, 0.5, 0.05);
+  bloomComposer.addPass(bloomPass);
+  const mixPass=new ShaderPass(new THREE.ShaderMaterial({
+    uniforms:{ baseTexture:{value:null}, bloomTexture:{value:bloomComposer.renderTarget2.texture} },
+    vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader:`uniform sampler2D baseTexture; uniform sampler2D bloomTexture; varying vec2 vUv;
+      void main(){ vec4 b=texture2D(baseTexture,vUv); vec4 g=texture2D(bloomTexture,vUv); gl_FragColor=b+g; }`
+  }), 'baseTexture');
+  finalComposer=new EffectComposer(renderer);
+  finalComposer.addPass(new RenderPass(scene,cam));
+  finalComposer.addPass(mixPass);
+
+  const mouse={x:0,y:0};
+  addEventListener('pointermove', e=>{ mouse.x=(e.clientX/innerWidth)*2-1; mouse.y=(e.clientY/innerHeight)*2-1; });
+  let tiltY=0, tiltX=0;   // wygladzony wplyw myszy (osobno od kolysania)
+
+  const clampf=(v,a,b)=>Math.min(Math.max(v,a),b);
+  const heroScreen=document.getElementById('heroScreen');
+  const siteGrid=document.getElementById('siteGrid');
+  const skullHud=['hudTitle','hudTelemBR','hudCap','hudHint'].map(id=>document.getElementById(id)).filter(Boolean);
+  const genScreen=document.getElementById('genScreen');
+  const genLaunch=document.getElementById('genLaunch');
+  size();
+  renderer.setAnimationLoop((t)=>{
+    const vh=innerHeight, s=scrollY;
+    const tp = clampf((s - vh*0.30)/(vh*0.85), 0, 1);   // WIDOK1 (szkielet) -> WIDOK2 (kula)
+    const ep = clampf((s - vh*1.65)/(vh*0.70), 0, 1);   // wyjscie intro -> reszta strony
+    const skullFade = clampf((0.58 - tp)/0.46, 0, 1);   // szkielet + jego HUD (gasnie ~tp 0.58)
+    const ballFade  = clampf((tp - 0.42)/0.46, 0, 1);   // kula + generator HUD (od ~tp 0.42, lekkie zazebienie)
+    const en = ballFade*ballFade*(3.0-2.0*ballFade);    // wygladzone wejscie kuli+info OD DOLU
+    // wyjscie calego intro (po widoku kuli) -> normalna strona
+    heroScreen.style.opacity = (1-ep).toFixed(3);
+    heroScreen.style.transform = 'scale('+(1-0.05*ep).toFixed(4)+')';
+    heroScreen.style.pointerEvents = ep>0.5 ? 'none' : 'auto';
+    if(siteGrid) siteGrid.style.opacity = (ep*0.6).toFixed(3);
+    // crossfade tekstu i 3D: szkielet -> kula
+    skullHud.forEach(el=>{ el.style.opacity = skullFade.toFixed(3); });
+    if(genScreen){ genScreen.style.opacity = ballFade.toFixed(3); genScreen.style.transform = 'translateY('+(180*(1-en)).toFixed(1)+'px)'; }
+    if(genLaunch) genLaunch.style.pointerEvents = (ballFade>0.6 && ep<0.5) ? 'auto' : 'none';
+    xrayMat.uniforms.uOpacity.value = skullFade;
+    skullGroup.scale.setScalar(1 - 0.15*tp);
+    ballMat.opacity = ballFade;
+    ballGroup.position.y = -1.0*(1-en);                 // kula wjezdza OD DOLU do srodka
+    cluster.scale.setScalar(0.62*(0.94 + 0.06*tp));
+    gridMat.uniforms.uB.value.copy(tunB1).lerp(tunB2, tp);   // tunel przebarwia sie na kolor kuli
+    if(ep>=1) return;                                        // intro poza kadrem -> nie renderuj
+    // kolysanie (~±18°) + wygladzony wplyw myszy (na szkielecie i kuli — widoczny i tak jeden)
+    tiltY += (mouse.x*0.4 - tiltY)*0.06;
+    tiltX += (mouse.y*0.22 - tiltX)*0.05;
+    const yaw = Math.sin(t*0.0004)*0.32 + tiltY;
+    skullGroup.rotation.y = yaw; skullGroup.rotation.x = tiltX;
+    cluster.rotation.y = yaw;    cluster.rotation.x = tiltX;
+    const tx=-mouse.x*tun.par, ty=tun.y - mouse.y*tun.par*0.6;
+    tunnel.position.x += (tx - tunnel.position.x)*0.05;
+    tunnel.position.y += (ty - tunnel.position.y)*0.05;
+    // selektywny bloom: 1) tylko kula -> bloom, 2) pelna scena + naklada glow
+    cam.layers.set(BLOOM_LAYER); bloomComposer.render();
+    cam.layers.set(0); finalComposer.render();
+  });
+}
+
+</script>
 </Base>
