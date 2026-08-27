@@ -1,0 +1,588 @@
+---
+import Base from '../layouts/Base.astro';
+const title = "Analiza tendencji rozwojowej — trend · Unicorner";
+const description = "Szeregi czasowe i modele trendu: trend liniowy MNK, miary dopasowania (R², φ², błąd szacunku), trend potęgowy i wykładniczy, prognozowanie. Materiały, ściąga Excela, zadania i quiz.";
+---
+
+<Base title={title} description={description}>
+<style is:inline>
+  :root{
+    --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
+    --line:#241d4a; --line2:#3a2e74;
+    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --accent-d:#8b5cf6;
+    --ok:#5ad1a0; --ok-bg:#10241d; --ok-line:#1d4a3a;
+    --bad:#f87a8e; --bad-bg:#2a0f17; --bad-line:#5a2230;
+    --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+    --shadow:0 18px 50px rgba(0,0,0,.5);
+    --mono:'Chakra Petch','Space Grotesk',ui-monospace,monospace; --disp:'Chakra Petch','Space Grotesk',sans-serif; --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a; --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:
+      radial-gradient(900px 500px at 85% -8%, #1e1646 0%, transparent 58%),
+      radial-gradient(700px 460px at -8% 4%, #181133 0%, transparent 52%),
+      var(--ink);
+    color:var(--text);min-height:100vh;line-height:1.55;letter-spacing:.1px;overflow-x:hidden;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+  header{padding:20px 0 6px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .horn{width:26px;height:26px;flex-shrink:0;display:block;}
+  .horn .seg{fill:url(#irisGrad);}
+  .wordmark{font-family:var(--mono);font-weight:700;font-size:1.34rem;letter-spacing:.3px;}
+  .wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .back{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:7px 13px;border-radius:999px;transition:border-color .2s,color .2s;}
+  .back:hover{color:var(--text);border-color:var(--line2);}
+  .hero{padding:34px 0 18px;max-width:760px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);background:var(--ink2);padding:6px 12px;border-radius:999px;margin-bottom:18px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);}
+  h1{font-family:var(--mono);font-weight:700;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.07;letter-spacing:-.8px;margin-bottom:14px;}
+  h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .lede{font-size:1.02rem;color:var(--muted);max-width:600px;}
+  .lede b{color:var(--text);font-weight:600;}
+  nav.pills{position:sticky;top:0;z-index:20;display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;margin:8px 0 6px;
+    background:linear-gradient(var(--ink),var(--ink) 70%,transparent);backdrop-filter:blur(4px);}
+  nav.pills a{font-family:var(--mono);font-size:.85rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:999px;transition:.2s;}
+  nav.pills a:hover{color:var(--text);border-color:var(--line2);transform:translateY(-1px);}
+  section.block{padding:26px 0 8px;}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin:8px 0 18px;font-family:var(--mono);}
+  .sec-head h2{font-size:1.3rem;font-weight:700;letter-spacing:-.3px;}
+  .sec-head .num{font-size:.8rem;color:var(--accent);font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:8px;padding:3px 9px;}
+  .sec-head .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+  .sub-note{color:var(--muted);font-size:.92rem;margin:-8px 0 18px;max-width:700px;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden;}
+  .mcard::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);opacity:.65;}
+  .mcard h3{font-family:var(--mono);font-size:1.05rem;font-weight:600;margin-bottom:4px;}
+  .mcard .tagline{font-size:.78rem;color:var(--accent);font-family:var(--mono);margin-bottom:10px;}
+  .mcard p{font-size:.9rem;color:var(--muted);margin-bottom:8px;}
+  .mcard p b{color:var(--text);font-weight:600;}
+  .mcard ul{list-style:none;margin:6px 0 0;}
+  .mcard li{font-size:.88rem;color:var(--muted);padding:4px 0 4px 18px;position:relative;}
+  .mcard li::before{content:"›";position:absolute;left:2px;color:var(--accent);font-weight:700;}
+  .mcard li b{color:var(--text);font-weight:600;}
+  .fml{display:block;font-family:var(--mono);font-size:.92rem;color:var(--text);background:var(--ink2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:8px 0;letter-spacing:.2px;}
+  .fml .v{color:var(--accent);}
+  .callout{font-size:.84rem;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;padding:10px 13px;margin-top:10px;}
+  .callout b{color:var(--text);}
+  .xtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);}
+  table.xt{width:100%;border-collapse:collapse;min-width:560px;font-size:.9rem;}
+  table.xt th{font-family:var(--mono);text-align:left;font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;padding:12px 14px;border-bottom:1px solid var(--line2);background:var(--ink2);}
+  table.xt td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.xt tr:last-child td{border-bottom:none;}
+  table.xt td.fn{font-family:var(--mono);color:var(--accent);white-space:nowrap;}
+  table.xt td.measure b{color:var(--text);}
+  table.xt td.measure small{display:block;color:var(--muted2);font-size:.78rem;margin-top:2px;}
+  .ex{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;position:relative;}
+  .ex.solved{border-color:var(--ok-line);}
+  .ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+  .ex-theme{font-family:var(--mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);}
+  .ex-diff{font-family:var(--mono);font-size:.68rem;color:var(--muted2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;}
+  .ex h3{font-family:var(--mono);font-size:1.04rem;font-weight:600;margin-bottom:10px;}
+  .ex .data{font-size:.9rem;color:var(--muted);margin-bottom:12px;}
+  .dtable-wrap{overflow-x:auto;margin:10px 0;}
+  table.dt{border-collapse:collapse;font-family:var(--mono);font-size:.85rem;}
+  table.dt th,table.dt td{border:1px solid var(--line2);padding:6px 12px;text-align:center;color:var(--text);}
+  table.dt th{background:var(--ink2);color:var(--muted);font-weight:600;}
+  .answer-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:6px;}
+  .answer-row input{font-family:var(--mono);font-size:1rem;color:var(--text);background:var(--ink2);border:1px solid var(--line2);border-radius:10px;padding:10px 13px;width:140px;outline:none;transition:border-color .2s;}
+  .answer-row input:focus{border-color:var(--accent);}
+  .answer-row .unit{font-family:var(--mono);color:var(--muted);font-size:.92rem;}
+  .btn{font-family:var(--mono);font-weight:600;font-size:.9rem;color:#160d2b;background:var(--accent);border:none;border-radius:10px;padding:10px 18px;cursor:pointer;transition:transform .15s,background .2s;}
+  .btn:hover{transform:translateY(-1px);background:#b9a3fb;}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line2);}
+  .btn.ghost:hover{color:var(--text);background:var(--surface2);}
+  .verdict{font-family:var(--mono);font-size:.9rem;font-weight:600;padding:8px 0;display:none;}
+  .verdict.ok{color:var(--ok);display:block;}
+  .verdict.bad{color:var(--bad);display:block;}
+  .solution{display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:14px;}
+  .solution.show{display:block;animation:fade .3s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .solution h4{font-family:var(--mono);font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;}
+  .step{font-size:.9rem;color:var(--muted);padding:4px 0 4px 20px;position:relative;}
+  .step::before{content:"";position:absolute;left:4px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  .step b{color:var(--text);}
+  .step .calc{font-family:var(--mono);color:var(--text);}
+  .excel-tag{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.86rem;background:var(--ok-bg);border:1px solid var(--ok-line);border-radius:10px;padding:9px 13px;font-family:var(--mono);color:#a7e8cd;flex-wrap:wrap;}
+  .excel-tag b{color:#d7f7e8;font-weight:600;}
+  .progress{position:sticky;bottom:14px;margin:18px auto 0;max-width:340px;background:var(--surface);border:1px solid var(--line2);border-radius:999px;padding:8px 16px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.82rem;box-shadow:var(--shadow);z-index:15;}
+  .progress .bar{flex:1;height:6px;background:var(--ink2);border-radius:99px;overflow:hidden;}
+  .progress .bar i{display:block;height:100%;width:0;background:var(--iris);transition:width .4s ease;}
+  .progress .lbl{color:var(--muted);white-space:nowrap;}
+  .quiz-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .q-no{font-family:var(--mono);font-size:.72rem;color:var(--accent);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .q-text{font-size:1rem;margin:8px 0 14px;font-weight:500;}
+  .opt{display:block;width:100%;text-align:left;background:var(--ink2);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:9px;cursor:pointer;color:var(--text);font-family:inherit;font-size:.94rem;transition:border-color .15s,background .15s;}
+  .opt:hover:not(:disabled){border-color:var(--line2);background:var(--surface2);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#cdeede;}
+  .opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#f7c9d1;}
+  .q-exp{display:none;font-size:.9rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:var(--ink2);border-radius:9px;padding:11px 13px;}
+  .q-exp.show{display:block;animation:fade .3s ease;}
+  .q-exp b{color:var(--text);}
+  .quiz-score{text-align:center;font-family:var(--mono);padding:22px;border:1px solid var(--line2);border-radius:16px;background:var(--ink2);margin-top:6px;}
+  .quiz-score .big{font-size:2.2rem;font-weight:700;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  footer{border-top:1px solid var(--line);padding:26px 0 50px;margin-top:40px;}
+  .disclaimer{font-size:.78rem;color:var(--muted2);max-width:620px;line-height:1.6;}
+  .disclaimer b{color:var(--muted);font-weight:600;}
+  @media(max-width:560px){.hero{padding:26px 0 14px;}.answer-row input{width:120px;}}
+</style>
+<style is:inline>
+/* ===== CYBERPUNK THEME — spójny z Unicorner ===== */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:linear-gradient(rgba(39,232,255,.05) 1px,transparent 1px) 0 0/100% 3px;mix-blend-mode:screen;opacity:.5;}
+/* kwadratowa siatka w tle — jak na stronie głównej */
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px,linear-gradient(rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px;}
+/* logo spójne ze stroną główną + lewitujący róg jednorożca */
+.wordmark,.uc-wordmark{font-size:1.72rem !important;letter-spacing:.5px !important;}
+.horn,.uc-horn{width:38px !important;height:38px !important;filter:drop-shadow(0 0 7px rgba(39,232,255,.5));}
+@media (prefers-reduced-motion:no-preference){.horn,.uc-horn{animation:hornFloat 5s ease-in-out infinite;}}
+@keyframes hornFloat{50%{transform:translateY(-3px) rotate(-3deg);}}
+@media(max-width:560px){.wordmark,.uc-wordmark{font-size:1.5rem !important;}.horn,.uc-horn{width:34px !important;height:34px !important;}}
+h1,h2,h3,h4,h5,h6,.wordmark,.sec-head h2,.mcard h3{font-family:'Chakra Petch','Space Grotesk','Inter',sans-serif !important;letter-spacing:.4px;}
+nav.pills a,.mcard,.ex,.quiz-card,.opt,.quiz-score,.xtable-wrap,.eyebrow,.back{border-radius:4px !important;}
+/* neon obwódka tylko na elementach klikalnych */
+nav.pills a,.opt,.back{transition:border-color .18s,box-shadow .18s,background .18s !important;}
+nav.pills a:hover,.back:hover,.opt:hover:not(:disabled){border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 8px 26px rgba(167,139,250,.22),0 0 14px rgba(39,232,255,.13) !important;}
+</style>
+<style is:inline>
+/* ===== PELNY MOTYW — doszlifowanie do wzorca (scanbar, sweep, HUD, gigant) ===== */
+.scanbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:var(--iris);background-size:200% 100%;opacity:.9;}
+@media (prefers-reduced-motion:no-preference){.scanbar{animation:ucshim 6s linear infinite;}}
+@keyframes ucshim{to{background-position:200% 0;}}
+.uc-sweep{position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(39,232,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
+@media (prefers-reduced-motion:no-preference){.uc-sweep{animation:ucsweep 14s ease-in-out infinite;}}
+@keyframes ucsweep{0%,100%{transform:translateX(-30%);}50%{transform:translateX(30%);}}
+.wrap{position:relative;z-index:1;}
+.wordmark .ai,.wordmark{font-family:var(--disp) !important;}
+.eyebrow{color:var(--cyan) !important;border-color:var(--line2) !important;background:rgba(39,232,255,.05) !important;}
+.eyebrow .dot{background:var(--cyan) !important;box-shadow:0 0 10px var(--cyan) !important;}
+.sec-head .num{color:#0b0918 !important;background:var(--iris) !important;border:none !important;font-family:var(--disp);font-weight:800;box-shadow:0 0 14px rgba(39,232,255,.3);}
+.mcard,.ex,.quiz-card,.quiz-score,.xtable-wrap{clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+.ex{position:relative;}
+.mcard::after,.ex::after{content:"";position:absolute;top:7px;left:7px;width:12px;height:12px;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);opacity:.4;pointer-events:none;}
+.mcard::before{background:var(--iris) !important;opacity:.9 !important;}
+.btn{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.quiz-score .big{font-family:'Orbitron','Chakra Petch',sans-serif;font-weight:800;}
+.giant{position:relative;z-index:1;text-align:center;overflow:hidden;line-height:.9;user-select:none;pointer-events:none;margin:26px auto 18px;padding:0 16px;}
+.giant span{display:inline-block;max-width:100%;font-family:'Orbitron','Chakra Petch',sans-serif;font-weight:800;font-size:clamp(1.7rem,11vw,6.2rem);letter-spacing:.04em;line-height:1;white-space:nowrap;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px rgba(39,232,255,.5)) drop-shadow(0 0 34px rgba(167,139,250,.4));}
+@media (prefers-reduced-motion:no-preference){.giant span{animation:ucshim 8s linear infinite;}}
+.foot-brand{display:flex;align-items:center;gap:9px;color:var(--muted);font-family:var(--disp);font-weight:600;font-size:.92rem;letter-spacing:1px;margin-top:14px;}
+.foot-brand .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+</style>
+<style is:inline>
+/* ===== GIGA-NAPIS: sama obwodka, bez poswiaty, czysta szeroka czcionka ===== */
+.giant span{
+  font-family:'Michroma','Orbitron','Chakra Petch',sans-serif !important;
+  font-weight:400 !important;
+  font-size:clamp(1.25rem,7.8vw,4rem) !important;
+  letter-spacing:.12em !important;
+  background:var(--iris) !important;
+  -webkit-background-clip:text !important;background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  color:transparent !important;
+  -webkit-text-stroke:0 !important;
+  filter:none !important;
+  animation:none !important;
+}
+</style>
+
+<div class="scanbar" aria-hidden="true"></div><div class="uc-sweep" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wordmark">Uni<span class="ai">corner</span></span>
+      </a>
+      <a class="back" href="index.html">← wszystkie przedmioty</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>Statystyka opisowa · UEP</span>
+    <h1>Analiza tendencji <span class="grad">rozwojowej</span></h1>
+    <p class="lede">Modele trendu w szeregach czasowych: trend liniowy metodą najmniejszych kwadratów, <b>ocena dopasowania (R², φ², błąd szacunku)</b>, trend potęgowy i wykładniczy oraz prognozowanie. Sezonowość — w osobnym dziale.</p>
+  </section>
+
+  <nav class="pills">
+    <a href="#materialy">Materiały</a>
+    <a href="#excel">Ściąga Excela</a>
+    <a href="#zadania">Zadania</a>
+    <a href="#quiz">Quiz</a>
+  </nav>
+
+  <!-- ===================== MATERIAŁY ===================== -->
+  <section class="block" id="materialy">
+    <div class="sec-head"><span class="num">01</span><h2>Materiały</h2><span class="line"></span></div>
+    <p class="sub-note">Zmienną objaśniającą jest <b>czas t</b> (kolejne okresy 1, 2, …, n). Parametry trendu szacuje się <b>klasyczną metodą najmniejszych kwadratów</b> (MNK) — minimalizując sumę kwadratów odchyleń danych od linii trendu. Przykład przewodni: sprzedaż (mln zł) w latach 2015–2023.</p>
+
+    <div class="cards">
+
+      <div class="mcard">
+        <h3>Szereg czasowy i jego składowe</h3>
+        <div class="tagline">co siedzi w danych</div>
+        <p>Chronologiczny ciąg wartości zjawiska. Rozkłada się na:</p>
+        <ul>
+          <li><b>Trend (T)</b> — długookresowy kierunek zmian</li>
+          <li><b>Wahania cykliczne (C)</b> — wieloletnie, koniunkturalne</li>
+          <li><b>Wahania sezonowe (S)</b> — regularne w ciągu roku</li>
+          <li><b>Wahania przypadkowe (ε)</b> — losowe, nieregularne</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Trend liniowy</h3>
+        <div class="tagline">stały przyrost absolutny</div>
+        <span class="fml"><span class="v">Y = a·t + b</span></span>
+        <ul>
+          <li><b>a</b> — o ile jednostek <b>średnio</b> zmienia się Y co okres</li>
+          <li><b>b</b> — wartość teoretyczna dla <b>t = 0</b> (okres zerowy)</li>
+          <li>t przyjmuje wartości 1, 2, …, n</li>
+        </ul>
+        <div class="callout">Przykład: <b>Y = 13,893·t + 121,426</b> → sprzedaż rosła średnio o 13,893 mln zł rocznie; w 2014 (t=0) trend daje 121,426 mln zł.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Wyznaczanie parametrów (MNK)</h3>
+        <div class="tagline">jak liczyć a i b ręcznie</div>
+        <span class="fml"><span class="v">a = Σ(tᵢ−t̄)(yᵢ−ȳ) / Σ(tᵢ−t̄)²</span></span>
+        <span class="fml"><span class="v">b = ȳ − a·t̄</span></span>
+        <ul>
+          <li>Budujesz kolumny: t−t̄, y−ȳ, ich iloczyn i (t−t̄)²</li>
+          <li>a = suma iloczynów / suma kwadratów</li>
+          <li>t̄ to środek osi czasu (dla n=9 → t̄=5)</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Miary dopasowania</h3>
+        <div class="tagline">jak dobrze trend pasuje</div>
+        <span class="fml">determinacja: <span class="v">R² ∈ [0; 1]</span></span>
+        <span class="fml">zbieżność: <span class="v">φ² = 1 − R²</span></span>
+        <span class="fml">błąd szacunku: <span class="v">s = √(Σ(yᵢ−ŷᵢ)² / (n−2))</span></span>
+        <ul>
+          <li><b>R²</b> — jaką część zmienności trend <b>wyjaśnia</b> (0,988 → 98,8%)</li>
+          <li><b>φ²</b> — część <b>niewyjaśniona</b> (0,012 → 1,2%)</li>
+          <li><b>s</b> — przeciętne odchylenie od trendu, w jednostkach Y</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Wartości teoretyczne i reszty</h3>
+        <div class="tagline">ŷ kontra rzeczywistość</div>
+        <span class="fml">teoretyczna: <span class="v">ŷᵢ = a·tᵢ + b</span></span>
+        <span class="fml">reszta: <span class="v">eᵢ = yᵢ − ŷᵢ</span></span>
+        <ul>
+          <li>ŷ — wartość „z linii trendu" dla okresu tᵢ</li>
+          <li>Reszta dodatnia → punkt nad trendem, ujemna → pod</li>
+          <li>Suma reszt w MNK = 0; ich kwadraty są minimalizowane</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Trend potęgowy</h3>
+        <div class="tagline">stała elastyczność</div>
+        <span class="fml"><span class="v">Y = b·tᵃ</span></span>
+        <ul>
+          <li><b>a</b> — elastyczność: o ile % zmieni się Y, gdy t wzrośnie o 1%</li>
+          <li><b>b</b> — wartość dla t = 1 (okres pierwszy)</li>
+          <li>Przykład: Y = 523,81·t⁰′¹²⁹³ → +1% czasu ≈ +0,13% sprzedaży</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Trend wykładniczy</h3>
+        <div class="tagline">stała stopa wzrostu</div>
+        <span class="fml"><span class="v">Y = b·aᵗ</span></span>
+        <ul>
+          <li><b>(a−1)·100%</b> — o ile % średnio rośnie Y co okres</li>
+          <li>a &gt; 1 → wzrost; 0 &lt; a &lt; 1 → spadek</li>
+          <li>Przykład: Y = 144,76·e⁰′¹²⁰³ᵗ, e⁰′¹²⁰³=1,128 → +12,8% rocznie</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Prognozowanie</h3>
+        <div class="tagline">ekstrapolacja trendu</div>
+        <p>Podstawiasz do równania trendu <b>kolejne wartości t</b> (poza zakresem danych).</p>
+        <ul>
+          <li>Prognozę stawiasz na model o <b>najlepszym dopasowaniu</b></li>
+          <li>Preferowane R² ≥ <b>0,90</b></li>
+          <li>Przy n=9 obserwacjach prognoza zaczyna się od t=10</li>
+        </ul>
+        <div class="callout">Im dalej w przyszłość, tym mniej pewna prognoza — trend zakłada, że dotychczasowa prawidłowość się utrzyma.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== ŚCIĄGA EXCEL ===================== -->
+  <section class="block" id="excel">
+    <div class="sec-head"><span class="num">02</span><h2>Ściąga funkcji Excela</h2><span class="line"></span></div>
+    <p class="sub-note">Trend liniowy policzysz dwoma drogami: <b>funkcjami</b> (NACHYLENIE/ODCIĘTA) albo <b>linią trendu na wykresie</b> (prawy klik na serii → „Dodaj linię trendu" → zaznacz „Wyświetl równanie" i „Wyświetl R²"). Linia trendu obsługuje też wariant potęgowy i wykładniczy.</p>
+    <div class="xtable-wrap">
+      <table class="xt">
+        <thead><tr><th>Co liczysz</th><th>Funkcja Excela</th><th>Uwaga</th></tr></thead>
+        <tbody>
+          <tr><td class="measure"><b>Nachylenie a</b><small>współczynnik kierunkowy</small></td><td class="fn">=NACHYLENIE(Y;t)</td><td>Y — wartości zjawiska, t — zmienna czasowa</td></tr>
+          <tr><td class="measure"><b>Wyraz wolny b</b></td><td class="fn">=ODCIĘTA(Y;t)</td><td>Wartość trendu dla t = 0</td></tr>
+          <tr><td class="measure"><b>Współczynnik determinacji R²</b></td><td class="fn">=R.KWADRAT(Y;t)</td><td>0–1; ·100 daje %</td></tr>
+          <tr><td class="measure"><b>Współczynnik zbieżności φ²</b></td><td class="fn">=1−R.KWADRAT(Y;t)</td><td>Część niewyjaśniona</td></tr>
+          <tr><td class="measure"><b>Błąd standardowy szacunku s</b></td><td class="fn">=REGBŁSTD(Y;t)</td><td>Dzielnik n−2 (uwzględnia 2 parametry)</td></tr>
+          <tr><td class="measure"><b>Prognoza dla nowego t</b></td><td class="fn">=NACHYLENIE(Y;t)*t_new+ODCIĘTA(Y;t)</td><td>Lub krócej: <span style="font-family:var(--mono)">=REGLINX(t_new;Y;t)</span></td></tr>
+          <tr><td class="measure"><b>Pełna regresja (a, b + statystyki)</b></td><td class="fn">=REGLINP(Y;t;PRAWDA;PRAWDA)</td><td>Formuła tablicowa — zwraca też R² i błędy</td></tr>
+          <tr><td class="measure"><b>Trend potęgowy / wykładniczy</b></td><td class="fn">linia trendu na wykresie</td><td>Wybierz typ „Potęgowy" / „Wykładniczy" → pokaż równanie i R²</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== ZADANIA ===================== -->
+  <section class="block" id="zadania">
+    <div class="sec-head"><span class="num">03</span><h2>Zadania krok po kroku</h2><span class="line"></span></div>
+    <p class="sub-note">Dane przewodnie: sprzedaż (mln zł), lata 2015–2023, czyli t = 1…9. Akceptuję przecinek/kropkę i drobne zaokrąglenia. Sumy pomocnicze masz pod tabelą — używaj ich przy MNK.</p>
+    <div id="exList"></div>
+    <div class="progress"><span class="lbl" id="exLbl">0 / 0</span><div class="bar"><i id="exFill"></i></div></div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="block" id="quiz">
+    <div class="sec-head"><span class="num">04</span><h2>Quiz teoretyczny</h2><span class="line"></span></div>
+    <p class="sub-note">Interpretacja parametrów i miar dopasowania, MNK, modele nieliniowe i zasady prognozowania.</p>
+    <div id="quizList"></div>
+    <div class="quiz-score" id="quizScore" style="display:none">
+      <div class="big" id="scoreBig">0 / 0</div>
+      <div id="scoreMsg" style="color:var(--muted);margin-top:6px"></div>
+    </div>
+  </section>
+
+  <div class="giant" aria-hidden="true"><span>TREND</span></div>
+
+  <footer>
+    <p class="disclaimer">
+      <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani żadną katedrą.
+      Materiały to własne opracowania na bazie zajęć. Licz też z oryginalnych źródeł.
+    </p>
+  </footer>
+</div>
+
+<script is:inline>
+const tbl=(head,rows)=>'<div class="dtable-wrap"><table class="dt"><thead><tr>'+head.map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')+'</tbody></table></div>';
+const trendRows=[['2015','1','138,816'],['2016','2','141,696'],['2017','3','162,976'],['2018','4','183,744'],['2019','5','187,209'],['2020','6','205,056'],['2021','7','220,608'],['2022','8','234,248'],['2023','9','243,648']];
+const trendTbl=tbl(['Rok','t','yₜ (mln zł)'],trendRows);
+const sums='<div class="callout"><b>Sumy pomocnicze:</b> ȳ = 190,889 • t̄ = 5 • Σ(tᵢ−t̄)(yᵢ−ȳ) = 833,56 • Σ(tᵢ−t̄)² = 60</div>';
+
+const EXS=[
+ {theme:'MNK · parametr a', diff:'średnie',
+  title:'Współczynnik kierunkowy a',
+  data:'Policz parametr a trendu liniowego (metoda najmniejszych kwadratów).'+trendTbl+sums,
+  ans:13.89, tol:0.1, unit:'mln zł',
+  sol:[['Wzór','a = Σ(tᵢ−t̄)(yᵢ−ȳ) / Σ(tᵢ−t̄)²'],
+       ['Podstawienie','= 833,56 / 60 = <span class="calc">13,893</span>'],
+       ['Interpretacja','sprzedaż rosła średnio o <b>13,893 mln zł rocznie</b>']],
+  excel:'=NACHYLENIE(yₜ;t)'},
+
+ {theme:'MNK · parametr b', diff:'średnie',
+  title:'Wyraz wolny b',
+  data:'Znając a = 13,893, policz wyraz wolny b.'+sums,
+  ans:121.43, tol:0.25, unit:'mln zł',
+  sol:[['Wzór','b = ȳ − a·t̄'],
+       ['Podstawienie','= 190,889 − 13,893·5 = 190,889 − 69,465 = <span class="calc">121,43</span>'],
+       ['Interpretacja','teoretyczna wartość dla t=0 (rok 2014): 121,426 mln zł']],
+  excel:'=ODCIĘTA(yₜ;t)'},
+
+ {theme:'Wartość teoretyczna', diff:'łatwe',
+  title:'Wartość trendu ŷ dla 2019',
+  data:'Równanie trendu: Y = 13,893·t + 121,426. Policz wartość teoretyczną dla 2019 (t = 5).',
+  ans:190.89, tol:0.6, unit:'mln zł',
+  sol:[['Podstawienie','ŷ = 13,893·5 + 121,426 = 69,465 + 121,426'],
+       ['Wynik','ŷ = <span class="calc">190,89 mln zł</span>'],
+       ['Sens','tyle „powinno być" w 2019 wg trendu (rzeczywiste = 187,209)']],
+  excel:'=13,893*5+121,426'},
+
+ {theme:'Reszta', diff:'średnie',
+  title:'Reszta (odchylenie od trendu) dla 2015',
+  data:'Y = 13,893·t + 121,426. Rzeczywista sprzedaż w 2015 (t=1) to 138,816. Policz resztę e = y − ŷ.',
+  ans:3.50, tol:0.3, unit:'mln zł',
+  sol:[['Wartość teoretyczna','ŷ = 13,893·1 + 121,426 = <span class="calc">135,319</span>'],
+       ['Reszta','e = 138,816 − 135,319 = <span class="calc">3,50</span>'],
+       ['Sens','punkt leży <b>nad</b> trendem (reszta dodatnia)']],
+  excel:'=138,816−(13,893*1+121,426)'},
+
+ {theme:'Prognoza', diff:'średnie',
+  title:'Prognoza na 2024',
+  data:'Y = 13,893·t + 121,426. Lata 2015–2023 to t = 1…9, więc 2024 → t = 10. Policz prognozę sprzedaży na 2024.',
+  ans:260.36, tol:0.6, unit:'mln zł',
+  sol:[['Podstawienie','ŷ = 13,893·10 + 121,426 = 138,93 + 121,426'],
+       ['Wynik','= <span class="calc">260,36 mln zł</span>'],
+       ['Warunek','R² = 0,988 ≥ 0,90 → model nadaje się do prognozy']],
+  excel:'=13,893*10+121,426  lub  =REGLINX(10;yₜ;t)'},
+
+ {theme:'Prognoza', diff:'średnie',
+  title:'Prognoza na 2025',
+  data:'Ten sam trend. Policz prognozę na 2025 (t = 11).',
+  ans:274.25, tol:0.6, unit:'mln zł',
+  sol:[['Podstawienie','ŷ = 13,893·11 + 121,426 = 152,823 + 121,426'],
+       ['Wynik','= <span class="calc">274,25 mln zł</span>'],
+       ['Uwaga','im dalej w przyszłość, tym mniej pewna prognoza']],
+  excel:'=13,893*11+121,426'},
+
+ {theme:'Dopasowanie · R²', diff:'łatwe',
+  title:'Interpretacja współczynnika determinacji',
+  data:'Współczynnik determinacji trendu wynosi R² = 0,988. W ilu procentach trend liniowy wyjaśnia kształtowanie się sprzedaży?',
+  ans:98.8, tol:0.3, unit:'%',
+  sol:[['Reguła','udział wyjaśniony = R² · 100%'],
+       ['Obliczenie','0,988 · 100% = <span class="calc">98,8%</span>'],
+       ['Sens','trend liniowy bardzo dobrze opisuje te dane']],
+  excel:'=R.KWADRAT(yₜ;t)*100'},
+
+ {theme:'Dopasowanie · φ²', diff:'średnie',
+  title:'Współczynnik zbieżności φ²',
+  data:'Dla R² = 0,988 policz współczynnik zbieżności φ².',
+  ans:0.012, tol:0.005, unit:'',
+  sol:[['Wzór','φ² = 1 − R²'],
+       ['Obliczenie','= 1 − 0,988 = <span class="calc">0,012</span>'],
+       ['Sens','jedynie <b>1,2%</b> zmienności zostaje niewyjaśnione przez trend']],
+  excel:'=1−R.KWADRAT(yₜ;t)'},
+
+ {theme:'Trend wykładniczy', diff:'trudne',
+  title:'Roczna stopa wzrostu z trendu wykładniczego',
+  data:'Trend wykładniczy: Y = 144,76·e^(0,1203·t). Wiedząc, że e^0,1203 = 1,128, policz przeciętną roczną stopę wzrostu (w %).',
+  ans:12.8, tol:0.3, unit:'%',
+  sol:[['Reguła','stopa wzrostu = (a − 1)·100%, gdzie a = e^0,1203 = 1,128'],
+       ['Obliczenie','(1,128 − 1)·100% = <span class="calc">12,8%</span>'],
+       ['Sens','sprzedaż rośnie średnio o 12,8% rocznie (procent składany)']],
+  excel:'=(EXP(0,1203)−1)*100'},
+
+ {theme:'Trend potęgowy', diff:'trudne',
+  title:'Elastyczność z trendu potęgowego',
+  data:'Trend potęgowy: Y = 523,81·t^0,1293. O ile procent przeciętnie zmieni się sprzedaż, gdy zmienna czasowa wzrośnie o 1%?',
+  ans:0.13, tol:0.03, unit:'%',
+  sol:[['Reguła','w trendzie potęgowym wykładnik a = elastyczność'],
+       ['Odczyt','a = 0,1293 ≈ <span class="calc">0,13</span>'],
+       ['Sens','+1% czasu → +0,13% sprzedaży (stała elastyczność)']],
+  excel:'odczyt wykładnika z równania linii trendu (potęgowej)'}
+];
+
+const KEY='unicorner_trend_v1';
+let solved=JSON.parse(localStorage.getItem(KEY)||'{}');
+const exList=document.getElementById('exList');
+EXS.forEach((e,i)=>{
+  const d=document.createElement('div'); d.className='ex'+(solved['e'+i]?' solved':''); d.id='ex'+i;
+  d.innerHTML=`
+    <div class="ex-top"><span class="ex-theme">${e.theme}</span><span class="ex-diff">${e.diff}</span></div>
+    <h3>${i+1}. ${e.title}</h3>
+    <div class="data">${e.data}</div>
+    <div class="answer-row">
+      <input type="text" inputmode="decimal" placeholder="Twój wynik" aria-label="wynik">
+      ${e.unit?`<span class="unit">${e.unit}</span>`:''}
+      <button class="btn" data-act="check">Sprawdź</button>
+      <button class="btn ghost" data-act="show">Pokaż rozwiązanie</button>
+    </div>
+    <div class="verdict"></div>
+    <div class="solution">
+      <h4>Rozwiązanie</h4>
+      ${e.sol.map(s=>`<div class="step"><b>${s[0]}:</b> ${s[1]}</div>`).join('')}
+      <div class="excel-tag"><span>▦</span><b>W Excelu:</b> ${e.excel}</div>
+    </div>`;
+  const inp=d.querySelector('input'), verd=d.querySelector('.verdict'), sol=d.querySelector('.solution');
+  const reveal=ok=>{ sol.classList.add('show'); if(ok){ d.classList.add('solved'); solved['e'+i]=1; localStorage.setItem(KEY,JSON.stringify(solved)); updateProg(); } };
+  d.querySelector('[data-act=check]').onclick=()=>{
+    const raw=inp.value.replace(',','.').replace(/[^0-9.\-]/g,'');
+    if(raw===''){verd.className='verdict bad';verd.textContent='Wpisz wynik liczbowy.';return;}
+    const v=parseFloat(raw); const ok=Math.abs(v-e.ans)<=(e.tol||0.01)+1e-9;
+    if(ok){verd.className='verdict ok';verd.textContent='✓ Dobrze! Wynik: '+String(e.ans).replace('.',',')+(e.unit?' '+e.unit:'');}
+    else{verd.className='verdict bad';verd.textContent='✗ Nie tym razem — sprawdź rozwiązanie poniżej.';}
+    reveal(ok);
+  };
+  d.querySelector('[data-act=show]').onclick=()=>{ sol.classList.add('show'); };
+  inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')d.querySelector('[data-act=check]').click();});
+  exList.appendChild(d);
+});
+function updateProg(){
+  const done=EXS.filter((_,i)=>solved['e'+i]).length;
+  document.getElementById('exLbl').textContent=done+' / '+EXS.length;
+  document.getElementById('exFill').style.width=(done/EXS.length*100)+'%';
+}
+updateProg();
+
+const QUIZ=[
+ {q:'Trend (tendencja rozwojowa) to:',
+  o:['Krótkookresowe wahania wokół wartości średniej','Długookresowy, regularny kierunek zmian','Przypadkowe, nieregularne odchylenia danych','Regularne wahania powtarzające się co roku'],c:1,
+  e:'Trend to <b>długookresowa</b> prawidłowość — ogólny kierunek, w którym zmierza zjawisko, po odfiltrowaniu wahań sezonowych i losowych.'},
+ {q:'Parametry funkcji trendu szacuje się:',
+  o:['Metodą kolejnych prób i ręcznych korekt','Klasyczną metodą najmniejszych kwadratów','Jako średnią geometryczną z obserwacji','Wskazując wartość środkową całego szeregu'],c:1,
+  e:'Standardem jest <b>MNK</b> — dobiera parametry tak, by zminimalizować sumę kwadratów odchyleń danych od linii trendu.'},
+ {q:'Co minimalizuje metoda najmniejszych kwadratów?',
+  o:['Sumę reszt między danymi a modelem','Sumę kwadratów odchyleń danych od trendu','Największe odchylenie pojedynczego punktu','Liczbę szacowanych parametrów modelu'],c:1,
+  e:'MNK minimalizuje <b>Σ(yᵢ − ŷᵢ)²</b> — sumę kwadratów odchyleń punktów empirycznych od linii trendu. (Sama suma reszt i tak wychodzi 0.)'},
+ {q:'W trendzie liniowym Y = a·t + b parametr a oznacza:',
+  o:['Wartość zjawiska w okresie zerowym','Średnią zmianę Y w jednym okresie','Udział wyjaśnionej zmienności zjawiska','Przeciętny błąd dopasowania modelu'],c:1,
+  e:'<b>a</b> to przeciętna zmiana zjawiska co okres. W przykładzie a = 13,893 → sprzedaż rosła średnio o 13,893 mln zł rocznie.'},
+ {q:'Parametr b w trendzie liniowym to:',
+  o:['Nachylenie linii trendu w czasie','Teoretyczna wartość zjawiska dla t = 0','Procent zmienności wyjaśnionej modelem','Suma reszt po dopasowaniu trendu'],c:1,
+  e:'<b>b</b> to wyraz wolny — wartość trendu w okresie zerowym (t = 0), czyli tuż przed pierwszą obserwacją.'},
+ {q:'R² = 0,988 oznacza, że:',
+  o:['Trend wyjaśnia 98,8% zmienności zjawiska','Błąd szacunku sięga 98,8% wartości','Zjawisko rośnie o 98,8% w okresie','Aż 98,8% punktów to wartości skrajne'],c:0,
+  e:'Współczynnik determinacji = udział zmienności <b>wyjaśnionej</b> przez trend. 0,988 → trend tłumaczy 98,8% zmienności sprzedaży.'},
+ {q:'Współczynnik zbieżności φ² informuje o:',
+  o:['O części zmienności wyjaśnionej trendem','O części zmienności niewyjaśnionej trendem','O nachyleniu linii trendu w czasie','O liczbie okresów w szeregu czasowym'],c:1,
+  e:'φ² = 1 − R². To <b>część niewyjaśniona</b>. Dla R²=0,988 mamy φ²=0,012 → tylko 1,2% zmienności poza trendem.'},
+ {q:'Standardowy błąd szacunku jest wyrażony:',
+  o:['W procentach całkowitej zmienności','W tych samych jednostkach co zmienna Y','W stałym przedziale od 0 do 1','Jako wielkość bez jednostki (ułamek)'],c:1,
+  e:'Błąd szacunku s mierzy przeciętne odchylenie punktów od trendu i ma <b>te same jednostki co Y</b> (np. mln zł).'},
+ {q:'Trend liniowy najlepiej opisuje zjawisko o:',
+  o:['Stałym bezwzględnym przyroście co okres','Stałej procentowej stopie wzrostu','Stałej elastyczności względem czasu','Zupełnym braku tendencji rozwojowej'],c:0,
+  e:'Liniowy = <b>stały przyrost absolutny</b> (co okres +/− podobna liczba jednostek). Stała stopa wzrostu → wykładniczy, stała elastyczność → potęgowy.'},
+ {q:'Trend wykładniczy Y = b·aᵗ charakteryzuje się:',
+  o:['Stałym przyrostem absolutnym co okres','Stałą procentową stopą wzrostu','Stałą elastycznością wobec czasu','Zerowym wyrazem wolnym równania'],c:1,
+  e:'Wykładniczy = <b>stała stopa wzrostu</b>: (a−1)·100% mówi, o ile % średnio zmienia się Y co okres (procent składany).'},
+ {q:'Jak wyznacza się prognozę z funkcji trendu?',
+  o:['Uśredniając kilka ostatnich obserwacji','Podstawiając kolejne wartości t do wzoru','Mnożąc ostatnią wartość przez wskaźnik R²','Dodając błąd szacunku do ostatniej danej'],c:1,
+  e:'Prognoza = <b>ekstrapolacja</b>: do równania trendu wstawiasz kolejne t (np. po 9 obserwacjach zaczynasz od t=10).'},
+ {q:'Który model najlepiej nadaje się do prognozowania?',
+  o:['Model o najniższym współczynniku R²','Model o najlepszym dopasowaniu do danych','Zawsze model liniowy, bez wyjątków','Model z najmniejszą liczbą obserwacji'],c:1,
+  e:'Prognozę stawia się na model <b>najlepiej dopasowany</b> do danych — preferowane wysokie R² (≥ 0,90) i wiarygodny przebieg w przyszłości.'}
+];
+const quizList=document.getElementById('quizList'); let answered=0, correct=0;
+QUIZ.forEach((q,i)=>{
+  const order=q.o.map((t,idx)=>idx).sort(()=>Math.random()-0.5);
+  const card=document.createElement('div'); card.className='quiz-card';
+  card.innerHTML=`<div class="q-no">Pytanie ${i+1} / ${QUIZ.length}</div><div class="q-text">${q.q}</div><div class="opts"></div><div class="q-exp">${q.e}</div>`;
+  const opts=card.querySelector('.opts'), exp=card.querySelector('.q-exp');
+  order.forEach(idx=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=q.o[idx];
+    b.onclick=()=>{
+      opts.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      if(idx===q.c){b.classList.add('correct');correct++;}
+      else{b.classList.add('wrong');opts.querySelectorAll('.opt').forEach(x=>{if(x.textContent===q.o[q.c])x.classList.add('correct');});}
+      exp.classList.add('show'); answered++;
+      if(answered===QUIZ.length){
+        const sc=document.getElementById('quizScore'); sc.style.display='block';
+        document.getElementById('scoreBig').textContent=correct+' / '+QUIZ.length;
+        const pct=correct/QUIZ.length;
+        document.getElementById('scoreMsg').textContent=
+          pct===1?'Komplet — trend rozłożony na czynniki. 🦄':pct>=0.7?'Dobrze. Dopnij miary dopasowania i prognozy.':'Wróć do kart o MNK i R² — tam siedzi sedno.';
+      }
+    };
+    opts.appendChild(b);
+  });
+  quizList.appendChild(card);
+});
+</script>
+
+</Base>

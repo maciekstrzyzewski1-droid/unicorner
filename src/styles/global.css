@@ -1,6 +1,4 @@
-@import "tailwindcss";
-
-/* ===== Design-system Unicornera (przeniesiony 1:1 z index.html) ===== */
+/* ===== Design-system landingu (1:1 z index.html); Tailwind wczytuje Base.astro ===== */
   :root{
     --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
     --line:#241d4a; --line2:#3a2e74;

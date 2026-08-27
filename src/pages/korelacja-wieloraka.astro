@@ -1,0 +1,563 @@
+---
+import Base from '../layouts/Base.astro';
+const title = "Korelacja wieloraka i cząstkowa · Unicorner";
+const description = "Korelacja cząstkowa i wieloraka: współzależność jednej cechy z kompleksem innych, eliminacja wpływu zmiennych, współczynnik korelacji wielorakiej R i determinacji R². Materiały, ściąga Excela, zadania i quiz.";
+---
+
+<Base title={title} description={description}>
+<style is:inline>
+  :root{
+    --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
+    --line:#241d4a; --line2:#3a2e74;
+    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --accent-d:#8b5cf6;
+    --ok:#5ad1a0; --ok-bg:#10241d; --ok-line:#1d4a3a;
+    --bad:#f87a8e; --bad-bg:#2a0f17; --bad-line:#5a2230;
+    --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+    --shadow:0 18px 50px rgba(0,0,0,.5);
+    --mono:'Chakra Petch','Space Grotesk',ui-monospace,monospace; --disp:'Chakra Petch','Space Grotesk',sans-serif; --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a; --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:
+      radial-gradient(900px 500px at 85% -8%, #1e1646 0%, transparent 58%),
+      radial-gradient(700px 460px at -8% 4%, #181133 0%, transparent 52%),
+      var(--ink);
+    color:var(--text);min-height:100vh;line-height:1.55;letter-spacing:.1px;overflow-x:hidden;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 20px;}
+  a{color:inherit;}
+  header{padding:20px 0 6px;}
+  .topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .brand{display:flex;align-items:center;gap:10px;text-decoration:none;}
+  .horn{width:26px;height:26px;flex-shrink:0;display:block;}
+  .horn .seg{fill:url(#irisGrad);}
+  .wordmark{font-family:var(--mono);font-weight:700;font-size:1.34rem;letter-spacing:.3px;}
+  .wordmark .ai{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .back{font-family:var(--mono);font-size:.82rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--ink2);padding:7px 13px;border-radius:999px;transition:border-color .2s,color .2s;}
+  .back:hover{color:var(--text);border-color:var(--line2);}
+  .hero{padding:34px 0 18px;max-width:760px;}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.72rem;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);background:var(--ink2);padding:6px 12px;border-radius:999px;margin-bottom:18px;}
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 10px var(--ok);}
+  h1{font-family:var(--mono);font-weight:700;font-size:clamp(1.9rem,5vw,2.9rem);line-height:1.07;letter-spacing:-.8px;margin-bottom:14px;}
+  h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .lede{font-size:1.02rem;color:var(--muted);max-width:600px;}
+  .lede b{color:var(--text);font-weight:600;}
+  nav.pills{position:sticky;top:0;z-index:20;display:flex;gap:8px;flex-wrap:wrap;padding:14px 0;margin:8px 0 6px;
+    background:linear-gradient(var(--ink),var(--ink) 70%,transparent);backdrop-filter:blur(4px);}
+  nav.pills a{font-family:var(--mono);font-size:.85rem;font-weight:600;color:var(--muted);text-decoration:none;border:1px solid var(--line);background:var(--surface);padding:8px 14px;border-radius:999px;transition:.2s;}
+  nav.pills a:hover{color:var(--text);border-color:var(--line2);transform:translateY(-1px);}
+  section.block{padding:26px 0 8px;}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin:8px 0 18px;font-family:var(--mono);}
+  .sec-head h2{font-size:1.3rem;font-weight:700;letter-spacing:-.3px;}
+  .sec-head .num{font-size:.8rem;color:var(--accent);font-variant-numeric:tabular-nums;border:1px solid var(--line);border-radius:8px;padding:3px 9px;}
+  .sec-head .line{flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent);}
+  .sub-note{color:var(--muted);font-size:.92rem;margin:-8px 0 18px;max-width:700px;}
+  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px;}
+  .mcard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 18px 16px;position:relative;overflow:hidden;}
+  .mcard::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);opacity:.65;}
+  .mcard h3{font-family:var(--mono);font-size:1.05rem;font-weight:600;margin-bottom:4px;}
+  .mcard .tagline{font-size:.78rem;color:var(--accent);font-family:var(--mono);margin-bottom:10px;}
+  .mcard p{font-size:.9rem;color:var(--muted);margin-bottom:8px;}
+  .mcard p b{color:var(--text);font-weight:600;}
+  .mcard ul{list-style:none;margin:6px 0 0;}
+  .mcard li{font-size:.88rem;color:var(--muted);padding:4px 0 4px 18px;position:relative;}
+  .mcard li::before{content:"›";position:absolute;left:2px;color:var(--accent);font-weight:700;}
+  .mcard li b{color:var(--text);font-weight:600;}
+  .fml{display:block;font-family:var(--mono);font-size:.92rem;color:var(--text);background:var(--ink2);border:1px solid var(--line);border-radius:9px;padding:9px 12px;margin:8px 0;letter-spacing:.2px;}
+  .fml .v{color:var(--accent);}
+  .callout{font-size:.84rem;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:9px;padding:10px 13px;margin-top:10px;}
+  .callout b{color:var(--text);}
+  .scale{display:flex;flex-direction:column;gap:5px;margin-top:8px;}
+  .scale .row{display:flex;align-items:center;gap:8px;font-size:.84rem;}
+  .scale .bar{height:8px;border-radius:4px;flex-shrink:0;}
+  .scale .lbl{color:var(--muted);}.scale .lbl b{color:var(--text);}
+  .xtable-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surface);}
+  table.xt{width:100%;border-collapse:collapse;min-width:560px;font-size:.9rem;}
+  table.xt th{font-family:var(--mono);text-align:left;font-weight:600;color:var(--muted);font-size:.78rem;text-transform:uppercase;letter-spacing:.5px;padding:12px 14px;border-bottom:1px solid var(--line2);background:var(--ink2);}
+  table.xt td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.xt tr:last-child td{border-bottom:none;}
+  table.xt td.fn{font-family:var(--mono);color:var(--accent);white-space:nowrap;}
+  table.xt td.measure b{color:var(--text);}
+  table.xt td.measure small{display:block;color:var(--muted2);font-size:.78rem;margin-top:2px;}
+  .ex{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;position:relative;}
+  .ex.solved{border-color:var(--ok-line);}
+  .ex-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;margin-bottom:6px;}
+  .ex-theme{font-family:var(--mono);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--accent);}
+  .ex-diff{font-family:var(--mono);font-size:.68rem;color:var(--muted2);border:1px solid var(--line);border-radius:6px;padding:2px 7px;}
+  .ex h3{font-family:var(--mono);font-size:1.04rem;font-weight:600;margin-bottom:10px;}
+  .ex .data{font-size:.9rem;color:var(--muted);margin-bottom:12px;}
+  .dtable-wrap{overflow-x:auto;margin:10px 0;}
+  table.dt{border-collapse:collapse;font-family:var(--mono);font-size:.85rem;}
+  table.dt th,table.dt td{border:1px solid var(--line2);padding:6px 12px;text-align:center;color:var(--text);}
+  table.dt th{background:var(--ink2);color:var(--muted);font-weight:600;}
+  .answer-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:6px;}
+  .answer-row input{font-family:var(--mono);font-size:1rem;color:var(--text);background:var(--ink2);border:1px solid var(--line2);border-radius:10px;padding:10px 13px;width:140px;outline:none;transition:border-color .2s;}
+  .answer-row input:focus{border-color:var(--accent);}
+  .answer-row .unit{font-family:var(--mono);color:var(--muted);font-size:.92rem;}
+  .btn{font-family:var(--mono);font-weight:600;font-size:.9rem;color:#160d2b;background:var(--accent);border:none;border-radius:10px;padding:10px 18px;cursor:pointer;transition:transform .15s,background .2s;}
+  .btn:hover{transform:translateY(-1px);background:#b9a3fb;}
+  .btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line2);}
+  .btn.ghost:hover{color:var(--text);background:var(--surface2);}
+  .verdict{font-family:var(--mono);font-size:.9rem;font-weight:600;padding:8px 0;display:none;}
+  .verdict.ok{color:var(--ok);display:block;}
+  .verdict.bad{color:var(--bad);display:block;}
+  .solution{display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:14px;}
+  .solution.show{display:block;animation:fade .3s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+  .solution h4{font-family:var(--mono);font-size:.82rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);margin-bottom:8px;}
+  .step{font-size:.9rem;color:var(--muted);padding:4px 0 4px 20px;position:relative;}
+  .step::before{content:"";position:absolute;left:4px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--accent);}
+  .step b{color:var(--text);}
+  .step .calc{font-family:var(--mono);color:var(--text);}
+  .excel-tag{display:flex;align-items:center;gap:8px;margin-top:12px;font-size:.86rem;background:var(--ok-bg);border:1px solid var(--ok-line);border-radius:10px;padding:9px 13px;font-family:var(--mono);color:#a7e8cd;flex-wrap:wrap;}
+  .excel-tag b{color:#d7f7e8;font-weight:600;}
+  .progress{position:sticky;bottom:14px;margin:18px auto 0;max-width:340px;background:var(--surface);border:1px solid var(--line2);border-radius:999px;padding:8px 16px;display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.82rem;box-shadow:var(--shadow);z-index:15;}
+  .progress .bar{flex:1;height:6px;background:var(--ink2);border-radius:99px;overflow:hidden;}
+  .progress .bar i{display:block;height:100%;width:0;background:var(--iris);transition:width .4s ease;}
+  .progress .lbl{color:var(--muted);white-space:nowrap;}
+  .quiz-card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:14px;}
+  .q-no{font-family:var(--mono);font-size:.72rem;color:var(--accent);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+  .q-text{font-size:1rem;margin:8px 0 14px;font-weight:500;}
+  .opt{display:block;width:100%;text-align:left;background:var(--ink2);border:1px solid var(--line);border-radius:11px;padding:12px 14px;margin-bottom:9px;cursor:pointer;color:var(--text);font-family:inherit;font-size:.94rem;transition:border-color .15s,background .15s;}
+  .opt:hover:not(:disabled){border-color:var(--line2);background:var(--surface2);}
+  .opt:disabled{cursor:default;}
+  .opt.correct{border-color:var(--ok-line);background:var(--ok-bg);color:#cdeede;}
+  .opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#f7c9d1;}
+  .q-exp{display:none;font-size:.9rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:var(--ink2);border-radius:9px;padding:11px 13px;}
+  .q-exp.show{display:block;animation:fade .3s ease;}
+  .q-exp b{color:var(--text);}
+  .quiz-score{text-align:center;font-family:var(--mono);padding:22px;border:1px solid var(--line2);border-radius:16px;background:var(--ink2);margin-top:6px;}
+  .quiz-score .big{font-size:2.2rem;font-weight:700;background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  footer{border-top:1px solid var(--line);padding:26px 0 50px;margin-top:40px;}
+  .disclaimer{font-size:.78rem;color:var(--muted2);max-width:620px;line-height:1.6;}
+  .disclaimer b{color:var(--muted);font-weight:600;}
+  @media(max-width:560px){.hero{padding:26px 0 14px;}.answer-row input{width:120px;}}
+</style>
+<style is:inline>
+/* ===== CYBERPUNK THEME — spójny z Unicorner ===== */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:9999;background:linear-gradient(rgba(39,232,255,.05) 1px,transparent 1px) 0 0/100% 3px;mix-blend-mode:screen;opacity:.5;}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(90deg,rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px,linear-gradient(rgba(167,139,250,.05) 1px,transparent 1px) 0 0/52px 52px;}
+.wordmark,.uc-wordmark{font-size:1.72rem !important;letter-spacing:.5px !important;}
+.horn,.uc-horn{width:38px !important;height:38px !important;filter:drop-shadow(0 0 7px rgba(39,232,255,.5));}
+@media (prefers-reduced-motion:no-preference){.horn,.uc-horn{animation:hornFloat 5s ease-in-out infinite;}}
+@keyframes hornFloat{50%{transform:translateY(-3px) rotate(-3deg);}}
+@media(max-width:560px){.wordmark,.uc-wordmark{font-size:1.5rem !important;}.horn,.uc-horn{width:34px !important;height:34px !important;}}
+h1,h2,h3,h4,h5,h6,.wordmark,.sec-head h2,.mcard h3{font-family:'Chakra Petch','Space Grotesk','Inter',sans-serif !important;letter-spacing:.4px;}
+nav.pills a,.mcard,.ex,.quiz-card,.opt,.quiz-score,.xtable-wrap,.eyebrow,.back{border-radius:4px !important;}
+nav.pills a,.opt,.back{transition:border-color .18s,box-shadow .18s,background .18s !important;}
+nav.pills a:hover,.back:hover,.opt:hover:not(:disabled){border-color:#a78bfa !important;border-image:linear-gradient(115deg,#27e8ff,#a78bfa 38%,#ff2e97 72%,#ffd84a) 1 !important;box-shadow:0 8px 26px rgba(167,139,250,.22),0 0 14px rgba(39,232,255,.13) !important;}
+</style>
+<style is:inline>
+/* ===== PELNY MOTYW — doszlifowanie do wzorca (scanbar, sweep, HUD, gigant) ===== */
+.scanbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:var(--iris);background-size:200% 100%;opacity:.9;}
+@media (prefers-reduced-motion:no-preference){.scanbar{animation:ucshim 6s linear infinite;}}
+@keyframes ucshim{to{background-position:200% 0;}}
+.uc-sweep{position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(39,232,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
+@media (prefers-reduced-motion:no-preference){.uc-sweep{animation:ucsweep 14s ease-in-out infinite;}}
+@keyframes ucsweep{0%,100%{transform:translateX(-30%);}50%{transform:translateX(30%);}}
+.wrap{position:relative;z-index:1;}
+.wordmark .ai,.wordmark{font-family:var(--disp) !important;}
+.eyebrow{color:var(--cyan) !important;border-color:var(--line2) !important;background:rgba(39,232,255,.05) !important;}
+.eyebrow .dot{background:var(--cyan) !important;box-shadow:0 0 10px var(--cyan) !important;}
+.sec-head .num{color:#0b0918 !important;background:var(--iris) !important;border:none !important;font-family:var(--disp);font-weight:800;box-shadow:0 0 14px rgba(39,232,255,.3);}
+.mcard,.ex,.quiz-card,.quiz-score,.xtable-wrap{clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+.ex{position:relative;}
+.mcard::after,.ex::after{content:"";position:absolute;top:7px;left:7px;width:12px;height:12px;border-left:1.5px solid var(--cyan);border-top:1.5px solid var(--cyan);opacity:.4;pointer-events:none;}
+.mcard::before{background:var(--iris) !important;opacity:.9 !important;}
+.btn{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+nav.pills a,.back{clip-path:polygon(0 0,calc(100% - 8px) 0,100% 8px,100% 100%,8px 100%,0 calc(100% - 8px));}
+.quiz-score .big{font-family:'Orbitron','Chakra Petch',sans-serif;font-weight:800;}
+.giant{position:relative;z-index:1;text-align:center;overflow:hidden;line-height:.9;user-select:none;pointer-events:none;margin:26px auto 18px;padding:0 16px;}
+.giant span{display:inline-block;max-width:100%;font-family:'Orbitron','Chakra Petch',sans-serif;font-weight:800;font-size:clamp(1.7rem,11vw,6.2rem);letter-spacing:.04em;line-height:1;white-space:nowrap;background:var(--iris);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 16px rgba(39,232,255,.5)) drop-shadow(0 0 34px rgba(167,139,250,.4));}
+@media (prefers-reduced-motion:no-preference){.giant span{animation:ucshim 8s linear infinite;}}
+.foot-brand{display:flex;align-items:center;gap:9px;color:var(--muted);font-family:var(--disp);font-weight:600;font-size:.92rem;letter-spacing:1px;margin-top:14px;}
+.foot-brand .fb-corner{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+</style>
+<style is:inline>
+/* ===== GIGA-NAPIS: sama obwodka, bez poswiaty, czysta szeroka czcionka ===== */
+.giant span{
+  font-family:'Michroma','Orbitron','Chakra Petch',sans-serif !important;
+  font-weight:400 !important;
+  font-size:clamp(1.25rem,7.8vw,4rem) !important;
+  letter-spacing:.12em !important;
+  background:var(--iris) !important;
+  -webkit-background-clip:text !important;background-clip:text !important;
+  -webkit-text-fill-color:transparent !important;
+  color:transparent !important;
+  -webkit-text-stroke:0 !important;
+  filter:none !important;
+  animation:none !important;
+}
+</style>
+
+<div class="scanbar" aria-hidden="true"></div><div class="uc-sweep" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wordmark">Uni<span class="ai">corner</span></span>
+      </a>
+      <a class="back" href="index.html">← wszystkie przedmioty</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>Statystyka · UEP</span>
+    <h1>Korelacja <span class="grad">wieloraka</span></h1>
+    <p class="lede">Gdy na jedną cechę wpływa kilka innych naraz: <b>korelacja cząstkowa</b> (dwie zmienne z wyłączeniem wpływu pozostałych) i <b>korelacja wieloraka</b> (jedna cecha z kompleksem innych łącznie) — wraz ze współczynnikiem determinacji wielorakiej R².</p>
+  </section>
+
+  <nav class="pills">
+    <a href="#materialy">Materiały</a>
+    <a href="#excel">Ściąga Excela</a>
+    <a href="#zadania">Zadania</a>
+    <a href="#quiz">Quiz</a>
+  </nav>
+
+  <!-- ===================== MATERIAŁY ===================== -->
+  <section class="block" id="materialy">
+    <div class="sec-head"><span class="num">01</span><h2>Materiały</h2><span class="line"></span></div>
+    <p class="sub-note">W rzeczywistości zmienna zależna Y rzadko zależy od jednej cechy. Dwa spojrzenia: <b>cząstkowe</b> — izolujemy jedną parę zmiennych, „mrożąc” resztę; <b>wieloraka</b> — pytamy o łączną siłę związku Y ze wszystkimi zmiennymi objaśniającymi razem.</p>
+
+    <div class="cards">
+
+      <div class="mcard">
+        <h3>Korelacja cząstkowa</h3>
+        <div class="tagline">związek pary · reszta zamrożona</div>
+        <p>Siła związku między <b>dwiema</b> zmiennymi przy <b>wyeliminowaniu</b> wpływu pozostałych (ustalonych jako stałe).</p>
+        <span class="fml"><span class="v">r₁₂.₃ = (r₁₂ − r₁₃·r₂₃) / √[(1−r₁₃²)(1−r₂₃²)]</span></span>
+        <ul>
+          <li>Indeks po kropce (<b>.3</b>) = zmienna wyeliminowana</li>
+          <li>r₁₂.₃ — korelacja 1 i 2 przy ustalonej zmiennej 3</li>
+          <li>Wartości z przedziału ⟨−1; 1⟩ — <b>ma kierunek</b></li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Korelacja wieloraka</h3>
+        <div class="tagline">jedna cecha ↔ kompleks cech</div>
+        <p>Ścisłość związku między zmienną zależną a <b>wszystkimi</b> zmiennymi niezależnymi <b>łącznie</b>.</p>
+        <span class="fml"><span class="v">R₁.₂₃ = √[(r₁₂² + r₁₃² − 2·r₁₂·r₁₃·r₂₃) / (1−r₂₃²)]</span></span>
+        <ul>
+          <li>Indeks przed kropką (<b>1</b>) = zmienna zależna</li>
+          <li>Po kropce (<b>23</b>) = zmienne objaśniające</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Własności R wielorakiej</h3>
+        <div class="tagline">co trzeba zapamiętać</div>
+        <ul>
+          <li>Przyjmuje wartości z przedziału <b>⟨0; 1⟩</b> (nieujemny)</li>
+          <li>Mierzy <b>tylko siłę</b> zależności</li>
+          <li><b>Nie wskazuje kierunku</b> (bo łączy wiele wpływów)</li>
+          <li>Im bliżej 1 — tym silniejszy związek łączny</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Determinacja wieloraka R²</h3>
+        <div class="tagline">jak w regresji</div>
+        <span class="fml"><span class="v">R² ∈ ⟨0; 1⟩</span> &nbsp; φ² = 1 − R²</span>
+        <ul>
+          <li><b>R²</b> — jaka część zmienności Y jest wyjaśniona przez <b>zestaw</b> zmiennych objaśniających</li>
+          <li>R wieloraka = <b>„Wielokrotność R”</b> w wydruku regresji</li>
+          <li>R wieloraka = korelacja między Y a wartościami teoretycznymi ŷ z modelu</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Cząstkowa vs prosta vs wieloraka</h3>
+        <div class="tagline">nie pomyl ich</div>
+        <ul>
+          <li><b>Prosta</b> r₁₂ — dwie zmienne, nic nie eliminujemy</li>
+          <li><b>Cząstkowa</b> r₁₂.₃ — dwie zmienne, wpływ trzeciej usunięty</li>
+          <li><b>Wieloraka</b> R₁.₂₃ — jedna cecha kontra wszystkie pozostałe łącznie</li>
+        </ul>
+        <div class="callout">Cząstkowa bywa <b>wyższa</b> niż prosta — usunięcie zakłócającej zmiennej „odsłania” czysty związek.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Przykład — wydatki na żywność</h3>
+        <div class="tagline">dane z wykładu</div>
+        <p>Y = wydatki, X₁ = ceny, X₂ = dochód. Korelacje proste:</p>
+        <ul>
+          <li>r(Y,X₁) = 0,7505 · r(Y,X₂) = 0,8541 · r(X₁,X₂) = 0,4388</li>
+          <li>Wieloraka <b>R = 0,951</b> → R² = <b>0,904</b></li>
+          <li>Cząstkowa dochód–wydatki (bez cen): <b>0,8837</b></li>
+        </ul>
+        <div class="callout">Model: ŷ = 7,55 + 0,455·X₁ + 0,460·X₂; wspólnie tłumaczy 90,4% zmienności wydatków.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Po co korelacja cząstkowa</h3>
+        <div class="tagline">sedno interpretacji</div>
+        <p>Prosta korelacja może być <b>zawyżona/zaniżona</b> przez trzecią zmienną. Cząstkowa pokazuje związek „w czystej postaci”.</p>
+        <ul>
+          <li>Przykład: cena i wydatki wyglądają na powiązane, ale częściowo przez wspólny wpływ dochodu</li>
+          <li>Po wyeliminowaniu dochodu widać związek rzeczywisty</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Podsumowanie doboru miary</h3>
+        <div class="tagline">cała analiza zależności</div>
+        <ul>
+          <li>Ilościowe, liniowo, 2 zmienne → <b>Pearson</b></li>
+          <li>Porządkowe / mała próba → <b>Spearman</b></li>
+          <li>Para z kontrolą innych → <b>cząstkowa</b></li>
+          <li>Jedna cecha vs wiele → <b>wieloraka R</b></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== ŚCIĄGA EXCEL ===================== -->
+  <section class="block" id="excel">
+    <div class="sec-head"><span class="num">02</span><h2>Ściąga funkcji Excela</h2><span class="line"></span></div>
+    <p class="sub-note">Korelacji cząstkowej nie policzysz jedną funkcją — najpierw wyznacz korelacje proste (albo całą <b>macierz korelacji</b>), potem podstaw do wzoru. Wieloraką R i R² odczytasz wprost z raportu regresji wielorakiej.</p>
+    <div class="xtable-wrap">
+      <table class="xt">
+        <thead><tr><th>Co liczysz</th><th>Funkcja Excela</th><th>Uwaga</th></tr></thead>
+        <tbody>
+          <tr><td class="measure"><b>Korelacje proste (pary)</b></td><td class="fn">=WSP.KORELACJI(zakres1;zakres2)</td><td>Dla każdej pary zmiennych</td></tr>
+          <tr><td class="measure"><b>Macierz wszystkich korelacji</b></td><td class="fn">Dane → Analiza danych → Korelacja</td><td>Od razu wszystkie r naraz</td></tr>
+          <tr><td class="measure"><b>Korelacja wieloraka R</b></td><td class="fn">Raport regresji: „Wielokrotność R”</td><td>Lub <span style="font-family:var(--mono)">=PIERWIASTEK(R.KWADRAT(...))</span></td></tr>
+          <tr><td class="measure"><b>Determinacja wieloraka R²</b></td><td class="fn">Raport regresji: „R kwadrat”</td><td>Część zmienności Y wyjaśniona łącznie</td></tr>
+          <tr><td class="measure"><b>Korelacja cząstkowa</b></td><td class="fn">brak funkcji — ze wzoru</td><td>Z korelacji prostych</td></tr>
+          <tr><td class="measure"><b>Parametry modelu (a, a₁, a₂)</b></td><td class="fn">=REGLINP(Y;X1:X2;PRAWDA;PRAWDA)</td><td>Funkcja tablicowa (wiele zmiennych X)</td></tr>
+          <tr><td class="measure"><b>Cały raport regresji wielorakiej</b></td><td class="fn">Dane → Analiza danych → Regresja</td><td>Zaznacz kilka kolumn X naraz</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== ZADANIA ===================== -->
+  <section class="block" id="zadania">
+    <div class="sec-head"><span class="num">03</span><h2>Zadania krok po kroku</h2><span class="line"></span></div>
+    <p class="sub-note">Zestaw z wykładu (Y = wydatki, X₁ = ceny, X₂ = dochód): r(Y,X₁) = 0,7505 • r(Y,X₂) = 0,8541 • r(X₁,X₂) = 0,4388. Plus czyste zestawy do wprawy. Akceptuję przecinek/kropkę i drobne zaokrąglenia.</p>
+    <div id="exList"></div>
+    <div class="progress"><span class="lbl" id="exLbl">0 / 0</span><div class="bar"><i id="exFill"></i></div></div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="block" id="quiz">
+    <div class="sec-head"><span class="num">04</span><h2>Quiz teoretyczny</h2><span class="line"></span></div>
+    <p class="sub-note">Różnica cząstkowa/wieloraka, notacja indeksów, własności R, związek z regresją i determinacją.</p>
+    <div id="quizList"></div>
+    <div class="quiz-score" id="quizScore" style="display:none">
+      <div class="big" id="scoreBig">0 / 0</div>
+      <div id="scoreMsg" style="color:var(--muted);margin-top:6px"></div>
+    </div>
+  </section>
+
+  <div class="giant" aria-hidden="true"><span>WIELORAKA</span></div>
+
+  <footer>
+    <p class="disclaimer">
+      <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani żadną katedrą.
+      Materiały to własne opracowania na bazie zajęć. Licz też z oryginalnych źródeł.
+    </p>
+  </footer>
+</div>
+
+<script is:inline>
+const EXS=[
+ {theme:'Wieloraka', diff:'trudne',
+  title:'Współczynnik korelacji wielorakiej R',
+  data:'Y = wydatki, objaśniające X₁ = ceny, X₂ = dochód. r(Y,X₁) = 0,7505, r(Y,X₂) = 0,8541, r(X₁,X₂) = 0,4388. Policz R (siłę łącznego związku).',
+  ans:0.951, tol:0.004, unit:'',
+  sol:[['Wzór','R = √[(r²_YX1 + r²_YX2 − 2·r_YX1·r_YX2·r_X1X2) / (1 − r²_X1X2)]'],
+       ['Licznik','0,7505² + 0,8541² − 2·0,7505·0,8541·0,4388 = 0,5632 + 0,7295 − 0,5625 = 0,7302'],
+       ['Mianownik','1 − 0,4388² = 1 − 0,1925 = 0,8075'],
+       ['Wynik','R = √(0,7302 / 0,8075) = √0,9043 = <span class="calc">0,951</span> → związek bardzo silny']],
+  excel:'Raport regresji: „Wielokrotność R”'},
+
+ {theme:'Determinacja', diff:'łatwe',
+  title:'Determinacja wieloraka R²',
+  data:'Współczynnik korelacji wielorakiej R = 0,951. Policz R² (współczynnik determinacji wielorakiej).',
+  ans:0.904, tol:0.005, unit:'',
+  sol:[['Wzór','R² = R²'],
+       ['Podstawienie','= 0,951² = <span class="calc">0,904</span>'],
+       ['Sens','ceny i dochód razem wyjaśniają ok. 90,4% zmienności wydatków']],
+  excel:'Raport regresji: „R kwadrat”'},
+
+ {theme:'Determinacja', diff:'łatwe',
+  title:'Część niewyjaśniona φ²',
+  data:'Determinacja wieloraka R² = 0,904. Policz współczynnik zbieżności φ².',
+  ans:0.096, tol:0.005, unit:'',
+  sol:[['Wzór','φ² = 1 − R²'],
+       ['Podstawienie','= 1 − 0,904 = <span class="calc">0,096</span>'],
+       ['Sens','ok. 9,6% zmienności wydatków pozostaje niewyjaśnione']],
+  excel:'=1 − R.KWADRAT(...)'},
+
+ {theme:'Cząstkowa', diff:'trudne',
+  title:'Korelacja cząstkowa dochód–wydatki (bez cen)',
+  data:'r(Y,X₂) = 0,8541, r(Y,X₁) = 0,7505, r(X₁,X₂) = 0,4388. Policz korelację cząstkową Y i X₂ przy wyeliminowaniu X₁.',
+  ans:0.884, tol:0.006, unit:'',
+  sol:[['Wzór','r_YX2.X1 = (r_YX2 − r_YX1·r_X1X2) / √[(1−r²_YX1)(1−r²_X1X2)]'],
+       ['Licznik','0,8541 − 0,7505·0,4388 = 0,8541 − 0,3293 = 0,5248'],
+       ['Mianownik','√[(1−0,5633)(1−0,1925)] = √(0,4367·0,8075) = √0,3527 = 0,5939'],
+       ['Wynik','= 0,5248 / 0,5939 = <span class="calc">0,884</span>']],
+  excel:'ze wzoru na podstawie korelacji prostych'},
+
+ {theme:'Cząstkowa', diff:'trudne',
+  title:'Korelacja cząstkowa ceny–wydatki (bez dochodu)',
+  data:'r(Y,X₁) = 0,7505, r(Y,X₂) = 0,8541, r(X₁,X₂) = 0,4388. Policz korelację cząstkową Y i X₁ przy wyeliminowaniu X₂.',
+  ans:0.804, tol:0.006, unit:'',
+  sol:[['Wzór','r_YX1.X2 = (r_YX1 − r_YX2·r_X1X2) / √[(1−r²_YX2)(1−r²_X1X2)]'],
+       ['Licznik','0,7505 − 0,8541·0,4388 = 0,7505 − 0,3748 = 0,3757'],
+       ['Mianownik','√[(1−0,7295)(1−0,1925)] = √(0,2705·0,8075) = √0,2184 = 0,4674'],
+       ['Wynik','= 0,3757 / 0,4674 = <span class="calc">0,804</span>']],
+  excel:'ze wzoru na podstawie korelacji prostych'},
+
+ {theme:'Wieloraka · od zera', diff:'trudne',
+  title:'R wieloraka dla czystych danych',
+  data:'r(Y,X₁) = 0,6, r(Y,X₂) = 0,7, r(X₁,X₂) = 0,3. Policz współczynnik korelacji wielorakiej R.',
+  ans:0.811, tol:0.01, unit:'',
+  sol:[['Licznik','0,6² + 0,7² − 2·0,6·0,7·0,3 = 0,36 + 0,49 − 0,252 = 0,598'],
+       ['Mianownik','1 − 0,3² = 1 − 0,09 = 0,91'],
+       ['Wynik','R = √(0,598 / 0,91) = √0,6571 = <span class="calc">0,811</span>']],
+  excel:'=PIERWIASTEK((0,36+0,49−2*0,6*0,7*0,3)/(1−0,3^2))'},
+
+ {theme:'Cząstkowa · od zera', diff:'średnie',
+  title:'Korelacja cząstkowa dla czystych danych',
+  data:'r₁₂ = 0,8, r₁₃ = 0,5, r₂₃ = 0,4. Policz korelację cząstkową r₁₂.₃ (między 1 i 2 z eliminacją 3).',
+  ans:0.756, tol:0.01, unit:'',
+  sol:[['Wzór','r₁₂.₃ = (r₁₂ − r₁₃·r₂₃) / √[(1−r₁₃²)(1−r₂₃²)]'],
+       ['Licznik','0,8 − 0,5·0,4 = 0,8 − 0,2 = 0,6'],
+       ['Mianownik','√[(1−0,25)(1−0,16)] = √(0,75·0,84) = √0,63 = 0,7937'],
+       ['Wynik','= 0,6 / 0,7937 = <span class="calc">0,756</span>']],
+  excel:'=(0,8−0,5*0,4)/PIERWIASTEK((1−0,5^2)*(1−0,4^2))'},
+
+ {theme:'Determinacja', diff:'łatwe',
+  title:'Z R² policz R',
+  data:'Z raportu regresji wielorakiej „R kwadrat” = 0,64. Ile wynosi współczynnik korelacji wielorakiej R?',
+  ans:0.8, tol:0.005, unit:'',
+  sol:[['Wzór','R = √R²'],
+       ['Podstawienie','= √0,64 = <span class="calc">0,8</span>'],
+       ['Uwaga','R wieloraka jest zawsze nieujemna (0 ≤ R ≤ 1)']],
+  excel:'=PIERWIASTEK(0,64)'}
+];
+
+const KEY='unicorner_korelw_v1';
+let solved=JSON.parse(localStorage.getItem(KEY)||'{}');
+const exList=document.getElementById('exList');
+EXS.forEach((e,i)=>{
+  const d=document.createElement('div'); d.className='ex'+(solved['e'+i]?' solved':''); d.id='ex'+i;
+  d.innerHTML=`
+    <div class="ex-top"><span class="ex-theme">${e.theme}</span><span class="ex-diff">${e.diff}</span></div>
+    <h3>${i+1}. ${e.title}</h3>
+    <div class="data">${e.data}</div>
+    <div class="answer-row">
+      <input type="text" inputmode="decimal" placeholder="Twój wynik" aria-label="wynik">
+      ${e.unit?`<span class="unit">${e.unit}</span>`:''}
+      <button class="btn" data-act="check">Sprawdź</button>
+      <button class="btn ghost" data-act="show">Pokaż rozwiązanie</button>
+    </div>
+    <div class="verdict"></div>
+    <div class="solution">
+      <h4>Rozwiązanie</h4>
+      ${e.sol.map(s=>`<div class="step"><b>${s[0]}:</b> ${s[1]}</div>`).join('')}
+      <div class="excel-tag"><span>▦</span><b>W Excelu:</b> ${e.excel}</div>
+    </div>`;
+  const inp=d.querySelector('input'), verd=d.querySelector('.verdict'), sol=d.querySelector('.solution');
+  const reveal=ok=>{ sol.classList.add('show'); if(ok){ d.classList.add('solved'); solved['e'+i]=1; localStorage.setItem(KEY,JSON.stringify(solved)); updateProg(); } };
+  d.querySelector('[data-act=check]').onclick=()=>{
+    const raw=inp.value.replace(',','.').replace(/[^0-9.\-]/g,'');
+    if(raw===''){verd.className='verdict bad';verd.textContent='Wpisz wynik liczbowy.';return;}
+    const v=parseFloat(raw); const ok=Math.abs(v-e.ans)<=(e.tol||0.01)+1e-9;
+    if(ok){verd.className='verdict ok';verd.textContent='✓ Dobrze! Wynik: '+String(e.ans).replace('.',',')+(e.unit?' '+e.unit:'');}
+    else{verd.className='verdict bad';verd.textContent='✗ Nie tym razem — sprawdź rozwiązanie poniżej.';}
+    reveal(ok);
+  };
+  d.querySelector('[data-act=show]').onclick=()=>{ sol.classList.add('show'); };
+  inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')d.querySelector('[data-act=check]').click();});
+  exList.appendChild(d);
+});
+function updateProg(){
+  const done=EXS.filter((_,i)=>solved['e'+i]).length;
+  document.getElementById('exLbl').textContent=done+' / '+EXS.length;
+  document.getElementById('exFill').style.width=(done/EXS.length*100)+'%';
+}
+updateProg();
+
+const QUIZ=[
+ {q:'Korelacja cząstkowa mierzy:',
+  o:['Związek dwóch zmiennych z wyłączeniem wpływu pozostałych','Związek jednej cechy ze wszystkimi łącznie','Zawsze związek dodatni','Kierunek zależności bez jej siły'],c:0,
+  e:'Korelacja cząstkowa to siła związku <b>dwóch</b> zmiennych przy <b>ustaleniu pozostałych jako stałych</b> (eliminacja ich wpływu).'},
+ {q:'Korelacja wieloraka mierzy:',
+  o:['Związek dwóch wybranych zmiennych','Współzależność jednej cechy ze wszystkimi pozostałymi łącznie','Tylko związek między zmiennymi niezależnymi','Różnicę między korelacjami prostymi'],c:1,
+  e:'Korelacja wieloraka to ścisłość związku zmiennej zależnej z <b>kompleksem</b> zmiennych objaśniających razem.'},
+ {q:'Współczynnik korelacji wielorakiej R przyjmuje wartości:',
+  o:['Od −1 do 1','Od 0 do 1','Od −∞ do +∞','Od 0 do 100'],c:1,
+  e:'R wieloraka jest <b>nieujemna</b> i mieści się w przedziale <b>⟨0; 1⟩</b>.'},
+ {q:'Współczynnik korelacji wielorakiej R:',
+  o:['Wskazuje siłę i kierunek','Mierzy tylko siłę, bez kierunku','Zawsze jest ujemny','Jest równy sumie korelacji prostych'],c:1,
+  e:'R mierzy <b>tylko siłę</b> łącznego związku. Nie ma znaku, bo łączy wpływy wielu zmiennych o różnych kierunkach.'},
+ {q:'W zapisie r₁₂.₃ liczba po kropce (3) oznacza zmienną:',
+  o:['Zależną','Wyeliminowaną (ustaloną jako stała)','Najsilniej skorelowaną','Nominalną'],c:1,
+  e:'Indeks po kropce to zmienna, której wpływ <b>wyeliminowano</b> — r₁₂.₃ to korelacja 1 i 2 przy ustalonej 3.'},
+ {q:'Współczynnik determinacji wielorakiej R² informuje o tym:',
+  o:['Jaka część zmienności Y jest wyjaśniona przez zestaw zmiennych','Ile wynosi nachylenie modelu','Jaki jest kierunek zależności','Ile jest zmiennych objaśniających'],c:0,
+  e:'<b>R²</b> to udział zmienności Y wyjaśniony <b>łącznie</b> przez wszystkie zmienne objaśniające.'},
+ {q:'W wydruku regresji wielorakiej pozycja „Wielokrotność R” to:',
+  o:['Współczynnik korelacji wielorakiej R','Wyraz wolny a₀','Błąd standardowy','Liczba obserwacji'],c:0,
+  e:'„Wielokrotność R” w raporcie regresji to właśnie <b>współczynnik korelacji wielorakiej</b>. Jego kwadrat to R².'},
+ {q:'R = 0,951. Ile wynosi determinacja wieloraka R²?',
+  o:['0,904','0,975','0,999','0,478'],c:0,
+  e:'R² = 0,951² = <b>0,904</b> — czyli ok. 90,4% zmienności Y wyjaśnione przez zestaw zmiennych.'},
+ {q:'Czym korelacja cząstkowa różni się od prostej?',
+  o:['Niczym, to synonimy','Cząstkowa eliminuje wpływ pozostałych zmiennych','Prosta zawsze jest wyższa','Cząstkowa nie ma znaku'],c:1,
+  e:'Prosta bierze parę „jak jest”, cząstkowa <b>usuwa wpływ innych zmiennych</b> i pokazuje związek w czystej postaci.'},
+ {q:'Aby ocenić łączny wpływ ceny i dochodu na wydatki, użyjemy:',
+  o:['Korelacji prostej','Korelacji wielorakiej','Współczynnika zmienności','Mediany'],c:1,
+  e:'Łączny wpływ wielu zmiennych na jedną cechę mierzy <b>korelacja wieloraka R</b>.'},
+ {q:'Korelacja wieloraka R jest równa:',
+  o:['Sumie korelacji prostych','Korelacji między Y a wartościami teoretycznymi ŷ z modelu','Średniej korelacji cząstkowych','Zawsze największej z korelacji prostych'],c:1,
+  e:'R wieloraka = korelacja między obserwowanymi Y a <b>wartościami teoretycznymi ŷ</b> z modelu regresji wielorakiej.'},
+ {q:'Korelacja cząstkowa bywa wyższa od prostej, ponieważ:',
+  o:['Zawsze zawyża wynik','Usunięcie zakłócającej zmiennej odsłania czysty związek','Liczy się ją na rangach','Ignoruje zmienną zależną'],c:1,
+  e:'Gdy trzecia zmienna maskowała związek, jej <b>wyeliminowanie</b> może ujawnić silniejszą, rzeczywistą zależność pary.'}
+];
+const quizList=document.getElementById('quizList'); let answered=0, correct=0;
+QUIZ.forEach((q,i)=>{
+  const order=q.o.map((t,idx)=>idx).sort(()=>Math.random()-0.5);
+  const card=document.createElement('div'); card.className='quiz-card';
+  card.innerHTML=`<div class="q-no">Pytanie ${i+1} / ${QUIZ.length}</div><div class="q-text">${q.q}</div><div class="opts"></div><div class="q-exp">${q.e}</div>`;
+  const opts=card.querySelector('.opts'), exp=card.querySelector('.q-exp');
+  order.forEach(idx=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=q.o[idx];
+    b.onclick=()=>{
+      opts.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      if(idx===q.c){b.classList.add('correct');correct++;}
+      else{b.classList.add('wrong');opts.querySelectorAll('.opt').forEach(x=>{if(x.textContent===q.o[q.c])x.classList.add('correct');});}
+      exp.classList.add('show'); answered++;
+      if(answered===QUIZ.length){
+        const sc=document.getElementById('quizScore'); sc.style.display='block';
+        document.getElementById('scoreBig').textContent=correct+' / '+QUIZ.length;
+        const pct=correct/QUIZ.length;
+        document.getElementById('scoreMsg').textContent=
+          pct===1?'Komplet — korelacja wieloraka opanowana. 🦄':pct>=0.7?'Dobrze. Dopnij różnicę cząstkowa/wieloraka i notację indeksów.':'Wróć do kart o korelacji cząstkowej i wielorakiej — tam sedno.';
+      }
+    };
+    opts.appendChild(b);
+  });
+  quizList.appendChild(card);
+});
+</script>
+
+</Base>
