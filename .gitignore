@@ -1,10 +1,20 @@
-# Materiały źródłowe wykładowców — NIE publikować (patrz stopka strony)
+# === zaleznosci / build (Astro) ===
+node_modules/
+dist/
+.astro/
+
+# === Materiały źródłowe wykładowców — NIE publikować (patrz stopka strony) ===
 *.pdf
 jakość claude/
 
-# Odpady po "Zapisz stronę jako" w przeglądarce (nowe; już-śledzone zostają)
+# === Odpady po "Zapisz stronę jako" w przeglądarce (nowe; już-śledzone zostają) ===
 *_files/
 
-# System / edytor
+# === env ===
+.env
+.env.*
+!.env.example
+
+# === System / edytor ===
 .DS_Store
 Thumbs.db

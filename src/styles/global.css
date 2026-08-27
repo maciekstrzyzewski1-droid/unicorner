@@ -1,0 +1,7 @@
+@import "tailwindcss";
+
+/*
+  Tu docelowo wejdzie design-system Unicornera (zmienne --ink/--cyan/--accent,
+  fonty Orbitron / Exo 2 / Audiowide / Inter itd.) przeniesiony 1:1 z index.html.
+  Faza 0: sam Tailwind + placeholder, zeby potwierdzic, ze build i dev dzialaja.
+*/
