@@ -483,7 +483,7 @@
   /* hero fixed — zostaje na ekranie; przy scrollu gasnie i cofa sie, panorama wjezdza na wierzch */
   .hero-screen{position:fixed;inset:0;z-index:1;overflow:hidden;
     transform-origin:50% 44%;will-change:opacity,transform;background:transparent}
-  .hero-spacer{height:240vh}   /* miejsce na scroll intro: szkielet -> kula -> wyjscie */
+  .hero-spacer{height:110vh}   /* hero Dither+unicorner -> fade -> reszta strony (widok kuli wylaczony) */
   #gl{position:absolute;inset:0;z-index:0;display:block}
   .hero-fx{position:absolute;inset:0;z-index:2;pointer-events:none}
   .hero-fx .scan{position:absolute;inset:0;mix-blend-mode:screen;opacity:.35;
@@ -544,3 +544,14 @@
     -webkit-mask-image:linear-gradient(to top,#000 6%,transparent 74%);
     mask-image:linear-gradient(to top,#000 6%,transparent 74%)}
   @media (prefers-reduced-motion: reduce){ .scroll-hint .arr{animation:none} }
+
+.liquid-bg{position:absolute;inset:0;z-index:0;pointer-events:none;}
+
+/* ===== HERO nad tlem Dither: wielki, wysrodkowany "unicorner" + reszta ===== */
+.hero-screen .title{ top:50%; left:50%; right:auto; transform:translate(-50%,-50%); text-align:center; width:min(94vw,960px); }
+.hero-screen .title .eb{ margin-bottom:24px; }
+.hero-screen .title .ttl{ font-size:clamp(3rem,12vw,8rem); line-height:.9; }
+.hero-screen .title .sub{ font-size:clamp(.95rem,2.2vw,1.45rem); margin-top:16px; }
+.hero-screen .title .meta{ margin-top:12px; }
+.hero-screen .title .hero-lede{ font-size:clamp(.95rem,1.55vw,1.12rem); max-width:600px; margin:26px auto 0; }
+#hudCap{ display:none; }

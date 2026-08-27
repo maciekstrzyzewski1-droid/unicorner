@@ -1,6 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import '../styles/global.css';
+import Dither from '../components/Dither.jsx';
+import Shuffle from '../components/Shuffle.jsx';
 ---
 
 <Base>
@@ -19,11 +21,12 @@ import '../styles/global.css';
 <!-- ===== INTRO: czaszka x-ray + panorama (skull-hero -> pan klub->nauka) ===== -->
 <!-- Model 3D szkieletu: "three-skull" (Cullen Webber) — licencja MIT. -->
 <div class="hero-screen" id="heroScreen">
+  <div class="liquid-bg" id="liquidBars"><Dither client:load waveColor={[0.55, 0.35, 0.95]} colorNum={4} pixelSize={2} waveAmplitude={0.4} waveFrequency={3} waveSpeed={0.04} enableMouseInteraction={true} mouseRadius={0.39} /></div>
   <canvas id="gl" aria-hidden="true"></canvas>
   <div class="hero-fx"><div class="scan"></div><div class="vig"></div></div>
   <div class="title" id="hudTitle">
     <div class="eb">◢ OPEN STUDENT WORKSPACE</div>
-    <div class="ttl">unicorner</div>
+    <Shuffle client:load text="unicorner" tag="div" className="ttl" duration={0.45} stagger={0.045} shuffleTimes={2} style={{ pointerEvents: 'auto' }} />
     <div class="sub">egzaminy ogarnięte po ludzku</div>
     <div class="meta">v.2026 · UEP · materiały do nauki</div>
     <p class="hero-lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
@@ -506,6 +509,7 @@ if (canvas) {
 
   // ---- WIDOK 1: SZKIELET (x-ray fresnel + additive), fade przez uOpacity ----
   const skullGroup = new THREE.Group(); scene.add(skullGroup);
+  skullGroup.visible = false;   // TYMCZASOWO ukryty szkielet (ocena tla Dither) — usun te linie, by wrocic
   const xrayMat = new THREE.ShaderMaterial({
     uniforms:{ uRim:{value:new THREE.Color(0x27e8ff)}, uMid:{value:new THREE.Color(0xa78bfa)},
       uBase:{value:new THREE.Color(0x181042)}, uPower:{value:2.2}, uOpacity:{value:1.0} },
@@ -547,13 +551,13 @@ if (canvas) {
     uniforms:{
       uA:{value:new THREE.Color(0xa855ff)}, uB:{value:tunB1.clone()},
       uDens:{value:tun.dens}, uThick:{value:tun.thick},
-      uLine:{value:tun.line}, uEdge:{value:tun.edge}, uFade:{value:tun.fade}
+      uLine:{value:tun.line}, uEdge:{value:tun.edge}, uFade:{value:tun.fade}, uFadeT:{value:0.0}
     },
     transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.BackSide,
     vertexShader:`varying float vDepth; varying vec2 vUv;
       void main(){ vUv=uv; vec4 mv=modelViewMatrix*vec4(position,1.0); vDepth=-mv.z;
         gl_Position=projectionMatrix*mv; }`,
-    fragmentShader:`uniform vec3 uA,uB; uniform float uDens,uThick,uLine,uEdge,uFade;
+    fragmentShader:`uniform vec3 uA,uB; uniform float uDens,uThick,uLine,uEdge,uFade,uFadeT;
       varying float vDepth; varying vec2 vUv;
       float gl(float c, float w){ float l=abs(fract(c-0.5)-0.5)/fwidth(c); return 1.0-min(l/w,1.0); }
       void main(){
@@ -561,7 +565,7 @@ if (canvas) {
         float fog = exp(-max(vDepth-3.0,0.0)*uFade);
         vec3  col = mix(uA, uB, smoothstep(5.0, 20.0, vDepth));
         float a   = g*fog*uLine + fog*fog*uEdge;
-        gl_FragColor = vec4(col, a);
+        gl_FragColor = vec4(col, a*uFadeT);
       }`
   });
   const tunnel = new THREE.Mesh(new THREE.CylinderGeometry(4.8, 4.8, 52, 64, 1, true), gridMat);
@@ -597,7 +601,7 @@ if (canvas) {
     uniforms:{ baseTexture:{value:null}, bloomTexture:{value:bloomComposer.renderTarget2.texture} },
     vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
     fragmentShader:`uniform sampler2D baseTexture; uniform sampler2D bloomTexture; varying vec2 vUv;
-      void main(){ vec4 b=texture2D(baseTexture,vUv); vec4 g=texture2D(bloomTexture,vUv); gl_FragColor=b+g; }`
+      void main(){ vec4 b=texture2D(baseTexture,vUv); vec4 g=texture2D(bloomTexture,vUv); gl_FragColor=vec4(b.rgb+g.rgb, b.a + max(max(g.r,g.g),g.b)); }`
   }), 'baseTexture');
   finalComposer=new EffectComposer(renderer);
   finalComposer.addPass(new RenderPass(scene,cam));
@@ -609,13 +613,26 @@ if (canvas) {
 
   const clampf=(v,a,b)=>Math.min(Math.max(v,a),b);
   const heroScreen=document.getElementById('heroScreen');
+  const liquidBars=document.getElementById('liquidBars');
   const siteGrid=document.getElementById('siteGrid');
   const skullHud=['hudTitle','hudTelemBR','hudCap','hudHint'].map(id=>document.getElementById(id)).filter(Boolean);
   const genScreen=document.getElementById('genScreen');
   const genLaunch=document.getElementById('genLaunch');
+  const SHOW_GEN_VIEW = false;   // widok kuli + generatora — na razie WYLACZONY (ustaw true, by wrocic)
   size();
   renderer.setAnimationLoop((t)=>{
     const vh=innerHeight, s=scrollY;
+    if (!SHOW_GEN_VIEW) {
+      // HERO = Dither + "unicorner"; scroll -> reszta strony (bez kuli/generatora)
+      const ep = clampf((s - vh*0.12)/(vh*0.85), 0, 1);
+      heroScreen.style.opacity = (1-ep).toFixed(3);
+      heroScreen.style.transform = 'none';   // bez scale -> Dither pelnoekranowy (koniec czarnych brzegow)
+      heroScreen.style.pointerEvents = ep>0.5 ? 'none' : 'auto';
+      if(siteGrid) siteGrid.style.opacity = (ep*0.6).toFixed(3);
+      skullHud.forEach(el=>{ el.style.opacity = (1-ep).toFixed(3); });
+      if(liquidBars) liquidBars.style.opacity = (1-ep).toFixed(3);
+      return;   // tekst hero zostaje w miejscu (bez parallaxu), tylko gasnie
+    }
     const tp = clampf((s - vh*0.30)/(vh*0.85), 0, 1);   // WIDOK1 (szkielet) -> WIDOK2 (kula)
     const ep = clampf((s - vh*1.65)/(vh*0.70), 0, 1);   // wyjscie intro -> reszta strony
     const skullFade = clampf((0.58 - tp)/0.46, 0, 1);   // szkielet + jego HUD (gasnie ~tp 0.58)
@@ -636,6 +653,8 @@ if (canvas) {
     ballGroup.position.y = -1.0*(1-en);                 // kula wjezdza OD DOLU do srodka
     cluster.scale.setScalar(0.62*(0.94 + 0.06*tp));
     gridMat.uniforms.uB.value.copy(tunB1).lerp(tunB2, tp);   // tunel przebarwia sie na kolor kuli
+    gridMat.uniforms.uFadeT.value = tp;                       // tunel gasnie pod szkieletem (tp=0) -> widoczne liquid-bars
+    if(liquidBars) liquidBars.style.opacity = (1 - tp).toFixed(3);   // liquid-bars pod szkieletem, znikaja przy kuli
     if(ep>=1) return;                                        // intro poza kadrem -> nie renderuj
     // kolysanie (~±18°) + wygladzony wplyw myszy (na szkielecie i kuli — widoczny i tak jeden)
     tiltY += (mouse.x*0.4 - tiltY)*0.06;
