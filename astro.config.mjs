@@ -7,6 +7,8 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://unicorner.pl',
+  // strony wychodza jako foo.html (nie foo/index.html) -> zachowuje istniejace linki .html
+  build: { format: 'file' },
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],
