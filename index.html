@@ -15,7 +15,7 @@
 <meta name="description" content="Fiszki, zadania i quizy do egzaminów. Zrobione po ludzku przez studentów, dla studentów.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@600;700;800;900&family=Audiowide&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@500;600;700&family=Orbitron:wght@600;700;800;900&family=Exo+2:wght@500;600;700;800&family=Audiowide&family=Syncopate:wght@700&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
@@ -277,49 +277,58 @@
     line-height:1.75;color:var(--muted);}
   .faq-a p b{color:var(--text);font-weight:600;}
 
-  .ai-feature{position:relative;width:100vw;left:50%;margin-left:-50vw;padding:78px 0 84px;overflow:hidden;}
-  .aif-bg{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;}
-  .aif-bg svg{position:absolute;right:-140px;top:50%;transform:translateY(-50%);width:640px;height:640px;opacity:.5;}
-  .aif-bg .r1{fill:none;stroke:rgba(39,232,255,.07);stroke-width:1;transform-origin:center;animation:aifRot 60s linear infinite;}
-  .aif-bg .r2{fill:none;stroke:rgba(255,46,151,.06);stroke-width:1;transform-origin:center;animation:aifRot 90s linear infinite reverse;}
-  @keyframes aifRot{to{transform:rotate(360deg);}}
-  .aif-inner{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 24px 0 60px;}
-  .aif-inner::before{content:"";position:absolute;left:24px;top:6px;bottom:6px;width:2px;
-    background:linear-gradient(180deg,transparent,#27e8ff 12%,#a78bfa 50%,#ff2e97 88%,transparent);box-shadow:0 0 12px rgba(167,139,250,.5);opacity:.9;}
-  .aif-inner::after{content:"";position:absolute;left:23px;width:4px;height:78px;top:6px;border-radius:2px;
-    background:linear-gradient(180deg,transparent,#aef6ff,transparent);filter:blur(1px);animation:railRun 5.5s ease-in-out infinite;}
-  @keyframes railRun{0%{top:6px;opacity:0;}12%{opacity:1;}88%{opacity:1;}100%{top:calc(100% - 84px);opacity:0;}}
-  .aif-eyebrow{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:26px;}
+  .ai-feature{position:relative;width:100vw;left:50%;margin-left:-50vw;padding:92px 0 100px;overflow:hidden;}
+  .aif-inner{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:0 24px;text-align:center;}
+  .aif-eyebrow{display:inline-flex;align-items:center;gap:14px;font-family:var(--mono);font-size:.72rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--cyan);margin-bottom:18px;}
   .aif-eyebrow .ed{width:8px;height:8px;border-radius:50%;background:var(--cyan);box-shadow:0 0 10px var(--cyan);flex:0 0 auto;animation:aifPulse 1.8s ease-in-out infinite;}
   @keyframes aifPulse{50%{opacity:.3;box-shadow:0 0 4px var(--cyan);}}
   .aif-eyebrow .sep{color:var(--muted2);}
-  .aif-eyebrow .eline{flex:1;height:1px;background:linear-gradient(90deg,#27e8ff,rgba(167,139,250,.55) 50%,transparent);}
-  .aif-h{font-family:'Orbitron',var(--disp);font-weight:900;text-transform:uppercase;letter-spacing:0;line-height:1.0;
-    font-size:clamp(2.4rem,6.8vw,5.7rem);color:var(--text);margin-bottom:30px;}
-  .aif-h .hl{color:transparent;-webkit-text-stroke:1.6px #b347ff;}
-  .aif-lead{font-family:var(--mono);font-size:clamp(.95rem,1.45vw,1.16rem);line-height:1.8;color:#b347ff;max-width:730px;margin-bottom:58px;}
+  .aif-eyebrow .eline{width:70px;height:1px;background:linear-gradient(90deg,rgba(167,139,250,.55),transparent);}
+  .aif-h{font-family:'Exo 2',var(--disp);font-weight:700;text-transform:uppercase;letter-spacing:.5px;line-height:1.04;
+    font-size:clamp(2.2rem,5.4vw,4.6rem);color:#f2fbff;margin:0 0 6px;}
+  .aif-h .hl{color:transparent;-webkit-text-stroke:0;
+    background-image:linear-gradient(115deg,#27e8ff 0%,#7db8ff 30%,#a855ff 62%,#ff2e97 100%);
+    -webkit-background-clip:text;background-clip:text;}
+
+  /* SCENA: kula (centralny wizual) + po 2 itemy z kazdej strony */
+  .aif-stage{display:grid;grid-template-columns:1fr minmax(300px,440px) 1fr;align-items:center;gap:clamp(16px,3.4vw,52px);margin:22px 0 40px;}
+  .aif-orb{position:relative;width:100%;max-width:440px;aspect-ratio:1;margin:0 auto;}
+  .aif-orb canvas{width:100%;height:100%;display:block;
+    -webkit-mask:radial-gradient(circle at 50% 50%,#000 60%,transparent 82%);mask:radial-gradient(circle at 50% 50%,#000 60%,transparent 82%);}
+  .aif-side{display:flex;flex-direction:column;gap:clamp(24px,3vw,42px);}
+  .aif-side-l{text-align:right;} .aif-side-r{text-align:left;}
+  .aif-item{position:relative;--ac:#27e8ff;--len:clamp(26px,4vw,58px);}
+  .aif-side-l .aif-item:nth-child(1){--ac:#27e8ff;} .aif-side-l .aif-item:nth-child(2){--ac:#b347ff;}
+  .aif-side-r .aif-item:nth-child(1){--ac:#ff2e97;} .aif-side-r .aif-item:nth-child(2){--ac:#ffd84a;}
+  .aif-item .num{display:inline-block;font-family:'Orbitron',var(--disp);font-weight:800;font-size:1.3rem;color:transparent;-webkit-text-stroke:1px var(--ac);letter-spacing:1px;}
+  .aif-item h3{font-family:var(--disp);font-weight:700;font-size:1.02rem;letter-spacing:.4px;text-transform:uppercase;color:var(--text);margin:7px 0 6px;}
+  .aif-item p{font-family:'Inter',sans-serif;font-size:.85rem;line-height:1.55;color:var(--muted);max-width:270px;}
+  .aif-side-l .aif-item p{margin-left:auto;} .aif-side-r .aif-item p{margin-right:auto;}
+  /* subtelne laczenie z kula: cienka linia + wezel-kropka w kierunku kuli */
+  .aif-side-l .aif-item::before,.aif-side-r .aif-item::before{content:"";position:absolute;top:15px;height:1.5px;width:var(--len);
+    box-shadow:0 0 7px var(--ac);opacity:.62;pointer-events:none;}
+  .aif-side-l .aif-item::before{right:calc(-1 * var(--len));background:linear-gradient(90deg,transparent,var(--ac));}
+  .aif-side-r .aif-item::before{left:calc(-1 * var(--len));background:linear-gradient(90deg,var(--ac),transparent);}
+  .aif-side-l .aif-item::after,.aif-side-r .aif-item::after{content:"";position:absolute;top:11px;width:9px;height:9px;border-radius:50%;
+    background:var(--ac);box-shadow:0 0 10px var(--ac),0 0 3px #fff;pointer-events:none;}
+  .aif-side-l .aif-item::after{right:calc((-1 * var(--len)) - 4px);}
+  .aif-side-r .aif-item::after{left:calc((-1 * var(--len)) - 4px);}
+
+  .aif-lead{font-family:var(--mono);font-size:clamp(.92rem,1.35vw,1.1rem);line-height:1.75;color:#b347ff;max-width:640px;margin:0 auto 34px;}
   .aif-lead b{color:#eafcff;}
-  .aif-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-bottom:66px;}
-  .aif-item{position:relative;padding-top:22px;border-top:1px solid var(--line2);--ac:#27e8ff;}
-  .aif-item:nth-child(1){--ac:#27e8ff;} .aif-item:nth-child(2){--ac:#b347ff;}
-  .aif-item:nth-child(3){--ac:#ff2e97;} .aif-item:nth-child(4){--ac:#ffd84a;}
-  .aif-item::before{content:"";position:absolute;top:-1px;left:0;width:40px;height:2px;background:var(--ac);box-shadow:0 0 8px var(--ac);}
-  .aif-item .num{font-family:'Orbitron',var(--disp);font-weight:800;font-size:1.55rem;color:transparent;-webkit-text-stroke:1px var(--ac);letter-spacing:1px;}
-  .aif-item h3{font-family:var(--disp);font-weight:700;font-size:1.06rem;letter-spacing:.4px;text-transform:uppercase;color:var(--text);margin:12px 0 9px;}
-  .aif-item p{font-family:'Inter',sans-serif;font-size:.87rem;line-height:1.6;color:var(--muted);}
-  .aif-launch{display:flex;align-items:center;gap:28px;text-decoration:none;position:relative;padding-bottom:20px;width:100%;}
+  .aif-launch{display:inline-flex;align-items:center;gap:24px;text-decoration:none;position:relative;padding-bottom:16px;text-align:left;}
   .aif-launch::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;
     background:linear-gradient(90deg,#27e8ff,#a78bfa 45%,#ff2e97 80%,rgba(255,46,151,.15));transform-origin:left;transform:scaleX(.4);transition:transform .45s var(--ease-out,ease);}
   .aif-launch:hover::after{transform:scaleX(1);}
-  .hexbtn{position:relative;width:100px;height:100px;flex:0 0 auto;display:grid;place-items:center;}
+  .hexbtn{position:relative;width:92px;height:92px;flex:0 0 auto;display:grid;place-items:center;}
   .hexbtn .rings{position:absolute;inset:0;width:100%;height:100%;overflow:visible;}
   .hexbtn .ring{fill:none;stroke:url(#hexRing);stroke-width:2.5;filter:drop-shadow(0 0 6px rgba(167,139,250,.6));transform-box:fill-box;transform-origin:center;animation:hexSpin 12s linear infinite;transition:stroke-width .3s ease;}
   .hexbtn .ring2{stroke:rgba(255,46,151,.5);stroke-width:1.5;animation:hexSpin 19s linear infinite reverse;}
   @keyframes hexSpin{to{transform:rotate(360deg);}}
-  .hexbtn .chip{position:relative;z-index:2;width:38px;height:38px;color:#c9b8ff;filter:drop-shadow(0 0 7px rgba(167,139,250,.7));}
+  .hexbtn .chip{position:relative;z-index:2;width:36px;height:36px;color:#c9b8ff;filter:drop-shadow(0 0 7px rgba(167,139,250,.7));}
   .aif-launch:hover .ring{stroke-width:3.2;animation-duration:6s;}
-  .lx-wrap{display:flex;flex-direction:column;gap:8px;}
-  .lx-tx{font-family:'Orbitron',var(--disp);font-weight:900;text-transform:uppercase;letter-spacing:0;font-size:clamp(1.5rem,3.7vw,2.7rem);line-height:1.05;color:var(--text);transition:color .2s ease,transform .3s ease;}
+  .lx-wrap{display:flex;flex-direction:column;gap:8px;align-items:flex-start;}
+  .lx-tx{font-family:'Orbitron',var(--disp);font-weight:900;text-transform:uppercase;letter-spacing:0;font-size:clamp(1.35rem,3.2vw,2.3rem);line-height:1.05;color:var(--text);transition:color .2s ease,transform .3s ease;}
   .aif-launch:hover .lx-tx{color:#eafcff;transform:translateX(7px);}
   .lx-sub{font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--cyan);}
   .lx-sub::before{content:"// ";color:var(--muted2);}
@@ -327,15 +336,22 @@
   .rz{color:#f3e6ff;text-shadow:0 0 10px #b347ff,0 0 4px #b347ff;}
   .cursor{color:#b347ff;text-shadow:0 0 8px #b347ff;animation:aifCaret .8s steps(1) infinite;}
   @keyframes aifCaret{50%{opacity:0;}}
-  @media(max-width:860px){ .aif-grid{grid-template-columns:repeat(2,1fr);gap:28px 26px;} .aif-bg{display:none;} }
+  @media(max-width:900px){
+    .aif-stage{grid-template-columns:1fr;gap:30px;}
+    .aif-orb{order:-1;max-width:320px;}
+    .aif-side{flex-direction:row;justify-content:center;flex-wrap:wrap;gap:26px 34px;}
+    .aif-side-l,.aif-side-r{text-align:center;}
+    .aif-side-l .aif-item p,.aif-side-r .aif-item p{margin:0 auto;}
+    .aif-item{max-width:230px;}
+    .aif-item::before,.aif-item::after{display:none;}
+  }
   @media(max-width:560px){
-    .ai-feature{padding:56px 0 62px;}
-    .aif-inner{padding:0 20px 0 40px;} .aif-inner::before{left:14px;} .aif-inner::after{left:13px;}
-    .aif-grid{grid-template-columns:1fr;}
-    .aif-launch{flex-wrap:wrap;gap:20px;}
+    .ai-feature{padding:62px 0 68px;}
+    .aif-launch{flex-wrap:wrap;gap:18px;justify-content:center;text-align:center;}
+    .lx-wrap{align-items:center;}
   }
   @media (prefers-reduced-motion: reduce){
-    .aif-inner::after,.hexbtn .ring,.aif-bg .r1,.aif-bg .r2,.aif-eyebrow .ed{animation:none!important;}
+    .hexbtn .ring,.aif-eyebrow .ed{animation:none!important;}
   }
 
   /* Opaque background is REQUIRED: .site-foot forms its own stacking context,
@@ -480,10 +496,77 @@
   @media (prefers-reduced-motion: reduce){
     .hero-cta{animation:none;}
   }
+
+  /* ===== INTRO: czaszka x-ray (WebGL) + panorama klub->nauka ===== */
+  /* hero fixed — zostaje na ekranie; przy scrollu gasnie i cofa sie, panorama wjezdza na wierzch */
+  .hero-screen{position:fixed;inset:0;z-index:1;overflow:hidden;
+    transform-origin:50% 44%;will-change:opacity,transform;background:transparent}
+  .hero-spacer{height:240vh}   /* miejsce na scroll intro: szkielet -> kula -> wyjscie */
+  #gl{position:absolute;inset:0;z-index:0;display:block}
+  .hero-fx{position:absolute;inset:0;z-index:2;pointer-events:none}
+  .hero-fx .scan{position:absolute;inset:0;mix-blend-mode:screen;opacity:.35;
+    background:repeating-linear-gradient(to bottom, rgba(39,232,255,.05) 0 1px, transparent 1px 3px)}
+  .hero-fx .vig{position:absolute;inset:0;box-shadow:inset 0 0 240px 60px rgba(5,4,11,.9)}
+  .hero-screen .title{position:absolute;z-index:6;top:29px;left:21px;pointer-events:none}
+  .hero-screen .title .eb{font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.28em;
+    text-transform:uppercase;color:var(--cyan);text-shadow:0 0 8px rgba(39,232,255,.4);margin-bottom:12px}
+  .hero-screen .title .ttl{font-family:'Audiowide',var(--disp);font-weight:400;font-size:clamp(1.8rem,3.4vw,2.9rem);
+    line-height:1;letter-spacing:.02em;color:var(--text);text-shadow:0 0 26px rgba(167,139,250,.35)}
+  .hero-screen .title .sub{font-family:var(--disp);font-weight:600;font-size:.8rem;letter-spacing:.14em;
+    text-transform:uppercase;margin-top:12px;
+    background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero-screen .title .meta{font-family:var(--mono);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--muted);margin-top:10px}
+  .hero-screen .title .hero-lede{font-family:var(--disp);font-weight:500;font-size:.82rem;line-height:1.5;
+    letter-spacing:.01em;color:var(--muted);max-width:330px;margin-top:18px}
+  .hero-screen .title .hero-lede b{color:var(--text);font-weight:600}
+  /* WIDOK 2: kula + generator — overlay na tym samym tunelu, crossfade sterowany scrollem */
+  .gen-screen{position:absolute;inset:0;z-index:6;opacity:0;pointer-events:none;
+    display:flex;flex-direction:column;align-items:center;justify-content:space-between;
+    text-align:center;padding:clamp(38px,7vh,84px) 24px;}
+  .gen-top{display:flex;flex-direction:column;align-items:center;gap:16px;max-width:720px;}
+  .gen-h{margin:0;}
+  .gen-lead{font-family:var(--mono);font-size:clamp(.86rem,1.25vw,1.02rem);line-height:1.7;
+    color:#c6b3ff;max-width:540px;margin:0;}
+  .gen-lead b{color:#eafcff;font-weight:600;}
+  .gen-launch{pointer-events:none;}   /* wlaczany z JS gdy widok kuli jest aktywny */
+  .telem{position:absolute;z-index:6;font-family:var(--mono);font-size:.6rem;font-weight:600;
+    letter-spacing:.22em;text-transform:uppercase;pointer-events:none}
+  .telem.br{bottom:38px;right:54px;text-align:right;color:rgba(255,46,151,.85);text-shadow:0 0 8px rgba(255,46,151,.35)}
+  .skull-cap{position:absolute;z-index:6;left:50%;top:6.5vh;transform:translateX(-50%);
+    max-width:min(600px,66vw);text-align:center;
+    font-family:var(--mono);font-size:.74rem;line-height:1.75;letter-spacing:.06em;
+    color:rgba(159,216,255,.92);text-shadow:0 0 10px rgba(39,232,255,.35);pointer-events:none}
+  .scroll-hint{position:absolute;z-index:6;left:50%;bottom:34px;transform:translateX(-50%);
+    font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--text);text-decoration:none;display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--line2);border-radius:4px;padding:9px 16px;background:rgba(16,13,34,.5);
+    backdrop-filter:blur(4px);transition:border-color .2s,box-shadow .2s}
+  .scroll-hint:hover{border-color:var(--accent);box-shadow:0 0 18px rgba(167,139,250,.25)}
+  .scroll-hint .arr{color:var(--cyan);animation:bob 1.8s ease-in-out infinite}
+  @keyframes bob{50%{transform:translateY(3px)}}
+
+  /* SIATKA-TLO calej strony: plaska sciana + wygiecie w podloge na dole (motyw jak w tunelu) */
+  .site-grid{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;overflow:hidden;will-change:opacity}
+  .site-grid::before{content:"";position:absolute;inset:0;
+    background:
+      linear-gradient(rgba(168,85,255,.30) 1px, transparent 1px) 0 0/100% 48px,
+      linear-gradient(90deg, rgba(168,85,255,.30) 1px, transparent 1px) 0 0/48px 100%;
+    -webkit-mask-image:linear-gradient(to bottom,#000,transparent 92%);
+    mask-image:linear-gradient(to bottom,#000,transparent 92%)}
+  .site-grid::after{content:"";position:absolute;left:-40%;right:-40%;bottom:0;height:54%;
+    background:
+      linear-gradient(rgba(168,85,255,.5) 1px, transparent 1px) 0 0/100% 46px,
+      linear-gradient(90deg, rgba(168,85,255,.4) 1px, transparent 1px) 0 0/46px 100%;
+    transform:perspective(560px) rotateX(70deg);transform-origin:bottom center;
+    -webkit-mask-image:linear-gradient(to top,#000 6%,transparent 74%);
+    mask-image:linear-gradient(to top,#000 6%,transparent 74%)}
+  @media (prefers-reduced-motion: reduce){ .scroll-hint .arr{animation:none} }
 </style>
 </head>
 <body>
 <div class="glow-drift" aria-hidden="true"></div>
+<div class="site-grid" id="siteGrid"></div>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <defs>
@@ -494,78 +577,56 @@
   </defs>
 </svg>
 
-<header class="site-top">
-  <div class="wrap">
-    <div class="brand">
-      <svg class="horn" viewBox="0 0 24 24" aria-hidden="true">
-        <path class="seg" d="M12 1 L15 22 H9 Z"/>
-        <path d="M10.4 7 L13.6 7 M9.8 12 L14.2 12 M9.2 17 L14.8 17" stroke="#07060f" stroke-width="1.1" fill="none" opacity="0.55"/>
-      </svg>
-      <span class="wordmark"><span class="uni">uni</span><span class="ai">corner</span></span>
-    </div>
+<!-- ===== INTRO: czaszka x-ray + panorama (skull-hero -> pan klub->nauka) ===== -->
+<!-- Model 3D szkieletu: "three-skull" (Cullen Webber) — licencja MIT. -->
+<div class="hero-screen" id="heroScreen">
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="hero-fx"><div class="scan"></div><div class="vig"></div></div>
+  <div class="title" id="hudTitle">
+    <div class="eb">◢ OPEN STUDENT WORKSPACE</div>
+    <div class="ttl">unicorner</div>
+    <div class="sub">egzaminy ogarnięte po ludzku</div>
+    <div class="meta">v.2026 · UEP · materiały do nauki</div>
+    <p class="hero-lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
   </div>
-</header>
+  <div class="telem br" id="hudTelemBR">RUSZAJ MYSZĄ ✕</div>
+  <div class="skull-cap" id="hudCap">psssssst… tak skończysz, jak będziesz próbował ogarnąć materiał z podręczników. tak tylko mówię :)</div>
+  <a class="scroll-hint" id="hudHint" href="#przedmioty">Zobacz, o co chodzi <span class="arr">↓</span></a>
+
+  <!-- WIDOK 2: kula + generator (wchodzi crossfadem przy scrollu, na tym samym tunelu) -->
+  <div class="gen-screen" id="genScreen">
+    <div class="gen-top">
+      <h2 class="aif-h gen-h">Twoje notatki.<br><span class="hl">Gotowa nauka.</span></h2>
+      <p class="gen-lead">Wrzuć notatki albo PDF, a sztuczna inteligencja rozbije materiał na <b>fiszki i quiz pod Twój egzamin</b> — bez przepisywania.</p>
+    </div>
+    <a class="aif-launch gen-launch" id="genLaunch" href="generator.html?v=1" aria-label="Uruchom Generator AI">
+      <span class="hexbtn" aria-hidden="true">
+        <svg class="rings" viewBox="0 0 100 100">
+          <defs><linearGradient id="hexRing" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#27e8ff"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#ff2e97"/>
+          </linearGradient></defs>
+          <polygon class="ring" points="50,7 90,28.5 90,71.5 50,93 10,71.5 10,28.5"/>
+          <polygon class="ring ring2" points="50,22 77,37 77,63 50,78 23,63 23,37"/>
+        </svg>
+        <svg class="chip" viewBox="0 0 48 48" fill="none">
+          <rect x="16" y="16" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2.4"/>
+          <rect x="21" y="21" width="6" height="6" rx="1.2" fill="currentColor"/>
+          <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+            <path d="M19 16v-5M24 16v-6M29 16v-5"/><path d="M19 32v5M24 32v6M29 32v5"/>
+            <path d="M16 19h-5M16 24h-6M16 29h-5"/><path d="M32 19h5M32 24h6M32 29h5"/>
+          </g>
+        </svg>
+      </span>
+      <span class="lx-wrap">
+        <span class="lx-tx">Uruchom generator</span>
+        <span class="lx-sub">generator.html · faza beta</span>
+      </span>
+    </a>
+  </div>
+</div>
+<div class="hero-spacer"></div>
 
 <div class="wrap">
-  <section class="hero">
-    <span class="eyebrow"><span class="dot"></span>materiały studenckie · UEP</span>
-    <h1>Egzaminy ogarnięte <span class="grad" data-text="po ludzku.">po ludzku.</span></h1>
-    <p class="lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
-    <a class="hero-cta" href="#przedmioty">Przeglądaj przedmioty <span class="arr">↓</span></a>
-  </section>
-
-  <section class="reviews" id="reviews" style="display:none">
-    <div class="reviews-head">
-      <span class="lbl">Opinie</span>
-      <a class="btn-review" href="recenzje.html">★ Zostaw opinię</a>
-    </div>
-    <div class="marquee"><div class="marquee-track" id="reviewTrack"></div></div>
-  </section>
-
-  <section class="ai-feature" data-rev aria-labelledby="aif-h">
-    <div class="aif-bg" aria-hidden="true">
-      <svg viewBox="0 0 200 200"><circle class="r1" cx="100" cy="100" r="96" stroke-dasharray="3 7"/><circle class="r2" cx="100" cy="100" r="70"/></svg>
-    </div>
-    <div class="aif-inner">
-      <p class="aif-eyebrow"><span class="ed"></span>Generator AI<span class="sep">// najnowsza aktualizacja — 01</span><span class="eline"></span></p>
-
-      <h2 class="aif-h" id="aif-h">Twoje notatki.<br><span class="hl">Gotowa nauka.</span></h2>
-
-      <p class="aif-lead" data-scramble>Wgraj własne notatki albo PDF, a sztuczna inteligencja rozbija Twój materiał na fiszki i quiz dopasowane pod egzamin. Uczysz się dokładnie tego, co naprawdę będzie sprawdzane — bez przepisywania i bez gotowców.</p>
-
-      <div class="aif-grid">
-        <div class="aif-item"><span class="num">01</span><h3 data-scramble>Materiał</h3><p>Notatki, skrypt albo PDF — wrzucasz i gotowe, nic nie przepisujesz.</p></div>
-        <div class="aif-item"><span class="num">02</span><h3 data-scramble>Fiszki AI</h3><p>Pojęcia i definicje wyciągnięte prosto z Twojego materiału.</p></div>
-        <div class="aif-item"><span class="num">03</span><h3 data-scramble>Quiz AI</h3><p>Pytania z natychmiastową informacją zwrotną po każdej odpowiedzi.</p></div>
-        <div class="aif-item"><span class="num">04</span><h3 data-scramble>Pod egzamin</h3><p>Uczysz się tego, co realnie masz na swoim egzaminie.</p></div>
-      </div>
-
-      <a class="aif-launch" href="generator.html?v=1" aria-label="Uruchom Generator AI">
-        <span class="hexbtn" aria-hidden="true">
-          <svg class="rings" viewBox="0 0 100 100">
-            <defs><linearGradient id="hexRing" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#27e8ff"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#ff2e97"/>
-            </linearGradient></defs>
-            <polygon class="ring" points="50,7 90,28.5 90,71.5 50,93 10,71.5 10,28.5"/>
-            <polygon class="ring ring2" points="50,22 77,37 77,63 50,78 23,63 23,37"/>
-          </svg>
-          <svg class="chip" viewBox="0 0 48 48" fill="none">
-            <rect x="16" y="16" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2.4"/>
-            <rect x="21" y="21" width="6" height="6" rx="1.2" fill="currentColor"/>
-            <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-              <path d="M19 16v-5M24 16v-6M29 16v-5"/><path d="M19 32v5M24 32v6M29 32v5"/>
-              <path d="M16 19h-5M16 24h-6M16 29h-5"/><path d="M32 19h5M32 24h6M32 29h5"/>
-            </g>
-          </svg>
-        </span>
-        <span class="lx-wrap">
-          <span class="lx-tx">Uruchom generator</span>
-          <span class="lx-sub">generator.html?v=1 · faza beta</span>
-        </span>
-      </a>
-    </div>
-  </section>
-
   <div class="ow" aria-hidden="true"><span>NEXT LEVEL</span></div>
 
   <div class="row-label" data-rev id="przedmioty"><h2>Przedmioty</h2><span class="count" id="count"></span><span class="line"></span></div>
@@ -581,6 +642,14 @@
 
   <div class="row-label" data-rev><h2>FAQ</h2><span class="line"></span></div>
   <div class="faq" id="faq"></div>
+
+  <section class="reviews" id="reviews" style="display:none">
+    <div class="reviews-head">
+      <span class="lbl">Opinie</span>
+      <a class="btn-review" href="recenzje.html">★ Zostaw opinię</a>
+    </div>
+    <div class="marquee"><div class="marquee-track" id="reviewTrack"></div></div>
+  </section>
 </div>
 
 <footer class="site-foot">
@@ -650,6 +719,7 @@
         <p>Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.</p>
         <p>Opinie są dobrowolne; publikujemy podane imię i treść, nie zbieramy adresów e-mail.</p>
         <p>Bez gwarancji kompletności — ucz się też z oryginalnych źródeł.</p>
+        <p>Model 3D szkieletu w intro: „three-skull" (Cullen Webber) — licencja MIT.</p>
       </div>
       <div class="foot-side">
         <div class="foot-brand">
@@ -949,5 +1019,269 @@ fetch(REVIEWS_URL)
   document.querySelectorAll('[data-scramble]').forEach(function (el) { io.observe(el); });
 })();
 </script>
+
+<!-- ===== INTRO WebGL: czaszka x-ray + tunel (three.js r0.161 via importmap CDN) ===== -->
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+}}
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
+import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const canvas = document.getElementById('gl');
+if (canvas) {
+  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.setClearColor(0x000000, 0);
+  let W=innerWidth, H=innerHeight;
+  const wireMats=[]; let bloomComposer, finalComposer, bloomPass;
+
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(42, W/H, 0.1, 100);
+  cam.position.set(0, 0.15, 5.2);
+  function size(){ W=innerWidth; H=innerHeight; renderer.setSize(W,H,false); cam.aspect=W/H; cam.updateProjectionMatrix();
+    wireMats.forEach(m=>m.resolution.set(W,H));
+    if(bloomComposer){ bloomComposer.setSize(W,H); finalComposer.setSize(W,H); bloomPass.setSize(W,H); } }
+  addEventListener('resize', size);
+
+  const ballGroup = new THREE.Group(); scene.add(ballGroup);
+  const cluster = new THREE.Group(); ballGroup.add(cluster);
+
+  // ---- WIDOK 1: SZKIELET (x-ray fresnel + additive), fade przez uOpacity ----
+  const skullGroup = new THREE.Group(); scene.add(skullGroup);
+  const xrayMat = new THREE.ShaderMaterial({
+    uniforms:{ uRim:{value:new THREE.Color(0x27e8ff)}, uMid:{value:new THREE.Color(0xa78bfa)},
+      uBase:{value:new THREE.Color(0x181042)}, uPower:{value:2.2}, uOpacity:{value:1.0} },
+    transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide,
+    vertexShader:`varying vec3 vN; varying vec3 vV;
+      void main(){ vec4 wp=modelMatrix*vec4(position,1.0);
+        vN=normalize(mat3(modelMatrix)*normal); vV=normalize(cameraPosition-wp.xyz);
+        gl_Position=projectionMatrix*viewMatrix*wp; }`,
+    fragmentShader:`uniform vec3 uRim,uMid,uBase; uniform float uPower,uOpacity;
+      varying vec3 vN; varying vec3 vV;
+      void main(){
+        float f=pow(1.0-abs(dot(normalize(vN),normalize(vV))),uPower);
+        vec3 col=mix(uBase,uMid,smoothstep(0.0,0.5,f));
+        col=mix(col,uRim,smoothstep(0.45,1.0,f));
+        col*=(0.5+f);
+        gl_FragColor=vec4(col*uOpacity,1.0);
+      }`
+  });
+  const draco = new DRACOLoader();
+  draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/libs/draco/');
+  const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
+  loader.load('assets/skeleton.glb', (g)=>{
+    const root=g.scene;
+    root.traverse(o=>{ if(o.isMesh) o.material=xrayMat; });
+    const box=new THREE.Box3().setFromObject(root);
+    const c=box.getCenter(new THREE.Vector3()), s=box.getSize(new THREE.Vector3());
+    root.position.sub(c);
+    const target=3.7, k=target/Math.max(s.x,s.y,s.z);
+    root.scale.setScalar(k);
+    root.position.y -= target*0.56;
+    skullGroup.add(root);
+  }, undefined, (e)=>console.error('skull load error', e));
+
+  // RURA-tunel wzdluz osi patrzenia — fioletowa siatka, jasne brzegi, ciemny rdzen. Wartosci zablokowane.
+  const tun = { dens:30, thick:0.70, line:2.65, edge:1.0, fade:0.10, y:0.4, z:-15, par:0.15 };
+  const tunB1 = new THREE.Color(0x5a2fbf);   // WIDOK 1: niebiesko-fioletowy (jak bylo)
+  const tunB2 = new THREE.Color(0x8a4af0);   // WIDOK 2: fiolet kuli
+  const gridMat = new THREE.ShaderMaterial({
+    uniforms:{
+      uA:{value:new THREE.Color(0xa855ff)}, uB:{value:tunB1.clone()},
+      uDens:{value:tun.dens}, uThick:{value:tun.thick},
+      uLine:{value:tun.line}, uEdge:{value:tun.edge}, uFade:{value:tun.fade}
+    },
+    transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.BackSide,
+    vertexShader:`varying float vDepth; varying vec2 vUv;
+      void main(){ vUv=uv; vec4 mv=modelViewMatrix*vec4(position,1.0); vDepth=-mv.z;
+        gl_Position=projectionMatrix*mv; }`,
+    fragmentShader:`uniform vec3 uA,uB; uniform float uDens,uThick,uLine,uEdge,uFade;
+      varying float vDepth; varying vec2 vUv;
+      float gl(float c, float w){ float l=abs(fract(c-0.5)-0.5)/fwidth(c); return 1.0-min(l/w,1.0); }
+      void main(){
+        float g   = max(gl(vUv.x*uDens, uThick), gl(vUv.y*uDens, uThick));
+        float fog = exp(-max(vDepth-3.0,0.0)*uFade);
+        vec3  col = mix(uA, uB, smoothstep(5.0, 20.0, vDepth));
+        float a   = g*fog*uLine + fog*fog*uEdge;
+        gl_FragColor = vec4(col, a);
+      }`
+  });
+  const tunnel = new THREE.Mesh(new THREE.CylinderGeometry(4.8, 4.8, 52, 64, 1, true), gridMat);
+  tunnel.rotation.x = Math.PI/2;
+  tunnel.position.set(0, tun.y, tun.z);
+  scene.add(tunnel);
+
+  // KULA-KLASTER (zamiast szkieletu): ikozaedr -> zewnetrzne trojkaty odlamkow, gruby jednolity fioletowy drut
+  function buildEdges(baseGeo,e){ const pos=baseGeo.getAttribute('position').array,out=[];
+    const c=new THREE.Vector3(),d=new THREE.Vector3(); const seg=(a,b)=>{out.push(a[0],a[1],a[2],b[0],b[1],b[2]);};
+    for(let i=0;i<pos.length;i+=9){
+      const p1=[pos[i],pos[i+1],pos[i+2]],p2=[pos[i+3],pos[i+4],pos[i+5]],p3=[pos[i+6],pos[i+7],pos[i+8]];
+      c.set(p1[0]+p2[0]+p3[0],p1[1]+p2[1]+p3[1],p1[2]+p2[2]+p3[2]).divideScalar(3); d.copy(c).normalize();
+      const p4=[p1[0]+d.x*e,p1[1]+d.y*e,p1[2]+d.z*e],p5=[p2[0]+d.x*e,p2[1]+d.y*e,p2[2]+d.z*e],p6=[p3[0]+d.x*e,p3[1]+d.y*e,p3[2]+d.z*e];
+      seg(p4,p5); seg(p5,p6); seg(p6,p4);
+    } return out; }
+  const baseIco=new THREE.IcosahedronGeometry(1,1);
+  const wireGeo=new LineSegmentsGeometry(); wireGeo.setPositions(buildEdges(baseIco,0.5));
+  function wireMat(color,lw,op){ const m=new LineMaterial({color,linewidth:lw,transparent:true,opacity:op||1.0,blending:THREE.NormalBlending,depthWrite:false,alphaToCoverage:false}); m.resolution.set(W,H);
+    m.onBeforeCompile=(sh)=>{ sh.fragmentShader=sh.fragmentShader.replace('if ( len2 > 1.0 ) discard;','discard;'); }; wireMats.push(m); return m; }
+  const ballMat = wireMat(0xa855ff, 4.0, 0.0);   // start ukryta (WIDOK 1)
+  const ballLine=new LineSegments2(wireGeo, ballMat);
+  ballLine.layers.enable(1);                 // warstwa dla selektywnego bloomu
+  cluster.add(ballLine);
+
+  // selektywny bloom: swieci TYLKO kula; tunel i tlo zostaja dokladnie takie jak byly (przezroczysty canvas)
+  const BLOOM_LAYER=1;
+  bloomComposer=new EffectComposer(renderer); bloomComposer.renderToScreen=false;
+  bloomComposer.addPass(new RenderPass(scene,cam));
+  bloomPass=new UnrealBloomPass(new THREE.Vector2(W,H), 0.95, 0.5, 0.05);
+  bloomComposer.addPass(bloomPass);
+  const mixPass=new ShaderPass(new THREE.ShaderMaterial({
+    uniforms:{ baseTexture:{value:null}, bloomTexture:{value:bloomComposer.renderTarget2.texture} },
+    vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader:`uniform sampler2D baseTexture; uniform sampler2D bloomTexture; varying vec2 vUv;
+      void main(){ vec4 b=texture2D(baseTexture,vUv); vec4 g=texture2D(bloomTexture,vUv); gl_FragColor=b+g; }`
+  }), 'baseTexture');
+  finalComposer=new EffectComposer(renderer);
+  finalComposer.addPass(new RenderPass(scene,cam));
+  finalComposer.addPass(mixPass);
+
+  const mouse={x:0,y:0};
+  addEventListener('pointermove', e=>{ mouse.x=(e.clientX/innerWidth)*2-1; mouse.y=(e.clientY/innerHeight)*2-1; });
+  let tiltY=0, tiltX=0;   // wygladzony wplyw myszy (osobno od kolysania)
+
+  const clampf=(v,a,b)=>Math.min(Math.max(v,a),b);
+  const heroScreen=document.getElementById('heroScreen');
+  const siteGrid=document.getElementById('siteGrid');
+  const skullHud=['hudTitle','hudTelemBR','hudCap','hudHint'].map(id=>document.getElementById(id)).filter(Boolean);
+  const genScreen=document.getElementById('genScreen');
+  const genLaunch=document.getElementById('genLaunch');
+  size();
+  renderer.setAnimationLoop((t)=>{
+    const vh=innerHeight, s=scrollY;
+    const tp = clampf((s - vh*0.30)/(vh*0.85), 0, 1);   // WIDOK1 (szkielet) -> WIDOK2 (kula)
+    const ep = clampf((s - vh*1.65)/(vh*0.70), 0, 1);   // wyjscie intro -> reszta strony
+    const skullFade = clampf((0.58 - tp)/0.46, 0, 1);   // szkielet + jego HUD (gasnie ~tp 0.58)
+    const ballFade  = clampf((tp - 0.42)/0.46, 0, 1);   // kula + generator HUD (od ~tp 0.42, lekkie zazebienie)
+    const en = ballFade*ballFade*(3.0-2.0*ballFade);    // wygladzone wejscie kuli+info OD DOLU
+    // wyjscie calego intro (po widoku kuli) -> normalna strona
+    heroScreen.style.opacity = (1-ep).toFixed(3);
+    heroScreen.style.transform = 'scale('+(1-0.05*ep).toFixed(4)+')';
+    heroScreen.style.pointerEvents = ep>0.5 ? 'none' : 'auto';
+    if(siteGrid) siteGrid.style.opacity = (ep*0.6).toFixed(3);
+    // crossfade tekstu i 3D: szkielet -> kula
+    skullHud.forEach(el=>{ el.style.opacity = skullFade.toFixed(3); });
+    if(genScreen){ genScreen.style.opacity = ballFade.toFixed(3); genScreen.style.transform = 'translateY('+(180*(1-en)).toFixed(1)+'px)'; }
+    if(genLaunch) genLaunch.style.pointerEvents = (ballFade>0.6 && ep<0.5) ? 'auto' : 'none';
+    xrayMat.uniforms.uOpacity.value = skullFade;
+    skullGroup.scale.setScalar(1 - 0.15*tp);
+    ballMat.opacity = ballFade;
+    ballGroup.position.y = -1.0*(1-en);                 // kula wjezdza OD DOLU do srodka
+    cluster.scale.setScalar(0.62*(0.94 + 0.06*tp));
+    gridMat.uniforms.uB.value.copy(tunB1).lerp(tunB2, tp);   // tunel przebarwia sie na kolor kuli
+    if(ep>=1) return;                                        // intro poza kadrem -> nie renderuj
+    // kolysanie (~±18°) + wygladzony wplyw myszy (na szkielecie i kuli — widoczny i tak jeden)
+    tiltY += (mouse.x*0.4 - tiltY)*0.06;
+    tiltX += (mouse.y*0.22 - tiltX)*0.05;
+    const yaw = Math.sin(t*0.0004)*0.32 + tiltY;
+    skullGroup.rotation.y = yaw; skullGroup.rotation.x = tiltX;
+    cluster.rotation.y = yaw;    cluster.rotation.x = tiltX;
+    const tx=-mouse.x*tun.par, ty=tun.y - mouse.y*tun.par*0.6;
+    tunnel.position.x += (tx - tunnel.position.x)*0.05;
+    tunnel.position.y += (ty - tunnel.position.y)*0.05;
+    // selektywny bloom: 1) tylko kula -> bloom, 2) pelna scena + naklada glow
+    cam.layers.set(BLOOM_LAYER); bloomComposer.render();
+    cam.layers.set(0); finalComposer.render();
+  });
+}
+</script>
+
+<!-- ===== Generator AI: kula-klaster (neonowy wireframe + bloom) ===== -->
+<script type="module">
+import * as THREE from 'three';
+import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
+import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
+import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+
+const gcanvas = document.getElementById('genGl');
+if (gcanvas) {
+  const orb = gcanvas.parentElement;
+  const renderer = new THREE.WebGLRenderer({canvas:gcanvas, antialias:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
+  renderer.setClearColor(0x07060f, 1);
+  let W = orb.clientWidth||440, H = orb.clientHeight||440;
+  const wireMats=[]; let composer;
+  const scene = new THREE.Scene();
+  const cam = new THREE.PerspectiveCamera(45, W/H, 0.1, 100);
+  cam.position.set(0,0,5.6);
+  function size(){ W=orb.clientWidth||440; H=orb.clientHeight||440; renderer.setSize(W,H,false); cam.aspect=W/H; cam.updateProjectionMatrix();
+    wireMats.forEach(m=>m.resolution.set(W,H)); if(composer) composer.setSize(W,H); }
+  addEventListener('resize', size);
+
+  const VI=new THREE.Color(0xa855ff);
+  const back=new THREE.Group(); scene.add(back);
+  function ring(r,seg,op){ const g=new THREE.BufferGeometry(),p=[];
+    for(let i=0;i<=seg;i++){const a=i/seg*Math.PI*2;p.push(Math.cos(a)*r,Math.sin(a)*r,0);}
+    g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
+    return new THREE.Line(g,new THREE.LineBasicMaterial({color:VI,transparent:true,opacity:op,blending:THREE.AdditiveBlending,depthWrite:false})); }
+  back.add(ring(2.15,128,.30)); back.add(ring(2.5,128,.14));
+  (function(){const g=new THREE.BufferGeometry(),p=[];const n=48;
+    for(let i=0;i<n;i++){const a=i/n*Math.PI*2;const r0=2.62,r1=(i%4===0)?2.82:2.72;p.push(Math.cos(a)*r0,Math.sin(a)*r0,0,Math.cos(a)*r1,Math.sin(a)*r1,0);}
+    g.setAttribute('position',new THREE.Float32BufferAttribute(p,3));
+    back.add(new THREE.LineSegments(g,new THREE.LineBasicMaterial({color:VI,transparent:true,opacity:.25,blending:THREE.AdditiveBlending,depthWrite:false})));})();
+
+  // kolczasta kula: ikozaedr -> zewnetrzne trojkaty odlamkow
+  function buildEdges(baseGeo,e){ const pos=baseGeo.getAttribute('position').array,out=[];
+    const c=new THREE.Vector3(),d=new THREE.Vector3(); const seg=(a,b)=>{out.push(a[0],a[1],a[2],b[0],b[1],b[2]);};
+    for(let i=0;i<pos.length;i+=9){
+      const p1=[pos[i],pos[i+1],pos[i+2]],p2=[pos[i+3],pos[i+4],pos[i+5]],p3=[pos[i+6],pos[i+7],pos[i+8]];
+      c.set(p1[0]+p2[0]+p3[0],p1[1]+p2[1]+p3[1],p1[2]+p2[2]+p3[2]).divideScalar(3); d.copy(c).normalize();
+      const p4=[p1[0]+d.x*e,p1[1]+d.y*e,p1[2]+d.z*e],p5=[p2[0]+d.x*e,p2[1]+d.y*e,p2[2]+d.z*e],p6=[p3[0]+d.x*e,p3[1]+d.y*e,p3[2]+d.z*e];
+      seg(p4,p5); seg(p5,p6); seg(p6,p4);
+    } return out; }
+  const cluster=new THREE.Group(); scene.add(cluster);
+  const base=new THREE.IcosahedronGeometry(1,1);
+  const wireGeo=new LineSegmentsGeometry(); wireGeo.setPositions(buildEdges(base,0.5));
+  function wireMat(color,lw,op,blend){ const m=new LineMaterial({color,linewidth:lw,transparent:true,opacity:op,blending:blend||THREE.NormalBlending,depthWrite:false,alphaToCoverage:false}); m.resolution.set(W,H);
+    m.onBeforeCompile=(sh)=>{ sh.fragmentShader=sh.fragmentShader.replace('if ( len2 > 1.0 ) discard;','discard;'); }; wireMats.push(m); return m; }
+  cluster.add(new LineSegments2(wireGeo, wireMat(0xa855ff, 3.5, 1.0)));
+
+  composer=new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, cam));
+  composer.addPass(new UnrealBloomPass(new THREE.Vector2(W,H), 0.95, 0.5, 0.05));
+  size();
+
+  const mouse={x:0,y:0};
+  orb.addEventListener('pointermove', e=>{ const r=orb.getBoundingClientRect(); mouse.x=((e.clientX-r.left)/r.width)*2-1; mouse.y=((e.clientY-r.top)/r.height)*2-1; });
+  orb.addEventListener('pointerleave', ()=>{ mouse.x=0; mouse.y=0; });
+  let spin=0, tiltY=0, tiltX=0, vis=false;
+  new IntersectionObserver(es=>es.forEach(e=>{ vis=e.isIntersecting; }), {threshold:0}).observe(orb);
+  renderer.setAnimationLoop(()=>{
+    if(!vis) return;
+    spin += 0.0016;
+    tiltY += (mouse.x*0.5 - tiltY)*0.05;
+    tiltX += (mouse.y*0.4 - tiltX)*0.05;
+    cluster.rotation.y = spin + tiltY;
+    cluster.rotation.x = tiltX;
+    back.rotation.z += 0.0008;
+    composer.render();
+  });
+}
+</script>
+
 </body>
 </html>
