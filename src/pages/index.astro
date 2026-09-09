@@ -2,7 +2,13 @@
 import Base from '../layouts/Base.astro';
 import '../styles/global.css';
 import Dither from '../components/Dither.jsx';
+import FaultyTerminal from '../components/FaultyTerminal.jsx';
 import Shuffle from '../components/Shuffle.jsx';
+import BorderGlow from '../components/BorderGlow.jsx';
+import Plasma from '../components/Plasma.jsx';
+import GridScan from '../components/GridScan.jsx';
+import TunnelGrid from '../components/TunnelGrid.jsx';
+import HeroSkull from '../components/HeroSkull.jsx';
 ---
 
 <Base>
@@ -21,19 +27,30 @@ import Shuffle from '../components/Shuffle.jsx';
 <!-- ===== INTRO: czaszka x-ray + panorama (skull-hero -> pan klub->nauka) ===== -->
 <!-- Model 3D szkieletu: "three-skull" (Cullen Webber) — licencja MIT. -->
 <div class="hero-screen" id="heroScreen">
-  <div class="liquid-bg" id="liquidBars"><Dither client:load waveColor={[0.55, 0.35, 0.95]} colorNum={4} pixelSize={2} waveAmplitude={0.4} waveFrequency={3} waveSpeed={0.04} enableMouseInteraction={true} mouseRadius={0.39} /></div>
+  <div class="liquid-bg" id="liquidBars"><FaultyTerminal client:load tint="#bb1cfc" scale={1.7} curvature={0.22} mouseStrength={0.4} brightness={0.7} timeScale={0.4} scanlineIntensity={0.8} digitSize={1.5} dpr={1.5} /></div>
+  {/* Poprzednie tło (Dither) — odkomentuj, by wrócić:
+  <div class="liquid-bg" id="liquidBars"><Dither client:load waveColor={[0.74, 0.28, 1.0]} colorNum={20} pixelSize={1.5} waveAmplitude={0.3} waveFrequency={1.9} waveSpeed={0.04} enableMouseInteraction={true} mouseRadius={0.2} dpr={[1, 1.5]} /></div> */}
   <canvas id="gl" aria-hidden="true"></canvas>
   <div class="hero-fx"><div class="scan"></div><div class="vig"></div></div>
-  <div class="title" id="hudTitle">
-    <div class="eb">◢ OPEN STUDENT WORKSPACE</div>
-    <Shuffle client:load text="unicorner" tag="div" className="ttl" duration={0.45} stagger={0.045} shuffleTimes={2} style={{ pointerEvents: 'auto' }} />
-    <div class="sub">egzaminy ogarnięte po ludzku</div>
-    <div class="meta">v.2026 · UEP · materiały do nauki</div>
-    <p class="hero-lede">Fiszki, zadania krok po kroku i quizy z natychmiastową informacją zwrotną. <b>Jedno miejsce na wszystkie przedmioty</b> — bez logowania, działa na telefonie, otwierasz i się uczysz.</p>
+  <div class="hero-skull" id="heroSkull"><HeroSkull client:load /></div>
+  <div class="hero-hud" id="hudTitle">
+    <div class="hh-brand">unicorner</div>
+
+    <div class="hh-main">
+      <h1 class="hh-head">Edukacja<br>po ludzku.</h1>
+      <p class="hh-sub">Jedno miejsce.<br>Cała Twoja nauka.</p>
+      <a class="hh-cta" href="#przedmioty" aria-label="Zacznij naukę">
+        <BorderGlow client:load animated={true} borderRadius={36} glowRadius={46} edgeSensitivity={10} backgroundColor="#2e253e" glowColor="270 90 74" glowIntensity={2.4} colors={['#c084fc', '#a855f7', '#c084fc']} className="hh-glow">
+          <span class="hh-cta-txt">Zacznij naukę <span class="arr">→</span></span>
+        </BorderGlow>
+      </a>
+    </div>
+
+    <div class="hh-scroll">
+      <span class="hh-scroll-num">// 01</span>
+      <span class="hh-scroll-label">Scroll to explore</span>
+    </div>
   </div>
-  <div class="telem br" id="hudTelemBR">RUSZAJ MYSZĄ ✕</div>
-  <div class="skull-cap" id="hudCap">psssssst… tak skończysz, jak będziesz próbował ogarnąć materiał z podręczników. tak tylko mówię :)</div>
-  <a class="scroll-hint" id="hudHint" href="#przedmioty">Zobacz, o co chodzi <span class="arr">↓</span></a>
 
   <!-- WIDOK 2: kula + generator (wchodzi crossfadem przy scrollu, na tym samym tunelu) -->
   <div class="gen-screen" id="genScreen">
@@ -74,16 +91,26 @@ import Shuffle from '../components/Shuffle.jsx';
   <div class="row-label" data-rev id="przedmioty"><h2>Przedmioty</h2><span class="count" id="count"></span><span class="line"></span></div>
   <div class="grid" id="grid"></div>
 
-  <div class="about">
-    <div class="item"><h4>Po co to jest</h4><p>Wkuwanie definicji rzadko wystarcza — egzaminy lubią przykłady i zastosowanie. Materiały są pod to ułożone.</p></div>
-    <div class="item"><h4>Jak korzystać</h4><p>Wybierz przedmiot, przejdź fiszki, rozwiąż zadania, sprawdź się quizem. Postęp zapisuje się w przeglądarce.</p></div>
-    <div class="item"><h4>Skąd się bierze</h4><p>To nasze własne opracowania na bazie zajęć. Robione, bo sami się z tego uczymy — i bo działa. Masz swoje notatki i chcesz je dorzucić? Wyślij je na <a href="mailto:unicornernotatki@gmail.com" class="ilink">unicornernotatki@gmail.com</a>.</p></div>
+  <div class="next-zone">
+    <div class="next-card" id="nextCard"></div>
+    <div class="about">
+      <div class="item"><h4>Po co to jest</h4><p>Wkuwanie definicji rzadko wystarcza — egzaminy lubią przykłady i zastosowanie. Materiały są pod to ułożone.</p></div>
+      <div class="item"><h4>Jak korzystać</h4><p>Wybierz przedmiot, przejdź fiszki, rozwiąż zadania, sprawdź się quizem. Postęp zapisuje się w przeglądarce.</p></div>
+      <div class="item"><h4>Skąd się bierze</h4><p>To nasze własne opracowania na bazie zajęć. Robione, bo sami się z tego uczymy — i bo działa.</p></div>
+    </div>
   </div>
 
   <div class="ow" aria-hidden="true"><span>LEARNING</span></div>
 
-  <div class="row-label" data-rev><h2>FAQ</h2><span class="line"></span></div>
-  <div class="faq" id="faq"></div>
+  <div class="faq-zone">
+    <aside class="faq-rail" data-rev>
+      <span class="faq-eyebrow">// FAQ</span>
+      <h2 class="faq-heading">Brakuje przedmiotu?</h2>
+      <p class="faq-sub">Masz przedmiot, który chciałbyś tu zobaczyć? Daj znać. Możesz też podesłać własne notatki lub materiały — dobre wrzucę na stronę.</p>
+      <a class="faq-contact" href="kontakt.html">Napisz do nas <span class="arr">→</span></a>
+    </aside>
+    <div class="faq" id="faq"></div>
+  </div>
 
   <section class="reviews" id="reviews" style="display:none">
     <div class="reviews-head">
@@ -95,81 +122,32 @@ import Shuffle from '../components/Shuffle.jsx';
 </div>
 
 <footer class="site-foot">
-  <div class="giant-deco" aria-hidden="true">
-    <span class="gd-line"></span>
-    <span class="gd-tag">// system online · unicorner_os</span>
-    <span class="gd-line"></span>
-  </div>
-  <div class="uf-stage">
-    <div class="uf-deco" aria-hidden="true">
-      <svg viewBox="0 0 700 420" preserveAspectRatio="none">
-        <defs>
-          <linearGradient id="ufA" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#27e8ff" stop-opacity="0"/><stop offset="1" stop-color="#27e8ff" stop-opacity=".45"/>
-          </linearGradient>
-          <linearGradient id="ufB" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0" stop-color="#ff2e97" stop-opacity="0"/><stop offset="1" stop-color="#ff2e97" stop-opacity=".4"/>
-          </linearGradient>
-        </defs>
-        <line x1="0" y1="96" x2="700" y2="96" stroke="url(#ufA)"/>
-        <line x1="120" y1="150" x2="700" y2="150" stroke="url(#ufB)"/>
-        <line x1="0" y1="286" x2="640" y2="286" stroke="url(#ufA)"/>
-        <path d="M700 40 H640 V16" fill="none" stroke="#a78bfa" stroke-opacity=".45"/>
-        <path d="M700 380 H620 V404" fill="none" stroke="#a78bfa" stroke-opacity=".3"/>
-        <g fill="none" stroke="#a78bfa" stroke-opacity=".2">
-          <circle cx="470" cy="215" r="120"/><circle cx="470" cy="215" r="168"/>
-          <circle cx="470" cy="215" r="72" stroke-dasharray="3 7"/>
-        </g>
-        <g stroke="#3b3560">
-          <line x1="60" y1="196" x2="60" y2="330"/>
-          <line x1="55" y1="196" x2="66" y2="196"/><line x1="55" y1="240" x2="66" y2="240"/>
-          <line x1="58" y1="218" x2="64" y2="218"/><line x1="55" y1="286" x2="66" y2="286"/>
-          <line x1="58" y1="262" x2="64" y2="262"/><line x1="55" y1="330" x2="66" y2="330"/>
-        </g>
-        <g class="uf-haz" stroke="#bd8bff" stroke-opacity=".85" stroke-width="6">
-          <line x1="200" y1="404" x2="228" y2="374"/><line x1="220" y1="404" x2="248" y2="374"/>
-          <line x1="240" y1="404" x2="268" y2="374"/>
-        </g>
-        <path d="M300 96 V130 H392 V186 H470" fill="none" stroke="#27e8ff" stroke-opacity=".3"/>
-        <circle cx="470" cy="186" r="3" fill="#27e8ff" fill-opacity=".65"/>
-        <path d="M20 250 H96 V318 H176" fill="none" stroke="#a78bfa" stroke-opacity=".25"/>
-        <circle cx="176" cy="318" r="2.5" fill="#a78bfa" fill-opacity=".5"/>
-      </svg>
-      <div class="uf-read">
-        <div>NODE <b>UNICORNER</b> / PL</div>
-        <div>STATUS <b>&#9679; ONLINE</b></div>
-        <div>SESJA <span class="mg">0xA7-2F9</span></div>
-      </div>
-      <div class="uf-eq" id="ufEq"></div>
+  <div class="foot-hero">
+    <p class="foot-eyebrow"><span class="fe-dot"></span>unicorner_os · system online</p>
+    <div class="foot-brandmark">
+      <div class="giant"><span class="gw" data-text="UNICORNER">UNICORNER</span></div>
     </div>
-
-    <div class="uf-clip" aria-hidden="true">
-      <video id="ufClip" src="assets/unicorn-loop.mp4" muted loop playsinline autoplay preload="auto"></video>
+    <p class="foot-tagline">Wszystkie materiały do egzaminów — w jednym miejscu.</p>
+    <div class="foot-cta">
+      <a class="fc-btn fc-primary" href="#przedmioty">Zacznij naukę <span class="arr">→</span></a>
     </div>
-
-    <div class="giant">
-      <span class="gw" data-text="UNICORNER">UNICORNER</span>
-      <span class="giant-scan" aria-hidden="true"></span>
-    </div>
-    <p class="uf-sub">materiały do nauki</p>
   </div>
 
-  <div class="wrap foot-simple">
-    <div class="foot-grid">
-      <div class="foot-note">
-        <p><b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą.</p>
-        <p>Wszystkie materiały to nasze własne opracowania — nie udostępniamy tu prezentacji ani materiałów wykładowców.</p>
-        <p>Opinie są dobrowolne; publikujemy podane imię i treść, nie zbieramy adresów e-mail.</p>
-        <p>Bez gwarancji kompletności — ucz się też z oryginalnych źródeł.</p>
-        <p>Model 3D szkieletu w intro: „three-skull" (Cullen Webber) — licencja MIT.</p>
+  <div class="foot-legal">
+    <div class="fl-left">
+      <p class="fl-notes"><b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą. Materiały to nasze własne opracowania na bazie ogólnodostępnego materiału, częściowo z pomocą AI — nie udostępniamy prezentacji wykładowców i nie korzystamy z zamkniętych baz pytań; podobieństwo do pytań egzaminacyjnych jest przypadkowe. Bez ciasteczek śledzących. Bez gwarancji kompletności — ucz się też z oryginałów. Model 3D szkieletu: „three-skull" (Cullen Webber) · MIT.</p>
+      <nav class="fl-links" aria-label="Informacje prawne">
+        <a href="prywatnosc.html">Polityka prywatności</a>
+        <a href="regulamin.html">Regulamin</a>
+        <a href="mailto:unicornernotatki@gmail.com">Kontakt</a>
+      </nav>
+    </div>
+    <div class="fl-brand">
+      <div class="foot-brand">
+        <svg class="horn" style="animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span><span class="fb-uni">uni</span><span class="fb-corner">corner</span></span>
       </div>
-      <div class="foot-side">
-        <div class="foot-brand">
-          <svg class="horn" style="animation:none" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
-          <span><span class="fb-uni">uni</span><span class="fb-corner">corner</span></span>
-        </div>
-        <p class="foot-sys">© 2026 unicorner · system online</p>
-      </div>
+      <p class="foot-sys">© 2026 · system online</p>
     </div>
   </div>
 </footer>
@@ -178,20 +156,20 @@ import Shuffle from '../components/Shuffle.jsx';
 <script is:inline>
 /* footer equalizer + motion guard */
 (function(){
-  var eq = document.getElementById('ufEq');
+  var stars = document.getElementById('footStars');
   var clip = document.getElementById('ufClip');
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (eq && !calm) {
-    var N = 46, html = '';
+  if (stars) {
+    var N = 80, html = '';
     for (var i = 0; i < N; i++) {
-      var t = i / (N - 1), col;
-      if (t < .5) col = 'rgba(' + (167 + 88 * t * 2 | 0) + ',' + (139 - 93 * t * 2 | 0) + ',' + (250 - 99 * t * 2 | 0) + ',.9)';
-      else        col = 'rgba(' + (255 - 216 * (t - .5) * 2 | 0) + ',' + (46 + 186 * (t - .5) * 2 | 0) + ',' + (151 + 104 * (t - .5) * 2 | 0) + ',.9)';
-      html += '<i style="height:' + (14 + Math.random() * 20 | 0) + 'px;background:' + col +
-              ';box-shadow:0 0 6px ' + col + ';--d:' + (.5 + Math.random() * .9).toFixed(2) +
-              's;--dl:' + (Math.random() * .8).toFixed(2) + 's;--lo:' + (.15 + Math.random() * .35).toFixed(2) + '"></i>';
+      var sz = (1 + Math.random() * 2.4).toFixed(1);
+      var col = Math.random() < .78 ? '167,139,250' : (Math.random() < .5 ? '39,232,255' : '255,46,151');
+      html += '<i style="left:' + (Math.random()*100).toFixed(2) + '%;top:' + (Math.random()*100).toFixed(2) +
+              '%;width:' + sz + 'px;height:' + sz + 'px;background:rgba(' + col + ',1);' +
+              'box-shadow:0 0 6px rgba(' + col + ',.7);--o:' + (.18 + Math.random()*.5).toFixed(2) +
+              ';--d:' + (2 + Math.random()*4).toFixed(1) + 's;--dl:' + (Math.random()*4).toFixed(1) + 's"></i>';
     }
-    eq.innerHTML = html;
+    stars.innerHTML = html;
   }
   if (clip) {
     if (calm) {
@@ -280,9 +258,7 @@ const FAQS = [
   { q:"Czy to darmowe?",
     a:"Tak. Otwierasz i się uczysz — bez kont, bez opłat, bez reklam. Nie zbieramy adresów e-mail, nie sprzedajemy danych, nie mamy żadnego produktu premium. Cały projekt utrzymujemy sami, bo sami się z niego uczymy." },
   { q:"Czy postęp się zapisuje?",
-    a:"Tak, ale tylko lokalnie. W quizach i fiszkach postęp (co odznaczyłeś jako „Umiem\", jaki masz wynik quizu) trzymany jest w Twojej przeglądarce (localStorage). Nic nie wysyłamy na żaden serwer. Wyczyścisz dane przeglądarki lub otworzysz stronę w trybie incognito — zacznie się od zera. Jeśli chcesz uczyć się na dwóch urządzeniach, postęp się między nimi nie zsynchronizuje." },
-  { q:"Mam własne notatki albo materiały — jak je dorzucić?",
-    a:"Wyślij mi je na <a href=\"mailto:unicornernotatki@gmail.com\" style=\"color:var(--cyan);text-decoration:none;border-bottom:1px dashed rgba(39,232,255,.4);\">unicornernotatki@gmail.com</a>. Notatki, skany, skrypty, opracowania — cokolwiek. Jeżeli materiał jest dobrej jakości, dorzucę go do odpowiedniego przedmiotu albo zrobię z niego osobną zakładkę. Jak nie masz notatek, ale znasz przedmiot, który powinien tu być — też się odezwij." }
+    a:"Tak, ale tylko lokalnie. W quizach i fiszkach postęp (co odznaczyłeś jako „Umiem\", jaki masz wynik quizu) trzymany jest w Twojej przeglądarce (localStorage). Nic nie wysyłamy na żaden serwer. Wyczyścisz dane przeglądarki lub otworzysz stronę w trybie incognito — zacznie się od zera. Jeśli chcesz uczyć się na dwóch urządzeniach, postęp się między nimi nie zsynchronizuje." }
 ];
 
 const grid = document.getElementById('grid');
@@ -295,6 +271,7 @@ function cardHtml(s){
   const live = s.status==='live';
   const tagHtml = s.tags.map(t=>`<span class="tag">${t}</span>`).join('');
   const inner = `
+    <span class="card-glow" aria-hidden="true"></span>
     <div class="card-top"><div class="emoji">${s.emoji}</div>
     <span class="badge ${live?'live':'soon'}">${s.badge || (live?'gotowe':'wkrótce')}</span></div>
     <h3>${s.name}</h3><p class="desc">${s.desc}</p>
@@ -336,8 +313,45 @@ const liveSubjects = SUBJECTS.filter(s=>s.status==='live');
 const soonSubjects = SUBJECTS.filter(s=>s.status!=='live');
 grid.innerHTML =
   liveSubjects.map(cardHtml).join('') +
-  statHubHtml(STAT_GROUP) +
-  soonSubjects.map(cardHtml).join('');
+  statHubHtml(STAT_GROUP);
+const nextCard = document.getElementById('nextCard');
+if (nextCard) nextCard.innerHTML = soonSubjects.map(cardHtml).join('');
+
+// ===== Magic Bento: border-glow per karta (proximity) — cache rectow + rAF, bez lagu =====
+(function(){
+  if (matchMedia('(hover: none)').matches) return;   // pomijaj na dotyku
+  const R=380, prox=R*0.5, fade=R*0.75, GLOWR=R+'px';
+  const cardsSel='.card, .stat-hub';
+  let cards=[], gr=null, rects=[], measured=false, mx=0, my=0, raf=0;
+  function measure(){
+    cards=[...grid.querySelectorAll(cardsSel)];
+    gr=grid.getBoundingClientRect();
+    rects=cards.map(c=>c.getBoundingClientRect());
+    measured=true;
+  }
+  function invalidate(){ measured=false; }
+  function clearGlow(){ cards.forEach(c=>c.style.setProperty('--glow-intensity','0')); }
+  function apply(){
+    raf=0;
+    if(!measured) measure();
+    if(mx<gr.left||mx>gr.right||my<gr.top||my>gr.bottom){ clearGlow(); return; }
+    for(let i=0;i<cards.length;i++){
+      const r=rects[i], cx=r.left+r.width/2, cy=r.top+r.height/2;
+      const eff=Math.max(0, Math.hypot(mx-cx,my-cy)-Math.max(r.width,r.height)/2);
+      let gi=0; if(eff<=prox) gi=1; else if(eff<=fade) gi=(fade-eff)/(fade-prox);
+      const st=cards[i].style;
+      st.setProperty('--glow-x', (((mx-r.left)/r.width)*100).toFixed(1)+'%');
+      st.setProperty('--glow-y', (((my-r.top)/r.height)*100).toFixed(1)+'%');
+      st.setProperty('--glow-intensity', gi.toFixed(3));
+      st.setProperty('--glow-radius', GLOWR);
+    }
+  }
+  function onMove(e){ mx=e.clientX; my=e.clientY; if(!raf) raf=requestAnimationFrame(apply); }
+  document.addEventListener('mousemove', onMove, {passive:true});
+  document.addEventListener('mouseleave', ()=>{ if(raf){cancelAnimationFrame(raf);raf=0;} if(measured) clearGlow(); });
+  addEventListener('scroll', invalidate, {passive:true});
+  addEventListener('resize', invalidate);
+})();
 
 const faq = document.getElementById('faq');
 faq.innerHTML = FAQS.map((f,i)=>`
@@ -615,6 +629,9 @@ if (canvas) {
   const heroScreen=document.getElementById('heroScreen');
   const liquidBars=document.getElementById('liquidBars');
   const siteGrid=document.getElementById('siteGrid');
+  // Faza pionowych linii siatki tla -> linia dokladnie na osi tunelu (srodek stopki), by sufit laczyl sie z tlem
+  const alignGrid=()=>{ if(!siteGrid) return; const f=document.querySelector('.site-foot'); const r=f&&f.getBoundingClientRect(); const cx=r?(r.left+r.width/2):innerWidth/2; siteGrid.style.setProperty('--gx', ((((cx%38)+38)%38)).toFixed(1)+'px'); };
+  alignGrid(); addEventListener('resize', alignGrid);
   const skullHud=['hudTitle','hudTelemBR','hudCap','hudHint'].map(id=>document.getElementById(id)).filter(Boolean);
   const genScreen=document.getElementById('genScreen');
   const genLaunch=document.getElementById('genLaunch');
@@ -623,15 +640,19 @@ if (canvas) {
   renderer.setAnimationLoop((t)=>{
     const vh=innerHeight, s=scrollY;
     if (!SHOW_GEN_VIEW) {
-      // HERO = Dither + "unicorner"; scroll -> reszta strony (bez kuli/generatora)
-      const ep = clampf((s - vh*0.12)/(vh*0.85), 0, 1);
-      heroScreen.style.opacity = (1-ep).toFixed(3);
-      heroScreen.style.transform = 'none';   // bez scale -> Dither pelnoekranowy (koniec czarnych brzegow)
+      // HERO zostaje JASNE (bez przyciemniania). Scroll -> jedzie w gore (parallax),
+      // a jego TLO nie ucina sie twardo: wygasza sie od dolu gradientem (maska), coraz mocniej ze scrollem.
+      const ep = clampf((s - vh*0.15)/(vh*1.05), 0, 1);
+      heroScreen.style.opacity = '1';
+      heroScreen.style.transform = 'translateY(' + (-(s*0.4)).toFixed(1) + 'px)';
+      const mfade = clampf(s/(vh*1.2), 0, 1);             // rusza od 1. piksela scrolla (bez opoznienia ep)
+      const fs = Math.max(0, 100 - Math.round(mfade*100)); // glebia wygaszenia (~0.83*s) zawsze > parallax (0.4*s) -> brak ucietej krawedzi
+      const mask = 'linear-gradient(to bottom, #000 ' + fs + '%, rgba(0,0,0,0) 100%)';
+      heroScreen.style.webkitMaskImage = mask;
+      heroScreen.style.maskImage = mask;
       heroScreen.style.pointerEvents = ep>0.5 ? 'none' : 'auto';
-      if(siteGrid) siteGrid.style.opacity = (ep*0.6).toFixed(3);
-      skullHud.forEach(el=>{ el.style.opacity = (1-ep).toFixed(3); });
-      if(liquidBars) liquidBars.style.opacity = (1-ep).toFixed(3);
-      return;   // tekst hero zostaje w miejscu (bez parallaxu), tylko gasnie
+      if(siteGrid) siteGrid.style.opacity = (ep*0.9).toFixed(3);
+      return;
     }
     const tp = clampf((s - vh*0.30)/(vh*0.85), 0, 1);   // WIDOK1 (szkielet) -> WIDOK2 (kula)
     const ep = clampf((s - vh*1.65)/(vh*0.70), 0, 1);   // wyjscie intro -> reszta strony
@@ -642,7 +663,7 @@ if (canvas) {
     heroScreen.style.opacity = (1-ep).toFixed(3);
     heroScreen.style.transform = 'scale('+(1-0.05*ep).toFixed(4)+')';
     heroScreen.style.pointerEvents = ep>0.5 ? 'none' : 'auto';
-    if(siteGrid) siteGrid.style.opacity = (ep*0.6).toFixed(3);
+    if(siteGrid) siteGrid.style.opacity = (ep*0.9).toFixed(3);
     // crossfade tekstu i 3D: szkielet -> kula
     skullHud.forEach(el=>{ el.style.opacity = skullFade.toFixed(3); });
     if(genScreen){ genScreen.style.opacity = ballFade.toFixed(3); genScreen.style.transform = 'translateY('+(180*(1-en)).toFixed(1)+'px)'; }

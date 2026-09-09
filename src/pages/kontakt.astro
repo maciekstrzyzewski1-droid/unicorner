@@ -1,0 +1,180 @@
+---
+import Base from '../layouts/Base.astro';
+const title = "Napisz do nas · Unicorner";
+const description = "Zaproponuj przedmiot, który ma się pojawić na Unicorner, albo prześlij własne notatki i materiały.";
+const mail = "unicornernotatki@gmail.com";
+---
+
+<Base title={title} description={description}>
+<style is:inline>
+  :root{
+    --ink:#07060f; --ink2:#0d0c13; --surface:#15131d; --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
+    --accent:#a78bfa; --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
+    --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+    --mono:'Chakra Petch','Space Grotesk',ui-monospace,monospace;
+    --disp:'Chakra Petch','Space Grotesk',sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+    background:#050505; color:var(--text); min-height:100vh; line-height:1.6; letter-spacing:.1px;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  a{color:var(--cyan); text-decoration:none;}
+  .lwrap{max-width:720px; margin:0 auto; padding:0 22px 90px;}
+
+  header.ltop{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:22px 0 8px;}
+  .brand{display:flex; align-items:center; gap:10px;}
+  .horn{width:24px; height:24px; flex-shrink:0;}
+  .horn .seg{fill:url(#irisGrad);}
+  .wordmark{font-family:var(--mono); font-weight:700; font-size:1.2rem; letter-spacing:.3px; color:var(--text);}
+  .back{font-family:var(--mono); font-size:.8rem; font-weight:600; color:var(--muted); border:1px solid var(--line); background:var(--ink2); padding:7px 13px; border-radius:999px; transition:.2s;}
+  .back:hover{color:var(--text); border-color:var(--line2);}
+
+  .lhead{padding:36px 0 8px;}
+  .eyebrow{display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:.7rem; font-weight:600; letter-spacing:.6px; text-transform:uppercase; color:var(--cyan); border:1px solid var(--line); background:var(--ink2); padding:6px 12px; border-radius:999px; margin-bottom:16px;}
+  h1{font-family:var(--mono); font-weight:700; font-size:clamp(1.7rem,4.5vw,2.5rem); line-height:1.1; letter-spacing:-.6px; margin-bottom:12px;}
+  h1 .grad{background:var(--iris); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .lede{color:var(--muted); font-size:1rem; max-width:600px;}
+  .lede b{color:var(--text); font-weight:600;}
+
+  form.uc-form{margin-top:30px; display:flex; flex-direction:column; gap:18px;}
+  .field{display:flex; flex-direction:column; gap:8px;}
+  .field label{font-family:var(--mono); font-size:.72rem; font-weight:600; letter-spacing:1.2px; text-transform:uppercase; color:var(--muted2);}
+  .field label .opt{color:var(--muted2); text-transform:none; letter-spacing:0; font-weight:400;}
+  .field input, .field textarea{
+    font-family:inherit; font-size:.95rem; color:var(--text);
+    background:var(--ink2); border:1px solid var(--line); border-radius:12px; padding:13px 15px;
+    transition:border-color .2s, box-shadow .2s; width:100%; resize:vertical;
+  }
+  .field input::placeholder, .field textarea::placeholder{color:var(--muted2);}
+  .field input:focus, .field textarea:focus{outline:none; border-color:var(--accent); box-shadow:0 0 0 3px rgba(167,139,250,.16);}
+  .field textarea{min-height:170px; line-height:1.55;}
+
+  .actions{display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-top:4px;}
+  .btn{font-family:var(--mono); font-size:.82rem; font-weight:700; letter-spacing:.4px; border-radius:12px; padding:13px 20px; cursor:pointer; border:1px solid transparent; transition:transform .18s ease, box-shadow .18s ease, border-color .2s; display:inline-flex; align-items:center; gap:9px;}
+  .btn-primary{color:#0b0713; background:var(--iris); border:none;}
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 8px 26px rgba(167,139,250,.35);}
+  .btn-ghost{color:var(--text); background:var(--ink2); border:1px solid var(--line2);}
+  .btn-ghost:hover{border-color:var(--accent); transform:translateY(-2px);}
+  .copied{font-family:var(--mono); font-size:.78rem; color:var(--cyan); opacity:0; transition:opacity .2s;}
+  .copied.show{opacity:1;}
+
+  .note{margin-top:8px; font-size:.85rem; color:var(--muted); line-height:1.6;}
+  .mailbox{margin-top:26px; border:1px solid var(--line); background:var(--ink2); border-radius:14px; padding:16px 18px;}
+  .mailbox .k{font-family:var(--mono); font-size:.7rem; letter-spacing:1px; text-transform:uppercase; color:var(--muted2); display:block; margin-bottom:6px;}
+  .mailbox a{font-family:var(--mono); font-size:1rem; color:var(--cyan); border-bottom:1px dashed rgba(39,232,255,.4);}
+  .mailbox p{font-size:.85rem; color:var(--muted); margin-top:8px;}
+
+  .lfoot{margin-top:44px; padding-top:18px; border-top:1px solid var(--line); display:flex; flex-wrap:wrap; gap:14px; justify-content:space-between; align-items:center; font-family:var(--mono); font-size:.78rem; color:var(--muted2);}
+  .lfoot .fnav{display:flex; gap:16px; flex-wrap:wrap;}
+  .lfoot a{color:var(--muted);}
+  .lfoot a:hover{color:var(--text);}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#27e8ff"/><stop offset=".4" stop-color="#a78bfa"/><stop offset=".72" stop-color="#ff2e97"/><stop offset="1" stop-color="#ffd84a"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="lwrap">
+  <header class="ltop">
+    <a class="brand" href="index.html" aria-label="Unicorner — strona główna">
+      <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+      <span class="wordmark">unicorner</span>
+    </a>
+    <a class="back" href="index.html">← Strona główna</a>
+  </header>
+
+  <div class="lhead">
+    <span class="eyebrow">// Napisz do nas</span>
+    <h1>Brakuje <span class="grad">przedmiotu?</span></h1>
+    <p class="lede">Napisz, jaki przedmiot chciałbyś tu zobaczyć — dorzucimy go do kolejki. Masz własne <b>notatki albo materiały</b>? Wklej je poniżej lub opisz, co masz; dobre wrzucimy na stronę.</p>
+  </div>
+
+  <form class="uc-form" id="ucForm" onsubmit="return false">
+    <div class="field">
+      <label for="fSubject">Jaki przedmiot?</label>
+      <input id="fSubject" type="text" placeholder="np. Rachunkowość finansowa, Prawo gospodarcze…" autocomplete="off" />
+    </div>
+    <div class="field">
+      <label for="fNotes">Notatki / materiały <span class="opt">— wklej tekst albo opisz, co masz</span></label>
+      <textarea id="fNotes" placeholder="Wklej notatki, linki do plików, albo napisz czym dysponujesz (skany, skrypty, opracowania…)."></textarea>
+    </div>
+    <div class="field">
+      <label for="fFrom">Twój e-mail <span class="opt">— opcjonalnie, gdybyśmy chcieli dopytać</span></label>
+      <input id="fFrom" type="email" placeholder="ty@przykład.pl" autocomplete="email" />
+    </div>
+    <div class="actions">
+      <button class="btn btn-primary" id="fSend" type="button">Wyślij e-mailem <span aria-hidden="true">→</span></button>
+      <button class="btn btn-ghost" id="fCopy" type="button">Skopiuj treść</button>
+      <span class="copied" id="fCopied">Skopiowano ✓</span>
+    </div>
+    <p class="note">Przycisk „Wyślij" otworzy Twój program pocztowy z gotową wiadomością (pliki możesz tam załączyć). Jeśli nic się nie otworzy — kliknij „Skopiuj treść" i wklej ją w mailu na adres poniżej.</p>
+  </form>
+
+  <div class="mailbox">
+    <span class="k">Wolisz napisać wprost?</span>
+    <a href={`mailto:${mail}`}>{mail}</a>
+    <p>Notatki, skany, skrypty, opracowania — cokolwiek. Jeśli nie masz notatek, ale znasz przedmiot, który powinien tu być, też się odezwij.</p>
+  </div>
+
+  <div class="lfoot">
+    <div class="fnav">
+      <a href="index.html">Strona główna</a>
+      <a href="regulamin.html">Regulamin</a>
+      <a href="prywatnosc.html">Polityka prywatności</a>
+    </div>
+    <span>© 2026 Unicorner</span>
+  </div>
+</div>
+
+<script is:inline>
+  (function(){
+    var MAIL = "unicornernotatki@gmail.com";
+    var subj = document.getElementById('fSubject');
+    var notes = document.getElementById('fNotes');
+    var from = document.getElementById('fFrom');
+    var sendBtn = document.getElementById('fSend');
+    var copyBtn = document.getElementById('fCopy');
+    var copied = document.getElementById('fCopied');
+
+    function compose(){
+      var s = (subj.value || '').trim();
+      var n = (notes.value || '').trim();
+      var f = (from.value || '').trim();
+      var lines = [];
+      lines.push('Przedmiot: ' + (s || '(nie podano)'));
+      if (f) lines.push('Kontakt: ' + f);
+      lines.push('');
+      lines.push(n || '(brak treści)');
+      return {
+        subject: s ? ('Unicorner — propozycja: ' + s) : 'Unicorner — zgłoszenie',
+        body: lines.join('\n')
+      };
+    }
+
+    sendBtn.addEventListener('click', function(){
+      var c = compose();
+      window.location.href = 'mailto:' + MAIL + '?subject=' + encodeURIComponent(c.subject) + '&body=' + encodeURIComponent(c.body);
+    });
+
+    copyBtn.addEventListener('click', async function(){
+      var c = compose();
+      var text = 'Do: ' + MAIL + '\nTemat: ' + c.subject + '\n\n' + c.body;
+      try {
+        await navigator.clipboard.writeText(text);
+      } catch (e) {
+        // fallback: zaznacz textarea, by mozna bylo skopiowac recznie
+        notes.focus(); notes.select();
+      }
+      copied.classList.add('show');
+      copyBtn.textContent = 'Skopiowano ✓';
+      setTimeout(function(){ copied.classList.remove('show'); copyBtn.textContent = 'Skopiuj treść'; }, 2200);
+    });
+  })();
+</script>
+</Base>

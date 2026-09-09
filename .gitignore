@@ -18,3 +18,9 @@ jakość claude/
 # === System / edytor ===
 .DS_Store
 Thumbs.db
+
+# dev-only pages / scratch (nie deployowane)
+dev-pages/
+
+# local Claude Code config
+.claude/

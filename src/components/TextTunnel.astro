@@ -1,0 +1,134 @@
+---
+// TextTunnel — adaptacja CodePen (alexandrevacassin/jENEZZq): perspektywiczny "korytarz"
+// z przewijajacym sie tekstem na scianach 3D + powolny zoom + fioletowa poswiata + rozmyte odbicie.
+// Zmiany vs oryginal: obrazy Google Drive USUNIETE -> nasz gradient; tekst Kiplinga -> nasz polski;
+// niebieski hue -> fiolet (hue-rotate na scenie); przewijanie SEAMLESS (marquee). Tekst renderowany
+// w SZABLONIE (nie JS) -> dostaje scope Astro, wiec style faktycznie sie aplikuja.
+const TXT =
+  'UNICORNER — cała twoja <span>nauka</span> w jednym miejscu. Uczysz się do egzaminu i nie wiesz od czego zacząć? My to <span>ogarniamy</span>. Fiszki, zadania i quizy — <span>powtórka</span> zamiast paniki. Rozwiąż, sprawdź się, <span>zdaj</span>. Statystyka, makroekonomia, marketing, rachunkowość — <span>wszystko</span> pod ręką. Ucz się <span>po ludzku</span>, w swoim tempie, kiedy tylko chcesz. Nasze własne <span>opracowania</span>, bez ściem i zamkniętych baz. Mniej stresu, więcej <span>wiedzy</span>.  ';
+---
+
+<div class="tt" aria-hidden="true">
+  <div class="tt-content">
+    <div class="tt-full">
+      <div class="tt-room">
+        <div class="tt-cube">
+          <div class="tt-face top"></div>
+          <div class="tt-face bottom"></div>
+          <div class="tt-face left tt-text"><div class="tt-track"><p set:html={TXT}></p><p set:html={TXT}></p></div></div>
+          <div class="tt-face right tt-text"><div class="tt-track"><p set:html={TXT}></p><p set:html={TXT}></p></div></div>
+          <div class="tt-face back tt-text"><div class="tt-track"><p set:html={TXT}></p><p set:html={TXT}></p></div></div>
+        </div>
+      </div>
+      <div class="tt-room tt-reflect">
+        <div class="tt-cube">
+          <div class="tt-face top"></div>
+          <div class="tt-face bottom"></div>
+          <div class="tt-face left tt-text"><div class="tt-track"><p set:html={TXT}></p><p set:html={TXT}></p></div></div>
+          <div class="tt-face right tt-text"><div class="tt-track"><p set:html={TXT}></p><p set:html={TXT}></p></div></div>
+          <div class="tt-face back tt-text"><div class="tt-track"><p set:html={TXT}></p><p set:html={TXT}></p></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .tt{
+    position:absolute; inset:0; overflow:hidden;
+    display:flex; align-items:center; justify-content:center;
+    background:#050505;
+  }
+  .tt-content{
+    position:relative;
+    width:1000px; height:562px;
+    overflow:hidden;
+    transform: scale(var(--tt-fit, 1.3));
+    transform-origin:center;
+    background: radial-gradient(ellipse at 50% 44%, #8b39e6 0%, #4a1a86 34%, #1c0c39 66%, #0a0612 100%);
+    animation: tt-hueshift 16s ease-in-out infinite;
+  }
+  .tt-full{
+    position:absolute; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    transform: scale(1);
+    animation: tt-zoom 140s linear infinite alternate;
+  }
+  .tt-room{ display:flex; align-items:center; justify-content:center; }
+
+  .tt-cube{
+    position:relative;
+    width:870px; height:190px;
+    transform-style:preserve-3d;
+    perspective:480px;
+    perspective-origin:51% 70%;
+  }
+  .tt-face{
+    position:absolute;
+    width:870px; height:190px;
+    display:flex; align-items:center;
+    overflow:hidden;
+    opacity:.7;
+  }
+  .tt-face.top, .tt-face.bottom{ width:870px; height:870px; }
+  .back  { transform: translateZ(-435px) rotateY(180deg) scaleX(-1); }
+  .left  { transform: translateX(-435px) rotateY(-90deg) scaleX(-1); }
+  .right { transform: translateX(435px)  rotateY(90deg)  scaleX(-1); }
+  .top   { transform: translateY(-435px) rotateX(90deg)  scaleY(-1); }
+  .bottom{ transform: translateY(-245px) rotateX(-90deg) scaleY(-1); }
+
+  /* przewijany tekst (marquee = 2 kopie, translateX -50% => bezszwowa petla) */
+  .tt-track{ display:flex; flex:none; will-change:transform; animation: tt-scroll 80s linear infinite; }
+  .tt-track :global(p){
+    white-space:nowrap; margin:0; padding-top:20px;
+    font-family:"Bebas Neue", system-ui, sans-serif; font-weight:400;
+    font-size: calc(6em + 13px);
+    line-height:1; color:#fff;
+    padding-right:1.2em;
+  }
+  .tt-track :global(span){ color:#c77dff; }
+  .left  .tt-track{ animation-duration:80s; animation-delay:  0s; }
+  .back  .tt-track{ animation-duration:92s; animation-delay:-30s; }
+  .right .tt-track{ animation-duration:86s; animation-delay:-58s; }
+
+  /* odbicie pod spodem */
+  .tt-reflect{ position:absolute; margin-top:380px; filter:blur(10px); opacity:.7; }
+  .tt-reflect .tt-cube{ perspective-origin:51% -30%; }
+  .tt-reflect .back { transform: translateZ(-435px) rotateY(180deg) scaleX(-1) scaleY(-1); }
+  .tt-reflect .left { transform: translateX(-435px) rotateY(-90deg) scaleX(-1) scaleY(-1); }
+  .tt-reflect .right{ transform: translateX(435px)  rotateY(90deg)  scaleX(-1) scaleY(-1); }
+  .tt-reflect .tt-track :global(p){ transform: scaleY(.7); }
+
+  /* wygaszony srodek -> czytelny napis UNICORNER na wierzchu */
+  .tt::after{
+    content:""; position:absolute; inset:0; z-index:5; pointer-events:none;
+    background: radial-gradient(ellipse at center, rgba(5,5,7,.5) 0%, rgba(5,5,7,.22) 44%, rgba(5,5,7,0) 80%);
+  }
+
+  @keyframes tt-scroll   { to { transform: translateX(-50%); } }
+  @keyframes tt-zoom     { 0%{ transform:scale(1);} 100%{ transform:scale(2.0);} }
+  @keyframes tt-hueshift { 0%,100%{ filter:hue-rotate(-20deg) brightness(1);} 50%{ filter:hue-rotate(34deg) brightness(1.08);} }
+
+  .tt.paused *{ animation-play-state:paused !important; }
+  @media (prefers-reduced-motion: reduce){ .tt-full, .tt-content, .tt-track{ animation:none !important; } }
+</style>
+
+<script>
+  document.querySelectorAll('.tt').forEach(root => {
+    const content = root.querySelector('.tt-content');
+    const fit = () => {
+      const w = root.offsetWidth, h = root.offsetHeight;
+      if (!w || !h) return;
+      const s = Math.max(w / 1000, h / 562) * 1.04;
+      content.style.setProperty('--tt-fit', s.toFixed(3));
+    };
+    fit();
+    if (typeof ResizeObserver !== 'undefined') new ResizeObserver(fit).observe(root);
+    if (typeof IntersectionObserver !== 'undefined') {
+      new IntersectionObserver(
+        ([e]) => root.classList.toggle('paused', !e.isIntersecting),
+        { threshold: 0 }
+      ).observe(root);
+    }
+  });
+</script>

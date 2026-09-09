@@ -30,6 +30,7 @@ uniform vec3 waveColor;
 uniform vec2 mousePos;
 uniform int enableMouseInteraction;
 uniform float mouseRadius;
+uniform float mouseStrength;
 
 vec4 mod289(vec4 x) { return x - floor(x * (1.0/289.0)) * 289.0; }
 vec4 permute(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
@@ -92,7 +93,7 @@ void main() {
     mouseNDC.x *= resolution.x / resolution.y;
     float dist = length(uv - mouseNDC);
     float effect = 1.0 - smoothstep(0.0, mouseRadius, dist);
-    f -= 0.5 * effect;
+    f -= 0.5 * effect * mouseStrength;
   }
   vec3 col = mix(vec3(0.0), waveColor, f);
   gl_FragColor = vec4(col, 1.0);
@@ -121,7 +122,7 @@ vec3 dither(vec2 uv, vec3 color) {
   float threshold = bayerMatrix8x8[y * 8 + x] - 0.25;
   float step = 1.0 / (colorNum - 1.0);
   color += threshold * step;
-  float bias = 0.2;
+  float bias = 0.1;
   color = clamp(color - bias, 0.0, 1.0);
   return floor(color * (colorNum - 1.0) + 0.5) / (colorNum - 1.0);
 }
@@ -179,6 +180,8 @@ function DitheredWaves({
 }) {
   const mesh = useRef(null);
   const mouseRef = useRef(new THREE.Vector2());
+  const lastMoveRef = useRef(-1e9);   // znacznik czasu (ms) ostatniego ruchu myszy
+  const mouseStrengthRef = useRef(0); // wygladzana sila efektu (0 = mysz stoi -> tlo plynie swobodnie)
   const { viewport, size, gl } = useThree();
 
   const waveUniformsRef = useRef({
@@ -190,7 +193,8 @@ function DitheredWaves({
     waveColor: new THREE.Uniform(new THREE.Color(...waveColor)),
     mousePos: new THREE.Uniform(new THREE.Vector2(0, 0)),
     enableMouseInteraction: new THREE.Uniform(enableMouseInteraction ? 1 : 0),
-    mouseRadius: new THREE.Uniform(mouseRadius)
+    mouseRadius: new THREE.Uniform(mouseRadius),
+    mouseStrength: new THREE.Uniform(0)
   });
 
   useEffect(() => {
@@ -225,6 +229,14 @@ function DitheredWaves({
 
     if (enableMouseInteraction) {
       u.mousePos.value.copy(mouseRef.current);
+      // efekt myszy rosnie przy ruchu i zanika, gdy mysz stoi (fala plynie swobodnie)
+      const moving = performance.now() - lastMoveRef.current < 100;
+      const target = moving ? 1 : 0;
+      const rate = moving ? 0.18 : 0.07;
+      mouseStrengthRef.current += (target - mouseStrengthRef.current) * rate;
+      u.mouseStrength.value = mouseStrengthRef.current;
+    } else {
+      u.mouseStrength.value = 0;
     }
   });
 
@@ -235,6 +247,7 @@ function DitheredWaves({
       const rect = gl.domElement.getBoundingClientRect();
       const dpr = gl.getPixelRatio();
       mouseRef.current.set((e.clientX - rect.left) * dpr, (e.clientY - rect.top) * dpr);
+      lastMoveRef.current = performance.now();
     };
     window.addEventListener('pointermove', onMove);
     return () => window.removeEventListener('pointermove', onMove);
@@ -245,6 +258,7 @@ function DitheredWaves({
     const rect = gl.domElement.getBoundingClientRect();
     const dpr = gl.getPixelRatio();
     mouseRef.current.set((e.clientX - rect.left) * dpr, (e.clientY - rect.top) * dpr);
+    lastMoveRef.current = performance.now();
   };
 
   return (
@@ -284,13 +298,14 @@ export default function Dither({
   pixelSize = 2,
   disableAnimation = false,
   enableMouseInteraction = true,
-  mouseRadius = 1
+  mouseRadius = 1,
+  dpr = 1
 }) {
   return (
     <Canvas
       className="dither-container"
       camera={{ position: [0, 0, 6] }}
-      dpr={1}
+      dpr={dpr}
       gl={{ antialias: true, preserveDrawingBuffer: true }}
     >
       <DitheredWaves

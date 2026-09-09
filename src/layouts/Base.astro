@@ -15,14 +15,13 @@ const {
 <!doctype html>
 <html lang="pl">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-3JWNYJ5EN4"></script>
-    <script is:inline>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-3JWNYJ5EN4');
-    </script>
+    <!--
+      Analityka bez ciasteczek (nie wymaga bannera zgody).
+      Aby włączyć: w panelu Cloudflare → Web Analytics → "Add a site" → unicorner.pl
+      → skopiuj token i wklej poniżej zamiast TOKEN, a następnie odkomentuj linię.
+      Cloudflare Web Analytics nie zapisuje ciasteczek i nie śledzi między witrynami.
+    -->
+    <!-- <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "TOKEN"}'></script> -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
@@ -30,7 +29,7 @@ const {
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Exo+2:wght@500;600;700;800&family=Audiowide&family=Syncopate:wght@700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Exo+2:wght@500;600;700;800&family=Audiowide&family=Syncopate:wght@700&family=Bebas+Neue&display=swap"
       rel="stylesheet"
     />
   </head>
