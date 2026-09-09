@@ -621,6 +621,17 @@
 .hero-hud .hh-scroll-num{ display:block; font-size:.8rem; font-weight:700; letter-spacing:.22em; opacity:.9; }
 .hero-hud .hh-scroll-label{ display:block; margin-top:7px; font-size:.72rem; font-weight:600; letter-spacing:.34em; text-transform:uppercase; opacity:.65; }
 
+/* ===== HERO na telefonie: tekst na gorze + scrim, zeby nie lezal na szkielecie ===== */
+@media (max-width:640px){
+  .hero-hud{ background:linear-gradient(180deg, rgba(4,3,14,.82) 0%, rgba(4,3,14,.34) 28%, rgba(4,3,14,0) 50%); }
+  .hero-hud .hh-main{ top:clamp(78px,12vh,124px); left:0; right:0; transform:none; max-width:none; padding:0 24px; text-align:center; }
+  .hero-hud .hh-head{ font-size:clamp(2.4rem,11vw,3.4rem); text-shadow:0 2px 22px rgba(0,0,0,.72); }
+  .hero-hud .hh-sub{ margin-top:14px; font-size:clamp(1rem,4.4vw,1.22rem); text-shadow:0 2px 16px rgba(0,0,0,.82); }
+  .hero-hud .hh-cta{ margin-top:24px; }
+  .hero-hud .hh-scroll{ display:none; }
+  .hero-skull{ transform:translateY(7%) scale(.94); transform-origin:center bottom; }
+}
+
 /* ===== STOPKA: wystrzalowa, pelnoekranowa (Lusion-style) ===== */
 .site-foot{ min-height:auto; margin-top:clamp(0px,2vh,18px); padding:0; overflow:hidden; position:relative;
   display:flex; flex-direction:column;
@@ -630,8 +641,8 @@
 .foot-grid .gridscan-container{ position:absolute; inset:0; }
 
 .foot-hero{ flex:0 0 auto; position:relative; z-index:2; display:flex; flex-direction:column;
-  align-items:center; justify-content:center; text-align:center; padding:clamp(52px,8vh,88px) 20px 40px; }
-.foot-eyebrow{ display:inline-flex; align-items:center; gap:9px; margin-bottom:clamp(16px,3vh,32px);
+  align-items:center; justify-content:center; text-align:center; padding:clamp(26px,4.5vh,48px) 20px 26px; }
+.foot-eyebrow{ display:inline-flex; align-items:center; gap:9px; margin-bottom:clamp(10px,2vh,18px);
   font-family:var(--mono); font-size:var(--eyebrow-size, .76rem); font-weight:700; letter-spacing:.34em; text-transform:uppercase;
   color:var(--wmark); text-shadow:0 0 12px rgba(189,139,255,.55); }
 .foot-eyebrow .fe-dot{ width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); }
@@ -643,9 +654,9 @@
 .foot-brandmark .giant{ position:relative; z-index:2; text-align:center; }
 .foot-brandmark .giant span.gw{ font-size:clamp(2.4rem, var(--fw-vw, 8vw), var(--fw-max, 6.4rem)); letter-spacing:var(--fw-ls, .06em); }
 
-.foot-tagline{ margin:clamp(20px,3.4vh,38px) 0 0; font-family:var(--mono); font-weight:500;
+.foot-tagline{ margin:clamp(12px,2vh,22px) 0 0; font-family:var(--mono); font-weight:500;
   font-size:var(--tag-size, clamp(1.06rem,1.9vw,1.4rem)); line-height:1.5; color:var(--muted); letter-spacing:.02em; }
-.foot-cta{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:clamp(26px,4vh,44px); }
+.foot-cta{ display:flex; flex-wrap:wrap; gap:14px; justify-content:center; margin-top:clamp(16px,2.6vh,26px); }
 .fc-btn{ display:inline-flex; align-items:center; gap:10px; padding:15px 30px; border-radius:40px; white-space:nowrap;
   font-family:var(--mono); font-weight:700; letter-spacing:.14em; text-transform:uppercase; font-size:.82rem;
   text-decoration:none; transition:transform .2s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease; }
@@ -659,7 +670,7 @@
 .fc-star{ color:var(--gold); }
 
 .foot-legal{ position:relative; z-index:2; display:flex; align-items:flex-end; justify-content:space-between;
-  gap:28px; flex-wrap:wrap; padding:0 clamp(20px,4vw,52px) 30px; }
+  gap:22px; flex-wrap:wrap; padding:0 clamp(20px,4vw,52px) 22px; }
 .foot-legal .fl-left{ flex:1 1 420px; min-width:260px; max-width:920px; display:flex; flex-direction:column; gap:13px; }
 .foot-legal .fl-notes{ margin:0; font-size:var(--legal-size, .78rem); line-height:1.65; color:var(--muted2); }
 .foot-legal .fl-notes b{ color:var(--muted); }

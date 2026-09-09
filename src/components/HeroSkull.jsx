@@ -66,6 +66,9 @@ export default function HeroSkull() {
   }, []);
 
   const onDown = (e) => {
+    // Na telefonie NIE przechwytujemy gestu — dotyk ma scrollowac strone, nie obracac szkielet.
+    // Obrot-przeciaganie zostaje tylko dla myszy/pen (desktop).
+    if (e.pointerType === 'touch') return;
     const d = drag.current;
     d.active = true; d.px = e.clientX; d.py = e.clientY; d.vx = 0; d.vy = 0;
     e.currentTarget.setPointerCapture?.(e.pointerId);
@@ -94,7 +97,7 @@ export default function HeroSkull() {
       onPointerMove={onMove}
       onPointerUp={onUp}
       onPointerLeave={onUp}
-      style={{ width: '100%', height: '100%', cursor: 'grab', touchAction: 'none' }}
+      style={{ width: '100%', height: '100%', cursor: 'grab', touchAction: 'pan-y' }}
     >
       <Canvas
         camera={{ position: [0, 0, 6.2], fov: 34 }}
