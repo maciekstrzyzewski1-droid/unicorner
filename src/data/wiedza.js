@@ -49,5 +49,6 @@ export const ARTICLES = [
   { slug: 'mieso-czy-rosliny', category: 'zdrowie', seoTitle: 'Mięso czy rośliny — zdrowie, klimat i etyka w liczbach' },
 
   // --- Świat i technika ---
+  { slug: 'anatomia-litra', category: 'swiat', seoTitle: 'Anatomia litra — kryzys paliwowy 2026 i ceny paliw w Polsce' },
   { slug: 'anatomia-predkosci', category: 'swiat', seoTitle: 'Anatomia prędkości — jak działa samochód i kultura motoryzacji' },
 ];
