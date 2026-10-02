@@ -1,0 +1,529 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Anatomia weta</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,800&family=Work+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme: dark;
+  --bg:#14150f;
+  --surface:#1d1e17;
+  --surface-2:#25261d;
+  --line:#35352a;
+  --text:#ece5d1;
+  --muted:#a39d88;
+  --gold:#d1a13f;
+  --gold-soft:rgba(209,161,63,.14);
+  --fact:#d1a13f;
+  --claim:#c9805f;
+  --closed:#93a67c;
+  --open:#8fa1b8;
+  --serif:"Fraunces", Georgia, "Times New Roman", serif;
+  --sans:"Work Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box}
+html{background:var(--bg)}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:17px;line-height:1.7;
+  padding-inline:20px;padding-block:0 80px;
+}
+.wrap{max-width:720px;margin:0 auto}
+.wide{width:min(960px, calc(100vw - 40px));position:relative;left:50%;transform:translateX(-50%)}
+a{color:var(--gold);text-underline-offset:3px}
+a:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+h1,h2,h3{font-family:var(--serif);text-wrap:balance;line-height:1.15;margin:0}
+p{margin:0}
+.flow{display:flex;flex-direction:column;gap:1.1em}
+
+/* hero */
+header.hero{padding-block:72px 40px;border-bottom:1px solid var(--line);margin-bottom:56px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.hero h1{font-size:clamp(44px,9vw,92px);font-weight:800;letter-spacing:-.02em;margin-block:18px 22px}
+.hero h1 em{font-style:italic;font-weight:400;color:var(--gold)}
+.lede{font-family:var(--serif);font-size:clamp(19px,2.6vw,23px);line-height:1.5;color:var(--text);max-width:36em}
+.meta{margin-top:26px;font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 22px}
+.stamp{display:inline-flex;align-items:baseline;gap:12px;margin-top:34px;padding:14px 20px;border:1.5px solid var(--gold);transform:rotate(-1.2deg);}
+.stamp b{font-family:var(--serif);font-size:44px;font-weight:800;color:var(--gold);line-height:1;font-variant-numeric:tabular-nums}
+.stamp span{font-family:var(--mono);font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);max-width:18em;line-height:1.4}
+
+/* sections */
+section{margin-block:72px}
+.sec-head{display:grid;grid-template-columns:auto 1fr;gap:6px 18px;align-items:baseline;margin-bottom:26px}
+.sec-num{font-family:var(--mono);font-size:13px;color:var(--gold);letter-spacing:.08em}
+.sec-head h2{font-size:clamp(28px,4.4vw,40px);font-weight:600}
+h3{font-size:22px;font-weight:600;margin-top:.6em}
+.pull{font-family:var(--serif);font-size:22px;line-height:1.45;border-left:2px solid var(--gold);padding-left:20px;color:var(--text)}
+.muted{color:var(--muted)}
+sup a{font-family:var(--mono);font-size:11px;text-decoration:none;padding-inline:1px}
+.box{background:var(--surface);border:1px solid var(--line);padding:22px 24px;border-radius:4px}
+.box h3{margin-top:0;font-size:19px}
+.box .flow{gap:.8em}
+.term{font-family:var(--mono);font-size:13px;color:var(--gold);letter-spacing:.04em}
+
+/* status legend */
+.legend{display:flex;flex-wrap:wrap;gap:10px 18px;font-size:14px;color:var(--muted);margin-block:4px 18px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.p-fact{color:var(--fact)} .p-claim{color:var(--claim)} .p-closed{color:var(--closed)} .p-open{color:var(--open)}
+
+/* case cards */
+.cases{display:grid;gap:14px}
+.case{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:20px 22px;display:grid;gap:10px}
+.case-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 14px;align-items:center}
+.case h3{margin:0;font-size:20px}
+.case p{font-size:16px}
+.case .verdict{font-size:15px;color:var(--muted);border-top:1px dashed var(--line);padding-top:10px}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;line-height:1.5;min-width:720px}
+th,td{text-align:left;vertical-align:top;padding:10px 14px;border-bottom:1px solid var(--line)}
+th{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface-2);position:sticky;top:0}
+td.date{font-family:var(--mono);font-size:13px;white-space:nowrap;color:var(--muted);font-variant-numeric:tabular-nums}
+tr.cat td{background:var(--bg);font-family:var(--serif);font-size:17px;font-weight:600;color:var(--gold);padding-top:18px}
+tr.cat td span{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:400;margin-left:8px}
+td.out{color:var(--muted)}
+td.out b{color:var(--closed);font-weight:500}
+
+/* charts */
+figure{margin:0}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:22px 18px 16px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}
+figcaption{font-size:14px;color:var(--muted);margin-top:12px;line-height:1.55}
+.chart-title{font-family:var(--serif);font-size:19px;font-weight:600;margin-bottom:14px}
+svg text{font-family:var(--sans);fill:var(--muted);font-size:13px}
+svg .num{font-family:var(--mono);fill:var(--text);font-size:13px}
+svg .lbl{fill:var(--text);font-size:14px}
+
+/* three types */
+.types{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.type{border-top:2px solid var(--gold);padding-top:14px;display:grid;gap:8px;align-content:start}
+.type b{font-family:var(--serif);font-size:19px}
+.type .n{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.type p{font-size:15.5px}
+
+/* ledger who wins / loses */
+.ledger{display:grid;gap:12px}
+.row{display:grid;grid-template-columns:1fr;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:16px 18px}
+.row h3{font-size:18px;margin:0}
+.row .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 22px;font-size:15px}
+.row .cols div span{display:block;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.gain span{color:var(--closed)} .loss span{color:var(--claim)}
+
+/* notes */
+ol.notes{font-size:14px;line-height:1.55;color:var(--muted);padding-left:1.6em;display:grid;gap:8px}
+ol.notes a{word-break:break-word}
+footer{border-top:1px solid var(--line);margin-top:72px;padding-top:32px}
+
+@media (max-width:520px){
+  body{font-size:16px}
+  .sec-head{grid-template-columns:1fr}
+  .stamp b{font-size:36px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<div class="wrap">
+<header class="hero">
+  <div class="eyebrow">Artykuł badawczy · polityka · wrzesień 2026</div>
+  <h1>Anatomia <em>weta</em></h1>
+  <p class="lede">Kim jest Karol Nawrocki, co w jego przeszłości jest faktem, a co tylko zarzutem, i czy czterdzieści pięć zablokowanych ustaw to strategia, odruch, czy coś pomiędzy.</p>
+  <div class="meta"><span>Stan wiedzy: 28 września 2026</span><span>Czas czytania: ok. 25 min</span><span>Przypisy: 30 źródeł</span></div>
+  <div class="stamp"><b>45</b><span>wet w 13 miesięcy urzędowania. Więcej niż jakikolwiek prezydent III RP przez całą kadencję.</span></div>
+</header>
+
+<div class="flow">
+<p>Wokół obecnego prezydenta krąży kilka opowieści naraz. W jednej jest kibolem, sutenerem i człowiekiem półświatka. W drugiej jest chłopakiem z Gdańska, który wszedł do polityki bez partyjnej legitymacji i jako jedyny „stawia się” rządowi. Obie wersje są wygodne, bo nie wymagają czytania dokumentów.</p>
+<p>Ten tekst robi coś mniej efektownego. Rozdziela to, co ktoś udowodnił, od tego, co ktoś powiedział. Oddziela sprawy zamknięte od tych, które tylko ucichły. A potem bierze na warsztat wszystkie 45 wet, jedno po drugim, i pyta, komu to służy.</p>
+<p>Uprzedzam od razu jedną rzecz. Część zarzutów z pytania „czy mamy prezydenta-sutenera?” nie ma dziś pokrycia w żadnym wyroku ani nawet w zarzutach prokuratorskich. Część innych jest za to poważniejsza, niż się pamięta. Uczciwy obraz jest bardziej skomplikowany od obu plemiennych wersji.</p>
+</div>
+
+<!-- 1 -->
+<section id="biografia">
+  <div class="sec-head"><span class="sec-num">01</span><h2>Chłopak z Siedlec</h2></div>
+  <div class="flow">
+    <p>Karol Tadeusz Nawrocki urodził się 3 marca 1983 roku w Gdańsku. Ojciec, Ryszard, był tokarzem i członkiem „Solidarności”. Matka, Elżbieta, pracowała jako introligatorka. Dorastał w dzielnicy Siedlce, której radzie dzielnicy później przewodniczył w latach 2011–2017<sup><a href="#n1">1</a></sup>.</p>
+    <p>W młodości trenował piłkę nożną i boks. Po maturze w 2002 roku skończył policealną szkołę biznesu, a w 2008 roku historię na Uniwersytecie Gdańskim. Doktorat obronił w 2013 roku. Temat: społeczny opór wobec władzy komunistycznej w województwie elbląskim w latach 1976–1989. Promotorem był Grzegorz Berendt, którego Nawrocki jako prezydent mianował potem swoim specjalnym przedstawicielem ds. dyplomacji historycznej<sup><a href="#n1">1</a></sup>.</p>
+    <p>Równolegle, w połowie lat dwutysięcznych, dorabiał jako ochroniarz w sopockim Grand Hotelu. Ten epizod wróci w sekcji o zarzutach.</p>
+    <h3>Kariera w instytucjach pamięci</h3>
+    <p>Jego droga zawodowa to niemal w całości instytucje zajmujące się historią. W 2009 roku trafił do gdańskiego oddziału IPN, a od 2013 roku kierował tam biurem edukacji publicznej. Zajmował się między innymi przestępczością zorganizowaną w PRL. To ważne, bo z tego zainteresowania wyrosła później jego książka pisana pod pseudonimem.</p>
+    <p>W 2017 roku został dyrektorem Muzeum II Wojny Światowej w Gdańsku. Zastąpił prof. Pawła Machcewicza, twórcę wystawy, którą nowe kierownictwo zmieniło, co było jednym z głośniejszych sporów o politykę historyczną tamtych lat. W lipcu 2021 roku Sejm wybrał go na prezesa IPN<sup><a href="#n1">1</a></sup>.</p>
+    <h3>Jak został kandydatem</h3>
+    <p>Latem 2024 roku Jarosław Kaczyński opisał w Radiu Maryja idealnego kandydata PiS: młody, wysoki, „okazały”, przystojny, z rodziną. W sondażach wśród wyborców PiS Nawrocki miał wtedy około 7 procent i był daleko za Błaszczakiem, Morawieckim i Czarnkiem. Prawyborów nie było. Decyzję podjął prezes. 22 listopada 2024 roku o 13:15 Nawrocki usłyszał, że to on, a dwa dni później przedstawiono go na kongresie w Krakowie jako kandydata „obywatelskiego”, formalnie bezpartyjnego, popieranego przez PiS<sup><a href="#n1">1</a></sup>.</p>
+    <p>To słowo, „obywatelski”, warto zapamiętać. Kandydat wybrany jednoosobowo przez lidera partii, z kancelarią obsadzoną potem politykami PiS i współpracownikami z IPN, był prezentowany jako niezależny od partii.</p>
+    <p>W pierwszej turze, 18 maja 2025 roku, zdobył 29,54 procent głosów i był drugi za Rafałem Trzaskowskim. Przed drugą turą podpisał ośmiopunktową deklarację Sławomira Mentzena. Zobowiązał się w niej między innymi, że nie dopuści do podnoszenia podatków ani wprowadzania nowych, do przyjęcia euro, do przekazywania nowych kompetencji instytucjom UE i do ograniczania wolności słowa<sup><a href="#n1">1</a></sup>. Ta lista tłumaczy zaskakująco dużo późniejszych wet.</p>
+    <p>1 czerwca 2025 roku wygrał z wynikiem 50,89 procent. Dostał 10 606 877 głosów, Trzaskowski 10 237 286. Różnica wyniosła niecałe 370 tysięcy przy rekordowej frekwencji 71,63 procent<sup><a href="#n2">2</a></sup>. Zaprzysiężono go 6 sierpnia 2025 roku.</p>
+  </div>
+</section>
+
+<!-- 2 -->
+<section id="zarzuty">
+  <div class="sec-head"><span class="sec-num">02</span><h2>Fakty, zarzuty, umorzenia</h2></div>
+  <div class="flow">
+    <p>Przy każdej sprawie z przeszłości Nawrockiego trzeba zadać to samo pytanie: na czym to się opiera? Na jego własnym przyznaniu, na dokumentach, na anonimowych świadkach czy na decyzji prokuratora? Poniżej każda sprawa dostaje jedną z czterech etykiet.</p>
+  </div>
+  <div class="legend" style="margin-top:18px">
+    <span class="pill p-fact">fakt / przyznane</span>
+    <span class="pill p-claim">zarzut medialny</span>
+    <span class="pill p-open">postępowanie w toku</span>
+    <span class="pill p-closed">umorzone</span>
+  </div>
+  <div class="cases">
+    <article class="case">
+      <div class="case-top"><h3>Ustawka Lechia–Lech, 25.10.2009</h3><span class="pill p-fact">fakt / przyznane</span></div>
+      <p>Po meczu Lechii Gdańsk z Lechem Poznań pod Gdańskiem doszło do umówionej bójki „70 na 70”. Trwała około sześciu i pół minuty. Zapytany o nią przez Mentzena 22 maja 2025 roku, Nawrocki nie zaprzeczył i odpowiedział, że „występował w różnych modułach szlachetnych walk”. Nieoficjalnie potwierdził to jego sztab<sup><a href="#n3">3</a></sup>. Był wtedy pracownikiem IPN.</p>
+      <p>Wirtualna Polska zidentyfikowała wśród uczestników po stronie Lechii 32 osoby z kryminalną przeszłością, w tym człowieka oczekującego na wyrok za zabójstwo. OKO.press dotarło do prokuratora, który prowadził sprawę serii ustawek z lat 2008–2009; akt oskarżenia objął ponad 70 osób<sup><a href="#n4">4</a></sup>. Dziennikarz Szymon Jadczak wskazuje też na tatuaż z symbolem Chuliganów Wolnego Miasta, grupy związanej z Lechią<sup><a href="#n5">5</a></sup>.</p>
+      <p class="verdict">Udział w ustawce jest przyznany. Nie ma publicznie dostępnej informacji, by Nawrocki usłyszał w tej sprawie zarzuty. Udział w bójce jest w Polsce przestępstwem, ale czyn sprzed 17 lat jest przedawniony. Zarzut „działalności przestępczej” w sensie członkostwa w grupie przestępczej nie ma dziś oparcia w żadnym dokumencie.</p>
+    </article>
+
+    <article class="case">
+      <div class="case-top"><h3>Grand Hotel w Sopocie i prostytucja</h3><span class="pill p-claim">zarzut medialny</span></div>
+      <p>26 maja 2025 roku, sześć dni przed drugą turą, Onet opublikował tekst „Karol Nawrocki i tajemnice Grand Hotelu”. Dwóch anonimowych byłych kolegów z ochrony twierdzi, że Nawrocki uczestniczył w procederze sprowadzania prostytutek dla gości. Mechanizm miał wyglądać tak: ochroniarze pokazywali gościom oferty na hotelowym komputerze, a potem dzwonili do „koordynatora”, który przywoził kobiety. Bez zgody ochrony nie weszłyby do hotelu<sup><a href="#n6">6</a></sup>. Świadkowie deklarowali gotowość zeznawania przed sądem.</p>
+      <p>Nawrocki nazwał tekst „stekiem kłamstw i nienawiści”. Nie wybrał jednak szybkiego trybu wyborczego, który rozstrzygnąłby sprawę przed głosowaniem. Złożył zwykły pozew cywilny i prywatny akt oskarżenia o zniesławienie. Proces cywilny ruszył dopiero 15 września 2026 roku i toczy się za zamkniętymi drzwiami. Co do tego, kto o to wnioskował, relacje są sprzeczne: postanowienie sądu mówi o wniosku pozwanego, czyli wydawcy Onetu, a Onet twierdzi, że chciał jawności i sąd jej odmówił. Pierwsza rozprawa karna jest wyznaczona na 12 listopada 2026 roku<sup><a href="#n7">7</a></sup>.</p>
+      <p class="verdict">Słowo „sutener” jest dziś zarzutem opartym na relacjach dwóch anonimowych osób, któremu zainteresowany stanowczo zaprzecza. Nie ma zarzutów prokuratorskich ani wyroku. To, czy Onet miał podstawy do publikacji, oceni sąd. Do tego czasu uczciwie można mówić tylko o zarzutach.</p>
+    </article>
+
+    <article class="case">
+      <div class="case-top"><h3>Kawalerka pana Jerzego</h3><span class="pill p-open">postępowanie w toku</span></div>
+      <p>W debacie Nawrocki deklarował, że ma jedno mieszkanie. Onet ujawnił, że ma dwa. Drugie to komunalna kawalerka pana Jerzego Ż., wykupiona od miasta z 90-procentową bonifikatą i przeniesiona na małżeństwo Nawrockich w zamian za obietnicę opieki. Nawrocki, działając jako pełnomocnik pana Jerzego, sprzedał mieszkanie sobie. Starszy, schorowany mężczyzna trafił później do domu pomocy społecznej jako bezdomny<sup><a href="#n8">8</a></sup>. W trakcie kampanii Nawrocki przekazał lokal fundacji.</p>
+      <p>13 czerwca 2025 roku prokuratura w Gdańsku wszczęła dochodzenie w sprawie możliwego oszustwa na szkodę pana Jerzego w latach 2012–2017. W lipcu odmówiła wszczęcia postępowania w siedmiu pobocznych wątkach, między innymi co do strat gminy i oświadczeń u notariusza, a sąd tę decyzję utrzymał. Główne dochodzenie trwa. W czerwcu 2026 roku prokuratura informowała, że po przesłuchaniu notariusza rozważy przesłuchanie prezydenta jako świadka<sup><a href="#n9">9</a></sup>.</p>
+      <p class="verdict">Fakty co do transakcji są bezsporne. Otwarte pozostaje, czy było to przestępstwo. Prezydent w trakcie kadencji może odpowiadać karnie tylko przed Trybunałem Stanu, a na to potrzeba 2/3 głosów Zgromadzenia Narodowego, których koalicja nie ma<sup><a href="#n10">10</a></sup>. W praktyce sprawa czeka na koniec kadencji.</p>
+    </article>
+
+    <article class="case">
+      <div class="case-top"><h3>Apartament w Muzeum II Wojny Światowej</h3><span class="pill p-closed">umorzone</span></div>
+      <p>Zarzut: jako dyrektor muzeum Nawrocki przez ponad pół roku miał korzystać za darmo z apartamentu de luxe w muzealnej części hotelowej. 11 sierpnia 2026 roku prokuratura umorzyła śledztwo, bo czyn „nie zawiera znamion czynu zabronionego”. Przesłuchano 41 świadków. Ustalono, że regulamin dawał dyrektorowi prawo do zwolnień z opłat i że nie da się ponad wszelką wątpliwość wykazać, że rzeczywiście tam mieszkał<sup><a href="#n11">11</a></sup>. Decyzja jest nieprawomocna.</p>
+      <p class="verdict">To przykład sprawy, która zniknęła z debaty z dobrego powodu: została zbadana i zamknięta. Kto dziś nadal ją przytacza jako dowód nadużycia, mija się z ustaleniami śledczych.</p>
+    </article>
+
+    <article class="case">
+      <div class="case-top"><h3>Tadeusz Batyr</h3><span class="pill p-fact">fakt / przyznane</span></div>
+      <p>W 2018 roku ukazała się biografia gangstera Nikodema „Nikosia” Skotarczaka, podpisana „Tadeusz Batyr”. Autorem był Nawrocki. Sam w sobie pseudonim nie jest niczym dziwnym. Dziwne było to, co zrobił dalej. Jako „Batyr”, w czapce, z rozmazaną twarzą i zmienionym głosem, wystąpił w TVP i chwalił historyka Karola Nawrockiego jako swoją inspirację. Jako Nawrocki pisał w mediach społecznościowych, że Batyr zgłosił się do niego po wskazówki, i polecał jego książkę<sup><a href="#n12">12</a></sup>.</p>
+      <p class="verdict">Przyznane przez samego zainteresowanego. Nie jest to przestępstwo. Jest to jednak udokumentowany przypadek, w którym przyszły prezydent zbudował fikcyjną postać, żeby chwaliła jego samego.</p>
+    </article>
+
+    <article class="case">
+      <div class="case-top"><h3>Znajomości z ludźmi półświatka</h3><span class="pill p-fact">fakt / przyznane</span></div>
+      <p>W grudniu 2024 roku ABW zatrzymała w Gdańsku Olgierda L., gangstera wymienianego w anonimowym raporcie o przeszłości Nawrockiego. Nawrocki odpowiedział, że ich relacje „miały charakter publiczny, jak z wieloma tysiącami Polek i Polaków”<sup><a href="#n13">13</a></sup>. Kilka lat wcześniej twierdził, że L. nie zna. W sieci krąży też zdjęcie Nawrockiego z Patrykiem Masiakiem, ps. Wielki Bu, skazanym za porwanie, podpisane przez tego drugiego: „Takie tam z prezesem IPN na kawce”<sup><a href="#n14">14</a></sup>.</p>
+      <p class="verdict">Zdjęcia i kontakty są faktami. Żadne postępowanie nie wykazało, by Nawrocki uczestniczył w działalności tych osób. Wniosek, który z tego wynika, dotyczy raczej środowiska i osądu niż czynów karalnych.</p>
+    </article>
+  </div>
+</section>
+
+<!-- 3 -->
+<section id="zapomniane">
+  <div class="sec-head"><span class="sec-num">03</span><h2>Co zniknęło z rozmowy</h2></div>
+  <div class="flow">
+    <p>Pytanie „o czym ludzie nie mówią” ma pułapkę. Część spraw cichnie, bo zostały wyjaśnione. Część cichnie, bo przestały się opłacać którejś ze stron. Część cichnie, bo toczy się w sądzie powoli, a media nie lubią powolnych historii. Oto sprawy z tej ostatniej kategorii. Są otwarte, ważne i prawie nieobecne w bieżącej debacie.</p>
+
+    <h3>Proces z Onetem idzie za zamkniętymi drzwiami</h3>
+    <p>Najpoważniejszy zarzut kampanii jest właśnie badany przez sąd, a opinia publiczna nie zobaczy zeznań świadków. Obie strony wzajemnie obwiniają się o utajnienie. Sam proces potrwa, jak przewidują komentatorzy, wiele miesięcy<sup><a href="#n7">7</a></sup>. Jeśli sąd uzna tekst za rzetelny, będzie to jedna z najpoważniejszych kompromitacji urzędującego prezydenta. Jeśli nie, jedna z najpoważniejszych kompromitacji dużego medium w środku kampanii. Każdy z tych wyników ma znaczenie.</p>
+
+    <h3>Dochodzenie w sprawie kawalerki nadal trwa</h3>
+    <p>Po umorzeniu sprawy apartamentu łatwo odnieść wrażenie, że „wszystko umorzono”. Tak nie jest. Główny wątek kawalerki, podejrzenie oszustwa na szkodę starszego człowieka, pozostaje otwarty<sup><a href="#n9">9</a></sup>. Immunitet nie kończy go, tylko zawiesza w czasie.</p>
+
+    <h3>Ułaskawienie „Starucha”</h3>
+    <p>3 sierpnia 2026 roku prezydent ułaskawił trzy osoby. Jedną z nich był Piotr „Staruch” Staruchowicz, lider kibiców Legii Warszawa. Darowano mu zakaz stadionowy i zatarto skazanie. Tego samego dnia prezydent warunkowo zwolnił z reszty kary dożywocia mężczyznę skazanego za zabójstwo połączone z rozbojem<sup><a href="#n15">15</a></sup>. Kancelaria tłumaczyła decyzje analizą akt i opiniami sądów i prokuratur. W zestawieniu z własną historią Nawrockiego na trybunach i poza nimi ułaskawienie lidera kibicowskiego środowiska jest czymś, o czym warto pamiętać.</p>
+
+    <h3>Zondacrypto i trzy weta</h3>
+    <p>To sprawa, w której przeszłość i prezydentura spotykają się najbliżej. Giełda kryptowalut Zondacrypto była głównym sponsorem prawicowej konferencji CPAC w maju 2025 roku, na której występowali Andrzej Duda i kandydat Nawrocki. W grudniu 2025 roku Nawrocki zawetował ustawę o nadzorze nad rynkiem kryptoaktywów, potem drugi i trzeci raz. Wiosną 2026 roku Zondacrypto przestało wypłacać klientom pieniądze. Szacunki mówią o nawet 30 tysiącach poszkodowanych i stratach nie mniejszych niż 350 mln zł. Prezes giełdy, Przemysław Kral, usłyszał zarzut udziału w oszustwie wielkich rozmiarów i według mediów współpracuje z prokuraturą<sup><a href="#n16">16</a></sup>.</p>
+    <p>Premier, powołując się na ABW, twierdził, że Kral miesiąc przed pierwszym głosowaniem nad wetem wpłacił pieniądze na dwie fundacje związane z politykami prawicy. Nawrocki odpowiada, że informacje służb o Zondacrypto dostał dopiero po pierwszym wecie i że ustawa w tym kształcie i tak nie ochroniłaby klientów<sup><a href="#n17">17</a></sup>. Szef jego kancelarii kontratakował, że za obecnego rządu prokuratura umorzyła sprawę BitBaya, poprzedniczki Zondacrypto.</p>
+    <p>Uczciwie trzeba powiedzieć jedno: nie ma dowodu, że weto było „zapłatą” za sponsoring. Jest za to udokumentowana zbieżność: sponsor imprezy kampanijnej, publiczna obietnica weta, trzy weta, upadek sponsora. Zeznania Krala mogą tę układankę uzupełnić albo rozbić.</p>
+
+    <h3>„Kandydat obywatelski”</h3>
+    <p>Ostatnia rzecz jest mniej sensacyjna, ale istotna dla oceny wet. Nawrocki szedł do wyborów jako niezależny. Jego kancelarię tworzą jednak politycy PiS, a weta w sprawach ustrojowych pokrywają się niemal jeden do jednego ze stanowiskiem tej partii. Jednocześnie bywa od PiS niezależny: sam wybrał szefa kancelarii wbrew woli partii, a w sprawie Ukrainy poszedł dalej niż dawne stanowisko PiS<sup><a href="#n1">1</a></sup>. Słowo „obywatelski” było marketingiem. Słowo „marionetka” też byłoby przesadą.</p>
+  </div>
+</section>
+
+<!-- 4 -->
+<section id="liczby">
+  <div class="sec-head"><span class="sec-num">04</span><h2>Czterdzieści pięć</h2></div>
+  <div class="flow">
+    <div class="box">
+      <h3>Jak działa weto</h3>
+      <div class="flow">
+        <p>Ustawa uchwalona przez Sejm i Senat trafia do prezydenta. Ma 21 dni na decyzję. Może ją podpisać, skierować do Trybunału Konstytucyjnego albo odmówić podpisu, czyli zawetować. Weto odsyła ustawę do Sejmu.</p>
+        <p>Sejm może weto odrzucić, ale potrzebuje do tego <span class="term">3/5 głosów</span> przy obecności co najmniej połowy posłów. Przy pełnej sali to 276 z 460. Koalicja rządząca ma około 240. Bez części PiS albo Konfederacji odrzucenie weta jest więc praktycznie niemożliwe.</p>
+      </div>
+    </div>
+    <p>Pierwsze weto Nawrocki złożył 21 sierpnia 2025 roku, dwa tygodnie po zaprzysiężeniu. Ostatnie, które udało się potwierdzić w źródłach, pochodzi z 28 sierpnia 2026 roku. Łącznie to 45 zawetowanych ustaw<sup><a href="#n18">18</a></sup>. W liczbie tej trzy razy występuje ta sama ustawa o kryptoaktywach, a dwie pozycje to ustawa o statusie osoby najbliższej i przepisy ją wprowadzające.</p>
+    <p>Dla porównania: Aleksander Kwaśniewski zawetował przez dziesięć lat 35 ustaw, Lech Wałęsa przez pięć lat 27, Andrzej Duda przez dziesięć lat 21, Lech Kaczyński 18, a Bronisław Komorowski 4<sup><a href="#n19">19</a></sup>. Przez pierwsze sto dni Kwaśniewski, Kaczyński i Komorowski nie zawetowali niczego. Nawrocki w tym czasie zawetował 13 ustaw<sup><a href="#n20">20</a></sup>.</p>
+  </div>
+
+  <figure class="chart" style="margin-top:28px">
+    <div class="chart-title">Liczba wet w całym okresie urzędowania</div>
+    <svg viewBox="0 0 640 262" role="img" aria-label="Wykres słupkowy: Nawrocki 45 wet w 13 miesięcy, Kwaśniewski 35 w 10 lat, Wałęsa 27 w 5 lat, Duda 21 w 10 lat, Kaczyński 18 w 4,7 roku, Komorowski 4 w 5 lat">
+      <!-- scale: 0..50 -> x 190..610 (8.4 px / weto) -->
+      <g stroke="#35352a" stroke-width="1">
+        <line x1="190" y1="8" x2="190" y2="232"/>
+        <line x1="274" y1="8" x2="274" y2="232" stroke-dasharray="2 4"/>
+        <line x1="358" y1="8" x2="358" y2="232" stroke-dasharray="2 4"/>
+        <line x1="442" y1="8" x2="442" y2="232" stroke-dasharray="2 4"/>
+        <line x1="526" y1="8" x2="526" y2="232" stroke-dasharray="2 4"/>
+        <line x1="610" y1="8" x2="610" y2="232" stroke-dasharray="2 4"/>
+      </g>
+      <g font-size="11">
+        <text x="190" y="252" text-anchor="middle">0</text>
+        <text x="274" y="252" text-anchor="middle">10</text>
+        <text x="358" y="252" text-anchor="middle">20</text>
+        <text x="442" y="252" text-anchor="middle">30</text>
+        <text x="526" y="252" text-anchor="middle">40</text>
+        <text x="610" y="252" text-anchor="middle">50</text>
+      </g>
+      <!-- rows -->
+      <text class="lbl" x="0" y="30">Nawrocki</text><text x="0" y="46" font-size="11.5">13 mies. (2025–)</text>
+      <rect x="190" y="18" width="378" height="24" fill="#d1a13f"/>
+      <text class="num" x="576" y="35">45</text>
+
+      <text class="lbl" x="0" y="67">Kwaśniewski</text><text x="0" y="83" font-size="11.5">10 lat</text>
+      <rect x="190" y="55" width="294" height="24" fill="#6f6a58"/>
+      <text class="num" x="492" y="72">35</text>
+
+      <text class="lbl" x="0" y="104">Wałęsa</text><text x="0" y="120" font-size="11.5">5 lat</text>
+      <rect x="190" y="92" width="226.8" height="24" fill="#6f6a58"/>
+      <text class="num" x="425" y="109">27</text>
+
+      <text class="lbl" x="0" y="141">Duda</text><text x="0" y="157" font-size="11.5">10 lat</text>
+      <rect x="190" y="129" width="176.4" height="24" fill="#6f6a58"/>
+      <text class="num" x="374" y="146">21</text>
+
+      <text class="lbl" x="0" y="178">L. Kaczyński</text><text x="0" y="194" font-size="11.5">4 lata 5 mies.</text>
+      <rect x="190" y="166" width="151.2" height="24" fill="#6f6a58"/>
+      <text class="num" x="349" y="183">18</text>
+
+      <text class="lbl" x="0" y="215">Komorowski</text><text x="0" y="231" font-size="11.5">5 lat</text>
+      <rect x="190" y="203" width="33.6" height="24" fill="#6f6a58"/>
+      <text class="num" x="231" y="220">4</text>
+    </svg>
+    <figcaption>Źródło: Konkret24 (dane poprzedników), lista wet KPRP i Wetomat (Nawrocki, stan na 28.08.2026). Wałęsa działał na podstawie tzw. małej konstytucji, z inną procedurą weta.</figcaption>
+  </figure>
+
+  <figure class="chart" style="margin-top:18px">
+    <div class="chart-title">Tempo: skumulowana liczba wet miesiąc po miesiącu</div>
+    <svg viewBox="0 0 640 250" role="img" aria-label="Wykres liniowy skumulowanej liczby wet od sierpnia 2025 (7) do sierpnia 2026 (45). Linia odniesienia na poziomie 35, czyli wyniku Kwaśniewskiego z 10 lat, przekroczona w czerwcu 2026.">
+      <!-- x: 13 points, 50..610 step 46.67 ; y: 0..50 -> 210..10 (4 px/weto) -->
+      <g stroke="#35352a" stroke-width="1">
+        <line x1="50" y1="210" x2="610" y2="210"/>
+        <line x1="50" y1="170" x2="610" y2="170" stroke-dasharray="2 4"/>
+        <line x1="50" y1="130" x2="610" y2="130" stroke-dasharray="2 4"/>
+        <line x1="50" y1="90" x2="610" y2="90" stroke-dasharray="2 4"/>
+        <line x1="50" y1="50" x2="610" y2="50" stroke-dasharray="2 4"/>
+        <line x1="50" y1="10" x2="610" y2="10" stroke-dasharray="2 4"/>
+      </g>
+      <g font-size="11" text-anchor="end">
+        <text x="40" y="214">0</text><text x="40" y="174">10</text><text x="40" y="134">20</text><text x="40" y="94">30</text><text x="40" y="54">40</text><text x="40" y="14">50</text>
+      </g>
+      <line x1="50" y1="70" x2="610" y2="70" stroke="#a39d88" stroke-width="1" stroke-dasharray="6 4"/>
+      <text x="56" y="63" font-size="11.5">35 = Kwaśniewski przez 10 lat</text>
+      <polygon fill="rgba(209,161,63,.14)" points="50,210 50,182 96.7,182 143.3,178 190,150 236.7,130 283.3,118 330,102 376.7,94 423.3,86 470,78 516.7,62 563.3,46 610,30 610,210"/>
+      <polyline fill="none" stroke="#d1a13f" stroke-width="2.5" stroke-linejoin="round" points="50,182 96.7,182 143.3,178 190,150 236.7,130 283.3,118 330,102 376.7,94 423.3,86 470,78 516.7,62 563.3,46 610,30"/>
+      <g fill="#d1a13f">
+        <circle cx="50" cy="182" r="3"/><circle cx="190" cy="150" r="3"/><circle cx="330" cy="102" r="3"/><circle cx="470" cy="78" r="3"/><circle cx="610" cy="30" r="5"/>
+      </g>
+      <text class="num" x="50" y="174" text-anchor="middle">7</text>
+      <text class="num" x="190" y="142" text-anchor="middle">15</text>
+      <text class="num" x="330" y="94" text-anchor="middle">27</text>
+      <text class="num" x="470" y="100" text-anchor="middle">33</text>
+      <text class="num" x="604" y="22" text-anchor="end">45</text>
+      <g font-size="11" text-anchor="middle">
+        <text x="50" y="230">VIII 25</text><text x="143.3" y="230">X</text><text x="236.7" y="230">XII</text><text x="330" y="230">II 26</text><text x="423.3" y="230">IV</text><text x="516.7" y="230">VI</text><text x="610" y="230">VIII 26</text>
+      </g>
+    </svg>
+    <figcaption>Liczba wet na koniec każdego miesiąca, wyliczona z listy dat decyzji. Najwięcej naraz: 4 weta 7 listopada 2025 roku.</figcaption>
+  </figure>
+</section>
+
+<!-- 5 -->
+<section id="lista">
+  <div class="sec-head"><span class="sec-num">05</span><h2>Wszystkie weta, pogrupowane</h2></div>
+  <div class="flow">
+    <p>Lista chronologiczna niewiele mówi. Po pogrupowaniu według tematu widać więcej. Opisy są możliwie neutralne. Kolumna „Uzasadnienie” podaje argument prezydenta tam, gdzie da się go przypisać do źródła. Kolumna „Co dalej” pokazuje, czy sprawa wróciła w innej formie.</p>
+  </div>
+  <div class="wide" style="margin-top:24px">
+  <div class="tbl-wrap">
+  <table>
+    <thead><tr><th style="width:92px">Data weta</th><th>Ustawa i co robiła</th><th>Uzasadnienie prezydenta</th><th style="width:190px">Co dalej</th></tr></thead>
+    <tbody>
+      <tr class="cat"><td colspan="4">Energetyka, klimat, środowisko <span>9 wet</span></td></tr>
+      <tr><td class="date">21.08.2025</td><td>„Ustawa wiatrakowa”: liberalizacja lokowania wiatraków plus przedłużenie zamrożenia cen prądu</td><td>Deregulacja forsowana przez lobby wiatrakowe; zapowiedź własnego projektu mrożenia cen</td><td class="out"><b>Mrożenie cen podpisane</b> w osobnej ustawie 26.09.2025</td></tr>
+      <tr><td class="date">25.08.2025</td><td>Deregulacja w energetyce</td><td>—</td><td class="out"><b>Podobna ustawa podpisana</b> 11.06.2026</td></tr>
+      <tr><td class="date">27.08.2025</td><td>Zapasy ropy i gazu, m.in. dostosowanie do unijnego rozporządzenia o bezpieczeństwie dostaw</td><td>—</td><td class="out"><b>Nowa wersja podpisana</b> 26.09.2025</td></tr>
+      <tr><td class="date">07.11.2025</td><td>Park Narodowy Doliny Dolnej Odry (miał powstać 1.01.2026)</td><td>—</td><td class="out">Parku nie ma</td></tr>
+      <tr><td class="date">07.11.2025</td><td>Zbiorowe zaopatrzenie w wodę: ocena ryzyka ujęć wody pitnej</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">02.07.2026</td><td>Zapobieganie zanieczyszczaniu morza przez statki (emisje, paliwa odnawialne)</td><td>Wdrażanie Zielonego Ładu, uderzenie w polskie porty</td><td class="out">—</td></tr>
+      <tr><td class="date">20.08.2026</td><td>Transport zbiorowy, Fundusz Autobusowy (wykluczenie komunikacyjne)</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">28.08.2026</td><td>Prawo energetyczne: doprecyzowanie przepisów dla części inwestycji OZE i magazynów energii</td><td>W marcu podpisał dużą nowelę, teraz dostał przepisy częściowo ją odwracające: „tak nie powinno się tworzyć prawa”</td><td class="out">Luka interpretacyjna dla inwestorów pozostaje</td></tr>
+      <tr><td class="date">28.08.2026</td><td>Prawo ochrony środowiska: skargi organizacji na programy ochrony powietrza</td><td>Nowe obowiązki dla samorządów bez czasu i narzędzi</td><td class="out">—</td></tr>
+
+      <tr class="cat"><td colspan="4">Podatki, finanse, rynek <span>15 wet</span></td></tr>
+      <tr><td class="date">25.08.2025</td><td>Kodeks karny skarbowy i Ordynacja podatkowa</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">06.11.2025</td><td>Ubezpieczenia obowiązkowe, UFG i PBUK</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">07.11.2025</td><td>Pakiet: Krajowy Rejestr Karny, Kodeks spółek handlowych, przepisy AML, ugodowe kończenie sporów</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">27.11.2025</td><td>CIT: uszczelnienie opodatkowania fundacji rodzinnych</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">01.12.2025</td><td>Rynek kryptoaktywów (wdrożenie unijnego MiCA, nadzór KNF) — weto I</td><td>„Zamordystyczne” przepisy, nadregulacja, wypychanie firm za granicę</td><td class="out">Sejm nie odrzucił weta</td></tr>
+      <tr><td class="date">12.02.2026</td><td>Rynek kryptoaktywów — weto II</td><td>„Zmieniono jeden detal; nie usunięto zasadniczych błędów”</td><td class="out">—</td></tr>
+      <tr><td class="date">11.06.2026</td><td>Rynek kryptoaktywów — weto III</td><td>„Jestem zwolennikiem regulacji… trzeba to robić skutecznie”</td><td class="out">4.09.2026: zabrakło 25 głosów do odrzucenia</td></tr>
+      <tr><td class="date">18.12.2025</td><td>Podwyżka opłaty cukrowej</td><td>Sprzeciw wobec podnoszenia danin</td><td class="out">—</td></tr>
+      <tr><td class="date">18.12.2025</td><td>Podwyżka akcyzy na alkohol</td><td>Sprzeciw wobec podnoszenia danin</td><td class="out">—</td></tr>
+      <tr><td class="date">09.01.2026</td><td>Rynek ubezpieczeń</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">09.01.2026</td><td>Reforma Narodowego Centrum Badań i Rozwoju</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">11.05.2026</td><td>Kształtowanie ustroju rolnego: uproszczenie obrotu ziemią rolną dla firm</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">02.06.2026</td><td>Rozszerzenie systemu SENT (monitorowanie przewozu towarów, m.in. paliw opałowych)</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">11.06.2026</td><td>Ordynacja podatkowa i KKS: przedawnienie zobowiązań podatkowych</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">11.06.2026</td><td>Świadczenia opieki zdrowotnej finansowane ze środków publicznych</td><td>—</td><td class="out">—</td></tr>
+
+      <tr class="cat"><td colspan="4">Państwo: sądy, służby, wybory, bezpieczeństwo <span>7 wet</span></td></tr>
+      <tr><td class="date">27.11.2025</td><td>Kodeks wyborczy: powszechne głosowanie korespondencyjne</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">09.01.2026</td><td>Wdrożenie unijnego DSA: m.in. nakazy usuwania nielegalnych treści wydawane przez prezesa UKE</td><td>„Administracyjna cenzura”; o treściach powinien decydować sąd</td><td class="out"><b>Część instytucjonalna podpisana</b> we wrześniu 2026; blokowanie treści wciąż nieuchwalone</td></tr>
+      <tr><td class="date">19.02.2026</td><td>Krajowa Rada Sądownictwa: zmiana sposobu wyboru członków</td><td>Własny projekt: niepodważalność wyroków i statusu obecnych sędziów</td><td class="out">Pat trwa</td></tr>
+      <tr><td class="date">12.03.2026</td><td>SAFE: ramy prawne unijnej pożyczki 43,7 mld euro na obronność</td><td>Zagrożenie dla suwerenności; 45-letni kredyt w obcej walucie; porównanie do „frankowiczów”</td><td class="out">Rząd obszedł weto uchwałą; <b>umowa podpisana</b> 8.05.2026</td></tr>
+      <tr><td class="date">13.03.2026</td><td>KPK: gwarancje przeciw nadużywaniu tymczasowego aresztu</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">30.04.2026</td><td>Kodeks wyborczy: zgłaszanie członków komisji i obserwatorów</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">11.05.2026</td><td>Likwidacja CBA i rozdzielenie kompetencji między Policję, ABW i KAS</td><td>Ryzyko „wieloletniego paraliżu walki z korupcją”</td><td class="out">Rząd zapowiada reformę CBA bez likwidacji</td></tr>
+
+      <tr class="cat"><td colspan="4">Społeczeństwo, tożsamość, szkoła, wieś <span>14 wet</span></td></tr>
+      <tr><td class="date">25.08.2025</td><td>Pomoc obywatelom Ukrainy: przedłużenie przepisów specustawy</td><td>Po 3,5 roku prawo „powinno zostać skorygowane”, 800+ tylko dla pracujących</td><td class="out"><b>Nowa wersja podpisana</b> 26.09.2025; specustawa wygaszona 19.02.2026</td></tr>
+      <tr><td class="date">27.08.2025</td><td>Środki ochrony roślin: przygotowanie do elektronicznej ewidencji zabiegów</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">29.08.2025</td><td>Nowelizacja „lex Kamilek” upraszczająca procedury ochrony małoletnich</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">16.10.2025</td><td>Uznanie etnolektu wilamowskiego za język regionalny</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">07.11.2025</td><td>Prawo o ruchu drogowym: m.in. e-zezwolenia w transporcie, buspasy dla aut elektrycznych</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">02.12.2025</td><td>„Ustawa łańcuchowa”: zakaz trzymania psów na uwięzi</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">18.12.2025</td><td>„Reforma 2026” w szkołach</td><td>„Nieprzemyślane, chaotyczne zmiany”, ideologizacja</td><td class="out">MEN szuka dróg obejścia</td></tr>
+      <tr><td class="date">12.02.2026</td><td>Uznanie języka śląskiego za regionalny</td><td>„Sztuczne podziały w narodowej wspólnocie”</td><td class="out">—</td></tr>
+      <tr><td class="date">19.02.2026</td><td>„Aktywny Rolnik”: wsparcie kierowane do rolników faktycznie gospodarujących</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">30.04.2026</td><td>Kodeks rodzinny: rozwody pozasądowe dla par bez małoletnich dzieci, po roku małżeństwa</td><td>—</td><td class="out">—</td></tr>
+      <tr><td class="date">02.07.2026</td><td>Prawo oświatowe: Rzecznik Praw Uczniowskich</td><td>Ideologizacja, zbędna biurokracja za kilka mln zł rocznie</td><td class="out">MEN wdraża „plan B”</td></tr>
+      <tr><td class="date">17.07.2026</td><td>Status osoby najbliższej i umowa o wspólnym pożyciu</td><td>Wątpliwości co do zgodności z art. 18 Konstytucji (ochrona małżeństwa)</td><td class="out">17.09.2026: zabrakło 27 głosów</td></tr>
+      <tr><td class="date">17.07.2026</td><td>Przepisy wprowadzające ustawę o statusie osoby najbliższej</td><td>jw.</td><td class="out">jw.</td></tr>
+      <tr><td class="date">28.08.2026</td><td>Pilotaż bezpłatnego państwowego eDziennika</td><td>Idea słuszna, ale braki w ochronie danych i kosztach</td><td class="out">—</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted" style="font-size:14px;margin-top:10px">Źródła listy: KPRP (prezydent.pl), Wetomat, PAP, Polsat News, RMF24, Rzeczpospolita, Gramwzielone, Demagog. Myślnik oznacza, że w wiarygodnych źródłach nie udało się znaleźć jednoznacznego uzasadnienia lub dalszych losów.<sup><a href="#n18">18</a></sup></p>
+  </div>
+</section>
+
+<!-- 6 -->
+<section id="plan">
+  <div class="sec-head"><span class="sec-num">06</span><h2>Strategia czy odruch?</h2></div>
+  <div class="flow">
+    <p>Intuicja, że 45 wet to nie jest „super zaplanowane działanie dla dobra państwa”, jest w połowie trafna. Weta nie są jednak jednym zjawiskiem. Po rozłożeniu na części wyłaniają się trzy wyraźnie różne typy.</p>
+  </div>
+  <div class="types" style="margin-top:22px">
+    <div class="type"><span class="n">Typ 1 · ok. 6 przypadków</span><b>Weto jako dźwignia</b><p>Weto, po którym rząd przerabia ustawę, a prezydent podpisuje nową wersję. Wiatraki i ceny prądu, pomoc Ukraińcom, zapasy gazu, deregulacja energetyki, część DSA. Tu weto zadziałało jak narzędzie negocjacji. Nawet RMF pisało wprost: „presja weta działa”<sup><a href="#n21">21</a></sup><sup><a href="#n30">30</a></sup>.</p></div>
+    <div class="type"><span class="n">Typ 2 · ok. 12 przypadków</span><b>Weto programowe</b><p>KRS, likwidacja CBA, związki partnerskie, język śląski, głosowanie korespondencyjne, rozwody pozasądowe, reforma szkoły. To były weta przewidywalne w dniu wyborów. Można się z nimi nie zgadzać, ale są zgodne z tym, co kandydat obiecywał.<sup><a href="#n27">27</a></sup><sup><a href="#n28">28</a></sup><sup><a href="#n29">29</a></sup></p></div>
+    <div class="type"><span class="n">Typ 3 · reszta</span><b>Weto kosztowne lub słabo uzasadnione</b><p>Kryptoaktywa (trzy razy), podatki „zdrowotne”, park narodowy, woda pitna, ustawy techniczne bez podanych publicznie powodów. Tu uzasadnienia są najsłabsze, a koszty najbardziej konkretne.</p></div>
+  </div>
+  <div class="flow" style="margin-top:28px">
+    <h3>Skąd się biorą motywy</h3>
+    <p>Da się wskazać cztery źródła decyzji, które się wzajemnie wzmacniają.</p>
+    <p><strong>Obietnice z kampanii.</strong> Deklaracja Mentzena mówiła: żadnych nowych ani wyższych podatków, żadnych nowych kompetencji dla UE, żadnego ograniczania wolności słowa. Weta akcyzowe, cukrowe, CIT-owskie, SAFE i DSA dają się do tej listy przypiąć prawie bezpośrednio. Kto chce zrozumieć, dlaczego prezydent odrzucił podwyżkę akcyzy na alkohol, nie musi szukać spisku. Wystarczy przeczytać, co podpisał 22 maja 2025 roku.</p>
+    <p><strong>Wojna z rządem.</strong> Analitycy od początku opisywali jego cel jako osłabienie koalicji Tuska i przyspieszenie wyborów<sup><a href="#n1">1</a></sup>. Weto jest tanie: nic nie kosztuje prezydenta, a każdy blok ustaw pokazuje rząd jako nieskuteczny. W tym sensie liczba 45 jest częściowo celem samym w sobie.</p>
+    <p><strong>Budowa pozycji lidera prawicy.</strong> Nawrocki nie jest już tylko kandydatem Kaczyńskiego. Weta w sprawach Ukrainy, CPAC, kibice, język suwerenności pozycjonują go między PiS a Konfederacją. Część wet jest adresowana do tego elektoratu, a nie do rządu.</p>
+    <p><strong>Realne wady legislacji.</strong> To argument, który krytycy prezydenta lubią pomijać. Rząd kilka razy dosłownie sklejał różne sprawy w jedną ustawę. Najjaskrawszy przykład to pierwsze weto: liberalizacja wiatraków połączona z mrożeniem cen prądu, czyli rzeczą, którą każdy prezydent by podpisał. Takie „wrzutki” prowokują weto i pozwalają obu stronom obwiniać się nawzajem. Uwaga o Prawie energetycznym, które po pięciu miesiącach cofało samo siebie, też jest merytorycznie trafna<sup><a href="#n22">22</a></sup>.</p>
+    <p class="pull">To nie jest jeden plan. To mieszanka konsekwentnie realizowanych obietnic, taktycznej walki z rządem i kilku decyzji, których koszt poniosą ludzie spoza polityki.</p>
+  </div>
+</section>
+
+<!-- 7 -->
+<section id="bilans">
+  <div class="sec-head"><span class="sec-num">07</span><h2>Kto zyskał, kto stracił</h2></div>
+  <div class="flow" style="margin-bottom:22px">
+    <p>Pięć wet ma skutki na tyle duże, że warto je rozpisać osobno. Przy każdym są dwie strony, bo prawie każda blokada komuś pomaga.</p>
+  </div>
+  <div class="ledger">
+    <div class="row">
+      <h3>Kryptoaktywa (3 weta)</h3>
+      <div class="cols">
+        <div class="gain"><span>Zyskali</span>Giełdy działające bez nadzoru KNF; część firm krypto, które bały się kosztów licencji; prezydent w oczach elektoratu „wolnościowego”.</div>
+        <div class="loss"><span>Stracili</span>Klienci. Kryptowaluty ma około 2 mln dorosłych Polaków, którzy wg CBOS włożyli w nie ok. 40 mld zł<sup><a href="#n23">23</a></sup>. Poszkodowani Zondacrypto nie mieli krajowego nadzorcy, do którego mogliby się zwrócić.</div>
+      </div>
+      <p class="muted" style="font-size:15px">Błąd po stronie prezydenta: trzecie weto w trakcie upadku giełdy, która sponsorowała jego środowisko. Błąd po stronie rządu: trzy razy przysłana niemal ta sama ustawa zamiast kompromisu z projektem prezydenta albo Polski 2050. Opinia z money.pl streszcza to trafnie: „gdyby nadrzędna nie była polityka”.</p>
+    </div>
+    <div class="row">
+      <h3>SAFE, 43,7 mld euro na obronność</h3>
+      <div class="cols">
+        <div class="gain"><span>Zyskali</span>Politycznie prezydent w roli obrońcy suwerenności. Merytorycznie trudno wskazać wygranego, bo pieniądze i tak popłynęły.</div>
+        <div class="loss"><span>Stracili</span>Przejrzystość: pożyczkę zawarto uchwałą rządu, bez ustawy, co opozycja nazywa obejściem prawa. Wojsko: 80 dni na podpisanie lub aneksowanie kilkudziesięciu umów w pośpiechu<sup><a href="#n24">24</a></sup>.</div>
+      </div>
+      <p class="muted" style="font-size:15px">Argument o „180 mld zł odsetek” i „zachodnich bankach” był krytykowany przez ekspertów jako przesadzony; SAFE to tania pożyczka z emisji UE, a Polska dostała największą pulę z 19 państw<sup><a href="#n25">25</a></sup>. Warto też pamiętać, że rząd PiS zaciągał wielomiliardowe pożyczki zbrojeniowe bez odrębnej ustawy i bez zgody prezydenta Dudy.</p>
+    </div>
+    <div class="row">
+      <h3>DSA, czyli prawo o platformach internetowych</h3>
+      <div class="cols">
+        <div class="gain"><span>Zyskali</span>Wielkie platformy, które dłużej działają w Polsce bez krajowego egzekutora; zwolennicy tezy, że o treściach powinien decydować sąd, a nie urzędnik.</div>
+        <div class="loss"><span>Stracili</span>Ofiary oszustw i treści przestępczych w sieci, dla których brakowało szybkiej ścieżki; państwo, któremu grozi postępowanie Komisji Europejskiej za brak wdrożenia.</div>
+      </div>
+      <p class="muted" style="font-size:15px">Tu prezydent miał merytoryczny argument: decyzja urzędnika podległego rządowi o blokadzie treści budzi uzasadnione wątpliwości, co przyznawali też niektórzy komentatorzy z organizacji społecznych<sup><a href="#n26">26</a></sup>. Efekt: przepisy rozdzielono, część podpisano.</p>
+    </div>
+    <div class="row">
+      <h3>KRS i likwidacja CBA</h3>
+      <div class="cols">
+        <div class="gain"><span>Zyskali</span>Sędziowie powołani w obecnym systemie i obecna struktura CBA, zbudowana za rządów PiS.</div>
+        <div class="loss"><span>Stracili</span>Obywatele czekający na wyroki w sądach, których status jest podważany, i na zakończenie sporu, który trwa już dekadę.</div>
+      </div>
+      <p class="muted" style="font-size:15px">To jest pat, a nie rozwiązanie. Prezydent złożył własny projekt KRS, rząd go nie przyjmuje. Żadna strona nie ma większości, żeby rozstrzygnąć spór sama.</p>
+    </div>
+    <div class="row">
+      <h3>Opłata cukrowa i akcyza na alkohol</h3>
+      <div class="cols">
+        <div class="gain"><span>Zyskali</span>Producenci napojów słodzonych i alkoholu; konsumenci na krótką metę, bo ceny nie wzrosły.</div>
+        <div class="loss"><span>Stracili</span>Budżet i zdrowie publiczne. Podwyżki takich danin należą do najlepiej udokumentowanych w badaniach narzędzi ograniczania spożycia.</div>
+      </div>
+      <p class="muted" style="font-size:15px">To czyste wykonanie obietnicy z kampanii. Kto na nią głosował, dostał dokładnie to, co mu obiecano. Kto liczy koszty zdrowotne, widzi to inaczej.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 -->
+<section id="wnioski">
+  <div class="sec-head"><span class="sec-num">08</span><h2>Co z tego wynika</h2></div>
+  <div class="flow">
+    <p>O przeszłości: najcięższe słowa, jakie padają pod adresem prezydenta, czyli „sutener” i „przestępca”, nie mają dziś pokrycia w żadnym wyroku ani zarzucie. Pewne jest za to kilka rzeczy mniej spektakularnych. Brał udział w brutalnej ustawce razem z ludźmi później skazanymi za ciężkie przestępstwa. Utrzymywał znajomości z postaciami półświatka i je bagatelizował. Budował fikcyjną tożsamość, żeby chwalić samego siebie. Mówił nieprawdę o liczbie posiadanych mieszkań. Dwie sprawy, Grand Hotel i kawalerka, wciąż się toczą i mogą ten obraz jeszcze zmienić w obie strony.</p>
+    <p>O wetach: liczba 45 robi wrażenie, ale sama nic nie rozstrzyga. Część wet to spełnione obietnice wyborcze, część to skuteczna negocjacja, która dała lepsze ustawy. Najwięcej szkody niosą nieliczne przypadki: trzykrotne blokowanie nadzoru nad kryptowalutami, wieczny pat wokół sądów i przepychanka o SAFE, która skończyła się obejściem prawa zamiast porozumienia.</p>
+    <p>Odpowiedzialność jest przy tym dzielona. Prezydent używa weta szerzej niż ktokolwiek przed nim i często bez szczegółowego uzasadnienia. Rząd z kolei wie, że bez 276 głosów nie przełamie weta, a mimo to wysyła ustawy w kształcie, który gwarantuje odmowę. Obie strony zyskują na konflikcie politycznie. Traci ten, kto potrzebuje, żeby jakaś konkretna rzecz po prostu zaczęła działać.</p>
+    <p class="pull">Najuczciwsze pytanie na następny rok nie brzmi „ile jeszcze wet”, tylko „ile z nich skończy się nową, lepszą ustawą”. Na razie to mniej więcej co siódme.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="eyebrow" style="margin-bottom:14px">Przypisy</div>
+  <ol class="notes">
+    <li id="n1">Wikipedia, „Karol Nawrocki” (biografia, kariera, nominacja, deklaracja Mentzena, kancelaria) — <a href="https://en.wikipedia.org/wiki/Karol_Nawrocki">en.wikipedia.org/wiki/Karol_Nawrocki</a></li>
+    <li id="n2">PKW, oficjalne wyniki II tury, za: Głos Nauczycielski — <a href="https://glos.pl/pkw-podala-oficjalne-wyniki-ii-tury-wyborow-prezydenckich-karol-nawrocki-pokonal-rafala-trzaskowskiego">glos.pl</a>; Infor — <a href="https://www.infor.pl/prawo/nowosci-prawne/6961415,pkw-wyniki-2025-karol-nawrocki-juz-oficjalnie-wygrywa-wybory-prezyden.html">infor.pl</a></li>
+    <li id="n3">i.pl / PAP, „Karol Nawrocki brał udział w ustawce Lechia Gdańsk – Lech Poznań?” — <a href="https://i.pl/karol-nawrocki-bral-udzial-w-ustawce-lechia-gdansk-lech-poznan-nieoficjalne-informacje/ar/c1p2-27613159">i.pl</a></li>
+    <li id="n4">OKO.press, „Znamy szczegóły ustawki Nawrockiego” (rozmowa z prokuratorem) — <a href="https://oko.press/ustawka-nawrocki-pseudokibice-prokurator">oko.press</a></li>
+    <li id="n5">Radio Kraków, „Ustawka kiboli i Karol Nawrocki. Co wydarzyło się 25 października 2009 roku?” — <a href="https://www.radiokrakow.pl/audycje/ustawka-kiboli-i-karol-nawrocki-co-wydarzylo-sie-25-pazdziernika-2009-roku/">radiokrakow.pl</a></li>
+    <li id="n6">TVN24, „Karol Nawrocki i sprowadzanie prostytutek do Grand Hotelu” — <a href="https://tvn24.pl/polska/karol-nawrocki-i-sprowadzanie-prostytutek-do-grand-hotelu-doniesienia-dziennikarzy-st8480204">tvn24.pl</a>; OKO.press — <a href="https://oko.press/nawrocki-prostytutki-grand-hotel-sopot">oko.press</a></li>
+    <li id="n7">Wirtualnemedia, „Ruszył proces Karola Nawrockiego przeciw Onetowi” — <a href="https://www.wirtualnemedia.pl/ruszyl-proces-karola-nawrockiego-przeciwko-onetowi-chodzi-o-tekst-o-grand-hotelu,7329637439428768a">wirtualnemedia.pl</a>; Interia — <a href="https://wydarzenia.interia.pl/kraj/news-pierwsza-rozprawa-w-procesie-nawrockiego-pozwal-wydawce-onet,nId,23543816">interia.pl</a>; Radio Warta — <a href="https://www.radiowarta.pl/artykul/20132,nawrocki-idzie-do-sadu-z-onetem-teraz-swiadkowie-maja-powiedziec-co-wiedza-o-grand-hotelu">radiowarta.pl</a></li>
+    <li id="n8">Portal Gdańsk.pl, „Kawalerka Karola Nawrockiego. Prokuratura wszczyna postępowanie” — <a href="https://www.gdansk.pl/wiadomosci/Kawalerka-Karola-Nawrockiego-Prokuratura-wszczyna-postepowanie,a,289729">gdansk.pl</a>; RMF24 — <a href="https://www.rmf24.pl/raporty/raport-wybory-prezydenckie-2025/news-wazna-decyzja-prokuratury-ws-kawalerki-nawrockiego,nId,7984845">rmf24.pl</a></li>
+    <li id="n9">PAP, „Mieszkanie Jerzego Ż. Prokuratura wszczęła dochodzenie” — <a href="https://www.pap.pl/aktualnosci/gdansk-prokuratura-wszczela-dochodzenie-w-sprawie-przejecia-mieszkania-jerzego-z-krotka">pap.pl</a>; Bankier (7 wątków) — <a href="https://www.bankier.pl/wiadomosc/Sprawa-kawalerki-Nawrockiego-Prokuratura-odmawia-sledztwa-8975843.html">bankier.pl</a>; Niezależna (czerwiec 2026) — <a href="https://niezalezna.pl/polska/wroci-temat-kawalerki-nawrockich-prokuratura-nie-wyklucza-przesluchania-prezydenta/571872">niezalezna.pl</a></li>
+    <li id="n10">XYZ, „Śledztwo w sprawie kawalerki… z pomocą przyszła Konstytucja” — <a href="https://xyz.pl/sledztwo-w-sprawie-kawalerki-karola-nawrockiego-z-pomoca-przyszlemu-prezydentowi-przyszla-konstytucja/">xyz.pl</a>; TVN24 (prezes NRA) — <a href="https://tvn24.pl/polska/dochodzenie-w-sprawie-kawalerki-przejetej-przez-karola-nawrockiego-przemyslaw-rosati-prezes-nra-komentuje-st8520002">tvn24.pl</a></li>
+    <li id="n11">Prokuratura Okręgowa w Gdańsku, komunikat o umorzeniu śledztwa (11.08.2026) — <a href="https://www.gov.pl/web/po-gdansk/umorzenie-sledztwa-w-sprawie-w-sprawie-przekroczenia-uprawnien-przez-funkcjonariuszy-publicznych-poprzez-dopuszczenie-do-nieodplatnego-korzystania-z-pokoi-i-apartamentow-nalezacych-do-muzeum-ii-wojny-swiatowej-w-gdansku">gov.pl</a>; Polsat News — <a href="https://www.polsatnews.pl/wiadomosc/2026-08-12/sprawa-apartamentow-w-muzeum-ii-wojny-swiatowej-nowy-komunikat-prokuratury/">polsatnews.pl</a></li>
+    <li id="n12">TVN24, „Karol Nawrocki. Tadeusz Batyr. Kandydat PiS w dwóch postaciach” — <a href="https://tvn24.pl/polska/karol-nawrocki-tadeusz-batyr-kandydat-pis-w-dwoch-postaciach-pod-pseudonimem-chwalil-samego-siebie-st8367670">tvn24.pl</a>; PAP — <a href="https://www.pap.pl/aktualnosci/literacka-tozsamosc-karola-nawrockiego-szef-ipn-o-tadeuszu-batyrze-pseudonimy-nie-sa">pap.pl</a></li>
+    <li id="n13">Money.pl, „ABW zatrzymało gangstera z raportu o Karolu Nawrockim” — <a href="https://www.money.pl/gospodarka/abw-zatrzymalo-gangstera-z-raportu-o-karolu-nawrockim-7099984641657504a.html">money.pl</a>; WP — <a href="https://wiadomosci.wp.pl/nawrocki-tlumaczyl-sie-z-relacji-z-l-7100687333079680a">wp.pl</a>; naTemat — <a href="https://natemat.pl/579947,nawrocki-5-lat-temu-wypieral-sie-znajomosci-z-gangsterem">natemat.pl</a></li>
+    <li id="n14">Polityka, „Nawrocki w opałach. Zdjęcia z gangsterem nie znikną z sieci” — <a href="https://www.polityka.pl/tygodnikpolityka/kraj/2280767,1,nawrocki-w-opalach-zdjecia-z-gangsterem-nie-znikna-z-sieci-kaczynski-liczy-na-cud.read">polityka.pl</a></li>
+    <li id="n15">WP, „Karol Nawrocki ułaskawił trzy osoby” — <a href="https://wiadomosci.wp.pl/karol-nawrocki-ulaskawil-trzy-osoby-7314500961495104a">wp.pl</a>; Polsat News — <a href="https://www.polsatnews.pl/wiadomosc/2026-08-04/prezydent-ulaskawil-starucha-palac-tlumaczy-decyzje/">polsatnews.pl</a></li>
+    <li id="n16">Interia, „Adam Szłapka o Karolu Nawrockim” (skala strat, śledztwo) — <a href="https://wydarzenia.interia.pl/kraj/news-burza-po-wecie-nawrockiego-determinacja-silniejsza-niz-inter,nId,23330079">interia.pl</a>; Gazeta Prawna, „Afera Zondacrypto. Przemysław Kral ma współpracować z prokuraturą” — <a href="https://www.gazetaprawna.pl/prawnik/prawo-karne/artykuly/11293917,kral-ma-wspolpracowac-z-prokuratura-w-sprawie-pojawiaja-sie-politycy.html">gazetaprawna.pl</a></li>
+    <li id="n17">Bankier, „Afera Zondacrypto, fundacje Ziobry i Wiplera oraz CPAC” — <a href="https://www.bankier.pl/wiadomosc/Afera-Zondacrypto-fundacje-Ziobry-i-Wiplera-oraz-CPAC-Premier-uderza-w-prawice-9110639.html">bankier.pl</a>; Interia (głosowanie 4.09.2026, wypowiedź Boguckiego) — <a href="https://wydarzenia.interia.pl/kraj/news-weto-prezydenta-ws-kryptowalut-sejm-zdecydowal,nId,23538607">interia.pl</a></li>
+    <li id="n18">Wetomat, lista wet (stan 28.08.2026) — <a href="https://wetomat.pl/">wetomat.pl</a>; KPRP, „Prezydent podjął decyzje w sprawie siedmiu ustaw” (28.08.2026) — <a href="https://www.prezydent.pl/aktualnosci/wydarzenia/prezydent-podjal-decyzje-w-sprawie-siedmiu-ustaw,125303">prezydent.pl</a>; KPRP, lista ustaw zawetowanych — <a href="https://www.prezydent.pl/prawo/ustawy-zawetowane">prezydent.pl</a>; Gramwzielone — <a href="https://www.gramwzielone.pl/trendy/20374489/dwie-wazne-ustawy-zablokowane-wsrod-nich-przepisy-dla-sektora-energetycznego">gramwzielone.pl</a></li>
+    <li id="n19">Konkret24, „Karol Nawrocki zawetował rekordową liczbę ustaw? Policzyliśmy” — <a href="https://konkret24.tvn24.pl/polityka/karol-nawrocki-zawetowal-rekordowa-liczbe-ustaw-policzylismy-st8881758">konkret24.tvn24.pl</a></li>
+    <li id="n20">Gazeta Prawna, „Rekordowe weta Karola Nawrockiego” — <a href="https://www.gazetaprawna.pl/wiadomosci/kraj/artykuly/10600364,rekordowewetakarolanawrockiegoporownaniezpoprzednikami.html">gazetaprawna.pl</a>; TVN24 — <a href="https://tvn24.pl/polska/weta-karola-nawrockiego-rekord-wszystkie-ustawy-zawetowane-przez-prezydenta-st8784705">tvn24.pl</a></li>
+    <li id="n21">RMF24, „Rząd wygasza po cichu pomoc Ukraińcom. »Presja weta działa«” — <a href="https://www.rmf24.pl/polityka/news-po-cichu-pojawil-sie-projekt-ustawy-dot-ukraincow-presja-wet,nId,8051027">rmf24.pl</a>; KPRP, podpisy z 26.09.2025 — <a href="https://www.prezydent.pl/aktualnosci/wydarzenia/szef-kprp-ustawy,107898">prezydent.pl</a>; Mam Prawo Wiedzieć — <a href="https://mamprawowiedziec.pl/czytelnia/artykul/nowa-ustawa-o-pomocy-obywatelom-ukrainy-z-podpisem-prezydenta">mamprawowiedziec.pl</a></li>
+    <li id="n22">Polsat News, „Trzy weta, cztery podpisy” (28.08.2026) — <a href="https://www.polsatnews.pl/wiadomosc/2026-08-28/prezydent-zdecydowal-w-sprawie-ustaw-trzy-weta-cztery-podpisy/">polsatnews.pl</a></li>
+    <li id="n23">Money.pl, „Weto prezydenta w mocy. Nowej ustawy brak. Polska traci każdego dnia” (dane CBOS dla DGP) — <a href="https://www.money.pl/finanse/weto-prezydenta-w-mocy-nowej-ustawy-brak-polska-traci-kazdego-dnia-opinia-7325737321322592a.html">money.pl</a>; PAP (wynik głosowania) — <a href="https://www.pap.pl/aktualnosci/weto-prezydenta-ws-kryptoaktywow-jest-decyzja-sejmu">pap.pl</a></li>
+    <li id="n24">Rzeczpospolita (Radar), „Rząd uruchamia plan B dla SAFE” — <a href="https://radar.rp.pl/modernizacja-sil-zbrojnych/art43961451-rzad-tuska-uruchamia-plan-b-dla-safe-umowa-z-ue-mimo-weta-prezydenta">rp.pl</a>; Dwugłos, „Pożyczka SAFE mimo weta prezydenta” — <a href="https://dwuglos.pl/umowa-safe-weto-prezydenta/">dwuglos.pl</a></li>
+    <li id="n25">Portal Obronny, „Weto prezydenta Nawrockiego wobec SAFE. Czy uzasadnienie ma sens?” — <a href="https://portalobronny.se.pl/polityka-obronna/weto-prezydenta-nawrockiego-wobec-safe-czy-uzasadnienie-ma-sens-aa-74Qn-5Kfi-AQkB.html">portalobronny.se.pl</a></li>
+    <li id="n26">Demagog, „Weto do ustawy wdrażającej DSA. Jakie są argumenty Nawrockiego?” — <a href="https://demagog.org.pl/na-biezaco/weto-do-ustawy-wdrazajacej-dsa-jakie-sa-argumenty-nawrockiego/">demagog.org.pl</a>; Instytut Spraw Obywatelskich — <a href="https://instytutsprawobywatelskich.pl/akt-o-uslugach-cyfrowych-dsa-chciwosc-inwigilacja-i-naiwnosc/">instytutsprawobywatelskich.pl</a>; Salon24 (podpis części DSA) — <a href="https://www.salon24.pl/newsroom/1524149,nawrocki-zdecydowal-o-losach-ustawy-o-dsa-wczesniej-bylo-weto">salon24.pl</a></li>
+    <li id="n27">PAP, „Weto prezydenta Nawrockiego. Chodzi o sprawę likwidacji CBA” — <a href="https://www.pap.pl/aktualnosci/weto-prezydenta-nawrockiego-chodzi-o-sprawe-likwidacji-cba">pap.pl</a></li>
+    <li id="n28">Wprost, „Ustawa o statusie osoby najbliższej. Sejm nie zdołał odrzucić weta” — <a href="https://www.wprost.pl/kraj/12445800/ustawa-o-statusie-osoby-najblizszej-sejm-nie-zdolal-odrzucic-weta-nawrockiego.html">wprost.pl</a></li>
+    <li id="n29">Interia, „Karol Nawrocki zdecydował ws. reformy Prawa oświatowego” — <a href="https://wydarzenia.interia.pl/kraj/news-karol-nawrocki-zdecydowal-ws-osmiu-ustaw-wsrod-nich-prawo-os,nId,23508664">interia.pl</a>; Prawo.pl, „Reforma edukacji w 2026” — <a href="https://www.prawo.pl/szkoly-i-uczelnie/reforma-edukacji-w-2026,536404.html">prawo.pl</a></li>
+    <li id="n30">KPRP, weto do ustawy o pomocy obywatelom Ukrainy (25.08.2025) — <a href="https://www.prezydent.pl/prawo/ustawy-zawetowane/weto-prezydenta-do-nowelizacji-ustawy-o-pomocy-obywatelom-ukrainy,105612">prezydent.pl</a></li>
+  </ol>
+  <p class="muted" style="font-size:13px;margin-top:24px">Tekst odróżnia fakty ustalone od zarzutów. Osoby, którym nie postawiono zarzutów ani nie zapadł wobec nich wyrok, korzystają z domniemania niewinności.</p>
+</footer>
+</div>
+
+</body></html>

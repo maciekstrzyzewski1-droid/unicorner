@@ -1,0 +1,91 @@
+---
+import Base from '../../layouts/Base.astro';
+import '../../styles/wiedza.css';
+import Bar from '../../components/wiedza/Bar.astro';
+import Card from '../../components/wiedza/Card.astro';
+import Foot from '../../components/wiedza/Foot.astro';
+import { getArticles, seriesNeighbours } from '../../lib/wiedza.js';
+
+export function getStaticPaths() {
+  return getArticles().map((a) => ({ params: { slug: a.slug }, props: { a } }));
+}
+const { a } = Astro.props;
+const all = getArticles();
+const { prev, next } = seriesNeighbours(a);
+const seriesList = a.series ? all.filter((x) => x.series === a.series).sort((x, y) => x.part - y.part) : [];
+const related = all.filter((x) => x.category === a.category && x.slug !== a.slug && x.series !== a.series || (x.category === a.category && !a.series && x.slug !== a.slug))
+  .filter((x, i, arr) => arr.findIndex((y) => y.slug === x.slug) === i).slice(0, 3);
+const url = `https://unicorner.pl${a.url}`;
+const ld = {
+  '@context': 'https://schema.org', '@type': 'Article', headline: a.seoTitle, description: a.lede, inLanguage: 'pl',
+  url, mainEntityOfPage: url, articleSection: a.categoryName, wordCount: a.words,
+  publisher: { '@type': 'Organization', name: 'Unicorner', url: 'https://unicorner.pl' },
+  ...(a.series ? { isPartOf: { '@type': 'CreativeWorkSeries', name: a.seriesName } } : {}),
+};
+---
+<Base title={`${a.seoTitle} · Unicorner`} description={a.lede}>
+  <Fragment slot="head">
+    <link rel="canonical" href={url} />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={a.seoTitle} />
+    <meta property="og:description" content={a.lede} />
+    <meta property="og:url" content={url} />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="article:section" content={a.categoryName} />
+    <meta name="twitter:card" content="summary" />
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+    <style is:inline>
+      /* przywrócenie domyślnych odstępów (Tailwind preflight je zeruje); :where = zero specyficzności, CSS artykułu wygrywa */
+      :where(.art) p{margin:0 0 1.15em;}
+      :where(.art) ul{list-style:disc;padding-left:1.4em;margin:0 0 1.15em;}
+      :where(.art) ol{list-style:decimal;padding-left:1.4em;margin:0 0 1.15em;}
+      :where(.art) li{margin-bottom:.35em;}
+      :where(.art) h3{font-size:1.17em;font-weight:600;margin:1.6em 0 .6em;}
+      :where(.art) h4{font-weight:600;margin:1.2em 0 .5em;}
+      :where(.art) blockquote{margin:1.4em 0;padding-left:1em;border-left:2px solid #a78bfa;}
+      :where(.art) table{border-collapse:collapse;}
+      :where(.art) sup{font-size:.7em;vertical-align:super;line-height:0;}
+    </style>
+    <style is:inline set:html={a.css}></style>
+    <style is:inline>
+      .art{background:transparent;font-weight:400;}
+      .art strong{color:#fff;}
+      .art a{color:#9fe9ff;text-decoration-color:rgba(39,232,255,.35);text-underline-offset:3px;}
+      .art h1{background:linear-gradient(115deg,#ffffff 0%,#e6e3f2 55%,#c9b8ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+      .art .wrap{position:relative;}
+    </style>
+  </Fragment>
+
+  <Bar crumbs={[{ label: 'Wiedza', href: '/wiedza.html' }, { label: a.categoryName, href: `/wiedza.html#${a.category}` }, { label: a.title }]}
+       back={{ label: '← Wszystkie teksty', href: '/wiedza.html' }} progress={true} />
+
+  <article class="art art-shell" set:html={a.html} />
+
+  <div class="wz-after">
+    {a.series && (
+      <nav class="wz-series" aria-label={a.seriesName}>
+        <div class="lbl">// {a.seriesName} · część {a.part} z {seriesList.length}</div>
+        <ol>
+          {seriesList.map((s) => (
+            <li class={s.slug === a.slug ? 'cur' : ''}><a href={s.url} aria-current={s.slug === a.slug ? 'page' : undefined}><span class="n">{String(s.part).padStart(2, '0')}</span>{s.title}</a></li>
+          ))}
+        </ol>
+      </nav>
+    )}
+    {(prev || next) && (
+      <div class="wz-pn">
+        {prev && <a href={prev.url}><span class="k">← Poprzednia część</span><span class="t">{prev.title}</span></a>}
+        {next && <a class="next" href={next.url}><span class="k">Następna część →</span><span class="t">{next.title}</span></a>}
+      </div>
+    )}
+  </div>
+
+  {related.length > 0 && (
+    <section class="wz-more">
+      <div class="wz-glabel"><h2>Czytaj dalej</h2><span class="line"></span></div>
+      <div class="wz-grid">{related.map((r) => <Card a={r} />)}</div>
+    </section>
+  )}
+
+  <Foot />
+</Base>

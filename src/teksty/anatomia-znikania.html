@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia znikania — narkolepsja poza sennością</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14150f;
+    --bg-raised:#191a13;
+    --text:#ece5d1;
+    --text-dim:#a8a290;
+    --gold:#d1a13f;
+    --gold-dim:#8a6f34;
+    --line:#2c2c22;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--text);}
+  body{
+    font-family:'Work Sans',sans-serif;
+    font-weight:400;
+    line-height:1.75;
+    font-size:18px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 28px 120px;}
+  header.hero{
+    max-width:900px;margin:0 auto;padding:100px 28px 60px;
+    border-bottom:1px solid var(--line);
+  }
+  .kicker{
+    font-family:'Work Sans',sans-serif;
+    text-transform:uppercase;
+    letter-spacing:.18em;
+    font-size:13px;
+    color:var(--gold);
+    margin-bottom:22px;
+    font-weight:600;
+  }
+  h1{
+    font-family:'Fraunces',serif;
+    font-optical-sizing:auto;
+    font-weight:600;
+    font-size:clamp(38px,6vw,64px);
+    line-height:1.05;
+    margin:0 0 22px;
+    letter-spacing:-0.01em;
+  }
+  .subtitle{
+    font-family:'Fraunces',serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:22px;
+    color:var(--text-dim);
+    line-height:1.5;
+    max-width:640px;
+    margin:0;
+  }
+  .lede{
+    max-width:760px;margin:56px auto 0;padding:0 28px;
+    font-size:21px;
+    line-height:1.8;
+    color:var(--text);
+  }
+  .lede em{color:var(--gold);font-style:normal;}
+  section{margin-top:88px;}
+  .sec-head{
+    display:flex;align-items:baseline;gap:20px;margin-bottom:32px;
+  }
+  .sec-num{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:16px;
+    color:var(--gold);
+    letter-spacing:.05em;
+    white-space:nowrap;
+    padding-top:4px;
+  }
+  h2{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    font-size:clamp(28px,4vw,38px);
+    line-height:1.15;
+    margin:0;
+  }
+  h3{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:23px;
+    color:var(--gold);
+    margin:44px 0 14px;
+  }
+  p{margin:0 0 22px;}
+  strong{color:var(--text);font-weight:600;}
+  .cite-num{
+    font-size:13px;color:var(--gold);vertical-align:super;
+    text-decoration:none;font-weight:600;
+  }
+  blockquote{
+    margin:36px 0;padding:4px 0 4px 26px;
+    border-left:2px solid var(--gold-dim);
+    font-family:'Fraunces',serif;font-style:italic;font-size:20px;
+    color:var(--text-dim);line-height:1.6;
+  }
+  .callout{
+    background:var(--bg-raised);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:30px 32px;
+    margin:40px 0;
+  }
+  .callout .label{
+    text-transform:uppercase;letter-spacing:.14em;font-size:12px;
+    color:var(--gold);font-weight:600;margin-bottom:10px;
+  }
+  .stat-row{
+    display:flex;gap:20px;flex-wrap:wrap;margin:44px 0;
+  }
+  .stat{
+    flex:1;min-width:150px;
+    background:var(--bg-raised);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:24px 22px;
+  }
+  .stat .num{
+    font-family:'Fraunces',serif;font-weight:600;
+    font-size:38px;color:var(--gold);line-height:1;margin-bottom:8px;
+  }
+  .stat .desc{font-size:14.5px;color:var(--text-dim);line-height:1.45;}
+  figure{margin:48px 0;}
+  figcaption{
+    font-size:13.5px;color:var(--text-dim);margin-top:14px;line-height:1.5;
+  }
+  .chart-title{
+    font-family:'Fraunces',serif;font-weight:500;font-size:17px;
+    color:var(--text);margin-bottom:4px;
+  }
+  .chart-sub{font-size:13.5px;color:var(--text-dim);margin-bottom:18px;}
+  svg{width:100%;height:auto;display:block;}
+  .bar-bg{fill:#232418;}
+  .bar-a{fill:var(--gold);}
+  .bar-b{fill:#5a5237;}
+  .axis-text{font-family:'Work Sans',sans-serif;font-size:12.5px;fill:var(--text-dim);}
+  .val-text{font-family:'Work Sans',sans-serif;font-size:13px;fill:var(--text);font-weight:600;}
+  .label-text{font-family:'Work Sans',sans-serif;font-size:14px;fill:var(--text);}
+  hr.div{border:none;border-top:1px solid var(--line);margin:56px 0;}
+  .closing{
+    font-family:'Fraunces',serif;font-style:italic;font-size:23px;
+    line-height:1.6;color:var(--text);margin-top:56px;
+  }
+  footer{
+    max-width:760px;margin:100px auto 0;padding:56px 28px 60px;
+    border-top:1px solid var(--line);
+  }
+  footer h4{
+    font-family:'Fraunces',serif;font-weight:500;font-size:15px;
+    text-transform:uppercase;letter-spacing:.12em;color:var(--gold);
+    margin:0 0 26px;
+  }
+  .src-list{list-style:none;margin:0;padding:0;counter-reset:src;}
+  .src-list li{
+    counter-increment:src;
+    font-size:14px;color:var(--text-dim);
+    padding-left:30px;position:relative;margin-bottom:14px;line-height:1.55;
+  }
+  .src-list li::before{
+    content:counter(src);
+    position:absolute;left:0;top:0;
+    color:var(--gold);font-weight:600;font-family:'Work Sans',sans-serif;
+    font-size:13px;
+  }
+  .src-list a{color:var(--text-dim);text-decoration:underline;text-decoration-color:var(--line);}
+  .src-list a:hover{color:var(--gold);}
+  .note{
+    font-size:14px;color:var(--text-dim);
+    background:var(--bg-raised);border:1px solid var(--line);
+    border-radius:4px;padding:20px 22px;margin-top:40px;
+  }
+  @media (max-width:600px){
+    header.hero{padding:70px 22px 44px;}
+    .sec-head{flex-direction:column;gap:6px;}
+    .stat-row{flex-direction:column;}
+  }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">Artykuł badawczy</div>
+  <h1>Anatomia znikania</h1>
+  <p class="subtitle">Narkolepsja jest zapisana w podręcznikach jako choroba nadmiernej senności. To prawda, ale niecała — brakujący neuropeptyd, o którym mowa, jest podłączony do niemal każdego systemu odpowiadającego za uwagę, pamięć i zdolność odczuwania radości.</p>
+</header>
+
+<div class="lede">
+<p>Zdarzyło mi się kiedyś zacząć rozpakowywać zmywarkę i „obudzić się” w połowie tej czynności, stojąc w salonie. Bez pojęcia, jak się tam znalazłem. Nie w sensie metafory — dosłownie. Jedna chwila to zmywarka, druga to salon, a pomiędzy nimi dziura, w którą wpadło kilka minut mojego życia. Kiedy opowiadam o tym ludziom bez narkolepsji, patrzą na mnie jak na kogoś, kto właśnie przyznał się do czegoś wstydliwego. Ja przez długi czas patrzyłem na siebie tak samo — <em>zakładałem, że to lenistwo, roztargnienie, może jakiś defekt charakteru</em>.</p>
+<p>Prawda jest dużo prostsza i mniej moralizatorska. Za tym epizodem stoi jeden brakujący neuroprzekaźnik — hipokretyna, zwana też orexyną. To malutka cząsteczka, którą mózg wysyła między swoimi różnymi częściami, jak wiadomość. Problem w tym, że ta konkretna wiadomość trafia niemal wszędzie — do ośrodków odpowiadających za emocje, pamięć i skupienie, nie tylko za sen. Ten tekst rozkłada na czynniki pierwsze to, co narkolepsja typu 1 robi z mózgiem poza samą sennością. Skupiam się na trzech rzeczach, o które pyta się najczęściej: na emocjach, na uwadze i na tych dziwnych, urywanych momentach nieobecności.</p>
+</div>
+
+<div class="wrap">
+
+<section>
+  <div class="sec-head"><span class="sec-num">01</span><h2>Neuron, którego brakuje</h2></div>
+
+  <p>Diagnozę narkolepsji typu 1 stawia się dziś na podstawie jednej liczby. Lekarze mierzą poziom hipokretyny w płynie, który otacza mózg i rdzeń kręgowy. Jeśli jest go mniej niż 110 pg/ml, to pewny sygnał choroby<a class="cite-num" href="#src1">[1]</a>. Dlaczego go brakuje? Najprawdopodobniej dlatego, że układ odpornościowy przez pomyłkę niszczy grupę neuronów, które go produkują. Ta grupa jest naprawdę mała — w zdrowym mózgu liczy zaledwie 60–70 tysięcy komórek, czyli mniej niż ma jeden przeciętny zwój nerwowy<a class="cite-num" href="#src2">[2]</a>. Aż 95% pacjentów z narkolepsją typu 1 nosi konkretny wariant genu związanego z odpornością, o nazwie HLA-DQB1*06:02<a class="cite-num" href="#src1">[1]</a>. To mocna wskazówka, że winny jest właśnie układ odpornościowy, choć naukowcy wciąż nie znaleźli dokładnego przeciwciała, które za tym stoi.</p>
+
+  <p>Problem w tym, że te kilkadziesiąt tysięcy komórek to nie jest osobny „obwód od senności”. Ich włókna sięgają niemal do każdego zakątka mózgu<a class="cite-num" href="#src3">[3]</a>. Docierają do miejsca, które produkuje serotoninę. Docierają do miejsca, które produkuje dopaminę — czyli do głównego ośrodka nagrody i motywacji. Wpływają też na układy odpowiedzialne za czujność, na podwzgórze regulujące metabolizm i na ciało migdałowate, które przetwarza emocje<a class="cite-num" href="#src4">[4]</a>.</p>
+
+  <p>Wygodniej jest więc myśleć o hipokretynie nie jak o włączniku światła („śpię / nie śpię”), tylko jak o dyrygencie, który koordynuje kilka sekcji orkiestry naraz — czuwanie, nagrodę, nastrój, apetyt — tak, by grały w odpowiednim natężeniu w odpowiednim momencie<a class="cite-num" href="#src5">[5]</a>. Kiedy dyrygent znika, orkiestra nie milknie. Gra dalej, tylko bez synchronizacji.</p>
+
+  <div class="note">Dlatego u osób z narkolepsją typu 1 częściej niż w populacji ogólnej obserwuje się otyłość, insulinooporność i zaburzenia autonomiczne<a class="cite-num" href="#src1">[1]</a>. To nie są zwykłe „skutki uboczne senności”. To konsekwencja utraty tego samego neuropeptydu, który reguluje również metabolizm.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">02</span><h2>Radość, która nie przychodzi</h2></div>
+
+  <p>Zacznijmy od czegoś, co sam kiedyś usłyszałem i długo nie rozumiałem: hipokretyna pobudza komórki, które produkują serotoninę. To znaczy, że gdy hipokretyny jest mniej, mózg dostaje słabszy bodziec do produkowania serotoniny. Naukowcy zobaczyli to wprost pod mikroskopem — włókna komórek hipokretynowych fizycznie stykają się z komórkami serotoninowymi, jakby jedne podłączały drugie do prądu<a class="cite-num" href="#src6">[6]</a><a class="cite-num" href="#src7">[7]</a>. To samo dzieje się z dopaminą, czyli substancją odpowiedzialną za motywację i poczucie nagrody — hipokretyna pobudza też ośrodek, który ją produkuje<a class="cite-num" href="#src5">[5]</a>. Krótko mówiąc: brak jednej cząsteczki potrafi ściszyć od razu dwa systemy odpowiedzialne za dobre samopoczucie.</p>
+
+  <p>Dlatego część badaczy uważa, że brak orexyny sprzyja anhedonii, czyli obniżonej zdolności do odczuwania przyjemności, a także przewlekłemu zmęczeniu. Obraz nie jest jednak taki prosty — inne badania pokazują, że przy stresie i lęku ten sam system bywa wręcz nadmiernie aktywny<a class="cite-num" href="#src1">[1]</a>. Zależy to prawdopodobnie od tego, który dokładnie receptor i który obszar mózgu jest zaangażowany. Naukowcy sami jeszcze się tu spierają. Jest jednak drugi mechanizm — dużo lepiej opisany i dużo bardziej specyficzny dla narkolepsji z katapleksją. To on tłumaczy coś, czego długo nie potrafiłem sam sobie nazwać.</p>
+
+  <h3>Nauczona nieśmiałość wobec własnej radości</h3>
+  <p>Katapleksja to nagła utrata napięcia mięśniowego — ciało na chwilę odmawia posłuszeństwa. Najczęściej wywołują ją silne emocje, a klasycznym wyzwalaczem jest śmiech<a class="cite-num" href="#src9">[9]</a>. Zespół badaczy z Bolonii sprawdził, co dzieje się wtedy w mózgu, pokazując pacjentom z katapleksją zabawne rysunki podczas skanowania. Wynik był zaskakujący: ci pacjenci oceniali dowcipy jako mniej śmieszne niż osoby zdrowe. A w ich mózgach — nawet gdy do żadnego ataku nie doszło — aktywność ośrodków nagrody i podwzgórza była wyraźnie przytłumiona<a class="cite-num" href="#src10">[10]</a>. Inne badanie poszło o krok dalej i sprawdziło samo zachowanie, nie tylko obrazy z mózgu. Dorośli z katapleksją, w porównaniu ze zdrowymi ludźmi, konsekwentnie hamowali okazywanie emocji na zewnątrz. Badacze uważają, że to wyuczona strategia — mózg sam, bez pytania nas o zgodę, uczy się tłumić emocje, żeby uniknąć kolejnego ataku<a class="cite-num" href="#src11">[11]</a>.</p>
+
+  <blockquote>Innymi słowy: mózg, który raz czy dwa razy upadł od zbyt mocnego śmiechu, może po cichu — bez naszej świadomej zgody — nauczyć się przytłumiać radość, zanim zdąży urosnąć do rozmiaru, który zwala z nóg.</blockquote>
+
+  <p>Podejrzewam, że nie tylko ja rozpoznaję w sobie coś z tego opisu. Nie chodzi o to, że nie umiemy się cieszyć. Chodzi o to, że gdzieś w głowie działa cichy hamulec bezpieczeństwa — włącza się, zanim entuzjazm zdąży się w pełni rozwinąć. Złość i smutek rzadko kiedy kładą kogoś na podłogę, więc łatwiej je poczuć w pełni. Z radością bywa trudniej.</p>
+
+  <h3>Kiedy lek robi to samo, co choroba</h3>
+  <p>Tu dochodzi drugi mechanizm, zupełnie niezależny od pierwszego. Wenlafaksyna — lek z grupy SNRI, czyli podnoszący poziom serotoniny i noradrenaliny — bywa przepisywana właśnie po to, żeby kontrolować katapleksję. Nie jest to jej oficjalne zastosowanie, ale działa, bo stabilizuje obwody odpowiedzialne za napięcie mięśni podczas silnych emocji<a class="cite-num" href="#src12">[12]</a>. Problem w tym, że ten sam lek, niezależnie od choroby, u 40–60% pacjentów wywołuje coś, co nazywa się spłyceniem afektywnym. To po prostu obniżona zdolność do odczuwania emocji — zarówno dobrych, jak i złych<a class="cite-num" href="#src13">[13]</a><a class="cite-num" href="#src14">[14]</a>. To zjawisko różni się od depresji. Mechanizm jest taki, że podniesiony poziom serotoniny przytłumia dopaminę w tych samych obwodach nagrody, o których była mowa wyżej<a class="cite-num" href="#src15">[15]</a>. Co ciekawe, efekt zależy od dawki. Opisano przypadek pacjenta, u którego niska dawka wenlafaksyny wywołała apatię i spłycenie emocji, a wyższa dawka — paradoksalnie — przywróciła mu i motywację, i zdolność odczuwania<a class="cite-num" href="#src16">[16]</a>.</p>
+
+  <div class="callout">
+    <div class="label">Dwa mechanizmy, jeden efekt</div>
+    <p style="margin:0;">Wyuczone tłumienie emocji, żeby uniknąć ataku katapleksji, i efekt uboczny leku, który tę katapleksję kontroluje — mogą działać naraz i nakładać się na siebie. Z zewnątrz, i od środka, wyglądają dokładnie tak samo: jako niezdolność do przeżywania pełnej, niepohamowanej radości.</p>
+  </div>
+
+  <h3>Co pokazują liczby o nastroju</h3>
+  <p>Do tego dochodzi jeszcze trzecia warstwa. Sama narkolepsja niesie ze sobą podwyższone ryzyko depresji i lęku — niezależnie od tego, co dzieje się z katapleksją czy z lekami. Analiza ponad 9 300 pacjentów w USA pokazała, że zaburzenia nastroju występują u nich niemal cztery razy częściej niż u osób zdrowych<a class="cite-num" href="#src17">[17]</a>. Metaanaliza 31 badań szacuje, że objawy depresyjne dotyczą około 32% osób z narkolepsją, a niektóre badania podają nawet 57%<a class="cite-num" href="#src18">[18]</a><a class="cite-num" href="#src19">[19]</a>.</p>
+
+  <figure>
+    <div class="chart-title">Częstość zaburzeń nastroju: narkolepsja vs. populacja ogólna</div>
+    <div class="chart-sub">Dane z analizy 9 312 pacjentów z narkolepsją i 46 559 dopasowanych osób z grupy kontrolnej, USA</div>
+    <svg viewBox="0 0 640 220" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="20" class="label-text">Zaburzenia depresyjne</text>
+      <rect x="0" y="30" width="640" height="26" class="bar-bg" rx="2"/>
+      <rect x="0" y="30" width="228.5" height="26" class="bar-a" rx="2"/>
+      <text x="234" y="48" class="val-text">35.8%</text>
+      <rect x="0" y="62" width="640" height="16" class="bar-bg" rx="2"/>
+      <rect x="0" y="62" width="83" height="16" class="bar-b" rx="2"/>
+      <text x="89" y="75" class="axis-text">13.0% (kontrola)</text>
+
+      <text x="0" y="120" class="label-text">Zaburzenia lękowe</text>
+      <rect x="0" y="130" width="640" height="26" class="bar-bg" rx="2"/>
+      <rect x="0" y="130" width="160" height="26" class="bar-a" rx="2"/>
+      <text x="166" y="148" class="val-text">25.1%</text>
+      <rect x="0" y="162" width="640" height="16" class="bar-bg" rx="2"/>
+      <rect x="0" y="162" width="76" height="16" class="bar-b" rx="2"/>
+      <text x="82" y="175" class="axis-text">11.9% (kontrola)</text>
+    </svg>
+    <figcaption>Złoty słupek = pacjenci z narkolepsją. Szary = dopasowana grupa kontrolna. Źródło: badanie BOND, Journal of Clinical Psychiatry<a class="cite-num" href="#src17">[17]</a>.</figcaption>
+  </figure>
+
+  <p>To nie znaczy, że każda osoba z narkolepsją, która czuje się emocjonalnie płasko, ma depresję. To znaczy, że jest to na tyle częsty wzorzec w tej grupie, że warto go sprawdzić u specjalisty. Lepiej zapytać kogoś, kto się na tym zna, niż zgadywać samemu, gdzie kończy się choroba, gdzie zaczyna lek, a gdzie zaczyna się coś, co wymaga osobnego leczenia.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">03</span><h2>Zniknięcia</h2></div>
+
+  <p>Wróćmy do zmywarki. To, co opisałem na wstępie, ma nazwę: zachowanie automatyczne. To jeden z pięciu klasycznych objawów narkolepsji — obok senności, katapleksji, paraliżu sennego i halucynacji hipnagogicznych, czyli żywych obrazów pojawiających się tuż przed zaśnięciem<a class="cite-num" href="#src20">[20]</a>. Zachowanie automatyczne to wykonywanie jakiejś czynności bez świadomości, że się ją w ogóle wykonuje. Zdarza się najczęściej przy zadaniach monotonnych<a class="cite-num" href="#src21">[21]</a>. Klasyczny przykład z literatury: dojechać do celu i nie pamiętać ani chwili samej jazdy<a class="cite-num" href="#src21">[21]</a>.</p>
+
+  <p>Mechanizm jest prosty do wyjaśnienia i jednocześnie niepokojący. To mikrosen — epizod trwający od kilku sekund do kilku minut, w którym mózg wchodzi w stan pomiędzy czuwaniem a snem. Jeśli dana czynność jest dobrze wyuczona, ciało po prostu kontynuuje ją na autopilocie<a class="cite-num" href="#src20">[20]</a>. Badanie z Victoria University opisało trzy sytuacje, w których to się zdarza: senność przy rutynowej czynności, senność przy zadaniu wymagającym dużej koncentracji, i — co ciekawe — presja, żeby dokończyć zadanie, nawet gdy nie czujemy wyraźnej senności. Sam stres potrafi wywołać taki epizod<a class="cite-num" href="#src21">[21]</a>. Całość może trwać od kilku minut do kilku godzin.</p>
+
+  <h3>Kiedy dzień robi się dziurawy</h3>
+  <p>Jest jeszcze drugi, pokrewny wątek. Badania pokazują, że objawy dysocjacyjne — czyli poczucie oderwania od rzeczywistości, jakby część umysłu była gdzie indziej — są wyjątkowo częste wśród dorosłych z narkolepsją typu 1<a class="cite-num" href="#src22">[22]</a>. Jedno z wyjaśnień odwołuje się do fazy REM, czyli tej części snu, w której śnimy najbardziej żywo. U osób z narkolepsją elementy tej fazy potrafią wdzierać się w stan czuwania. Nadmierne ciśnienie snu REM i krótkie mikroepizody senne w ciągu dnia mogą sprawiać, że myślenie robi się bardziej płynne i marzycielskie, co subiektywnie odczuwamy jako oderwanie od bieżącej chwili<a class="cite-num" href="#src22">[22]</a>. To nie jest to samo, co dysocjacja znana z psychologii traumy — mechanizm jest inny, choć w środku uczucie bywa łudząco podobne.</p>
+
+  <p>Większość ludzi błądzi myślami przez jakąś część dnia. Badania nad tym zjawiskiem, zwanym mind-wanderingiem, szacują, że robimy to nawet przez jedną trzecią czasu, w którym jesteśmy przytomni<a class="cite-num" href="#src23">[23]</a>. Przy narkolepsji różnica polega raczej na skali — ile scen z wyimaginowanej sali sądowej da się upchnąć w jedno przedpołudnie, zanim ktoś zapyta, dlaczego stoimy w kuchni z otwartą lodówką i bez pojęcia po co.</p>
+
+  <div class="stat-row">
+    <div class="stat">
+      <div class="num">1/3</div>
+      <div class="desc">tyle czasu czuwania statystyczny człowiek spędza w stanie błądzenia myślami<a class="cite-num" href="#src23">[23]</a></div>
+    </div>
+    <div class="stat">
+      <div class="num">min–godz.</div>
+      <div class="desc">typowy czas trwania epizodu zachowania automatycznego w narkolepsji<a class="cite-num" href="#src20">[20]</a></div>
+    </div>
+  </div>
+
+  <p>Warto tu dodać coś, o czym literatura rzadko wspomina. To samo zjawisko — halucynacje hipnagogiczne wywołujące błądzenie myślami — wiąże się u osób z narkolepsją typu 1 z wyższą kreatywnością. W testach mierzących zdolność wymyślania nietypowych rozwiązań radzą sobie lepiej niż osoby zdrowe<a class="cite-num" href="#src24">[24]</a>. Granica między dysfunkcją a niezwykle bogatą wyobraźnią bywa cieńsza, niż się wydaje. Nie zmienia to jednak faktu, że epizody automatycznego działania niosą realne ryzyko — zwłaszcza za kierownicą.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">04</span><h2>Uwaga, która ucieka</h2></div>
+
+  <p>Trzecia oś tego wszystkiego dotyczy pamięci i skupienia. W mojej pracy — montowaniu silników do pojazdów elektrycznych — nie ma jednego uniwersalnego sposobu na złożenie czegoś. Zależnie od modelu inna jest kolejność: raz najpierw montuje się tłumik, raz kierownicę, raz dana śrubka idzie po lewej stronie, raz po prawej. Kiedy w ciągu dwóch tygodni przechodzę przez cztery różne modele, te kroki zaczynają mi się mieszać — nie pamiętam, co było najpierw, którą stroną, w jakiej kolejności. Dany model zapamiętuję dopiero wtedy, kiedy zrobię go dziesięć razy jednego dnia pod rząd. To musi wynikać z praktyki, nie z samego wytłumaczenia.</p>
+
+  <p>To nie jest tylko subiektywne wrażenie. Metaanaliza, która zebrała wyniki z 39 badań, policzyła to twardymi liczbami<a class="cite-num" href="#src25">[25]</a>. Uwaga to funkcja poznawcza najsilniej upośledzona w narkolepsji typu 1 — różnica względem osób zdrowych jest tu duża, porównywalna z tą w hipersomnii idiopatycznej, czyli innym zaburzeniu nadmiernej senności. Funkcje wykonawcze — czyli planowanie, elastyczne przełączanie się między zadaniami, hamowanie impulsów — są upośledzone umiarkowanie. Pamięć wypada najsłabiej upośledzona, choć różnica wciąż jest wyraźna. We wszystkich trzech badanych grupach diagnostycznych najbardziej ucierpiała jedna konkretna umiejętność: zdolność do utrzymania uwagi przez dłuższy czas.</p>
+
+  <figure>
+    <div class="chart-title">Rozmiar upośledzenia funkcji poznawczych w narkolepsji typu 1</div>
+    <div class="chart-sub">Im dłuższy złoty słupek, tym większa różnica względem osób zdrowych (miara statystyczna: d Cohena)</div>
+    <svg viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg">
+      <text x="0" y="20" class="label-text">Uwaga</text>
+      <rect x="0" y="30" width="640" height="26" class="bar-bg" rx="2"/>
+      <rect x="0" y="30" width="576" height="26" class="bar-a" rx="2"/>
+      <text x="530" y="48" class="val-text" text-anchor="end" style="fill:#14150f;">d = −0.90</text>
+
+      <text x="0" y="86" class="label-text">Funkcje wykonawcze</text>
+      <rect x="0" y="96" width="640" height="26" class="bar-bg" rx="2"/>
+      <rect x="0" y="96" width="192" height="26" class="bar-a" rx="2"/>
+      <text x="200" y="114" class="val-text">d = −0.30</text>
+
+      <text x="0" y="152" class="label-text">Pamięć</text>
+      <rect x="0" y="162" width="640" height="26" class="bar-bg" rx="2"/>
+      <rect x="0" y="162" width="211" height="26" class="bar-a" rx="2"/>
+      <text x="219" y="180" class="val-text">d = −0.33</text>
+    </svg>
+    <figcaption>Metaanaliza 39 badań (73 porównania), styczeń 2000 – październik 2022. Źródło: przegląd systematyczny w czasopiśmie naukowym poświęconym medycynie snu<a class="cite-num" href="#src25">[25]</a>.</figcaption>
+  </figure>
+
+  <h3>Ten sam neuropeptyd, dwie różne diagnozy</h3>
+  <p>Tu robi się naprawdę ciekawie. Naukowcy porównali narkolepsję typu 1 (z brakiem hipokretyny) z narkolepsją typu 2 (bez tego braku, ale wciąż z sennością). Okazało się, że tylko w typie 1 upośledzona jest jedna konkretna sieć uwagi w mózgu, odpowiedzialna za czujność<a class="cite-num" href="#src26">[26]</a>. Innymi słowy: to konkretnie brak hipokretyny — a nie sama senność jako taka — rozregulowuje ten jeden filar uwagi. W tym samym badaniu pacjenci z typem 1 mieli też silniejsze objawy nadpobudliwości typowe dla ADHD oraz silniejsze objawy depresyjne. Im więcej jednego, tym więcej drugiego<a class="cite-num" href="#src26">[26]</a>.</p>
+
+  <p>To nie jest odosobniony wynik. Chińskie badanie na 267 dzieciach z narkolepsją typu 1 wykazało objawy ADHD u prawie 29% z nich<a class="cite-num" href="#src27">[27]</a>. Te dzieci miały dodatkowo wyższy poziom lęku, więcej zachowań impulsywnych, gorszą jakość życia i słabsze funkcje wykonawcze niż dzieci bez objawów ADHD. U dorosłych liczby są jeszcze bardziej wymowne — osoby z narkolepsją mają blisko dziesięć razy wyższe szanse na współwystępujące ADHD niż reszta populacji<a class="cite-num" href="#src28">[28]</a>.</p>
+
+  <div class="callout">
+    <div class="label">Wspólna chemia</div>
+    <p style="margin:0;">To nakładanie się narkolepsji i ADHD było kiedyś na tyle wyraźne, że badacze nadali mu osobne nazwy — „Syndrome Z” i „Primary Disorder of Vigilance”<a class="cite-num" href="#src29">[29]</a>. Najbardziej prawdopodobne wyjaśnienie: oba zaburzenia dzielą te same szlaki w mózgu, oparte na dopaminie i noradrenalinie. To właśnie te dwie substancje regulują uwagę u osób z ADHD — i to te same substancje pobudzają neurony hipokretynowe.</p>
+  </div>
+
+  <p>To ma konkretne znaczenie w gabinecie lekarskim. Narkolepsję myli się z ADHD, zwłaszcza z podtypem skupionym na problemach z koncentracją, a bywa i odwrotnie. Opisano przypadki, w których narkolepsję błędnie rozpoznawano jako depresję, zaburzenie dysocjacyjne, a nawet schizofrenię, zanim ktoś w końcu zlecił badanie snu<a class="cite-num" href="#src30">[30]</a>. Powód jest prosty: nadmierna senność nie zawsze wygląda jak ziewanie. Czasem wygląda jak nadpobudliwość, problemy z zachowaniem albo trudność w skupieniu — czyli dokładnie to, co kojarzy się z ADHD<a class="cite-num" href="#src31">[31]</a>. Dlatego jeden z przeglądów naukowych wprost zaleca, żeby lekarze prowadzący pacjentów z narkolepsją regularnie sprawdzali też objawy ADHD, zamiast traktować je jako osobną sprawę<a class="cite-num" href="#src26">[26]</a>.</p>
+
+  <p>Wracając do silników: to właśnie umiarkowane upośledzenie funkcji wykonawczych tłumaczy, dlaczego przy zadaniu bez jednej ustalonej kolejności trudno o intuicyjne przeskakiwanie kroków. Kiedy każdy model różni się jakimś szczegółem, łatwo pogubić kolejność, mimo że sama czynność w teorii jest prosta. Powtarzanie buduje wówczas pamięć mięśniową tam, gdzie pamięć robocza zawodzi — i to dlatego dziesięć powtórzeń jednego dnia działa lepiej niż jedno dokładne wytłumaczenie. To zupełnie normalna strategia radzenia sobie, a nie oznaka, że coś jest z nami nie tak.</p>
+</section>
+
+<section>
+  <div class="sec-head"><span class="sec-num">05</span><h2>Co z tym zrobić</h2></div>
+
+  <p>Problem z tymi czterema mechanizmami — wyuczonym tłumieniem radości przy katapleksji, spłyceniem emocji po lekach SNRI, zachowaniem automatycznym i deficytem uwagi powiązanym z ADHD — jest taki, że od środka wyglądają niemal identycznie. Wszystkie sprowadzają się do jednego: „czuję mniej, niż powinienem, i nie do końca wiem, dlaczego”. Żeby je od siebie odróżnić, potrzeba czegoś więcej niż zastanawiania się nad sobą. Potrzeba sprawdzonych kwestionariuszy, rozmowy z kimś, kto widział setki takich przypadków, a czasem po prostu czasu i uważnej obserwacji.</p>
+
+  <p>Kilka rzeczy, które według badań faktycznie pomagają to rozplątać:</p>
+
+  <p><strong>Śledzenie wzorca, nie tylko objawu.</strong> Badania nad zachowaniem automatycznym pokazują, że epizody są przewidywalnie powiązane z konkretnymi warunkami — monotonią, presją czasu, porą dnia<a class="cite-num" href="#src21">[21]</a>. Zapisywanie, kiedy dokładnie znika się z własnej głowy, daje specjaliście dużo więcej niż ogólne „czasem się zawieszam”.</p>
+
+  <p><strong>Osobne pytanie o ADHD.</strong> Skoro badania wprost zalecają sprawdzanie objawów ADHD u pacjentów z narkolepsją, a mylenie tych dwóch diagnoz jest udokumentowanym zjawiskiem w obie strony<a class="cite-num" href="#src31">[31]</a>, warto to pytanie zadać wprost, zamiast zakładać, że problemy z koncentracją to „po prostu” senność.</p>
+
+  <p><strong>Rozmowa o lekach osobno od rozmowy o chorobie.</strong> Spłycenie emocji po SNRI to efekt znany, częsty i — co ważne — możliwy do zmiany: pomaga zmiana dawki, zmiana leku, czasem dodanie kolejnego<a class="cite-num" href="#src15">[15]</a>. To nie jest coś, z czym trzeba żyć bez pytania. Zdecydowanie nie jest to też coś do samodzielnego majstrowania przy dawkowaniu.</p>
+
+  <div class="note">Nic z powyższego nie jest diagnozą — to mapa mechanizmów, które badania łączą z narkolepsją typu 1. To, które z nich, i w jakim natężeniu, dotyczą konkretnej osoby, może ustalić wyłącznie lekarz prowadzący. Najlepiej przy użyciu sprawdzonych narzędzi przesiewowych, a nie lektury artykułu w internecie.</div>
+
+  <p class="closing">Hipokretyna nie jest włącznikiem snu. Jest bliżej pokrętła głośności dla tego, jak bardzo jesteśmy obecni we własnym życiu — w tym, co czujemy, co pamiętamy i na czym potrafimy się skupić. Zrozumienie mechanizmu nie daje gotowej diagnozy. Daje za to coś prawie równie cennego: zamienia niejasne, wstydliwe poczucie „coś jest ze mną nie tak” w konkretne, możliwe do zadania pytania.</p>
+</section>
+
+</div>
+
+<footer>
+  <h4>Źródła</h4>
+  <ol class="src-list">
+    <li id="src1">Rauf et al., <em>Orexin Deficiency in Narcolepsy: Molecular Mechanisms, Clinical Phenotypes, and Emerging Therapeutic Frontiers</em>, Brain and Behavior, 2025. <a href="https://onlinelibrary.wiley.com/doi/10.1002/brb3.70984" target="_blank">onlinelibrary.wiley.com</a></li>
+    <li id="src2">tamże (przegląd 50 publikacji recenzowanych), PMC. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12515106/" target="_blank">ncbi.nlm.nih.gov/pmc</a></li>
+    <li id="src3">Cerebrospinal Fluid Hypocretin-1 (Orexin-A) Level Fluctuates with Season and Correlates with Day Length, PMC. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4805193/" target="_blank">ncbi.nlm.nih.gov/pmc</a></li>
+    <li id="src4">Role of Brown Adipose Tissue in Adiposity Associated With Narcolepsy Type 1, PMC. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7176868/" target="_blank">ncbi.nlm.nih.gov/pmc</a></li>
+    <li id="src5">Sleep, sleep disorders and hypocretin (orexin), ScienceDirect. <a href="https://www.sciencedirect.com/science/article/abs/pii/S1389945704900019" target="_blank">sciencedirect.com</a></li>
+    <li id="src6">Sakurai, T. <em>The neural circuit of orexin (hypocretin): maintaining sleep and wakefulness</em>, Nature Reviews Neuroscience, 2007. <a href="https://www.nature.com/articles/nrn2092" target="_blank">nature.com</a></li>
+    <li id="src7">The orexinergic synaptic innervation of serotonin- and orexin 1-receptor-containing neurons in the dorsal raphe nucleus, ScienceDirect. <a href="https://www.sciencedirect.com/science/article/abs/pii/S0167011504002939" target="_blank">sciencedirect.com</a></li>
+    <li id="src9">Cataplexy: What It Is, Causes, Symptoms & Treatment, Cleveland Clinic. <a href="https://my.clevelandclinic.org/health/symptoms/cataplexy" target="_blank">clevelandclinic.org</a></li>
+    <li id="src10">Anomalous Hypothalamic Responses to Humor in Cataplexy, PLOS ONE, 2008. <a href="https://journals.plos.org/plosone/article?id=10.1371%2Fjournal.pone.0002225" target="_blank">journals.plos.org</a></li>
+    <li id="src11">Facing emotions in narcolepsy with cataplexy: haemodynamic and behavioural responses during emotional stimulation, PubMed. <a href="https://pubmed.ncbi.nlm.nih.gov/24635684/" target="_blank">pubmed.ncbi.nlm.nih.gov</a></li>
+    <li id="src12">Cataplexy: What It Is, Causes, Symptoms & Treatment (leki off-label), Cleveland Clinic. <a href="https://my.clevelandclinic.org/health/symptoms/cataplexy" target="_blank">clevelandclinic.org</a></li>
+    <li id="src13">Emotional blunting in patients with depression. Part I: clinical characteristics, PMC. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8981644/" target="_blank">ncbi.nlm.nih.gov/pmc</a></li>
+    <li id="src14">Antidepressant-Induced Emotional Blunting: Diagnosis, Mechanisms and Management, Psychopharmacology Institute. <a href="https://psychopharmacologyinstitute.com/publication/antidepressant-induced-emotional-blunting-diagnosis-mechanisms-and-management-2/" target="_blank">psychopharmacologyinstitute.com</a></li>
+    <li id="src15">tamże — mechanizm serotoninowego tłumienia dopaminy w obwodach nagrody. <a href="https://psychopharmacologyinstitute.com/publication/antidepressant-induced-emotional-blunting-diagnosis-mechanisms-and-management-2/" target="_blank">psychopharmacologyinstitute.com</a></li>
+    <li id="src16">Apathy symptoms induced by low-dose venlafaxine: Two cases, PMC. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC7722648/" target="_blank">pmc.ncbi.nlm.nih.gov</a></li>
+    <li id="src17">High Rates of Psychiatric Comorbidity in Narcolepsy: Findings From the Burden of Narcolepsy Disease (BOND) Study of 9,312 Patients, Journal of Clinical Psychiatry. <a href="https://www.psychiatrist.com/jcp/sleep-disturbance-and-mental-disturbance/" target="_blank">psychiatrist.com</a></li>
+    <li id="src18">Li, X. et al. <em>Prevalence of depression or depressive symptoms in patients with narcolepsy: A systematic review and meta-analysis</em>, 2020, cytowane w Medical News Today. <a href="https://www.medicalnewstoday.com/articles/narcolepsy-and-depression" target="_blank">medicalnewstoday.com</a></li>
+    <li id="src19">Narcolepsy and Psychiatric Disorders: Comorbidities or Shared Pathophysiology?, PMC. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5872173/" target="_blank">pmc.ncbi.nlm.nih.gov</a></li>
+    <li id="src20">Narcolepsy — Symptoms overview, Johns Hopkins Medicine. <a href="https://www.hopkinsmedicine.org/health/conditions-and-diseases/narcolepsy" target="_blank">hopkinsmedicine.org</a></li>
+    <li id="src21">Morandin, M. <em>Automatic Behaviour in Individuals With Narcolepsy: A Qualitative Approach</em>, praca doktorska, Victoria University, 2005. <a href="https://vuir.vu.edu.au/429/" target="_blank">vuir.vu.edu.au</a></li>
+    <li id="src22">Dissociative Symptoms are Highly Prevalent in Adults with Narcolepsy Type 1, Behavioral Sleep Medicine (Taylor & Francis). <a href="https://www.tandfonline.com/doi/full/10.1080/15402002.2021.1888729" target="_blank">tandfonline.com</a></li>
+    <li id="src23">Mind-wandering and Predictive Processes in Narcolepsy: a Putative Mechanism Through Covert REM Intrusions, ClinicalTrials.gov (Hospices Civils de Lyon). <a href="https://clinicaltrials.gov/study/NCT06457945" target="_blank">clinicaltrials.gov</a></li>
+    <li id="src24">Creativity in Narcolepsy Type 1: The Role of Dissociated REM Sleep Mentation, Nature and Science of Sleep, Dove Medical Press. <a href="https://www.dovepress.com/creativity-in-narcolepsy-type-1-the-role-of-dissociated-rem-sleep-mani-peer-reviewed-fulltext-article-NSS" target="_blank">dovepress.com</a></li>
+    <li id="src25">The nature and magnitude of cognitive impairment in narcolepsy type 1, narcolepsy type 2, and idiopathic hypersomnia: a meta-analysis, PMC. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11258808/" target="_blank">ncbi.nlm.nih.gov/pmc</a></li>
+    <li id="src26">Attention impairments and ADHD symptoms in adult narcoleptic patients with and without hypocretin deficiency, PMC. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5538711/" target="_blank">ncbi.nlm.nih.gov/pmc</a></li>
+    <li id="src27">A comparison of mood, quality of life and executive function among narcolepsy type 1 patients with or without ADHD symptoms in China, ScienceDirect. <a href="https://www.sciencedirect.com/science/article/abs/pii/S1389945722002003" target="_blank">sciencedirect.com</a></li>
+    <li id="src28">ADHD and Narcolepsy: Understanding the Connection, MyNarcolepsyTeam. <a href="https://www.mynarcolepsyteam.com/resources/adhd-and-narcolepsy-understanding-the-connection" target="_blank">mynarcolepsyteam.com</a></li>
+    <li id="src29">Narcolepsy and Psychiatric Disorders: Comorbidities or Shared Pathophysiology? (koncepcja „Syndrome Z” i „Primary Disorder of Vigilance”), PMC. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC5872173/" target="_blank">pmc.ncbi.nlm.nih.gov</a></li>
+    <li id="src30">Case report: Cases of narcolepsy misdiagnosed as other psychiatric disorders, PMC. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9669416/" target="_blank">ncbi.nlm.nih.gov/pmc</a></li>
+    <li id="src31">Differential Diagnosis for Pediatric Patients, NarcolepsyLink (materiał kliniczny). <a href="https://www.narcolepsylink.com/pediatric-patients/differential-diagnosis/" target="_blank">narcolepsylink.com</a></li>
+  </ol>
+</footer>
+
+</body>
+</html>

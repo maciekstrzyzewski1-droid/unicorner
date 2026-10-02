@@ -1,0 +1,81 @@
+---
+import Base from '../layouts/Base.astro';
+import '../styles/wiedza.css';
+import Bar from '../components/wiedza/Bar.astro';
+import Card from '../components/wiedza/Card.astro';
+import Foot from '../components/wiedza/Foot.astro';
+import { getArticles, CATEGORIES } from '../lib/wiedza.js';
+
+const articles = getArticles();
+const groups = CATEGORIES.map((c) => ({ ...c, items: articles.filter((a) => a.category === c.id) })).filter((g) => g.items.length);
+const totalMin = articles.reduce((s, a) => s + a.minutes, 0);
+const totalSrc = articles.length;
+const title = 'Wiedza · Unicorner — artykuły badawcze oparte na źródłach';
+const description = 'Długie, rzetelne teksty o krypto, polskiej polityce, zdrowiu i technice. Każda liczba ma źródło, fakty oddzielone od zarzutów i prognoz.';
+const ld = {
+  '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Wiedza · Unicorner', description,
+  url: 'https://unicorner.pl/wiedza.html', inLanguage: 'pl',
+  hasPart: articles.map((a) => ({ '@type': 'Article', headline: a.title, url: `https://unicorner.pl${a.url}` })),
+};
+---
+<Base title={title} description={description}>
+  <Fragment slot="head">
+    <link rel="canonical" href="https://unicorner.pl/wiedza.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Wiedza · Unicorner" />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content="https://unicorner.pl/wiedza.html" />
+    <meta property="og:locale" content="pl_PL" />
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  </Fragment>
+
+  <Bar crumbs={[{ label: 'Wiedza' }]} />
+
+  <main class="wz-wrap">
+    <section class="wz-hero">
+      <span class="wz-eyebrow"><span class="dot"></span>// Wiedza · artykuły badawcze</span>
+      <h1>Teksty, które <span class="grad">sprawdzają fakty.</span></h1>
+      <p>Długie, spokojne rozbiory tematów, o których wszyscy mają zdanie, a mało kto sprawdził źródła. <b>Każda liczba ma przypis.</b> Fakty są oddzielone od zarzutów, a pewne ustalenia od prognoz.</p>
+      <div class="wz-stats">
+        <span><b>{articles.length}</b>tekstów</span>
+        <span><b>{groups.length}</b>działy</span>
+        <span><b>~{Math.round(totalMin / 60)} h</b>czytania</span>
+      </div>
+    </section>
+
+    <div class="wz-filters" role="toolbar" aria-label="Filtruj według działu">
+      <button class="wz-chip" type="button" data-f="all" aria-pressed="true">Wszystko<span class="c">{articles.length}</span></button>
+      {groups.map((g) => <button class="wz-chip" type="button" data-f={g.id} aria-pressed="false">{g.name}<span class="c">{g.items.length}</span></button>)}
+    </div>
+
+    {groups.map((g) => (
+      <section class="wz-group" data-group={g.id} id={g.id}>
+        <div class="wz-glabel"><h2>{g.name}</h2><span class="line"></span><span class="d">{g.desc}</span></div>
+        <div class="wz-grid">
+          {g.items.map((a, i) => <Card a={a} feature={i === 0 && g.items.length > 3} />)}
+        </div>
+      </section>
+    ))}
+
+    <div class="wz-note"><b>Jak powstają te teksty.</b> Opieramy się na publikacjach recenzowanych, dokumentach urzędowych, wyrokach sądów i ekspertach z udokumentowanym dorobkiem. Pełna lista źródeł jest na końcu każdego artykułu. Przy sprawach w toku podajemy datę stanu wiedzy — warto sprawdzić, czy coś się od tego czasu nie zmieniło.</div>
+  </main>
+
+  <Foot />
+
+  <script is:inline>
+    (function(){
+      var chips=[].slice.call(document.querySelectorAll('.wz-chip')), groups=[].slice.call(document.querySelectorAll('.wz-group'));
+      function apply(f, push){
+        chips.forEach(function(c){c.setAttribute('aria-pressed', String(c.dataset.f===f));});
+        groups.forEach(function(g){
+          var show = f==='all' || g.dataset.group===f;
+          g.hidden=!show;
+          if(show){ g.querySelectorAll('.wz-card').forEach(function(c,i){ c.classList.remove('in'); setTimeout(function(){c.classList.add('in')}, 30+i*45); }); }
+        });
+        if(push) history.replaceState(null,'', f==='all' ? location.pathname : '#'+f);
+      }
+      chips.forEach(function(c){ c.addEventListener('click', function(){ apply(c.dataset.f, true); window.scrollTo({top: document.querySelector('.wz-filters').offsetTop - 70, behavior:'smooth'}); }); });
+      var h=location.hash.slice(1); if(h && document.querySelector('[data-group="'+h+'"]')) apply(h,false);
+    })();
+  </script>
+</Base>

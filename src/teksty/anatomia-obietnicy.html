@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia obietnicy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;}
+strong{font-weight:600;color:#fff;}
+a{color:var(--gold);}
+sup a{text-decoration:none;font-size:.72em;}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;font-size:.95rem;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;font-size:1.05rem;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .ev.r:before{background:var(--red);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.bars{margin:30px 0;} .bars .row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);} .bars .track{flex:1;background:var(--card);height:14px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.r{background:var(--red);} .bars .fill.b{background:var(--blue);} .bars .fill.g{background:var(--green);}
+.bars .val{flex:0 0 74px;text-align:right;font-variant-numeric:tabular-nums;}
+.chart-title{font-family:'Fraunces',serif;font-size:1.02rem;margin:0 0 14px;}
+.caption{font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.5;}
+.figure{margin:36px 0;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .h{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;font-size:1rem;}
+.verdict{width:100%;border-collapse:collapse;margin:30px 0;font-size:.88rem;line-height:1.45;}
+.verdict th,.verdict td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left;vertical-align:top;}
+.verdict th{color:var(--muted);font-weight:500;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;}
+.tag{display:inline-block;font-size:.72rem;font-weight:600;letter-spacing:.06em;padding:2px 7px;border-radius:2px;white-space:nowrap;}
+.t-true{background:rgba(127,160,106,.18);color:var(--green);}
+.t-part{background:rgba(209,161,63,.18);color:var(--gold);}
+.t-false{background:rgba(201,106,78,.18);color:var(--red);}
+.t-open{background:rgba(111,143,168,.2);color:var(--blue);}
+.stack{display:flex;height:34px;margin:10px 0 8px;border:1px solid var(--line);}
+.stack div{height:100%;}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.78rem;color:var(--muted);}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;background:var(--c);}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+.sources{font-size:.85rem;color:var(--muted);line-height:1.6;padding-left:22px;} .sources li{margin-bottom:9px;}
+.sources a{color:var(--muted);word-break:break-word;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+.tablewrap{overflow-x:auto;}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;} .bars .lab{flex:0 0 100px;} .bars .val{flex:0 0 72px;white-space:nowrap;} .twocol{grid-template-columns:1fr;}
+.verdict{font-size:.86rem;} .verdict tr:first-child{display:none;} .verdict tr{display:block;border-bottom:1px solid var(--line);padding:12px 0;} .verdict td{display:block;border:none;padding:3px 0;} .verdict td:first-child{font-weight:500;color:#fff;} .verdict td:last-child{color:var(--muted);}}
+.bars .val{white-space:nowrap;}
+</style>
+</head>
+<body><div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy</div>
+  <h1>Anatomia obietnicy</h1>
+  <p class="lede">Tether obiecuje, że każdy jego token jest wart dolara. Przez lata ta obietnica była nieprawdziwa — i to nie jest teoria spiskowa, tylko ustalenie dwóch amerykańskich urzędów. Sprawdzamy, co z popularnych zarzutów wobec największego stablecoina świata jest faktem, co przesadą, a co zwykłą legendą z wykresów.</p>
+  <div class="meta">Wrzesień 2026 · czas czytania ok. 30 minut</div>
+</header>
+
+<p>15 września 2017 roku, rano, firma Tether otworzyła swoje pierwsze prawdziwe konto bankowe. Tego samego dnia, kilka godzin później, siostrzana giełda Bitfinex przelała na nie 382 446 847,71 dolara. O ósmej wieczorem czasu nowojorskiego firma księgowa Friedman LLP sprawdziła saldo konta. Wszystko się zgadzało.</p>
+
+<p>Dwa tygodnie później Tether opublikował „Aktualizację przejrzystości” z memorandum Friedmana. Wynikało z niego, że tokeny są pokryte dolarami. Nikt z czytających nie mógł wiedzieć, że pieniądze leżały na koncie od kilkunastu godzin. Ani że przez poprzednie trzy i pół miesiąca Tether — z ponad 400 milionami tokenów w obiegu — miał w banku około 61 milionów dolarów.<sup><a href="#s1">[1]</a></sup></p>
+
+<p>Tę scenę znamy nie z anonimowego wątku na forum, tylko z ugody, którą Tether podpisał w 2021 roku z prokurator generalną stanu Nowy Jork. I właśnie od niej warto zacząć każdą rozmowę o Tetherze. Bo pokazuje dwie rzeczy naraz.</p>
+
+<p>Po pierwsze: podejrzenia wobec tej firmy nie wzięły się znikąd. Przez lata Tether mówił rynkowi nieprawdę o tym, co stoi za jego tokenami.</p>
+
+<p>Po drugie: wiemy to dzięki dokumentom, a nie dzięki intuicji. A dokumenty mówią też rzeczy, które do najpopularniejszej narracji — „największa piramida finansowa w historii” — pasują znacznie gorzej.</p>
+
+<p>Punktem wyjścia tego tekstu jest film polskiego kanału Krypto Blogger z listopada 2024 roku, zatytułowany właśnie „Czy Tether to największa piramida finansowa w historii świata?”. Autor stawia w nim kilka konkretnych tez. Tether nigdy nie przeszedł audytu. Założyciele mają powiązania ze światem przestępczym. Firma ma w gotówce tylko 78 milionów dolarów. A regulator przyznał, że nie jest w stanie sprawdzić, co Tether robi z pieniędzmi klientów.<sup><a href="#s2">[2]</a></sup> Do tego dochodzą zarzuty krążące w internecie: że Tether „drukuje” tokeny bez pokrycia, że nie ma żadnej poduszki bezpieczeństwa i że na wykresach widać podejrzane wymiany USDT na USDC — jakby ktoś po cichu zamieniał puste żetony na prawdziwe.</p>
+
+<p>Każdą z tych tez da się sprawdzić. Niektóre wytrzymują zderzenie ze źródłami lepiej, niż sądzą obrońcy Tethera. Inne — gorzej, niż sądzą jego krytycy.</p>
+
+<div class="box">
+  <div class="bt">Zastrzeżenie</div>
+  Tekst opisuje stan wiedzy na koniec września 2026 roku, na podstawie dokumentów urzędowych, raportów firm księgowych, badań recenzowanych i dziennikarstwa finansowego. Nie jest poradą inwestycyjną. Tam, gdzie źródła się różnią albo dane są niepełne, piszę to wprost. Filmu nie dało się obejrzeć w całości w trakcie pracy nad tekstem — jego tezy odtworzyłem z opublikowanego przez autora scenariusza i opisu.
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Czym w ogóle jest Tether</h2>
+
+<p>Kryptowaluty mają jedną wadę, która przeszkadza w handlu: skaczą. Bitcoin potrafi stracić dziesięć procent w jeden dzień. Jeśli chcemy sprzedać bitcoina i na chwilę „przeczekać” w czymś stabilnym, najprościej byłoby wrócić do dolarów. Tyle że przelew bankowy trwa dni, a banki przez lata nie chciały obsługiwać giełd kryptowalut.</p>
+
+<p>Rozwiązaniem jest <strong>stablecoin</strong> — token na blockchainie, który ma być zawsze wart jednego dolara. Porusza się z prędkością kryptowaluty, ale zachowuje się jak gotówka. Tether (symbol USDT) był pierwszym, który się przyjął. Powstał w 2014 roku pod nazwą Realcoin, a pierwsze tokeny wyemitowano 6 października 2014 roku.<sup><a href="#s3">[3]</a></sup></p>
+
+<p>Mechanizm jest prosty. Klient przesyła firmie dolary, a firma „wybija” (ang. <em>mint</em>) dla niego tyle samo tokenów. Gdy klient chce wyjść, oddaje tokeny, firma je „spala” (<em>burn</em>) i odsyła dolary. Tokeny, które krążą po rynku, to więc zobowiązanie firmy wobec ich posiadaczy. Za każdym powinno coś stać — to nazywamy <strong>rezerwami</strong>.</p>
+
+<p>Najlepsza analogia to szatnia w teatrze. Oddajemy płaszcz, dostajemy numerek. Numerek sam w sobie nic nie jest wart — ma wartość tylko dlatego, że wierzymy, że za nim wisi płaszcz. Szatniarz, który wydaje numerki bez płaszczy, przez jakiś czas nie zostanie przyłapany. Dopóki nie przyjdzie cała sala naraz.</p>
+
+<p>Ważny szczegół: zwykły użytkownik nie wymienia USDT bezpośrednio w Tetherze. Minimalna kwota wykupu to 100 tysięcy dolarów, a konto wymaga weryfikacji.<sup><a href="#s4">[4]</a></sup> Większość ludzi kupuje i sprzedaje USDT na giełdach. Do samego Tethera przychodzą głównie duże firmy tradingowe. To one pilnują, żeby cena na rynku trzymała się dolara: gdy USDT kosztuje 0,99, kupują go taniej i wymieniają w Tetherze za pełnego dolara. Ekonomiści nazywają to <strong>arbitrażem</strong>.</p>
+
+<p>Skala jest dziś ogromna. Na koniec czerwca 2026 roku w obiegu było około 184,6 miliarda dolarów w tokenach Tethera.<sup><a href="#s5">[5]</a></sup> Firma należy do tej samej grupy właścicieli co giełda Bitfinex — spółki iFinex z Brytyjskich Wysp Dziewiczych. Największym udziałowcem jest Włoch Giancarlo Devasini, były chirurg plastyczny, który podpisuje raporty rezerw jako przewodniczący zarządu.<sup><a href="#s5">[5]</a></sup><sup><a href="#s6">[6]</a></sup></p>
+
+<p>I tu zaczyna się problem, który przewija się przez całą historię firmy. Tether i Bitfinex to formalnie dwie spółki. W praktyce przez lata prowadzili je ci sami ludzie. Kiedy jedna miała kłopoty, druga miała pieniądze.</p>
+
+<h2><span class="num">Rozdział drugi</span>Co ustalili urzędnicy</h2>
+
+<p>W 2019 roku biuro prokurator generalnej Nowego Jorku (NYAG) poszło do sądu, żeby zablokować przepływy pieniędzy między Tetherem a Bitfinexem. W lutym 2021 roku sprawa zakończyła się ugodą. Firmy zapłaciły 18,5 miliona dolarów kary i zgodziły się przez dwa lata co kwartał publikować skład rezerw. Formalnie <strong>ani nie przyznały się, ani nie zaprzeczyły</strong> ustaleniom prokuratury — to standardowa formuła w amerykańskich ugodach. Ale ustalenia zostały spisane i są publiczne.<sup><a href="#s1">[1]</a></sup></p>
+
+<p>Oto ich rdzeń, w porządku chronologicznym.</p>
+
+<div class="tl">
+  <div class="ev r"><div class="yr">Marzec 2017</div><div class="txt">Wells Fargo przestaje obsługiwać przelewy Tethera i Bitfinexa. Tether traci realny dostęp do bankowości. W obiegu jest około 50 milionów tokenów.</div></div>
+  <div class="ev r"><div class="yr">Czerwiec – wrzesień 2017</div><div class="txt">Liczba tokenów rośnie ze 108 do 442 milionów. Jedyne dolary Tethera leżą na rachunku powierniczym w Bank of Montreal, prowadzonym na nazwisko radcy prawnego firmy — maksymalnie 61,5 miliona. Kolejne 382 miliony trzyma Bitfinex na wspólnym koncie; w księgach Tethera figurują jako „należność”.</div></div>
+  <div class="ev r"><div class="yr">15 września 2017</div><div class="txt">Tether otwiera konto w Noble Bank. Bitfinex przelewa na nie 382 miliony w dniu weryfikacji przez Friedman LLP. Obiecany audyt nigdy nie zostaje ukończony.</div></div>
+  <div class="ev r"><div class="yr">2018</div><div class="txt">Pośrednik płatniczy Crypto Capital, któremu Bitfinex powierzył ponad miliard dolarów klientów, przestaje oddawać pieniądze. Polskie władze zamrażają jedno z jego kont (co najmniej 340 mln), portugalskie — kolejne (ok. 150 mln).</div></div>
+  <div class="ev r"><div class="yr">1–2 listopada 2018</div><div class="txt">Tether ogłasza, że ma w banku Deltec 1,83 miliarda i że tokeny są „w pełni pokryte dolarami”. Następnego dnia zaczyna przelewać do Bitfinexa łącznie 475 milionów. W sumie do Bitfinexa trafia co najmniej 625 milionów z rezerw.</div></div>
+  <div class="ev r"><div class="yr">Luty – marzec 2019</div><div class="txt">Tether po cichu zmienia regulamin: rezerwy mogą obejmować „pożyczki, także dla podmiotów powiązanych”. Chwilę później podpisuje z Bitfinexem linię kredytową do 900 milionów z rezerw. Po obu stronach umowy widnieje ten sam podpis: Giancarlo Devasini.</div></div>
+  <div class="ev"><div class="yr">Styczeń 2021</div><div class="txt">Linia kredytowa zostaje spłacona. Miesiąc później firmy podpisują ugodę z NYAG.</div></div>
+</div>
+<p class="caption">Źródło: ustalenia NYAG w ugodzie z 17–18 lutego 2021 [1]; informacja o podpisach Devasiniego po obu stronach umowy kredytowej za książką Zeke’a Faux „Number Go Up” [7].</p>
+
+<p>Warto zatrzymać się przy zdaniu, które prokuratura wpisała do ustaleń z listopada 2018 roku: od tego dnia tokeny „znów nie były pokryte 1 do 1 dolarami na rachunku Tethera”.<sup><a href="#s1">[1]</a></sup> Słowo „znów” mówi wszystko.</p>
+
+<div class="figure">
+  <p class="chart-title">Lato 2017: tokeny w obiegu a dolary w banku Tethera</p>
+  <div class="bars">
+    <div class="row"><div class="lab">Tokeny, 1 czerwca</div><div class="track"><div class="fill b" style="width:24.4%"></div></div><div class="val">108 mln</div></div>
+    <div class="row"><div class="lab">Tokeny, 15 września</div><div class="track"><div class="fill b" style="width:100%"></div></div><div class="val">442 mln</div></div>
+    <div class="row"><div class="lab">Dolary w banku Tethera</div><div class="track"><div class="fill r" style="width:13.8%"></div></div><div class="val">~61 mln</div></div>
+  </div>
+  <p class="caption">W dniu weryfikacji dolary w banku pokrywały ok. 14% tokenów w obiegu. Reszta była „należnością” od Bitfinexa. Dane: ugoda NYAG, pkt 15–21 [1].</p>
+</div>
+
+<p>Osiem miesięcy po ugodzie nowojorskiej przyszedł drugi cios. W październiku 2021 roku federalna Komisja ds. Obrotu Kontraktami Terminowymi (CFTC) nałożyła na Tethera 41 milionów dolarów kary. Jej ustalenia idą dalej niż nowojorskie. CFTC przeanalizowała 26 miesięcy z lat 2016–2018. Wynik: Tether miał wystarczające rezerwy w walucie tradycyjnej <strong>tylko przez 27,6% dni</strong>.<sup><a href="#s8">[8]</a></sup></p>
+
+<p>Komisja wymieniła też, co zamiast dolarów leżało w rezerwach. Pieniądze u nieregulowanych pośredników. Środki wymieszane z pieniędzmi klientów Bitfinexa. Produkty finansowe, które nie były gotówką. I co najmniej 29 układów z osobami trzecimi, które przechowywały fundusze bez żadnej pisemnej umowy.<sup><a href="#s8">[8]</a></sup></p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">27,6%</div><div class="d">odsetek dni w 26-miesięcznej próbie (2016–2018), w których Tether miał pełne pokrycie w walucie tradycyjnej — ustalenie CFTC</div></div>
+  <div class="nrow"><div class="n">~850 mln $</div><div class="d">tyle Bitfinex stracił dostępu do pieniędzy u pośrednika Crypto Capital; dziurę łatano rezerwami Tethera</div></div>
+  <div class="nrow"><div class="n">625 mln $</div><div class="d">minimum, które w listopadzie 2018 trafiło z rezerw Tethera do Bitfinexa — bez informacji dla rynku</div></div>
+  <div class="nrow"><div class="n">59,5 mln $</div><div class="d">łączne kary: 18,5 mln dla NYAG (2021) i 41 mln dla CFTC (2021); Bitfinex zapłacił do CFTC osobno 1,5 mln</div></div>
+</div>
+
+<p>Dla porządku: to, że Tether „drukował tokeny bez pokrycia w dolarach, jak zapewniał”, <strong>jest faktem ustalonym</strong> dla lat 2016–2019. Nie trzeba do tego wykresów on-chain. Wystarczy przeczytać dwa dokumenty urzędowe.</p>
+
+<p>Tyle że słowo „bez pokrycia” wymaga precyzji. Z ustaleń nie wynika, że za tokenami nie stało <em>nic</em>. Wynika, że stały za nimi rzeczy inne niż obiecane: należności od siostrzanej firmy, pieniądze zamrożone u podejrzanego pośrednika, pożyczki dla podmiotów powiązanych. Część tych aktywów była realna. Część — jak środki u Crypto Capital — okazała się zagrożona albo stracona. W dniu podpisania ugody Bitfinex wciąż nie potrafił powiedzieć, czy i kiedy te pieniądze wrócą.<sup><a href="#s1">[1]</a></sup></p>
+
+<h2><span class="num">Rozdział trzeci</span>Ludzie za szyldem</h2>
+
+<p>Film Krypto Bloggera sporo miejsca poświęca założycielom. Najmocniejszy zarzut dotyczy Brocka Pierce’a, byłego aktora dziecięcego i jednego ze współzałożycieli Realcoina. Autor filmu nazywa go człowiekiem „oskarżonym o pedofilię, molestowanie oraz transport nieletnich”, którego zarzuty oddalono.<sup><a href="#s2">[2]</a></sup></p>
+
+<p>Fakty są bardziej złożone i warto je podać dokładnie. Pod koniec lat 90. Pierce był nastoletnim wiceprezesem internetowej firmy Digital Entertainment Network (DEN). Jej założyciel, Marc Collins-Rector, został w 2000 roku oskarżony o przewożenie nieletnich przez granice stanów w celach seksualnych i w 2004 roku przyznał się do winy. W 2000 roku trzej byli pracownicy DEN złożyli pozew cywilny przeciw Collins-Rectorowi, jego partnerowi i Pierce’owi, zarzucając gwałt, napaść i groźby. Po wybuchu afery Pierce wyjechał z Collins-Rectorem do Hiszpanii; w 2002 roku Interpol przeszukał ich willę w Marbelli.<sup><a href="#s9">[9]</a></sup><sup><a href="#s10">[10]</a></sup></p>
+
+<p>Pierce’owi <strong>nigdy nie postawiono zarzutów karnych</strong>. Sprawa wobec niego toczyła się w trybie cywilnym, a źródła różnią się co do jej zakończenia: część mówi o umorzeniu przez powodów, część o poufnej ugodzie i wyroku zaocznym.<sup><a href="#s9">[9]</a></sup> Słowo „oskarżony” w polskim znaczeniu karnym jest więc nieprecyzyjne. Bliższe prawdy jest „pozwany w procesie cywilnym, w otoczeniu skazanego przestępcy seksualnego”. To wciąż fatalny życiorys dla kogoś, kto miałby pilnować cudzych pieniędzy. Ale to nie to samo.</p>
+
+<p>Ważniejsze jest co innego. Pierce nie jest człowiekiem, który zbudował dzisiejszego Tethera. Według „Financial Times” firmę rozwinęli ludzie z Bitfinexa: Devasini i Jan Ludovicus van der Velde. Obecnym prezesem jest Paolo Ardoino, informatyk, który w 2017 roku został dyrektorem technicznym Tethera, a od 2023 roku kieruje firmą.<sup><a href="#s3">[3]</a></sup> O nich wiemy mniej sensacyjnych rzeczy, ale za to bardziej istotnych dla posiadaczy USDT. To oni kierowali firmą w latach, które opisują ugody z NYAG i CFTC. Nazwiska Devasiniego i Philipa Pottera pojawiły się też w wycieku Paradise Papers z 2017 roku jako osób, które zakładały Tether Holdings na Brytyjskich Wyspach Dziewiczych.<sup><a href="#s3">[3]</a></sup></p>
+
+<p>Tu łapiemy się na typowym błędzie: najbardziej obrzydliwa historia przyciąga uwagę, więc to ją zapamiętujemy. A ryzyko dla użytkownika Tethera nie wynika z tego, co zrobił ktoś w 1999 roku. Wynika z tego, jak ludzie, którzy <em>dziś</em> zarządzają rezerwami, traktowali je wtedy, gdy nikt nie patrzył.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Audyt, którego nie było. Do niedawna</h2>
+
+<p>„Nigdy nie przeszedł żadnego audytu” — to zdanie z filmu było prawdziwe w listopadzie 2024 roku. Dziś wymaga aktualizacji.</p>
+
+<p>Najpierw rozróżnienie, które w dyskusjach o Tetherze gubi się notorycznie. <strong>Atestacja</strong> to sprawdzenie, czy konkretne liczby w konkretnym raporcie zgadzają się z rzeczywistością w jednym momencie. <strong>Audyt</strong> to badanie całego sprawozdania finansowego za cały rok: transakcji, kontroli wewnętrznych, przepływów pieniędzy.</p>
+
+<p>Różnicę dobrze oddaje porównanie z kontrolą w restauracji. Atestacja to sanepid, który przychodzi o umówionej godzinie i sprawdza, czy lodówka jest czysta. Audyt to sanepid, który przegląda faktury za cały rok, sprawdza, skąd przyszło mięso i gdzie trafiły resztki. Historia z września 2017 roku pokazuje, czemu to rozróżnienie ma znaczenie. Friedman LLP sprawdził saldo w umówionym dniu — i saldo było w porządku.</p>
+
+<p>Od 2021 roku Tether publikuje kwartalne atestacje. Od 2022 roku przygotowuje je włoska firma BDO. Raport za 30 czerwca 2026 roku jest wykonany według standardu ISAE 3000 — czyli, jak brzmi jego pełna nazwa, „usług atestacyjnych innych niż audyt”. BDO wprost zaznacza, że wnioski dotyczą jednej chwili, 30 czerwca o 23:59, i że nie bada aktywności przed ani po tej dacie.<sup><a href="#s11">[11]</a></sup></p>
+
+<p>Trzeba jednak oddać sprawiedliwość: to nie jest atestacja na odczepnego. BDO deklaruje „rozsądny” poziom pewności, czyli wyższy z dwóch dostępnych. Pobiera potwierdzenia bezpośrednio z banków i depozytariuszy, sprawdza złoto przez wyspecjalizowaną firmę, uzgadnia liczbę tokenów z blockchainami i weryfikuje próbkę zabezpieczeń pod pożyczki.<sup><a href="#s11">[11]</a></sup> To znacznie więcej niż w 2017 roku.</p>
+
+<p>A potem, 13 sierpnia 2026 roku, stało się coś, na co krytycy czekali prawie dekadę. KPMG US — firma z tzw. Wielkiej Czwórki — wydała <strong>opinię bez zastrzeżeń</strong> o sprawozdaniu finansowym Tether International za 2025 rok. Według Tethera sprawozdanie pokazuje nadwyżkę rezerw nad zobowiązaniami w wysokości 6,814 miliarda dolarów. KPMG potwierdziło agencji Reuters, że taką opinię wydało, i odmówiło dalszych komentarzy, powołując się na poufność klienta.<sup><a href="#s12">[12]</a></sup><sup><a href="#s13">[13]</a></sup></p>
+
+<p>Dwa zastrzeżenia do tego sukcesu. Pierwsze: pełnego sprawozdania ani opinii biegłego rewidenta <strong>nie opublikowano</strong>. Znamy je z komunikatu firmy i jednozdaniowego potwierdzenia KPMG.<sup><a href="#s13">[13]</a></sup> Drugie: KPMG ustaliło nadwyżkę o 476 milionów wyższą niż BDO na ten sam dzień (6,814 wobec 6,338 miliarda). Tether nie wyjaśnił różnicy.<sup><a href="#s14">[14]</a></sup></p>
+
+<p>Mimo to uczciwie trzeba przyznać: zdanie „Tether nigdy nie przeszedł audytu” jest dziś fałszywe. Firma z Wielkiej Czwórki podpisała się pod jej finansami — a żadna z nich nie ryzykuje reputacji dla jednego klienta, nawet dużego. To najmocniejszy argument przeciw tezie, że za USDT stoi pustka.</p>
+
+<h2><span class="num">Rozdział piąty</span>Co dziś leży w rezerwach</h2>
+
+<p>Zobaczmy więc, co konkretnie Tether deklaruje, a BDO potwierdza. Oto skład rezerw na 30 czerwca 2026 roku.</p>
+
+<div class="figure">
+  <p class="chart-title">Rezerwy Tether International, 30 czerwca 2026 (187,75 mld $)</p>
+  <div class="stack">
+    <div style="width:61.2%;background:var(--green)" title="Obligacje skarbowe USA"></div>
+    <div style="width:13.7%;background:#9dbb86" title="Repo"></div>
+    <div style="width:10.0%;background:var(--gold)" title="Złoto"></div>
+    <div style="width:7.2%;background:var(--red)" title="Pożyczki zabezpieczone"></div>
+    <div style="width:3.1%;background:#e0874f" title="Bitcoin"></div>
+    <div style="width:2.8%;background:var(--blue)" title="Inne inwestycje"></div>
+    <div style="width:2.0%;background:#8a7fa8" title="Akcje"></div>
+  </div>
+  <div class="legend">
+    <span style="--c:var(--green)">Bony skarbowe USA 61,2%</span>
+    <span style="--c:#9dbb86">Repo 13,7%</span>
+    <span style="--c:var(--gold)">Złoto 10,0%</span>
+    <span style="--c:var(--red)">Pożyczki zabezp. 7,2%</span>
+    <span style="--c:#e0874f">Bitcoin 3,1%</span>
+    <span style="--c:var(--blue)">Inne inwestycje 2,8%</span>
+    <span style="--c:#8a7fa8">Akcje 2,0%</span>
+  </div>
+  <div class="bars" style="margin-top:22px">
+    <div class="row"><div class="lab">Bony skarbowe USA</div><div class="track"><div class="fill g" style="width:100%"></div></div><div class="val">114,96 mld</div></div>
+    <div class="row"><div class="lab">Repo (overnight + term)</div><div class="track"><div class="fill g" style="width:22.3%"></div></div><div class="val">25,62 mld</div></div>
+    <div class="row"><div class="lab">Złoto</div><div class="track"><div class="fill" style="width:16.4%"></div></div><div class="val">18,84 mld</div></div>
+    <div class="row"><div class="lab">Pożyczki zabezpieczone</div><div class="track"><div class="fill r" style="width:11.7%"></div></div><div class="val">13,45 mld</div></div>
+    <div class="row"><div class="lab">Bitcoin</div><div class="track"><div class="fill r" style="width:5.0%"></div></div><div class="val">5,80 mld</div></div>
+    <div class="row"><div class="lab">Inne inwestycje</div><div class="track"><div class="fill b" style="width:4.6%"></div></div><div class="val">5,24 mld</div></div>
+    <div class="row"><div class="lab">Akcje notowane</div><div class="track"><div class="fill b" style="width:3.3%"></div></div><div class="val">3,76 mld</div></div>
+    <div class="row"><div class="lab">Gotówka w bankach</div><div class="track"><div class="fill r" style="width:0.2%"></div></div><div class="val">0,04 mld</div></div>
+  </div>
+  <p class="caption">Dane: Financial Figures and Reserves Report, atestacja BDO z 31 lipca 2026 [11]. Pominięto pozycje poniżej 0,03 mld (obligacje korporacyjne, bony innych państw). Udziały obliczone od sumy aktywów.</p>
+</div>
+
+<p>Teraz zarzut z filmu: „Tether posiada jedynie 78 milionów dolarów w gotówce, co stanowi 0,1% wartości rezerw”.<sup><a href="#s2">[2]</a></sup> Liczba była prawdopodobnie poprawna dla raportu z jesieni 2024 roku. Dziś jest jeszcze niższa: <strong>40,3 miliona</strong>, czyli 0,02% rezerw.<sup><a href="#s11">[11]</a></sup></p>
+
+<p>Tylko że ta liczba, choć prawdziwa, wprowadza w błąd. „Gotówka w bankach” to w raporcie wyłącznie depozyty na zwykłych kontach. <strong>Bon skarbowy USA</strong> to krótkoterminowa pożyczka dla rządu amerykańskiego, która wraca z odsetkami najczęściej w ciągu kilku tygodni lub miesięcy. W finansach traktuje się go jako ekwiwalent gotówki: to najpłynniejsze aktywo świata, które da się sprzedać w kilka minut za prawie pełną cenę. <strong>Repo</strong> to z kolei pożyczka na jedną noc lub kilka tygodni, zabezpieczona takimi właśnie obligacjami. Konkurencyjny USDC firmy Circle również trzyma rezerwy głównie w obligacjach i repo, a nie na kontach bankowych.<sup><a href="#s4">[4]</a></sup></p>
+
+<p>Trzymanie 115 miliardów na koncie bankowym byłoby wręcz nierozsądne. Depozyty powyżej gwarantowanego limitu są narażone na upadek banku — co boleśnie odczuł Circle w marcu 2023 roku, gdy 3,3 miliarda jego rezerw utknęło w upadającym Silicon Valley Bank.<sup><a href="#s15">[15]</a></sup> Obligacje skarbowe są w tym sensie bezpieczniejsze niż bank.</p>
+
+<p>Mówienie „Tether ma 0,1% w gotówce” jest więc jak mówienie, że ktoś jest biedny, bo ma w portfelu 40 złotych — pomijając, że ma milion na lokacie z wypłatą na żądanie.</p>
+
+<p>Ale to nie znaczy, że z rezerwami wszystko w porządku. Prawdziwy problem leży w innej części wykresu. Mniej więcej trzy czwarte rezerw to aktywa bardzo bezpieczne i płynne. <strong>Pozostała jedna czwarta — ok. 47 miliardów — to złoto, bitcoin, akcje, pożyczki i „inne inwestycje”</strong>. Te aktywa mogą stracić na wartości albo okazać się trudne do szybkiej sprzedaży.</p>
+
+<h2><span class="num">Rozdział szósty</span>Poduszka, która się kurczy</h2>
+
+<p>W filmie pada zarzut, że Tether „nie ma żadnej kasy zabezpieczającej wierzycieli”. W tej formie jest nieprawdziwy. Ale sedno obawy — że poduszka jest za cienka — ma dziś mocniejsze podstawy niż w 2024 roku.</p>
+
+<p>Firma, która przyjmuje cudze pieniądze i obiecuje oddać je na żądanie, potrzebuje <strong>kapitału własnego</strong>. To jej własne pieniądze, które jako pierwsze przyjmują straty. Jeśli aktywa spadną o 3%, a kapitał wynosi 5%, klienci nic nie tracą. Jeśli kapitał wynosi 2%, klienci tracą 1%. Tether nazywa tę nadwyżkę „excess reserves” — rezerwami ponad zobowiązania.</p>
+
+<div class="figure">
+  <p class="chart-title">Nadwyżka rezerw Tethera jako % zobowiązań</p>
+  <div class="bars">
+    <div class="row"><div class="lab">Koniec 2024</div><div class="track"><div class="fill g" style="width:100%"></div></div><div class="val">5,2%</div></div>
+    <div class="row"><div class="lab">Czerwiec 2025</div><div class="track"><div class="fill" style="width:67.3%"></div></div><div class="val">3,5%</div></div>
+    <div class="row"><div class="lab">Marzec 2026</div><div class="track"><div class="fill" style="width:86.5%"></div></div><div class="val">4,5%</div></div>
+    <div class="row"><div class="lab">Czerwiec 2026</div><div class="track"><div class="fill r" style="width:42.3%"></div></div><div class="val">2,2%</div></div>
+  </div>
+  <p class="caption">Czerwiec 2026: 4,11 mld $ nadwyżki przy 183,64 mld $ zobowiązań [11]. Marzec 2026: 8,23 mld $ [14], wartość procentowa wyliczona przy zobowiązaniach niższych o 106 mln $. Koniec 2024 i czerwiec 2025 — za analizą Forbesa [14].</p>
+</div>
+
+<p>W drugim kwartale 2026 roku nadwyżka spadła z 8,23 do 4,11 miliarda dolarów — o połowę w ciągu 91 dni. Zobowiązania w tym czasie prawie się nie zmieniły. To nie był odpływ klientów. To były straty na aktywach: złoto potaniało w wycenie BDO z 4668 do 4008 dolarów za uncję, a bitcoin z ok. 68 do ok. 58,6 tysiąca dolarów.<sup><a href="#s14">[14]</a></sup><sup><a href="#s11">[11]</a></sup> Według BDO wynik finansowy za pierwsze półrocze wyniósł <strong>minus 3,17 miliarda</strong>; częściowo zrównoważyło go 943 miliony dopłaconego kapitału.<sup><a href="#s11">[11]</a></sup> Sam Tether w komunikacie nazwał ten kwartał „mocnym”.<sup><a href="#s5">[5]</a></sup></p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">4,11 mld $</div><div class="d">nadwyżka rezerw na 30.06.2026 — to 2,2% zobowiązań</div></div>
+  <div class="nrow"><div class="n">24,64 mld $</div><div class="d">złoto i bitcoin razem w rezerwach — sześć razy więcej niż nadwyżka</div></div>
+  <div class="nrow"><div class="n">~17%</div><div class="d">o tyle musiałyby jednocześnie potanieć złoto i bitcoin, żeby nadwyżka zniknęła do zera</div></div>
+  <div class="nrow"><div class="n">13,45 mld $</div><div class="d">pożyczki zabezpieczone w rezerwach — 3,3 razy więcej niż nadwyżka; kredytobiorców nie ujawniono</div></div>
+</div>
+
+<p>Najlepiej zrozumieć to przez analogię z bankiem, a nie z piramidą. Wyobraźmy sobie bank, który 75% depozytów trzyma w obligacjach rządowych, a resztę w złocie, bitcoinie i pożyczkach dla anonimowych klientów. Jego własny kapitał to 2,2% sumy bilansowej. Europejskie banki muszą mieć wskaźnik dźwigni co najmniej 3%, a ich ryzykowne aktywa podlegają dużo surowszym wymogom. Tether nie jest bankiem i tych wymogów nie musi spełniać. Ale ekonomicznie robi dokładnie to, co bank: zarabia na różnicy między tym, co obiecał klientom (zero odsetek), a tym, co zarabia na ich pieniądzach.</p>
+
+<p>Ta sama obawa stoi za decyzją S&amp;P Global Ratings. W listopadzie 2025 roku agencja obniżyła ocenę zdolności USDT do utrzymania kursu do najniższego poziomu na swojej skali: „słaba”. Uzasadnienie brzmiało niemal identycznie: bitcoin w rezerwach przekraczał wtedy poduszkę bezpieczeństwa, a ujawnienia na temat pożyczek, kontrahentów i depozytariuszy są ograniczone.<sup><a href="#s16">[16]</a></sup> Tether odpowiedział, że S&amp;P stosuje „przestarzałe ramy” nieprzystające do cyfrowego pieniądza.<sup><a href="#s16">[16]</a></sup></p>
+
+<p>Jest jeszcze jedna historia o złamanej obietnicy, tym razem z czasów po ugodach. W grudniu 2022 roku, tuż po upadku FTX, Tether zapowiedział, że w ciągu 2023 roku zredukuje pożyczki zabezpieczone w rezerwach „do zera”. Co wydarzyło się potem, pokazuje wykres.</p>
+
+<div class="figure">
+  <p class="chart-title">Pożyczki zabezpieczone w rezerwach Tethera (mld $)</p>
+  <div class="bars">
+    <div class="row"><div class="lab">Wrzesień 2022</div><div class="track"><div class="fill" style="width:35.8%"></div></div><div class="val">6,10</div></div>
+    <div class="row"><div class="lab">Grudzień 2023</div><div class="track"><div class="fill" style="width:28.2%"></div></div><div class="val">4,80</div></div>
+    <div class="row"><div class="lab">Grudzień 2024</div><div class="track"><div class="fill" style="width:48.1%"></div></div><div class="val">8,19</div></div>
+    <div class="row"><div class="lab">Grudzień 2025</div><div class="track"><div class="fill r" style="width:100%"></div></div><div class="val">17,04</div></div>
+    <div class="row"><div class="lab">Marzec 2026</div><div class="track"><div class="fill r" style="width:92.9%"></div></div><div class="val">15,83</div></div>
+    <div class="row"><div class="lab">Czerwiec 2026</div><div class="track"><div class="fill r" style="width:79.0%"></div></div><div class="val">13,45</div></div>
+  </div>
+  <p class="caption">Obietnica z grudnia 2022: „zero w ciągu 2023 roku”. Dane z atestacji zebrane przez Forbes [14]; czerwiec 2026 — atestacja BDO [11].</p>
+</div>
+
+<p>We wrześniu 2026 roku Tether razem z funduszem Fasanara Capital uruchomił jeszcze fundusz kredytowy StableFund z 400 milionami wkładu obu sponsorów. Tether będzie w nim wyszukiwał pożyczki i doradzał. Firma twierdzi, że inwestycje finansuje z własnych zysków, oddzielonych od rezerw. Ile z 400 milionów pochodzi od Tethera — nie ujawniono.<sup><a href="#s14">[14]</a></sup></p>
+
+<h2><span class="num">Rozdział siódmy</span>Czy to piramida?</h2>
+
+<p>Tytułowe pytanie filmu brzmi, czy Tether to „największa piramida finansowa w historii”. Autor porównuje go z funduszem Berniego Madoffa, który działał dekadami, zanim upadł w 2008 roku.<sup><a href="#s2">[2]</a></sup> Żeby odpowiedzieć uczciwie, trzeba najpierw ustalić, czym piramida jest.</p>
+
+<p><strong>Piramida finansowa</strong> (albo schemat Ponziego) to układ, w którym obiecane zyski wypłaca się starym inwestorom z pieniędzy nowych. Prawdziwego źródła dochodu nie ma albo jest ono za małe. Dlatego piramida musi rosnąć — gdy napływ nowych pieniędzy słabnie, zawala się. Madoff obiecywał stały zysk około 10% rocznie i wypłacał go z wpłat kolejnych klientów.</p>
+
+<p>Tether nie pasuje do tej definicji w kilku istotnych miejscach.</p>
+
+<p>Po pierwsze, Tether nie obiecuje żadnego zysku. Posiadacz USDT dostaje dolara za dolara, bez odsetek. Nie ma więc czego wypłacać „z nowych wpłat”.</p>
+
+<p>Po drugie, Tether ma realne i duże źródło dochodu: odsetki od 115 miliardów w obligacjach skarbowych. W 2025 roku firma wykazała ponad 10 miliardów zysku.<sup><a href="#s14">[14]</a></sup> To model biznesowy banku albo funduszu rynku pieniężnego, który nie oddaje klientom odsetek.</p>
+
+<p>Po trzecie, Tether przetrwał prawdziwy test masowych wypłat. W maju 2022 roku, podczas upadku algorytmicznego stablecoina TerraUSD, panika objęła cały rynek. Kurs USDT spadł na chwilę do ok. 0,95 dolara. W ciągu niespełna dwóch tygodni Tether wypłacił około 10 miliardów dolarów, a jego kapitalizacja w dwa miesiące skurczyła się z ponad 83 do 65 miliardów. Kurs wrócił do dolara.<sup><a href="#s17">[17]</a></sup><sup><a href="#s18">[18]</a></sup> Piramida, której jedna piąta klientów zażądała zwrotu, nie przeżyłaby tego.</p>
+
+<div class="twocol">
+  <div class="side"><div class="h">Co łączy Tethera z piramidą</div>Przez lata kłamał o pokryciu. Rezerwy służyły do ratowania powiązanej firmy. Unikał prawdziwego audytu przez prawie dekadę. Dzisiaj ma cienką poduszkę i nieujawnionych kredytobiorców. Zaufanie jest jego jedynym zabezpieczeniem przed paniką.</div>
+  <div class="side"><div class="h">Co go od piramidy odróżnia</div>Nie obiecuje zysków. Ma realny, wysoki dochód z obligacji. Wypłacił miliardy w panice 2022 roku. Większość rezerw potwierdza zewnętrzna firma księgowa co kwartał, a za 2025 rok wydano opinię audytorską bez zastrzeżeń.</div>
+</div>
+
+<p>Trafniejsza etykieta to <strong>„bank cieni”</strong> — instytucja, która robi to, co bank, bez nadzoru, gwarancji depozytów i wymogów kapitałowych, jakie mają banki. Jej ryzyko nie polega na tym, że pieniądze nie istnieją. Polega na tym, że jeśli ryzykowna część rezerw straci na wartości w złym momencie, a ludzie zaczną uciekać, poduszka może nie wystarczyć. To realne ryzyko. Ale to inne ryzyko niż Madoff, i mylenie ich prowadzi do złych wniosków. Na przykład do przekonania, że upadek jest pewny, tylko kwestia czasu — podczas gdy równie prawdopodobny jest scenariusz nudny: Tether dalej zarabia miliardy na obligacjach i powoli uzupełnia kapitał.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Wykresy, mint i USDC</h2>
+
+<p>Zostaje hipoteza, która krąży wśród osób obserwujących dane on-chain. Brzmi mniej więcej tak: Tether wybija USDT bez pokrycia, a potem na rynku wymienia je po kursie 1:1 na USDC — stablecoin konkurencyjnej, regulowanej firmy Circle. W ten sposób zamienia „puste” tokeny na „pełne” i realnie się bogaci.</p>
+
+<p>To najprostszy możliwy skok na kasę. Dlatego warto go sprawdzić starannie.</p>
+
+<h3>Co wiemy na pewno</h3>
+
+<p>W historii Tethera naprawdę udokumentowano schemat „tokeny na kredyt dla powiązanego gracza”. Tyle że wyglądał inaczej. Ugoda z NYAG opisuje, jak latem 2018 roku Bitfinex pożyczył od Tethera 400 milionów dolarów, a w październiku oddał dług, <em>wykupując</em> 400 milionów tokenów. W listopadzie Bitfinex „kupił” 150 milionów tokenów, płacąc pieniędzmi zamrożonymi u Crypto Capital.<sup><a href="#s1">[1]</a></sup> Czyli tokeny powstawały w zamian za należności, których odzyskanie było wątpliwe. To jest udokumentowany odpowiednik tego, co podejrzewamy — tylko bez USDC i bez anonimowych portfeli.</p>
+
+<p>Istnieje też recenzowane badanie, które każdy sceptyk powinien znać. John Griffin z Uniwersytetu Teksańskiego i Amin Shams z Ohio State opublikowali w 2020 roku w „The Journal of Finance” — jednym z trzech najważniejszych czasopism finansowych świata — analizę przepływów z lat 2017–2018. Ustalili, że zakupy bitcoina za tethery następowały po spadkach cen, pochodziły od jednego podmiotu związanego z Bitfinexem i wiązały się ze znaczącymi wzrostami kursu. Wzorce sugerowały też niewystarczające rezerwy przed końcem miesięcy.<sup><a href="#s19">[19]</a></sup> Według Griffina 95 godzin z najsilniejszymi przepływami tetherów odpowiadało za 59% wzrostu ceny bitcoina w badanym roku.<sup><a href="#s20">[20]</a></sup></p>
+
+<p>To poważny wynik, ale ma dwa ograniczenia. Dotyczy lat 2017–2018, a nie dzisiejszego rynku. I jest kwestionowany: Richard Lyons z Berkeley i Ganesh Viswanath-Natraj z Warwick w „Journal of International Money and Finance” pokazali, że emisja tetherów w dużej mierze odpowiada na odchylenia kursu od dolara — czyli na popyt arbitrażystów, a nie odwrotnie.<sup><a href="#s21">[21]</a></sup> Oba wyniki mogą być prawdziwe jednocześnie dla różnych okresów.</p>
+
+<h3>Czego nie znalazłem</h3>
+
+<p>Nie znalazłem żadnego wiarygodnego źródła — dokumentu urzędowego, pozwu, badania ani analizy on-chain renomowanej firmy — które pokazywałoby, że <strong>skarbiec Tethera sam wymieniał USDT na USDC</strong>. Nie twierdzę, że to niemożliwe. Twierdzę, że nikt tego nie wykazał, a są dobre powody, by uważać ten schemat za mało prawdopodobny.</p>
+
+<p>Pierwszy powód: przejrzystość blockchaina działa tu przeciw oszustowi. Każde wybicie i spalenie USDT to publiczna transakcja z kontraktu Tethera. Adresy skarbca są znane i śledzone przez firmy analityczne. Gdyby skarbiec wysyłał miliardy na zdecentralizowane giełdy, żeby kupić USDC, zobaczyłoby to tysiące ludzi, którzy szukają dowodu od lat.</p>
+
+<p>Drugi powód: USDC to nie jest bezpieczna przystań dla takiego zysku. Circle to amerykańska spółka giełdowa, która potrafi zamrozić dowolny adres z USDC. Wymiana „pustych” tokenów na aktywa, które kontrolowany przez regulatora konkurent może zablokować jednym kliknięciem, to fatalny plan.</p>
+
+<p>Trzeci powód: skala płynności. Zamiana miliardów USDT na USDC przez rynek przesunęłaby kurs. Pule wymiany byłyby silnie niezrównoważone, a USDT taniałby względem USDC — co jest widoczne i natychmiast komentowane.</p>
+
+<h3>Skąd więc biorą się podejrzane wykresy</h3>
+
+<p>Są trzy częste źródła, które na wykresach wyglądają jak „drukowanie” albo „ucieczka do USDC”, a mają zwykłe wyjaśnienie.</p>
+
+<p><strong>Tokeny autoryzowane, ale niewyemitowane.</strong> Tether często wybija z wyprzedzeniem na przykład miliard USDT do własnego skarbca, jako zapas na przyszłe zamówienia. Na blockchainie to wygląda jak nagły „dodruk”. Ale w raportach te tokeny nie są zobowiązaniem i nie krążą po rynku, dopóki ktoś ich nie kupi za dolary.<sup><a href="#s11">[11]</a></sup><sup><a href="#s22">[22]</a></sup> Dopiero sprzedaż klientowi zamienia je w dług Tethera.</p>
+
+<p><strong>Rynkowe ucieczki inwestorów.</strong> W czerwcu 2023 roku popularna pula wymiany Curve 3pool, która normalnie trzyma po około jednej trzeciej USDT, USDC i DAI, przechyliła się do ponad 70% USDT. Kurs USDT spadł do 0,997. Na wykresie wyglądało to jak masowa ucieczka z Tethera. Sprawcą był jednak prywatny inwestor znany jako CZSamSun: pożyczył 31,5 miliona USDT pod zastaw eteru i wymienił je na USDC, prawdopodobnie grając na spadek kursu.<sup><a href="#s22">[22]</a></sup> Podobne przechyły zdarzały się po upadku FTX (w stronę USDC) i w marcu 2023 (w odwrotną stronę, gdy panika dotyczyła USDC i Silicon Valley Bank).<sup><a href="#s15">[15]</a></sup></p>
+
+<p><strong>Arbitraż dużych graczy.</strong> Firmy tradingowe masowo kupują USDT w Tetherze, gdy rynkowy kurs jest powyżej dolara, i sprzedają na giełdach. Analiza Protos wykazała, że do 2021 roku sama Alameda Research — fundusz Sama Bankmana-Frieda — otrzymała od Tethera około 36,7 miliarda USDT, a wraz z Cumberland Global odpowiadała za dwie trzecie całej emisji.<sup><a href="#s23">[23]</a></sup> Alameda płaciła za te tokeny dolarami, więc samo w sobie to nie jest oszustwo. Ale pokazuje, jak bardzo emisja Tethera zależała od kilku podmiotów — w tym jednego, który okazał się przestępczym.</p>
+
+<div class="box">
+  <div class="bt">Jak samemu sprawdzać takie wykresy</div>
+  Przy każdym „podejrzanym” przepływie warto zadać trzy pytania. Czy nadawcą jest skarbiec Tethera, czy prywatny portfel? Czy wybite tokeny opuściły skarbiec, czy tylko do niego trafiły? Czy ruch zbiega się z paniką na rynku, która tłumaczy go bez spisku? Bez odpowiedzi na te pytania wykres mówi niewiele — i ja sam nie jestem w stanie ocenić konkretnych wykresów, których nie widziałem.
+</div>
+
+<p>Podsumowując: hipoteza „mint bez pokrycia → wymiana na USDC” nie ma dziś dowodów. Ale jej rdzeń — że tokeny mogą powstawać za coś mniej wartego niż dolar — ma w historii Tethera udokumentowany precedens.</p>
+
+<h2><span class="num">Rozdział dziewiąty</span>Co naprawdę może Tetherowi zaszkodzić</h2>
+
+<p>Jeśli nie piramida, to co? Wskazuję cztery ryzyka, uporządkowane od najbardziej udokumentowanego.</p>
+
+<p><strong>1. Straty na ryzykownej części rezerw.</strong> Opisane wyżej: złoto i bitcoin warte sześć razy więcej niż poduszka, 13,45 miliarda pożyczek bez ujawnionych kredytobiorców. Samo w sobie nie oznacza niewypłacalności. Oznacza, że zły kwartał na rynkach może zjeść kapitał, zanim zyski z obligacji go odbudują. Kolejna atestacja, za trzeci kwartał 2026, ma się ukazać pod koniec października i pokaże, czy poduszka się odbudowała.</p>
+
+<p><strong>2. Regulacje w USA.</strong> Amerykańska ustawa GENIUS Act, podpisana 18 lipca 2025 roku, określa, w czym mogą leżeć rezerwy stablecoina dopuszczonego do obrotu w USA: gotówka, ubezpieczone depozyty, krótkie obligacje skarbowe, repo, fundusze rynku pieniężnego. Złota, bitcoina i pożyczek na tej liście nie ma. Zagraniczny emitent będzie mógł działać w USA dopiero, gdy Departament Skarbu uzna jego krajowe przepisy za porównywalne. Amerykańskie platformy nie będą mogły oferować niezgodnych stablecoinów od 18 lipca 2028 roku.<sup><a href="#s14">[14]</a></sup> Tether odpowiedział osobnym tokenem USAT, emitowanym przez amerykański Anchorage Digital Bank. Sam USDT jest „w trakcie dostosowywania się”.<sup><a href="#s14">[14]</a></sup> W Unii Europejskiej USDT już w latach 2024–2025 zniknął z większości giełd, bo nie uzyskał zgody w ramach rozporządzenia MiCA.<sup><a href="#s4">[4]</a></sup></p>
+
+<p><strong>3. Sankcje i pranie pieniędzy.</strong> W październiku 2024 roku „The Wall Street Journal” donosił, na podstawie anonimowych źródeł, o śledztwie prokuratury federalnej na Manhattanie w sprawie naruszania sankcji i przepisów o praniu pieniędzy. Tether zaprzeczył, że wie o jakimkolwiek śledztwie.<sup><a href="#s24">[24]</a></sup> Wczoraj, 28 września 2026 roku, demokraci w senackiej podkomisji śledczej opublikowali raport. Wynika z niego, że 84% z 846 objętych sankcjami portfeli powiązanych z Iranem używało wyłącznie lub głównie USDT. Senator Richard Blumenthal przekazał ustalenia Departamentowi Skarbu i Departamentowi Sprawiedliwości. Tether odpowiada, że w 2026 roku pomógł zamrozić prawie 550 milionów dolarów w USDT związanych z Iranem.<sup><a href="#s25">[25]</a></sup> To raport mniejszości, a nie wyrok. Ale jeśli władze USA uderzyłyby w Tethera sankcjami, jego dostęp do amerykańskich banków i obligacji — czyli do fundamentu rezerw — stanąłby pod znakiem zapytania.</p>
+
+<p><strong>4. Stary proces sądowy.</strong> BDO zaznacza, że Tether International jest pozwanym w toczącej się w Nowym Jorku zbiorowej sprawie cywilnej o manipulację ceną bitcoina w latach 2017–2018. Firma nie utworzyła na nią rezerwy, bo wyniku nie da się oszacować.<sup><a href="#s11">[11]</a></sup></p>
+
+<p>Warto zauważyć, czego na tej liście nie ma: „wszystko jest fikcją i pieniędzy nie ma”. Po opinii KPMG i latach atestacji ten scenariusz stał się najmniej prawdopodobnym z możliwych.</p>
+
+<h2><span class="num">Rozdział dziesiąty</span>Bilans zarzutów</h2>
+
+<p>Zestawmy tezy z filmu i z internetowej dyskusji z tym, co udało się ustalić.</p>
+
+<div class="tablewrap">
+<table class="verdict">
+  <tr><th>Teza</th><th>Ocena</th><th>Na podstawie</th></tr>
+  <tr><td>Tether emitował tokeny bez obiecanego pokrycia w dolarach</td><td><span class="tag t-true">Prawda</span></td><td>Dla lat 2016–2019: ustalenia NYAG i CFTC; pełne pokrycie tylko przez 27,6% dni w próbie [1][8]</td></tr>
+  <tr><td>Rezerwy użyto do ratowania Bitfinexa</td><td><span class="tag t-true">Prawda</span></td><td>Co najmniej 625 mln w 2018 r., linia kredytowa do 900 mln, spłacona w 2021 r. [1]</td></tr>
+  <tr><td>Tether nigdy nie przeszedł audytu</td><td><span class="tag t-part">Już nieaktualne</span></td><td>Prawdziwe do sierpnia 2026. Teraz: opinia KPMG bez zastrzeżeń za 2025 r., ale raport niepublikowany [12][13]</td></tr>
+  <tr><td>Tylko 78 mln $ gotówki, 0,1% rezerw</td><td><span class="tag t-part">Prawda, ale myląca</span></td><td>Dziś 40,3 mln w bankach; ok. 75% rezerw to obligacje USA i repo, traktowane jak gotówka [11]</td></tr>
+  <tr><td>Brak zabezpieczenia dla wierzycieli</td><td><span class="tag t-part">Przesadzone</span></td><td>Nadwyżka istnieje (4,11 mld), ale to tylko 2,2% i spadła o połowę w kwartał [11][14]</td></tr>
+  <tr><td>CFTC przyznała, że nie może sprawdzić, co Tether robi z pieniędzmi</td><td><span class="tag t-part">Wyrwane z kontekstu</span></td><td>Komisarz Stump mówiła, że CFTC nie reguluje stablecoinów i nie ma codziennego wglądu — jednocześnie poparła ukaranie Tethera [26]</td></tr>
+  <tr><td>Założyciel Pierce „oskarżony o pedofilię”</td><td><span class="tag t-part">Nieprecyzyjne</span></td><td>Pozew cywilny, bez zarzutów karnych; skazany był jego wspólnik Collins-Rector [9][10]</td></tr>
+  <tr><td>Tether to piramida jak Madoff</td><td><span class="tag t-false">Mylące porównanie</span></td><td>Brak obiecanych zysków, realny dochód z obligacji, wypłacone ~10 mld w panice 2022 [17]. Trafniej: nieregulowany „bank cieni”</td></tr>
+  <tr><td>Mint bez pokrycia i wymiana na USDC dla zysku</td><td><span class="tag t-open">Brak dowodów</span></td><td>Nie znaleziono analizy wskazującej skarbiec Tethera; znane przechyły USDT/USDC mają inne źródła [22]</td></tr>
+  <tr><td>Tethery pompowały cenę bitcoina</td><td><span class="tag t-open">Sporne</span></td><td>Griffin i Shams (J. of Finance) — tak, w latach 2017–18; Lyons i Viswanath-Natraj — emisja głównie reaguje na popyt [19][21]</td></tr>
+</table>
+</div>
+
+<p>Film Krypto Bloggera ma rację w najważniejszej sprawie: Tether przez lata nie był tym, za co się podawał, a ludzie, którzy nim kierowali, traktowali rezerwy jak kasę podręczną siostrzanej giełdy. To nie są plotki, tylko ustalenia urzędowe. Ale film sprzedaje ten fakt w opakowaniu, które go przejaskrawia. „Piramida”, „0,1% gotówki” i cytat z komisarz Stump są dobrane tak, żeby czytelnik doszedł do wniosku, że pieniędzy nie ma. Dokumenty z lat 2021–2026 tego wniosku nie wspierają.</p>
+
+<h2><span class="num">Zakończenie</span>Numerek i płaszcz</h2>
+
+<p>Wróćmy do września 2017 roku i 382 milionów, które wylądowały na koncie Tethera w dniu kontroli. Ta scena uczy dwóch rzeczy, które dotyczą nas wszystkich, niezależnie od tego, czy trzymamy USDT.</p>
+
+<p>Pierwsza: instytucja, która raz ustawiła rzeczywistość pod kontrolę, traci prawo do domniemania dobrej wiary. Dlatego sceptycyzm wobec Tethera jest racjonalny, a nie paranoiczny. Dzisiejsze liczby wyglądają dobrze — ale wtedy też wyglądały.</p>
+
+<p>Druga: sceptycyzm też ma swoją dyscyplinę. Łatwo nam przyjąć każdą historię, która potwierdza to, co już podejrzewamy. Wykres z nagłym „dodrukiem”, zestawienie z Madoffem, liczba 0,1% bez kontekstu. Tymczasem prawdziwe ryzyko Tethera jest nudniejsze i przez to groźniejsze: cienka poduszka, ryzykowne aktywa, pożyczki dla nie wiadomo kogo, właściciele z historią łamania obietnic i regulatorzy coraz bliżej.</p>
+
+<p>Szatniarz z naszej analogii ma dziś w szatni prawie wszystkie płaszcze. Większość wisi na solidnych wieszakach. Część oddał jednak w zastaw znajomym, część zamienił na złoto i bitcoina, a zapasowych wieszaków ma na dwa procent sali. Nie jest oszustem, który w ogóle nie ma płaszczy.</p>
+
+<p>Ale też nie jest kimś, komu należy się pełne zaufanie tylko dlatego, że dotąd wszyscy dostali swoje płaszcze z powrotem.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+<ol class="sources">
+  <li id="s1">Office of the New York State Attorney General, <em>Settlement Agreement: In the Matter of Investigation of iFinex Inc., BFXNA Inc., BFXWW Inc., Tether Holdings Limited et al.</em>, nr 21-012, luty 2021. <a href="https://ag.ny.gov/sites/default/files/settlements-agreements/ifinex_inc.pdf">ag.ny.gov</a></li>
+  <li id="s2">Krypto Blogger, „Czy Tether to największa piramida finansowa w historii świata?”, YouTube / X, 9 listopada 2024. <a href="https://www.youtube.com/watch?v=hI3HlnKAaSY">youtube.com</a>; scenariusz: <a href="https://x.com/blogger_krypto/status/1855206539327312173">x.com/blogger_krypto</a></li>
+  <li id="s3">„Tether (cryptocurrency)”, Wikipedia — kompilacja z odwołaniami do „Financial Times”, „New York Times” i „Wall Street Journal” (historia firmy, Paradise Papers, założyciele). <a href="https://en.wikipedia.org/wiki/Tether_(cryptocurrency)">wikipedia.org</a></li>
+  <li id="s4">Coin Bureau, „USDC vs USDT: Safety, Fees and Best Uses in 2026”, lipiec 2026 (minimalna kwota wykupu, skład rezerw USDC); Eco, „Inside Tether: USDT Reserves Explained”, 2026 (MiCA). <a href="https://coinbureau.com/analysis/usdc-vs-usdt">coinbureau.com</a>, <a href="https://eco.com/support/en/articles/14796320-inside-tether-usdt-reserves-explained">eco.com</a></li>
+  <li id="s5">Tether, „Tether Posts Strong Q2 Performance, Generates $1.5B Net Operating Profit, Maintains $4.11B Reserve Buffer…”, komunikat, 31 lipca 2026. <a href="https://tether.io/news/tether-posts-strong-q2-performance-generates-1-5b-net-operating-profit-maintains-4-11b-reserve-buffer-and-expands-gold-holdings-to-more-than-146-tons/">tether.io</a></li>
+  <li id="s6">„Giancarlo Devasini”, Wikipedia, z odwołaniami do „Forbes” i „Bilanz”. <a href="https://en.wikipedia.org/wiki/Giancarlo_Devasini">wikipedia.org</a></li>
+  <li id="s7">Zeke Faux, <em>Number Go Up: Inside Crypto’s Wild Rise and Staggering Fall</em>, Currency / Penguin Random House, 2023.</li>
+  <li id="s8">Commodity Futures Trading Commission, „CFTC Orders Tether and Bitfinex to Pay Fines Totaling $42.5 Million”, komunikat nr 8450-21, 15 października 2021. <a href="https://www.cftc.gov/PressRoom/PressReleases/8450-21">cftc.gov</a></li>
+  <li id="s9">„Digital Entertainment Network”, Wikipedia (pozew z 2000 r., rozbieżne relacje o jego zakończeniu). <a href="https://en.wikipedia.org/wiki/Digital_Entertainment_Network">wikipedia.org</a></li>
+  <li id="s10">„Marc Collins-Rector”, Wikipedia (akt oskarżenia z 2000 r., przeszukanie w Marbelli w 2002 r.). <a href="https://en.wikipedia.org/wiki/Marc_Collins-Rector">wikipedia.org</a></li>
+  <li id="s11">BDO Advisory Services S.r.l., <em>Assurance Report according to ISAE 3000R on the Financials Figures and Reserves Report — Tether International, S.A. de C.V., as at 30 June 2026</em>, Mediolan, 31 lipca 2026. <a href="https://assets.ctfassets.net/vyse88cgwfbl/2kYf7r64h3tzwiu6F0CbUB/2997abd2f11ecea74a21528048b50707/Opinion___Report_-_Tether_International_Financial_Figure_30-06-2026.pdf">ctfassets.net (PDF)</a></li>
+  <li id="s12">Tether, „Tether Completes the Largest Inaugural Financial Audit in History”, komunikat, 13 sierpnia 2026. <a href="https://tether.io/news/tether-completes-the-largest-inaugural-financial-audit-in-history/">tether.io</a></li>
+  <li id="s13">Reuters, „Stablecoin issuer Tether says KPMG US has audited its 2025 statements”, 14 sierpnia 2026 (za: U.S. News / KFGO; potwierdzenie KPMG, informacja o niepublikowaniu raportu). <a href="https://money.usnews.com/investing/news/articles/2026-08-14/stablecoin-issuer-tether-says-kpmg-us-has-audited-its-2025-statements">usnews.com</a></li>
+  <li id="s14">Zennon Kapron, „Tether’s Buffer Halved In A Quarter. Then It Became A Private Credit Originator.”, Forbes Digital Assets, 28 września 2026. <a href="https://www.forbes.com/sites/digital-assets/2026/09/28/tethers-buffer-halved-in-a-quarter-then-it-became-a-private-credit-originator/">forbes.com</a></li>
+  <li id="s15">CoinDesk, „DeFi Protocol Curve’s $500M Stablecoin Pool Hammered as Traders Flee USDC”, 10 marca 2023; „USDC (cryptocurrency)”, Wikipedia (3,3 mld w SVB). <a href="https://www.coindesk.com/business/2023/03/10/defi-protocol-curves-500m-stablecoin-pool-hammered-as-traders-flee-usdc">coindesk.com</a></li>
+  <li id="s16">The Block, „Tether’s USDT stability score cut to ‘weak’ level as S&amp;P says reserves can’t absorb bitcoin drop”, 26 listopada 2025; Bloomberg, tamże. <a href="https://www.theblock.co/post/380562/tether-usdt-stability-score-weak-sp-reserves-cant-absorb-bitcoin-drop">theblock.co</a></li>
+  <li id="s17">Fortune, „Tether investors cashed out $10 billion worth of its crypto tokens since the crash began”, 23 maja 2022. <a href="https://fortune.com/2022/05/23/tether-investors-10-billion-terrausd-ust-stablecoins-crypto-crash/">fortune.com</a></li>
+  <li id="s18">CoinDesk, „Tether Finds Stable Dollar Peg After Terra’s Collapse”, 26 lipca 2022. <a href="https://www.coindesk.com/markets/2022/07/26/tether-finds-stable-dollar-peg-after-terras-collapse">coindesk.com</a></li>
+  <li id="s19">John M. Griffin, Amin Shams, „Is Bitcoin Really Untethered?”, <em>The Journal of Finance</em> 75(4), 2020, s. 1913–1964. <a href="https://onlinelibrary.wiley.com/doi/10.1111/jofi.12903">doi:10.1111/jofi.12903</a></li>
+  <li id="s20">McCombs School of Business, University of Texas, „Tether Connection Puts Bitcoin at Risk” (rozmowa z J. Griffinem). <a href="https://news.mccombs.utexas.edu/research/tether-connection-puts-bitcoin-at-risk/">utexas.edu</a></li>
+  <li id="s21">Richard K. Lyons, Ganesh Viswanath-Natraj, „What keeps stablecoins stable?”, <em>Journal of International Money and Finance</em> 131, 2023, 102777. <a href="https://www.sciencedirect.com/science/article/pii/S0261560622001802">sciencedirect.com</a></li>
+  <li id="s22">Cointelegraph, „Curve pool imbalance triggers USDT depeg concerns, Tether CTO calls it FUD”, 15 czerwca 2023 (za: TradingView); CCN, „USDT Depegs Due to Curve Pool Imbalance”, czerwiec 2023 (tokeny „authorized but not issued”). <a href="https://www.tradingview.com/news/cointelegraph:ba847b35d094b:0-curve-pool-imbalance-triggers-usdt-depeg-concerns-tether-cto-calls-it-fud/">tradingview.com</a>, <a href="https://www.ccn.com/usdt-depeg-curve-pool-imbalance-stablecoin/">ccn.com</a></li>
+  <li id="s23">Protos, „Tether Papers: This is exactly who acquired 70% of all USDT ever issued”. <a href="https://protos.com/tether-papers-crypto-stablecoin-usdt-investigation-analysis/">protos.com</a></li>
+  <li id="s24">Fortune, „Tether blasts report that stablecoin giant is under investigation for money laundering, sanctions violations”, 25 października 2024. <a href="https://fortune.com/crypto/2024/10/25/tether-department-justice-probe-money-laundering-sanctions-binance-crypto/">fortune.com</a></li>
+  <li id="s25">CoinDesk, „Tether is a ‘lifeline’ for Iranian regime, Senate Dems say in new report”, 28 września 2026; crypto.news, „Tether faces Senate scrutiny over Iran-linked USDT”, 29 września 2026. <a href="https://www.coindesk.com/policy/2026/09/28/tether-is-a-lifeline-for-iranian-regime-senate-dems-say-in-new-report">coindesk.com</a>, <a href="https://crypto.news/tether-faces-senate-scrutiny-over-iran-linked-usdt/">crypto.news</a></li>
+  <li id="s26">Dawn D. Stump, „Concurring Statement Regarding Tether and Bitfinex Settlement”, CFTC, 15 października 2021. <a href="https://www.cftc.gov/PressRoom/SpeechesTestimony/stumpstatement101521">cftc.gov</a></li>
+</ol>
+
+<footer class="end">Anatomia obietnicy · artykuł badawczy · wrzesień 2026. Stan wiedzy na 29 września 2026 r. Liczby z raportów Tethera pochodzą z atestacji BDO na 30 czerwca 2026 r.; kolejna atestacja spodziewana jest pod koniec października 2026 r.</footer>
+
+</div></body></html>

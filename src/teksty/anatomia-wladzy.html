@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia władzy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14150f;
+    --text:#ece5d1;
+    --muted:#a9a292;
+    --gold:#d1a13f;
+    --line:#2b2c23;
+    --card:#1b1c15;
+    --red:#c96a4e;
+    --green:#7fa06a;
+    --blue:#6f8fa8;
+  }
+  :root:not([data-theme="light"]){color-scheme:dark;}
+  @media (prefers-color-scheme: light){
+    :root:not([data-theme="light"]){color-scheme:dark;}
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Work Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    font-weight:300;
+    font-size:18px;
+    line-height:1.72;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+  header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+  .kicker{
+    font-family:'Work Sans',sans-serif;
+    font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;margin-bottom:22px;
+  }
+  h1{
+    font-family:'Fraunces',Georgia,serif;
+    font-weight:600;
+    font-size:clamp(2.3rem,8vw,3.6rem);
+    line-height:1.04;
+    margin:0 0 20px;
+    letter-spacing:-.02em;
+  }
+  .lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+  .meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+  h2{
+    font-family:'Fraunces',Georgia,serif;
+    font-weight:600;
+    font-size:clamp(1.5rem,4.6vw,2rem);
+    line-height:1.18;
+    margin:68px 0 20px;
+    letter-spacing:-.01em;
+  }
+  h2 .num{
+    display:block;
+    font-family:'Work Sans',sans-serif;
+    font-size:12px;letter-spacing:.22em;font-weight:600;
+    color:var(--gold);margin-bottom:12px;text-transform:uppercase;
+  }
+  h3{
+    font-family:'Fraunces',Georgia,serif;
+    font-weight:600;font-size:1.2rem;margin:42px 0 12px;line-height:1.3;
+  }
+  p{margin:0 0 20px;}
+  strong{font-weight:600;color:#fff;}
+  em{font-style:italic;color:var(--text);}
+  a{color:var(--gold);}
+  ul,ol{padding-left:22px;margin:0 0 22px;}
+  li{margin-bottom:11px;}
+  .box{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-left:3px solid var(--gold);
+    padding:20px 22px;
+    margin:32px 0;
+    font-size:.96rem;
+    line-height:1.62;
+  }
+  .box .bt{
+    font-family:'Work Sans',sans-serif;
+    font-size:11px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--gold);font-weight:600;margin-bottom:10px;
+  }
+  .box p:last-child{margin-bottom:0;}
+  .pull{
+    font-family:'Fraunces',Georgia,serif;
+    font-size:1.32rem;line-height:1.38;color:#fff;
+    border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+    padding:26px 0;margin:38px 0;font-weight:400;
+  }
+  /* charts */
+  .chart{margin:34px 0;}
+  .chart-title{
+    font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted);margin-bottom:18px;font-weight:600;
+  }
+  .row{display:flex;align-items:center;gap:12px;margin-bottom:11px;font-size:.88rem;}
+  .row .lab{flex:0 0 122px;color:var(--muted);text-align:right;line-height:1.25;}
+  .row .barwrap{flex:1;background:#22231b;height:22px;position:relative;overflow:hidden;}
+  .row .bar{height:100%;background:var(--gold);}
+  .row .bar.dim{background:#4d4e3f;}
+  .row .bar.alt{background:var(--blue);}
+  .row .val{flex:0 0 58px;font-variant-numeric:tabular-nums;color:var(--text);font-size:.85rem;}
+  /* timeline */
+  .tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+  .tl .ev{margin-bottom:22px;position:relative;}
+  .tl .ev:before{
+    content:"";position:absolute;left:-25px;top:8px;
+    width:9px;height:9px;border-radius:50%;background:var(--gold);
+  }
+  .tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+  .tl .txt{font-size:.94rem;line-height:1.55;}
+  /* evidence ladder */
+  .ladder{margin:30px 0;}
+  .step{
+    display:flex;gap:14px;align-items:flex-start;
+    border:1px solid var(--line);background:var(--card);
+    padding:14px 16px;margin-bottom:9px;
+  }
+  .step .rank{
+    font-family:'Fraunces',serif;font-size:1.25rem;color:var(--gold);
+    flex:0 0 26px;line-height:1.2;
+  }
+  .step .body{font-size:.92rem;line-height:1.55;}
+  .step .body b{display:block;color:#fff;font-weight:600;margin-bottom:3px;font-size:.95rem;}
+  .tag{
+    display:inline-block;font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+    padding:2px 8px;border:1px solid var(--line);color:var(--muted);margin-left:6px;
+    vertical-align:middle;
+  }
+  .tag.fact{border-color:#3f5033;color:var(--green);}
+  .tag.disp{border-color:#5c3f33;color:var(--red);}
+  hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+  .sources{font-size:.85rem;color:var(--muted);line-height:1.6;}
+  .sources li{margin-bottom:8px;}
+  .scroll{overflow-x:auto;}
+  footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+  @media (max-width:520px){
+    body{font-size:17px;}
+    .row .lab{flex:0 0 92px;font-size:.78rem;}
+    .row .val{flex:0 0 50px;font-size:.78rem;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy</div>
+  <h1>Anatomia władzy</h1>
+  <p class="lede">Dlaczego w Polsce od dwudziestu lat wygrywają te same dwie partie, czego naprawdę dowodzą głośne afery i jak sprawdzić polityka, zanim uwierzy się komukolwiek — łącznie z tym tekstem.</p>
+  <div class="meta">Wrzesień 2026 · czas czytania ok. 35 minut</div>
+</header>
+
+<p>Kilka tygodni temu stałem na stacji benzynowej i słuchałem, jak jakiś facet tłumaczy kasjerce, że rząd jest do niczego, bo paliwo drogie. Kasjerka kiwała głową. Facet wyszedł przekonany, że właśnie wygrał dyskusję.</p>
+
+<p>Miał trochę racji i był w dużej części w błędzie, ale nie o to chodzi. Chodzi o to, że w tej rozmowie nie padł ani jeden sprawdzalny fakt. Dwie osoby wymieniły się nastrojami i rozeszły się do domu z poczuciem, że rozumieją politykę.</p>
+
+<p>Łapiemy się na tym wszyscy. Ja też. Najtrudniejsze w ocenianiu polskiej polityki nie jest znalezienie informacji — informacji jest więcej, niż da się przeczytać. Najtrudniejsze jest odróżnienie informacji od nastroju, a nastroju od dowodu.</p>
+
+<p>Ten tekst nie jest listą afer. Lista afer niczego nie rozstrzyga, bo każdą listę ktoś ułożył, a układając ją, już podjął decyzję za czytelnika. Ten tekst jest o czymś innym: o <strong>mechanizmach</strong>, które w polskim państwie produkują te same problemy niezależnie od tego, kto akurat rządzi, i o <strong>narzędziach</strong>, którymi da się sprawdzić konkretny zarzut samodzielnie.</p>
+
+<p>Po drodze rozbierzemy na części dziesięć konkretnych spraw. Nie po to, żeby ustalić, kto jest złym człowiekiem. Po to, żeby pokazać, jak wygląda sprawa, kiedy patrzy się na dokumenty, a nie na nagłówki.</p>
+
+<div class="box">
+  <div class="bt">Zastrzeżenie, które trzeba postawić na początku</div>
+  <p>Ten tekst nie mówi, na kogo głosować, i nie stwierdza, kto jest uczciwy, a kto nie. Nie dlatego, że to temat delikatny, tylko dlatego, że taki osąd wymaga danych, których w większości przypadków po prostu nie ma — co wyjaśniam w sekcji 3. Wszędzie, gdzie coś jest ustalone prawomocnym wyrokiem, jest to zaznaczone. Wszędzie, gdzie sprawa jest w toku albo sporna, też.</p>
+</div>
+
+<h2><span class="num">Część pierwsza — mechanika</span>Dlaczego zawsze te same dwie partie</h2>
+
+<p>Poczucie, że w Polsce realnie rządzą tylko PiS i PO, nie jest złudzeniem. Od 2005 roku każdy rząd tworzyła jedna z tych dwóch partii. Inne ugrupowania istnieją, mają posłów, czasem wchodzą do koalicji jako mniejszy partner — ale premiera nie dały ani razu.</p>
+
+<p>Ważne jest jednak <em>dlaczego</em>. Bo popularne wytłumaczenie — „bo ludzie są głupi” albo „bo tak się umówili” — jest najmniej trafne z możliwych. Prawdziwa odpowiedź jest nudniejsza i dużo bardziej użyteczna: <strong>to w dużej mierze arytmetyka</strong>.</p>
+
+<h3>Jak głosy zamieniają się w mandaty</h3>
+
+<p>W wyborach do Sejmu nie głosujemy na jednego posła w swojej okolicy. Głosujemy na listę — czyli na partię, która wystawiła w naszym okręgu grupę kandydatów. Potem oddane głosy trzeba zamienić na konkretną liczbę mandatów, a to wymaga przeliczenia.</p>
+
+<p>Polska używa do tego <strong>metody D'Hondta</strong>. To sposób dzielenia mandatów wymyślony w XIX wieku przez belgijskiego matematyka Victora D'Hondta. Działa mniej więcej tak: liczbę głosów każdej partii dzieli się kolejno przez 1, 2, 3, 4 i tak dalej, wypisuje wszystkie otrzymane wyniki obok siebie i przyznaje mandaty tym największym.</p>
+
+<p>Brzmi neutralnie, ale ma jedną wbudowaną właściwość: metoda D'Hondta faworyzuje duże partie i koalicje kosztem małych. Przy tym samym odsetku głosów duża partia dostaje proporcjonalnie więcej miejsc niż mała. To nie jest błąd — to była świadoma decyzja, żeby w Sejmie nie siedziało trzydzieści partii po czterech posłów i żeby dało się w ogóle zbudować rząd.</p>
+
+<p>Do tego dochodzą <strong>progi wyborcze</strong>. Pojedyncza partia musi zdobyć minimum 5 procent głosów w skali kraju, a koalicja partii — 8 procent. Kto nie przekroczy progu, nie dostaje ani jednego mandatu, nawet jeśli w swoim okręgu miał najlepszy wynik osobisty.</p>
+
+<h3>Efekt, który decyduje o wszystkim: głosy zmarnowane</h3>
+
+<p>Tu zaczyna się najciekawsze. Głosy oddane na partie poniżej progu nie znikają w próżni — one <em>przechodzą</em> na tych, którzy próg przekroczyli. Im więcej głosów przepada, tym większą premię dostaje zwycięzca.</p>
+
+<p>Najczystszy przykład to wybory 2015 roku. Prawo i Sprawiedliwość zdobyło 37,6 procent głosów, ale aż 16,6 procent głosów padło na ugrupowania, które nie przekroczyły progu. To pozwoliło PiS uzyskać samodzielną większość w Sejmie. 235 mandatów z 460, czyli ponad połowa izby — przy niecałych czterech na dziesięć oddanych głosów.</p>
+
+<div class="chart">
+  <div class="chart-title">Wybory 2015: głosy kontra mandaty</div>
+  <div class="row"><div class="lab">PiS — głosy</div><div class="barwrap"><div class="bar dim" style="width:73.6%"></div></div><div class="val">37,6%</div></div>
+  <div class="row"><div class="lab">PiS — mandaty</div><div class="barwrap"><div class="bar" style="width:100%"></div></div><div class="val">51,1%</div></div>
+  <div class="row"><div class="lab">głosy, które przepadły</div><div class="barwrap"><div class="bar alt" style="width:32.5%"></div></div><div class="val">16,6%</div></div>
+</div>
+
+<p>To jest odpowiedź na pytanie, dlaczego nowa partia tak trudno przebija się w Polsce — i dlaczego wyborcy, którzy chcieliby zagłosować „na coś nowego”, często w ostatniej chwili wybierają dużego. Nazywa się to <strong>głosowaniem strategicznym</strong>: człowiek nie głosuje na tego, kogo lubi najbardziej, tylko na tego, kto ma szansę wygrać z tym, kogo lubi najmniej. System sam popycha do takiego zachowania. Nikt nie musi nikogo przekonywać.</p>
+
+<div class="box">
+  <div class="bt">Czego to nie tłumaczy</div>
+  <p>Ordynacja nie jest odpowiedzią na wszystko. Sam sposób liczenia nie stworzyłby duopolu, gdyby nie było jeszcze trzech rzeczy: finansowania partii z budżetu państwa (partia, która raz przekroczy próg, dostaje przez całą kadencję pieniądze na struktury i kampanie — a ta, która nie przekroczy, nie dostaje nic i słabnie), spolaryzowanych mediów, które przez lata ustawiały debatę jako mecz dwóch drużyn, oraz tożsamości. Dla wielu ludzi „jestem przeciw tamtym” to nie jest wybór polityczny, tylko element opisu samego siebie. Z tego trudniej wyjść niż ze złego kredytu.</p>
+</div>
+
+<h3>Ale pęknięcie już widać</h3>
+
+<p>Pierwsza tura wyborów prezydenckich w maju 2025 roku jest najlepszym dostępnym zdjęciem tego, jak naprawdę rozkładają się sympatie, kiedy nikt nie musi głosować strategicznie — bo w pierwszej turze można oddać głos szczerze i dopiero w drugiej wybierać mniejsze zło.</p>
+
+<div class="chart">
+  <div class="chart-title">I tura wyborów prezydenckich, 18 maja 2025 (dane PKW)</div>
+  <div class="row"><div class="lab">Trzaskowski</div><div class="barwrap"><div class="bar" style="width:100%"></div></div><div class="val">31,4%</div></div>
+  <div class="row"><div class="lab">Nawrocki</div><div class="barwrap"><div class="bar" style="width:94.2%"></div></div><div class="val">29,5%</div></div>
+  <div class="row"><div class="lab">Mentzen</div><div class="barwrap"><div class="bar alt" style="width:47.2%"></div></div><div class="val">14,8%</div></div>
+  <div class="row"><div class="lab">Braun</div><div class="barwrap"><div class="bar alt" style="width:20.2%"></div></div><div class="val">6,3%</div></div>
+  <div class="row"><div class="lab">Hołownia</div><div class="barwrap"><div class="bar dim" style="width:15.9%"></div></div><div class="val">5,0%</div></div>
+  <div class="row"><div class="lab">Zandberg</div><div class="barwrap"><div class="bar dim" style="width:15.5%"></div></div><div class="val">4,9%</div></div>
+  <div class="row"><div class="lab">Biejat</div><div class="barwrap"><div class="bar dim" style="width:13.5%"></div></div><div class="val">4,2%</div></div>
+</div>
+
+<p>Trzaskowski uzyskał 31,36 procent, Nawrocki 29,54 procent, a trzeci był Sławomir Mentzen z wynikiem 14,8 procent. Dwaj kandydaci wielkich obozów zebrali razem około 61 procent. Prawie czterech na dziesięciu głosujących wybrało kogoś spoza duopolu.</p>
+
+<p>To jest najważniejsza liczba w tym rozdziale. Duopol nie jest prawem natury. Jest skutkiem reguł gry i przyzwyczajenia — a jedno i drugie da się zmienić. Powoli.</p>
+
+<h2><span class="num">Część druga — metoda</span>Trzy pytania, które ciągle mylimy</h2>
+
+<p>Kiedy słyszymy, że „minister X ukradł”, to zdanie skleja ze sobą trzy zupełnie różne pytania. Każde ma inny poziom trudności i inny rodzaj dowodu.</p>
+
+<div class="ladder">
+  <div class="step"><div class="rank">1</div><div class="body"><b>Co się stało?</b>Pytanie o fakt fizyczny. Czy pieniądze wypłynęły, czy dokument został podpisany, czy człowiek wszedł na salę z gaśnicą. To jest zwykle łatwe do ustalenia i najczęściej bezsporne.</div></div>
+  <div class="step"><div class="rank">2</div><div class="body"><b>Kto za to odpowiada i czy złamał prawo?</b>Pytanie o kwalifikację prawną. Trudniejsze, bo „to było złe” i „to było przestępstwem” to dwie różne rzeczy. Odpowiada na nie sąd, po latach, na podstawie akt, których nikt z nas nie czytał.</div></div>
+  <div class="step"><div class="rank">3</div><div class="body"><b>Dlaczego to zrobił?</b>Pytanie o motyw. I tutaj muszę być brutalnie szczery: <strong>na to pytanie prawie nigdy nie da się odpowiedzieć uczciwie.</strong></div></div>
+</div>
+
+<p>Zatrzymajmy się przy trzecim, bo to właśnie tego najbardziej się chce.</p>
+
+<p>Chcemy wiedzieć, czy ktoś zrobił coś dobrego z przekonania, czy z wyrachowania. Czy ktoś popełnił błąd, czy działał umyślnie. To naturalne pytanie i zupełnie zrozumiałe. Ale motyw jest stanem czyjejś głowy, a do cudzej głowy nie ma dostępu nikt — łącznie z sądem, który w sprawach karnych rekonstruuje zamiar z zachowania, a nie odczytuje go wprost.</p>
+
+<p class="pull">Prawie wszystko, co słyszymy o motywach polityków, to zgadywanie przebrane za wiedzę. Po jednej i po drugiej stronie.</p>
+
+<p>Praktyczny wniosek jest taki: przy ocenie decyzji politycznej warto <strong>zamienić pytanie o motyw na pytanie o skutek i o strukturę</strong>. Zamiast „czy on to zrobił dla łapówki?” — „kto na tej decyzji zyskał, ile, i czy istniała procedura, która miała temu zapobiec?”. Na te pytania zwykle są dokumenty.</p>
+
+<h3>Drabina dowodów</h3>
+
+<p>Druga rzecz, która natychmiast porządkuje myślenie: nie wszystkie „dowody” ważą tyle samo. Uszeregowane od najmocniejszego:</p>
+
+<div class="ladder">
+  <div class="step"><div class="rank">A</div><div class="body"><b>Prawomocny wyrok sądu</b>Najmocniejsze, co istnieje. Sprawa przeszła przez dwie instancje, obie strony miały obrońców, dowody były weryfikowane. Uwaga: „wyrok” i „wyrok prawomocny” to nie to samo — pierwszy można jeszcze obalić.</div></div>
+  <div class="step"><div class="rank">B</div><div class="body"><b>Raport NIK</b>Najwyższa Izba Kontroli to niezależny od rządu organ kontrolny, podległy Sejmowi. Sprawdza, czy publiczne pieniądze wydano legalnie, gospodarnie i celowo. Nie skazuje nikogo — może tylko opisać nieprawidłowość i zawiadomić prokuraturę. Ale robi to na podstawie faktur i dokumentów, nie plotek.</div></div>
+  <div class="step"><div class="rank">C</div><div class="body"><b>Akt oskarżenia</b>To stanowisko prokuratury, czyli jednej ze stron sporu — nie ustalenie sądu. Mówi: „mamy dowody, uważamy, że to przestępstwo”. Sąd może to odrzucić w całości. Traktowanie aktu oskarżenia jak wyroku to najczęstszy błąd w polskiej debacie.</div></div>
+  <div class="step"><div class="rank">D</div><div class="body"><b>Śledztwo dziennikarskie</b>Bywa świetne i bywa pierwszym źródłem prawdy. Ale redakcja nie ma uprawnień śledczych, a bywa, że ma sympatie. Sprawdzaj, czy tekst pokazuje dokumenty, czy tylko powołuje się na „nasze źródła”.</div></div>
+  <div class="step"><div class="rank">E</div><div class="body"><b>Lista afer opublikowana przez partię przeciwną</b>To nie jest źródło o faktach. To jest źródło o tym, co dana partia chce, żebyś zapamiętał. Może zawierać prawdę — ale dobór spraw jest z definicji stronniczy, a spraw własnej strony tam nie ma nigdy.</div></div>
+  <div class="step"><div class="rank">F</div><div class="body"><b>Rolka na TikToku, wycinek z debaty, wypowiedź polityka o samym sobie</b>Wartość dowodowa bliska zeru. Wrócimy do tego w sekcji 11, bo to zasługuje na osobne omówienie.</div></div>
+</div>
+
+<h2><span class="num">Część trzecia — sprawy</span>Dziesięć przypadków, rozebranych</h2>
+
+<p>Poniżej dziesięć spraw, które w polskiej debacie funkcjonują jako skróty myślowe. Przy każdej: co jest ustalone, co jest sporne i czego ta sprawa naprawdę uczy. Kolejność nie odzwierciedla wagi.</p>
+
+<h3>1. SKOK Wołomin — czyli jak działa błędny skrót</h3>
+
+<p>Zacznę od tej, bo sam przez lata miałem ją zapamiętaną źle, a jest pouczająca właśnie dlatego, że popularna wersja jest nieprawdziwa.</p>
+
+<p>Popularna wersja brzmi mniej więcej tak: „politycy PiS przez lata kradli i na końcu wyszło”. Dokumenty pokazują coś innego i ciekawszego.</p>
+
+<p><strong>Co się faktycznie stało.</strong> SKOK Wołomin to była spółdzielcza kasa oszczędnościowo-kredytowa — instytucja przyjmująca depozyty i udzielająca kredytów, coś w rodzaju małego banku należącego do członków. Przez lata udzielano w niej kredytów podstawionym osobom, zabezpieczonych na nieruchomościach o zawyżonej wartości, przez co kasa wykazywała, że ma zabezpieczenie w nieruchomościach o wysokiej wartości, więc na papierze nie pokazywała strat. Kasa upadła pod koniec 2014 roku. Skala strat liczona jest w miliardach złotych.</p>
+
+<p><strong>Kto został skazany.</strong> Centralną postacią jest Piotr Polaszczyk, były funkcjonariusz Wojskowych Służb Informacyjnych i wiceprzewodniczący rady nadzorczej SKOK Wołomin — a nie polityk. Ma wyroki: osiem lat za pranie pieniędzy i dziesięć lat za zlecenie pobicia wiceszefa Komisji Nadzoru Finansowego Wojciecha Kwaśniaka, który nadzorował likwidację kasy. Kwaśniak został brutalnie pobity przed swoim domem w kwietniu 2014 roku i według biegłych ledwie przeżył atak.</p>
+
+<p>Główny proces to nie jest sprawa polityczna. Na ławie oskarżonych zasiada ponad 60 osób, a sam akt oskarżenia liczy 29 tomów i ponad pięć i pół tysiąca stron.</p>
+
+<p><strong>Gdzie jest wątek polityczny.</strong> System SKOK-ów był historycznie związany z Grzegorzem Biereckim, senatorem PiS, jednym z jego twórców. Kasy trafiły pod nadzór Komisji Nadzoru Finansowego dopiero w 2012 roku — wcześniej nie podlegały zewnętrznemu nadzorowi żadnej instytucji państwowej, choć Polacy trzymali w nich ponad 15 miliardów złotych. To jest realny zarzut systemowy i dotyczy tego, kto przez lata blokował objęcie kas nadzorem.</p>
+
+<p><strong>I tu zaczyna się część, która powinna dać do myślenia.</strong> Po 2015 roku to <em>nadzorcy</em> trafili na ławę oskarżonych. W procesie toczącym się od września 2023 roku oskarżonych jest jedenaście osób, w tym siedmioro z ówczesnego kierownictwa KNF — łącznie z Andrzejem Jakubiakiem, przewodniczącym w latach 2011–2016, i jego zastępcą Wojciechem Kwaśniakiem, czyli tym samym człowiekiem, którego pobito. Zarzut: niedopełnienie obowiązków w nadzorze.</p>
+
+<p>W marcu 2026 roku nastąpił zwrot: prokurator w tym procesie wystąpił o cofnięcie aktu oskarżenia wobec siedmiorga oskarżonych, w konsekwencji polecenia Prokuratora Generalnego, którym jest obecnie minister sprawiedliwości Waldemar Żurek. Jedni nazwali to naprawieniem krzywdy, drudzy zamiataniem sprawy pod dywan.</p>
+
+<div class="box">
+  <div class="bt">Czego uczy ta sprawa</div>
+  <p>Po pierwsze: nasza pamięć skleja wątki. „Afera SKOK Wołomin” to co najmniej trzy różne sprawy — przestępczość zorganizowana w kasie, spór o jakość nadzoru finansowego i wieloletnia walka polityczna o to, kogo za to obwinić. Traktowanie ich jako jednej całości gwarantuje błędny wniosek.</p>
+  <p>Po drugie, i to jest ważniejsze: <strong>oskarżenia karne wobec urzędników potrafią zmieniać kierunek wraz ze zmianą władzy.</strong> To samo postępowanie wyglądało inaczej za jednego rządu i inaczej za następnego. Kiedy tak się dzieje, sam fakt postawienia komuś zarzutów przestaje być wiarygodną informacją o tym, co ten ktoś zrobił.</p>
+</div>
+
+<h3>2. Wybory kopertowe 2020 — kto pilnuje pilnujących</h3>
+
+<p>Wiosną 2020 roku, w pierwszych tygodniach pandemii, rząd chciał przeprowadzić wybory prezydenckie wyłącznie korespondencyjnie. 16 kwietnia 2020 premier Mateusz Morawiecki wydał decyzję polecającą Poczcie Polskiej i Polskiej Wytwórni Papierów Wartościowych przygotowanie takich wyborów. Karty wydrukowano. Wybory w tym terminie się nie odbyły.</p>
+
+<p><strong>Co ustaliła NIK.</strong> Według Najwyższej Izby Kontroli nie było podstaw prawnych, żeby premier wydawał Poczcie Polskiej i PWPW jakiekolwiek polecenia związane z organizacją wyborów — w chwili wydania decyzji nie obowiązywała jeszcze ustawa, która by na to pozwalała. NIK nazwała decyzje premiera „prawnie wadliwymi”, a jego działania podjętymi „bez podstawy prawnej”.</p>
+
+<p>Co więcej, z raportu wynika, że negatywne opinie w tej sprawie zgłaszały Departament Prawny Kancelarii Premiera oraz Prokuratoria Generalna, a mimo to decyzję wydano. Ministrowie Jacek Sasin i Mariusz Kamiński tej decyzji nie wykonali — nie podpisali umów z podległymi im spółkami ani nie zwrócili im kosztów.</p>
+
+<p><strong>Koszt.</strong> Według pełnej wersji raportu NIK koszt wyborów kopertowych wyniósł 76 507 400 złotych. Dla skali: sama Poczta Polska szacowała koszty przeprowadzenia tych wyborów na około 800 milionów złotych — środków tych nie było.</p>
+
+<p><strong>I teraz rzecz najważniejsza.</strong> NIK skierowała zawiadomienia do prokuratury. Prokuratura, kierowana wówczas przez ministra sprawiedliwości będącego jednocześnie Prokuratorem Generalnym, 30 grudnia 2021 roku odmówiła wszczęcia śledztwa, a sąd rejonowy utrzymał tę odmowę w mocy, uznając, że prokurator zasadnie odmówił wszczęcia. Sąd wskazał przy tym na okoliczności epidemii jako element oceny motywów urzędników.</p>
+
+<p>Dopiero po zmianie władzy powstała sejmowa komisja śledcza w tej sprawie.</p>
+
+<div class="box">
+  <div class="bt">Czego uczy ta sprawa</div>
+  <p>To jest podręcznikowy przykład problemu, który po łacinie nazywa się <em>quis custodiet ipsos custodes</em> — kto pilnuje strażników. Niezależny organ kontrolny stwierdził złamanie prawa. Jedyna instytucja, która mogła to ścigać, podlegała politykowi z tego samego obozu. Śledztwa nie było.</p>
+  <p>Dlatego połączenie funkcji Ministra Sprawiedliwości i Prokuratora Generalnego w jednej osobie — obowiązujące w Polsce od 2016 roku — jest jednym z najpoważniejszych problemów ustrojowych, o jakich nie mówi się w kampanii. Niezależnie od tego, kto tę funkcję pełni.</p>
+</div>
+
+<h3>3. Fundusz Sprawiedliwości — najlepiej udokumentowana sprawa ostatniej dekady</h3>
+
+<p>Fundusz Sprawiedliwości to pieniądze zasądzane od sprawców przestępstw, przeznaczone ustawowo na pomoc ofiarom. Dysponował nim Minister Sprawiedliwości.</p>
+
+<p><strong>Ustalenia NIK — pierwsza kontrola, 2021.</strong> Z wyników kontroli NIK wynikało, że działanie ministra sprawiedliwości skutkowało niegospodarnym i niecelowym wydatkowaniem środków z Funduszu oraz sprzyjało powstawaniu mechanizmów korupcjogennych. Według raportu nadużywano tak zwanego trybu pozanaborowego, przewidzianego na wyjątkowe sytuacje — finansowano w nim ponad 60 procent dotacji. Tryb pozanaborowy oznacza przyznanie pieniędzy bez konkursu, uznaniową decyzją.</p>
+
+<p><strong>Ustalenia NIK — druga kontrola, ujawniona w 2026.</strong> Potwierdzają się zarzuty dotyczące ustawiania konkursów i rozdawania milionowych dotacji zaprzyjaźnionym organizacjom. Konkursy były fikcją, a wnioski oceniali nieprzygotowani pracownicy, nawet stażyści. Jedna liczba oddaje istotę rzeczy: w 2023 roku fundusz przeznaczył więcej na autopromocję niż na pomoc psychologiczną i prawną dla osób pokrzywdzonych przestępstwem.</p>
+
+<p>NIK wskazała konkretne osoby odpowiedzialne: trzy osoby z byłego kierownictwa Ministerstwa Sprawiedliwości — Zbigniewa Ziobrę, Marcina Warchoła i Marcina Romanowskiego — jako odpowiadające za ogłaszanie konkursów, zatwierdzanie ich wyników i podpisywanie umów z beneficjentami.</p>
+
+<p><strong>Stan prawny, wrzesień 2026.</strong> Tu trzeba być precyzyjnym, bo emocje są duże, a wyroków nie ma. Od 2025 roku prokuratura dąży do postawienia Ziobrze 26 zarzutów związanych głównie z zarządzaniem Funduszem Sprawiedliwości, w tym nadużycia władzy, przywłaszczenia środków publicznych i kierowania zorganizowaną grupą przestępczą. Ziobro zaprzecza i nazywa postępowanie polityczną zemstą rządu Donalda Tuska. W styczniu 2026 roku uzyskał na Węgrzech status uchodźcy; Węgry cofnęły go 2 lipca 2026 roku, a tego samego dnia warszawski sąd uprawomocnił wobec niego areszt. W lipcu 2026 przebywał w Stanach Zjednoczonych. Marcin Romanowski przebywa na Węgrzech.</p>
+
+<p>Osobne postępowania toczą się wobec beneficjentów. Oddzielny akt oskarżenia skierowano 21 października 2025 roku przeciwko byłemu wiceministrowi Michałowi Wosiowi, oskarżonemu o przekroczenie uprawnień w związku z przekazaniem 25 milionów złotych na zakup systemu Pegasus.</p>
+
+<div class="box">
+  <div class="bt">Jak to czytać uczciwie</div>
+  <p>To jest sprawa, w której <strong>ustalenia niezależnego organu kontrolnego są bardzo mocne</strong> — NIK opisała mechanizm na podstawie dokumentów, w dwóch osobnych kontrolach, w tym jednej przeprowadzonej jeszcze za rządów PiS. To znaczy dużo więcej niż akt oskarżenia.</p>
+  <p>Jednocześnie: <strong>nikt nie został skazany.</strong> Zarzuty to zarzuty. Twierdzenie, że postępowanie ma charakter polityczny, nie jest samo w sobie absurdalne — pokazała to sprawa SKOK-ów. Uczciwa pozycja brzmi: mechanizm nieprawidłowości jest udokumentowany bardzo dobrze, odpowiedzialność karna konkretnych osób nie jest jeszcze rozstrzygnięta.</p>
+</div>
+
+<h3>4. Gaśnica w Sejmie — fakt bezsporny, wszystko inne sporne</h3>
+
+<p>12 grudnia 2023 roku poseł Grzegorz Braun użył gaśnicy proszkowej i zgasił świece chanukowe zapalone podczas uroczystości w Sejmie. Zdarzenie jest nagrane, więc pytanie „czy to się stało” nie istnieje.</p>
+
+<p>Dalej wszystko jest procedurą. 17 stycznia 2024 Sejm uchylił Braunowi immunitet na wniosek Prokuratury Okręgowej. Prokuratura postawiła mu siedem zarzutów — dwa dotyczą incydentu w Sejmie, pozostałe innych zdarzeń, w tym naruszenia nietykalności byłego ministra zdrowia i zakłócenia wykładu o Zagładzie. Zarzut dotyczący świec to znieważenie grupy osób na tle religijnym; podejrzany nie przyznał się i odmówił składania wyjaśnień.</p>
+
+<p>W czerwcowych wyborach do Parlamentu Europejskiego w 2024 roku Braun został europosłem, uzyskując najlepszy wynik spośród wszystkich kandydatów Konfederacji. Później stracił immunitet także w Parlamencie Europejskim. Proces ruszył 8 grudnia 2025 roku przed Sądem Rejonowym dla Warszawy-Pragi Południe. Braun oświadczył, że nie przyznaje się do jakiejkolwiek winy i że działał zgodnie z obowiązkami wynikającymi z mandatu. Wyroku nie ma.</p>
+
+<p>Rok wcześniej zdobył 6,34 procent głosów w pierwszej turze wyborów prezydenckich — prawie 1,25 miliona osób.</p>
+
+<div class="box">
+  <div class="bt">Czego uczy ta sprawa</div>
+  <p>Trzy różne osądy, które trzeba trzymać osobno: <strong>osąd moralny</strong> (czy to było godziwe — tu większość ludzi ma jasne zdanie i ma do niego prawo), <strong>osąd prawny</strong> (czy to wypełnia znamiona konkretnego przestępstwa — decyduje sąd i jeszcze nie zdecydował) i <strong>osąd wyborców</strong> (który okazał się zupełnie niezależny od dwóch poprzednich).</p>
+  <p>To, że ktoś zrobił coś, co uważamy za oburzające, nie sprawia automatycznie, że złamał prawo. I odwrotnie: to, że sąd czegoś nie uzna za przestępstwo, nie czyni tego godziwym. Mieszanie tych porządków to najszybsza droga do rozczarowania państwem.</p>
+</div>
+
+<h3>5. Elektrownia atomowa — dlaczego przez 35 lat nic nie stało</h3>
+
+<p>To jest pytanie, na które odpowiedź jest zaskakująco mało polityczna.</p>
+
+<p>Budowę elektrowni w Żarnowcu przerwano w 1990 roku. Przez następne trzydzieści lat program jądrowy ogłaszano kilkukrotnie, ostatni raz na poważnie w 2009 roku. Powstawały spółki, dokumenty i harmonogramy. Nie powstał żaden reaktor.</p>
+
+<p><strong>Gdzie jesteśmy dzisiaj.</strong> Wybrano lokalizację Lubiatowo-Kopalino w gminie Choczewo na Pomorzu oraz technologię AP1000 firmy Westinghouse. 9 grudnia 2025 roku Komisja Europejska wydała zgodę na pomoc publiczną: dokapitalizowanie spółki Polskie Elektrownie Jądrowe kwotą 60 miliardów złotych z budżetu, czterdziestoletni kontrakt różnicowy i gwarancje Skarbu Państwa dla całości finansowania dłużnego. Elektrownia ma mieć trzy bloki o łącznej mocy 3750 MW, pierwszy tak zwany beton jądrowy planowany jest na 2028 rok, a komercyjna praca pierwszego bloku na 2036 rok.</p>
+
+<p>W sierpniu 2026 przedsięwzięcie było formalnie wciąż na etapie prac przygotowawczych i procesu licencyjnego; 5 sierpnia 2026 PEJ przekazały firmie Bechtel zarządzanie terenem inwestycji, gdzie rozpoczęto zasadnicze roboty ziemne.</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">1990</div><div class="txt">Przerwanie budowy w Żarnowcu.</div></div>
+  <div class="ev"><div class="yr">2009</div><div class="txt">Program energetyki jądrowej ogłoszony ponownie. Powstaje spółka. Decyzji technologicznej brak.</div></div>
+  <div class="ev"><div class="yr">2022</div><div class="txt">Wybór technologii AP1000 i partnera amerykańskiego.</div></div>
+  <div class="ev"><div class="yr">2025</div><div class="txt">Zgoda Komisji Europejskiej na pomoc publiczną — dopiero to zabezpiecza finansowanie.</div></div>
+  <div class="ev"><div class="yr">2028</div><div class="txt">Planowany pierwszy beton jądrowy, czyli formalny początek budowy reaktora.</div></div>
+  <div class="ev"><div class="yr">2036</div><div class="txt">Planowane uruchomienie pierwszego bloku.</div></div>
+</div>
+
+<p><strong>Dlaczego to trwało.</strong> Nie ma tu jednego winnego i to jest właśnie lekcja. Złożyły się cztery rzeczy naraz:</p>
+
+<ul>
+  <li><strong>Niedopasowanie cykli.</strong> Elektrownia jądrowa to inwestycja na 15–20 lat od decyzji do prądu. Kadencja Sejmu trwa cztery lata. Rząd, który podejmie decyzję i poniesie jej koszt polityczny, nigdy nie przetnie wstęgi. Nagrodę zbierze następca, często z konkurencyjnej partii. To jest strukturalna zachęta do odkładania.</li>
+  <li><strong>Pieniądze.</strong> To największa inwestycja w powojennej historii Polski. Bez gwarancji państwa żaden podmiot komercyjny tego nie sfinansuje, a gwarancje państwa wymagają zgody Komisji Europejskiej na pomoc publiczną — bo bez tej zgody byłoby to niedozwolone wsparcie zaburzające konkurencję. Ta zgoda przyszła w grudniu 2025.</li>
+  <li><strong>Brak zaplecza.</strong> Polska nie miała ani regulatora z doświadczeniem w licencjonowaniu takich obiektów, ani kadr, ani łańcucha dostaw. Pierwszą w Polsce opinię prezesa Państwowej Agencji Atomistyki dotyczącą wstępnego raportu lokalizacyjnego wydano dopiero 7 maja 2026 roku. Pierwszą w historii.</li>
+  <li><strong>Procedury i odwołania.</strong> Decyzja środowiskowa nie była prawomocna, a wnioski o ponowne rozpatrzenie sprawy wniosło pięć osób fizycznych oraz organizacje, w tym stowarzyszenie broniące obszarów nadmorskich. To normalne w państwie prawa i jednocześnie realnie wydłuża proces.</li>
+</ul>
+
+<div class="box">
+  <div class="bt">Czego uczy ta sprawa</div>
+  <p>Kiedy państwo czegoś nie robi przez trzydzieści lat, pierwszym odruchem jest szukanie sabotażysty. Zwykle sabotażysty nie ma. Jest za to system, w którym nikomu się nie opłaca zaczynać czegoś, co skończy ktoś inny.</p>
+  <p>To najlepszy możliwy test na polityka: <em>czy ta osoba popiera rzeczy, których efekt zobaczymy po jej odejściu?</em> Bardzo niewielu przechodzi ten test — w każdej partii.</p>
+</div>
+
+<h3>6. Fabryka Intela — decyzja, która nie zapadła w Polsce</h3>
+
+<p>W czerwcu 2023 roku ogłoszono, że Intel zbuduje w Miękini pod Wrocławiem zakład wart 4,6 miliarda dolarów. Rząd przedstawiał to jako duży sukces. Zakład nie powstał.</p>
+
+<p><strong>Pierwsza korekta, ważna.</strong> To nie miała być fabryka procesorów. Miał to być zakład integracji i testowania półprzewodników, część większego ekosystemu europejskiego powiązanego z zakładami w Magdeburgu i Portugalii. Czyli końcowy etap produkcji — składanie i testowanie gotowych układów, nie wytwarzanie krzemowych płytek. To wciąż poważna inwestycja, ale nie to samo, co „Polska produkuje procesory”.</p>
+
+<p><strong>Co się stało.</strong> We wrześniu 2024 szef Intela przekazał wicepremierowi Krzysztofowi Gawkowskiemu, że firma wstrzymuje do 2026 roku plany budowy fabryk w Niemczech i w Polsce, z powodu pogarszającej się globalnej sytuacji finansowej firmy. Wtedy proces przyznania pomocy publicznej był już zaawansowany — wartość planowanego wsparcia rozłożonego na lata 2024–2026 miała wynieść ponad 7,4 miliarda złotych.</p>
+
+<p>Rok później było już po wszystkim. Intel ogłosił przy okazji wyników za drugi kwartał 2025 roku, że nie będzie kontynuować projektów w Niemczech i w Polsce. Firma wycofała się bez podania szczegółowych przyczyn, informując jedynie o dostosowaniu strategii inwestycyjnej i zmieniających się warunkach rynkowych. Kontekst: akcje Intela zanotowały w 2024 roku najgorszy spadek w historii firmy — o 60 procent.</p>
+
+<p><strong>Argumenty, które padają w tej dyskusji, i ile są warte.</strong></p>
+
+<ul>
+  <li><em>„To dawałoby miejsca pracy”</em> — tak, mówiło się o około 2 tysiącach miejsc pracy. Argument prawdziwy, ale wymaga zestawienia z kosztem: 7,4 miliarda złotych pomocy publicznej. To jest liczba, którą warto podzielić przez liczbę etatów, zanim się oceni, czy to był dobry interes. Sam fakt, że inwestycja tworzy pracę, nie czyni jej opłacalną dla podatnika.</li>
+  <li><em>„Amerykanie mieliby tu swój majątek, więc broniliby Polski”</em> — to argument popularny i słaby. Zakład montażowy nie jest zobowiązaniem sojuszniczym. Gwarancje bezpieczeństwa wynikają z traktatów i obecności wojskowej, a firma może się z inwestycji wycofać — co właśnie zrobiła, w środku wojny za wschodnią granicą.</li>
+  <li><em>„Ktoś tego nie chciał”</em> — nic tego nie potwierdza. Cztery dni przed ogłoszeniem wstrzymania polski rząd informował, że inwestycja przyspiesza. To nie wygląda na sabotaż, tylko na zaskoczenie.</li>
+</ul>
+
+<div class="box">
+  <div class="bt">Czego uczy ta sprawa</div>
+  <p>Najtrudniejsza do przyjęcia lekcja w całym tym tekście: <strong>duża część tego, co dzieje się z Polską, nie jest o Polsce.</strong> Decyzja zapadła w Santa Clara, na podstawie wyników kwartalnych amerykańskiej spółki. Żaden polski polityk nie miał na nią wpływu — ani ten, który ją ogłaszał jako sukces, ani ten, który potem tłumaczył się z jej braku.</p>
+  <p>Kiedy słyszysz „rząd stracił inwestycję”, pierwsze pytanie brzmi: czy ta decyzja w ogóle leżała po polskiej stronie?</p>
+</div>
+
+<h3>7. Ceny paliw — jak działa mechanizm, o który kłócił się facet na stacji</h3>
+
+<p>Wracamy do stacji benzynowej. Kto miał rację?</p>
+
+<p>Cena litra paliwa składa się z kilku rzeczy: ceny ropy na rynkach światowych, kursu dolara (bo ropa rozliczana jest w dolarach), marż rafinerii i stacji oraz <strong>podatków</strong> — akcyzy, opłaty paliwowej i podatku VAT. Podatki to grubo koło połowy tego, co płacimy przy dystrybutorze.</p>
+
+<p>Na cenę ropy i kurs dolara polski rząd nie ma wpływu żadnego. Na podatki ma wpływ całkowity. Facet na stacji nie miał więc racji w tej formie, w jakiej to powiedział — ale odpowiedź „rząd nie ma z tym nic wspólnego” też jest fałszywa.</p>
+
+<p><strong>Jak to wygląda w praktyce — i jak wyglądało już dwa razy.</strong> W latach 2022–2023, w ramach tak zwanej tarczy antyinflacyjnej, stawkę VAT na paliwa czasowo obniżono do 8 procent, co obniżyło ceny detaliczne o około 90 groszy na litrze benzyny i 1,07 złotego na litrze oleju napędowego. Od 2023 roku przywrócono pełną stawkę, co podniosło ceny na stacjach średnio o około 15 procent.</p>
+
+<p>W 2026 roku powtórzono ten sam manewr, pod inną nazwą. W ramach pakietu „Ceny Paliwa Niżej” stawka VAT na paliwa została zmniejszona z 23 do 8 procent, akcyza na benzynę spadła o 29 groszy na litrze, a na olej napędowy o 28 groszy. Wprowadzono też maksymalne ceny paliw, wyliczane ze średniej ceny hurtowej powiększonej o akcyzę, opłatę paliwową, marżę 30 groszy na litrze i VAT. Rozwiązanie jest przedłużane co kilka tygodni i rząd zakłada, że ma ono charakter czasowy.</p>
+
+<p class="pull">Obniżka podatku nie sprawia, że paliwo jest tańsze. Sprawia, że jego część zamiast na stacji płacimy gdzie indziej — w postaci mniejszych wpływów budżetowych, a więc większego długu albo mniejszych wydatków na coś innego.</p>
+
+<p>To samo dotyczy każdego programu socjalnego i każdej ulgi podatkowej — w każdej partii. Nie jest to zarzut wobec żadnej z nich. Jest to po prostu opis tego, jak działa budżet. Pieniądze publiczne nie mają własnego źródła. Każda złotówka wydana dzisiaj jest złotówką zabraną skądś — z podatku, z długu albo z innego wydatku.</p>
+
+<div class="box">
+  <div class="bt">Jedno pytanie, które warto zadawać zawsze</div>
+  <p>Kiedy polityk obiecuje nowy program, ulgę albo obniżkę, zadaj dokładnie jedno pytanie: <strong>z czego to jest finansowane?</strong> Dopuszczalne odpowiedzi to: z podniesienia podatku X, z likwidacji wydatku Y, z długu. Odpowiedź „z uszczelnienia systemu” albo „ze wzrostu gospodarczego” oznacza zwykle „z długu, ale tego nie powiem”.</p>
+</div>
+
+<h3>8. Stanowiska dla swoich — co jest udowodnione, a co nie</h3>
+
+<p>Przekonanie, że w państwowych instytucjach tworzy się posady dla znajomych, jest jednym z najpowszechniejszych w Polsce. Tu trzeba oddzielić to, co jest udokumentowane, od tego, co jest odczuciem.</p>
+
+<p><strong>Co jest udokumentowane.</strong> Skala obsady jest duża i realna. Po zmianie rządu w grudniu 2023 wymiana kadr w spółkach z udziałem Skarbu Państwa objęła według wyliczeń money.pl nawet 6315 osób, w tym 240 osób w radach lub zarządach 16 spółek notowanych na giełdzie. To nie jest liczba „fikcyjnych etatów” — to liczba stanowisk w organach spółek, które zmieniły obsadę.</p>
+
+<p>Udokumentowane jest też, że <strong>robią to wszyscy</strong>. Analiza Fundacji Batorego opisuje ten mechanizm od czasów rządów SLD–PSL, przez PO–PSL, po PiS. Po ośmiu latach rządów PiS, podczas których stanowiska w spółkach często obejmowali działacze tej partii, postulat odpartyjnienia spółek był częścią programów ugrupowań startujących przeciwko PiS w 2023 roku. Po czym nowa koalicja rozpoczęła wymianę kadr, a część decyzji była postrzegana jako upolityczniona.</p>
+
+<p><strong>Co jest najbardziej wymowne.</strong> Projekt ustawy, który miałby to ograniczyć, utknął. Poselski projekt naprawy ładu korporacyjnego w spółkach z udziałem Skarbu Państwa powstał w 2024 roku i znalazł się w legislacyjnym zawieszeniu — w styczniu 2025 za skierowaniem go do dalszych prac zagłosowało tylko czterech z czterdziestu posłów połączonych komisji sejmowych. Czterech na czterdziestu, przy udziale posłów różnych klubów.</p>
+
+<p>To jest znacznie mocniejszy dowód niż jakakolwiek deklaracja. Głosowanie to twardy, jawny fakt. Deklaracja to intencja.</p>
+
+<p><strong>Czego nie da się udowodnić.</strong> Nie istnieje wiarygodny licznik „fikcyjnych stanowisk w rządzie”. Liczby rzucane w takich dyskusjach zwykle nie mają źródła albo mieszają różne kategorie — pełnomocników rządu, pracowników ministerstw, członków rad nadzorczych, pracowników spółek. Nie znaczy to, że problemu nie ma. Znaczy, że konkretna liczba, którą ktoś podaje, zwykle jest zmyślona, a zmyślona liczba osłabia prawdziwy zarzut.</p>
+
+<h3>9. Trybunał Konstytucyjny — spór, którego nie da się streścić bez opowiedzenia się po stronie</h3>
+
+<p>Muszę tu być szczery: to jest jedyna sprawa w tym tekście, której nie umiem opisać w sposób, który obie strony uznałyby za neutralny. I dlatego opiszę ją inaczej — przez to, co jest bezsporne.</p>
+
+<p><strong>Bezsporne fakty.</strong> Trybunał Konstytucyjny bada, czy uchwalone ustawy są zgodne z Konstytucją. Artykuł 194 Konstytucji stanowi, że Trybunał składa się z 15 sędziów wybieranych indywidualnie przez Sejm na dziewięć lat. Od 2015 roku trwa spór o legalność wyboru części sędziów — najpierw dotyczący sędziów wybranych przez poprzedni Sejm, potem przez kolejne.</p>
+
+<p>W marcu 2026 koalicja rządowa wybrała sześciu nowych sędziów TK. Prezydent Karol Nawrocki przyjął ślubowanie tylko od dwóch, pozostawiając czterech w zawieszeniu. Jesienią 2026 rząd zapowiada eskalację w tej sprawie.</p>
+
+<p><strong>Szerszy kontekst.</strong> Od sierpnia 2025 Polska funkcjonuje w kohabitacji — prezydent i rząd pochodzą z przeciwnych obozów. Prezydent Nawrocki skorzystał z prawa weta 37 razy, częściej niż którykolwiek z poprzedników. Weto stało się formą wpływania na ustawodawstwo, co mieści się w ramach konstytucyjnych kompetencji prezydenta.</p>
+
+<p>Obie strony tego sporu opisują siebie jako obrońcę Konstytucji, a drugą stronę jako jej łamiącego. To nie jest sytuacja, w której jedna strona ma dokumenty, a druga nie. To jest spór o interpretację prawa, w którym instytucja powołana do rozstrzygania takich sporów jest przedmiotem sporu.</p>
+
+<div class="box">
+  <div class="bt">Jak podejść do sprawy, w której nie da się być neutralnym</div>
+  <p>Nie udawać, że się da. Zamiast szukać „obiektywnego streszczenia”, które nie istnieje, warto przeczytać dwa najlepsze teksty z dwóch przeciwnych stron i wypisać, w których faktach się zgadzają. Zwykle zgadzają się w dziewięćdziesięciu procentach — różnią się w ocenie tych samych zdarzeń. To, w czym się <em>nie</em> zgadzają, jest zwykle właśnie pytaniem o motywy, na które, jak ustaliliśmy w sekcji 3, nie ma odpowiedzi.</p>
+</div>
+
+<h3>10. „Afery PO-PSL” i „afery PiS” — dlaczego listy afer są bezużyteczne</h3>
+
+<p>W 2017 roku Prawo i Sprawiedliwość opublikowało wykaz 115 „afer koalicji PO-PSL” z lat 2007–2015, obejmujący między innymi aferę taśmową, hazardową i sprawę Amber Gold. Strona przeciwna publikowała analogiczne wykazy dotyczące rządów PiS.</p>
+
+<p>Te sprawy nie są zmyślone. Afera hazardowa z 2009 roku, upadek piramidy finansowej Amber Gold w 2012, nagrania restauracyjnych rozmów polityków z 2014 — to wszystko wydarzenia realne, szeroko opisane, o realnych konsekwencjach.</p>
+
+<p>Problem jest inny. <strong>Lista sporządzona przez przeciwnika nie jest źródłem o rzeczywistości — jest źródłem o tym, co przeciwnik chce, żebyś zapamiętał.</strong> Charakterystyczne jest to, że taki wykaz miesza w jednym rzędzie sprawy o różnym ciężarze: obok zaniedbań instytucji finansowych, które kosztowały ludzi oszczędności, pojawiają się drogie obiady. To celowe. Umieszczenie rzeczy błahej obok poważnej sprawia, że ta poważna wygląda mniej poważnie, a błaha — bardziej.</p>
+
+<p>Ten sam mechanizm działa w drugą stronę. Jeśli wykaz jest długi, przestajemy czytać — a długość zaczyna zastępować argument.</p>
+
+<h2><span class="num">Część czwarta — źródła</span>Dlaczego TikTok jest najgorszym możliwym miejscem</h2>
+
+<p>Osobny rozdział, bo to dotyczy nas — ludzi po dwudziestce — bardziej niż kogokolwiek innego.</p>
+
+<p>Krótkie wideo z polityka ma jedną właściwość, która czyni je bezwartościowym jako źródło wiedzy o nim: <strong>jest wycięte</strong>. Ktoś wybrał te trzydzieści sekund z wielu godzin. Ten wybór zawiera całą informację. Jeśli montował zwolennik, zobaczysz najlepszy moment. Jeśli przeciwnik — najgorszy. W obu przypadkach nie oglądasz człowieka, tylko czyjąś tezę o nim.</p>
+
+<p>Do tego dochodzi algorytm, który pokazuje to, co zatrzymuje uwagę. Zatrzymuje uwagę konflikt, ironia i pewność siebie. Nie zatrzymuje uwagi ktoś, kto mówi „to zależy od kilku czynników, których jeszcze nie znamy” — a to jest zwykle najuczciwsza odpowiedź na trudne pytanie.</p>
+
+<h3>Przykład: pytanie o koty w piwnicy</h3>
+
+<p>Warto rozebrać konkret, który wielu osobom służy za dowód, że ktoś jest inteligentny. Chodzi o klip, w którym rozmówca żąda odpowiedzi „tak lub nie”, a polityk odpowiada pytaniem w rodzaju „czy przestał pan już napastować koty w piwnicy?” — pokazując, że na takie pytanie nie da się odpowiedzieć ani tak, ani nie, bo każda odpowiedź przyznaje coś, czego rozmówca nie przyznał.</p>
+
+<p>To jest trafne. I jest to chwyt znany od starożytności. Nazywa się <strong>pytanie złożone</strong> (po łacinie <em>plurium interrogationum</em>) i polega na przemyceniu w pytaniu założenia, którego przeciwnik nie zaakceptował. Klasyczna wersja podręcznikowa brzmi „czy przestał pan bić żonę?”. Opisują to podręczniki logiki od wieków.</p>
+
+<p>Co z tego wynika o osobie, która ten chwyt zastosowała? Że zna podstawy erystyki. To wszystko. Nie wynika z tego nic o tym, czy jej program gospodarczy się spina, czy jej przewidywania się sprawdzały ani czy dotrzymuje obietnic.</p>
+
+<p class="pull">Sprawność w mówieniu i trafność w myśleniu to dwie różne umiejętności. Zdarza się, że idą razem. Nie ma powodu tego zakładać.</p>
+
+<p>To samo dotyczy „z tym to bym się napił piwa”. Sympatyczność jest realną cechą i realnie wpływa na to, kogo lubimy. Ale to jest kryterium wyboru kolegi, nie kryterium wyboru osoby, która ma zarządzać budżetem państwa. Nikt nie wybiera chirurga według tego, czy fajnie gada.</p>
+
+<h3>Debaty telewizyjne są tylko trochę lepsze</h3>
+
+<p>Debata nie jest wycięta, więc to postęp. Ale mierzy tę samą umiejętność co klip — zdolność do formułowania przekonujących zdań pod presją czasu. Każdy poważny kandydat ma sztab, który go do tego przygotowuje, przewiduje pytania i ćwiczy odpowiedzi. Debata mierzy więc w dużej mierze jakość przygotowania sztabu.</p>
+
+<p>Jedyna rzecz, którą warto z debat wyławiać, to <strong>momenty, w których ktoś podaje sprawdzalną liczbę albo składa konkretną obietnicę</strong>. To można potem zweryfikować. Reszta to występ.</p>
+
+<h2><span class="num">Część piąta — praktyka</span>Co realnie zrobić przed głosowaniem</h2>
+
+<p>Konkretna procedura. Zajmuje kilka godzin raz na kilka lat i daje więcej niż setki godzin scrollowania.</p>
+
+<h3>Krok 1: sprawdź, jak głosował, a nie co mówi</h3>
+
+<p>Wszystkie głosowania w Sejmie są jawne i dostępne na stronie sejm.gov.pl — imiennie, przy każdej ustawie. Serwis mamprawowiedziec.pl porządkuje te dane po osobach i tematach.</p>
+
+<p>To jest najmocniejsze dostępne narzędzie i prawie nikt z niego nie korzysta. Deklaracja kosztuje zero. Głos zapisuje się na zawsze. Jeśli ktoś mówi, że walczy z upolitycznieniem spółek, a głosował przeciw ustawie o tym — to rozstrzyga sprawę bez dyskusji o motywach.</p>
+
+<h3>Krok 2: sprawdź raporty NIK w interesującym cię obszarze</h3>
+
+<p>Raporty NIK są publiczne i darmowe na nik.gov.pl. Są napisane suchym językiem, ale to jest ich zaleta — to najbliższa rzecz do audytu państwa, jaką mamy. Kontrolerzy piszą o fakturach, terminach i procedurach, nie o intencjach.</p>
+
+<h3>Krok 3: rozdziel fakt od kwalifikacji</h3>
+
+<p>Przy każdym zarzucie, który słyszysz, zadaj po kolei: co dokładnie się stało (fakt), na jakim etapie jest sprawa (zawiadomienie, zarzuty, akt oskarżenia, wyrok nieprawomocny, wyrok prawomocny), i kto to ustalił (sąd, NIK, dziennikarz, partia przeciwna).</p>
+
+<p>Trzy pytania. Odsiewają jakieś osiemdziesiąt procent tego, co krąży.</p>
+
+<h3>Krok 4: przy każdej obietnicy pytaj o finansowanie</h3>
+
+<p>Opisane w sekcji 7. Program bez wskazanego źródła finansowania nie jest programem, tylko życzeniem.</p>
+
+<h3>Krok 5: pogódź się z tym, że motywu nie ustalisz</h3>
+
+<p>To jest najtrudniejszy krok, bo najbardziej niewygodny. Nie dowiesz się, czy ktoś zrobił coś z przekonania, czy dla korzyści. Możesz natomiast ustalić, co zrobił, ile to kosztowało i kto na tym zyskał. To wystarczy do podjęcia decyzji.</p>
+
+<div class="box">
+  <div class="bt">Test, który warto stosować do samego siebie</div>
+  <p>Wybierz partię, którą najbardziej cenisz, i spróbuj wymienić trzy konkretne rzeczy, które zrobiła źle — z datami. Potem wybierz tę, którą cenisz najmniej, i wymień trzy rzeczy, które zrobiła dobrze.</p>
+  <p>Jeśli to trudne, problem prawdopodobnie nie leży w partiach.</p>
+</div>
+
+<h2><span class="num">Zakończenie</span>Czego ten tekst nie zrobił</h2>
+
+<p>Nie powiedział, kto jest złym człowiekiem. To było celowe.</p>
+
+<p>Człowiek, który chce wiedzieć „kto zawinił”, szuka czegoś, czego polityka nie oferuje: czystej historii z bohaterem i czarnym charakterem. Państwo tak nie działa. Działa tak, że ktoś podejmuje decyzję na podstawie niepełnych informacji, pod presją czasu, z myślą o wyborach za trzy lata, a skutki tej decyzji ujawniają się po dziesięciu — kiedy on już nie rządzi, a rozlicza się z tego kto inny.</p>
+
+<p>W tym systemie są ludzie, którzy kradną, i to jest udokumentowane. Są ludzie, którzy popełniają błędy w dobrej wierze. I jest bardzo dużo przypadków, w których nie da się rozstrzygnąć, z którą sytuacją mamy do czynienia — a każdy, kto twierdzi inaczej, coś ci sprzedaje.</p>
+
+<p>Dobra wiadomość jest taka, że do sensownego głosowania nie trzeba mieć pewności co do cudzych intencji. Wystarczy sprawdzić zapis głosowań, przeczytać jeden raport, zadać pytanie o finansowanie i nie dać się zagadać temu, kto ładnie mówi.</p>
+
+<p>To jest wykonalne. I jest dokładnie tym, czego nie robi prawie nikt — łącznie z facetem na stacji benzynowej, który był absolutnie pewny, że wie, o czym mówi.</p>
+
+<hr class="sep">
+
+<h2 style="margin-top:0"><span class="num">Aneks</span>Źródła i jak je czytać</h2>
+
+<p style="font-size:.95rem;color:var(--muted)">Poniżej źródła wykorzystane w tekście. Przy sprawach spornych celowo zestawiono materiały o różnym nachyleniu redakcyjnym — to nie jest niedopatrzenie, tylko warunek uczciwego opisu.</p>
+
+<h3 style="font-size:1rem;margin-top:34px">Instytucje, do których warto chodzić bezpośrednio</h3>
+<ul class="sources">
+  <li><strong>nik.gov.pl</strong> — raporty Najwyższej Izby Kontroli. Niezależny od rządu organ kontrolny podległy Sejmowi.</li>
+  <li><strong>sejm.gov.pl</strong> — imienne wyniki wszystkich głosowań, stenogramy posiedzeń, druki sejmowe.</li>
+  <li><strong>pkw.gov.pl</strong> — oficjalne wyniki wyborcze Państwowej Komisji Wyborczej.</li>
+  <li><strong>mamprawowiedziec.pl</strong> — baza głosowań i deklaracji posłów, uporządkowana po osobach.</li>
+  <li><strong>demagog.org.pl</strong> — organizacja factcheckingowa, prowadzi też rejestr realizacji obietnic wyborczych.</li>
+  <li><strong>batory.org.pl</strong> — analizy ustrojowe Fundacji im. Stefana Batorego, m.in. opracowania dr. hab. Jarosława Flisa o ordynacji wyborczej.</li>
+</ul>
+
+<h3 style="font-size:1rem;margin-top:34px">Materiały szczegółowe</h3>
+<ul class="sources">
+  <li>Metoda D'Hondta i progi wyborcze: prawo.pl, opracowania Fundacji Batorego (Jarosław Flis), analiza FOR nt. matematyki systemu D'Hondta.</li>
+  <li>Wyniki I tury wyborów prezydenckich 2025: komunikat PKW, relacje TVN24, Dziennik Gazeta Prawna.</li>
+  <li>SKOK Wołomin: Polskie Radio 24, „Rzeczpospolita”, TVN24 Biznes, Gazeta Prawna; stanowisko strony przeciwnej — wGospodarce.pl, wPolityce.pl.</li>
+  <li>Wybory kopertowe: raport NIK z 13 maja 2021, Konkret24 (kalendarium decyzji), „Rzeczpospolita”, prawo.pl; stanowisko strony przeciwnej — DoRzeczy.pl.</li>
+  <li>Fundusz Sprawiedliwości: raporty NIK z 2021 i 2025–2026, ustalenia Wirtualnej Polski, TVN24, Polskie Radio 24, Bankier.pl.</li>
+  <li>Sprawa Grzegorza Brauna: PAP, „Rzeczpospolita”, Polsat News, TVN24.</li>
+  <li>Elektrownia jądrowa: komunikaty Polskich Elektrowni Jądrowych, decyzja Komisji Europejskiej z 9.12.2025, portal nuclear.pl, PAP.</li>
+  <li>Intel Miękinia: komunikaty Ministerstwa Cyfryzacji, wyniki kwartalne Intela, RMF24, wroclaw.pl, OKO.press.</li>
+  <li>Ceny paliw i pakiet CPN: Dziennik Ustaw, komunikaty Ministerstwa Finansów i Gospodarki, podatki.biz, Forsal.</li>
+  <li>Spółki Skarbu Państwa: Demagog (Konkret 68), money.pl, „Rzeczpospolita”, Fundacja Batorego („Stanowiska publiczne jako łup polityczny”).</li>
+</ul>
+
+<footer class="end">
+  <p>Stan wiedzy: wrzesień 2026. Wszystkie sprawy sądowe opisane jako „w toku” mogły się od tego czasu rozstrzygnąć — przy każdej warto sprawdzić aktualny status przed powołaniem się na nią.</p>
+  <p>Jeśli znajdziesz w tym tekście błąd rzeczowy, jest to błąd, a nie stanowisko. Warto go poprawić.</p>
+</footer>
+
+</div>
+</body>
+</html>

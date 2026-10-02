@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia sporu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;}
+  :root:not([data-theme="light"]){color-scheme:dark;}
+  @media (prefers-color-scheme: light){:root:not([data-theme="light"]){color-scheme:dark;}}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+  header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+  .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+  .lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+  .meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+  h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;letter-spacing:-.01em;}
+  h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.22em;font-weight:600;color:var(--gold);margin-bottom:12px;text-transform:uppercase;}
+  h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:42px 0 12px;line-height:1.3;}
+  p{margin:0 0 20px;} strong{font-weight:600;color:#fff;} a{color:var(--gold);}
+  ul,ol{padding-left:22px;margin:0 0 22px;} li{margin-bottom:11px;}
+  .box{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold);padding:20px 22px;margin:32px 0;font-size:.96rem;line-height:1.62;}
+  .box .bt{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+  .box p:last-child{margin-bottom:0;}
+  .box.red{border-left-color:var(--red);} .box.red .bt{color:var(--red);}
+  .box.blue{border-left-color:var(--blue);} .box.blue .bt{color:var(--blue);}
+  .pull{font-family:'Fraunces',Georgia,serif;font-size:1.32rem;line-height:1.38;color:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0;margin:38px 0;font-weight:400;}
+  .case{border:1px solid var(--line);background:var(--card);padding:22px 24px;margin:26px 0;}
+  .case .ch{font-family:'Fraunces',serif;font-size:1.15rem;color:#fff;margin-bottom:6px;}
+  .case .cl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin-bottom:14px;}
+  .case.a{border-left:3px solid var(--blue);} .case.a .cl{color:var(--blue);}
+  .case.b{border-left:3px solid var(--red);} .case.b .cl{color:var(--red);}
+  .case ul{margin:14px 0 0;font-size:.94rem;} .case li{margin-bottom:10px;}
+  .case p{font-size:.95rem;margin-bottom:12px;}
+  .nums{margin:34px 0;border:1px solid var(--line);}
+  .nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+  .nums .nrow:last-child{border-bottom:none;}
+  .nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+  .nums .d{font-size:.92rem;line-height:1.5;}
+  .tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+  .tl .ev{margin-bottom:22px;position:relative;}
+  .tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+  .tl .ev.crit:before{background:var(--red);}
+  .tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+  .tl .ev.crit .yr{color:var(--red);}
+  .tl .txt{font-size:.94rem;line-height:1.55;}
+  hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+  .sources{font-size:.85rem;color:var(--muted);line-height:1.6;} .sources li{margin-bottom:8px;}
+  footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+  @media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy · część siódma</div>
+  <h1>Anatomia sporu</h1>
+  <p class="lede">Ze wszystkich spraw w tej serii ta jedna nie ma wersji neutralnej. Nie dlatego, że brakuje faktów — fakty są dobrze udokumentowane. Dlatego, że obie strony zgadzają się co do zdarzeń i różnią się w tym, co te zdarzenia znaczą. Ten tekst nie rozstrzyga sporu. Pokazuje, z czego się składa.</p>
+  <div class="meta">Wrzesień 2026 · czas czytania ok. 35 minut</div>
+</header>
+
+<p>Muszę zacząć od uczciwego zastrzeżenia, bo inaczej cała reszta byłaby nieuczciwa.</p>
+
+<p>W poprzednich sześciu tekstach dało się oddzielić fakt od interpretacji i powiedzieć: to jest ustalone, tamto jest sporne. Tutaj się nie da w ten sam sposób. Bo spór o praworządność nie dotyczy tego, <em>co się stało</em> — kalendarium jest bezsporne i obie strony podają te same daty. Dotyczy tego, <strong>czy to, co się stało, było zgodne z Konstytucją</strong>. A od rozstrzygania takich pytań jest w Polsce jeden organ: Trybunał Konstytucyjny. Który sam jest przedmiotem tego sporu.</p>
+
+<p>Dlatego ten tekst jest zbudowany inaczej. Najpierw wyjaśnię, o co w ogóle chodzi, potem podam kalendarium, którego nikt nie kwestionuje, a następnie rozpiszę <strong>obie wersje prawne — każdą w jej najmocniejszej postaci</strong>, tak jak przedstawiają ją jej zwolennicy. Nie powiem, która ma rację. Powiem, gdzie dokładnie się rozchodzą, żeby dało się samodzielnie ocenić, który argument jest przekonujący.</p>
+
+<h2><span class="num">Rozdział pierwszy</span>Po co komu niezależne sądy — od zera</h2>
+
+<p>Żeby ocenić spór, trzeba rozumieć trzy instytucje. Bez tego cała dyskusja jest wymianą skrótów.</p>
+
+<p><strong>Trybunał Konstytucyjny</strong> sprawdza, czy uchwalona ustawa jest zgodna z Konstytucją. Jeśli orzeknie, że nie — przepis przestaje obowiązywać. To jest jedyny hamulec na większość parlamentarną: parlament może uchwalić prawie wszystko, ale nie może uchwalić czegoś sprzecznego z Konstytucją, bo TK to uchyli. Sędziów TK wybiera Sejm.</p>
+
+<p><strong>Krajowa Rada Sądownictwa</strong> decyduje o tym, kto zostanie sędzią i kto awansuje. Formalnie sędziów powołuje Prezydent, ale na wniosek KRS — bez wniosku Rady nie ma powołania. Kto kontroluje KRS, ten kontroluje dopływ ludzi do zawodu sędziowskiego. Konstytucja przewiduje, że w skład Rady wchodzi między innymi piętnastu sędziów — i właśnie o to, <em>kto ich wybiera</em>, toczy się spór.</p>
+
+<p><strong>System dyscyplinarny</strong> decyduje, co się stanie z sędzią, który orzeknie niewygodnie. Jeśli sędziego można za treść orzeczenia postawić przed komisją dyscyplinarną, zawiesić i obciąć mu pensję, to jego niezawisłość jest teoretyczna — nawet jeśli formalnie nikt nie wydaje mu poleceń.</p>
+
+<div class="box">
+  <div class="bt">Dlaczego to nie jest sprawa dla prawników, tylko dla każdego</div>
+  <p>Niezależność sądu nie jest przywilejem sędziów. Jest zabezpieczeniem dla obywatela na wypadek sporu z państwem — o podatek, o mandat, o odebrane świadczenie, o zatrzymanie. Jeśli o awansie sędziego decydują ludzie związani z jedną ze stron tego sporu, obywatel traci gwarancję, że jego sprawa zostanie rozpatrzona niezależnie.</p>
+  <p>To działa też odwrotnie i to jest argument drugiej strony: jeśli sędziowie sami się rekrutują, sami awansują i sami sądzą, powstaje zamknięta grupa zawodowa, której nikt nie kontroluje — a władza niekontrolowana też jest problemem, nawet jeśli nosi togę.</p>
+  <p>Oba zdania są sensowne. Cały spór polega na tym, które ryzyko uznamy za większe.</p>
+</div>
+
+<h2><span class="num">Rozdział drugi</span>Kalendarium, którego nikt nie kwestionuje</h2>
+
+<div class="tl">
+  <div class="ev crit"><div class="yr">październik 2015</div><div class="txt">Sejm poprzedniej kadencji, z większością PO-PSL, wybiera pięciu sędziów Trybunału Konstytucyjnego — w tym dwóch na miejsca, które zwolnią się dopiero w grudniu, czyli już po wyborach i za kadencji następnego Sejmu.</div></div>
+  <div class="ev crit"><div class="yr">listopad–grudzień 2015</div><div class="txt">Prezydent Andrzej Duda nie odbiera ślubowania od żadnego z tej piątki. Nowy Sejm z większością PiS unieważnia tamte wybory i wybiera pięciu innych sędziów; ślubowanie odbiera się od nich w nocy. Trybunał orzeka w grudniu, że trzech z pięciu wybranych w październiku wybrano prawidłowo, a dwóch nie. Powstaje sytuacja, w której część miejsc w TK zajmują osoby wybrane na stanowiska już obsadzone — w debacie nazywane sędziami dublerami.</div></div>
+  <div class="ev"><div class="yr">2016</div><div class="txt">Kolejne ustawy o Trybunale i spór o publikowanie jego wyroków. W grudniu prezesem TK zostaje Julia Przyłębska.</div></div>
+  <div class="ev"><div class="yr">lipiec 2017</div><div class="txt">Prezydent Duda wetuje ustawy o Sądzie Najwyższym i o KRS, podpisuje natomiast ustawę o sądach powszechnych, która pozwala ministrowi sprawiedliwości wymienić prezesów wszystkich sądów w Polsce w ciągu pół roku.</div></div>
+  <div class="ev crit"><div class="yr">grudzień 2017</div><div class="txt">Sejm uchwala nową ustawę o KRS: piętnastu sędziowskich członków Rady wybiera odtąd Sejm, a nie — jak wcześniej — samo środowisko sędziowskie. Opozycja zaczyna nazywać ten organ neoKRS, a sędziów powołanych z jego udziałem — neosędziami. W tym samym miesiącu Komisja Europejska uruchamia wobec Polski procedurę z artykułu 7 Traktatu o UE.</div></div>
+  <div class="ev"><div class="yr">2018</div><div class="txt">W Sądzie Najwyższym powstaje Izba Dyscyplinarna, nieuznawana przez ówczesną opozycję. W 2022 roku zastępuje ją Izba Odpowiedzialności Zawodowej — której z kolei nie uznaje dzisiejsza koalicja rządząca.</div></div>
+  <div class="ev"><div class="yr">2021</div><div class="txt">Europejski Trybunał Praw Człowieka w sprawie Xero Flor przeciwko Polsce orzeka, że skład TK z udziałem osoby wybranej na zajęte miejsce nie jest sądem ustanowionym ustawą. W październiku TK orzeka w sprawie K 3/21, że część przepisów traktatowych w rozumieniu przyjętym przez TSUE jest niezgodna z polską Konstytucją.</div></div>
+  <div class="ev crit"><div class="yr">2021–2023</div><div class="txt">TSUE nakłada na Polskę karę miliona euro dziennie za niezawieszenie Izby Dyscyplinarnej; później obniża ją do pół miliona. Naliczanie ustaje z wyrokiem z 5 czerwca 2023. Równolegle zablokowane pozostają środki z Krajowego Planu Odbudowy.</div></div>
+  <div class="ev"><div class="yr">2024</div><div class="txt">Po zmianie rządu Komisja Europejska uznaje warunki za spełnione. Pierwsza transza KPO — 6,3 miliarda euro — zostaje wypłacona na początku kwietnia. Otwiera się dostęp do 76,5 miliarda euro z polityki spójności na lata 2021–2027. W maju zamknięta zostaje procedura z artykułu 7.</div></div>
+  <div class="ev"><div class="yr">2025–2026</div><div class="txt">Od sierpnia 2025 prezydentem jest Karol Nawrocki. Wetuje ustawę o KRS oraz tak zwaną ustawę praworządnościową. Konkursy na stanowiska sędziowskie pozostają wstrzymane od kilkunastu miesięcy. W lipcu 2026 TSUE wydaje kolejne wyroki dotyczące statusu sędziów powołanych z udziałem KRS ukształtowanej po 2017 roku.</div></div>
+</div>
+
+<h2><span class="num">Rozdział trzeci</span>Dwie wersje prawne</h2>
+
+<p>Poniżej każda ze stron w swojej najmocniejszej postaci. Nie streszczenie tego, co mówią w telewizji — argument prawny, który stoi za ich stanowiskiem.</p>
+
+<div class="case a">
+  <div class="cl">Wersja pierwsza</div>
+  <div class="ch">Reforma naruszyła Konstytucję i standard europejski</div>
+  <p>Rdzeń tego stanowiska: zmiany z lat 2015–2018 nie były zwykłą reformą organizacyjną, tylko przejęciem kontroli nad organami, które miały kontrolować władzę.</p>
+  <ul>
+    <li><strong>TK przestał być hamulcem.</strong> Jeśli w składzie orzekającym zasiadają osoby wybrane na miejsca już obsadzone, orzeczenia takiego składu są wadliwe. Nie jest to zarzut publicystyczny — tak orzekł Europejski Trybunał Praw Człowieka w sprawie Xero Flor, stwierdzając, że taki skład nie spełnia wymogu sądu ustanowionego ustawą.</li>
+    <li><strong>KRS przestała być niezależna.</strong> Konstytucja przewiduje, że KRS ma stać na straży niezależności sądów. Organ, którego sędziowską większość wybiera Sejm, jest zależny od aktualnej większości parlamentarnej — a więc nie może pełnić funkcji, do której został powołany. Zastrzeżenia wobec tego modelu zgłaszały TSUE, ETPC, Sąd Najwyższy i Naczelny Sąd Administracyjny.</li>
+    <li><strong>System dyscyplinarny stał się narzędziem nacisku.</strong> TSUE zarządził zawieszenie Izby Dyscyplinarnej środkiem tymczasowym; niewykonanie tego postanowienia kosztowało Polskę setki milionów euro. Gdyby izba działała prawidłowo, nie byłoby podstaw do takiego rozstrzygnięcia.</li>
+    <li><strong>Skutek dla obywatela.</strong> Wyrok wydany przez sędziego powołanego w wadliwej procedurze może być podważany latami. To nie jest problem sędziów — to problem stron, które nie mają pewności, czy ich sprawa jest zakończona.</li>
+  </ul>
+</div>
+
+<div class="case b">
+  <div class="cl">Wersja druga</div>
+  <div class="ch">To była legalna reforma w wyłącznej kompetencji państwa</div>
+  <p>Rdzeń tego stanowiska: ustrój wymiaru sprawiedliwości należy do kompetencji państw członkowskich, a zarzuty wobec reformy są spóźnione i wybiórcze.</p>
+  <ul>
+    <li><strong>Łamanie zaczęło się wcześniej.</strong> To jest najmocniejszy punkt tej strony i trzeba go uczciwie oddać: w październiku 2015 poprzednia większość wybrała dwóch sędziów TK na miejsca, które zwalniały się dopiero za kadencji następnego Sejmu. Sam Trybunał orzekł, że ten wybór był wadliwy. Zatem pierwszy krok poza standard wykonała strona, która dziś oskarża o jego łamanie.</li>
+    <li><strong>Konstytucja nie rozstrzyga, kto wybiera piętnastu sędziów do KRS.</strong> Artykuł 187 mówi, że Rada składa się między innymi z piętnastu członków wybranych spośród sędziów — ale nie precyzuje, przez kogo. Wcześniejsza praktyka nie jest tożsama z nakazem konstytucyjnym.</li>
+    <li><strong>Powoływanie sędziów to prerogatywa prezydenta.</strong> Raz powołany sędzia jest sędzią, a Konstytucja nie przewiduje procedury unieważniania powołań. Na tej podstawie prezydent Nawrocki uzasadniał weto wobec ustawy praworządnościowej, wskazując, że wprowadza ona podział sędziów na lepszych i gorszych i że w polskim porządku prawnym nie ma sędziów „neo” ani żadnych innych kategorii.</li>
+    <li><strong>Unia nie ma tu kompetencji.</strong> Organizacja wymiaru sprawiedliwości nie została przekazana Unii w traktatach. Na tym opierało się orzeczenie TK w sprawie K 3/21 — i na tym opiera się zarzut, że TSUE rozszerzył swoje kompetencje poza to, na co państwa się zgodziły.</li>
+    <li><strong>Inne państwa robią podobnie.</strong> W wielu krajach Unii politycy uczestniczą w powoływaniu sędziów, a w niektórych robią to w stopniu większym niż w Polsce — bez analogicznych konsekwencji.</li>
+  </ul>
+</div>
+
+<h3>Gdzie dokładnie się rozchodzą</h3>
+
+<p>Warto to nazwać precyzyjnie, bo to jedno zdanie oszczędza godzin słuchania kłótni.</p>
+
+<p>Obie strony zgadzają się, że sędziów do KRS wybiera dziś Sejm. Obie zgadzają się, że wcześniej wybierali ich sędziowie. Obie zgadzają się, że Konstytucja tego wprost nie przesądza.</p>
+
+<p><strong>Różnią się w tym, czy z ogólnej zasady podziału władz wynika konkretny nakaz.</strong> Jedna strona mówi: skoro KRS ma chronić niezależność sądów od polityków, to nie może być obsadzana przez polityków — to wynika z funkcji, nawet bez wyraźnego przepisu. Druga mówi: jeśli nie ma przepisu, to nie ma zakazu, a wyprowadzanie nakazów z ogólnych zasad jest tworzeniem prawa przez interpretację.</p>
+
+<p class="pull">To nie jest spór o fakty. To spór o to, jak czytać Konstytucję — i w każdym systemie prawnym jest to spór realny, który toczą ze sobą uczciwi prawnicy.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Trybunały orzekły przeciwnie i to jest sedno</h2>
+
+<p>Tutaj dochodzimy do rzeczy, która czyni ten spór nierozstrzygalnym w ramach istniejących instytucji.</p>
+
+<p>Trybunał Sprawiedliwości Unii Europejskiej i Europejski Trybunał Praw Człowieka orzekały, że polskie rozwiązania naruszają wymogi niezależności sądownictwa. Polski Trybunał Konstytucyjny orzekł, że rozumienie traktatów przyjęte przez TSUE jest niezgodne z polską Konstytucją.</p>
+
+<p>Nie ma instancji ponad tym. Nie istnieje sąd, który rozstrzygnąłby, który trybunał ma rację — bo spór dotyczy właśnie tego, komu przysługuje ostatnie słowo.</p>
+
+<p>Warto dodać, że to nie jest wyłącznie polski problem. Podobne napięcia między sądem konstytucyjnym a TSUE pojawiały się także w innych państwach członkowskich — najgłośniej w Niemczech. Różnica polega na skali i na tym, że w Polsce zbiegło się to ze sporem wewnętrznym o obsadę samego trybunału.</p>
+
+<h2><span class="num">Rozdział piąty</span>Pieniądze — twarde liczby</h2>
+
+<p>To jedyna część tej sprawy, w której nie ma interpretacji. Są przelewy i potrącenia.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">1 mln €</div><div class="d">Dzienna kara nałożona przez TSUE od 3 listopada 2021 za niewykonanie postanowienia o zawieszeniu Izby Dyscyplinarnej. Później obniżona do 500 tysięcy euro dziennie.</div></div>
+  <div class="nrow"><div class="n">~2,5 mld zł</div><div class="d">Łączna wartość naliczonych kar do czasu wstrzymania ich naliczania wyrokiem z 5 czerwca 2023. Polska nie płaciła ich dobrowolnie — Komisja potrącała należności z funduszy przysługujących Polsce z innych tytułów.</div></div>
+  <div class="nrow"><div class="n">320 mln €</div><div class="d">Kwota, której zwrotu Polska domagała się przed TSUE. W lutym 2025 Trybunał oddalił wniosek, uznając, że Komisja działała zgodnie z prawem.</div></div>
+  <div class="nrow"><div class="n">6,3 mld €</div><div class="d">Pierwsza transza z Krajowego Planu Odbudowy, wypłacona na początku kwietnia 2024, po niemal trzech latach blokady.</div></div>
+  <div class="nrow"><div class="n">76,5 mld €</div><div class="d">Środki polityki spójności na lata 2021–2027, do których dostęp otwarto po uznaniu przez Komisję, że spełnione zostały warunki horyzontalne związane z Kartą Praw Podstawowych.</div></div>
+</div>
+
+<div class="box red">
+  <div class="bt">Fakt, który jest niewygodny dla obu stron</div>
+  <p>Środki odblokowano w 2024 roku, <strong>zanim parlament uchwalił nowe ustawy o sądach</strong>. Komisja uznała za wystarczające zmiany w systemie dyscyplinarnym oraz plan naprawczy.</p>
+  <p>Strona rządowa traktuje to jako dowód realnej poprawy. Strona przeciwna — jako dowód, że kryterium było od początku polityczne, skoro te same instytucje sądowe działają dalej, a ocena się zmieniła po zmianie rządu. Trzecia interpretacja, formułowana przez część prawników, brzmi: Komisja zawsze miała tu szeroki margines uznania, a decyzja o odblokowaniu była decyzją polityczną — tak samo jak decyzja o zablokowaniu.</p>
+  <p>Żadnej z tych wersji nie da się dziś zweryfikować dokumentem. Warto natomiast zauważyć, że sam fakt jest bezsporny, a różnią się wyłącznie wnioski.</p>
+</div>
+
+<h2><span class="num">Rozdział szósty</span>Gdzie jesteśmy dziś</h2>
+
+<p>Od sierpnia 2025 Polska działa w kohabitacji: rząd i prezydent pochodzą z przeciwnych obozów. Skutek dla tej konkretnej sprawy jest paraliżujący.</p>
+
+<p><strong>Ustawy nie przechodzą.</strong> Prezydent Nawrocki zawetował nowelizację ustawy o KRS, która przenosiła wybór sędziowskich członków Rady z Sejmu z powrotem na środowisko sędziowskie, oraz tak zwaną ustawę praworządnościową regulującą status sędziów powołanych po 2017 roku. Uzasadnienie: ustawa wprowadza segregację sędziów, a powoływanie sędziów jest prerogatywą prezydenta.</p>
+
+<p><strong>Konkursy stoją.</strong> Nabory na stanowiska sędziowskie są wstrzymane od kilkunastu miesięcy — z powodu wątpliwości co do statusu KRS. Oznacza to, że wakaty się nie wypełniają, a sprawy w sądach czekają dłużej.</p>
+
+<p><strong>Pojawiła się pułapka, którą warto zrozumieć.</strong> Kadencja obecnej KRS wygasła wiosną 2026. Po wecie rząd stanął przed wyborem: albo nie wybrać nowej Rady wcale, albo wybrać ją <strong>na podstawie ustawy z 2017 roku, którą sam uznaje za niekonstytucyjną</strong>. Minister sprawiedliwości zapowiedział skorzystanie z tej drugiej ścieżki, zastrzegając, że decydujący głos i tak będzie należał do środowiska sędziowskiego.</p>
+
+<p>To jest moment, w którym warto zawiesić sympatie i zobaczyć strukturę. Strona, która przez osiem lat argumentowała, że danej ustawy nie wolno stosować, stosuje ją — bo alternatywą jest brak organu. Dokładnie w tej samej sytuacji była poprzednia władza, gdy tłumaczyła, że musi działać, mimo wątpliwości.</p>
+
+<div class="box blue">
+  <div class="bt">Szczegół, który dobrze pokazuje temperaturę sporu</div>
+  <p>Były minister sprawiedliwości Zbigniew Ziobro, wobec którego prokuratura prowadzi postępowania opisane w pierwszej części tej serii, uzyskał w styczniu 2026 roku status uchodźcy na Węgrzech. Węgry cofnęły go 2 lipca 2026.</p>
+  <p>To jest sytuacja bez precedensu w Unii: państwo członkowskie przyznaje ochronę międzynarodową byłemu ministrowi innego państwa członkowskiego, uznając tamtejsze postępowanie za polityczne. Niezależnie od tego, jak ocenia się zasadność zarzutów, sam fakt mówi coś o stanie wzajemnego zaufania między instytucjami europejskimi.</p>
+</div>
+
+<h2><span class="num">Rozdział siódmy</span>Co da się rozstrzygnąć, a czego nie</h2>
+
+<h3>Rzeczy bezsporne</h3>
+<ul>
+  <li>Kalendarium wydarzeń — daty, ustawy, głosowania, wyroki.</li>
+  <li>Treść orzeczeń TSUE, ETPC i TK — można je przeczytać.</li>
+  <li>Kwoty kar i terminy wypłat środków unijnych.</li>
+  <li>Fakt, że w październiku 2015 wybrano dwóch sędziów TK z wyprzedzeniem i że TK uznał ten wybór za wadliwy.</li>
+  <li>Fakt, że od grudnia 2017 sędziowskich członków KRS wybiera Sejm.</li>
+</ul>
+
+<h3>Spory prawne — realne, nie propagandowe</h3>
+<ul>
+  <li>Czy z zasady podziału władz wynika nakaz, by sędziów do KRS wybierali sędziowie.</li>
+  <li>Czy ustrój sądownictwa podlega ocenie instytucji unijnych, czy jest wyłączną kompetencją państwa.</li>
+  <li>Czy powołanie sędziego dokonane w wadliwej procedurze da się wzruszyć, skoro Konstytucja nie przewiduje takiej procedury.</li>
+</ul>
+
+<h3>Spory o wartości — nierozstrzygalne dowodem</h3>
+<ul>
+  <li>Co jest większym zagrożeniem: wpływ polityków na sądy czy brak jakiejkolwiek kontroli nad zamkniętym środowiskiem sędziowskim.</li>
+  <li>Czy naprawianie wadliwych procedur wadliwymi procedurami jest dopuszczalne, gdy nie ma innej drogi.</li>
+  <li>Czy członkostwo w Unii oznacza zgodę na to, by wspólne instytucje oceniały ustrój państwa.</li>
+</ul>
+
+<p>Ostatnia grupa jest najważniejsza, bo większość publicznej kłótni toczy się właśnie o nią — tyle że w przebraniu sporu o fakty. Ludzie kłócą się o daty, mając w istocie różne poglądy na to, czego się bardziej boją.</p>
+
+<h2><span class="num">Zakończenie</span>Koszt, który płaci ktoś inny</h2>
+
+<p>Osiem lat sporu daje się podsumować z perspektywy kogoś, kto nie jest ani sędzią, ani politykiem.</p>
+
+<p>Wyroki wydane przez sędziów powołanych po 2017 roku mogą być kwestionowane — co oznacza, że ludzie, którzy wygrali albo przegrali sprawę, nie mają pewności, czy jest zakończona. Konkursy sędziowskie stoją, więc wakaty się nie wypełniają, a postępowania trwają dłużej. Setki milionów euro zostały potrącone z funduszy, które miały sfinansować coś innego.</p>
+
+<p>Żaden z tych kosztów nie spadł na osoby, które podejmowały decyzje.</p>
+
+<p>I jeszcze jedna obserwacja, którą trudno obejść. Obie strony twierdzą, że bronią Konstytucji, i obie w praktyce sięgnęły po rozwiązania, które wcześniej same uznawały za niedopuszczalne — jedna wybierając sędziów z wyprzedzeniem, druga korzystając z ustawy, którą nazywa niekonstytucyjną. To nie jest argument za tym, że są takie same. To jest obserwacja, że <strong>w sporze o reguły każda strona prędzej czy później uznaje, że jej cel usprawiedliwia odstępstwo od reguły</strong> — a to jest dokładnie ten moment, w którym reguła przestaje istnieć.</p>
+
+<p>Pytanie, które warto zadać politykowi każdej opcji, brzmi więc nie „czy broni pan praworządności”, bo odpowiedzą wszyscy tak samo. Brzmi:</p>
+
+<p class="pull">Jaką procedurę zmiany ustroju sądów uznałby pan za wiążącą również wtedy, gdyby rządziła strona przeciwna?</p>
+
+<p>Na to pytanie nie da się odpowiedzieć hasłem. I właśnie dlatego warto je zadawać.</p>
+
+<hr class="sep">
+
+<h2 style="margin-top:0"><span class="num">Aneks</span>Źródła</h2>
+
+<ul class="sources">
+  <li><strong>Orzeczenia</strong> — wyroki i postanowienia TSUE dotyczące Izby Dyscyplinarnej i statusu sędziów (w tym postanowienie z 14 lipca 2021, wyrok z 5 czerwca 2023, rozstrzygnięcie z lutego 2025 w sprawie potrąceń, wyroki z lipca 2026); wyroki ETPC, w tym Xero Flor przeciwko Polsce oraz wyrok pilotażowy Wałęsa przeciwko Polsce; wyrok TK w sprawie K 3/21 oraz orzeczenia TK z grudnia 2015.</li>
+  <li><strong>Komisja Europejska</strong> — sprawozdania na temat praworządności (rozdziały dotyczące Polski, dostępne w dokumentach Rady UE), komunikaty o ocenie wniosków o płatność z KPO.</li>
+  <li><strong>Kancelaria Prezydenta RP</strong> — uzasadnienia wet wobec ustawy o KRS i ustawy praworządnościowej (2026).</li>
+  <li><strong>Ministerstwo Sprawiedliwości</strong> — projekty ustaw praworządnościowych i nowelizacji ustawy o KRS wraz z uzasadnieniami.</li>
+  <li>Analizy prawne i relacje: prawo.pl, „Rzeczpospolita” (dział Sądy i Trybunały), Dziennik Gazeta Prawna, portalsamorzadowy.pl, Euronews, konstytucyjny.pl.</li>
+  <li>Materiały prezentujące stanowiska stron sporu: Krytyka Polityczna i konstytucyjny.pl po jednej stronie, Salon24, wPolityce.pl i Radio Maryja po drugiej — cytowane z zastrzeżeniem z części pierwszej, że są to źródła o stanowiskach, nie o faktach.</li>
+</ul>
+
+<footer class="end">
+  <p>Stan wiedzy: wrzesień 2026. Spór jest w toku: kolejne ustawy, weta i orzeczenia mogą zmieniać obraz z miesiąca na miesiąc. Przy powoływaniu się na którykolwiek element warto sprawdzić aktualny stan.</p>
+  <p>Części poprzednie: „Anatomia władzy”, „Anatomia zaniechania”, „Anatomia podsłuchu”, „Anatomia koncernu”, „Anatomia luki”, „Anatomia liczby”.</p>
+</footer>
+
+</div>
+</body>
+</html>

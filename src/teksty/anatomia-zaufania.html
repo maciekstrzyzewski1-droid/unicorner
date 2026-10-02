@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia zaufania</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;}
+strong{font-weight:600;color:#fff;}
+sup{font-size:.62em;color:var(--gold);font-weight:500;margin-left:1px;}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;font-size:.94rem;line-height:1.6;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;font-size:1.05rem;}
+.box p{margin:0 0 10px;} .box p:last-child{margin-bottom:0;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .ev.r:before{background:var(--red);} .tl .ev.g:before{background:var(--green);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.chart{margin:34px 0;}
+.chart .ct{font-family:'Fraunces',serif;font-size:1.05rem;margin-bottom:14px;}
+.bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.r{background:var(--red);} .bars .fill.g{background:var(--green);} .bars .fill.b{background:var(--blue);}
+.bars .val{flex:0 0 78px;text-align:right;font-variant-numeric:tabular-nums;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:10px;}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;background:var(--c);}
+.caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .h{font-family:'Fraunces',serif;color:var(--gold);font-size:1rem;margin-bottom:8px;}
+.twocol .side p{margin:0 0 8px;} .twocol .side p:last-child{margin:0;}
+.quote{border-left:2px solid var(--gold);padding:4px 0 4px 18px;margin:28px 0;font-family:'Fraunces',serif;font-size:1.12rem;line-height:1.5;color:#f3ecd9;}
+.quote .who{display:block;font-family:'Work Sans',sans-serif;font-size:.8rem;color:var(--muted);margin-top:8px;}
+.verdict{margin:30px 0;border:1px solid var(--line);}
+.verdict .vr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);}
+.verdict .vr:last-child{border-bottom:none;}
+.verdict .vr div{padding:12px 16px;font-size:.9rem;line-height:1.5;}
+.verdict .vr div:first-child{border-right:1px solid var(--line);}
+.verdict .vr:not(.head) div:first-child{color:var(--muted);font-style:italic;}
+.verdict .head div{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--gold);}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+.sources{font-size:.85rem;color:var(--muted);line-height:1.6;padding-left:22px;} .sources li{margin-bottom:8px;}
+.sources a{color:var(--muted);word-break:break-word;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;} .bars .lab{flex:0 0 104px;} .bars .val{flex:0 0 66px;} .twocol{grid-template-columns:1fr;} .verdict .vr{grid-template-columns:1fr;} .verdict .vr div:first-child{border-right:none;border-bottom:none;padding-bottom:0;} .verdict .head{display:none;} .verdict .vr div:first-child:before{content:'Popularna wersja';display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;font-style:normal;margin-bottom:4px;} .verdict .vr div:last-child:before{content:'Co mówi wyrok';display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:4px;}}
+</style>
+</head>
+<body><div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy · Seria krypto, część szósta</div>
+  <h1>Anatomia zaufania</h1>
+  <p class="lede">FTX była drugą największą giełdą krypto na świecie, a jej założyciel — twarzą „odpowiedzialnego” krypto. W osiem dni wszystko się rozpadło. Nie zawiodła technologia blockchain. Zawiodło coś dużo starszego: zaufanie do człowieka, który trzymał cudze pieniądze.</p>
+  <div class="meta">Wrzesień 2026 · czas czytania ok. 12 minut</div>
+</header>
+
+<p>2 listopada 2022 roku portal CoinDesk opublikował tekst o firmie, o której mało kto spoza branży słyszał — o funduszu handlowym Alameda Research. Dziennikarz dotarł do jego bilansu. Wynikało z niego, że fundusz ma 14,6 miliarda dolarów aktywów. Ale największą ich część stanowił token FTT — token wyemitowany przez giełdę FTX, siostrzaną firmę tego samego właściciela.<sup>1</sup></p>
+
+<p>Dziewięć dni później FTX, Alameda i ponad sto powiązanych spółek złożyły wniosek o upadłość. Z giełdy, z której korzystało ponad milion ludzi, zniknęło około 8 miliardów dolarów pieniędzy klientów.<sup>3</sup> Jej założyciel Sam Bankman-Fried odsiaduje dziś karę 25 lat więzienia.<sup>6</sup></p>
+
+<p>Historia FTX często bywa opowiadana jako dowód, że krypto to jedno wielkie oszustwo. To wniosek zbyt prosty. Ten tekst pokazuje, co dokładnie się stało, jak to było możliwe i kto dał się nabrać. Teza: <strong>upadek FTX nie był porażką technologii, tylko klasyczną defraudacją w nowym opakowaniu. Była możliwa dlatego, że miliony ludzi, inwestorzy, celebryci i politycy zaufali osobie zamiast sprawdzić system.</strong></p>
+
+<div class="box">
+  <div class="bt">Zanim zaczniemy</div>
+  <p>Opisuję fakty ustalone przez sąd, regulatorów i zarządcę masy upadłościowej. Apelację Bankmana-Frieda sąd odrzucił w czerwcu 2026 roku; teoretycznie może on jeszcze zwrócić się do Sądu Najwyższego.<sup>12</sup> Nie jest to porada inwestycyjna.</p>
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Szatnia i sklep z płaszczami</h2>
+
+<p>Bankman-Fried prowadził dwie firmy. FTX była giełdą: ludzie wpłacali na nią pieniądze i kryptowaluty, żeby nimi handlować. Alameda Research była funduszem, który handlował na własny rachunek. Już samo to tworzyło konflikt interesów. Ale prawdziwy problem leżał głębiej.</p>
+
+<p>Najlepiej oddaje go obraz szatni. Oddajemy płaszcz, dostajemy numerek i zakładamy, że płaszcz wisi na wieszaku. Wyobraźmy sobie teraz, że właściciel szatni prowadzi obok sklep z używanymi płaszczami. Po cichu pożycza z szatni płaszcze klientów i nimi handluje, zastawia je, sprzedaje. Dopóki klienci przychodzą po odbiór pojedynczo, nikt niczego nie zauważa — na bieżące wydania zawsze coś wisi. Problem pojawia się dopiero wtedy, gdy wszyscy naraz przychodzą po swoje. Wtedy okazuje się, że wieszaki są puste.</p>
+
+<p>FTX była tą szatnią, a Alameda — sklepem obok. SEC ustaliła, że Alameda miała na FTX nieujawnione przywileje. Korzystała z praktycznie nieograniczonej „linii kredytowej” finansowanej pieniędzmi klientów giełdy. Była też zwolniona z mechanizmów bezpieczeństwa, które obowiązywały wszystkich innych.<sup>4</sup> Tymczasem FTX reklamowała się jako bezpieczna i odpowiedzialna platforma z zaawansowanymi, automatycznymi zabezpieczeniami przed ryzykiem.<sup>4</sup></p>
+
+<h3>Kod, który pozwalał na minus</h3>
+
+<p>Szczegóły ujawnił w październiku 2023 roku na procesie Gary Wang, współzałożyciel FTX i szef jej działu technologii. Zeznał, że na polecenie Bankmana-Frieda w systemie giełdy dodano specjalny kod dla Alamedy. Fundusz mógł mieć ujemne saldo i wypłacać bez ograniczeń. Jego linia kredytowa wynosiła 65 miliardów dolarów.<sup>5</sup> W chwili upadku Alameda miała pobrane z tej linii około 8 miliardów dolarów.<sup>5</sup></p>
+
+<p>Wang powiedział też coś, co dobrze opisuje kulturę tej firmy: czasem się spierali, ale ostatecznie decyzja zawsze należała do Sama.<sup>5</sup></p>
+
+<h2><span class="num">Rozdział drugi</span>Bilans zbudowany z własnych żetonów</h2>
+
+<p>Wróćmy do bilansu, który opublikował CoinDesk. Na koniec czerwca 2022 roku Alameda wykazywała 14,6 miliarda dolarów aktywów.<sup>1</sup></p>
+
+<div class="chart">
+  <div class="ct">Wybrane pozycje w bilansie Alamedy, 30 czerwca 2022 (mld $)</div>
+  <div class="bars">
+    <div class="row"><div class="lab">FTT „odblokowany”</div><div class="track"><div class="fill r" style="width:100%"></div></div><div class="val">3,66</div></div>
+    <div class="row"><div class="lab">Inne kryptowaluty</div><div class="track"><div class="fill b" style="width:92.1%"></div></div><div class="val">3,37</div></div>
+    <div class="row"><div class="lab">FTT jako zabezpieczenie</div><div class="track"><div class="fill r" style="width:59%"></div></div><div class="val">2,16</div></div>
+    <div class="row"><div class="lab">SOL zablokowany</div><div class="track"><div class="fill b" style="width:23.6%"></div></div><div class="val">0,86</div></div>
+    <div class="row"><div class="lab">Gotówka i ekwiwalenty</div><div class="track"><div class="fill g" style="width:3.7%"></div></div><div class="val">0,13</div></div>
+  </div>
+  <div class="caption">Na czerwono token FTT wyemitowany przez FTX. Po stronie zobowiązań bilans wykazywał ok. 8 mld $, w tym 7,4 mld $ pożyczek. Źródło: CoinDesk.<sup>1</sup></div>
+</div>
+
+<p>Problem polegał na tym, czym był FTT. To token, który FTX sama wydała i którego cenę w dużej mierze sama kształtowała. Jeden z analityków cytowanych przez CoinDesk ujął to dosadnie: większość kapitału własnego Alamedy stanowił token FTX „wydrukowany z powietrza”.<sup>1</sup></p>
+
+<p>To tak, jakby firma wyceniała swój majątek w bonach do własnego sklepu. Dopóki wszyscy wierzą, że bony są coś warte, bilans wygląda imponująco. Ale gdy ktokolwiek spróbuje zamienić dużą ich ilość na prawdziwe pieniądze, ich cena się załamie. A razem z nią cały bilans. Zaledwie 134 miliony dolarów w gotówce przy 8 miliardach zobowiązań znaczyło, że Alameda nie miała żadnego marginesu na taki moment.<sup>1</sup></p>
+
+<h2><span class="num">Rozdział trzeci</span>Osiem dni</h2>
+
+<div class="tl">
+  <div class="ev"><div class="yr">2 listopada 2022</div><div class="txt">CoinDesk publikuje bilans Alamedy. Około 40% jej aktywów to tokeny FTT.<sup>1,2,3</sup></div></div>
+  <div class="ev"><div class="yr">6 listopada</div><div class="txt">Changpeng Zhao, szef konkurencyjnej giełdy Binance, ogłasza sprzedaż posiadanych tokenów FTT wartych ok. 529 mln $, powołując się na „ostatnie rewelacje”.<sup>3</sup> Klienci zaczynają masowo wypłacać środki.</div></div>
+  <div class="ev"><div class="yr">8 listopada</div><div class="txt">Po wypłatach na 6 mld $ w ciągu 72 godzin FTX i Binance ogłaszają niewiążące porozumienie o przejęciu.<sup>3</sup></div></div>
+  <div class="ev r"><div class="yr">9 listopada</div><div class="txt">Binance wycofuje się, bo nie jest w stanie ocenić sytuacji finansowej FTX. FTT traci tego dnia 80% wartości.<sup>3</sup></div></div>
+  <div class="ev r"><div class="yr">11 listopada</div><div class="txt">FTX, Alameda i ponad 100 powiązanych spółek składają wniosek o upadłość. Bankman-Fried ustępuje, jego miejsce zajmuje specjalista od restrukturyzacji John J. Ray III. Tej samej nocy z portfeli giełdy znika ok. 473 mln $ w „nieautoryzowanych transakcjach”.<sup>3</sup></div></div>
+  <div class="ev"><div class="yr">12 grudnia</div><div class="txt">Bankman-Fried zostaje aresztowany na Bahamach na wniosek prokuratury z Nowego Jorku.<sup>9</sup></div></div>
+</div>
+
+<p>Tempo jest tu najważniejszą lekcją. Między pierwszym artykułem a upadłością minęło dziewięć dni. Giełda, która dzień wcześniej wydawała się filarem branży, runęła w tempie klasycznej paniki bankowej. Klienci, którzy wypłacili pieniądze w pierwszych dniach, je odzyskali. Ci, którzy czekali, zostali z niczym.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Co znalazł likwidator</h2>
+
+<p>John J. Ray III, specjalista od restrukturyzacji upadających firm, w pierwszym oświadczeniu złożonym w sądzie napisał zdanie, które zapamiętała cała branża:</p>
+
+<div class="quote">„Never in my career have I seen such a complete failure of corporate controls.”<span class="who">John J. Ray III, oświadczenie w sądzie upadłościowym, listopad 2022 r.<sup>3</sup></span></div>
+
+<p>Nigdy w swojej karierze nie widział tak całkowitego braku kontroli w firmie ani tak kompletnego braku wiarygodnych informacji finansowych. Ray opisał systemy, których integralności nie dało się zagwarantować, oraz władzę skupioną w rękach wąskiej grupy niedoświadczonych ludzi.<sup>3</sup></p>
+
+<p>To zdanie warto zestawić z tym, jak FTX wyglądała z zewnątrz. Firma pozyskała od inwestorów ponad 1,8 miliarda dolarów, w tym około 1,1 miliarda od około 90 inwestorów z USA.<sup>4</sup> Wśród nich były renomowane fundusze, które przed inwestycją powinny były sprawdzić jej finanse. Żaden tego nie wychwycił.</p>
+
+<h2><span class="num">Rozdział piąty</span>Kupowanie zaufania</h2>
+
+<p>FTX nie tylko budziła zaufanie. Ona je kupowała — w dosłownym sensie. Na procesie Nishad Singh, szef działu inżynierii, przedstawił wewnętrzną listę kontraktów sponsorskich.<sup>7</sup></p>
+
+<div class="chart">
+  <div class="ct">Wybrane kontrakty sponsorskie i reklamowe FTX (mln $)</div>
+  <div class="bars">
+    <div class="row"><div class="lab">Major League Baseball (5,5 roku)</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">148</div></div>
+    <div class="row"><div class="lab">Mistrzostwa League of Legends (7 lat)</div><div class="track"><div class="fill" style="width:67.4%"></div></div><div class="val">99,8</div></div>
+    <div class="row"><div class="lab">Tom Brady (3 lata)</div><div class="track"><div class="fill" style="width:37.2%"></div></div><div class="val">55</div></div>
+    <div class="row"><div class="lab">Stephen Curry (3 lata)</div><div class="track"><div class="fill" style="width:19.3%"></div></div><div class="val">28,5</div></div>
+    <div class="row"><div class="lab">Shohei Ohtani (5 lat)</div><div class="track"><div class="fill" style="width:7.4%"></div></div><div class="val">11</div></div>
+    <div class="row"><div class="lab">Larry David (reklama na Super Bowl)</div><div class="track"><div class="fill" style="width:6.8%"></div></div><div class="val">10</div></div>
+  </div>
+  <div class="caption">Źródła: zeznania N. Singha na procesie (Slate) oraz Sportico na podstawie książki M. Lewisa.<sup>7,8</sup></div>
+</div>
+
+<p>Brady za 55 milionów dolarów miał poświęcać firmie około 20 godzin rocznie.<sup>8</sup> Dla przeciętnego kibica czy widza wniosek był oczywisty: skoro największe gwiazdy sportu i telewizji firmują giełdę, to musi być bezpieczna. Nikt z nich nie sprawdzał jej finansów. Nie było to ich zadaniem — i właśnie dlatego ich twarz nie powinna była nikogo przekonywać.</p>
+
+<h3>Pieniądze w polityce</h3>
+
+<p>Równolegle płynęły pieniądze do polityków. Singh zeznał, że był „słupem” — darowizny szły w jego imieniu, choć pieniądze pochodziły z Alamedy. Trafiały do polityków obu partii. W sierpniu 2022 roku Bankman-Fried przekazał 10 milionów dolarów organizacji One Nation, związanej z republikańskim liderem Senatu. Singh przyznał, że jesienne darowizny z 2022 roku zostały sfinansowane pieniędzmi klientów.<sup>7</sup> Szef firmy z Bahamów, Ryan Salame, dostał później 7,5 roku więzienia m.in. za przestępstwa związane z finansowaniem kampanii.<sup>10,11</sup></p>
+
+<h2><span class="num">Rozdział szósty</span>Wyroki</h2>
+
+<p>2 listopada 2023 roku, równo rok po artykule CoinDesk, ława przysięgłych uznała Bankmana-Frieda winnym wszystkich siedmiu zarzutów: oszustw, spisku w celu oszustwa oraz prania pieniędzy.<sup>6</sup> 28 marca 2024 roku sąd skazał go na 25 lat więzienia i przepadek ponad 11 miliardów dolarów. Prokuratura wyliczyła, że ukradł 8 miliardów dolarów klientom, 1,7 miliarda inwestorom i 1,3 miliarda pożyczkodawcom Alamedy.<sup>6</sup></p>
+
+<div class="chart">
+  <div class="ct">Kary pozbawienia wolności w sprawie FTX (w miesiącach)</div>
+  <div class="bars">
+    <div class="row"><div class="lab">Sam Bankman-Fried</div><div class="track"><div class="fill r" style="width:100%"></div></div><div class="val">300</div></div>
+    <div class="row"><div class="lab">Ryan Salame</div><div class="track"><div class="fill r" style="width:30%"></div></div><div class="val">90</div></div>
+    <div class="row"><div class="lab">Caroline Ellison</div><div class="track"><div class="fill r" style="width:8%"></div></div><div class="val">24</div></div>
+    <div class="row"><div class="lab">Gary Wang</div><div class="track"><div class="fill g" style="width:0%"></div></div><div class="val">0</div></div>
+    <div class="row"><div class="lab">Nishad Singh</div><div class="track"><div class="fill g" style="width:0%"></div></div><div class="val">0</div></div>
+  </div>
+  <div class="caption">Wang i Singh uniknęli więzienia dzięki współpracy z prokuraturą. Sędzia Kaplan uznał, że współpraca Wanga zasługuje na „ogrom uznania”. Źródła: Departament Sprawiedliwości USA, PYMNTS, CoinDesk.<sup>6,10,11</sup></div>
+</div>
+
+<p>Caroline Ellison, szefowa Alamedy, była najważniejszym świadkiem oskarżenia. Zeznała, że Bankman-Fried polecił jej popełnić te przestępstwa i że Alameda zabrała klientom FTX kilka miliardów dolarów.<sup>10</sup></p>
+
+<p>Bankman-Fried odwołał się, twierdząc m.in., że nie pozwolono mu wykazać, że FTX była wypłacalna i mogła oddać klientom pieniądze. 12 czerwca 2026 roku Sąd Apelacyjny Drugiego Okręgu jednogłośnie odrzucił apelację. Uznał dowody oskarżenia za „mocne, mówiąc ostrożnie”. Sformułował przy tym zasadę kluczową dla całej sprawy: klienci FTX zostali oszukani w momencie, gdy ich pieniądze trafiły do Alamedy — bez względu na to, jak mocno Bankman-Fried wierzył, że kiedyś je odda.<sup>12</sup></p>
+
+<p>Bankman-Fried ubiega się teraz o ułaskawienie przez prezydenta Trumpa. Nie wiadomo, czy je dostanie. Trump ułaskawił w 2025 roku Changpenga Zhao — tego samego szefa Binance, którego wpis rozpoczął upadek FTX.<sup>12</sup></p>
+
+<h2><span class="num">Rozdział siódmy</span>Paradoks odzysku</h2>
+
+<p>Historia FTX ma zakończenie, którego mało kto się spodziewał. Zarządca masy upadłościowej odzyskał znacznie więcej, niż zakładano. Do lipca 2026 roku wierzyciele otrzymali w pięciu rundach niemal 10 miliardów dolarów. Drobni klienci dostają od 118% do 142% wartości swoich środków.<sup>13</sup></p>
+
+<p>Część tych pieniędzy pochodzi z inwestycji, które Bankman-Fried zrobił za pieniądze klientów. Najbardziej znana to udziały w firmie Anthropic, zajmującej się sztuczną inteligencją. W 2021 roku FTX kupiła około 8% udziałów za 500 milionów dolarów. W 2024 roku masa upadłościowa sprzedała mniej więcej dwie trzecie tego pakietu za 884 miliony dolarów.<sup>14</sup></p>
+
+<p>Obrońcy Bankmana-Frieda mówią: skoro klienci dostają ponad 100%, to gdzie jest krzywda? Są dwie odpowiedzi. Pierwsza jest prawna i dała ją apelacja: przestępstwem było zabranie pieniędzy, a nie to, czy później udało się je oddać.<sup>12</sup> Druga jest finansowa. Odzysk liczony jest w dolarach według cen z listopada 2022 roku, czyli z samego dna rynku. Kto trzymał na FTX bitcoiny, dostaje ich dolarową wartość z chwili upadku, a nie same bitcoiny. Przez to omija go cały późniejszy wzrost.<sup>13</sup> Na papierze to ponad 100%. W rzeczywistości dla wielu to znacząca strata.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Czego uczy FTX</h2>
+
+<p><strong>Blockchain nic tu nie pomógł, bo pieniądze nie były na blockchainie.</strong> To najważniejszy i najczęściej przeoczany wniosek. Salda klientów FTX były zapisami w prywatnej bazie danych firmy, a nie na publicznym rejestrze. Z punktu widzenia klienta FTX działała jak zwykły bank bez nadzoru i bez gwarancji depozytów. Przejrzystość, która jest największą zaletą blockchaina, kończy się w momencie, gdy oddajemy kryptowaluty komuś na przechowanie.</p>
+
+<p>Stąd popularne w branży hasło „not your keys, not your coins”: jeśli nie masz kluczy prywatnych do swojego portfela, to nie masz swoich monet, tylko obietnicę kogoś, kto je trzyma. Nie znaczy to, że giełdy są z definicji złe. Znaczy, że trzymanie na giełdzie większych kwot przez długi czas to udzielanie jej pożyczki bez żadnej gwarancji.</p>
+
+<p><strong>Zaufanie do osoby nie zastępuje sprawdzenia systemu.</strong> Bankman-Fried miał wizerunek niemal idealny: młody geniusz, który chce zarobić, żeby oddać pieniądze na dobre cele, i który sam prosi o regulacje. Kupili ten wizerunek najlepsi inwestorzy, największe gwiazdy i politycy. Jak pokazywał poprzedni tekst tej serii, ten sam wzór powtarza się przy Terrze, Celsiusie i SafeMoon: im bardziej przekonujący lider, tym rzadziej ktoś sprawdza bilans.</p>
+
+<p><strong>Upadek FTX zmienił też regulacje.</strong> Jak opisaliśmy w części czwartej, po listopadzie 2022 roku SEC wyraźnie zaostrzyła kurs wobec całej branży. Paradoksalnie za nadużycia jednej firmy zapłaciły też te, które działały uczciwie.</p>
+
+<h2><span class="num">Zakończenie</span>Szatnia</h2>
+
+<p>Wracam do obrazu szatni. Najgorsze w historii FTX nie jest to, że właściciel pożyczał płaszcze. Najgorsze jest to, że przez lata nikt nie zajrzał na wieszaki. Ani inwestorzy, ani audytorzy, ani gwiazdy, które firmowały szatnię swoją twarzą, ani regulatorzy.</p>
+
+<p>Łapiemy się na tym, że zaufanie traktujemy jak skrót. Nie chce się nam sprawdzać, skoro sprawdzili już mądrzejsi od nas — duże fundusze, znane nazwiska, media. FTX pokazała, że ci mądrzejsi często też nie sprawdzali. Każdy zakładał, że zrobił to ktoś inny.</p>
+
+<p>Technologia blockchain powstała po to, żeby zastąpić zaufanie weryfikacją — żeby każdy mógł sam sprawdzić, czy jego środki istnieją. FTX była zaprzeczeniem tej idei: scentralizowaną firmą, która prosiła o dokładnie ten rodzaj zaufania, od którego krypto miało nas uwolnić.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+<ol class="sources">
+<li>CoinDesk, „Divisions in Sam Bankman-Fried’s Crypto Empire Blur on His Trading Titan Alameda’s Balance Sheet”, 02.11.2022. <a href="https://www.coindesk.com/business/2022/11/02/divisions-in-sam-bankman-frieds-crypto-empire-blur-on-his-trading-titan-alamedas-balance-sheet">coindesk.com</a></li>
+<li>CoinDesk, „8 Days in November: What Led to FTX’s Sudden Collapse”, 09.11.2022. <a href="https://www.coindesk.com/layer2/2022/11/09/8-days-in-november-what-led-to-ftxs-sudden-collapse">coindesk.com</a></li>
+<li>„Bankruptcy of FTX”, Wikipedia (chronologia i cytaty z oświadczenia J. Raya w sądzie upadłościowym). <a href="https://en.wikipedia.org/wiki/Bankruptcy_of_FTX">wikipedia.org</a></li>
+<li>SEC, „SEC Charges Samuel Bankman-Fried with Defrauding Investors in Crypto Asset Trading Platform FTX”, komunikat 2022-219, 13.12.2022. <a href="https://www.sec.gov/news/press-release/2022-219">sec.gov</a></li>
+<li>TechCrunch, „Alameda had a $65B line of credit and ‘unlimited withdrawals’”, 05.10.2023. <a href="https://techcrunch.com/2023/10/05/sbf-trial-gary-wang/">techcrunch.com</a></li>
+<li>U.S. Attorney’s Office, SDNY, „Samuel Bankman-Fried Sentenced To 25 Years In Prison”, 28.03.2024. <a href="https://www.justice.gov/usao-sdny/pr/samuel-bankman-fried-sentenced-25-years-prison">justice.gov</a></li>
+<li>Slate, „So How Much Did SBF Pay Steph Curry and Larry David?” (zeznania N. Singha), 10.2023. <a href="https://slate.com/technology/2023/10/sam-bankman-fried-nishad-singh-political-donations-celebrity-endorsements-michael-kives.html">slate.com</a></li>
+<li>Sportico, „Tom Brady’s Failed FTX Sponsorship Worth $55M, Per Michael Lewis”, 10.2023. <a href="https://www.sportico.com/personalities/athletes/2023/tom-brady-ftx-sponsorship-55m-lewis-1234740702/">sportico.com</a></li>
+<li>CoinDesk, „FTX Founder Sam Bankman-Fried Arrested in the Bahamas”, 12.12.2022. <a href="https://www.coindesk.com/policy/2022/12/12/ftx-founder-sam-bankman-fried-arrested-bahamas-says">coindesk.com</a></li>
+<li>PYMNTS, „FTX Execs Caroline Ellison and Ryan Salame Get Prison Time Shortened”, 2024. <a href="https://www.pymnts.com/cryptocurrency/2024/ftx-execs-caroline-ellison-and-ryan-salame-get-prison-time-shortened/">pymnts.com</a></li>
+<li>CoinDesk, „Former FTX CTO Gary Wang Won’t Have to Serve Prison Time, Judge Rules”, 20.11.2024. <a href="https://www.coindesk.com/policy/2024/11/20/former-ftx-cto-gary-wang-wont-have-to-serve-prison-time-judge-rules">coindesk.com</a></li>
+<li>Al Jazeera, „Sam Bankman-Fried loses appeal to overturn fraud convictions and prison”, 12.06.2026. <a href="https://www.aljazeera.com/economy/2026/6/12/sam-bankman-fried-loses-appeal-to-overturn-fraud-convictions-and-prison">aljazeera.com</a></li>
+<li>The Cryptonomist, „FTX Creditor Payouts Resume With $900 Million Distribution”, 18.07.2026. <a href="https://en.cryptonomist.ch/2026/07/18/ftx-creditor-payouts-900m/">cryptonomist.ch</a></li>
+<li>Unchained, „FTX To Sell Two Thirds of Anthropic Stake for $884 Million”, 03.2024. <a href="https://unchainedcrypto.com/ftx-to-sell-two-thirds-of-anthropic-stake-for-884-million/">unchainedcrypto.com</a></li>
+</ol>
+
+<footer class="end">Seria krypto, część szósta. Wcześniej: „Anatomia procesu”, „Anatomia wybrańca”, „Anatomia narracji”, „Anatomia wahadła” i „Anatomia tłumu”. W kolejnych częściach: Terra/Luna i memecoin Trumpa. Tekst ma charakter informacyjny i nie stanowi porady inwestycyjnej.</footer>
+
+</div></body></html>

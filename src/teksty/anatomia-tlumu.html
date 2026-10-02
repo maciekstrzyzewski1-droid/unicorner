@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia tłumu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;}
+strong{font-weight:600;color:#fff;}
+sup{font-size:.62em;color:var(--gold);font-weight:500;margin-left:1px;}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;font-size:.94rem;line-height:1.6;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;font-size:1.05rem;}
+.box p{margin:0 0 10px;} .box p:last-child{margin-bottom:0;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .ev.r:before{background:var(--red);} .tl .ev.g:before{background:var(--green);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.chart{margin:34px 0;}
+.chart .ct{font-family:'Fraunces',serif;font-size:1.05rem;margin-bottom:14px;}
+.bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.r{background:var(--red);} .bars .fill.g{background:var(--green);} .bars .fill.b{background:var(--blue);}
+.bars .val{flex:0 0 78px;text-align:right;font-variant-numeric:tabular-nums;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:10px;}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;background:var(--c);}
+.caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .h{font-family:'Fraunces',serif;color:var(--gold);font-size:1rem;margin-bottom:8px;}
+.twocol .side p{margin:0 0 8px;} .twocol .side p:last-child{margin:0;}
+.quote{border-left:2px solid var(--gold);padding:4px 0 4px 18px;margin:28px 0;font-family:'Fraunces',serif;font-size:1.12rem;line-height:1.5;color:#f3ecd9;}
+.quote .who{display:block;font-family:'Work Sans',sans-serif;font-size:.8rem;color:var(--muted);margin-top:8px;}
+.verdict{margin:30px 0;border:1px solid var(--line);}
+.verdict .vr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);}
+.verdict .vr:last-child{border-bottom:none;}
+.verdict .vr div{padding:12px 16px;font-size:.9rem;line-height:1.5;}
+.verdict .vr div:first-child{border-right:1px solid var(--line);}
+.verdict .vr:not(.head) div:first-child{color:var(--muted);font-style:italic;}
+.verdict .head div{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--gold);}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+.sources{font-size:.85rem;color:var(--muted);line-height:1.6;padding-left:22px;} .sources li{margin-bottom:8px;}
+.sources a{color:var(--muted);word-break:break-word;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;} .bars .lab{flex:0 0 104px;} .bars .val{flex:0 0 66px;} .twocol{grid-template-columns:1fr;} .verdict .vr{grid-template-columns:1fr;} .verdict .vr div:first-child{border-right:none;border-bottom:none;padding-bottom:0;} .verdict .head{display:none;} .verdict .vr div:first-child:before{content:'Wizerunek';display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;font-style:normal;margin-bottom:4px;} .verdict .vr div:last-child:before{content:'Co ustalił sąd';display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:4px;}}
+</style>
+</head>
+<body><div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy · Seria krypto, część piąta</div>
+  <h1>Anatomia tłumu</h1>
+  <p class="lede">Na rynku krypto najgroźniejszy nie jest ktoś, kto się myli. Groźny jest ktoś, kto zarabia na tym, że mylimy się my. Ten tekst rozkłada na części płatne polecenia, grupy „sygnałowe”, pompy i zrzuty, historie ludzi, którym ufały miliony, oraz zjawisko „maxi” — i kończy się zasadami, które chronią przed tym wszystkim lepiej niż jakikolwiek guru.</p>
+  <div class="meta">Wrzesień 2026 · czas czytania ok. 17 minut</div>
+</header>
+
+<p>5 grudnia 2024 roku, sieć Solana. Haliey Welch, internetowa celebrytka znana z jednego wiralowego nagrania, wypuszcza token HAWK. W ciągu kilku minut jego wycena dochodzi do 500 milionów dolarów. Pół godziny później spada poniżej 50 milionów — o 90%.<sup>1</sup></p>
+
+<p>Mechanizm był prosty. Adres tokena ujawniono przed startem, więc boty zaprogramowane na błyskawiczny zakup — tak zwani snajperzy — przejęły 97% podaży za grosze. Gdy zaczęli sprzedawać, cena runęła. Do tego 17% tokenów sprzedano wcześniej inwestorom bez żadnej blokady odsprzedaży. Portfel twórcy zebrał około 2 milionów dolarów opłat. Zespół Welch zaprzeczał jakimkolwiek nadużyciom i twierdził, że tym portfelem zarządza fundacja z Kajmanów, a nie konkretne osoby.<sup>1</sup> Podczas rozmowy z rozwścieczonymi kupującymi Welch powiedziała, że idzie spać i porozmawiają jutro.<sup>1</sup> Kilka miesięcy później oświadczyła w swoim podcaście, że FBI i SEC ją przesłuchały i „oczyściły” z zarzutów. Żadna z agencji tego nie potwierdziła, ale też nikomu nie postawiono zarzutów.<sup>2</sup></p>
+
+<p>Dwa miesiące później, 14 lutego 2025 roku, podobną ścieżką poszedł token LIBRA. Tym razem udostępnił go w mediach społecznościowych prezydent Argentyny Javier Milei, który później usunął wpis. Token osiągnął wycenę 4,56 miliarda dolarów, a w ciągu 11 godzin od startu stracił 94%. Według firmy analitycznej Lookonchain osiem portfeli powiązanych z zespołem projektu wyprowadziło około 107 milionów dolarów.<sup>3</sup></p>
+
+<p>Oba przypadki łączy jedno pojęcie, które trzeba zrozumieć, zanim kupi się jakikolwiek modny token: <strong>płynność wyjścia</strong> (<em>exit liquidity</em>). Ktoś, kto kupił wcześnie i tanio, może zrealizować zysk tylko wtedy, gdy ktoś inny kupi od niego drożej. Teza tego tekstu jest taka: <strong>na rynku opartym na opowieściach najważniejsze pytanie nie brzmi „czy ten projekt jest dobry”, tylko „kto na mnie zarobi, jeśli kupię teraz”.</strong> Kto nie zna odpowiedzi, sam jest odpowiedzią.</p>
+
+<div class="box">
+  <div class="bt">Zanim zaczniemy</div>
+  <p>Opisuję tu wyłącznie przypadki potwierdzone wyrokami, ugodami z regulatorami, aktami oskarżenia albo danymi on-chain, które cytuję ze źródeł. Tam, gdzie postępowanie trwa albo nikomu nie postawiono zarzutów, piszę to wprost. Obowiązuje domniemanie niewinności. Nie jest to porada inwestycyjna.</p>
+  <p>Świadomie pomijam komentatorów, którzy otwarcie przedstawiają swoją perspektywę i jej argumenty — nawet jeśli bywają zbyt optymistyczni. Mylić się wolno. Tekst dotyczy tych, którzy zarabiali na cudzym błędzie.</p>
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Słownik, zanim zaczniemy</h2>
+
+<p>Słowo <strong>shill</strong> ma ciekawe pochodzenie. W jarmarcznym i aukcyjnym żargonie oznaczało wspólnika, który udaje zwykłego klienta. Na aukcji podbija ceny, choć nie zamierza kupić. Przy stoisku z grą „wygrywa”, żeby inni uwierzyli, że da się wygrać. To idealny opis tego, co dzieje się w krypto: ktoś udaje niezależnego entuzjastę, a w rzeczywistości pracuje dla sprzedającego.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">Shill</div><div class="d">Promowanie tokena bez ujawniania, że się za to dostaje pieniądze albo że się go posiada i chce sprzedać.</div></div>
+  <div class="nrow"><div class="n">KOL</div><div class="d">„Key opinion leader” — branżowa nazwa influencera, którego wpisy poruszają ceną. Agencje marketingowe kupują ich posty hurtowo.</div></div>
+  <div class="nrow"><div class="n">Pump and dump</div><div class="d">Pompa i zrzut: organizatorzy kupują tanio, nakręcają zainteresowanie, a potem sprzedają późniejszym kupującym.</div></div>
+  <div class="nrow"><div class="n">Rug pull</div><div class="d">Dosłownie „wyciągnięcie dywanu”: twórcy wypłacają pieniądze z projektu albo z puli płynności i znikają.</div></div>
+  <div class="nrow"><div class="n">Snajper</div><div class="d">Bot kupujący token w pierwszych sekundach po starcie, zanim zrobią to ludzie.</div></div>
+  <div class="nrow"><div class="n">Wash trading</div><div class="d">Handel sam ze sobą, żeby sztucznie napompować wolumen i przyciągnąć uwagę.</div></div>
+</div>
+
+<h2><span class="num">Rozdział drugi</span>Jak działa pompa</h2>
+
+<p>Najlepsze badanie tego zjawiska ma w tytule to samo słowo, co ta seria. W 2019 roku dwaj badacze z Imperial College London, Jiahua Xu i Benjamin Livshits, opublikowali na konferencji USENIX Security pracę „The Anatomy of a Cryptocurrency Pump-and-Dump Scheme”. Przeanalizowali 412 akcji pompowania zorganizowanych w kanałach na Telegramie między czerwcem 2018 a lutym 2019 roku.<sup>6</sup></p>
+
+<p>Schemat, który opisali, wygląda tak:</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">Krok 1</div><div class="txt">Organizatorzy grupy wybierają mały, mało płynny token i kupują go po cichu, zanim ktokolwiek się dowie.</div></div>
+  <div class="ev"><div class="yr">Krok 2</div><div class="txt">Ogłaszają członkom grupy termin akcji. Nazwę tokena podają dopiero w wyznaczonej sekundzie.</div></div>
+  <div class="ev"><div class="yr">Krok 3</div><div class="txt">Tysiące osób kupuje jednocześnie. Cena wystrzeliwuje.</div></div>
+  <div class="ev r"><div class="yr">Krok 4</div><div class="txt">Organizatorzy sprzedają swoje wcześniej kupione tokeny tym, którzy właśnie kupują. Cena się załamuje, a większość uczestników zostaje ze stratą.<sup>6</sup></div></div>
+</div>
+
+<p>Kluczowe jest to, że przewagę daje tu wyłącznie informacja, a nie umiejętność. Organizator wie, kiedy i co się stanie. Uczestnik wie tylko tyle, ile mu powiedziano. Badacze pokazali przy okazji, że da się przewidzieć, który token zostanie wybrany. Ich model pozwalał w teorii osiągnąć do 60% zysku w ciągu dwóch i pół miesiąca.<sup>6</sup> Wniosek jest brutalny: zarabia ten, kto wie wcześniej. Ten, kto dołącza „na sygnał”, jest paliwem.</p>
+
+<p>Grupy z płatnymi „sygnałami VIP”, które dziś reklamują się na X i Telegramie, działają według tej samej logiki. Jeśli ich twórcy sami handlują tokenami, które polecają, to kupują je przed swoimi członkami — inaczej nie mieliby czego sprzedać drożej. Członek płaci więc dwa razy: abonamentem i ceną, którą podbija ktoś, kto dostał sygnał przed nim.</p>
+
+<h3>Epoka memecoinów</h3>
+
+<p>W latach 2024–2025 ten model zautomatyzowano. Platforma Pump.fun pozwala każdemu stworzyć token w kilka sekund. Firma Solidus Labs, która zajmuje się wykrywaniem manipulacji rynkowych, przeanalizowała ponad 7 milionów tokenów utworzonych tam od stycznia 2024 do marca 2025 roku.<sup>7</sup></p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">98,6%</div><div class="d">Tokenów z Pump.fun, które nosiły cechy pompy i zrzutu.<sup>7</sup></div></div>
+  <div class="nrow"><div class="n">97 tys.</div><div class="d">Tokenów z ponad 7 milionów, które utrzymały płynność powyżej zaledwie 1000 $.<sup>7</sup></div></div>
+  <div class="nrow"><div class="n">93%</div><div class="d">Pul płynności na giełdzie Raydium ze śladami „miękkiego” wyciągnięcia dywanu.<sup>7</sup></div></div>
+</div>
+
+<p>Na tym rynku kupno przypadkowego memecoina nie jest inwestycją ani nawet hazardem w zwykłym sensie. W kasynie reguły gry są przynajmniej znane z góry. Tu po drugiej stronie stoją ludzie, którzy znają wszystkie karty.</p>
+
+<h3>Kiedy FBI samo stworzyło token</h3>
+
+<p>Jak głęboko sięga ten przemysł, pokazała w 2024 roku operacja „Token Mirrors”. FBI stworzyło własny token o nazwie NexFundAI i zgłosiło się do firm, które oferowały projektom kryptowalutowym usługi „animatorów rynku”. W praktyce te firmy handlowały same ze sobą, żeby tworzyć sztuczny obrót, a twórcy tokenów sprzedawali w tym czasie swoje tokeny po zawyżonych cenach. W październiku 2024 roku prokuratura oskarżyła 18 osób i firm. Zajęto ponad 25 milionów dolarów w kryptowalutach i wyłączono boty handlujące około 60 tokenami. Jeden z oskarżonych mówił wprost, że żeby zarobić, inni kupujący muszą stracić.<sup>12</sup></p>
+
+<h2><span class="num">Rozdział trzeci</span>Płatne polecenia</h2>
+
+<p>Najprostsza forma manipulacji nie wymaga botów. Wystarczy zapłacić komuś z dużym zasięgiem.</p>
+
+<p>W październiku 2022 roku SEC ukarała Kim Kardashian. Dostała 250 tysięcy dolarów za post na Instagramie promujący token EthereumMax i nie ujawniła, że jej za to zapłacono. Zapłaciła 1,26 miliona dolarów i zobowiązała się przez trzy lata nie promować kryptowalut.<sup>8</sup> W marcu 2023 roku SEC oskarżyła ośmioro celebrytów — m.in. Lindsay Lohan, Jake’a Paula i Akona — o promowanie tokenów Justina Suna bez ujawnienia wynagrodzenia. Sześcioro zawarło ugody na łącznie ponad 400 tysięcy dolarów. Samemu Sunowi zarzucono m.in. ponad 600 tysięcy transakcji pozornych, czyli handel samym ze sobą.<sup>9</sup> Jak opisaliśmy w części czwartej, w 2025 roku nowe kierownictwo SEC wstrzymało sprawę Suna.<sup>22</sup></p>
+
+<h3>ZachXBT i lista 160 kont</h3>
+
+<p>Tu wchodzi postać, o którą warto zapytać każdego, kto na poważnie siedzi w krypto. ZachXBT to pseudonim anonimowego analityka, który od kilku lat prowadzi śledztwa na podstawie publicznych danych z blockchainów. Według jego biografii zaczął w 2018 roku, gdy sam stracił ponad 15 tysięcy dolarów w oszustwach i włamaniach. Nie ma formalnego wykształcenia w finansach ani informatyce — uczył się, śledząc transakcje w ogólnodostępnych narzędziach.<sup>11</sup></p>
+
+<p>Opublikował ponad 200 raportów. Jego analiza pomogła m.in. francuskiej policji zatrzymać pięć osób z grupy wyłudzającej NFT metodą phishingu. Śledził też przepływy środków skradzionych przez północnokoreańską grupę Lazarus. Jeden z opisanych przez niego ludzi pozwał go o zniesławienie. Społeczność zebrała na jego obronę milion dolarów, a pozew wycofano.<sup>11</sup> W 2025 roku fundusz Paradigm zatrudnił go jako konsultanta ds. incydentów bezpieczeństwa.<sup>11</sup></p>
+
+<p>We wrześniu 2025 roku ZachXBT opublikował wyciek z kampanii marketingowej jednego z projektów memecoinowych. Wynikało z niego, że ponad 160 kont na X dostało pieniądze za promowanie tokena. Mniej niż pięć z nich to ujawniło.<sup>10</sup> Sam projekt twierdził zresztą, że został oszukany przez pośredników, którzy zamiast prawdziwych influencerów zatrudnili konta z botami.<sup>10</sup> Oszukiwani byli więc wszyscy — kupujący przez influencerów, a zleceniodawca przez pośredników.</p>
+
+<p>To ważna lekcja o skali. Pojedynczy przypadek Kardashian trafił na nagłówki. Ale typowy „entuzjastyczny wpis” o nowym tokenie, który widzimy na X, pochodzi z tego samego świata — tylko nikt go nie sprawdza.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Twarze zaufania</h2>
+
+<p>Najbardziej niszczące oszustwa nie wyglądały na oszustwa. Stały za nimi ludzie, którzy przez lata budowali wizerunek wiarygodnych liderów. Poniżej tylko przypadki zakończone wyrokami skazującymi albo przyznaniem się do winy.</p>
+
+<div class="verdict">
+  <div class="vr head"><div>Wizerunek</div><div>Co ustalił sąd</div></div>
+  <div class="vr"><div><strong>Do Kwon, Terraform Labs</strong><br>Wizjoner „algorytmicznego stablecoina”, gwiazda konferencji.</div><div>Gdy UST stracił powiązanie z dolarem w maju 2021 roku, Kwon potajemnie zlecił firmie handlowej skupowanie tokena, a publicznie twierdził, że parytet przywrócił algorytm. Krach w 2022 roku kosztował inwestorów ponad 40 mld $. W grudniu 2025 roku został skazany na 15 lat więzienia.<sup>13</sup></div></div>
+  <div class="vr"><div><strong>Alex Mashinsky, Celsius</strong><br>„Unbank yourself” — bankowość bez banków.</div><div>Sugerował klientom m.in., że firma ma zgody regulatorów. Jednocześnie manipulował ceną tokena CEL i po cichu sprzedawał własne tokeny, zarabiając 48 mln $. W maju 2025 roku został skazany na 12 lat.<sup>14</sup></div></div>
+  <div class="vr"><div><strong>Braden Karony, SafeMoon</strong><br>Token z „zablokowaną płynnością”, miliony posiadaczy, wycena ponad 8 mld $.</div><div>Płynność wcale nie była zablokowana. Karony i wspólnicy wyprowadzili z niej ponad 9 mln $, m.in. na dom za 2,2 mln $ i sportowe Audi. Skazany na 100 miesięcy więzienia.<sup>15</sup></div></div>
+  <div class="vr"><div><strong>BitConnect</strong><br>„Bot handlowy”, który miał codziennie zarabiać na zmienności.</div><div>Piramida finansowa warta ok. 2,4 mld $. Główny promotor w Ameryce Północnej, Glenn Arcaro, przyznał się do winy i dostał 38 miesięcy więzienia. Oszukał ponad 4500 osób w 95 krajach. Założyciel, Satish Kumbhani, został oskarżony i zniknął.<sup>16,17</sup></div></div>
+</div>
+
+<div class="chart">
+  <div class="ct">Wyroki pozbawienia wolności (w miesiącach)</div>
+  <div class="bars">
+    <div class="row"><div class="lab">Do Kwon (Terra)</div><div class="track"><div class="fill r" style="width:100%"></div></div><div class="val">180</div></div>
+    <div class="row"><div class="lab">Alex Mashinsky (Celsius)</div><div class="track"><div class="fill r" style="width:80%"></div></div><div class="val">144</div></div>
+    <div class="row"><div class="lab">Braden Karony (SafeMoon)</div><div class="track"><div class="fill r" style="width:55.6%"></div></div><div class="val">100</div></div>
+    <div class="row"><div class="lab">Glenn Arcaro (BitConnect)</div><div class="track"><div class="fill r" style="width:21.1%"></div></div><div class="val">38</div></div>
+  </div>
+  <div class="caption">Źródła: Departament Sprawiedliwości USA, Bloomberg, Salon.<sup>13,14,15,16</sup> Upadek giełdy FTX i wyrok dla jej założyciela opiszę w osobnym tekście.</div>
+</div>
+
+<p>Wszystkie te historie łączą trzy cechy. Po pierwsze, twórcy obiecywali coś, co brzmiało technicznie i nie dało się tego łatwo sprawdzić: algorytm, zablokowaną płynność, bota. Po drugie, mieli ogromne, oddane społeczności, które broniły ich przed krytyką. Po trzecie, sprzedawali własne tokeny wtedy, gdy publicznie zachęcali innych do kupowania.</p>
+
+<p>LIBRA z początku tekstu wciąż jest w toku. W Nowym Jorku toczy się pozew zbiorowy przeciwko twórcy tokena Haydenowi Davisowi, w którym sąd utrzymał zamrożenie około 110 mln $.<sup>5</sup> W Argentynie śledztwo obejmuje także prezydenta Mileia i jego siostrę. Rok po aferze sądy nie przesłuchały jednak jeszcze żadnych świadków ani podejrzanych.<sup>4</sup> Poszkodowanych jest ponad 44 tysiące inwestorów.<sup>4</sup> Nikt nie został skazany.</p>
+
+<h2><span class="num">Rozdział piąty</span>Maxi, czyli tłum jako dowód</h2>
+
+<p>Oszuści to tylko jedna strona. Druga jest dużo powszechniejsza i nie wymaga niczyjej złej woli. W krypto nazywa się ją „maksymalizmem”.</p>
+
+<p>Pojęcie wzięło się od „bitcoinowych maksymalistów”, czyli ludzi przekonanych, że przetrwa tylko bitcoin, a wszystko inne jest oszustwem albo stratą czasu. Już w 2014 roku Vitalik Buterin, twórca Ethereum, polemizował z tym podejściem. Pisał, że rozdrobnienie branży jest naturalne, bo ludzie mają różne wizje. Blockchainy porównywał do języków programowania, z których każdy nadaje się do czegoś innego. Przestrzegał przed myśleniem „zwycięzca bierze wszystko”.<sup>18</sup> Z czasem słowo „maxi” przylgnęło do każdej społeczności: XRP maxi, ETH maxi, SOL maxi.</p>
+
+<p>Sam od początku byłem mocno zaangażowany w XRP i przez lata czerpałem wiedzę głównie od jego entuzjastów. Wiem więc, jak ten mechanizm wygląda od środka. Każdy nowy członek społeczności, każdy kolejny film i każdy entuzjastyczny komentarz wzmacnia poczucie, że skoro wierzy tylu ludzi, to musi być w tym coś prawdziwego.</p>
+
+<p>Problem polega na tym, że liczebność tłumu nie mówi nic o jakości jego wiedzy. Jeśli 10 tysięcy osób powtarza tezę zasłyszaną u jednego twórcy, to nie jest 10 tysięcy niezależnych opinii. To jedna opinia z bardzo głośnym echem. Tłum sprawia wrażenie potwierdzenia, choć w rzeczywistości każdy pożycza przekonanie od innych.</p>
+
+<p>Badacze widzą ten mechanizm w danych. Michael Cary przeanalizował w 2024 roku wpisy na Twitterze po krachu rynku krypto z maja 2022 roku. Okazało się, że wpisy entuzjastów krypto stały się po krachu bardziej neutralne i — co zaskakujące — mniej negatywne. Stało za tym świadome dążenie społeczności do utrzymania pozytywnego nastroju pod hasłem „WAGMI” (<em>we’re all gonna make it</em> — „wszyscy się dorobimy”). Autor znalazł też wyraźne ślady zachowań stadnych, w tym skoordynowanych wezwań do trzymania aktywów mimo złej sytuacji na rynku.<sup>19</sup></p>
+
+<p>Maksymalizm nie jest przestępstwem. Ale to on dostarcza oszustom widowni. Społeczność, w której krytyka jest zdradą, a wątpliwości „FUD-em”, nie zauważy zagrożenia na czas. Nie zauważy go też, gdy zagrożenie pochodzi od jej własnego lidera.</p>
+
+<h2><span class="num">Rozdział szósty</span>Zasady, które działają lepiej niż guru</h2>
+
+<p>Nie ma ludzi, którzy wiedzą, co stanie się na rynku, na sto procent. Są tylko tacy, którzy tak twierdzą — i często sprzedają dostęp do tej rzekomej wiedzy. Zamiast szukać kolejnego proroka, lepiej przyjąć kilka zasad. Nie są odkrywcze, ale działają dlatego, że są nudne.</p>
+
+<h3>1. Nie zakochiwać się w projekcie</h3>
+
+<p>Projekt to narzędzie do zarabiania, nie tożsamość. Jeśli krytyka tokena, który mamy, wywołuje w nas złość zamiast ciekawości, to znak, że przekroczyliśmy granicę opisaną w poprzednim rozdziale. Pomaga proste ćwiczenie: raz na jakiś czas poszukać najmocniejszych argumentów przeciwko własnej pozycji i uczciwie na nie odpowiedzieć.</p>
+
+<h3>2. Realizować część zysków</h3>
+
+<p>Zysk na ekranie nie jest zyskiem, dopóki się go nie zrealizuje. Przy statystyce z Pump.fun, gdzie niemal wszystkie tokeny okazują się pompami, i przy spadkach o 90% w kilkadziesiąt minut, które widzieliśmy przy HAWK i LIBRA, trzymanie całości „do samego szczytu” to zakład, że uda się sprzedać przed organizatorami.<sup>1,3,7</sup> A organizatorzy zawsze są pierwsi. Rozsądniejsza jest sprzedaż etapami, według planu ustalonego z góry — zanim emocje przejmą kontrolę.</p>
+
+<h3>3. Nie złapiemy dołka ani szczytu</h3>
+
+<p>To jedna z najlepiej udokumentowanych prawd o rynkach. Uczciwie trzeba jednak dodać, że badacze spierają się, ile kosztuje próba „wstrzelenia się” w rynek. Morningstar szacował w 2025 roku, że złe wyczucie czasu kosztuje inwestorów funduszy 1,2 punktu procentowego rocznie. W 2026 roku grupa naukowców, analizując te same dane w „Financial Analysts Journal”, oszacowała ten koszt na zaledwie 0,10 punktu.<sup>21</sup> Spór dotyczy więc tego, jak duża jest strata, a nie tego, czy da się regularnie wygrywać na wyczuciu momentu. Tego nie potrafi nikt.</p>
+
+<h3>4. Uśrednianie ceny wejścia — z uczciwym zastrzeżeniem</h3>
+
+<p>Uśrednianie, czyli kupowanie regularnie za stałą kwotę zamiast wszystkiego naraz, to dla większości ludzi najrozsądniejszy sposób budowania pozycji. Warto jednak wiedzieć, dlaczego. Vanguard, jeden z największych zarządzających funduszami na świecie, zbadał w 2012 roku amerykański rynek akcji od 1926 roku. Jednorazowe zainwestowanie całej kwoty dawało lepszy wynik niż rozłożenie zakupów na 12 miesięcy w około dwóch trzecich przypadków. Przy rozłożeniu na 36 miesięcy — w prawie 90%.<sup>20</sup> Rynek akcji w długim terminie rośnie, więc wcześniej zainwestowane pieniądze mają więcej czasu, żeby pracować.</p>
+
+<p>Dlaczego więc uśredniać? Bo przewaga jednorazowego zakupu działa tylko na papierze — u kogoś, kto ma całą kwotę, nie wpada w panikę i nie żałuje decyzji. W praktyce uśrednianie chroni przed najgroźniejszym przeciwnikiem inwestora: nim samym.<sup>20</sup> Na rynku krypto, gdzie spadki o połowę są normalne, a emocje sięgają zenitu, ta ochrona jest warta więcej niż teoretyczna przewaga. Uśrednianie nie jest więc magiczną strategią na wyższy zysk. To dyscyplina, która nie pozwala emocjom podejmować decyzji.</p>
+
+<h3>5. Sprawdzić, kto na mnie zarobi</h3>
+
+<div class="box">
+  <div class="bt">Pięć pytań przed kupnem modnego tokena</div>
+  <p><strong>Kto mi go poleca i czy ujawnia, że ma w tym interes?</strong> Brak informacji o współpracy przy entuzjastycznym wpisie to sygnał ostrzegawczy, nie dowód niezależności.<sup>10</sup></p>
+  <p><strong>Ile tokenów jest od razu w obiegu?</strong> Przy LIBRA 82% podaży dało się sprzedać od pierwszej minuty.<sup>3</sup> Przy HAWK 17% sprzedano inwestorom bez blokady.<sup>1</sup></p>
+  <p><strong>Kto kupił pierwszy i za ile?</strong> Dane on-chain są publiczne. Narzędzia do analizy portfeli pokazują, czy podaż skupiło kilka adresów.</p>
+  <p><strong>Czy obietnica da się sprawdzić?</strong> „Algorytm”, „zablokowana płynność”, „bot handlowy” — wszystkie trzy okazały się kłamstwem w sprawach opisanych wyżej.<sup>13,15,16</sup></p>
+  <p><strong>Co się stanie, gdy przestaną przychodzić nowi kupujący?</strong> Jeśli jedyną odpowiedzią jest „nie przestaną”, to nie jest to inwestycja, tylko gra w krzesełka.</p>
+</div>
+
+<h2><span class="num">Zakończenie</span>Kto idzie spać</h2>
+
+<p>Wróćmy do nocy 5 grudnia 2024 roku. Po trzydziestu minutach od startu HAWK ktoś zarobił miliony, a tysiące ludzi straciło oszczędności. Twórczyni tokena powiedziała, że idzie spać.</p>
+
+<p>To zdanie dobrze opisuje całą strukturę, o której był ten tekst. Na końcu każdej pompy są dwie grupy. Jedna może spokojnie iść spać, bo sprzedała wcześniej. Druga nie śpi, bo patrzy na wykres, który spada. Różnica między nimi rzadko wynika z inteligencji czy szczęścia. Wynika z tego, kto wiedział wcześniej i kto podał komu informację.</p>
+
+<p>Łapiemy się na tym wszyscy: chcemy wierzyć, że gdzieś jest osoba, która wie. Że wystarczy znaleźć właściwą grupę, właściwy kanał, właściwego proroka. Rynek nie działa w ten sposób. Działa według prostszej reguły — pieniądze płyną od tych, którzy działają pod wpływem emocji, do tych, którzy mają plan. Dlatego nudne zasady wygrywają z ekscytującymi obietnicami. Nie zawsze, ale na tyle często, że warto na nie postawić.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+<ol class="sources">
+<li>DL News, „How insiders and bots crashed Hawk Tuah Girl’s memecoin”, 12.2024. <a href="https://www.dlnews.com/articles/markets/investors-angry-hawk-tuah-girl-haliey-welch-memecoin-crashes/">dlnews.com</a></li>
+<li>FXStreet, „Hawk Tuah girl Hailey Welch claims SEC, FBI cleared her for the HAWK memecoin disaster”, 21.05.2025. <a href="https://www.fxstreet.com/cryptocurrencies/news/hawk-tuah-girl-hailey-welch-claims-sec-fbi-cleared-her-for-the-hawk-memecoin-disaster-202505211214">fxstreet.com</a></li>
+<li>Cointelegraph, „Javier Milei-endorsed Libra token crashes after $107M insider rug pull”, 02.2025. <a href="https://cointelegraph.com/news/milei-libra-token-scandal-107m-rug-pull">cointelegraph.com</a></li>
+<li>Buenos Aires Times, „A year on ‘$LIBRA’ crypto scandal, Argentina’s courts have yet to summon witnesses or suspects”, 2026. <a href="https://www.batimes.com.ar/news/argentina/a-year-on-libra-crypto-scandal-argentinas-courts-have-yet-to-summon-witnesses-or-suspects.phtml">batimes.com.ar</a></li>
+<li>Buenos Aires Herald, „$LIBRA crypto scandal: What’s the status of the legal inquiry in Argentina and the US?”, 08.08.2025. <a href="https://buenosairesherald.com/politics/judiciary/libra-crypto-scandal-whats-the-status-of-the-legal-inquiry-in-argentina-and-the-us">buenosairesherald.com</a></li>
+<li>J. Xu, B. Livshits, „The Anatomy of a Cryptocurrency Pump-and-Dump Scheme”, 28th USENIX Security Symposium, 2019. <a href="https://www.usenix.org/conference/usenixsecurity19/presentation/xu-jiahua">usenix.org</a> · <a href="https://arxiv.org/abs/1811.10109">arxiv.org</a></li>
+<li>Solidus Labs, „Solana Rug Pulls &amp; Pump-and-Dumps”, raport, 05.2025. <a href="https://www.soliduslabs.com/reports/solana-rug-pulls-pump-dumps-crypto-compliance">soliduslabs.com</a></li>
+<li>SEC, „SEC Charges Kim Kardashian for Unlawfully Touting Crypto Security”, komunikat 2022-183, 03.10.2022. <a href="https://www.sec.gov/newsroom/press-releases/2022-183">sec.gov</a></li>
+<li>SEC, „SEC Charges Crypto Entrepreneur Justin Sun and His Companies for Fraud and Other Securities Law Violations”, komunikat 2023-59, 22.03.2023. <a href="https://www.sec.gov/newsroom/press-releases/2023-59">sec.gov</a></li>
+<li>CCN, „ZachXBT Leak Reveals Fewer Than Five of 160+ Crypto Influencers Admit Paid Promotions”, 09.2025. <a href="https://www.ccn.com/news/crypto/zachxbt-leak-crypto-influencers-paid-promotions/">ccn.com</a></li>
+<li>PANews, „From victim to on-chain detective, ZachXBT…” (profil). <a href="https://panews.io/articles/83055ef5-cb39-46a9-a64f-92a59b6cd6e2">panews.io</a></li>
+<li>U.S. Attorney’s Office, District of Massachusetts, „Eighteen Individuals and Entities Charged in International Operation Targeting Widespread Fraud and Manipulation in the Cryptocurrency Market”, 09.10.2024. <a href="https://www.justice.gov/usao-ma/pr/eighteen-individuals-and-entities-charged-international-operation-targeting-widespread">justice.gov</a></li>
+<li>U.S. Attorney’s Office, SDNY, „Crypto-Enabled Fraudster Sentenced For Orchestrating $40 Billion Fraud”, 11.12.2025. <a href="https://www.justice.gov/usao-sdny/pr/crypto-enabled-fraudster-sentenced-orchestrating-40-billion-fraud">justice.gov</a></li>
+<li>Salon, „Celsius CEO Alex Mashinsky gets 12 years in crypto fraud case”, 05.2025. <a href="https://www.salon.com/2025/05/09/celsius-ceo-alex-mashinsky-gets-12-years-in-crypto-fraud-case/">salon.com</a></li>
+<li>U.S. Attorney’s Office, EDNY, „CEO of Digital Asset Company SafeMoon Sentenced to 100 Months in Prison”. <a href="https://www.justice.gov/usao-edny/pr/ceo-digital-asset-company-safemoon-sentenced-100-months-prison-multi-million-dollar">justice.gov</a></li>
+<li>Bloomberg, „BitConnect Promoter Gets 38 Months in $2.4 Billion Ponzi Scam”, 17.09.2022. <a href="https://www.bloomberg.com/news/articles/2022-09-17/bitconnect-promoter-gets-38-months-in-2-4-billion-ponzi-scam">bloomberg.com</a></li>
+<li>U.S. Attorney’s Office, SDCA, „Founder of Fraudulent Cryptocurrency Charged in $2 Billion BitConnect Ponzi Scheme”, 02.2022. <a href="https://www.justice.gov/usao-sdca/pr/founder-fraudulent-cryptocurrency-charged-2-billion-bitconnect-ponzi-scheme">justice.gov</a></li>
+<li>V. Buterin, „On Silos”, Ethereum Foundation Blog, 31.12.2014. <a href="https://blog.ethereum.org/2014/12/31/silos">blog.ethereum.org</a></li>
+<li>M. Cary, „Herding and investor sentiment after the cryptocurrency crash: evidence from Twitter and natural language processing”, <em>Financial Innovation</em>, 2024. <a href="https://link.springer.com/article/10.1186/s40854-024-00663-x">springer.com</a></li>
+<li>Johnson Investment Counsel, „Lump Sum vs. Dollar Cost Averaging — Rationality vs. Psychological Comfort” (omówienie badania Vanguard z 2012 r.). <a href="https://www.johnsoninv.com/insights/blog/investment/lump-sum-vs-dollar-cost-averaging">johnsoninv.com</a></li>
+<li>J.A. Fulkerson, B. Jordan, T.B. Riley, Q. Yan, „Bad Timing Does Not Cost Investors 15% of Their Funds’ Returns”, <em>Financial Analysts Journal</em>, 2026. <a href="https://rpc.cfainstitute.org/research/financial-analysts-journal/2026/bad-timing-does-not-cost-investors-funds-returns">cfainstitute.org</a></li>
+<li>Protos, „Crypto cases Trump’s SEC has paused and dismissed in 2025”. <a href="https://protos.com/sec-cases-crypto-dismissed/">protos.com</a></li>
+</ol>
+
+<footer class="end">Seria krypto, część piąta. Wcześniej: „Anatomia procesu”, „Anatomia wybrańca”, „Anatomia narracji” i „Anatomia wahadła”. W kolejnych częściach: upadek FTX, Terra/Luna i memecoin Trumpa. Tekst ma charakter informacyjny i nie stanowi porady inwestycyjnej.</footer>
+
+</div></body></html>

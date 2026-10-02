@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia wybrańca</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;}
+strong{font-weight:600;color:#fff;}
+sup{font-size:.62em;color:var(--gold);font-weight:500;margin-left:1px;}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;font-size:.94rem;line-height:1.6;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;font-size:1.05rem;}
+.box p{margin:0 0 10px;} .box p:last-child{margin-bottom:0;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .ev.r:before{background:var(--red);} .tl .ev.g:before{background:var(--green);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.chart{margin:34px 0;}
+.chart .ct{font-family:'Fraunces',serif;font-size:1.05rem;margin-bottom:14px;}
+.bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.r{background:var(--red);} .bars .fill.g{background:var(--green);} .bars .fill.b{background:var(--blue);}
+.bars .val{flex:0 0 78px;text-align:right;font-variant-numeric:tabular-nums;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:10px;}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;background:var(--c);}
+.caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .h{font-family:'Fraunces',serif;color:var(--gold);font-size:1rem;margin-bottom:8px;}
+.twocol .side p{margin:0 0 8px;} .twocol .side p:last-child{margin:0;}
+.quote{border-left:2px solid var(--gold);padding:4px 0 4px 18px;margin:28px 0;font-family:'Fraunces',serif;font-size:1.12rem;line-height:1.5;color:#f3ecd9;}
+.quote .who{display:block;font-family:'Work Sans',sans-serif;font-size:.8rem;color:var(--muted);margin-top:8px;}
+.verdict{margin:30px 0;border:1px solid var(--line);}
+.verdict .vr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);}
+.verdict .vr:last-child{border-bottom:none;}
+.verdict .vr div{padding:12px 16px;font-size:.9rem;line-height:1.5;}
+.verdict .vr div:first-child{border-right:1px solid var(--line);}
+.verdict .vr:not(.head) div:first-child{color:var(--muted);font-style:italic;}
+.verdict .head div{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--gold);}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+.sources{font-size:.85rem;color:var(--muted);line-height:1.6;padding-left:22px;} .sources li{margin-bottom:8px;}
+.sources a{color:var(--muted);word-break:break-word;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;} .bars .lab{flex:0 0 104px;} .bars .val{flex:0 0 66px;} .twocol{grid-template-columns:1fr;} .verdict .vr{grid-template-columns:1fr;} .verdict .vr div:first-child{border-right:none;border-bottom:none;padding-bottom:0;} .verdict .head{display:none;} .verdict .vr div:first-child:before{content:'Twierdzenie z filmu';display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;font-style:normal;margin-bottom:4px;} .verdict .vr div:last-child:before{content:'Co mówią źródła';display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:4px;}}
+</style>
+</head>
+<body><div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy · Seria krypto, część druga</div>
+  <h1>Anatomia wybrańca</h1>
+  <p class="lede">Ripple to jedna z najlepiej ustosunkowanych firm w świecie krypto. Ma licencję bankową w drodze, wycenę 40 miliardów dolarów i byłych urzędników w radzie. Pytanie, które zadaje sobie każdy posiadacz XRP, brzmi jednak inaczej: czy sukces firmy to to samo, co sukces tokena? Rozkładam na części popularny film, który twierdzi, że tak.</p>
+  <div class="meta">Wrzesień 2026 · czas czytania ok. 20 minut</div>
+</header>
+
+<p>Film trwa dwie minuty i czternaście sekund. Zaczyna się od zdania, że Ripple zostało wybrane do prowadzenia nowego globalnego systemu płatności cyfrowych — i że używa XRP. Potem narrator w szybkim tempie wymienia: Rezerwa Federalna, Bank Światowy, Fundacja Billa i Melindy Gatesów, ONZ, standard ISO 20022, ponad 300 instytucji finansowych, Bank Anglii, były skarbnik Stanów Zjednoczonych, była szefowa SEC, Światowe Forum Ekonomiczne. Na końcu pada pytanie: czy to brzmi jak projekt, który zniknie, czy jak część dużo większego planu? „Zdecyduj sam”.<sup>1</sup></p>
+
+<p>Obejrzałem ten film, kiedy krążył po platformie X, i dobrze pamiętam, jak działał. Każde nazwisko dokładało cegiełkę. Po dwóch minutach miało się wrażenie, że nie trzymam spekulacyjnego tokena, tylko udział w czymś, co najpotężniejsze instytucje świata już dawno postanowiły. Takie filmy były dla mnie przez lata głównym źródłem wiedzy o Ripple.</p>
+
+<p>Ten tekst robi dwie rzeczy. Najpierw opowiada historię Ripple jako firmy: skąd się wzięła, co naprawdę sprzedaje i jak zmieniła się w ostatnich trzech latach. Potem sprawdza film zdanie po zdaniu, na źródłach pierwotnych. Teza jest taka: <strong>prawie każdy element filmu ma w sobie ziarno prawdy. Fałszywy jest wniosek, który z nich zbudowano — bo firma Ripple i token XRP to dwie różne rzeczy, a dowody na sukces pierwszej rzadko są dowodami na sukces drugiego.</strong></p>
+
+<div class="box">
+  <div class="bt">Zanim zaczniemy</div>
+  <p>To nie jest tekst „przeciwko XRP” ani porada inwestycyjna. Nie oceniam, czy kurs wzrośnie. Sprawdzam, czy konkretne twierdzenia są prawdziwe i czy wynika z nich to, co sugerują. Dane o wolumenach i klientach Ripple pochodzą w większości od samej firmy — zaznaczam to przy każdej liczbie.</p>
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Zanim był token</h2>
+
+<p>Nazwa „Ripple” jest starsza niż bitcoin. W 2004 roku kanadyjski programista Ryan Fugger stworzył projekt RipplePay. Był to system, w którym ludzie mogli pożyczać sobie nawzajem w oparciu o zaufanie. Ty ufasz mnie, ja ufam trzeciej osobie, więc przez łańcuch znajomych pieniądz może „przepłynąć” między ludźmi, którzy się nie znają.<sup>2</sup> Nie było w tym żadnej kryptowaluty.</p>
+
+<p>Dzisiejszy XRP powstał później. W 2011 roku Jed McCaleb, Arthur Britto i David Schwartz zaczęli pisać rejestr, który miał być szybszą i tańszą alternatywą dla bitcoina. Ruszył w czerwcu 2012 roku. We wrześniu tego samego roku założyli firmę, do której dołączył Chris Larsen jako prezes. Firma nazywała się kolejno NewCoin, OpenCoin i Ripple Labs.<sup>2</sup> Kod rejestru jednorazowo stworzył 100 miliardów XRP. 80 miliardów trafiło do firmy, 20 miliardów zatrzymali założyciele.<sup>6</sup></p>
+
+<h3>Pierwszy rozłam: Stellar</h3>
+
+<p>McCaleb był postacią nietuzinkową. Wcześniej prowadził Mt. Gox, który przerobił ze strony do handlu kartami do gry na giełdę bitcoina. Sprzedał ją w 2011 roku Markowi Karpelèsowi, na długo przed jej spektakularnym upadkiem.<sup>3</sup> Z Ripple rozstał się w 2013 roku, po sporze o kierunek rozwoju firmy.<sup>2,3</sup></p>
+
+<p>W 2014 roku McCaleb razem z Joyce Kim założył Stellar Development Foundation. Stellar miał podobny cel: tanie przelewy międzynarodowe. Na początku opierał się na protokole Ripple. W 2015 roku przeszedł na własny mechanizm uzgadniania transakcji, Stellar Consensus Protocol.<sup>3</sup> Od tego momentu XRP i XLM łączy wspólna historia, ale nie wspólny kod. To dwa konkurencyjne projekty.</p>
+
+<p>Przez następne osiem lat rynek XRP żył w cieniu tokenów McCaleba. Jako współzałożyciel miał około 9 miliardów XRP. Sprzedawał je stopniowo, według ograniczeń uzgodnionych z Ripple, od maja 2014 roku. Ostatnie tokeny sprzedał w lipcu 2022 roku.<sup>2,4</sup></p>
+
+<h3>55 miliardów pod kluczem</h3>
+
+<p>W grudniu 2017 roku Ripple zrobiło coś, co miało uspokoić rynek. Zamknęło 55 miliardów XRP — ponad połowę całej podaży — w tak zwanych escrow. To zamki wbudowane w sam rejestr: tokeny odblokowują się automatycznie według harmonogramu i nikt, łącznie z Ripple, nie może ich ruszyć wcześniej. Co miesiąc odblokowuje się miliard XRP. Czego firma nie wykorzysta, trafia z powrotem do nowego escrow na koniec kolejki.<sup>5</sup></p>
+
+<p>To ważny szczegół dla zrozumienia całego modelu biznesowego. Ripple przez lata finansowało się w dużej mierze ze sprzedaży XRP. W samym czerwcu 2024 roku sprzedało 150 milionów XRP za około 64,5 miliona dolarów.<sup>2</sup> Firma jest więc największym sprzedawcą tokena na rynku. Jej interes i interes posiadaczy są zbieżne w jednym punkcie — obie strony chcą wysokiej ceny — ale nie we wszystkich.</p>
+
+<h2><span class="num">Rozdział drugi</span>Dwa produkty, jedna nazwa</h2>
+
+<p>Żeby zrozumieć, co Ripple właściwie sprzedaje, trzeba poznać problem, który rozwiązuje. Załóżmy, że bank w Stanach chce wysłać pieniądze do Meksyku. Tradycyjnie potrzebuje do tego banku-pośrednika, który trzyma pesos. Albo sam musi mieć w meksykańskim banku konto z zapasem pesos, tak zwane <strong>konto nostro</strong>. Te pieniądze leżą bezczynnie, na zapas, na wypadek przelewów. Na świecie takich zamrożonych rezerw są ogromne kwoty.</p>
+
+<p>Ripple przez lata oferowało na to dwie zupełnie różne odpowiedzi:</p>
+
+<div class="twocol">
+  <div class="side">
+    <div class="h">xCurrent — komunikacja</div>
+    <p>Oprogramowanie, dzięki któremu banki wymieniają się informacjami o przelewie w czasie rzeczywistym: kto, komu, ile, po jakim kursie. Pieniądze płyną dalej starymi kanałami.</p>
+    <p><strong>Nie wymaga XRP.</strong></p>
+  </div>
+  <div class="side">
+    <div class="h">xRapid / ODL — płynność</div>
+    <p>Dolary zamieniane są na XRP, XRP przelatuje przez rejestr w kilka sekund, na miejscu jest zamieniane na pesos. Konto nostro nie jest potrzebne.<sup>6</sup></p>
+    <p><strong>Tu XRP jest niezbędny.</strong></p>
+  </div>
+</div>
+
+<p>W 2019 roku oba produkty i trzeci, interfejs xVia, połączono w jedną markę: RippleNet. W listopadzie 2023 roku RippleNet stał się Ripple Payments.<sup>2</sup> Z marketingowego punktu widzenia to był sensowny ruch. Z punktu widzenia posiadacza XRP — pułapka. Od tej chwili każdy bank, który korzystał tylko z komunikacji, był „klientem RippleNet” tak samo jak ten, który kupował XRP.</p>
+
+<h3>Banki wzięły komunikację, nie token</h3>
+
+<p>Dziennikarze zauważyli ten podział dawno. W styczniu 2019 roku Fortune opisywał, że banki korzystające z xCurrent odrzucały próby namówienia ich na xRapid. Western Union, długo przedstawiany jako partner, ogłosił po testach, że XRP nie obniżył kosztów jego przelewów.<sup>7</sup></p>
+
+<p>Jest też smaczny szczegół sprzed dekady. W 2015 roku dwaj pracownicy Ripple opublikowali artykuł gościnny na stronie Better Than Cash Alliance — tej samej, którą przywołuje film. Przedstawili w nim Ripple jako rozwiązanie, które działa z istniejącą infrastrukturą banków <em>bez konieczności używania alternatywnych walut</em>.<sup>8</sup> Firma świadomie sprzedawała bankom produkt, w którym XRP nie był potrzebny.</p>
+
+<p>Ripple twierdzi, że z czasem się to zmieniło. W raporcie za 2022 rok podało, że około 60% płatności w RippleNet szło już przez ODL, a produkt działał w prawie 40 krajach docelowych, wobec trzech w 2020 roku.<sup>9</sup> Łączny wolumen od uruchomienia sieci firma szacowała wtedy na prawie 30 miliardów dolarów.<sup>9</sup> W listopadzie 2025 roku mówiła już o ponad 95 miliardach dolarów w Ripple Payments.<sup>26</sup></p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">~60%</div><div class="d">Udział płatności przez ODL (z XRP) w RippleNet w 2022 r. — według Ripple.<sup>9</sup></div></div>
+  <div class="nrow"><div class="n">~30 mld $</div><div class="d">Łączny wolumen RippleNet od startu do końca 2022 r. — według Ripple.<sup>9</sup></div></div>
+  <div class="nrow"><div class="n">95 mld $+</div><div class="d">Łączny wolumen Ripple Payments podany w listopadzie 2025 r. — według Ripple.<sup>26</sup></div></div>
+  <div class="nrow"><div class="n">0,35%</div><div class="d">Taki udział w światowym obrocie XRP miała sprzedaż Ripple w IV kwartale 2022 r.<sup>9</sup> Nawet największy sprzedawca to kropla w morzu handlu spekulacyjnego.</div></div>
+</div>
+
+<p>Te liczby nie są małe. Ale trzeba je czytać z dwiema uwagami. Po pierwsze, podaje je sama firma i nie da się ich niezależnie zweryfikować. Po drugie, 95 miliardów dolarów łącznie przez kilka lat to wciąż ułamek rynku przelewów międzynarodowych, który liczy się w bilionach dolarów rocznie. Ripple jest ważnym graczem niszy, a nie kręgosłupem światowych finansów.</p>
+
+<h2><span class="num">Rozdział trzeci</span>MoneyGram, czyli ile kosztuje wolumen</h2>
+
+<p>Najgłośniejszym przykładem użycia XRP w prawdziwym biznesie był MoneyGram, jedna z największych firm przekazów pieniężnych na świecie. W czerwcu 2019 roku podpisał z Ripple umowę na korzystanie z ODL. Ripple kupiło akcje MoneyGram za 30 milionów dolarów i zobowiązało się zainwestować łącznie do 50 milionów.<sup>2,10,11</sup></p>
+
+<p>Szczegóły umowy są w raporcie rocznym MoneyGram złożonym w SEC. I są zaskakujące. MoneyGram nie płacił Ripple za korzystanie z platformy. Było odwrotnie: to Ripple płaciło MoneyGram za „rozwijanie rynków i dostarczanie płynności”. MoneyGram nazwał te pieniądze <strong>opłatami za rozwój rynku</strong>. Umowa nie przewidywała żadnego zwrotu.<sup>10</sup></p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">0 $</div><div class="d">Tyle MoneyGram płacił Ripple za korzystanie z ODL.<sup>10</sup></div></div>
+  <div class="nrow"><div class="n">38 mln $</div><div class="d">Tyle Ripple zapłaciło MoneyGram w samym 2020 roku w „opłatach za rozwój rynku”.<sup>11</sup></div></div>
+  <div class="nrow"><div class="n">~15%</div><div class="d">Taką część skorygowanego zysku MoneyGram w 2020 roku stanowiły pieniądze od Ripple.<sup>11</sup></div></div>
+  <div class="nrow"><div class="n">2 lata</div><div class="d">O tyle wcześniej niż planowano, w marcu 2021 roku, zakończono współpracę — po pozwie SEC.<sup>11</sup></div></div>
+</div>
+
+<p>Tu warto się zatrzymać nad mechanizmem. Największy klient XRP nie kupował tokena dlatego, że był tańszy od alternatyw. Kupował go, bo producent tokena mu za to płacił. Subsydiowanie pierwszych klientów to w startupach normalna praktyka — tak Uber przyciągał kierowców, a aplikacje dostawcze dawały zniżki. Ale subsydiowany wolumen nie dowodzi popytu. Dowodzi, że ktoś zapłacił, żeby wolumen powstał. Kiedy pieniądze przestały płynąć, przestał płynąć i wolumen.</p>
+
+<p>Garlinghouse bronił współpracy, pisząc, że nie da się zaprzeczyć temu, co obie firmy razem osiągnęły, a winą za koniec obarczył brak ram regulacyjnych dla krypto.<sup>11</sup> To częściowo prawda — pozew SEC realnie zabił tę umowę. Ale model, w którym dostawca płaci klientowi, żeby ten używał jego produktu, i tak nie był zrównoważony.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Film „Why do I hold XRP” pod lupą</h2>
+
+<p>Teraz sam film. Przeszedłem przez transkrypcję i każde twierdzenie, które da się sprawdzić, porównałem ze źródłem pierwotnym: raportami Rezerwy Federalnej, dokumentami Banku Światowego, komunikatami Banku Anglii i samego Ripple. Oto wyniki.</p>
+
+<h3>Rezerwa Federalna i „jedna firma krypto”</h3>
+
+<p>Film mówi, że w 2015 roku powstał zespół Rezerwy Federalnej do spraw szybszych płatności, a była w nim jedna firma skupiona na krypto: Ripple.<sup>1</sup> Zespół rzeczywiście istniał — Faster Payments Task Force. Ripple rzeczywiście w nim był, a jego pracownik Ryan Zagone zasiadał nawet w komitecie sterującym.<sup>12</sup></p>
+
+<p>Tyle że pod koniec 2016 roku zespół liczył 320 uczestników. Były wśród nich banki, firmy płatnicze, regulatorzy, konsultanci i organizacje konsumenckie. I nie tylko Ripple reprezentowało świat krypto: na liście uczestników są też Circle, firma stojąca za stablecoinem USDC, oraz Digital Asset Holdings.<sup>12</sup> Ripple było jednym z kilkuset głosów doradczych, a nie „wybrańcem” Fedu. <strong>Werdykt: prawda, ale mocno podkoloryzowana.</strong></p>
+
+<h3>Raport Banku Światowego i Fundacji Gatesów</h3>
+
+<p>Film mówi, że w 2014 roku Bank Światowy, Better Than Cash Alliance i Fundacja Gatesów opublikowały raport „The Opportunities of Digitizing Payments”, a rok później Better Than Cash Alliance wyróżniło na swojej stronie jedną firmę krypto — Ripple.<sup>1</sup></p>
+
+<p>Raport istnieje. Przygotowały go te trzy instytucje w sierpniu 2014 roku dla Globalnego Partnerstwa G20 na rzecz Włączenia Finansowego.<sup>13</sup> Przeczytałem go. Ma 22 strony i dotyczy zastępowania gotówki płatnościami elektronicznymi: przelewami, kartami, pieniądzem mobilnym. <strong>Nie pada w nim ani razu słowo Ripple, XRP, blockchain, bitcoin ani kryptowaluta.</strong><sup>14</sup></p>
+
+<p>Wzmianka na stronie Better Than Cash Alliance to artykuł gościnny napisany przez dwóch pracowników Ripple — ten sam, w którym przedstawili Ripple jako rozwiązanie niewymagające alternatywnych walut.<sup>8</sup> Nie jest to członkostwo w sojuszu ani rekomendacja. Film zestawia oba fakty tak, że powstaje wrażenie, jakby raport prowadził do Ripple. <strong>Werdykt: dwa prawdziwe fakty połączone fałszywym związkiem.</strong></p>
+
+<h3>ONZ, cele zrównoważonego rozwoju i „oficjalna giełda”</h3>
+
+<p>Film pokazuje logo celów zrównoważonego rozwoju ONZ na klapie Billa Gatesa i pyta, jakiej kryptowaluty używa oficjalna giełda ONZ do handlu kredytami węglowymi. Odpowiedź: XRP.<sup>1</sup></p>
+
+<p>Cele zrównoważonego rozwoju to agenda przyjęta przez wszystkie państwa członkowskie ONZ. Ich logo noszą tysiące polityków, firm i organizacji. Nie ma żadnego związku z płatnościami.</p>
+
+<p>„Oficjalna giełda ONZ” to firma Xange.com. W grudniu 2021 roku ogłosiła, że zbuduje rozwiązanie do kredytów węglowych na rejestrze XRP Ledger. Sama opisuje się jako partner ONZ wybrany do utworzenia giełdy papierów wartościowych na Mauritiusie.<sup>15</sup> Nie jest to więc giełda ONZ, tylko prywatna firma z projektem na jednej wyspie. Co ważniejsze, komunikat mówi o budowie na rejestrze, a nie o używaniu tokena XRP — w ogóle o nim nie wspomina.<sup>15</sup> <strong>Werdykt: przesadzone, a słowo „XRP” pomylone z „XRP Ledger”.</strong></p>
+
+<h3>ISO 20022</h3>
+
+<p>Film mówi, że świat przechodzi na nowy standard wiadomości bankowych ISO 20022, a Ripple było pierwszym członkiem skupionym na technologii rozproszonych rejestrów.<sup>1</sup> Ripple rzeczywiście dołączyło w maju 2020 roku do organu zarządzającego tym standardem. Samo przedstawiło się jako jeden z pierwszych członków skupionych na tej technologii.<sup>16</sup></p>
+
+<p>Tylko że ISO 20022 to format wiadomości — sposób opisania przelewu. Członkostwo w organie standaryzacyjnym oznacza, że firma bierze udział w pracach nad formatem. Nie oznacza, że ktokolwiek wybrał jakikolwiek token. Najmocniej powiedział to Matt Hamilton, były dyrektor ds. relacji z programistami w Ripple. W sierpniu 2025 roku napisał, że w kodzie XRP Ledger nie ma absolutnie nic, co miałoby związek z ISO 20022. Zgodne z ISO jest oprogramowanie firmy do komunikacji z bankami — a nie token.<sup>17</sup> Temu, dlaczego mimo to „monety ISO” rosły, poświęcę osobny tekst. <strong>Werdykt: fakt prawdziwy, wniosek o XRP nieuzasadniony.</strong></p>
+
+<h3>„Ponad 300 instytucji finansowych”</h3>
+
+<p>Liczba pochodzi od Ripple, które w 2020 roku mówiło o ponad 300 instytucjach w swojej sieci.<sup>16</sup> Warto zauważyć, że w 2024 roku firma podawała już, że z Ripple Payments korzysta „ponad 100 instytucji”.<sup>2</sup> Lista z filmu miesza przy tym zupełnie różne rodzaje relacji.</p>
+
+<p>Weźmy Bank Anglii. W 2017 roku Ripple rzeczywiście wzięło udział w programie akceleracyjnym Banku Anglii. Był to test koncepcji: w odizolowanym, symulowanym środowisku sprawdzano, czy protokół Interledger może zsynchronizować przelewy między dwoma systemami rozliczeniowymi. W raporcie banku nie ma ani słowa o XRP.<sup>23</sup> To nie jest „partnerstwo” w sensie, jaki sugeruje film. To jeden z wielu eksperymentów, które banki centralne prowadzą z dziesiątkami firm.</p>
+
+<p>Podobnie jest z resztą listy. Wiele banków korzystało z komunikacji Ripple, a nie z XRP. Część relacji skończyła się na pilotażu. <strong>Werdykt: liczba od Ripple, w dodatku malejąca, a lista miesza klientów z testami.</strong></p>
+
+<h3>Ludzie z wysokich stanowisk</h3>
+
+<p>To najmocniejsza część filmu i tu większość faktów się zgadza. Warto jednak zobaczyć, co z nich wynika.</p>
+
+<div class="verdict">
+  <div class="vr head"><div>Twierdzenie z filmu</div><div>Co mówią źródła</div></div>
+  <div class="vr"><div>Były człowiek Ripple nadzoruje Rezerwę Federalną.</div><div>Michael Barr był członkiem rady doradczej Ripple od 2015 roku. W lipcu 2022 roku został wiceprzewodniczącym Fedu ds. nadzoru.<sup>18</sup> Na tym stanowisku uchodził jednak za zwolennika twardego kursu wobec krypto.<sup>19</sup> W styczniu 2025 roku zapowiedział odejście z funkcji.<sup>32</sup></div></div>
+  <div class="vr"><div>Były pracownik Ripple kieruje aktywami cyfrowymi BlackRocka.</div><div>Robert Mitchnick, szef działu aktywów cyfrowych BlackRocka, pracował w Ripple przez kilka miesięcy w 2013 roku, 13 lat temu.<sup>20</sup></div></div>
+  <div class="vr"><div>Ripple zatrudniło byłego skarbnika USA.</div><div>Prawda. Rosie Rios dołączyła do rady dyrektorów Ripple w maju 2021 roku.<sup>21</sup></div></div>
+  <div class="vr"><div>Była szefowa SEC w zespole prawnym Ripple.</div><div>Prawda. Mary Jo White broniła Ripple od 2018 roku w prywatnym pozwie zbiorowym inwestorów.<sup>22</sup> Najdroższe kancelarie zatrudniają byłych regulatorów rutynowo.</div></div>
+  <div class="vr"><div>Ripple prowadzi prace nad australijską walutą cyfrową banku centralnego.</div><div>Nie znalazłem żadnego potwierdzenia. Ripple prowadziło pilotaże CBDC m.in. z Palau, Bhutanem, Czarnogórą i Kolumbią. W lutym 2025 roku wzmianki o CBDC zniknęły ze strony firmy.<sup>24</sup></div></div>
+</div>
+
+<p>Zatrudnianie byłych urzędników, polityków i regulatorów to w amerykańskiej branży finansowej standard. Tak samo robią Coinbase, Circle, banki i fundusze. Świadczy to o tym, że Ripple ma pieniądze i ambicje. Nie świadczy o tym, że jakiekolwiek państwo wybrało XRP. Przypadek Barra pokazuje wręcz, że były doradca firmy krypto może, jako regulator, być dla krypto wyjątkowo surowy.</p>
+
+<h3>Lista organizacji</h3>
+
+<p>Końcówka filmu to seria członkostw: Digital Dollar Project, Digital Euro Association, Mojaloop, konsorcjum Hyperledger, Rada Szybkich Płatności, Światowe Forum Ekonomiczne i kilkanaście innych.<sup>1</sup> Nie weryfikowałem każdego z osobna. Nie było to potrzebne, bo nawet jeśli wszystkie są prawdziwe, niewiele z nich wynika. To w większości otwarte stowarzyszenia branżowe, do których należą dziesiątki, a często setki firm. Członkostwo kupuje się składką. Nie jest wyróżnieniem.</p>
+
+<h3>Jak działa ten film</h3>
+
+<p>Wiele filmów i seriali ma scenę z tablicą korkową. Detektyw przypina do niej zdjęcia, wycinki z gazet, bilety, a potem łączy je czerwonymi nitkami. Każde zdjęcie jest prawdziwe. Każdy wycinek naprawdę się ukazał. Nitki dorysował jednak sam detektyw. Im więcej pinezek, tym bardziej tablica wygląda jak dowód — choć siła całości zależy wyłącznie od nitek.</p>
+
+<p>Film o XRP działa dokładnie tak. Większość „pinezek” jest prawdziwa: Fed, Barr, Rios, ISO, Bank Anglii. Ale żadna z nitek — „Ripple wybrane”, „XRP w centrum”, „większy plan” — nie ma pokrycia w dokumentach. A zakończenie „zdecyduj sam” zdejmuje z autora obowiązek udowodnienia czegokolwiek. Jeśli widz uwierzy, to jego wniosek. Jeśli nie — też jego.</p>
+
+<div class="chart">
+  <div class="ct">Bilans twierdzeń filmu, które dało się sprawdzić</div>
+  <div class="bars">
+    <div class="row"><div class="lab">Prawdziwe, ale wniosek o XRP nie wynika</div><div class="track"><div class="fill b" style="width:100%"></div></div><div class="val">6</div></div>
+    <div class="row"><div class="lab">Przesadzone lub mylące</div><div class="track"><div class="fill" style="width:66.7%"></div></div><div class="val">4</div></div>
+    <div class="row"><div class="lab">Niepotwierdzone</div><div class="track"><div class="fill r" style="width:16.7%"></div></div><div class="val">1</div></div>
+    <div class="row"><div class="lab">Dowodzące użycia tokena XRP</div><div class="track"><div class="fill g" style="width:0%"></div></div><div class="val">0</div></div>
+  </div>
+  <div class="caption">Moja klasyfikacja 11 sprawdzalnych twierdzeń. Prawdziwe bez zastrzeżeń co do wniosku: Rios, White, członkostwo w ISO, obecność w zespole Fedu, przeszłość Barra i Mitchnicka. Przesadzone: „jedyna firma krypto” w zespole Fedu, raport Banku Światowego, „oficjalna giełda ONZ”, lista 300 instytucji. Niepotwierdzone: australijskie CBDC. Lista stowarzyszeń nie była liczona.</div>
+</div>
+
+<h2><span class="num">Rozdział piąty</span>Nowe Ripple</h2>
+
+<p>Film pochodzi z czasów, gdy Ripple walczyło o przetrwanie w sporze z SEC. Po zakończeniu procesu firma przeszła jedną z najszybszych przemian w historii branży. Warto ją znać, bo pokazuje, w którą stronę Ripple naprawdę zmierza.</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">maj 2023</div><div class="txt">Przejęcie Metaco, szwajcarskiej firmy przechowującej aktywa cyfrowe dla instytucji, za 250 mln $.<sup>25</sup></div></div>
+  <div class="ev"><div class="yr">2024</div><div class="txt">Przejęcie Standard Custody. W kwietniu Ripple ogłasza własny stablecoin RLUSD, zabezpieczony dolarem; testy ruszają w sierpniu na Ethereum i XRP Ledger.<sup>2,25</sup></div></div>
+  <div class="ev"><div class="yr">kwiecień 2025</div><div class="txt">Przejęcie Hidden Road, brokera obsługującego instytucje, za 1,25 mld $.<sup>25</sup></div></div>
+  <div class="ev"><div class="yr">sierpień–październik 2025</div><div class="txt">Przejęcia Rail (płatności stablecoinami) i GTreasury (oprogramowanie do zarządzania skarbem firm, ok. 1 mld $).<sup>25</sup></div></div>
+  <div class="ev g"><div class="yr">5 listopada 2025</div><div class="txt">500 mln $ od inwestorów prowadzonych przez Fortress i Citadel Securities przy wycenie 40 mld $.<sup>26</sup></div></div>
+  <div class="ev g"><div class="yr">12 grudnia 2025</div><div class="txt">Amerykański nadzór bankowy OCC udziela Ripple warunkowej zgody na utworzenie Ripple National Trust Bank — razem z Circle, Paxos, BitGo i Fidelity Digital Assets.<sup>28</sup></div></div>
+  <div class="ev"><div class="yr">maj 2026</div><div class="txt">Kapitalizacja RLUSD przekracza 1,6 mld $, wobec 132 mln $ rok wcześniej.<sup>29</sup></div></div>
+</div>
+
+<div class="chart">
+  <div class="ct">Największe przejęcia Ripple o ujawnionej cenie (mln $)</div>
+  <div class="bars">
+    <div class="row"><div class="lab">Hidden Road (2025)</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">1 250</div></div>
+    <div class="row"><div class="lab">GTreasury (2025)</div><div class="track"><div class="fill" style="width:80%"></div></div><div class="val">~1 000</div></div>
+    <div class="row"><div class="lab">Metaco (2023)</div><div class="track"><div class="fill" style="width:20%"></div></div><div class="val">250</div></div>
+  </div>
+  <div class="caption">Ceny Standard Custody, Rail i Palisade nie zostały ujawnione. Łącznie wydatki na przejęcia szacuje się na ok. 4 mld $. Źródło: crypto.news.<sup>25</sup></div>
+</div>
+
+<p>Zgoda OCC to rzecz, o której posiadacze XRP marzyli od lat — „Ripple zostaje bankiem”. Warto jednak rozumieć, czym jest bank powierniczy. To instytucja, która przechowuje i zarządza aktywami klientów. Nie jest to pełny bank, który przyjmuje depozyty i udziela kredytów.<sup>28</sup> Zgoda jest przy tym warunkowa.</p>
+
+<p>Ciekawy jest też szczegół rundy za 40 miliardów. Bloomberg ustalił, że inwestorzy z Wall Street wynegocjowali sobie zabezpieczenia. Dostali prawo odsprzedania akcji Ripple z gwarantowanym zwrotem oraz pierwszeństwo w razie upadłości albo sprzedaży firmy.<sup>27</sup> Najwięksi gracze uwierzyli w Ripple — ale na warunkach, które chronią ich przed stratą.</p>
+
+<h2><span class="num">Rozdział szósty</span>Firma to nie token</h2>
+
+<p>Spójrzmy na listę z poprzedniego rozdziału jeszcze raz. Przechowywanie aktywów, pośrednictwo dla instytucji, stablecoin w dolarach, oprogramowanie do zarządzania skarbem firm, licencja bankowa. Wszystkie te biznesy mogą zarabiać bez względu na to, ile kosztuje XRP.</p>
+
+<p>Weźmy RLUSD. RLUSD działa m.in. na XRP Ledger, a każda transakcja na tym rejestrze spala minimalną opłatę w XRP.<sup>2</sup> To jest realny, rosnący popyt na rejestr. Ale jeśli bank rozlicza się w stablecoinie, to XRP pełni tylko rolę drobnej opłaty, a nie mostu między walutami. Według analizy 24/7 Wall St z maja 2026 roku kluczowe partnerstwa Ripple z tego roku opierały rozliczenia na RLUSD, a XRP pokrywał jedynie koszty transakcji.<sup>29</sup></p>
+
+<p>Najciekawszą wypowiedź na ten temat usłyszeliśmy kilka dni temu od samego prezesa Ripple. 24 września 2026 roku Brad Garlinghouse powiedział na panelu, że nie jest maksymalistą XRP. Dodał, że może się okazać, że XRP jest najlepszym aktywem-mostem, ale może też być tak, że lepiej rozwiąże ten problem stablecoin.<sup>30</sup></p>
+
+<p>To zdanie jest uczciwe i ważne. Szef firmy mówi wprost to, czego film nie chciał powiedzieć: sukces Ripple i sukces XRP mogą się rozejść.</p>
+
+<div class="twocol">
+  <div class="side">
+    <div class="h">Argumenty za XRP</div>
+    <p>XRP Ledger rośnie jako infrastruktura: RLUSD i inne aktywa przenoszą na niego realny ruch.</p>
+    <p>ODL wciąż używa XRP jako mostu, a Ripple deklarowało już w 2022 roku prawie 40 rynków docelowych.<sup>9</sup></p>
+    <p>Koniec sporu z SEC i fundusze ETF otworzyły XRP drogę do kapitału instytucjonalnego.<sup>31</sup></p>
+    <p>Ripple, kontrolując dziesiątki miliardów XRP, ma silny interes w jego wartości.<sup>2,5</sup></p>
+  </div>
+  <div class="side">
+    <div class="h">Argumenty przeciw</div>
+    <p>Większość historycznych „partnerstw” dotyczyła komunikacji, nie tokena.</p>
+    <p>Największy przypadek użycia, MoneyGram, był opłacany przez samo Ripple.</p>
+    <p>Nowe biznesy Ripple mogą zarabiać bez XRP, a stablecoiny konkurują z nim o rolę mostu.</p>
+    <p>Wycenę firmy (40 mld $) i kapitalizację tokena wyznaczają różne siły — ta druga zależy głównie od spekulacji.</p>
+  </div>
+</div>
+
+<h2><span class="num">Zakończenie</span>Zdecyduj sam</h2>
+
+<p>Film kończy się zaproszeniem do samodzielnego wniosku. Paradoksalnie to dobra rada, tylko źle użyta. Żeby naprawdę zdecydować samemu, trzeba otworzyć raport, na który powołuje się film, i zobaczyć, że nie ma w nim słowa o Ripple. Trzeba przeczytać komunikat „giełdy ONZ” i zauważyć, że mówi o rejestrze, a nie o tokenie. Trzeba sprawdzić, że były doradca Ripple w Fedzie był jednym z najostrzejszych regulatorów krypto.</p>
+
+<p>Kiedy oglądałem ten film pierwszy raz, niczego z tego nie sprawdzałem. Nie musiałem. Każde nazwisko potwierdzało to, w co i tak chciałem wierzyć. Wszyscy tak mamy. Kiedy mamy w czymś pieniądze, nie szukamy dowodów, tylko potwierdzeń. A twórcy takich filmów doskonale wiedzą, że pinezki przekonują nas bardziej niż nitki.</p>
+
+<p>Ripple nie jest oszustwem. To prawdziwa, bogata i coraz poważniejsza firma finansowa, z licencjami, klientami i byłymi urzędnikami na pokładzie. Ale „Ripple wygrywa” i „XRP wygrywa” to dwa różne zdania. Kto trzyma XRP, powinien wiedzieć, że jego prezes powiedział to publicznie kilka dni temu.</p>
+
+<p>Resztę rzeczywiście zdecyduj sam.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+<ol class="sources">
+<li>NotFinancialAdvice, „Why do I hold XRP”, film na YouTube, transkrypcja. <a href="https://www.youtube.com/watch?v=5urrOWO0KDI">youtube.com</a></li>
+<li>Contrary Research, „Ripple: Business Breakdown &amp; Founding Story”, 2024. <a href="https://research.contrary.com/company/ripple">research.contrary.com</a></li>
+<li>„Jed McCaleb”, Wikipedia (biografia: Mt. Gox, Ripple, Stellar). <a href="https://en.wikipedia.org/wiki/Jed_McCaleb">wikipedia.org</a></li>
+<li>CryptoSlate, „Ripple co-founder Jed McCaleb to finish selling XRP holdings by July 16”, 07.2022. <a href="https://cryptoslate.com/ripple-co-founder-jed-mccaleb-to-finish-selling-xrp-holdings-by-july-16/">cryptoslate.com</a></li>
+<li>XRPL.org, „An Explanation of Ripple’s XRP Escrow”, 15.12.2017. <a href="https://xrpl.org/blog/2017/explanation-of-ripples-xrp-escrow">xrpl.org</a></li>
+<li>U.S. District Court S.D.N.Y., <em>SEC v. Ripple Labs, Inc.</em>, 20 Civ. 10832 (AT), Order, 13.07.2023. <a href="https://www.nysd.uscourts.gov/sites/default/files/2023-07/SEC%20vs%20Ripple%207-13-23.pdf">nysd.uscourts.gov</a></li>
+<li>Fortune, „Ripple and XRapid: banks and XRP”, 08.01.2019. <a href="https://fortune.com/crypto/2019/01/08/ripple-xrapid">fortune.com</a></li>
+<li>R. Zagone, D. Aranda (Ripple Labs), „An infrastructure approach to improving Financial Inclusion”, artykuł gościnny, Better Than Cash Alliance, 2015. <a href="https://www.betterthancash.org/news/an-infrastructure-approach-to-improving-financial-inclusion">betterthancash.org</a></li>
+<li>Ripple, „Q4 2022 XRP Markets Report”, 2023 (dane firmy). <a href="https://ripple.com/insights/q4-2022-xrp-markets-report/">ripple.com</a></li>
+<li>MoneyGram International, Form 10-K za 2019 r. (umowa z Ripple, „market development fees”). <a href="https://www.sec.gov/Archives/edgar/data/1273931/000127393120000036/mgi201910-k.htm">sec.gov</a></li>
+<li>FinTech Futures, „MoneyGram and Ripple end partnership deal two years early”, 03.2021. <a href="https://www.fintechfutures.com/partnerships/moneygram-and-ripple-end-partnership-deal-two-years-early">fintechfutures.com</a></li>
+<li>Faster Payments Task Force (Federal Reserve), „The U.S. Path to Faster Payments. Final Report Part One”, 01.2017 (lista uczestników). <a href="https://www.federalreserve.gov/newsevents/pressreleases/files/US-path-to-faster-payments-pt1-201701.pdf">federalreserve.gov</a></li>
+<li>GPFI (G20), „The Opportunities of Digitizing Payments”, strona publikacji, 2014. <a href="https://www.gpfi.org/publications/opportunities-digitizing-payments">gpfi.org</a></li>
+<li>World Bank Development Research Group, Better Than Cash Alliance, Bill &amp; Melinda Gates Foundation, „The Opportunities of Digitizing Payments”, raport dla G20, 28.08.2014. <a href="https://docs.gatesfoundation.org/documents/g20%20report_final.pdf">gatesfoundation.org</a></li>
+<li>Xange.com, „Xange.com Will Develop a Carbon Credit Solution on the XRP Ledger”, GlobeNewswire, 16.12.2021. <a href="https://www.globenewswire.com/news-release/2021/12/16/2353715/0/en/Xange-com-Will-Develop-a-Carbon-Credit-Solution-on-the-XRP-Ledger.html">globenewswire.com</a></li>
+<li>The Paypers, „Ripple joins ISO 20022 standards body”, 05.2020. <a href="https://thepaypers.com/fintech/news/ripple-joins-iso-20022-standards-body">thepaypers.com</a></li>
+<li>Bitcoinist, „XRP–ISO 20022 Narrative Is A ‘Charade’: Ex-Ripple Developer”, 12.08.2025 (wypowiedź M. Hamiltona). <a href="https://bitcoinist.com/xrp-iso-20022-complete-charade-ex-ripple-developer/">bitcoinist.com</a></li>
+<li>CoinDesk, „Former Crypto Adviser Michael Barr Confirmed as Top US Financial Watchdog”, 13.07.2022. <a href="https://www.coindesk.com/policy/2022/07/13/former-crypto-adviser-michael-barr-confirmed-as-top-us-financial-watchdog">coindesk.com</a></li>
+<li>Cointelegraph, „US Fed vice chair Michael Barr favors hard line on crypto”. <a href="https://cointelegraph.com/news/us-fed-vice-chair-michael-barr-favors-hard-line-on-crypto-occ-acting-head-no-friendlier">cointelegraph.com</a></li>
+<li>IQ.wiki, „Robert Mitchnick” (przebieg kariery). <a href="https://iq.wiki/wiki/robert-mitchnick">iq.wiki</a></li>
+<li>Ripple, „Ripple Appoints Former Treasurer of the United States Rosie Rios to Board of Directors”, 04.05.2021. <a href="https://ripple.com/ripple-press/ripple-appoints-former-treasurer-of-the-united-states-rosie-rios-to-board-of-directors-names-new-cfo-kristina-campbell/">ripple.com</a></li>
+<li>CoinDesk, „Former SEC Chair to Represent Ripple in XRP Lawsuit”, 04.06.2018. <a href="https://www.coindesk.com/markets/2018/06/04/former-sec-chair-to-represent-ripple-in-xrp-lawsuit">coindesk.com</a></li>
+<li>Bank of England, „Ripple — FinTech Accelerator Proof of Concept”, 2017. <a href="https://www.bankofengland.co.uk/-/media/boe/files/fintech/ripple">bankofengland.co.uk</a></li>
+<li>U.Today, „Ripple’s Website: No Mention of CBDCs Sparks XRP Community Debate”, 15.02.2025. <a href="https://u.today/ripples-website-no-mention-of-cbdcs-sparks-xrp-community-debate">u.today</a></li>
+<li>crypto.news, „Ripple bought a bank in pieces. Here is the $4 billion audit”, 25.07.2026. <a href="https://crypto.news/ripple-4-billion-acquisition-empire-audit/">crypto.news</a></li>
+<li>CoinDesk, „Ripple Valued at $40B in Funding Round”, 05.11.2025 (dane o wolumenie podawane przez Ripple). <a href="https://www.coindesk.com/markets/2025/11/05/ripple-raises-usd500m-at-usd40b-valuation-in-fortress-led-round">coindesk.com</a></li>
+<li>Bloomberg, „Wall Street Hedged Big Crypto Bet in $500 Million Ripple Deal”, 08.12.2025. <a href="https://www.bloomberg.com/news/articles/2025-12-08/wall-street-hedged-big-crypto-bet-in-500-million-ripple-deal-xrp">bloomberg.com</a></li>
+<li>Banking Dive, „OCC green-lights Circle, Ripple, Paxos for national trust bank charters”, 12.2025; OCC, komunikat NR 2025-125. <a href="https://www.bankingdive.com/news/occ-national-trust-bank-charter-approve-circle-paxos-ripple-bitgo-gould-crypto/807799/">bankingdive.com</a> · <a href="https://www.occ.gov/news-issuances/news-releases/2025/nr-occ-2025-125.html">occ.gov</a></li>
+<li>24/7 Wall St, „RLUSD Just Crossed $1.6 Billion Market Cap: Here’s Why It’s Not Helping XRP”, 26.05.2026. <a href="https://247wallst.com/investing/2026/05/26/rlusd-just-crossed-1-6-billion-market-cap-heres-why-its-not-helping-xrp/">247wallst.com</a></li>
+<li>Yahoo Finance, „Ripple’s CEO Questions XRP’s Central Role: What Does This Mean for Demand?”, 09.2026 (wypowiedź B. Garlinghouse’a z 24.09.2026). <a href="https://finance.yahoo.com/markets/crypto/articles/ripple-ceo-questions-xrp-central-190137036.html">finance.yahoo.com</a></li>
+<li>CoinDesk, „First XRP Spot ETF Opens for Trade With Canary Capital’s XRPC”, 13.11.2025. <a href="https://www.coindesk.com/markets/2025/11/13/first-xrp-spot-etf-opens-for-trade-with-canary-capital-s-xrpc">coindesk.com</a></li>
+<li>CoinDesk, „U.S. Fed’s Michael Barr to Step Down as Vice Chair for Supervision”, 06.01.2025. <a href="https://www.coindesk.com/policy/2025/01/06/u-s-fed-s-michael-barr-to-step-down-as-vice-chair-for-supervision">coindesk.com</a></li>
+</ol>
+
+<footer class="end">Seria krypto, część druga. Część pierwsza: „Anatomia procesu” (SEC przeciwko Ripple). W kolejnych częściach: narracja „monet ISO 20022”, era Genslera w SEC i ekonomia influencerów krypto. Tekst ma charakter informacyjny i nie stanowi porady inwestycyjnej.</footer>
+
+</div></body></html>

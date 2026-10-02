@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia narracji</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;}
+strong{font-weight:600;color:#fff;}
+sup{font-size:.62em;color:var(--gold);font-weight:500;margin-left:1px;}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;font-size:.94rem;line-height:1.6;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;font-size:1.05rem;}
+.box p{margin:0 0 10px;} .box p:last-child{margin-bottom:0;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .ev.r:before{background:var(--red);} .tl .ev.g:before{background:var(--green);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.chart{margin:34px 0;}
+.chart .ct{font-family:'Fraunces',serif;font-size:1.05rem;margin-bottom:14px;}
+.bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.r{background:var(--red);} .bars .fill.g{background:var(--green);} .bars .fill.b{background:var(--blue);}
+.bars .val{flex:0 0 78px;text-align:right;font-variant-numeric:tabular-nums;}
+.legend{display:flex;flex-wrap:wrap;gap:16px;font-size:.8rem;color:var(--muted);margin-top:10px;}
+.legend span:before{content:"";display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px;background:var(--c);}
+.caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .h{font-family:'Fraunces',serif;color:var(--gold);font-size:1rem;margin-bottom:8px;}
+.twocol .side p{margin:0 0 8px;} .twocol .side p:last-child{margin:0;}
+.quote{border-left:2px solid var(--gold);padding:4px 0 4px 18px;margin:28px 0;font-family:'Fraunces',serif;font-size:1.12rem;line-height:1.5;color:#f3ecd9;}
+.quote .who{display:block;font-family:'Work Sans',sans-serif;font-size:.8rem;color:var(--muted);margin-top:8px;}
+.verdict{margin:30px 0;border:1px solid var(--line);}
+.verdict .vr{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line);}
+.verdict .vr:last-child{border-bottom:none;}
+.verdict .vr div{padding:12px 16px;font-size:.9rem;line-height:1.5;}
+.verdict .vr div:first-child{border-right:1px solid var(--line);}
+.verdict .vr:not(.head) div:first-child{color:var(--muted);font-style:italic;}
+.verdict .head div{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--gold);}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+.sources{font-size:.85rem;color:var(--muted);line-height:1.6;padding-left:22px;} .sources li{margin-bottom:8px;}
+.sources a{color:var(--muted);word-break:break-word;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;} .bars .lab{flex:0 0 104px;} .bars .val{flex:0 0 66px;} .twocol{grid-template-columns:1fr;} .verdict .vr{grid-template-columns:1fr;} .verdict .vr div:first-child{border-right:none;border-bottom:none;padding-bottom:0;} .verdict .head{display:none;} .verdict .vr div:first-child:before{content:'Połączenie na schemacie';display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;font-style:normal;margin-bottom:4px;} .verdict .vr div:last-child:before{content:'Co mówią źródła';display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:600;margin-bottom:4px;}}
+</style>
+</head>
+<body><div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy · Seria krypto, część trzecia</div>
+  <h1>Anatomia narracji</h1>
+  <p class="lede">Przez pięć lat „monety ISO 20022” były jedną z najsilniejszych opowieści w krypto. Miały być tokenami, które banki przyjmą, gdy świat przejdzie na nowy standard. 22 listopada 2025 roku świat przeszedł. Nic się nie stało. Rozkładam na części ten mit, słynny schemat powiązań między projektami — i mechanizm, dzięki któremu takie opowieści naprawdę poruszają kursami.</p>
+  <div class="meta">Wrzesień 2026 · czas czytania ok. 18 minut</div>
+</header>
+
+<p>Sobota, 22 listopada 2025 roku. SWIFT — sieć, przez którą banki na całym świecie wysyłają sobie polecenia przelewów — kończy dwudziestoletnią migrację. Stary format wiadomości, używany od dekad, przestaje obowiązywać w płatnościach międzynarodowych. Pierwszego dnia 97% poleceń płatniczych idzie już w nowym standardzie ISO 20022.<sup>1</sup></p>
+
+<p>Tego samego dnia serwis CoinMarketCap, najpopularniejsza strona z kursami kryptowalut, uruchamia nową kategorię: „ISO 20022”. Trafia do niej 17 tokenów, m.in. XRP, XLM i HBAR.<sup>2</sup></p>
+
+<p>Dla wielu posiadaczy to miał być dzień, na który czekali latami. XRP kosztował wtedy około 1,90 dolara. W ciągu poprzedniego tygodnia stracił ponad 15%, a od lipcowego szczytu — prawie połowę wartości.<sup>3</sup> Rejestr XRP Ledger obsługiwał tyle samo transakcji co wcześniej, około 22 na sekundę.<sup>4</sup> Matt Hamilton, były dyrektor ds. relacji z programistami w Ripple, skomentował to drwiąco: zwolennicy teorii po prostu wymyślą kolejną.<sup>4</sup></p>
+
+<p>Pamiętam listy „monet ISO”, które krążyły po grupach i filmach od 2021 roku. Pamiętam też schemat, który zamieszczam dalej — z Ripple, Quantem, Hederą i XDC połączonymi dziesiątkami kolorowych linii. Rozumiem, że wzrosty tych monet były efektem narracji. Ale nie uważam, że to czyni narrację nieważną. Żaden rynek byka nie obszedł się bez opowieści, która przyciąga nowe pieniądze. Bez niej nie ma wzrostów parabolicznych.</p>
+
+<p>Ten tekst traktuje więc narrację ISO poważnie — jako zjawisko rynkowe, a nie tylko pomyłkę. Pokazuje, czym naprawdę jest standard, skąd wzięła się lista „zgodnych monet”, co jest prawdą na słynnym schemacie powiązań i dlaczego mimo wszystko ta opowieść działała. Teza: <strong>„moneta ISO 20022” to kategoria, która nie istnieje w żadnym dokumencie ISO ani SWIFT. Ale jako narracja rynkowa była całkowicie realna — i dobrze pokazuje, jak w krypto powstaje cena.</strong></p>
+
+<div class="box">
+  <div class="bt">Zanim zaczniemy</div>
+  <p>To nie jest ocena, czy któryś z opisanych projektów jest dobry albo zły, ani porada inwestycyjna. Kilka z nich ma realne osiągnięcia biznesowe i piszę o nich wprost. Sprawdzam tylko jedno: czy związek z ISO 20022 i z bankami daje tokenom to, co sugerowała narracja.</p>
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Formularz, nie waluta</h2>
+
+<p>ISO 20022 to standard wiadomości finansowych. Określa, jak ma wyglądać komunikat, który jeden bank wysyła drugiemu: jakie pola zawiera, w jakiej kolejności, jak zapisać nadawcę, odbiorcę, kwotę i tytuł przelewu. Nowy format jest bogatszy od starego i łatwiejszy do automatycznego przetwarzania przez komputery.<sup>1,5</sup></p>
+
+<p>Najlepiej zrozumieć to na przykładzie z logistyki. Wyobraźmy sobie, że wszystkie firmy transportowe na świecie przechodzą na jeden, ujednolicony wzór listu przewozowego. Nowy formularz ma więcej rubryk: dokładny opis towaru, kody celne, dane odbiorcy w stałym układzie. Dzięki temu magazyny i urzędy mogą go czytać automatycznie. Ale formularz nie mówi niczego o tym, czym paczka pojedzie — ciężarówką, pociągiem czy samolotem. Nie wybiera też przewoźnika. Każdy przewoźnik, który nauczy się go wypełniać, może z niego korzystać.</p>
+
+<p>ISO 20022 jest takim formularzem. Token — XRP, XLM czy jakikolwiek inny — byłby w tym obrazie pojazdem albo ładunkiem. Standard go nie wybiera i nie wymaga. Każde oprogramowanie może generować i odczytywać wiadomości ISO 20022, także takie, które z kryptowalutami nie ma nic wspólnego.</p>
+
+<h3>Kto naprawdę siedzi przy stole</h3>
+
+<p>Standardem zarządza kilka ciał. Najważniejsze z nich to Registration Management Group, czyli grupa, która zatwierdza jego zmiany. Należą do niej 43 delegacje. Są wśród nich SWIFT, Euroclear, Clearstream, Visa, Mastercard, Europejski Bank Centralny, Bank Anglii, Bank Japonii, Bank Rozrachunków Międzynarodowych, JPMorgan, BNP Paribas i krajowe instytucje normalizacyjne.<sup>6</sup> Jedyną firmą z branży krypto na tej liście jest Ripple, które dołączyło w maju 2020 roku.<sup>6,7</sup></p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">43</div><div class="d">Delegacje w grupie zarządzającej rejestracją standardu ISO 20022. Dominują banki centralne, banki komercyjne i infrastruktura rynku.<sup>6</sup></div></div>
+  <div class="nrow"><div class="n">1</div><div class="d">Firma z branży krypto w tej grupie: Ripple. Nie ma w niej Stellar, Hedery, Algorandu, XDC, IOTA ani Quanta.<sup>6</sup></div></div>
+  <div class="nrow"><div class="n">0</div><div class="d">Liczba certyfikatów „zgodności z ISO 20022” wydanych jakiejkolwiek kryptowalucie. Taki certyfikat po prostu nie istnieje.<sup>5,8</sup></div></div>
+  <div class="nrow"><div class="n">97%</div><div class="d">Udział poleceń płatniczych w formacie ISO 20022 w sieci SWIFT pierwszego dnia po zakończeniu migracji, 22 listopada 2025 r.<sup>1</sup></div></div>
+</div>
+
+<p>Członkostwo Ripple jest faktem i ma sens biznesowy: firma sprzedaje bankom oprogramowanie do komunikacji, więc chce mieć wpływ na standard, w którym ta komunikacja się odbywa. Ale jak pisaliśmy w poprzedniej części serii, Matt Hamilton ujął to dosadnie: w kodzie XRP Ledger nie ma niczego, co miałoby związek z ISO 20022. Zgodne z ISO jest oprogramowanie Ripple, a nie token.<sup>9</sup></p>
+
+<h2><span class="num">Rozdział drugi</span>Jak powstała lista</h2>
+
+<p>Skoro standard nie wybiera tokenów, skąd wzięła się lista „monet ISO”? Dokładnego „pacjenta zero” nie da się wskazać. Da się za to odtworzyć logikę, według której lista rosła.</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">maj 2020</div><div class="txt">Ripple dołącza do organu zarządzającego ISO 20022. Z faktu „firma jest członkiem” rodzi się skrót „XRP jest zgodny z ISO”.<sup>7</sup></div></div>
+  <div class="ev"><div class="yr">2021–2022</div><div class="txt">Do XRP dopisywane są kolejne tokeny skupione na płatnościach i klientach instytucjonalnych: XLM, XDC, ALGO, IOTA, HBAR, QNT. Listy krążą po blogach, TikToku i YouTubie. Trafiają też na strony związane z teorią spiskową o „kwantowym systemie finansowym” (QFS). Jedna z nich zapowiadała „boom w 2022 roku” — i zastrzegała, że jej treści służą wyłącznie rozrywce.<sup>10</sup></div></div>
+  <div class="ev"><div class="yr">2022</div><div class="txt">Część projektów zaczyna sama używać tego języka. W ekosystemie XDC rusza Impel — komunikator dla instytucji, reklamowany jako alternatywa dla SWIFT, wysyłający wiadomości „zgodne z ISO 20022”.<sup>11</sup></div></div>
+  <div class="ev r"><div class="yr">22 listopada 2025</div><div class="txt">Koniec migracji SWIFT. CoinMarketCap tworzy kategorię „ISO 20022” z 17 tokenami — i nadaje nieoficjalnej liście pozór oficjalnej klasyfikacji.<sup>2</sup> Kurs XRP i aktywność jego rejestru się nie zmieniają.<sup>3,4</sup></div></div>
+</div>
+
+<p>W tym łańcuchu jest jedno uczciwe ogniwo, którego nie wolno zgubić. Firmy budujące oprogramowanie dla banków naprawdę muszą obsługiwać wiadomości ISO 20022. Jeśli projekt chce współpracować z instytucjami regulowanymi, jego systemy muszą umieć czytać i wypełniać ten „formularz”.<sup>5</sup> Impel i podobne narzędzia robią dokładnie to. Tylko że to cecha oprogramowania, jaką musi mieć każdy dostawca dla banków — od Oracle po polskie software house’y. Nie jest to przywilej, który ktoś przyznał wybranym tokenom.</p>
+
+<p>Serwis CCN, analizując mity wokół ISO 20022, zauważył, że kategoria CoinMarketCap odzwierciedla projekty obsługujące komunikację zgodną ze standardem, a nie żadne oficjalne członkostwo.<sup>5</sup> Takie członkostwo dla kryptowalut po prostu nie istnieje.</p>
+
+<h2><span class="num">Rozdział trzeci</span>Dlaczego to działało</h2>
+
+<p>Gdyby narracja ISO była tylko pomyłką, można by ją zbyć jednym akapitem. Ale ona działała — przyciągała kapitał i uwagę przez pięć lat. Warto zrozumieć dlaczego, bo te same cechy mają kolejne narracje.</p>
+
+<p><strong>Miała datę.</strong> Większość obietnic w krypto jest mglista: „kiedyś banki przyjmą”, „w przyszłości”. ISO miało konkretny termin migracji SWIFT. Data tworzy odliczanie, a odliczanie tworzy poczucie, że trzeba kupić przed.</p>
+
+<p><strong>Miała prawdziwe instytucje.</strong> SWIFT, Fed, EBC i ISO to nie wymysły. Każdy, kto sprawdzał, czy migracja naprawdę się odbywa, dostawał potwierdzenie. Fałszywe było tylko jedno ogniwo — związek z tokenami — i akurat tego nikt nie sprawdzał.</p>
+
+<p><strong>Była trudna do zweryfikowania.</strong> Standard wiadomości bankowych to temat nudny i techniczny. Mało kto czytał dokumentację ISO. Łatwiej było uwierzyć w skrót niż przekopać się przez specyfikację.</p>
+
+<p><strong>Dawała poczucie wiedzy tajemnej.</strong> „Większość ludzi nie wie, co nadchodzi, a ty już wiesz.” To bardzo silny motyw. Sprawia, że krytyka z zewnątrz brzmi jak dowód, że ktoś „nie rozumie”.</p>
+
+<h3>Cena chodzi stadem</h3>
+
+<p>Jest jeszcze jeden dowód, że kursy tych tokenów napędzała przede wszystkim opowieść, a nie ich osobne osiągnięcia. W sierpniu 2024 roku David Schwartz, dyrektor technologiczny Ripple, przyznał, że nie ma pojęcia, co napędza cenę XRP. Jedyny twardy fakt, jaki widzi, to że XRP niezwykle dokładnie podąża za kursem i kapitalizacją XLM.<sup>12</sup> Współczynnik korelacji między tymi tokenami wynosił wtedy 0,97 w skali miesiąca i 0,87 w skali roku.<sup>12</sup></p>
+
+<p>Współczynnik korelacji mierzy, jak bardzo dwa wykresy poruszają się razem. Wartość 1 oznacza, że poruszają się identycznie, a 0 — że nie mają ze sobą nic wspólnego. 0,97 to niemal bliźniacze wykresy. A przecież XRP i XLM należą do konkurencyjnych projektów o zupełnie innych klientach i wynikach. Taka synchronizacja pasuje do rynku, który traktuje je jako jeden „koszyk” pod jedną opowieścią.</p>
+
+<h3>Świeży przykład</h3>
+
+<p>Mechanizm działa dalej. 24 września 2026 roku The Clearing House — operator amerykańskich systemów płatności, rozliczających ponad 2 biliony dolarów dziennie — ogłosił, że wybrał firmę Quant do obsługi sieci tokenizowanych depozytów bankowych. Sieć ma ruszyć w pierwszej połowie 2027 roku.<sup>13</sup> To naprawdę duży sukces Quanta jako firmy.</p>
+
+<p>Token QNT zyskał w ciągu tygodnia 62%.<sup>14</sup> Tymczasem w komunikacie The Clearing House nie ma ani słowa o tokenie QNT ani o żadnym publicznym blockchainie.<sup>13</sup> Część komentatorów twierdzi, że instytucje będą potrzebowały QNT do obsługi węzłów i opłat licencyjnych.<sup>15</sup> Inni zauważają, że nie ma publicznego dokumentu, który by to potwierdzał.<sup>14</sup> Rynek nie czekał na odpowiedź.</p>
+
+<p>Nie uważam tego za szaleństwo. Tak działa rynek, na którym większość uczestników kupuje opowieść o przyszłości. Łapiemy się na tym wszyscy — kupujemy zanim sprawdzimy, bo boimy się, że po sprawdzeniu będzie za późno. Tyle że warto wiedzieć, za co się płaci: za prawdopodobieństwo, że opowieść się spełni, a nie za fakt, który już zaszedł.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Schemat pod lupą</h2>
+
+<p>Teraz słynny schemat. Krążył po grupach krypto jako mapa „ukrytej infrastruktury” przyszłych finansów. Są na nim kryptowaluty — XRP, XLM, XDC, ALGO, QNT, HBAR, IOTA i DAG (token Constellation) — oraz firmy i instytucje: R3, IBM, JPMorgan, ConsenSys, Accenture, ISO. Łączą je dziesiątki linii w różnych kolorach.</p>
+
+<p>Sprawdziłem każdą grupę połączeń, którą dało się zidentyfikować. Ogólny obraz jest taki: większość linii odpowiada czemuś, co naprawdę się wydarzyło. Tyle że bardzo często było to coś innego, niż sugeruje schemat. A prawie nigdy nie dotyczyło to samego tokena.</p>
+
+<div class="verdict">
+  <div class="vr head"><div>Połączenie na schemacie</div><div>Co mówią źródła</div></div>
+  <div class="vr"><div><strong>Ripple ↔ R3</strong><br>Sugestia: partnerzy.</div><div>W 2016 roku Ripple i konsorcjum bankowe R3 podpisały umowę. R3 miało promować Ripple w bankach i dostało opcję kupna 5 mld XRP po 0,0085 $. W 2017 roku Ripple zerwało umowę, a R3 poszło do sądu. Spór zakończył się w 2018 roku poufną ugodą.<sup>16</sup> Ta linia to w rzeczywistości proces sądowy.</div></div>
+  <div class="vr"><div><strong>Ripple ↔ Interledger ↔ Hyperledger Quilt</strong></div><div>Protokół Interledger opisali w 2015 roku dwaj inżynierowie Ripple. W 2019 roku jego rozwój przejęła fundacja o neutralnym statusie, współzałożona przez Ripple.<sup>17</sup> Protokół działa też bez kryptowalut — w teście Banku Anglii z 2017 roku nie użyto XRP.<sup>32</sup> Quilt, jego wersja dla języka Java, jest dziś projektem wygaszonym i zarchiwizowanym.<sup>18</sup></div></div>
+  <div class="vr"><div><strong>Ripple ↔ Stellar</strong></div><div>Wspólne korzenie: Stellar założył w 2014 roku współtwórca Ripple, Jed McCaleb, i początkowo oparł go na kodzie Ripple. W 2015 roku przeszedł na własny protokół.<sup>19</sup> Dziś to konkurenci.</div></div>
+  <div class="vr"><div><strong>Stellar ↔ IBM</strong></div><div>IBM zbudował na Stellarze sieć płatności World Wire. Mimo pozyskania kilku instytucji nie zdobyła popularności i jest dziś w dużej mierze nieaktywna.<sup>20</sup></div></div>
+  <div class="vr"><div><strong>IBM ↔ Hyperledger Fabric ↔ IBM Weaver</strong></div><div>Prawdziwe. To otwarte narzędzia IBM do budowy zamkniętych blockchainów dla firm. Nie mają własnych tokenów i nie są powiązane z żadną z kryptowalut na schemacie.</div></div>
+  <div class="vr"><div><strong>JPMorgan ↔ ConsenSys ↔ Ethereum</strong></div><div>Prawdziwe. JPMorgan zbudował własną, zamkniętą wersję Ethereum o nazwie Quorum i w 2020 roku sprzedał ją firmie ConsenSys.<sup>22</sup> Jego platforma blockchain nazywa się dziś Kinexys.<sup>23</sup> Z „monetami ISO” nie ma to nic wspólnego.</div></div>
+  <div class="vr"><div><strong>XDC ↔ Impel ↔ „R3 Corda Bridge” ↔ TradeFinex</strong></div><div>To w dużej mierze własny ekosystem XDC. Impel działa na sieci XDC i integruje się z platformą Corda firmy R3. Przy starcie w 2022 roku mówił o rozmowach z bankami w ramach pilotażu, ale żadnego z nich nie wymienił z nazwy.<sup>11</sup></div></div>
+  <div class="vr"><div><strong>JPMorgan ↔ XDC / TradeFinex</strong></div><div>Nie znalazłem żadnego źródła potwierdzającego taką współpracę.</div></div>
+  <div class="vr"><div><strong>Quant Overledger ↔ CBDC</strong></div><div>Prawdziwe. W maju 2025 roku EBC wybrał Quanta jako jednego z około 70 uczestników platformy innowacji cyfrowego euro. Quant testuje tam płatności warunkowe.<sup>24</sup> We wrześniu 2026 roku dołączyła umowa z The Clearing House.<sup>13</sup> Rola tokena QNT w tych projektach nie jest publicznie opisana. Dla porównania: Ripple, które też prowadziło pilotaże walut cyfrowych banków centralnych, w 2025 roku usunęło wzmianki o nich ze swojej strony.<sup>30</sup></div></div>
+  <div class="vr"><div><strong>INATBA</strong></div><div>Stowarzyszenie branżowe z siedzibą w Brukseli, z członkostwem płatnym w czterech kategoriach wielkości firmy i ponad setką członków. IOTA Foundation i Quant są na liście; Ripple, Algorandu, Hedery i XDC na niej nie widać.<sup>25</sup></div></div>
+  <div class="vr"><div><strong>Constellation</strong></div><div>Prawdziwe. W 2021 roku firma dostała drugi etap kontraktu badawczego Sił Powietrznych USA na zabezpieczenie wymiany danych.<sup>26</sup> To projekt o bezpieczeństwie danych wojskowych, nie o płatnościach.</div></div>
+  <div class="vr"><div><strong>IOTA</strong></div><div>Prawdziwe. W 2022 roku IOTA znalazła się wśród trzech finalistów unijnego zamówienia badawczego na infrastrukturę blockchain. Zadanie: cyfrowe paszporty produktów, np. baterii i elektroniki, żeby ułatwić recykling.<sup>27</sup> Też nie chodzi o płatności.</div></div>
+  <div class="vr"><div><strong>Hedera</strong></div><div>Prawdziwe. Siecią zarządza rada, do której należy około 30 dużych firm, m.in. Google i IBM. Członkowie rady utrzymują węzły sieci.<sup>28,29</sup> W 2024 roku Hedera przekazała cały kod fundacji Linuxa.<sup>28</sup></div></div>
+  <div class="vr"><div><strong>Accenture</strong></div><div>Nie znalazłem źródła opisującego konkretną relację pokazaną na schemacie.</div></div>
+  <div class="vr"><div><strong>ISO — połączone ze wszystkimi</strong></div><div>Fałsz. Jedynym projektem na schemacie obecnym w organie zarządzającym standardem jest Ripple.<sup>6</sup> Certyfikacja tokenów nie istnieje.<sup>5</sup></div></div>
+</div>
+
+<div class="chart">
+  <div class="ct">15 grup połączeń na schemacie — co z nich zostaje</div>
+  <div class="bars">
+    <div class="row"><div class="lab">Prawdziwe, ale bez związku z tokenami lub płatnościami</div><div class="track"><div class="fill b" style="width:100%"></div></div><div class="val">6</div></div>
+    <div class="row"><div class="lab">Prawdziwe, ale inne niż sugeruje schemat lub wygaszone</div><div class="track"><div class="fill" style="width:66.7%"></div></div><div class="val">4</div></div>
+    <div class="row"><div class="lab">Własny ekosystem lub płatne członkostwo</div><div class="track"><div class="fill" style="width:33.3%;opacity:.6"></div></div><div class="val">2</div></div>
+    <div class="row"><div class="lab">Fałszywe lub niepotwierdzone</div><div class="track"><div class="fill r" style="width:50%"></div></div><div class="val">3</div></div>
+    <div class="row"><div class="lab">Dowodzące, że banki używają tych tokenów</div><div class="track"><div class="fill g" style="width:0%"></div></div><div class="val">0</div></div>
+  </div>
+  <div class="caption">Moja klasyfikacja na podstawie źródeł z tabeli powyżej. „Bez związku z tokenami”: IBM Fabric/Weaver, JPMorgan–ConsenSys, Constellation, IOTA, Hedera, Quant–EBC. „Inne niż sugeruje lub wygaszone”: R3, Interledger/Quilt, Ripple–Stellar, World Wire. „Własny ekosystem lub członkostwo”: XDC–Impel, INATBA. „Fałszywe lub niepotwierdzone”: ISO, Accenture, JPMorgan–XDC.</div>
+</div>
+
+<p>Schemat działa dokładnie jak film analizowany w poprzedniej części serii. Każda ikona jest prawdziwa i każde logo należy do prawdziwej firmy. Połączenia narysował jednak autor schematu. Grubość i kolor linii nic nie znaczą, bo nie ma legendy. Pozew sądowy, wygaszony projekt, zakup oprogramowania i płatne członkostwo w stowarzyszeniu wyglądają na nim tak samo jak strategiczny sojusz.</p>
+
+<h2><span class="num">Rozdział piąty</span>Wzór, który się powtarza</h2>
+
+<p>Kiedy przejrzy się realne sukcesy tych projektów, widać ten sam wzór, który opisaliśmy przy Ripple. Instytucje chętnie korzystają z oprogramowania i technologii firm krypto. Znacznie rzadziej — z ich tokenów.</p>
+
+<p>Najlepszą ilustracją jest MoneyGram. W latach 2019–2021 korzystał z XRP, a Ripple płaciło mu za to miliony dolarów. Po pozwie SEC współpraca się skończyła. Jesienią 2021 roku MoneyGram ogłosił nowe partnerstwo — ze Stellar. Tyle że przelewy miały być rozliczane w USDC, stablecoinie powiązanym z dolarem, a nie w tokenie XLM.<sup>21</sup> Firma zmieniła sieć, a token tej sieci i tak nie był jej potrzebny.</p>
+
+<p>Podobnie jest dziś z bankami. The Clearing House buduje sieć <em>tokenizowanych depozytów</em>, czyli cyfrowych wersji zwykłych pieniędzy bankowych, a nie nowej kryptowaluty.<sup>13</sup> SWIFT, ogłaszając zakończenie migracji, zapowiedział wprost budowę własnego rejestru opartego na blockchainie do przenoszenia tokenizowanej wartości.<sup>1</sup> Stara infrastruktura nie czeka, aż zastąpi ją któryś z tokenów. Uczy się technologii blockchain i wdraża ją u siebie.</p>
+
+<p>To nie znaczy, że tokeny nie mają żadnej roli. Każda transakcja na XRP Ledger, Stellar czy Hederze wymaga drobnej opłaty w natywnym tokenie. Quant deklaruje, że dostęp do jego sieci Overledger opłaca się w QNT.<sup>31</sup> Rosnący ruch na tych sieciach tworzy więc jakiś popyt. Ale to popyt na drobne opłaty sieciowe, a nie ten, który sugerowała narracja — że banki będą trzymać i przesyłać miliardy w tych tokenach.</p>
+
+<h2><span class="num">Rozdział szósty</span>Co zostaje prawdą</h2>
+
+<p>Po odrzuceniu mitu zostaje kilka rzeczy, które warto uczciwie wymienić.</p>
+
+<div class="twocol">
+  <div class="side">
+    <div class="h">Co jest prawdą</div>
+    <p>Te projekty rzeczywiście celują w instytucje, a nie w spekulację memami. Kilka z nich ma poważne kontrakty: Quant z The Clearing House i EBC, IOTA z UE, Hedera z radą dużych korporacji.</p>
+    <p>Obsługa formatu ISO 20022 jest dla dostawców oprogramowania dla banków rzeczywiście ważna.<sup>5</sup></p>
+    <p>Narracja realnie przyciągała kapitał i uwagę — i może to robić dalej.</p>
+  </div>
+  <div class="side">
+    <div class="h">Co jest mitem</div>
+    <p>Że istnieje lista tokenów „zgodnych z ISO” albo „zatwierdzonych przez ISO”.</p>
+    <p>Że migracja SWIFT miała automatycznie zwiększyć popyt na te tokeny. Dzień migracji to pokazał.<sup>3,4</sup></p>
+    <p>Że kontrakt firmy z bankiem oznacza użycie jej tokena. W opisanych przypadkach zwykle nie oznacza.</p>
+  </div>
+</div>
+
+<p>Z tego wynika praktyczne pytanie, które warto zadawać przy każdej kolejnej narracji: <strong>co dokładnie musi się stać, żeby ten konkretny token był potrzebny?</strong> Nie firma, nie sieć, nie technologia — token. Jeśli odpowiedź brzmi „nic, wystarczy, że firma odniesie sukces”, to kupujemy opowieść o firmie przez instrument, który nie daje nam do niej żadnego prawa.</p>
+
+<h2><span class="num">Zakończenie</span>Opowieść, która zrobiła swoje</h2>
+
+<p>22 listopada 2025 roku świat finansów przeszedł na nowy formularz. Dziewięćdziesiąt siedem procent przelewów tego dnia poszło w nowym formacie. Żaden z nich nie potrzebował do tego XRP, XLM ani żadnego innego tokena z listy.</p>
+
+<p>Mimo to nie uważam, że narracja ISO była bezużyteczna dla rynku. Przez pięć lat przyciągała nowych ludzi, dawała powód do kupna i trzymania, budowała społeczności. W tym sensie spełniła swoją funkcję. Rynki byka potrzebują opowieści tak samo, jak silnik potrzebuje paliwa.</p>
+
+<p>Ale paliwo się spala. Narracja z datą ma tę wadę, że data kiedyś nadchodzi. Wtedy okazuje się, kto kupił fakt, a kto opowieść. Kto rozumie tę różnicę, może na narracjach zarabiać. Kto jej nie widzi, zwykle je finansuje.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+<ol class="sources">
+<li>SWIFT, „Global financial community completes switch to ISO 20022”, komunikat prasowy, 11.2025. <a href="https://www.swift.com/news-events/press-releases/global-financial-community-completes-switch-iso-20022-paving-way-new-levels-cross-border-payment-speed-and-innovation-around-world">swift.com</a></li>
+<li>CryptocurrencyHelp, „CoinMarketCap’s ISO 20022 Category Confuses Messaging with Compliance”, 11.2025. <a href="https://cryptocurrencyhelp.com/news/coinmarketcap-iso-20022-category-confuses-messaging-with-compliance/">cryptocurrencyhelp.com</a></li>
+<li>TS2 Tech, „XRP Price Today, 22 November 2025”, 22.11.2025. <a href="https://ts2.tech/en/xrp-price-today-22-november-2025-ripple-hovers-near-1-90-as-etf-wave-and-swift-iso-20022-shift-collide/">ts2.tech</a></li>
+<li>The Crypto Basic, „Expert Says ‘Absolutely Nothing Happened’ to XRP as ISO 20022 Officially Goes Live”, 24.11.2025. <a href="https://thecryptobasic.com/2025/11/24/expert-says-absolutely-nothing-happened-to-xrp-as-iso-20022-officially-goes-live/">thecryptobasic.com</a></li>
+<li>CCN, „5 Myths About ISO 20022 and Crypto Compliance — The Truth Behind the Hype”. <a href="https://www.ccn.com/education/crypto/iso-20022-crypto-compliance-myths/">ccn.com</a></li>
+<li>ISO 20022, „Registration Management Group member list”. <a href="https://www.iso20022.org/registration-management-group-member-list">iso20022.org</a></li>
+<li>The Paypers, „Ripple joins ISO 20022 standards body”, 05.2020. <a href="https://thepaypers.com/fintech/news/ripple-joins-iso-20022-standards-body">thepaypers.com</a></li>
+<li>crypto.news, „What is ISO 20022? The banking standard behind the XRP, XLM, and ALGO hype”. <a href="https://crypto.news/what-is-iso-20022-the-banking-standard-behind-the-xrp-xlm-and-algo-hype/">crypto.news</a></li>
+<li>Bitcoinist, „XRP–ISO 20022 Narrative Is A ‘Charade’: Ex-Ripple Developer”, 12.08.2025. <a href="https://bitcoinist.com/xrp-iso-20022-complete-charade-ex-ripple-developer/">bitcoinist.com</a></li>
+<li>QFS1776, „ISO 20022 Cryptos” (strona związana z teorią QFS/GESARA; przywołana jako przedmiot analizy). <a href="https://www.qfs1776.com/iso-20022-cryptos">qfs1776.com</a></li>
+<li>Impel, „Impel Launches Next-Gen Alternative to SWIFT, SEPA on the XDC Network”, GlobeNewswire, 22.06.2022. <a href="https://www.globenewswire.com/en/news-release/2022/06/22/2467195/0/en/Impel-Launches-Next-Gen-Alternative-to-SWIFT-SEPA-on-the-XDC-Network.html">globenewswire.com</a></li>
+<li>BeInCrypto, „XRP vs. XLM: Breaking Down the Reasons Behind Their Unusual Market Correlation”, 2024. <a href="https://beincrypto.com/correlation-between-xlm-and-xrp/">beincrypto.com</a></li>
+<li>The Clearing House, „The Clearing House Partners with Quant to Advance the On-Chain Money Initiative”, PR Newswire, 24.09.2026. <a href="https://www.prnewswire.com/news-releases/the-clearing-house-partners-with-quant-to-advance-the-on-chain-money-initiative-302888598.html">prnewswire.com</a></li>
+<li>CryptoTicker, „Quant (QNT) Up 62 Percent: What The Clearing House Mandate Really Means”, 09.2026. <a href="https://cryptoticker.io/en/quant-qnt-tokenized-deposits/">cryptoticker.io</a></li>
+<li>Genfinity, „Quant Network Explained: The Interoperability Network Behind The Clearing House’s Tokenized Deposit Future”, 29.09.2026. <a href="https://genfinity.io/2026/09/29/quant-network-overledger-clearing-house-tokenized-deposits-explained/">genfinity.io</a></li>
+<li>Ledger Insights, „Ripple, R3 settle billion dollar blockchain dispute”, 09.2018. <a href="https://www.ledgerinsights.com/ripple-r3-settle-blockchain-billion-dollar-dispute/">ledgerinsights.com</a></li>
+<li>„Interledger Foundation”, Wikipedia. <a href="https://en.wikipedia.org/wiki/Interledger_Foundation">wikipedia.org</a></li>
+<li>Hyperledger Quilt, repozytorium archiwalne (projekt wygaszony). <a href="https://github.com/hyperledger/quilt">github.com</a></li>
+<li>„Jed McCaleb”, Wikipedia. <a href="https://en.wikipedia.org/wiki/Jed_McCaleb">wikipedia.org</a></li>
+<li>PYMNTS, „Stablecoin Pilots Keep Stalling on the Road to Scale”, 2026 (o IBM World Wire). <a href="https://www.pymnts.com/cryptocurrency/2026/mapping-the-digital-dollar-graveyard-of-failed-stablecoin-pilots/">pymnts.com</a></li>
+<li>CoinDesk, „MoneyGram Partners With Stellar and USDC for Blockchain-Based Payments”, 06.10.2021. <a href="https://www.coindesk.com/business/2021/10/06/moneygram-partners-with-stellar-and-usdc-for-blockchain-based-payments">coindesk.com</a></li>
+<li>CoinDesk, „ConsenSys Acquires JPMorgan’s Quorum Blockchain”, 25.08.2020. <a href="https://www.coindesk.com/business/2020/08/25/consensys-acquires-jpmorgans-quorum-blockchain">coindesk.com</a></li>
+<li>CoinDesk, „JPMorgan Renames Blockchain Platform to Kinexys”, 06.11.2024. <a href="https://www.coindesk.com/business/2024/11/06/jpmorgan-renames-blockchain-platform-to-kynexis-to-add-on-chain-fx-settlement-for-usd-eur">coindesk.com</a></li>
+<li>Quant, „Quant selected as a pioneer partner in the European Central Bank’s Digital Euro project”, 05.2025; Banque de France, „ECB partners with private sector through digital euro innovation platform”, 05.05.2025. <a href="https://quant.network/news/quant-selected-as-a-pioneer-partner-in-the-european-central-banks-digital-euro-project/">quant.network</a> · <a href="https://www.banque-france.fr/en/press-release/ecb-partners-private-sector-through-digital-euro-innovation-platform">banque-france.fr</a></li>
+<li>INATBA, „Our members”. <a href="https://inatba.org/members/">inatba.org</a></li>
+<li>Enterprise Times, „Constellation Network awarded SBIR Phase II USAF contract”, 01.09.2021. <a href="https://www.enterprisetimes.co.uk/2021/09/01/constellation-network-awarded-sbir-phase-ii-usaf-contract/">enterprisetimes.co.uk</a></li>
+<li>Ledger Insights, „IOTA, Chromaway, Billon make the final cut in EU blockchain infrastructure pre-procurement”, 25.11.2022. <a href="https://www.ledgerinsights.com/iota-chomaway-billon-eu-blockchain-ebsi/">ledgerinsights.com</a></li>
+<li>„Hedera (distributed ledger)”, Wikipedia. <a href="https://en.wikipedia.org/wiki/Hedera_(distributed_ledger)">wikipedia.org</a></li>
+<li>KuCoin News, „Hedera’s Governing Council hits 31 with Google, IBM, FedEx”, 2026. <a href="https://www.kucoin.com/news/trends/HBAR/69e27a879b8ebc0007cc773d">kucoin.com</a></li>
+<li>U.Today, „Ripple’s Website: No Mention of CBDCs Sparks XRP Community Debate”, 15.02.2025. <a href="https://u.today/ripples-website-no-mention-of-cbdcs-sparks-xrp-community-debate">u.today</a></li>
+<li>Gemini Cryptopedia, „Quant (QNT): Web3 Enterprise Interoperability via Overledger”. <a href="https://www.gemini.com/cryptopedia/quant-network-overledger-network-quant-crypto-qnt-token">gemini.com</a></li>
+<li>Bank of England, „Ripple — FinTech Accelerator Proof of Concept”, 2017. <a href="https://www.bankofengland.co.uk/-/media/boe/files/fintech/ripple">bankofengland.co.uk</a></li>
+</ol>
+
+<footer class="end">Seria krypto, część trzecia. Wcześniej: „Anatomia procesu” (SEC przeciwko Ripple) i „Anatomia wybrańca” (historia Ripple i rozbiór filmu „Why do I hold XRP”). W kolejnych częściach: era Genslera w SEC i ekonomia influencerów krypto. Tekst ma charakter informacyjny i nie stanowi porady inwestycyjnej.</footer>
+
+</div></body></html>

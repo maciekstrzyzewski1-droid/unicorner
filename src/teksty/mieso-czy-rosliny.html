@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mięso czy rośliny — pełny obraz</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14150f;
+    --surface: #1b1c14;
+    --surface-2: #212216;
+    --paper: #ece5d1;
+    --muted: #a49a80;
+    --dim: #6f6a58;
+    --line: #34351f;
+    --line-soft: #24251a;
+    --beef: #b5502e;
+    --crop: #7f9b57;
+    --water: #4f8a8b;
+    --gold: #d1a13f;
+    --danger: #c34a3a;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--paper);
+    font-family:'Work Sans', sans-serif;
+    font-size:16.5px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{
+    max-width:680px;
+    margin:0 auto;
+    padding:0 22px 96px;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces', serif;
+    font-weight:600;
+    line-height:1.15;
+    margin:0 0 .4em;
+    color:var(--paper);
+  }
+  p{ max-width:65ch; margin:0 0 1.05em; color:var(--paper); }
+  .muted{ color:var(--muted); }
+  em{ font-style:italic; color:var(--gold); font-weight:500;}
+  strong{ font-weight:600; color:var(--paper); }
+  a{ color:var(--gold); }
+
+  /* HERO */
+  .hero{ padding:72px 0 32px; }
+  .kicker{
+    font-family:'Work Sans', sans-serif;
+    font-weight:500;
+    font-size:.78rem;
+    letter-spacing:.14em;
+    color:var(--muted);
+    text-transform:uppercase;
+    margin-bottom:22px;
+  }
+  .hero h1{
+    font-size:clamp(2.1rem, 8vw, 3.1rem);
+    font-weight:700;
+    letter-spacing:-0.015em;
+    line-height:1.05;
+  }
+  .hero .dek{
+    font-family:'Fraunces', serif;
+    font-size:1.15rem;
+    font-weight:400;
+    color:var(--paper);
+    max-width:48ch;
+    margin-top:18px;
+    line-height:1.4;
+  }
+  .byline{
+    margin-top:26px;
+    padding-top:18px;
+    border-top:1px solid var(--line);
+    font-size:.85rem;
+    color:var(--muted);
+  }
+
+  /* SECTIONS */
+  section{ padding:44px 0 8px; border-top:1px solid var(--line); }
+  section:first-of-type{ border-top:none; padding-top:20px; }
+  h2{ font-size:1.75rem; margin-bottom:6px; letter-spacing:-.005em;}
+  h2 .num{
+    display:block;
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:400;
+    font-size:.9rem;
+    color:var(--gold);
+    letter-spacing:.05em;
+    margin-bottom:8px;
+    text-transform:none;
+  }
+  h3{ font-size:1.2rem; margin-top:28px; margin-bottom:8px;}
+
+  .lede{
+    font-family:'Fraunces', serif;
+    font-weight:400;
+    font-size:1.15rem;
+    color:var(--paper);
+    line-height:1.45;
+    margin:16px 0 26px;
+    max-width:60ch;
+  }
+
+  .stat-line{
+    font-family:'Fraunces', serif;
+    font-style:italic;
+    font-weight:500;
+    font-size:1.25rem;
+    color:var(--gold);
+    margin:24px 0;
+    line-height:1.4;
+    padding-left:18px;
+    border-left:2px solid var(--gold);
+  }
+
+  .callout{
+    background:var(--surface);
+    border-left:3px solid var(--gold);
+    padding:16px 18px;
+    border-radius:0 4px 4px 0;
+    margin:22px 0;
+    font-size:.96rem;
+    color:var(--paper);
+  }
+  .callout .tag{
+    font-family:'Work Sans', sans-serif;
+    font-weight:600;
+    font-size:.72rem;
+    letter-spacing:.15em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:6px;
+    display:block;
+  }
+  .callout p{ margin:0; max-width:none; }
+
+  .warning{ border-left-color:var(--danger); }
+  .warning .tag{ color:var(--danger); }
+
+  /* LAND GRID */
+  .grid-card{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:24px 22px 22px;
+    margin:22px 0 10px;
+  }
+  .land-grid{
+    display:grid;
+    grid-template-columns:repeat(10, 1fr);
+    gap:3px;
+    max-width:300px;
+    margin:0 auto 18px;
+  }
+  .cell{ aspect-ratio:1/1; border-radius:1px; }
+  .cell.livestock{ background:var(--beef); }
+  .cell.crop{ background:var(--crop); }
+  .grid-caption{ font-size:.95rem; text-align:center; color:var(--paper); }
+  .grid-key{
+    display:flex; justify-content:center; gap:22px;
+    margin-top:14px; font-size:.82rem; color:var(--muted);
+  }
+  .key-dot{ display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:6px; vertical-align:-1px; }
+
+  /* BAR CHARTS */
+  .chart{ margin:22px 0 12px; }
+  .bar-row{
+    display:grid;
+    grid-template-columns:110px 1fr 58px;
+    align-items:center;
+    gap:10px;
+    margin-bottom:7px;
+    font-size:.86rem;
+  }
+  .bar-row .label{ color:var(--paper); text-align:right; }
+  .bar-track{
+    background:var(--surface-2);
+    border-radius:2px;
+    height:16px;
+    overflow:hidden;
+  }
+  .bar-fill{ height:100%; border-radius:2px; }
+  .bar-row .val{ color:var(--muted); font-variant-numeric:tabular-nums; text-align:right;}
+  figcaption{ font-size:.78rem; color:var(--muted); margin-top:12px; line-height:1.4; }
+
+  /* COMPARISON TABLE */
+  .compare-table{
+    width:100%;
+    border-collapse:collapse;
+    margin:20px 0 8px;
+    font-size:.9rem;
+  }
+  .compare-table th, .compare-table td{
+    text-align:left;
+    padding:10px 8px;
+    border-bottom:1px solid var(--line-soft);
+  }
+  .compare-table th{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-size:.85rem;
+    color:var(--gold);
+    font-style:italic;
+  }
+  .compare-table td.num{ text-align:right; font-variant-numeric:tabular-nums;}
+  .compare-table tr:last-child td{ border-bottom:none; }
+
+  /* Q&A */
+  .qa{
+    margin:24px 0;
+    padding:20px 22px;
+    background:var(--surface);
+    border-radius:4px;
+    border:1px solid var(--line);
+  }
+  .qa h4{
+    font-size:1rem;
+    font-style:italic;
+    font-weight:500;
+    color:var(--gold);
+    margin-bottom:8px;
+  }
+  .qa p:last-child{ margin-bottom:0; }
+
+  /* ARGUMENTS BOX */
+  .arg-box{
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:4px;
+    padding:26px 24px;
+    margin:22px 0;
+  }
+  .arg-box ol{
+    margin:0; padding-left:20px;
+  }
+  .arg-box li{
+    margin-bottom:14px;
+    max-width:60ch;
+  }
+  .arg-box li::marker{ color:var(--gold); font-family:'Fraunces', serif; font-style:italic;}
+  .arg-box li strong{ color:var(--gold); font-family:'Fraunces', serif; font-weight:500; font-style:italic;}
+
+  /* FOOTER */
+  footer{
+    margin-top:56px;
+    padding-top:24px;
+    border-top:1px solid var(--line);
+    font-size:.78rem;
+    color:var(--muted);
+    line-height:1.7;
+  }
+  footer p{ max-width:none; color:var(--muted); }
+  footer h3{ font-size:.9rem; color:var(--paper); font-style:italic; margin-bottom:8px;}
+
+  @media (max-width:420px){
+    .bar-row{ grid-template-columns:88px 1fr 48px; font-size:.78rem; }
+    .wrap{ padding:0 18px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <div class="kicker">Środowisko · Zdrowie · Etyka codziennego wyboru</div>
+    <h1>Mięso czy rośliny — pełny obraz</h1>
+    <p class="dek">Twarde dane o tym, jak jedzenie kształtuje planetę i długość twojego życia. Nie moralizowanie, tylko liczby — na tyle konkretne, żeby dało się na nich oprzeć własne zdanie.</p>
+    <div class="byline">Artykuł badawczy · Ok. 25 minut lektury · Źródła u dołu strony</div>
+  </header>
+
+  <!-- INTRO -->
+  <section>
+    <p class="lede">Jedna decyzja podejmowana trzy razy dziennie zmienia klimat, wodę, glebę i — jak pokazują duże, wieloletnie badania — długość życia człowieka. Ta decyzja nazywa się „co dziś jem”. W większości rozmów o niej dominują emocje: TikToki, mema o „soja‑boyach”, ideologia. Ten artykuł ma zrobić coś innego — położyć na stole liczby.</p>
+
+    <p>Główna teza jest prosta i wynika z niemal całego dostępnego materiału naukowego: dieta oparta na roślinach, z dopuszczeniem jajek i umiarkowanej ilości nabiału (czyli <em>ovo‑lacto‑wegetarianizm</em>), jest znacząco lepsza dla środowiska niż standardowa dieta zachodnia i wiąże się z mniejszym ryzykiem najgroźniejszych chorób cywilizacyjnych. Nie znaczy to, że każde mięso jest złe — pierś z kurczaka to nie kabanos. Ale skala różnic między czerwonym mięsem a resztą świata żywności jest zwykle niedoceniana.</p>
+
+    <p>Pod „skalą” chowa się coś, co warto od razu zobaczyć.</p>
+
+    <div class="grid-card">
+      <div class="land-grid" id="landGrid"></div>
+      <p class="grid-caption">Każdy kwadrat to 1% światowych gruntów rolnych. <span style="color:var(--beef)">Pomarańczowe</span> — pastwiska i uprawy przeznaczone na paszę dla zwierząt. <span style="color:var(--crop)">Zielone</span> — uprawy roślin, które ludzie jedzą bezpośrednio (plus biopaliwa i włókna).</p>
+      <div class="grid-key">
+        <span><span class="key-dot" style="background:var(--beef)"></span>Zwierzęta hodowlane — 77%</span>
+      </div>
+      <div class="grid-key" style="margin-top:6px;">
+        <span><span class="key-dot" style="background:var(--crop)"></span>Uprawy roślinne dla ludzi — 23%</span>
+      </div>
+    </div>
+
+    <p class="muted" style="font-size:.9rem; text-align:center; margin-top:16px;">Te 77% zajętej pod hodowlę powierzchni daje ~18% światowych kalorii i ~37% białka. Reszta ziemi karmi siedem miliardów ludzi resztą wszystkiego.</p>
+  </section>
+
+  <!-- 1 SKALA -->
+  <section id="s1">
+    <h2><span class="num">Sekcja 1</span>Skala problemu</h2>
+    <p class="lede">Zanim zejdziemy w szczegóły: system żywnościowy odpowiada za mniej więcej <em>jedną czwartą</em> wszystkich emisji gazów cieplarnianych na planecie. To większy udział niż cały globalny transport (samochody, ciężarówki, samoloty, statki, łącznie) i porównywalny z emisjami całego przemysłu.</p>
+
+    <p>Rolnictwo pochłania też <strong>~70% pobieranej przez ludzi wody słodkiej</strong> (dane FAO), zajmuje połowę wszystkich nadających się do zamieszkania gruntów na Ziemi i jest głównym motorem niszczenia dzikiej przyrody. IUCN, prowadzący czerwoną listę gatunków zagrożonych, wskazuje rolnictwo jako zagrożenie dla <strong>24 tysięcy z 28 tysięcy</strong> ocenionych gatunków.</p>
+
+    <p>W obrębie żywności największym pojedynczym „segmentem” jest hodowla zwierząt. Nie chodzi tylko o krowy — chodzi o cały łańcuch: karczowanie lasu pod pastwisko, uprawy soi i kukurydzy na paszę, transport paszy, chów zwierząt, ubój, chłodnie, przetwórstwo, transport. Ten łańcuch generuje wszystkie problemy naraz: emituje gazy cieplarniane, wyczerpuje wody gruntowe, degraduje gleby, wypłukuje azot do rzek, zwiększa oporność bakterii na antybiotyki i wypycha dziką faunę z jej siedlisk.</p>
+
+    <div class="stat-line">Gdyby cały świat przeszedł na dietę roślinną, powierzchnia gruntów rolnych mogłaby spaść o około 75% — z ~4 miliardów hektarów do ~1 miliarda. Uwolniona przestrzeń jest wielkości Ameryki Północnej i Południowej razem.</div>
+
+    <p>To liczby z opublikowanej w <em>Science</em> metaanalizy Poore'a i Nemecka (2018), obejmującej dane z 38 700 gospodarstw w 119 krajach — najsolidniejsze badanie systemu żywnościowego jakie mamy. Będziemy do niego wracać, bo jest to obecnie <strong>fundament</strong> całej debaty.</p>
+  </section>
+
+  <!-- 2 ZIEMIA -->
+  <section id="s2">
+    <h2><span class="num">Sekcja 2</span>Ziemia — dlaczego zwierzęta zjadają kontynenty</h2>
+
+    <p class="lede">Cały mechanizm sprowadza się do jednej brutalnej matematyki: <em>konwersji energetycznej</em>. Kiedy karmisz krowę zbożem, większość tego zboża idzie w utrzymanie krowy przy życiu — na oddychanie, temperaturę ciała, chodzenie, produkcję kości i sierści. Do mięsa trafia tylko ułamek.</p>
+
+    <p>W konkretach: żeby wyprodukować kilokalorię wołowiny lub jagnięciny, potrzeba <em>50 do 100 razy więcej ziemi</em> niż na kilokalorię z roślin. Kurczak jest znacznie efektywniejszy — mniej więcej 10‑krotnie mniej wymagający niż wołowina — ale nawet on nigdy nie dogoni fasoli, soczewicy czy pszenicy.</p>
+
+    <p>To dlatego 77% gruntów rolnych świata idzie na hodowlę mimo że mięso i nabiał dają tylko 18% kalorii. Nie jest to spisek ani przypadek — to nieunikniona konsekwencja karmienia zwierzęcia, żeby zjeść zwierzę.</p>
+
+    <h3>Wylesianie — jak wołowina zjada Amazonię</h3>
+
+    <p>Największa pojedyncza przyczyna wylesiania tropikalnego świata to <strong>hodowla bydła</strong>. Yale School of Forestry oraz Our World in Data podają zgodnie: około <em>41% wylesiania w tropikach</em> jest spowodowane ekspansją pastwisk pod bydło. W samej Brazylii ten udział sięga <em>72%</em>. Do tego dochodzi kolejne 18% wylesiania na uprawy soi i olejów — a większość światowej soi (~77%) nie trafia do tofu, tylko do koryta świń, krów i kurczaków w chowie przemysłowym.</p>
+
+    <div class="callout">
+      <span class="tag">Ciekawostka</span>
+      <p>Popularny mit: „weganie niszczą Amazonię przez soję”. Prawda: 77% globalnej soi jest zjadane przez zwierzęta hodowlane. Zaledwie kilka procent trafia bezpośrednio do żywności dla ludzi (tofu, mleko sojowe, edamame). Kiedy przestajesz jeść mięso, obniżasz popyt na soję, nie zwiększasz go.</p>
+    </div>
+
+    <p>Amazonia nie „płonie” losowo. Płonie, bo ktoś podpalił las, żeby zrobić miejsce dla krów, których mięso pojedzie potem do sieci fast food i supermarketów w Europie, Chinach i USA. Kiedy w 2019 roku CNN pokazywała płonące dżungle, patrzyliśmy na ekonomikę hamburgera w akcji.</p>
+
+    <h3>Degradacja gleb — wolniejsza katastrofa</h3>
+
+    <p>Ziemia rolna nie jest odnawialna w skali życia człowieka. Powstanie centymetra żyznej gleby zajmuje naturze setki lat. FAO szacuje, że przy obecnym tempie erozji <strong>ok. 90% wierzchniej warstwy gleby na świecie znajdzie się w stanie zagrożenia do 2050 roku</strong>. Nadmierny wypas bydła i owiec jest jednym z głównych sprawców tej erozji, obok wylesiania i intensywnego rolnictwa monokulturowego (pod uprawy pasz).</p>
+
+    <p>Mechanizm jest prosty: krowa depcze i przygryza roślinność szybciej, niż ta zdąży odrosnąć. Gdy zielona pokrywa znika, wiatr i deszcz zaczynają zdzierać wierzchnią warstwę. W samych USA, mimo prawie 50 lat programów ochrony gleb, średnia strata gleby z ziemi uprawnej wynosi <em>12 ton na hektar rocznie</em>. W Iowa — jednym z głównych stanów kukurydzianych — na każdy metr sześcienny wyprodukowanej kukurydzy tracone są dwa metry sześcienne gleby. Ta kukurydza w większości zresztą nie idzie na chleb, tylko na paszę.</p>
+  </section>
+
+  <!-- 3 WODA -->
+  <section id="s3">
+    <h2><span class="num">Sekcja 3</span>Woda — spór o to, co się liczy</h2>
+
+    <p class="lede">Statystyka „15 400 litrów wody na kilogram wołowiny” pojawia się na plakatach organizacji ekologicznych od dwóch dekad. Jest technicznie prawdziwa. Jest też niekompletna, i uczciwość wymaga tłumaczenia dlaczego — bo to jeden z niewielu argumentów, w którym przeciwnicy weganizmu mają rację co do niuansu.</p>
+
+    <p>Water Footprint Network dzieli „ślad wodny” na trzy typy:</p>
+
+    <ul style="max-width:60ch;">
+      <li><strong>Woda zielona</strong> — deszczówka wchłonięta przez glebę i wyparowana przez rośliny. Wróciłaby do obiegu z krową lub bez niej.</li>
+      <li><strong>Woda niebieska</strong> — woda pobierana z rzek, jezior i wód gruntowych. To ta, którą naprawdę „zabieramy” ekosystemowi.</li>
+      <li><strong>Woda szara</strong> — woda potrzebna do rozcieńczenia zanieczyszczeń (nawozów, odchodów) do bezpiecznych poziomów.</li>
+    </ul>
+
+    <p>W przypadku wołowiny <strong>~93% śladu wodnego to woda zielona</strong>. Kiedy odejmiemy ją i policzymy tylko wodę faktycznie pobraną, szacunki spadają do ok. <em>550–700 litrów</em> na kilogram wołowiny (albo, według bardziej rygorystycznej metody francuskiego INRAE, do zaledwie ~50 litrów blue water). Wciąż więcej niż warzywa, ale nie „15 400 litrów wypompowanych z kranu”.</p>
+
+    <p>Dlaczego ten spór ma znaczenie? Bo mówi nam, <em>gdzie</em> hodowla jest realnym problemem wodnym, a gdzie nie. Krowy pasące się w deszczowej Bawarii lub w Podkarpaciu w większości „piją” deszcz, który i tak by spadł. Krowy w wielkich felotach w Kalifornii, Arizonie czy północnym Meksyku żywią się kukurydzą i lucerną nawadnianą z wód gruntowych — i to <strong>tam</strong> realnie osuszają aquifery. To samo dotyczy migdałów i awokado uprawianych w tym samym rejonie: same rośliny, ale w niewłaściwym miejscu.</p>
+
+    <div class="callout warning">
+      <span class="tag">Uwaga na argument</span>
+      <p>Kiedy ktoś w internetowej dyskusji rzuca „15 000 litrów na kilogram”, jest w połowie racji, w połowie nie. Uczciwiej jest powiedzieć: „hodowla mięsa <strong>na paszy zbożowej</strong> — a taka jest niemal cała produkcja mięsa na świecie — jest ekstremalnie wodochłonna w porównaniu z roślinami, i szczególnie problematyczna w regionach z deficytem wody”.</p>
+    </div>
+
+    <p>Nie zmienia to jednak faktu, że globalnie <strong>rolnictwo jest odpowiedzialne za ~70% pobrań wody słodkiej</strong>, a znacząca część tej wody trafia do produkcji paszy i pojenia zwierząt. Dieta roślinna, według Poore'a i Nemecka, może zredukować indywidualne zużycie wody „skalowanej niedoborem” (scarcity‑weighted) o ~50%.</p>
+  </section>
+
+  <!-- 4 GAZY -->
+  <section id="s4">
+    <h2><span class="num">Sekcja 4</span>Gazy cieplarniane — trzy różne winowajcy</h2>
+
+    <p class="lede">Kiedy mówimy „emisje z żywności”, myślimy o CO₂. To zwodnicze. Trzy najważniejsze gazy z rolnictwa to CO₂, <em>metan</em> i <em>podtlenek azotu</em> — i każdy z nich pochodzi z innego procesu.</p>
+
+    <h3>CO₂ — głównie z lasu, który się nie odrodzi</h3>
+
+    <p>Dwutlenek węgla z systemu żywnościowego pochodzi przede wszystkim z <strong>zmian użytkowania gruntów</strong> — czyli wypalonych i wyciętych lasów. Kiedy tropikalny las zamienia się w pastwisko, ogromne ilości węgla zmagazynowanego w drzewach i glebie trafiają do atmosfery jednorazowo. Potem to pastwisko emituje nadal, tylko wolniej.</p>
+
+    <p>To dlatego produkcja jednego kilograma wołowiny generuje średnio ok. <em>99 kg ekwiwalentu CO₂</em> — dwadzieścia razy więcej niż kilogram kurczaka. Nie chodzi o samą krowę, chodzi o to, że krowa stoi na ziemi, która była lasem.</p>
+
+    <h3>Metan — problem, który dzieje się szybko</h3>
+
+    <p>Bydło i owce to <strong>przeżuwacze</strong>. W ich żołądkach (dokładniej: w żwaczu) mieszkają bakterie, które rozkładają celulozę z trawy i wytwarzają metan jako produkt uboczny. Krowa wypuszcza ten metan przede wszystkim przez pysk (odbicia stanowią ~95%, wbrew memom o „krowich pierdzeniach”).</p>
+
+    <p>Na Ziemi żyje obecnie około <em>1,5 miliarda krów</em>. Każda z nich wydziela dziennie od 110 do 190 litrów metanu. Metan jest gazem cieplarnianym <strong>~28–30 razy silniejszym niż CO₂</strong> w skali stu lat — a w skali dwudziestu lat aż <em>~80 razy silniejszym</em>. FAO ocenia, że hodowla zwierząt odpowiada za ~32% wszystkich antropogenicznych emisji metanu na świecie. Bydło samo w sobie generuje ~75% metanu z hodowli.</p>
+
+    <div class="callout">
+      <span class="tag">Dlaczego to szok</span>
+      <p>Metan „żyje” w atmosferze średnio 12 lat, potem rozpada się na CO₂ i wodę. Znaczy to, że każde ograniczenie emisji metanu <strong>daje efekt klimatyczny w ciągu jednej dekady</strong>, a nie stulecia. Redukcja pogłowia bydła to jedyna interwencja klimatyczna, której efekty zobaczylibyśmy jeszcze za życia obecnych nastolatków.</p>
+    </div>
+
+    <h3>Podtlenek azotu (N₂O) — cichy gigant</h3>
+
+    <p>Trzeci gaz nazywa się <em>tlenek azotu(I)</em> lub <em>podtlenek azotu</em>. Powstaje głównie z odchodów zwierząt hodowlanych i z nadmiaru nawozów azotowych wysypywanych na pola (w tym pola z paszą dla zwierząt). Jest ~<strong>265 razy silniejszym gazem cieplarnianym niż CO₂</strong> i utrzymuje się w atmosferze ~114 lat. To on jest ukrytym kosztem intensywnego rolnictwa.</p>
+
+    <p>Suma: <strong>hodowla zwierząt = ~14,5% globalnych emisji gazów cieplarnianych</strong>, według najwyższych szacunków FAO. To więcej niż emisje z całego światowego transportu pasażerskiego (ok. 11%).</p>
+  </section>
+
+  <!-- 5 AZOT -->
+  <section id="s5">
+    <h2><span class="num">Sekcja 5</span>Azot, martwe strefy i bioróżnorodność</h2>
+
+    <p class="lede">Rolnictwo intensywne wysypuje na pola ogromne ilości nawozów azotowych. Około <em>85–90%</em> tego azotu <strong>nie zostaje w plonie</strong>. Wypłukuje się z gleby do rzek, a stamtąd do morza. To zabija oceany.</p>
+
+    <p>Nazywa się to <em>eutrofizacją</em>. Azot i fosfor spływają do estuarium, nakręcają eksplozję glonów, glony obumierają i opadają na dno, gdzie bakterie rozkładają je zużywając cały tlen. Powstają <strong>martwe strefy</strong> — regiony morza, gdzie żadne większe organizmy nie potrafią przeżyć.</p>
+
+    <p>Najsłynniejsza z nich to <em>Dead Zone</em> w Zatoce Meksykańskiej u ujścia Missisipi — obecnie ok. <em>18 000 km²</em> martwej wody, mniej więcej wielkości województwa mazowieckiego. Jest ich w oceanach świata <strong>ponad 700</strong>, i przybywa. Główne źródło azotu w tych spływach? Nawozy z pól kukurydzy i soi na paszę dla zwierząt hodowlanych oraz odchody z ferm przemysłowych.</p>
+
+    <div class="stat-line">Rocznie do Zatoki Meksykańskiej spływa około <em>1,15 mln ton</em> azotu z pól rolnych. To ~170% więcej niż wyciekło ropy podczas katastrofy platformy BP Deepwater Horizon w 2010 roku — z tym że BP wydarza się raz, a azot spływa co roku.</div>
+
+    <h3>Bioróżnorodność — biomasa mówi wszystko</h3>
+
+    <p>Jedna z najbardziej wstrząsających statystyk ekologicznych ostatnich lat pochodzi z artykułu w <em>PNAS</em> (Bar‑On et al., 2018). Przeanalizowano biomasę wszystkich ssaków na Ziemi. Wynik:</p>
+
+    <div class="chart">
+      <div class="bar-row"><span class="label">Bydło i inne hodowlane</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--beef)"></div></div><span class="val">62%</span></div>
+      <div class="bar-row"><span class="label">Ludzie</span><div class="bar-track"><div class="bar-fill" style="width:56%;background:var(--gold)"></div></div><span class="val">34%</span></div>
+      <div class="bar-row"><span class="label">Dzikie ssaki</span><div class="bar-track"><div class="bar-fill" style="width:6%;background:var(--crop)"></div></div><span class="val">4%</span></div>
+      <figcaption>Podział światowej biomasy ssaków. Bar‑On, Phillips i Milo (2018), Proceedings of the National Academy of Sciences.</figcaption>
+    </div>
+
+    <p>Bardzo trudno to sobie wyobrazić, więc: <strong>na każdego dzikiego ssaka na Ziemi — od słonia po myszkę — przypada dziś kilkanaście zwierząt hodowlanych.</strong> Wszystkie tygrysy, słonie, wieloryby, jelenie, wilki, niedźwiedzie i lisy razem wzięte ważą mniej niż światowe pogłowie krów. Ludzka cywilizacja przetworzyła planetę na fabrykę zwierząt gospodarskich.</p>
+  </section>
+
+  <!-- 6 ANTYBIOTYKI -->
+  <section id="s6">
+    <h2><span class="num">Sekcja 6</span>Antybiotyki, oporność i pandemia która się szykuje</h2>
+
+    <p class="lede">Fakt, o którym prawie nikt nie mówi: <em>~73% wszystkich antybiotyków sprzedawanych na świecie trafia do zwierząt hodowlanych, nie do ludzi</em>. Nie na chorobę — profilaktycznie, żeby zwierzę stłoczone w przemysłowej fermie szybciej rosło i nie zdechło od infekcji.</p>
+
+    <p>Analiza opublikowana w <em>Science</em> (Van Boeckel et al., 2019) pokazała, że w latach 2000–2018 odsetek antybiotyków, na które przynajmniej połowa bakterii jest już oporna, wzrósł <strong>z 15% do 41% u kurczaków i z 13% do 34% u świń</strong>. Nowe „ogniska” oporności powstają w Chinach, Indiach, Brazylii i Kenii — czyli tam, gdzie hodowla przemysłowa rośnie najszybciej.</p>
+
+    <p>Konsekwencja jest prosta i przerażająca: bakterie oporne na antybiotyki, wyhodowane w przemysłowych świniach i kurczakach, trafiają do ludzi przez żywność, wodę i bezpośredni kontakt. WHO ostrzega, że przy obecnym tempie <strong>oporność na antybiotyki może do 2050 roku zabijać 10 milionów osób rocznie</strong> — więcej niż nowotwory. Świat po antybiotykach oznacza świat, w którym proste operacje, cesarskie cięcia i chemioterapia stają się śmiertelnie ryzykowne, bo nie ma czym leczyć infekcji pooperacyjnych.</p>
+
+    <div class="callout warning">
+      <span class="tag">Argument mocy ciężkiej</span>
+      <p>Kiedy ktoś mówi „przecież mięso jest naturalne”, warto odpowiedzieć: naturalna jest krowa pasąca się na łące. Naturalne nie jest 30 000 kurczaków w hali o wielkości hangaru, karmionych profilaktycznie kolistyną (antybiotyk „ostatniej szansy” dla ludzi). To już nie jest jedzenie — to farmakologia, i przynosi rachunek w postaci superbakterii.</p>
+    </div>
+  </section>
+
+  <!-- 7 KONKRETY -->
+  <section id="s7">
+    <h2><span class="num">Sekcja 7</span>Konkretne porównania — produkt po produkcie</h2>
+
+    <p class="lede">Do tej pory operowaliśmy w agregatach. Teraz zejdźmy do konkretnych półek sklepowych. Dane pochodzą z Poore i Nemecek (2018) oraz Our World in Data — najsolidniejsze źródło, jakie ludzkość dziś ma.</p>
+
+    <h3>Mleko krowie vs mleka roślinne</h3>
+
+    <p>Litr mleka krowiego wymaga produkcji ~<strong>9 razy więcej ziemi</strong> i emituje ~<strong>3 razy więcej CO₂</strong> niż litr dowolnego mleka roślinnego. Ale między roślinnymi też są różnice:</p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Mleko</th>
+          <th class="num">CO₂ (kg/L)</th>
+          <th class="num">Ziemia (m²/L)</th>
+          <th class="num">Woda (L/L)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Krowie</strong></td><td class="num">3,15</td><td class="num">8,9</td><td class="num">628</td></tr>
+        <tr><td>Owsiane</td><td class="num">0,90</td><td class="num">0,8</td><td class="num">48</td></tr>
+        <tr><td>Sojowe</td><td class="num">0,98</td><td class="num">0,7</td><td class="num">28</td></tr>
+        <tr><td>Migdałowe</td><td class="num">0,70</td><td class="num">0,5</td><td class="num">371</td></tr>
+        <tr><td>Ryżowe</td><td class="num">1,18</td><td class="num">0,3</td><td class="num">270</td></tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:.85rem; color:var(--muted);">Dane: Poore &amp; Nemecek (2018), Our World in Data.</p>
+
+    <p>Wnioski praktyczne: <strong>mleko owsiane i sojowe</strong> to najlepszy kompromis wszystkich metryk. Migdałowe ma najniższe CO₂, ale bardzo wysokie zużycie wody (bo migdały uprawia się głównie w suchej Kalifornii). Ryżowe wypada źle na eutrofizację. Mleko krowie przegrywa w każdej kategorii — w niektórych o rząd wielkości.</p>
+
+    <p>Jest jedna zmienna korygująca: <em>białko</em>. Litr mleka krowiego zawiera 7,5 g białka, litr mleka migdałowego tylko 1 g. Jeśli porównujemy „per gram białka”, mleko owsiane i sojowe wciąż wygrywają zdecydowanie z krowim, a migdałowe wypada gorzej niż w powyższym zestawieniu. Sojowe pozostaje najbardziej wszechstronnym wyborem.</p>
+
+    <h3>Mięso — hierarchia szkody</h3>
+
+    <div class="chart">
+      <div class="bar-row"><span class="label">Wołowina</span><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--beef)"></div></div><span class="val">99 kg</span></div>
+      <div class="bar-row"><span class="label">Jagnięcina</span><div class="bar-track"><div class="bar-fill" style="width:40%;background:var(--beef)"></div></div><span class="val">40 kg</span></div>
+      <div class="bar-row"><span class="label">Krewetki hod.</span><div class="bar-track"><div class="bar-fill" style="width:27%;background:var(--water)"></div></div><span class="val">27 kg</span></div>
+      <div class="bar-row"><span class="label">Ser</span><div class="bar-track"><div class="bar-fill" style="width:24%;background:var(--gold)"></div></div><span class="val">24 kg</span></div>
+      <div class="bar-row"><span class="label">Wieprzowina</span><div class="bar-track"><div class="bar-fill" style="width:12%;background:var(--beef)"></div></div><span class="val">12 kg</span></div>
+      <div class="bar-row"><span class="label">Drób</span><div class="bar-track"><div class="bar-fill" style="width:10%;background:var(--beef)"></div></div><span class="val">10 kg</span></div>
+      <div class="bar-row"><span class="label">Jajka</span><div class="bar-track"><div class="bar-fill" style="width:5%;background:var(--gold)"></div></div><span class="val">4,7 kg</span></div>
+      <div class="bar-row"><span class="label">Tofu</span><div class="bar-track"><div class="bar-fill" style="width:3%;background:var(--crop)"></div></div><span class="val">3,2 kg</span></div>
+      <div class="bar-row"><span class="label">Soczewica</span><div class="bar-track"><div class="bar-fill" style="width:1%;background:var(--crop)"></div></div><span class="val">0,9 kg</span></div>
+      <div class="bar-row"><span class="label">Groch</span><div class="bar-track"><div class="bar-fill" style="width:1%;background:var(--crop)"></div></div><span class="val">1,0 kg</span></div>
+      <figcaption>Emisje w kg CO₂‑ekw. na kg wyprodukowanej żywności. Poore &amp; Nemecek (2018), Science.</figcaption>
+    </div>
+
+    <p>Wołowina jest <strong>100 razy</strong> gorsza od soczewicy. Nawet drób — najniżej emisyjne mięso — jest 10 razy gorszy od soczewicy przy porównywalnej zawartości białka. Ryby dziko łowione bywają lepsze niż drób (poza wpływem na populacje ryb i przyłów), ryby hodowlane (łosoś, krewetki) często gorsze.</p>
+
+    <h3>Białko na hektar — brutalne zestawienie</h3>
+
+    <p>Ta liczba mówi najwięcej: ile białka można wyprodukować z hektara ziemi w rok?</p>
+
+    <ul style="max-width:56ch;">
+      <li>Wołowina: ~<em>10 kg</em> białka / ha / rok</li>
+      <li>Wieprzowina: ~50 kg</li>
+      <li>Kurczak: ~120 kg</li>
+      <li>Jajka: ~130 kg</li>
+      <li>Rośliny strączkowe (soja, fasola, groch, soczewica): <strong>~500–1000 kg</strong> / ha / rok</li>
+    </ul>
+
+    <p>Innymi słowy: hektar ziemi, który wyprodukuje 10 kg białka jako wołowina, wyprodukuje 800 kg białka jako soczewica. To 80‑krotność. To dlatego dyskusja „a jak wyżywimy 10 miliardów ludzi w 2050” jest jednoznaczna wśród ekonomistów żywności: <strong>bez znaczącej redukcji spożycia mięsa się nie da</strong>.</p>
+  </section>
+
+  <!-- 8 ZDROWIE - INTRO -->
+  <section id="s8">
+    <h2><span class="num">Sekcja 8</span>Co mięso robi z twoim ciałem</h2>
+
+    <p class="lede">Do tej pory patrzyliśmy na planetę. Teraz patrzymy na ciało człowieka. Powszechny mit: „mięso jest zdrowe, bo mamy je w genach”. Współczesna nauka odpowiada: <em>zależy które i ile</em>. Kluczowa różnica jest między mięsem przetworzonym, czerwonym mięsem świeżym i mięsem białym / rybami.</p>
+
+    <h3>Mięso przetworzone — kategoria 1 rakotwórczych</h3>
+
+    <p>W październiku 2015 roku <em>International Agency for Research on Cancer</em> (IARC), agencja badawcza WHO, opublikowała ocenę 800 badań naukowych i sklasyfikowała mięso przetworzone jako <strong>Grupa 1: substancja rakotwórcza dla ludzi</strong>. To ta sama kategoria, w której są tytoń i azbest.</p>
+
+    <div class="callout warning">
+      <span class="tag">Precyzja jest ważna</span>
+      <p>Grupa 1 nie znaczy „równie niebezpieczne jak papierosy”. Znaczy „mamy pewność, że powoduje raka u ludzi”. Papierosy zwiększają ryzyko raka płuc kilkunastokrotnie; codzienne 50 g przetworzonego mięsa (dwa plasterki kabanosa lub jeden gruby plaster szynki) zwiększa ryzyko raka jelita grubego o ~<em>18%</em>. Skala jest inna, ale kategoria dowodowa — ta sama.</p>
+    </div>
+
+    <p>Co dokładnie to znaczy: <em>mięso przetworzone</em> to mięso konserwowane przez peklowanie, wędzenie, solenie, fermentację lub dodatek konserwantów. Praktycznie: <strong>kabanosy, kiełbasy, szynki, boczek, salami, parówki, nuggetsy, hot‑dogi, mielonki, mortadela</strong>. Wszystko, co ma etykietę „wędzone” lub zawiera azotyn sodu (E250).</p>
+
+    <p>Mechanizm szkodliwości jest wieloraki:</p>
+
+    <ol style="max-width:62ch;">
+      <li><strong>Azotany i azotyny</strong> (dodawane jako konserwant i dla różowego koloru) w kontakcie z aminami w jelicie tworzą <em>N‑nitrozoaminy</em> — silne kancerogeny uszkadzające DNA komórek jelita.</li>
+      <li><strong>Wielopierścieniowe węglowodory aromatyczne</strong> (WWA) powstają przy wędzeniu i grillowaniu — również DNA‑toksyczne.</li>
+      <li><strong>Sól</strong> w ilościach obecnych w kabanosach uszkadza śluzówkę żołądka, sprzyjając rakowi żołądka.</li>
+      <li><strong>Hem żelaza</strong> z mięsa katalizuje w jelicie reakcje generujące wolne rodniki uszkadzające ścianę jelita.</li>
+    </ol>
+
+    <p>Skala problemu w Polsce jest znacząca — spożycie kiełbas, wędlin i mięsa przetworzonego należy do wysokich w Europie. Rak jelita grubego jest jedną z najczęstszych przyczyn zgonów onkologicznych w kraju.</p>
+
+    <h3>Czerwone mięso świeże — Grupa 2A („prawdopodobnie rakotwórcze”)</h3>
+
+    <p>Świeża wołowina, wieprzowina i jagnięcina otrzymały niższą kategorię — Grupa 2A, „prawdopodobnie rakotwórcze dla ludzi”. Związek jest słabszy niż w przypadku mięsa przetworzonego, ale wciąż udokumentowany, głównie dla raka jelita grubego, trzustki i prostaty.</p>
+
+    <p>Ale nowotwory to tylko jeden problem. Drugi jest większy: <strong>choroby układu krążenia</strong>. I to jest historia, którą chciałeś zrozumieć — jak dokładnie „kiełbasa zapycha żyły”.</p>
+  </section>
+
+  <!-- 9 TMAO / CHOROBY SERCA -->
+  <section id="s9">
+    <h2><span class="num">Sekcja 9</span>Jak dokładnie mięso „zapycha żyły” — mechanizm</h2>
+
+    <p class="lede">Klasyczne wytłumaczenie mówi o cholesterolu i tłuszczach nasyconych. To prawda, ale nauka ostatnich 15 lat odkryła znacznie ciekawszy mechanizm, w którym uczestniczą bakterie w twoich jelitach.</p>
+
+    <h3>TMAO — nazwa, którą warto znać</h3>
+
+    <p>W 2011 roku zespół Stanleya Hazena z Cleveland Clinic opublikował w <em>Nature</em> pracę, która na nowo zdefiniowała rozumienie miażdżycy. Odkryli mechanizm o nazwie <em>oś jelito–wątroba–naczynia</em>.</p>
+
+    <p>Przebiega on tak:</p>
+
+    <ol style="max-width:62ch;">
+      <li>Zjadasz stek (lub jajka, choć w mniejszym stopniu). Zawierają one <strong>L‑karnitynę</strong>, <strong>cholinę</strong> i <strong>lecytynę</strong> — związki obecne szczególnie obficie w czerwonym mięsie.</li>
+      <li>Twoje bakterie jelitowe rozkładają te związki do <strong>trimetyloaminy (TMA)</strong>.</li>
+      <li>Wątroba przekształca TMA w <strong>N‑tlenek trimetyloaminy — TMAO</strong>.</li>
+      <li>TMAO krąży we krwi i:
+        <ul>
+          <li>zwiększa <strong>aktywność płytek krwi</strong> — łatwiej tworzą się zakrzepy;</li>
+          <li>napędza powstawanie <strong>„komórek piankowych”</strong> — makrofagów obładowanych cholesterolem, które osadzają się w ścianach tętnic tworząc blaszki miażdżycowe;</li>
+          <li>osłabia <strong>zwrotny transport cholesterolu</strong> — cholesterol wolniej opuszcza tętnice;</li>
+          <li>napędza <strong>przewlekły stan zapalny</strong> w naczyniach.</li>
+        </ul>
+      </li>
+    </ol>
+
+    <p>Efekt: blaszka miażdżycowa. Tętnica zwęża się. Krew przepływa gorzej. Kiedy blaszka pęka, powstaje zakrzep. Zakrzep zatyka tętnicę wieńcową → <strong>zawał serca</strong>. Zatyka tętnicę w mózgu → <strong>udar</strong>.</p>
+
+    <div class="stat-line">Osoby z podwyższonym poziomem TMAO we krwi mają o <em>20–30% wyższe</em> ryzyko śmierci ze wszystkich przyczyn niż osoby z niskim TMAO (Cardiovascular Health Study, 4000 dorosłych, wyniki opublikowane w AHA Journals 2022).</div>
+
+    <p>Najciekawsza obserwacja Hazena: <strong>weganie i wegetarianie prawie w ogóle nie produkują TMAO</strong>, nawet gdy podać im karnitynę w suplemencie. Ich mikrobiom jelitowy „zapomniał” jak to robić. Po kilku tygodniach powrotu do mięsa bakterie się przekwalifikowują — ale mechanizm pokazuje, że długoterminowa dieta zmienia sposób, w jaki twoje ciało metabolizuje pokarm.</p>
+
+    <p>Dokładniej: <em>„zapychanie żył”</em> to trzy nakładające się procesy — cholesterol z tłuszczów nasyconych (klasyka), TMAO od bakterii jelitowych (nowa historia), oraz przewlekły stan zapalny wywołany m.in. przez hem z czerwonego mięsa i sól z mięsa przetworzonego. Wszystkie trzy wektory prowadzą do tej samej blaszki miażdżycowej.</p>
+  </section>
+
+  <!-- 10 KTORE MIESO JEST OK -->
+  <section id="s10">
+    <h2><span class="num">Sekcja 10</span>Które mięso jest w porządku — hierarchia</h2>
+
+    <p class="lede">Jeśli ktoś nie chce lub nie może zrezygnować z mięsa całkowicie, to nie każde mięso jest sobie równe. Poniższa hierarchia — od najbardziej problematycznego do najbardziej neutralnego — nie jest hierarchią „zdrowe vs niezdrowe”, tylko <em>szkodliwe vs mniej szkodliwe</em>.</p>
+
+    <table class="compare-table">
+      <thead>
+        <tr>
+          <th>Kategoria</th>
+          <th>Rak</th>
+          <th>Serce</th>
+          <th>Klimat</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Mięso przetworzone</strong><br><span style="color:var(--muted); font-size:.82rem;">(kabanosy, kiełbasa, szynka, boczek)</span></td>
+          <td style="color:var(--danger);">Grupa 1</td>
+          <td style="color:var(--danger);">wysokie ryzyko</td>
+          <td style="color:var(--danger);">wysoki ślad</td>
+        </tr>
+        <tr>
+          <td><strong>Wołowina, jagnięcina</strong> (świeże)</td>
+          <td style="color:var(--gold);">Grupa 2A</td>
+          <td style="color:var(--gold);">podwyższone (TMAO)</td>
+          <td style="color:var(--danger);">bardzo wysoki</td>
+        </tr>
+        <tr>
+          <td><strong>Wieprzowina</strong> (świeża)</td>
+          <td style="color:var(--gold);">Grupa 2A</td>
+          <td style="color:var(--gold);">umiarkowane</td>
+          <td style="color:var(--gold);">średni</td>
+        </tr>
+        <tr>
+          <td><strong>Drób</strong> (kurczak, indyk)</td>
+          <td>brak dowodów</td>
+          <td>neutralne</td>
+          <td style="color:var(--gold);">średni</td>
+        </tr>
+        <tr>
+          <td><strong>Ryby</strong> (tłuste, morskie)</td>
+          <td>brak dowodów</td>
+          <td style="color:var(--crop);">ochronne (omega‑3)</td>
+          <td>zmienny*</td>
+        </tr>
+        <tr>
+          <td><strong>Jajka</strong></td>
+          <td>brak dowodów</td>
+          <td>neutralne**</td>
+          <td style="color:var(--crop);">niski</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="font-size:.8rem; color:var(--muted); margin-top:8px;">* Ryby dziko łowione (dorsz, śledź, makrela) — niski ślad, ale problem przełowienia. Ryby hodowlane (łosoś norweski) — porównywalny ślad z wieprzowiną. Krewetki hodowlane — porównywalny z wołowiną.<br>** Duże metaanalizy z lat 2020–2023 nie potwierdzają dawnego mitu, że jajka podnoszą ryzyko sercowe u zdrowych osób.</p>
+
+    <h3>Dwie ciekawostki, które warto znać</h3>
+
+    <p><strong>Sposób obróbki cieplnej ma znaczenie.</strong> Mięso pieczone lub grillowane w wysokiej temperaturze (steki, karkówka z grilla, drób z ostrym rumieńcem) generuje <em>heterocykliczne aminy aromatyczne</em> (HCA) i wcześniej wspomniane WWA — obie klasy związków są mutagenne. Gotowanie, duszenie i pieczenie w umiarkowanej temperaturze redukują ten problem.</p>
+
+    <p><strong>Ryby są w porządku, ale mają swój własny paradoks.</strong> Duże ryby drapieżne (tuńczyk, miecznik, rekin) akumulują <em>rtęć</em> z całego łańcucha pokarmowego. Kobietom w ciąży i dzieciom zaleca się je ograniczać. Ryby małe i tłuste (sardynki, śledzie, makrele) mają najlepszy profil omega‑3 i najmniej metali ciężkich. Łosoś hodowlany jest środkiem stawki na obu osiach.</p>
+
+    <p><strong>Jajka to najlepsze białko zwierzęce jakie można wybrać.</strong> Niski ślad środowiskowy (~4,7 kg CO₂/kg), wysoka jakość białka (najwyższy współczynnik biologiczny — 100), pełen zestaw witamin. Kluczowa uwaga: jeśli hodowla klatkowa cię brzydzi, kupuj jaja z „1” lub „0” na numerze — wolno wybiegowe lub ekologiczne. Numery zaczynają się od cyfry po lewej stronie kodu na skorupce.</p>
+  </section>
+
+  <!-- 11 DLUGOWIECZNOSC -->
+  <section id="s11">
+    <h2><span class="num">Sekcja 11</span>Co dzieje się przez całe życie</h2>
+
+    <p class="lede">Krótkoterminowe badania są łatwe — bierzemy 20 osób, karmimy dietą X przez tydzień, mierzymy cholesterol. Ale jaki jest efekt <em>całych dekad</em> jedzenia w określony sposób? Odpowiedź daje jedno z największych badań epidemiologicznych na świecie — <em>Adventist Health Study 2</em>.</p>
+
+    <p>Adwentyści Dnia Siódmego to społeczność religijna, w której z powodów religijnych występuje pełny przekrój diet: weganie, wegetarianie, pescatarianie (jedzą ryby), semi‑wegetarianie i wszystkożercy — wszyscy dzielą inne czynniki (nie palą, nie piją, prowadzą podobny styl życia). Idealny naturalny eksperyment. Uniwersytet Loma Linda śledzi ich od kilkudziesięciu lat.</p>
+
+    <p>Ostatnie wyniki (opublikowane w <em>American Journal of Clinical Nutrition</em>, 2024, na próbie <strong>88 400 osób</strong> obserwowanych średnio 11 lat, z 12 515 zgonami):</p>
+
+    <div class="chart">
+      <div class="bar-row"><span class="label">Śmierć — dowolna</span><div class="bar-track"><div class="bar-fill" style="width:89%;background:var(--gold)"></div></div><span class="val">−11%</span></div>
+      <div class="bar-row"><span class="label">Choroba niedokrwienna serca</span><div class="bar-track"><div class="bar-fill" style="width:73%;background:var(--gold)"></div></div><span class="val">−27%</span></div>
+      <div class="bar-row"><span class="label">Cukrzyca</span><div class="bar-track"><div class="bar-fill" style="width:51%;background:var(--gold)"></div></div><span class="val">−49%</span></div>
+      <div class="bar-row"><span class="label">Niewydolność nerek</span><div class="bar-track"><div class="bar-fill" style="width:52%;background:var(--gold)"></div></div><span class="val">−48%</span></div>
+      <div class="bar-row"><span class="label">Choroby zakaźne</span><div class="bar-track"><div class="bar-fill" style="width:57%;background:var(--gold)"></div></div><span class="val">−43%</span></div>
+      <figcaption>Ryzyko śmierci z danej przyczyny u wegetarian w porównaniu z mięsożercami (obie grupy z tej samej społeczności adwentystów). Orlich et al., AJCN 2024.</figcaption>
+    </div>
+
+    <p>Wegetarianie w tym badaniu mieli <strong>~11% niższe ryzyko śmierci z dowolnej przyczyny</strong> niż wszystkożercy — nawet po skorygowaniu wpływu wieku, płci, palenia, aktywności fizycznej, wykształcenia i innych czynników. Największe korzyści widać było u mężczyzn i u młodszych badanych. Efekt jest największy dla cukrzycy typu 2 (~50% mniej), chorób nerek i chorób sercowo‑naczyniowych.</p>
+
+    <p>Ta sama społeczność to jedna z pięciu tzw. <em>Blue Zones</em> na świecie — regionów geograficznych z najwyższym odsetkiem stulatków. Wszystkie pięć Blue Zones (Okinawa, Sardynia, Ikaria, Loma Linda, półwysep Nicoya) łączy dieta, w której mięso odgrywa marginalną rolę — zazwyczaj kilka porcji miesięcznie, prawie zawsze drób lub ryba, prawie nigdy przetworzone.</p>
+
+    <div class="stat-line">Przeciętny mieszkaniec Loma Linda żyje 4–10 lat dłużej niż przeciętny Amerykanin. Nie dzięki genom — dzięki temu, co codziennie kładzie na talerz.</div>
+
+    <h3>Ostrzeżenie na koniec sekcji</h3>
+
+    <p>Wegetarianizm to <em>redukcja ryzyka</em>, nie tarcza. Kolejne badania (m.in. AHS‑2 z 2024) zauważyły, że starsi wegetarianie mają nieco wyższe ryzyko udaru i pewnych chorób neurologicznych — prawdopodobnie związane z niedoborami witaminy B12, D3, żelaza i kwasów omega‑3, jeśli dieta jest źle skomponowana. Wegetarianizm dobrze zrobiony wymaga suplementacji B12 (zawsze), świadomego dodawania żelaza z roślin z witaminą C, i regularnego jedzenia siemienia lnianego, orzechów włoskich lub tłustych ryb (jeśli je akceptujemy) dla omega‑3.</p>
+
+    <p>Innymi słowy: <strong>nie da się być zdrowym wegetarianinem żywiąc się chipsami i colą.</strong> To trywialne, ale trzeba to powiedzieć, bo najgorsze przypadki „wegetarianizmu” to często najgorsze diety w ogóle — same węglowodany proste, bez białka, bez tłuszczów. Sensowna dieta roślinna to strączki + pełne ziarna + orzechy + warzywa liściaste + owoce + jajka + trochę nabiału. Nie makaron z sosem pomidorowym pięć razy w tygodniu.</p>
+  </section>
+
+  <!-- 12 ARGUMENTY -->
+  <section id="s12">
+    <h2><span class="num">Sekcja 12</span>Sześć twardych argumentów, których możesz użyć w rozmowie</h2>
+
+    <p class="lede">Jeśli kiedyś ktoś przy stole rzuci „przecież ludzie zawsze jedli mięso, weganie to sekta”, to są liczby, którymi warto odpowiedzieć. Bez emocji. Bez moralizowania.</p>
+
+    <div class="arg-box">
+      <ol>
+        <li><strong>77% gruntów rolnych świata idzie na hodowlę zwierząt, a daje tylko 18% naszych kalorii.</strong> To nie jest ideologia, to podstawowa arytmetyka. Gdybyśmy jedli tylko rośliny, uwolnilibyśmy powierzchnię wielkości obu Ameryk. (Poore &amp; Nemecek 2018, <em>Science</em>)</li>
+
+        <li><strong>Hodowla bydła to główna przyczyna wylesiania Amazonii — 72% deforestacji Brazylii.</strong> Kiedy patrzysz na dym z płonącej dżungli, patrzysz na przygotowywanie pastwiska. Nie na naturalny pożar. (Our World in Data / Yale)</li>
+
+        <li><strong>Mięso przetworzone jest sklasyfikowane przez WHO jako rakotwórcze — Grupa 1, ta sama co tytoń i azbest.</strong> Każde codzienne 50 gram (jedna kiełbasa) podnosi ryzyko raka jelita o 18%. To nie jest opinia ONZ, to metaanaliza 800 badań przez IARC. (WHO/IARC 2015)</li>
+
+        <li><strong>Metan z krów odpowiada za znaczącą część globalnego ocieplenia — a jest 28–80 razy silniejszy niż CO₂.</strong> 1,5 miliarda krów, każda ~150 litrów metanu dziennie. Redukcja stada bydła to jedyna interwencja klimatyczna z efektami widocznymi w ciągu dekady. (FAO)</li>
+
+        <li><strong>73% wszystkich antybiotyków na świecie idzie do hodowli, nie do ludzi.</strong> To główny motor kryzysu oporności bakterii na antybiotyki, który do 2050 może zabijać 10 milionów osób rocznie. (Van Boeckel et al., <em>Science</em> 2019)</li>
+
+        <li><strong>Największe badanie diet w historii — 88 400 osób, 11 lat obserwacji — pokazuje, że wegetarianie żyją dłużej.</strong> Ryzyko śmierci −11%, cukrzycy −49%, chorób serca −27%. Ta sama społeczność, ten sam styl życia, tylko dieta różna. (AJCN 2024)</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 13 CO ROBIC -->
+  <section id="s13">
+    <h2><span class="num">Sekcja 13</span>Co z tego wynika — praktycznie</h2>
+
+    <p class="lede">Trzy pytania na koniec, bo pewnie się nasuwają.</p>
+
+    <div class="qa">
+      <h4>Czy trzeba być weganinem, żeby to miało sens?</h4>
+      <p>Nie. Największa skokowa poprawa jakości środowiskowej i zdrowotnej diety następuje między <em>„dużo czerwonego mięsa”</em> a <em>„głównie rośliny + trochę mięsa”</em>. Kolejne kroki (wegetarianizm, weganizm) też coś dodają, ale skala jest już mniejsza. Jeśli ktoś zredukuje wołowinę i mięso przetworzone do zera, a resztę mięsa (drób, ryby, jajka) zostawi — środowiskowo zbiera już ~80% możliwej korzyści, zdrowotnie prawie tyle samo. To jest realistyczny cel dla większości ludzi.</p>
+    </div>
+
+    <div class="qa">
+      <h4>A co z argumentem „krowa na łące to naturalny obieg węgla”?</h4>
+      <p>Częściowo prawdziwy, ale nie w skali globalnej. Ekstensywna hodowla bydła na trawie w regionach, gdzie las by i tak nie rósł (górskie łąki alpejskie, stepy Mongolii), ma niską lub neutralną emisję netto. Ale to nie jest sposób, w jaki produkuje się 95% światowego mięsa. Reszta to chów przemysłowy karmiony soją z wykarczowanej dżungli — tam obieg węgla dawno przestał być zamknięty. Argument „grass‑fed” ma sens dla lokalnych, drobnych producentów, nie dla McDonalda.</p>
+    </div>
+
+    <div class="qa">
+      <h4>Czy pojedynczy człowiek w Polsce robi jakąkolwiek różnicę?</h4>
+      <p>Tak, w dwóch wymiarach. Bezpośrednio: mniej więcej ~1,5 tony CO₂ rocznie oszczędności przy przejściu z diety mięsnej na wegetariańską — porównywalne z rezygnacją z jednej dalekiej podróży samolotem. Pośrednio, i to jest ważniejsze: rynki działają na sygnałach popytu. Kiedy sieciom sklepów spada rotacja szynki i rośnie tofu, dostosowują ofertę. Kolejne pokolenie dorasta w świecie, w którym rośliny są normą, a nie ekscentrycznym wyborem. Zmiany kulturowe zaczynają się od ludzi, którzy pierwsi zmienili nawyk.</p>
+    </div>
+
+    <h3>Praktyczna hierarchia zmian, od najskuteczniejszych</h3>
+
+    <ol style="max-width:60ch;">
+      <li><strong>Wyeliminuj mięso przetworzone.</strong> To jedyna łatwa decyzja z jednoznacznymi korzyściami zdrowotnymi (rak) i środowiskowymi. Kabanosy, parówki, kiełbasy w folii — koniec.</li>
+      <li><strong>Ogranicz czerwone mięso do rzadkości.</strong> Wołowinę i jagnięcinę do okazji — raz na tydzień lub rzadziej. Same emisje spadną 2–3‑krotnie.</li>
+      <li><strong>Zastąp część mięsa strączkami.</strong> Soczewica, cieciorka, fasola, tofu. Cel: 3–4 dni w tygodniu bez mięsa.</li>
+      <li><strong>Wybieraj drób, ryby, jajka</strong>, jeśli chcesz jeść zwierzęce białko. Nie każde jest sobie równe.</li>
+      <li><strong>Suplementuj B12</strong> jeśli redukujesz zwierzęce białko poniżej ~2 razy tygodniowo. To jedyna witamina, której nie da się realistycznie zebrać z roślin.</li>
+    </ol>
+
+    <p class="muted" style="margin-top:24px; font-size:.9rem;">Nic z powyższego nie rozstrzyga, jak ktoś <em>powinien</em> jeść. To decyzja indywidualna, w którą wchodzą też koszt, kultura, rodzina, tradycja i przyjemność. Ten artykuł miał jedynie pokazać, że jest to decyzja z konsekwencjami — mierzalnymi, udokumentowanymi, wykraczającymi daleko poza pojedynczy talerz.</p>
+  </section>
+
+  <footer>
+    <h3>Główne źródła</h3>
+    <p>
+      Poore, J. &amp; Nemecek, T. (2018). <em>Reducing food's environmental impacts through producers and consumers</em>. Science 360(6392): 987–992. Metaanaliza 38 700 gospodarstw w 119 krajach — podstawowe źródło większości liczb środowiskowych.<br><br>
+      IARC / WHO (2015). <em>IARC Monographs evaluate consumption of red meat and processed meat</em>. Press release 240. Klasyfikacja mięsa przetworzonego jako Grupa 1 rakotwórcza.<br><br>
+      Hazen, S. L. et al. (2011–2019, Cleveland Clinic). Seria prac w <em>Nature</em>, <em>Cell Metabolism</em>, <em>European Heart Journal</em>, <em>JCI</em> — mechanizm TMAO i miażdżycy.<br><br>
+      Orlich, M. J. et al. (2013, 2024). <em>Vegetarian dietary patterns and mortality in Adventist Health Study 2</em>. JAMA Internal Medicine / American Journal of Clinical Nutrition. Kohorta 96 469, potem 88 400 osób.<br><br>
+      Van Boeckel, T. P. et al. (2019). <em>Global trends in antimicrobial resistance in animals in low- and middle-income countries</em>. Science 365(6459). Dane o 73% globalnego zużycia antybiotyków w hodowli.<br><br>
+      FAO (2013, 2023). <em>Livestock and enteric methane</em>. <em>The state of world's soils</em>. Raporty o metanie hodowlanym i degradacji gleb.<br><br>
+      Bar‑On, Y. M., Phillips, R., &amp; Milo, R. (2018). <em>The biomass distribution on Earth</em>. PNAS 115(25). Podział biomasy ssaków.<br><br>
+      Scarborough, P. et al. (2014, 2023). <em>Dietary greenhouse gas emissions of meat‑eaters, fish‑eaters, vegetarians and vegans in the UK</em>. Climatic Change / Nature Food. Kohorta EPIC‑Oxford.<br><br>
+      Mekonnen, M. &amp; Hoekstra, A. (2012). <em>The blue water footprint of electricity from hydropower</em>. Water Footprint Network — globalne dane o śladzie wodnym.<br><br>
+      Our World in Data — <em>Environmental Impacts of Food</em>, <em>Environmental impact of milks</em>, <em>Drivers of deforestation</em>, <em>Antibiotics in livestock</em>. Redakcja: Hannah Ritchie i in.<br><br>
+      Buettner, D. — <em>The Blue Zones</em>, National Geographic. Reportaż i analizy pięciu regionów długowieczności.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+  const grid = document.getElementById('landGrid');
+  for (let i = 0; i < 100; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell ' + (i < 77 ? 'livestock' : 'crop');
+    grid.appendChild(cell);
+  }
+</script>
+</body>
+</html>

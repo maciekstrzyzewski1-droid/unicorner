@@ -1,0 +1,13 @@
+---
+interface Props { a: any; feature?: boolean }
+const { a, feature = false } = Astro.props;
+---
+<a class={`wz-card${feature ? ' feature' : ''}`} href={a.url} data-cat={a.category}>
+  <div class="top">
+    <span class="wz-tag">{a.categoryName}</span>
+    {a.series ? <span class="wz-part">{a.seriesName} · <b>cz. {a.part}</b></span> : <span class="wz-part">osobny tekst</span>}
+  </div>
+  <h3>{a.title}</h3>
+  <p>{a.lede}</p>
+  <div class="foot"><span>{a.minutes} min czytania</span><span class="go">Czytaj <span class="arr">→</span></span></div>
+</a>

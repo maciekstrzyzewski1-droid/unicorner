@@ -100,6 +100,31 @@ import HeroSkull from '../components/HeroSkull.jsx';
     </div>
   </div>
 
+  <div class="row-label" data-rev id="wiedza"><h2>Wiedza</h2><span class="count">artykuły badawcze</span><span class="line"></span></div>
+  <a class="wiedza-band" href="wiedza.html" data-rev>
+    <span class="wb-k">// nowa sekcja</span>
+    <span class="wb-h">Teksty, które <span class="grad">sprawdzają fakty.</span></span>
+    <span class="wb-p">Krypto, polska polityka, zdrowie i technika — długie rozbiory tematów z przypisami do źródeł. Fakty oddzielone od zarzutów.</span>
+    <span class="wb-tags"><span>Krypto</span><span>Polityka</span><span>Zdrowie i umysł</span><span>Świat i technika</span></span>
+    <span class="wb-go">Przejdź do czytelni <span class="arr">→</span></span>
+  </a>
+  <style>
+    #wiedza{position:relative;left:50%;transform:translateX(-50%);width:min(1680px,calc(100vw - 48px));}
+    .wiedza-band{position:relative;width:min(1680px,calc(100vw - 48px));margin-left:50%;translate:-50% 0;display:grid;gap:10px;padding:28px 28px 24px;margin:0 0 34px;text-decoration:none;color:inherit;
+      background:radial-gradient(520px 200px at 0% 0%,rgba(39,232,255,.08),transparent 60%),radial-gradient(460px 220px at 100% 100%,rgba(255,46,151,.08),transparent 60%),linear-gradient(160deg,var(--surface),var(--ink2));
+      border:1px solid var(--line2);clip-path:polygon(0 0,calc(100% - 18px) 0,100% 18px,100% 100%,18px 100%,0 calc(100% - 18px));transition:transform .3s cubic-bezier(.16,1,.3,1),border-color .25s,box-shadow .3s;}
+    .wiedza-band:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 18px 50px rgba(0,0,0,.5),0 0 26px rgba(167,139,250,.2);}
+    .wiedza-band .wb-k{font-family:var(--mono);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);}
+    .wiedza-band .wb-h{font-family:var(--disp);font-weight:700;font-size:clamp(1.5rem,3.4vw,2.2rem);line-height:1.1;}
+    .wiedza-band .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+    .wiedza-band .wb-p{color:var(--muted);max-width:640px;font-size:.95rem;}
+    .wiedza-band .wb-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;}
+    .wiedza-band .wb-tags span{font-family:var(--mono);font-size:.7rem;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-radius:3px;padding:4px 9px;}
+    .wiedza-band .wb-go{font-family:var(--mono);font-weight:600;font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:6px;}
+    .wiedza-band .wb-go .arr{color:var(--cyan);display:inline-block;transition:transform .25s;}
+    .wiedza-band:hover .wb-go .arr{transform:translateX(4px);}
+  </style>
+
   <div class="ow" aria-hidden="true"><span>LEARNING</span></div>
 
   <div class="faq-zone">
@@ -136,6 +161,7 @@ import HeroSkull from '../components/HeroSkull.jsx';
       <nav class="fl-links" aria-label="Informacje prawne">
         <a href="prywatnosc.html">Polityka prywatności</a>
         <a href="regulamin.html">Regulamin</a>
+        <a href="wiedza.html">Wiedza</a>
         <a href="mailto:unicornernotatki@gmail.com">Kontakt</a>
       </nav>
     </div>
