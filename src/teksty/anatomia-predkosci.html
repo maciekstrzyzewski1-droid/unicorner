@@ -3,593 +3,283 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anatomia prędkości — co naprawdę siedzi pod maską</title>
+<title>Anatomia prędkości</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Work+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#14150f;
-    --bg-alt:#1b1c14;
-    --card:#1e1f17;
-    --text:#ece5d1;
-    --text-dim:#a7a08a;
-    --gold:#d1a13f;
-    --gold-soft:#8a6f34;
-    --line:#33342a;
-    --cyan-ish:#7fa896;
-    --red-ish:#b5573f;
-  }
-  *{box-sizing:border-box;}
-  html{scroll-behavior:smooth;}
-  body{
-    margin:0;
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Work Sans', sans-serif;
-    font-weight:400;
-    line-height:1.65;
-    font-size:17px;
-  }
-  h1,h2,h3,h4{
-    font-family:'Fraunces', serif;
-    font-weight:700;
-    color:#f7f2e4;
-    line-height:1.15;
-    margin:0 0 0.4em 0;
-  }
-  a{color:var(--gold);}
-  .wrap{max-width:860px;margin:0 auto;padding:0 24px 120px;}
-
-  /* HERO */
-  .hero{
-    padding:100px 24px 70px;
-    text-align:left;
-    border-bottom:1px solid var(--line);
-    background:
-      radial-gradient(ellipse 800px 400px at 15% -10%, rgba(209,161,63,0.10), transparent),
-      var(--bg);
-  }
-  .hero-inner{max-width:860px;margin:0 auto;}
-  .kicker{
-    font-family:'Work Sans',sans-serif;
-    text-transform:uppercase;
-    letter-spacing:0.18em;
-    font-size:12.5px;
-    color:var(--gold);
-    font-weight:600;
-    margin-bottom:22px;
-  }
-  h1.title{
-    font-size:clamp(34px,5.4vw,54px);
-    font-style:italic;
-    font-weight:600;
-    letter-spacing:-0.01em;
-  }
-  .subtitle{
-    font-size:19px;
-    color:var(--text-dim);
-    max-width:620px;
-    margin-top:18px;
-    font-weight:300;
-  }
-  .hero-meta{
-    display:flex;gap:28px;margin-top:40px;
-    font-size:13px;color:var(--text-dim);
-    flex-wrap:wrap;
-  }
-  .hero-meta span strong{color:var(--text);font-weight:600;}
-
-  /* TOC */
-  .toc{
-    margin:56px auto 0;
-    max-width:860px;
-    padding:28px 24px;
-  }
-  .toc-title{font-size:12.5px;text-transform:uppercase;letter-spacing:0.16em;color:var(--gold);font-weight:600;margin-bottom:16px;}
-  .toc-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px 32px;}
-  .toc-grid a{
-    display:flex;gap:10px;color:var(--text-dim);text-decoration:none;font-size:14.5px;padding:6px 0;border-bottom:1px dotted var(--line);
-  }
-  .toc-grid a:hover{color:var(--gold);}
-  .toc-num{color:var(--gold-soft);font-family:'Fraunces',serif;font-style:italic;min-width:22px;}
-  @media(max-width:640px){.toc-grid{grid-template-columns:1fr;}}
-
-  /* SECTION */
-  section{padding:70px 0 10px;border-top:1px solid var(--line);}
-  section:first-of-type{border-top:none;}
-  .sec-head{display:flex;align-items:baseline;gap:18px;margin-bottom:28px;}
-  .sec-num{
-    font-family:'Fraunces',serif;
-    font-size:52px;
-    font-weight:400;
-    color:transparent;
-    -webkit-text-stroke:1.3px var(--gold-soft);
-    line-height:1;
-  }
-  .sec-head h2{font-size:clamp(24px,3.6vw,32px);font-style:italic;font-weight:600;}
-  p{margin:0 0 18px 0;}
-  h3{font-size:19px;font-style:italic;color:var(--gold);margin:30px 0 12px;font-weight:600;}
-  h4{font-size:16px;color:var(--text);margin:20px 0 8px;font-weight:600;font-family:'Work Sans',sans-serif;text-transform:uppercase;letter-spacing:0.04em;font-size:13px;color:var(--cyan-ish);}
-  ul,ol{padding-left:22px;margin:0 0 18px 0;}
-  li{margin-bottom:8px;}
-  strong{color:#fbf7ea;font-weight:600;}
-  em{color:var(--text-dim);}
-
-  /* CALLOUT */
-  .callout{
-    background:var(--card);
-    border-left:3px solid var(--gold);
-    padding:18px 22px;
-    margin:24px 0;
-    border-radius:2px;
-  }
-  .callout .label{font-size:11.5px;text-transform:uppercase;letter-spacing:0.14em;color:var(--gold);font-weight:600;margin-bottom:8px;}
-  .callout p{margin:0;font-size:15.5px;color:var(--text-dim);}
-  .callout.warn{border-left-color:var(--red-ish);}
-  .callout.warn .label{color:var(--red-ish);}
-
-  /* CARDS GRID */
-  .card-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:26px 0;}
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    padding:18px 20px;
-    border-radius:3px;
-  }
-  .card h4{margin-top:0;}
-  .card .big-label{font-family:'Fraunces',serif;font-style:italic;font-size:18px;color:#f7f2e4;margin-bottom:6px;}
-  .card p{font-size:14.5px;color:var(--text-dim);margin-bottom:0;}
-  @media(max-width:640px){.card-grid{grid-template-columns:1fr;}}
-
-  /* OWNERSHIP BLOCK */
-  .owner-block{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:3px;
-    padding:22px 24px;
-    margin:22px 0;
-  }
-  .owner-parent{
-    display:flex;justify-content:space-between;align-items:baseline;
-    border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:14px;
-  }
-  .owner-parent .name{font-family:'Fraunces',serif;font-style:italic;font-size:21px;color:var(--gold);}
-  .owner-parent .tag{font-size:12px;color:var(--text-dim);}
-  .owner-brands{display:flex;flex-wrap:wrap;gap:8px;}
-  .owner-brands span{
-    background:var(--bg-alt);border:1px solid var(--line);border-radius:20px;
-    padding:5px 13px;font-size:13.5px;color:var(--text);
-  }
-  .owner-note{font-size:13.5px;color:var(--text-dim);margin-top:12px;margin-bottom:0;}
-
-  /* BADGE TABLE */
-  .badge-table{width:100%;border-collapse:collapse;margin:22px 0;font-size:15px;}
-  .badge-table th{
-    text-align:left;font-family:'Work Sans';font-size:11.5px;text-transform:uppercase;letter-spacing:0.1em;
-    color:var(--gold);padding:8px 12px;border-bottom:1px solid var(--gold-soft);
-  }
-  .badge-table td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top;}
-  .badge-table td.code{font-family:'Fraunces',serif;font-style:italic;font-weight:700;color:#f7f2e4;font-size:17px;white-space:nowrap;}
-  .badge-table td.mean{color:var(--gold);font-size:14px;}
-  .badge-table td.desc{color:var(--text-dim);font-size:14.5px;}
-
-  /* BAR CHART */
-  .chart{margin:30px 0;}
-  .bar-row{display:flex;align-items:center;gap:14px;margin-bottom:14px;}
-  .bar-label{width:170px;flex-shrink:0;font-size:13.5px;color:var(--text-dim);text-align:right;}
-  .bar-track{flex:1;background:var(--bg-alt);border-radius:3px;height:26px;position:relative;overflow:hidden;}
-  .bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold-soft),var(--gold));display:flex;align-items:center;}
-  .bar-fill.electric{background:linear-gradient(90deg,#3f6e64,var(--cyan-ish));}
-  .bar-val{padding-left:10px;font-size:12.5px;color:#14150f;font-weight:600;}
-  .chart-note{font-size:12.5px;color:var(--text-dim);margin-top:6px;}
-
-  /* ICON GRID (body types) */
-  .icon-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0;}
-  .icon-card{background:var(--card);border:1px solid var(--line);padding:14px 14px 12px;border-radius:3px;text-align:center;}
-  .icon-card svg{width:56px;height:32px;margin-bottom:8px;}
-  .icon-card .name{font-size:13.5px;font-weight:600;color:#f7f2e4;}
-  .icon-card .sub{font-size:11.5px;color:var(--text-dim);margin-top:2px;}
-  @media(max-width:640px){.icon-grid{grid-template-columns:repeat(2,1fr);}}
-
-  /* TIRE DIAGRAM */
-  .tire-code{
-    display:flex;gap:0;font-family:'Fraunces',serif;font-weight:700;font-size:30px;color:#f7f2e4;
-    margin:24px 0 8px;flex-wrap:wrap;
-  }
-  .tire-code span{padding:0 4px;}
-  .tire-legend{display:grid;grid-template-columns:1fr 1fr;gap:10px 20px;margin-top:16px;}
-  .tire-legend div{font-size:13.5px;color:var(--text-dim);border-top:2px solid var(--gold-soft);padding-top:8px;}
-  .tire-legend div b{color:var(--gold);display:block;font-family:'Fraunces',serif;font-style:italic;font-size:16px;margin-bottom:2px;}
-
-  /* NASCAR FLOW */
-  .flow{display:flex;align-items:center;gap:8px;margin:26px 0;flex-wrap:wrap;}
-  .flow-step{background:var(--card);border:1px solid var(--gold-soft);border-radius:3px;padding:14px 16px;flex:1;min-width:130px;}
-  .flow-step .num{font-family:'Fraunces',serif;font-style:italic;color:var(--gold);font-size:22px;}
-  .flow-step .txt{font-size:13px;color:var(--text-dim);margin-top:4px;}
-  .flow-arrow{color:var(--gold-soft);font-size:20px;}
-  @media(max-width:640px){.flow{flex-direction:column;}.flow-arrow{transform:rotate(90deg);}}
-
-  /* QUOTE-LIKE THESIS BOX */
-  .thesis{
-    font-family:'Fraunces',serif;font-style:italic;font-weight:500;
-    font-size:22px;line-height:1.5;color:#f7f2e4;
-    padding:26px 0;margin:20px 0 30px;
-    border-top:1px solid var(--gold-soft);border-bottom:1px solid var(--gold-soft);
-  }
-
-  /* FOOTER / SOURCES */
-  .sources{padding:60px 0 40px;border-top:1px solid var(--line);}
-  .sources h2{font-size:20px;font-style:italic;}
-  .sources ol{font-size:13.5px;color:var(--text-dim);padding-left:20px;}
-  .sources li{margin-bottom:10px;}
-  .end-note{font-size:13px;color:var(--text-dim);margin-top:30px;padding-top:20px;border-top:1px dotted var(--line);}
-
-  ::selection{background:var(--gold);color:#14150f;}
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;}
+p{margin:0 0 1.1em;}
+strong{font-weight:600;color:#fff;}
+sup{font-size:.68em;color:var(--gold);}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;}
+.box p:last-child{margin-bottom:0;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.bars{margin:30px 0;} .bars .row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:.85rem;}
+.bars .lab{flex:0 0 140px;color:var(--muted);} .bars .track{flex:1;background:var(--card);height:14px;position:relative;}
+.bars .fill{height:100%;background:var(--gold);} .bars .val{flex:0 0 56px;text-align:right;font-variant-numeric:tabular-nums;}
+.bars .tick{position:absolute;top:-4px;bottom:-4px;width:1px;background:var(--muted);opacity:.6;}
+.bars .title{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:12px;}
+.caption{font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.5;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0 8px;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .h{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:8px;}
+.twocol .side.ok .h{color:var(--green);} .twocol .side.no .h{color:var(--red);}
+.twocol ul{margin:0;padding-left:1.1em;} .twocol li{margin-bottom:6px;}
+table.t{width:100%;border-collapse:collapse;margin:30px 0 8px;font-size:.88rem;line-height:1.45;}
+table.t th{text-align:left;font-weight:600;color:var(--gold);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;padding:10px 12px;border-bottom:1px solid var(--line);}
+table.t td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top;}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+.sources{font-size:.85rem;color:var(--muted);line-height:1.6;} .sources li{margin-bottom:8px;}
+.sources a{color:var(--muted);}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;} .bars .lab{flex:0 0 96px;} .twocol{grid-template-columns:1fr;} table.t{font-size:.82rem;}}
 </style>
 </head>
-<body>
+<body><div class="wrap">
+<header class="top">
+  <div class="kicker">Artykuł badawczy</div>
+  <h1>Anatomia prędkości</h1>
+  <p class="lede">Co naprawdę siedzi pod maską aut znanych z filmów i ulic: jak działa turbo, co znaczą litery na klapie bagażnika, kto jest właścicielem której marki i gdzie leży granica między szybkim autem a hipersamochodem. Od zera do poziomu, na którym film o wyścigach ogląda się zupełnie inaczej.</p>
+  <div class="meta">Wrzesień 2026 · czas czytania ok. 20 minut</div>
+</header>
 
-<div class="hero">
-  <div class="hero-inner">
-    <div class="kicker">Artykuł badawczy · Inżynieria &amp; kultura motoryzacyjna</div>
-    <h1 class="title">Anatomia prędkości</h1>
-    <p class="subtitle">Co naprawdę siedzi pod maską aut, które znasz z ekranu — turbiny, litery na klapie bagażnika, właściciele marek i granica między „szybkim autem” a hipersamochodem.</p>
-    <div class="hero-meta">
-      <span>Zakres: <strong>10 rozdziałów</strong></span>
-      <span>Stan wiedzy: <strong>wrzesień 2026</strong></span>
-      <span>Poziom: <strong>od zera do „rozumiem, o co chodzi w Fast &amp; Furious”</strong></span>
-    </div>
-  </div>
+<p>Czerwiec 1966 roku, tor Le Mans we Francji. Po dwudziestu czterech godzinach jazdy trzy Fordy GT40 przekraczają linię mety niemal obok siebie. Zajmują całe podium.</p>
+
+<p>Trzy lata wcześniej Henry Ford II próbował po prostu kupić Ferrari. Negocjacje się rozpadły. Ford postanowił więc zbudować od zera auto, które pokona Ferrari na jego ulubionym torze. Tę historię opowiada film „Le Mans ’66” z 2019 roku, w Ameryce znany jako „Ford v Ferrari”.</p>
+
+<p>Ta scena dobrze pokazuje, czym jest „fajne auto”. To nie jedna cecha, tylko skrzyżowanie czterech rzeczy. Silnika, który daje moc. Nadwozia i zawieszenia, które zamieniają tę moc w jazdę. Marki i koncernu, które decydują, ile to kosztuje. I sportu, który dokłada do tego mit. Ten tekst rozkłada każdą z nich na części.</p>
+
+<h2><span class="num">Rozdział pierwszy</span>Z czego składa się auto</h2>
+
+<p>Żeby samochód w ogóle pojechał, musi współpracować kilka układów. Bez któregokolwiek z nich auto stoi albo nie da się nim bezpiecznie jechać.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">Silnik</div><div class="d">Zamienia paliwo albo prąd w ruch obrotowy.</div></div>
+  <div class="nrow"><div class="n">Napęd</div><div class="d">Skrzynia biegów, wały i <strong>dyferencjał</strong>, czyli mechanizm, który pozwala kołom na zakręcie kręcić się z różną prędkością. Koło zewnętrzne ma wtedy dłuższą drogę do przejechania niż wewnętrzne.</div></div>
+  <div class="nrow"><div class="n">Zawieszenie</div><div class="d">Sprężyny, amortyzatory i wahacze. Trzymają koła przy asfalcie mimo nierówności.</div></div>
+  <div class="nrow"><div class="n">Hamulce</div><div class="d">Zamieniają energię ruchu w ciepło przez tarcie klocków o tarcze.</div></div>
+  <div class="nrow"><div class="n">Chłodzenie</div><div class="d">Odbiera nadmiar ciepła z silnika spalinowego: chłodnica, pompa i płyn.</div></div>
+  <div class="nrow"><div class="n">Nadwozie</div><div class="d">Szkielet całości. Dziś zwykle <strong>samonośny</strong>, czyli karoseria sama jest konstrukcją nośną, bez osobnej ramy pod spodem.</div></div>
 </div>
 
-<div class="toc">
-  <div class="toc-title">Spis treści</div>
-  <div class="toc-grid">
-    <a href="#s1"><span class="toc-num">01</span> Z czego w ogóle składa się auto</a>
-    <a href="#s2"><span class="toc-num">02</span> Silniki: co bije pod maską</a>
-    <a href="#s3"><span class="toc-num">03</span> Doładowanie: więcej powietrza, więcej mocy</a>
-    <a href="#s4"><span class="toc-num">04</span> Alfabet na klapie bagażnika</a>
-    <a href="#s5"><span class="toc-num">05</span> Kto naprawdę jest właścicielem marki</a>
-    <a href="#s6"><span class="toc-num">06</span> Nadwozia: hatchback, sedan, SUV i reszta</a>
-    <a href="#s7"><span class="toc-num">07</span> Muscle car, supercar, hipersamochód</a>
-    <a href="#s8"><span class="toc-num">08</span> Benzyna, prąd, wodór</a>
-    <a href="#s9"><span class="toc-num">09</span> Koła i opony: większe nie zawsze lepsze</a>
-    <a href="#s10"><span class="toc-num">10</span> NASCAR, Le Mans i film, który oglądałeś</a>
-  </div>
+<p>Reszta tego tekstu to warianty tych sześciu składników. Fizyka się nie zmienia. Zmienia się wykonanie.</p>
+
+<h2><span class="num">Rozdział drugi</span>Co bije pod maską</h2>
+
+<p>Silnik spalinowy działa dzięki serii małych, kontrolowanych wybuchów. Mieszanka paliwa i powietrza zapala się w cylindrze i popycha tłok. Tłok obraca wał korbowy, a ten przez skrzynię biegów napędza koła. Silniki różnią się przede wszystkim tym, jak ułożone są cylindry, i tym, jakie paliwo spalają.</p>
+
+<h3>Układ cylindrów</h3>
+
+<ul>
+  <li><strong>Rzędowy</strong> (na przykład R4, R6): cylindry stoją w jednym rzędzie. Prosty i tani. Rzędowa „szóstka” jest bardzo dobrze wyważona, dlatego BMW przez dekady uczyniło ją swoim znakiem rozpoznawczym.</li>
+  <li><strong>Widlasty</strong> (V6, V8, V12): dwa rzędy cylindrów ustawione pod kątem, jak litera V. Silnik jest krótszy niż rzędowy o tej samej liczbie cylindrów. Dlatego V8 zmieści się pod maską amerykańskiego muscle cara i za plecami kierowcy supersamochodu.</li>
+  <li><strong>Bokser</strong>: cylindry leżą poziomo, naprzeciwko siebie, jak pięści bokserów. Silnik jest płaski, więc środek ciężkości auta jest nisko. To znak firmowy Porsche 911 i Subaru.</li>
+  <li><strong>W</strong>: w praktyce dwa silniki V połączone na wspólnym wale. Bardzo zwarty jak na liczbę cylindrów. Najsłynniejszy przykład to szesnastocylindrowy W16 w Bugatti Veyronie i Chironie.</li>
+</ul>
+
+<p>Ciekawostką jest silnik Wankla, który Mazda stosowała w modelach RX-7 i RX-8. Zamiast tłoków ma trójkątny wirnik, który obraca się w komorze. Jest lekki i chętnie wkręca się na wysokie obroty, ale spala dużo paliwa i oleju. Dziś Mazda używa go głównie jako małego generatora prądu w hybrydowej wersji modelu MX-30.</p>
+
+<h3>Benzyna i diesel</h3>
+
+<p>W silniku benzynowym mieszankę zapala iskra ze świecy zapłonowej. Diesel świec zapłonowych nie ma. Wtryskuje paliwo do powietrza, które tłok tak mocno sprężył, że stało się gorące. Mieszanka zapala się sama. Dlatego diesel to silnik <strong>wysokoprężny</strong>.</p>
+
+<p>W praktyce diesel ma dużą siłę „ciągnięcia” przy niskich obrotach, a benzyna chętniej wkręca się na wysokie. Ta siła ciągnięcia to <strong>moment obrotowy</strong>. Moc mówi, jak szybko silnik może wykonywać pracę, a moment obrotowy, jak mocno w danej chwili „pcha”. Dlatego diesel dobrze sprawdza się w ciężkim kombi z przyczepą, a supersamochody prawie zawsze mają silniki benzynowe.</p>
+
+<h2><span class="num">Rozdział trzeci</span>Więcej powietrza, więcej mocy</h2>
+
+<p>Do spalenia paliwa potrzebny jest tlen. Im więcej powietrza zmieścimy w cylindrze, tym więcej paliwa możemy spalić w jednym cyklu. A to oznacza więcej mocy z silnika tej samej wielkości. <strong>Doładowanie</strong> to sztuka wtłaczania do silnika większej ilości powietrza, niż wciągnąłby sam.</p>
+
+<div class="twocol">
+  <div class="side"><div class="h">Turbosprężarka</div>Napędzają ją spaliny. Gorące gazy kręcą turbiną, a ta po drugiej stronie wału kręci sprężarką, która wtłacza powietrze do silnika. Wykorzystuje energię, która i tak uciekłaby rurą wydechową. Wada: działa z opóźnieniem, tzw. <em>turbo lagiem</em>, bo silnik musi najpierw wyprodukować dość spalin.</div>
+  <div class="side"><div class="h">Kompresor mechaniczny</div>Napędza go pasek bezpośrednio od wału silnika. Reaguje natychmiast, bez opóźnienia. Wada: do kręcenia sam zabiera silnikowi część mocy. Nigdy nie jest „za darmo”.</div>
 </div>
 
-<div class="wrap">
+<h3>Rodzaje turbo</h3>
 
-  <p style="margin-top:60px;font-size:18px;color:var(--text-dim);">Kiedy w filmie kamera najeżdża na tylny spojler Nissana GT-R albo na zawodzące V8 w Charger evie, widzisz efekt końcowy stu lat inżynierii, kilkudziesięciu lat wojen korporacyjnych o marki i kilku prostych praw fizyki, które da się ogarnąć w jedno popołudnie. Ten tekst rozbiera to wszystko na czynniki pierwsze — bez lania wody, bez skupiania się na tym, jaki silnik miał Ford Fiesta rocznik 2004, tylko konkretnie o tym, co sprawia, że jedno auto jest „fajne”, a drugie tylko się nim wydaje.</p>
+<p>Konstruktorzy wymyślili kilka sposobów, żeby zmniejszyć opóźnienie turbo:</p>
 
-  <div class="thesis">„Fajne auto” to nie jedna cecha — to skrzyżowanie czterech osobnych systemów: silnika, który generuje moc; nadwozia i zawieszenia, które tę moc przekładają na ruch; marki, która decyduje, ile to będzie kosztować; i sportu, który nadaje temu wszystkiemu mit.</div>
+<ul>
+  <li><strong>Jedna turbina</strong>: prosto i tanio. Duża daje więcej mocy na wysokich obrotach, ale wolniej się rozkręca. Mała reaguje szybko, ale ma mniejszy „sufit”.</li>
+  <li><strong>Twin-turbo</strong>: dwie turbiny. Albo pracują równolegle, na przykład po jednej na każdy rząd cylindrów w silniku V. Albo po kolei: mała rusza od razu, a duża dokłada moc wyżej.</li>
+  <li><strong>Twin-scroll</strong>: jedna turbina z dwoma oddzielnymi kanałami dla spalin. Impulsy z różnych cylindrów nie przeszkadzają sobie nawzajem, więc turbo reaguje szybciej bez dokładania drugiej turbiny.</li>
+  <li><strong>Zmienna geometria</strong>: ruchome łopatki wewnątrz turbiny zmieniają jej przekrój zależnie od obrotów. Opóźnienie prawie znika. Rozwiązanie jest drogie i musi znieść wysoką temperaturę, dlatego spotyka się je głównie w dieslach, w których spaliny są chłodniejsze. Wyjątkiem są topowe benzynowe Porsche 911 Turbo.</li>
+  <li><strong>Turbo elektryczne</strong>: mały silnik elektryczny rozkręca turbinę, zanim zrobią to spaliny. Opóźnienie praktycznie znika. Tę technikę przeniesiono z Formuły 1 do drogowych aut Mercedesa-AMG.</li>
+</ul>
 
-  <!-- ============ SECTION 01 ============ -->
-  <section id="s1">
-    <div class="sec-head"><span class="sec-num">01</span><h2>Z czego w ogóle składa się auto</h2></div>
+<p>Uczciwie trzeba dodać, że bardziej skomplikowane nie znaczy lepsze na co dzień. W zwykłym aucie jedna mała turbina z dobrą elektroniką daje większość korzyści za ułamek kosztów. Egzotyczne rozwiązania mają sens tam, gdzie liczy się każda dziesiąta część sekundy.</p>
 
-    <p>Zanim przejdziemy do turbin i liter na klapie bagażnika — podstawa. Żeby samochód w ogóle mógł jechać, potrzebuje pięciu układów, które muszą ze sobą współpracować. Brakuje jednego — auto stoi.</p>
+<h2><span class="num">Rozdział czwarty</span>Alfabet na klapie bagażnika</h2>
 
-    <div class="card-grid">
-      <div class="card">
-        <div class="big-label">Źródło mocy</div>
-        <p>Silnik spalinowy, elektryczny albo hybryda. To on zamienia paliwo (chemię) albo prąd (elektrony) w ruch obrotowy.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">Układ napędowy</div>
-        <p>Skrzynia biegów + wał napędowy + dyferencjał. Przenosi moc z silnika na koła i pozwala kołom obracać się z różną prędkością na zakręcie.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">Zawieszenie</div>
-        <p>Sprężyny, amortyzatory, wahacze. Trzyma koła w kontakcie z asfaltem mimo nierówności — bez tego każda dziura wybijałaby auto z toru.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">Hamulce</div>
-        <p>Zamieniają energię kinetyczną (ruch) w ciepło poprzez tarcie. Tarcze + klocki na każdym kole, sterowane hydraulicznie.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">Chłodzenie</div>
-        <p>Silnik spalinowy przy pracy generuje ogromne ilości ciepła — chłodnica, pompa wody i płyn chłodzący nie dają mu się stopić.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">Nadwozie / rama</div>
-        <p>Szkielet, do którego przykręcone jest wszystko inne. Dziś w większości aut to samonośna struktura (monokok), nie oddzielna rama jak kiedyś w pickupach i terenówkach.</p>
-      </div>
-    </div>
+<p>Litery na tyle auta wyglądają jak przypadkowa zupa. Każdy skrót ma jednak swoje pochodzenie: techniczne, marketingowe albo historyczne.</p>
 
-    <p>To jest właściwie cały przepis. Reszta tego artykułu to w gruncie rzeczy różne warianty tych sześciu składników — mocniejszy silnik, inny układ napędowy, inna geometria nadwozia. Fizyka się nie zmienia, zmienia się tylko wykonanie.</p>
-  </section>
+<table class="t">
+  <tr><th>Skrót</th><th>Rozwinięcie</th><th>Skąd się wziął</th></tr>
+  <tr><td>GT</td><td>Gran Turismo</td><td>Auta do szybkiej i wygodnej jazdy na długich trasach. Termin z Włoch, z czasów przedwojennych.</td></tr>
+  <tr><td>GTI</td><td>Gran Turismo Injection</td><td>VW Golf GTI z 1976 roku, jeden z pierwszych „hot hatchy”. „Injection” podkreślało wtrysk paliwa zamiast gaźnika, wtedy nowość w tanich autach.</td></tr>
+  <tr><td>GTO</td><td>Gran Turismo Omologato</td><td>„Homologowane jako GT”, czyli auto zbudowane w liczbie egzemplarzy wymaganej, żeby dopuścić je do wyścigów (Ferrari 250 GTO).</td></tr>
+  <tr><td>GT-R</td><td>Gran Turismo Racing</td><td>Nissan Skyline GT-R z 1969 roku, budowany z myślą o wyścigach samochodów turystycznych w Japonii.</td></tr>
+  <tr><td>AMG</td><td>Aufrecht, Melcher, Großaspach</td><td>Nazwiska dwóch założycieli i rodzinne miasto Aufrechta. Kiedyś niezależny tuner, dziś sportowa część Mercedesa.</td></tr>
+  <tr><td>M</td><td>BMW Motorsport</td><td>Dział BMW założony w 1972 roku do budowy aut wyścigowych i ich drogowych wersji.</td></tr>
+  <tr><td>RS</td><td>RennSport</td><td>Po niemiecku „sport wyścigowy”. Najmocniejsze wersje u Audi i Porsche.</td></tr>
+  <tr><td>STI</td><td>Subaru Tecnica International</td><td>Sportowy dział Subaru, znany z sukcesów w rajdach WRC.</td></tr>
+  <tr><td>Evo</td><td>Evolution</td><td>Kolejne „ewolucje” Mitsubishi Lancera budowane pod przepisy rajdowe.</td></tr>
+  <tr><td>TDI / TSI</td><td>Turbo + wtrysk bezpośredni</td><td>Oznaczenia silników w grupie Volkswagena: TDI dla diesli, TSI dla benzynowych.</td></tr>
+</table>
+<div class="caption">Rozwinięcia według materiałów producentów; przy części skrótów marki podawały w różnych latach różne wersje.</div>
 
-  <!-- ============ SECTION 02 ============ -->
-  <section id="s2">
-    <div class="sec-head"><span class="sec-num">02</span><h2>Silniki: co bije pod maską</h2></div>
+<p>Z tej tabeli wyłania się wzór. Wiele najsłynniejszych oznaczeń ma korzenie w <strong>homologacji</strong>. Przepisy wyścigowe i rajdowe wymagały, żeby producent sprzedał określoną liczbę aut drogowych, zanim jego wyścigowa wersja mogła startować. GTO, Evo, STI czy GT-R zaczynały więc na torze, a dopiero potem trafiły do salonów.</p>
 
-    <p>Silnik spalinowy generuje moc przez serię małych kontrolowanych wybuchów — mieszanka paliwa i powietrza zapala się w cylindrze, popycha tłok, tłok kręci wałem korbowym. To, co różni jeden silnik od drugiego, to głównie <strong>układ cylindrów</strong> i <strong>rodzaj paliwa</strong>.</p>
+<h2><span class="num">Rozdział piąty</span>Kto jest właścicielem marki</h2>
 
-    <h3>Układ cylindrów</h3>
-    <ul>
-      <li><strong>Rzędowy (inline, np. I4, I6)</strong> — cylindry ustawione w jednej linii. Prosty, tani w produkcji, dobrze wyważony przy 6 cylindrach (dlatego BMW przez dekady trzymało się rzędowej „szóstki” jako swojego znaku firmowego).</li>
-      <li><strong>Widlasty (V, np. V6, V8, V10, V12)</strong> — dwa rzędy cylindrów pod kątem względem siebie. Krótszy niż rzędowy o tej samej liczbie cylindrów, więc mieści się w niższej i szerszej masce — stąd V8 w większości amerykańskich muscle carów i europejskich supersamochodów.</li>
-      <li><strong>Bokser / płaski</strong> — cylindry leżą poziomo, naprzeciwko siebie. Bardzo niski środek ciężkości, bo silnik jest płaski jak naleśnik. To sygnatura Porsche 911 i całej gamy Subaru.</li>
-      <li><strong>W</strong> — dwa silniki V sklejone razem pod wspólnym wałem. Ekstremalnie kompaktowy jak na liczbę cylindrów — 16-cylindrowy silnik W16 w Bugatti Veyronie i Chironie mieści się w przestrzeni nieproporcjonalnie mniejszej, niż wynikałoby to z liczby cylindrów.</li>
-    </ul>
+<p>Wiele marek, które wydają się zupełnie osobne, od lat należy do kilku dużych koncernów.</p>
 
-    <div class="callout">
-      <div class="label">Ciekawostka</div>
-      <p>Mazda przez dekady stawiała na silnik rotacyjny Wankla (RX-7, RX-8) — zamiast tłoków ma trójkątny wirnik obracający się w komorze w kształcie ósemki. Bardzo lekki, bardzo wysokoobrotowy, ale strasznie nieefektywny paliwowo i olejowo. Dziś przetrwał głównie jako mały „range extender” doładowujący baterię w Mazdzie MX-30 — nie jako główny napęd.</p>
-    </div>
-
-    <h3>Benzyna vs diesel</h3>
-    <p>Silnik benzynowy zapala mieszankę świecą zapłonową. Diesel nie ma świec — wtryskuje paliwo do already-sprężonego, gorącego powietrza i mieszanka zapala się sama od ciśnienia (dlatego „silnik wysokoprężny”). Efekt: diesel ma więcej momentu obrotowego przy niskich obrotach (dobry do ciągnięcia i pchania), benzyna kręci się chętniej na wysokie obroty (dobra do przyspieszania i emocji). To dlatego europejskie kombi jeżdżą na dieslu, a supersamochody prawie nigdy.</p>
-  </section>
-
-  <!-- ============ SECTION 03 ============ -->
-  <section id="s3">
-    <div class="sec-head"><span class="sec-num">03</span><h2>Doładowanie: więcej powietrza, więcej mocy</h2></div>
-
-    <p>Silnik potrzebuje tlenu, żeby spalić paliwo. Im więcej powietrza upchniesz do cylindra, tym więcej paliwa możesz spalić przy każdym wybuchu — czyli więcej mocy z tej samej objętości silnika. Doładowanie to właśnie sztuka wpychania większej ilości powietrza na siłę.</p>
-
-    <h3>Turbo vs sprężarka mechaniczna (kompresor)</h3>
-    <p><strong>Turbosprężarka</strong> jest napędzana spalinami — gazy wylotowe kręcą turbiną, turbina kręci sprężarką po drugiej stronie. Za darmo wykorzystuje energię, która i tak by uciekła rurą wydechową, ale ma opóźnienie („turbo lag”) — silnik musi najpierw wyprodukować dość spalin, żeby turbina się rozkręciła. <strong>Kompresor mechaniczny (supercharger)</strong> jest napędzany paskiem bezpośrednio od silnika, więc reaguje natychmiast, ale zabiera trochę mocy silnikowi, żeby się kręcić — nigdy nie jest „za darmo”.</p>
-
-    <h3>Rodzaje turbosprężarek</h3>
-    <div class="card-grid">
-      <div class="card">
-        <div class="big-label">Single-turbo</div>
-        <p>Jedna turbina. Tanie i proste. Duża turbina = więcej mocy górą, ale wolniej się rozkręca. Mała = odwrotnie.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">Twin-turbo</div>
-        <p>Dwie turbiny — albo równoległe (jedna na każdy rząd cylindrów w V), albo sekwencyjne (mała rozkręca się od razu, duża dokłada moc górą). Nissan GT-R i BMW M5 klasycznie na tym stoją.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">Twin-scroll</div>
-        <p>Jedna turbina, ale podzielona na dwa oddzielne kanały wlotowe, żeby impulsy spalin z różnych cylindrów sobie nie przeszkadzały. Mniej opóźnienia bez dokładania drugiej turbiny.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">Zmienna geometria (VGT)</div>
-        <p>Ruchome łopatki wewnątrz turbiny zmieniają jej „przekrój” zależnie od obrotów silnika. Prawie bez opóźnienia w całym zakresie, ale drogie i skomplikowane — stąd głównie w dieslach, gdzie temperatura spalin jest niższa i łopatki nie topnieją.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">E-turbo (elektryczny)</div>
-        <p>Mały silnik elektryczny rozkręca turbinę, zanim spaliny zdążą to zrobić same — eliminuje opóźnienie niemal całkowicie. Nowość ostatnich lat (Audi SQ7, technologia BorgWarner eBooster), droga i wymaga dodatkowej instalacji elektrycznej.</p>
-      </div>
-      <div class="card">
-        <div class="big-label">Variable twin-scroll</div>
-        <p>Połączenie dwóch powyższych — zawór kieruje spaliny do jednego lub dwóch kanałów zależnie od obrotów. Najbardziej wszechstronne, ale i najdroższe w produkcji.</p>
-      </div>
-    </div>
-
-    <div class="callout">
-      <div class="label">Uczciwie</div>
-      <p>Więcej turbin albo bardziej wymyślna geometria nie zawsze oznacza „lepiej” dla ciebie jako kierowcy — dla codziennego auta miejskiego jeden mały turbo z dobrą elektroniką daje 90% korzyści za 30% ceny i komplikacji. Egzotyczne rozwiązania mają sens tam, gdzie liczy się każda dziesiąta sekundy, czyli w wyścigach albo w autach za pół miliona złotych.</p>
-    </div>
-  </section>
-
-  <!-- ============ SECTION 04 ============ -->
-  <section id="s4">
-    <div class="sec-head"><span class="sec-num">04</span><h2>Alfabet na klapie bagażnika</h2></div>
-
-    <p>To jest ta część, która wygląda jak przypadkowa zupa liter, dopóki ktoś ci nie powie, skąd się wzięła. Każdy skrót ma konkretne pochodzenie — techniczne, marketingowe albo historyczne (najczęściej wszystkie trzy naraz).</p>
-
-    <table class="badge-table">
-      <tr><th>Skrót</th><th>Znaczenie</th><th>Kontekst</th></tr>
-      <tr><td class="code">GT</td><td class="mean">Grand Touring / Gran Turismo</td><td class="desc">Kategoria aut budowanych do szybkiej, komfortowej jazdy na długich dystansach. Termin włoski z lat 20.–30. XX wieku (m.in. Alfa Romeo, Bugatti Type 57 „Gran Turismo”) — <strong>istniał dekady przed programem telewizyjnym „The Grand Tour”</strong>, który wziął nazwę od tego pojęcia, a nie odwrotnie.</td></tr>
-      <tr><td class="code">GTI</td><td class="mean">Grand Touring Injection</td><td class="desc">VW Golf GTI (1976) był jednym z pierwszych „hot hatchy” — dopisek Injection podkreślał wtrysk paliwa zamiast gaźnika, wtedy nowość.</td></tr>
-      <tr><td class="code">GT-R</td><td class="mean">Grand Touring Racing</td><td class="desc">Oznaczenie Nissana od legendarnego Skyline GT-R z 1969, budowanego z myślą o homologacji do wyścigów turystycznych w Japonii.</td></tr>
-      <tr><td class="code">GTO</td><td class="mean">Gran Turismo Omologato</td><td class="desc">Włoskie „homologowany do Gran Turismo” — czyli auto uliczne budowane w liczbie wystarczającej, by dopuścić je do wyścigów GT (Ferrari 250 GTO). Amerykański Pontiac GTO pożyczył samą nazwę bez związku z homologacją.</td></tr>
-      <tr><td class="code">TDI</td><td class="mean">Turbocharged Direct Injection</td><td class="desc">Oznaczenie diesli w grupie Volkswagena — turbodoładowanie plus wtrysk bezpośredni do komory spalania.</td></tr>
-      <tr><td class="code">TSI</td><td class="mean">Turbocharged Stratified Injection</td><td class="desc">To samo, ale dla silników benzynowych VW/Audi/Škoda.</td></tr>
-      <tr><td class="code">AMG</td><td class="mean">Aufrecht, Melcher, Großaspach</td><td class="desc">Inicjały dwóch założycieli (Hans Werner Aufrecht, Erhard Melcher) plus rodzinne miasto Aufrechta. Dziś sportowa dywizja Mercedesa, wcześniej niezależny tuner.</td></tr>
-      <tr><td class="code">M</td><td class="mean">BMW Motorsport GmbH</td><td class="desc">Osobna dywizja BMW założona w 1972 do budowy aut wyścigowych i ich drogowych pochodnych (M3, M5).</td></tr>
-      <tr><td class="code">RS</td><td class="mean">RennSport (niem. „sport wyścigowy”)</td><td class="desc">Najwyższe oznaczenie osiągowe w Audi i Porsche.</td></tr>
-      <tr><td class="code">STI</td><td class="mean">Subaru Tecnica International</td><td class="desc">Dywizja motorsportowa Subaru odpowiedzialna za sukcesy w WRC — dziś oznaczenie topowych wersji Impreza/WRX.</td></tr>
-      <tr><td class="code">Type R</td><td class="mean">Racing</td><td class="desc">Honda — najbardziej surowa, torowa wersja Civica czy Integry.</td></tr>
-      <tr><td class="code">Quattro</td><td class="mean">Cztery (wł. „quattro”)</td><td class="desc">System napędu na cztery koła Audi, znak firmowy od czasów rajdowej Audi Quattro w latach 80.</td></tr>
-      <tr><td class="code">Evo</td><td class="mean">Evolution</td><td class="desc">Mitsubishi Lancer Evolution — kolejne „ewolucje” homologacyjne budowane pod rajdy WRC.</td></tr>
-    </table>
-
-    <p>Wzorzec, który widać w tabeli: większość tych liter nie wzięła się z marketingu, tylko z homologacji wyścigowej — producent musiał zbudować pewną liczbę egzemplarzy ulicznych, żeby dopuścić wersję wyścigową do zawodów. GTO, Evo, STI, GT-R — wszystkie mają korzenie na torze, zanim trafiły na salon.</p>
-  </section>
-
-  <!-- ============ SECTION 05 ============ -->
-  <section id="s5">
-    <div class="sec-head"><span class="sec-num">05</span><h2>Kto naprawdę jest właścicielem marki, którą kochasz</h2></div>
-
-    <p>Masz rację co do Stellantis — i to jest tylko czubek góry lodowej. Większość marek, które wydają się „osobne”, od dekad należy do garstki dużych koncernów. Oto realny stan na 2026 rok.</p>
-
-    <div class="owner-block">
-      <div class="owner-parent"><span class="name">Stellantis</span><span class="tag">spółka giełdowa (NYSE: STLA), powstała z fuzji Fiat Chrysler + PSA (2021)</span></div>
-      <div class="owner-brands"><span>Abarth</span><span>Alfa Romeo</span><span>Chrysler</span><span>Citroën</span><span>Dodge</span><span>DS Automobiles</span><span>Fiat</span><span>Jeep</span><span>Lancia</span><span>Maserati</span><span>Opel</span><span>Peugeot</span><span>Ram</span><span>Vauxhall</span></div>
-      <p class="owner-note">14 marek motoryzacyjnych pod jednym dachem — to dlatego Opel (Niemcy), Peugeot (Francja) i Jeep (USA) dzielą dziś platformy i silniki, mimo zupełnie różnej tożsamości na sprzedaży.</p>
-    </div>
-
-    <div class="owner-block">
-      <div class="owner-parent"><span class="name">Volkswagen Group</span><span class="tag">największy koncern motoryzacyjny Europy</span></div>
-      <div class="owner-brands"><span>Volkswagen</span><span>Audi</span><span>Škoda</span><span>SEAT / Cupra</span><span>Bentley</span><span>Lamborghini</span><span>Porsche</span><span>Ducati (motocykle)</span><span>Scania</span><span>MAN</span><span>Scout Motors (USA)</span></div>
-      <p class="owner-note">Porsche jest notowana osobno na giełdzie, ale VW zachowuje pakiet większościowy (75% minus jedna akcja). Bugatti od 2021 działa jako osobna spółka joint venture „Bugatti Rimac” — Porsche ma w niej 45%, chorwacki Rimac Group 55% i faktyczną kontrolę operacyjną.</p>
-    </div>
-
-    <div class="owner-block">
-      <div class="owner-parent"><span class="name">BMW Group</span><span class="tag">jedyny z „wielkiej trójki” niemieckiej bez fuzji ani przejęcia w historii</span></div>
-      <div class="owner-brands"><span>BMW</span><span>MINI</span><span>Rolls-Royce Motor Cars</span></div>
-      <p class="owner-note">Uwaga na pułapkę: Rolls-Royce Motor Cars (auta) to od 1998 całkowicie inna firma niż Rolls-Royce Holdings — brytyjski gigant produkujący silniki lotnicze. Rozdzieliły się prawnie i właścicielsko, zostały tylko wspólne korzenie w nazwie.</p>
-    </div>
-
-    <div class="owner-block">
-      <div class="owner-parent"><span class="name">Mercedes-Benz Group</span><span class="tag">plus udziały mniejszościowe poza własną marką</span></div>
-      <div class="owner-brands"><span>Mercedes-Benz</span><span>Mercedes-AMG</span><span>Mercedes-Maybach</span></div>
-      <p class="owner-note">Mercedes od lat buduje pakiet akcji w niezależnym Aston Martinie (docelowo do ok. 20%) w zamian za dostęp Astona do swoich jednostek hybrydowych i elektrycznych — to strategiczne partnerstwo technologiczne, nie przejęcie.</p>
-    </div>
-
-    <div class="owner-block">
-      <div class="owner-parent"><span class="name">Renault–Nissan–Mitsubishi Alliance</span><span class="tag">nie koncern — sojusz trzech niezależnych spółek</span></div>
-      <div class="owner-brands"><span>Renault</span><span>Nissan</span><span>Mitsubishi Motors</span></div>
-      <p class="owner-note">Zamiast jednej struktury właścicielskiej — skrzyżowany akcjonariat (Renault ma udziały w Nissanie, Nissan w Mitsubishi) i wspólne platformy. To odróżnia ten model od Stellantis czy VW, gdzie jest jeden właściciel na szczycie.</p>
-    </div>
-
-    <div class="owner-block">
-      <div class="owner-parent"><span class="name">Niezależni gracze</span><span class="tag">marki, które wciąż stoją same</span></div>
-      <div class="owner-brands"><span>Ferrari</span><span>McLaren</span><span>Aston Martin</span><span>Koenigsegg</span><span>Pagani</span><span>Rimac</span></div>
-      <p class="owner-note"><strong>Ferrari</strong> — spółka giełdowa (NYSE: RACE), wydzielona z Fiat Chrysler w 2016; nie ma nic wspólnego ze Stellantis mimo wspólnej historii. <strong>McLaren Group</strong> — od marca 2024 w 100% należy do Mumtalakat, państwowego funduszu inwestycyjnego Bahrajnu (który dokapitalizowywał firmę od 2007). <strong>Aston Martin</strong> — spółka giełdowa, największym udziałowcem jest konsorcjum Yew Tree kanadyjskiego miliardera Lawrence'a Strolla. <strong>Koenigsegg</strong> i <strong>Pagani</strong> pozostają rodzinnymi firmami — odpowiednio szwedzką i włoską.</p>
-    </div>
-  </section>
-
-  <!-- ============ SECTION 06 ============ -->
-  <section id="s6">
-    <div class="sec-head"><span class="sec-num">06</span><h2>Nadwozia: hatchback, sedan, SUV i reszta</h2></div>
-
-    <p>Podział aut na typy nadwozia to w gruncie rzeczy podział proporcji — gdzie kończy się przestrzeń pasażerska, a zaczyna bagażnik, i czy w ogóle jest między nimi ściana.</p>
-
-    <div class="icon-grid">
-      <div class="icon-card"><svg viewBox="0 0 100 50"><path d="M8 38 Q10 20 30 18 L70 18 Q90 20 92 38 L92 40 L8 40 Z" fill="none" stroke="#d1a13f" stroke-width="2.5"/><circle cx="26" cy="40" r="6" fill="#d1a13f"/><circle cx="74" cy="40" r="6" fill="#d1a13f"/></svg><div class="name">Hatchback</div><div class="sub">bagażnik w kabinie, klapa tylna</div></div>
-      <div class="icon-card"><svg viewBox="0 0 100 50"><path d="M6 38 Q8 22 26 20 L44 18 Q52 17 60 20 L78 20 Q94 22 94 38 L94 40 L6 40 Z" fill="none" stroke="#d1a13f" stroke-width="2.5"/><circle cx="24" cy="40" r="6" fill="#d1a13f"/><circle cx="76" cy="40" r="6" fill="#d1a13f"/></svg><div class="name">Sedan</div><div class="sub">osobny, wydzielony bagażnik</div></div>
-      <div class="icon-card"><svg viewBox="0 0 100 50"><path d="M6 38 Q8 20 28 18 L70 18 Q90 18 94 34 L94 40 L6 40 Z" fill="none" stroke="#d1a13f" stroke-width="2.5"/><circle cx="24" cy="40" r="6" fill="#d1a13f"/><circle cx="76" cy="40" r="6" fill="#d1a13f"/></svg><div class="name">Kombi (Estate)</div><div class="sub">sedan z wydłużonym dachem</div></div>
-      <div class="icon-card"><svg viewBox="0 0 100 50"><path d="M8 40 Q9 15 28 12 L72 12 Q91 15 92 40 Z" fill="none" stroke="#d1a13f" stroke-width="2.5"/><circle cx="26" cy="40" r="7" fill="#d1a13f"/><circle cx="74" cy="40" r="7" fill="#d1a13f"/></svg><div class="name">SUV</div><div class="sub">wysokie nadwozie, wysoki prześwit</div></div>
-      <div class="icon-card"><svg viewBox="0 0 100 50"><path d="M8 40 Q10 24 30 20 L70 20 Q90 24 92 40 Z" fill="none" stroke="#d1a13f" stroke-width="2.5"/><circle cx="26" cy="40" r="6.5" fill="#d1a13f"/><circle cx="74" cy="40" r="6.5" fill="#d1a13f"/></svg><div class="name">Crossover</div><div class="sub">SUV zbudowany na płycie osobówki, nie terenówki</div></div>
-      <div class="icon-card"><svg viewBox="0 0 100 50"><path d="M6 38 Q10 12 40 12 L60 12 Q65 20 92 24 L92 38 L6 38 Z" fill="none" stroke="#d1a13f" stroke-width="2.5"/><circle cx="26" cy="38" r="6" fill="#d1a13f"/><circle cx="76" cy="38" r="6" fill="#d1a13f"/></svg><div class="name">Coupe</div><div class="sub">2 drzwi, opadająca linia dachu</div></div>
-      <div class="icon-card"><svg viewBox="0 0 100 50"><path d="M6 38 Q10 20 30 18 L70 18 Q90 20 92 38 L92 40 L6 40 Z" fill="none" stroke="#d1a13f" stroke-width="2.5" stroke-dasharray="4 3"/><circle cx="24" cy="40" r="6" fill="#d1a13f"/><circle cx="76" cy="40" r="6" fill="#d1a13f"/></svg><div class="name">Kabriolet</div><div class="sub">składany / zdejmowany dach</div></div>
-      <div class="icon-card"><svg viewBox="0 0 100 50"><path d="M6 40 Q8 20 26 18 L46 18 Q52 18 52 24 L52 40 M56 40 L94 40 L94 30 L56 30 Z" fill="none" stroke="#d1a13f" stroke-width="2.5"/><circle cx="22" cy="40" r="6" fill="#d1a13f"/><circle cx="80" cy="40" r="6" fill="#d1a13f"/></svg><div class="name">Pickup</div><div class="sub">osobna, otwarta skrzynia ładunkowa</div></div>
-      <div class="icon-card"><svg viewBox="0 0 100 50"><path d="M6 40 Q8 16 30 14 L70 14 Q92 16 94 40 Z M30 14 L30 26 M70 14 L70 26" fill="none" stroke="#d1a13f" stroke-width="2.5"/><circle cx="24" cy="40" r="6" fill="#d1a13f"/><circle cx="76" cy="40" r="6" fill="#d1a13f"/></svg><div class="name">Minivan / MPV</div><div class="sub">maksimum przestrzeni pasażerskiej</div></div>
-    </div>
-
-    <p>Klucz do zamieszania: <strong>SUV</strong> historycznie oznaczał auto zbudowane na ramie drabinowej (jak pickup, prawdziwie terenowe), a <strong>crossover</strong> to to samo wizualnie, ale zbudowane na platformie zwykłej osobówki — lżejsze, tańsze, gorsze w terenie, lepsze w mieście. Dziś marketing prawie zatarł tę różnicę i większość „SUV-ów” sprzedawanych w Europie to technicznie crossovery.</p>
-  </section>
-
-  <!-- ============ SECTION 07 ============ -->
-  <section id="s7">
-    <div class="sec-head"><span class="sec-num">07</span><h2>Muscle car, supercar, hipersamochód</h2></div>
-
-    <p>To jest hierarchia, ale nie ściśle zdefiniowana prawnie — bardziej konsensus branżowy, który się przesuwa z dekady na dekadę.</p>
-
-    <h3>Trzy kategorie w skrócie</h3>
-    <div class="card-grid">
-      <div class="card"><div class="big-label">Muscle car</div><p>Amerykańska filozofia: duży, tani silnik V8 w lekkim, prostym nadwoziu. Napęd na tył, mało elektroniki, cena dostępna dla zwykłego pracującego człowieka. Mustang, Camaro, Charger/Challenger.</p></div>
-      <div class="card"><div class="big-label">Supercar</div><p>Termin ukuty w 1966 przy premierze Lamborghini Miury — silnik centralny (za plecami kierowcy), egzotyczna stylistyka, flagowy model producenta. Dziś: 600–800 KM, hybrydy, ~500 tys.–1,5 mln zł.</p></div>
-      <div class="card"><div class="big-label">Hipersamochód</div><p>Kategoria, która praktycznie nie istniała przed 2005 rokiem. Ekstremalna technologia, produkcja liczona w dziesiątkach sztuk, ceny liczone w milionach, moc dziś standardowo powyżej 1500 KM.</p></div>
-    </div>
-
-    <h3>Skala mocy hipersamochodów — jak szybko to eksplodowało</h3>
-    <div class="chart">
-      <div class="bar-row"><div class="bar-label">Bugatti Veyron 16.4 (2005)</div><div class="bar-track"><div class="bar-fill" style="width:52%"><span class="bar-val">1001 KM</span></div></div></div>
-      <div class="bar-row"><div class="bar-label">Bugatti Chiron (2016)</div><div class="bar-track"><div class="bar-fill" style="width:78%"><span class="bar-val">1500 KM</span></div></div></div>
-      <div class="bar-row"><div class="bar-label">Koenigsegg Jesko Absolut (2020)</div><div class="bar-track"><div class="bar-fill" style="width:84%"><span class="bar-val">~1600 KM</span></div></div></div>
-      <div class="bar-row"><div class="bar-label">Rimac Nevera (2021, elektryk)</div><div class="bar-track"><div class="bar-fill electric" style="width:100%"><span class="bar-val">1914 KM</span></div></div></div>
-      <div class="chart-note">Wartości deklarowane przez producentów (KM = koń mechaniczny/PS). Veyron był pierwszym seryjnym hipersamochodem — 1001 KM z poczwórnie doładowanego W16 uchodziło wtedy za granicę fizyki. 20 lat później to wynik „wejściowy” do tej kategorii.</div>
-    </div>
-
-    <h3>Wtedy vs teraz: co się stało z muscle carami</h3>
-    <p>Jeszcze w 2023 roku masz klasyczne trio: Ford Mustang, Chevrolet Camaro, Dodge Challenger — wszystkie z opcją wielkiego V8. Od tego czasu podłoga się urwała. <strong>Camaro</strong> zeszło z linii produkcyjnej w grudniu 2023, a powrót zapowiadany jest dopiero około 2028 roku, na zupełnie nowej platformie. <strong>Challenger</strong> pożegnał się serią limitowanych modeli „Last Call”. <strong>Dodge Charger</strong> wrócił najpierw jako elektryk (Charger Daytona, 2024), potem jako auto spalinowe, ale z podwójnie doładowanym rzędowym sześciocylindrowym „Sixpack” zamiast V8 — sam Hemi V8 wraca w 2026 do innych modeli (Ram 1500, Jeep Wrangler), bo złagodzono przepisy emisyjne w USA i klienci głośno się dopominali. Efekt: Ford Mustang zostaje praktycznie jedynym klasycznym „pony carem” z V8 na rynku.</p>
-
-    <div class="callout warn">
-      <div class="label">Bez owijania w bawełnę</div>
-      <p>Kultura muscle carów nie umiera dlatego, że inżynierowie stracili pomysł — umiera, bo przepisy emisyjne i realia biznesowe (mniejsza marża na dużych silnikach, presja na elektryfikację) przez chwilę wygrywały z popytem klientów. To, że Hemi V8 wraca w 2025–2026, pokazuje, że popyt był cały czas, tylko decyzje korporacyjne poszły w inną stronę i się z tego wycofują.</p>
-    </div>
-  </section>
-
-  <!-- ============ SECTION 08 ============ -->
-  <section id="s8">
-    <div class="sec-head"><span class="sec-num">08</span><h2>Benzyna, prąd, wodór — trzy różne sposoby na ruch</h2></div>
-
-    <h3>Silnik spalinowy (ICE)</h3>
-    <p>Opisany w rozdziale 02 — spalanie paliwa napędza tłoki. Największa zaleta: gęstość energii (dużo energii w małej objętości baku) i tankowanie w 3 minuty. Wada: większość energii ucieka jako ciepło, sprawność rzędu 25–40%.</p>
-
-    <h3>Silnik elektryczny (BEV)</h3>
-    <p>Prąd z akumulatora napędza silnik elektryczny bezpośrednio — brak spalania, brak skrzyni biegów w klasycznym sensie (jeden stały przełożenie zwykle wystarcza). Sprawność 85–95%, natychmiastowy pełny moment obrotowy od zera obrotów. Dwa główne typy silników: <strong>synchroniczny z magnesami trwałymi</strong> (mniejszy, bardziej wydajny, ale potrzebuje metali ziem rzadkich) i <strong>indukcyjny</strong> (tańszy, bez metali ziem rzadkich, ale mniej wydajny — takiego używała pierwotnie Tesla w tylnym silniku Model S/X, zanim większość producentów przeszła głównie na magnesy trwałe dla lepszej efektywności).</p>
-
-    <h3>Ogniwo wodorowe (FCEV)</h3>
-    <p>To nie jest silnik spalający wodór (choć takie prototypy też istnieją, np. programy Toyoty nad spalaniem wodoru w klasycznym silniku) — w typowym aucie wodorowym ogniwo paliwowe łączy wodór z tlenu z powietrza i produkuje prąd elektryczny na bieżąco, który napędza silnik elektryczny dokładnie jak w BEV. Różnica względem baterii: „bak” to zbiornik ciśnieniowy z wodorem, tankowanie trwa ~5 minut jak przy benzynie, a jedynym produktem ubocznym jest para wodna.</p>
-
-    <div class="callout">
-      <div class="label">Stan na 2026 — bez ściemniania</div>
-      <p>Auta wodorowe praktycznie nie wyszły poza fazę eksperymentu. Na rynku realnie liczą się dwa modele — Toyota Mirai i Hyundai Nexo — sprzedawane w większości wyłącznie w Kalifornii, bo tylko tam istnieje choć trochę stacji tankowania wodoru. Nawet w samej Toyocie padły otwarte słowa, że Mirai „się nie udał” z powodu braku infrastruktury — firma przesuwa teraz uwagę na ciężarówki wodorowe, gdzie wystarczy zbudować stację na trasie punkt-punkt, zamiast tysięcy stacji dla klientów indywidualnych. Jeśli ktoś sprzedaje ci wizję „wodór za rogiem”, to obietnica bez pokrycia w obecnej infrastrukturze.</p>
-    </div>
-  </section>
-
-  <!-- ============ SECTION 09 ============ -->
-  <section id="s9">
-    <div class="sec-head"><span class="sec-num">09</span><h2>Koła i opony: większe nie zawsze lepsze</h2></div>
-
-    <p>Na boku opony jest kod, który wygląda jak przypadkowy ciąg cyfr. Nie jest przypadkowy — to pełna specyfikacja.</p>
-
-    <div class="tire-code"><span style="color:#d1a13f;">245</span><span>/</span><span style="color:#7fa896;">40</span><span>R</span><span style="color:#f7f2e4;">18</span></div>
-    <div class="tire-legend">
-      <div><b>245</b>Szerokość opony w milimetrach — mierzona od ściany bocznej do ściany bocznej.</div>
-      <div><b>40</b>Profil (aspekt) — wysokość ściany bocznej jako procent szerokości. 40 oznacza 40% z 245 mm, czyli 98 mm. Im niższa liczba, tym „niższa”, bardziej sportowa opona.</div>
-      <div><b>R</b>Konstrukcja radialna (dziś praktycznie standard we wszystkich autach osobowych).</div>
-      <div><b>18</b>Średnica felgi w calach, na którą opona pasuje.</div>
-    </div>
-
-    <h3>Dlaczego większe felgi to kompromis, nie ulepszenie</h3>
-    <p>Zwiększenie średnicy felgi przy tej samej zewnętrznej średnicy koła (tzw. „plus-sizing”) oznacza automatycznie niższy profil opony — krótszą ścianę boczną. Krótsza ściana boczna to mniej gumy amortyzującej nierówności, więc jazda robi się twardsza, hałaśliwsza, a felga jest bardziej narażona na uszkodzenie od dziury czy krawężnika. W zamian dostajesz sztywniejszą, bardziej precyzyjną reakcję na skręt kierownicy i agresywniejszy wygląd. To dlatego auta wyścigowe i większość supersamochodów mają bardzo niski profil, a SUV-y terenowe — wysoki: inny priorytet, inny kompromis.</p>
-
-    <div class="callout">
-      <div class="label">Offset (ET)</div>
-      <p>Osobny parametr, często mylony z rozmiarem — to odległość między płaszczyzną mocowania felgi do piasty a osiową linią środkową felgi, podawana w milimetrach. Niższy offset (albo ujemny) wypycha koło bardziej na zewnątrz nadkola — stąd agresywny, „szeroki” wygląd tuningowanych aut, ale źle dobrany offset przeciąża łożyska koła i zawieszenie.</p>
-    </div>
-  </section>
-
-  <!-- ============ SECTION 10 ============ -->
-  <section id="s10">
-    <div class="sec-head"><span class="sec-num">10</span><h2>NASCAR, Le Mans i film, który oglądałeś</h2></div>
-
-    <h3>Skąd się w ogóle wzięło NASCAR</h3>
-    <p>To nie zaczęło się od inżynierii — zaczęło się od przemytu. W czasach prohibicji i tuż po niej, na południu USA, przemytnicy bimbru modyfikowali zwykłe, „seryjne” (stock) samochody, żeby uciekać przed policją — mocniejsze silniki, wzmocnione zawieszenie, wygląd bez zmian, żeby nie wzbudzać podejrzeń. W 1948 roku Bill France Sr. sformalizował te nieoficjalne wyścigi między kierowcami w organizację NASCAR. Stąd nazwa „stock car” — dosłownie samochód seryjny, „z półki”.</p>
-
-    <div class="callout">
-      <div class="label">Ironia historyczna</div>
-      <p>Dzisiejsze auta NASCAR („Next Gen”, od 2022) mają wspólne, jednolite podwozie dla wszystkich producentów — Chevroleta, Forda i Toyoty. Różnią się właściwie tylko elementami nadwozia i naklejkami. Innymi słowy: to, co zaczęło się jako dosłownie przerobione auta z salonu, stało się dziś czystej krwi wyścigowymi bolidami-sobowtórami, które z „seryjnym” samochodem nie mają już nic wspólnego poza nazwą kategorii.</p>
-    </div>
-
-    <h3>Jak działa sezon NASCAR (nowość na 2026)</h3>
-    <p>Sezon 2026 to duża zmiana formatu — powrót do systemu sprzed 2014 roku po dwunastu latach krytykowanego formatu z jednym wyścigiem finałowym.</p>
-    <div class="flow">
-      <div class="flow-step"><div class="num">26</div><div class="txt">wyścigów sezonu zasadniczego</div></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step"><div class="num">16</div><div class="txt">najlepszych kierowców kwalifikuje się do „The Chase”</div></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step"><div class="num">10</div><div class="txt">wyścigów play-off — liczy się suma punktów, nie jeden finał</div></div>
-      <div class="flow-arrow">→</div>
-      <div class="flow-step"><div class="num">1</div><div class="txt">mistrz sezonu</div></div>
-    </div>
-    <p style="font-size:13.5px;color:var(--text-dim);">Zwycięstwo w pojedynczym wyścigu jest teraz warte 55 punktów (wcześniej 40) — nagroda za wygrywanie, nie tylko za stabilne, wysokie miejsca.</p>
-
-    <h3>NASCAR vs Formuła 1 vs Le Mans — to nie ten sam sport</h3>
-    <ul>
-      <li><strong>NASCAR</strong> — zamknięte nadwozia, owalne tory (głównie), wyścigi krótkie (godziny, nie doby), amerykańska liga oparta o rywalizację marek Chevrolet/Ford/Toyota.</li>
-      <li><strong>Formuła 1</strong> — auta jednomiejscowe z odkrytymi kołami, tory uliczne i tradycyjne, sezon złożony z osobnych Grand Prix.</li>
-      <li><strong>24h Le Mans / WEC</strong> — wyścig wytrzymałościowy: kilka klas aut (dziś najwyższa to Hypercar — Ferrari 499P, Porsche 963, Toyota GR010, z Fordem i McLarenem szykującymi własne programy) rywalizuje jednocześnie na tym samym torze przez 24 godziny non-stop, zmieniając się kierowcami. Le Mans wchodzi w skład „Potrójnej Korony Motorsportu” razem z Indy 500 i Grand Prix Monako — tylko jeden kierowca w historii, Brytyjczyk Graham Hill, wygrał wszystkie trzy.</li>
-    </ul>
-
-    <h3>Film, o którym mówisz</h3>
-    <p>To <strong>„Ford v Ferrari”</strong> (2019, w Wielkiej Brytanii i części Europy dystrybuowany jako <strong>„Le Mans '66”</strong>) w reżyserii Jamesa Mangolda. Matt Damon gra Carrolla Shelby'ego, Christian Bale — Kena Milesa. To prawdziwa historia: po nieudanych negocjacjach w sprawie przejęcia Ferrari przez Forda w 1963 roku, Henry Ford II zlecił zbudowanie od zera samochodu, który pokona dominujące wtedy Ferrari na 24-godzinnym wyścigu Le Mans. Efektem był Ford GT40, a w 1966 roku Ford rzeczywiście zdominował podium w Le Mans. Film jest dobrym punktem wyjścia właśnie dlatego, że pokazuje to, o czym jest cały ten artykuł — że za „fajnym autem” zawsze stoi konkretny, udokumentowany konflikt ludzi, pieniędzy i inżynierii, nie tylko ładna sylwetka.</p>
-  </section>
-
-  <!-- ============ ZAKOŃCZENIE ============ -->
-  <section style="border-top:1px solid var(--line);">
-    <div class="sec-head"><span class="sec-num">＋</span><h2>Co dalej z tą wiedzą</h2></div>
-    <p>Masz teraz szkielet, do którego możesz doczepiać dalsze fakty, zamiast zapamiętywać je jako osobne, niepowiązane ciekawostki. Kiedy zobaczysz kolejny filmowy kadr z Nissanem GT-R, wiesz już: że litery R odnoszą się do wyścigowej homologacji, że silnik prawdopodobnie ma dwie turbiny, że marka nie należy do żadnego wielkiego koncernu (Nissan jest częścią sojuszu, nie koncernu w stylu Stellantis), i że kategoria „supercar” różni się od „hipersamochodu” konkretną, policzalną granicą mocy i ceny. To jest różnica między oglądaniem filmu a rozumieniem tego, co się na ekranie dzieje.</p>
-  </section>
-
-  <div class="sources">
-    <h2>Źródła i podstawa faktograficzna</h2>
-    <ol>
-      <li>Stellantis N.V. — oficjalne komunikaty korporacyjne i raporty okresowe (formularze 6-K), sekcja „About Stellantis” z pełną listą 14 marek, 2026.</li>
-      <li>Volkswagen AG — oficjalna struktura marek koncernu (Progressive / Core / Sport&Luxury), w tym status Porsche AG i joint venture Bugatti Rimac (Porsche 45% / Rimac Group 55%).</li>
-      <li>Mumtalakat (bahrajński państwowy fundusz inwestycyjny) — komunikaty o przejęciu 100% udziałów w McLaren Group, marzec 2024.</li>
-      <li>Komunikaty korporacyjne Aston Martin Lagonda oraz Mercedes-Benz Group dot. partnerstwa technologicznego i pakietu akcyjnego.</li>
-      <li>Materiały prasowe Sojuszu Renault–Nissan–Mitsubishi dot. struktury akcjonariatu i wspólnych platform.</li>
-      <li>NASCAR — oficjalne ogłoszenie nowego formatu mistrzostw „The Chase” na sezon 2026 (26 wyścigów sezonu zasadniczego + 10-wyścigowy play-off, top 16 kierowców).</li>
-      <li>Toyota Motor Corporation / Hyundai Motor Group — dane rynkowe i wypowiedzi kierownictwa technicznego dot. stanu infrastruktury wodorowej i modeli Mirai / Nexo, 2025–2026.</li>
-      <li>Dane historyczne i produkcyjne producentów hipersamochodów: Bugatti (Veyron 16.4, Chiron), Koenigsegg (Jesko Absolut), Rimac (Nevera) — deklarowane parametry mocy.</li>
-      <li>Materiały produkcyjne i historyczne dot. filmu „Ford v Ferrari” / „Le Mans '66” (2019, reż. James Mangold) oraz udokumentowana historia programu Ford GT40 i wyścigu 24h Le Mans 1966.</li>
-      <li>Techniczne opisy typów turbosprężarek (single, twin, twin-scroll, zmienna geometria, e-turbo) — materiały inżynierskie producentów komponentów (m.in. BorgWarner) oraz publikacje branżowe motoryzacyjno-techniczne.</li>
-      <li>Stan produkcji muscle carów: zakończenie produkcji Chevrolet Camaro (grudzień 2023), seria pożegnalna Dodge Challenger, wprowadzenie Dodge Charger Daytona (2024) i powrót silnika Hemi V8 do oferty Stellantis (Ram 1500, Jeep Wrangler) w 2025–2026.</li>
-    </ol>
-    <p class="end-note">Rzeczywistość korporacyjna w motoryzacji zmienia się szybko — udziały, fuzje i decyzje produktowe potrafią się przesunąć w ciągu kilku miesięcy. Ten artykuł odzwierciedla stan wiedzy na wrzesień 2026. Przy tematach, które szczególnie cię interesują (np. konkretny model czy marka), warto sprawdzić najświeższe źródło przed podjęciem decyzji opartej na tych liczbach.</p>
-  </div>
-
+<div class="nums">
+  <div class="nrow"><div class="n">Stellantis</div><div class="d">Powstał w 2021 roku z połączenia Fiat Chrysler i francuskiej grupy PSA. Ma 14 marek: Abarth, Alfa Romeo, Chrysler, Citroën, Dodge, DS, Fiat, Jeep, Lancia, Maserati, Opel, Peugeot, Ram i Vauxhall.<sup>1</sup> Dlatego Opel, Peugeot i Jeep dzielą dziś płyty podłogowe i silniki.</div></div>
+  <div class="nrow"><div class="n">Volkswagen</div><div class="d">Volkswagen, Audi, Škoda, SEAT i Cupra, Bentley, Lamborghini, Porsche, a także ciężarówki Scania i MAN. Porsche jest od 2022 roku notowane na giełdzie, ale VW zachował większość akcji.<sup>2</sup></div></div>
+  <div class="nrow"><div class="n">BMW</div><div class="d">BMW, MINI i Rolls-Royce. Samochodowy Rolls-Royce to inna firma niż Rolls-Royce produkujący silniki lotnicze. Ich drogi rozeszły się w latach 70., a markę aut BMW kontroluje od 2003 roku.</div></div>
+  <div class="nrow"><div class="n">Sojusz</div><div class="d">Renault, Nissan i Mitsubishi to nie jeden koncern, tylko sojusz niezależnych firm połączonych wzajemnymi udziałami i wspólnymi płytami podłogowymi.</div></div>
+  <div class="nrow"><div class="n">Bugatti</div><div class="d">Od 2021 roku część spółki Bugatti Rimac. Większość, 55 procent, ma chorwacki Rimac, a 45 procent Porsche.<sup>3</sup></div></div>
+  <div class="nrow"><div class="n">McLaren</div><div class="d">W 2024 roku całość przejął bahrajński fundusz państwowy Mumtalakat. W kwietniu 2025 roku samochodową część McLarena kupił fundusz CYVN z Abu Zabi, łącząc ją z firmą Forseven.<sup>4</sup></div></div>
 </div>
 
-</body>
-</html>
+<p>Kilka marek wciąż stoi osobno. Ferrari wydzielono z Fiat Chrysler w 2016 roku i dziś jest osobną spółką giełdową, bez związku ze Stellantisem.<sup>5</sup> Koenigsegg i Pagani to firmy rodzinne. Aston Martin jest spółką giełdową, a silniki i elektronikę dostarcza mu Mercedes-AMG.</p>
+
+<h2><span class="num">Rozdział szósty</span>Hatchback, sedan, SUV</h2>
+
+<p>Podział na typy nadwozia to w gruncie rzeczy podział proporcji. Chodzi o to, gdzie kończy się kabina, a zaczyna bagażnik, i czy w ogóle jest między nimi ściana.</p>
+
+<ul>
+  <li><strong>Hatchback</strong>: bagażnik połączony z kabiną, z dużą tylną klapą razem z szybą.</li>
+  <li><strong>Sedan</strong>: osobny bagażnik z własną klapą.</li>
+  <li><strong>Kombi</strong>: wydłużony dach i duży bagażnik połączony z kabiną.</li>
+  <li><strong>Coupé</strong>: zwykle dwoje drzwi i opadająca linia dachu.</li>
+  <li><strong>SUV i crossover</strong>: wysokie nadwozie i duży prześwit.</li>
+</ul>
+
+<p>Między SUV-em a crossoverem kryje się najczęstsze zamieszanie. Klasyczny SUV był budowany na osobnej ramie, jak pickup czy terenówka. Crossover wygląda podobnie, ale powstaje na płycie podłogowej zwykłej osobówki. Jest lżejszy, tańszy i lepszy w mieście, gorszy w terenie. Marketing prawie zatarł tę różnicę. Większość aut sprzedawanych w Europie jako SUV to technicznie crossovery.</p>
+
+<h2><span class="num">Rozdział siódmy</span>Muscle car, supersamochód, hipersamochód</h2>
+
+<p>To hierarchia umowna. Nie ma prawnej definicji, a granice przesuwają się z każdą dekadą.</p>
+
+<ul>
+  <li><strong>Muscle car</strong>: amerykańska filozofia. Duży, prosty silnik V8 w stosunkowo tanim aucie z napędem na tył. Mustang, Camaro, Challenger.</li>
+  <li><strong>Supersamochód</strong>: określenie spopularyzowane przy premierze Lamborghini Miury w 1966 roku. Silnik za plecami kierowcy, egzotyczny wygląd, flagowy model marki.</li>
+  <li><strong>Hipersamochód</strong>: kategoria, która właściwie narodziła się w 2005 roku. Produkcja liczona w dziesiątkach lub setkach sztuk, ceny w milionach, moc dużo powyżej tysiąca koni.</li>
+</ul>
+
+<div class="bars">
+  <div class="title">Jak rosła moc hipersamochodów (KM, wartości deklarowane)</div>
+  <div class="row"><div class="lab">Bugatti Veyron, 2005</div><div class="track"><div class="fill" style="width:52.3%"></div></div><div class="val">1001</div></div>
+  <div class="row"><div class="lab">Bugatti Chiron, 2016</div><div class="track"><div class="fill" style="width:78.4%"></div></div><div class="val">1500</div></div>
+  <div class="row"><div class="lab">Koenigsegg Jesko Absolut, 2020</div><div class="track"><div class="fill" style="width:83.6%"></div></div><div class="val">1600</div></div>
+  <div class="row"><div class="lab">Rimac Nevera, 2021</div><div class="track"><div class="fill" style="width:100%;background:var(--blue)"></div></div><div class="val">1914</div></div>
+  <div class="caption">Dane producentów. Jesko Absolut osiąga 1600 KM na paliwie E85; Nevera jest w pełni elektryczna.<sup>6</sup></div>
+</div>
+
+<p>W 2005 roku 1001 koni Veyrona uchodziło za granicę możliwości. Dwadzieścia lat później elektryczny Rimac ma prawie dwa razy więcej.</p>
+
+<h3>Co się stało z muscle carami</h3>
+
+<div class="tl">
+  <div class="ev"><div class="yr">Grudzień 2023</div><div class="txt">Chevrolet kończy produkcję Camaro.</div></div>
+  <div class="ev"><div class="yr">2023</div><div class="txt">Dodge żegna Challengera i Chargera z V8 limitowaną serią „Last Call”.</div></div>
+  <div class="ev"><div class="yr">2024–2025</div><div class="txt">Nowy Dodge Charger wraca najpierw jako elektryczny Charger Daytona, a potem w wersji spalinowej, ale z sześciocylindrowym silnikiem rzędowym z dwiema turbinami zamiast V8.</div></div>
+  <div class="ev"><div class="yr">2025–2026</div><div class="txt">Stellantis przywraca silnik Hemi V8 do pickupa Ram 1500, a duże V8 trafiają też do Dodge’a Durango i Jeepa Wranglera. Producent tłumaczy to popytem klientów.<sup>7</sup></div></div>
+</div>
+
+<p>Na początku 2026 roku Ford Mustang pozostawał właściwie jedynym klasycznym amerykańskim „pony carem” z V8 w ofercie. Dodge nie ogłosił wtedy powrotu Hemi do swoich muscle carów.<sup>7</sup></p>
+
+<p>Ta historia pokazuje, że kultura V8 nie umarła z braku chętnych. Złożyły się na to przepisy emisyjne, marże i presja na elektryfikację. Kiedy przepisy w USA zelżały, a klienci głośno dopominali się o V8, producent częściowo zawrócił.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Benzyna, prąd, wodór</h2>
+
+<p><strong>Silnik spalinowy</strong> ma dwie wielkie zalety. W małym baku mieści się dużo energii, a tankowanie trwa kilka minut. Wada: większość energii paliwa zamienia się w ciepło, a nie w ruch. Sprawność typowego silnika to mniej więcej 25–40 procent.</p>
+
+<p><strong>Silnik elektryczny</strong> zamienia na ruch zwykle ponad 85 procent energii z akumulatora. Daje pełną siłę od zera, bez rozkręcania. Zwykle wystarcza mu jeden stały bieg. Jego słabością jest akumulator: ciężki, drogi i wolniej się „tankuje”.</p>
+
+<p><strong>Auto wodorowe</strong> zwykle nie spala wodoru. Ma <strong>ogniwo paliwowe</strong>, w którym wodór łączy się z tlenem z powietrza i wytwarza prąd. Ten prąd napędza silnik elektryczny. Tankowanie trwa kilka minut, a z rury wydechowej wylatuje para wodna.</p>
+
+<p>Brzmi świetnie, ale w praktyce auta wodorowe nie wyszły z niszy. Na rynku liczą się właściwie dwa modele, Toyota Mirai i Hyundai Nexo. Sprzedają się głównie tam, gdzie są stacje tankowania wodoru: w Korei Południowej, Japonii i Kalifornii. Bez sieci stacji nawet najlepsze auto wodorowe pozostaje ciekawostką. Dlatego producenci coraz częściej myślą o wodorze dla ciężarówek, które jeżdżą stałymi trasami i potrzebują mniej stacji.</p>
+
+<h2><span class="num">Rozdział dziewiąty</span>Koła i opony</h2>
+
+<p>Na boku każdej opony jest kod, na przykład <strong>245/40 R18</strong>. To pełna specyfikacja:</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">245</div><div class="d">szerokość opony w milimetrach.</div></div>
+  <div class="nrow"><div class="n">40</div><div class="d">profil, czyli wysokość ściany bocznej jako procent szerokości. Tu 40 procent z 245 mm, czyli około 98 mm.</div></div>
+  <div class="nrow"><div class="n">R</div><div class="d">konstrukcja radialna, dziś standard w autach osobowych.</div></div>
+  <div class="nrow"><div class="n">18</div><div class="d">średnica felgi w calach.</div></div>
+</div>
+
+<p>Większe felgi to kompromis, a nie ulepszenie. Jeśli koło ma mieć tę samą średnicę zewnętrzną, to większa felga oznacza niższy profil opony. Niższa ściana boczna to mniej gumy, która tłumi nierówności. Jazda robi się twardsza i głośniejsza, a felgę łatwiej uszkodzić na dziurze. W zamian auto precyzyjniej reaguje na ruch kierownicy i wygląda agresywniej. Dlatego auta wyścigowe mają bardzo niski profil, a terenówki wysoki.</p>
+
+<h2><span class="num">Rozdział dziesiąty</span>NASCAR, Le Mans i Formuła 1</h2>
+
+<h3>Od przemytu do ligi</h3>
+
+<p>NASCAR nie zaczął się od inżynierii, tylko od przemytu. W czasach prohibicji i tuż po niej przemytnicy bimbru na południu USA przerabiali zwykłe auta. Dokładali mocniejsze silniki i lepsze zawieszenie, ale zostawiali niewinny wygląd, żeby uciec policji. W 1948 roku Bill France senior zamienił nieformalne wyścigi w zorganizowaną ligę. Stąd nazwa <strong>stock car</strong>, czyli samochód seryjny, „z półki”.</p>
+
+<p>Dziś to już historia. Od 2022 roku wszystkie auta NASCAR jeżdżą na jednolitym, wspólnym podwoziu, a Chevrolet, Ford i Toyota różnią się w zasadzie tylko karoserią i naklejkami. Z seryjnym autem łączy je głównie nazwa.</p>
+
+<h3>Nowy format na 2026 rok</h3>
+
+<p>W 2026 roku NASCAR wrócił do formatu „The Chase”. Po 26 wyścigach sezonu zasadniczego 16 najlepszych kierowców walczy o tytuł w 10 wyścigach. Liczy się suma punktów, a nie jeden wyścig finałowy. Zwycięstwo jest teraz warte 55 punktów zamiast 40.<sup>8</sup> Zmianę wprowadzono po krytyce poprzedniego systemu, w którym o mistrzostwie decydował jeden finałowy wyścig.</p>
+
+<h3>Trzy różne sporty</h3>
+
+<ul>
+  <li><strong>NASCAR</strong>: zamknięte nadwozia, głównie owalne tory, rywalizacja Chevroleta, Forda i Toyoty.</li>
+  <li><strong>Formuła 1</strong>: jednomiejscowe bolidy z odkrytymi kołami, sezon złożony z osobnych Grand Prix na torach na całym świecie.</li>
+  <li><strong>Le Mans</strong>: wyścig wytrzymałościowy. Kilka klas aut jedzie razem przez 24 godziny bez przerwy, a kierowcy zmieniają się za kierownicą. W najwyższej klasie, Hypercar, startują dziś między innymi Ferrari, Porsche i Toyota.</li>
+</ul>
+
+<p>Le Mans należy do tak zwanej Potrójnej Korony sportów motorowych, razem z wyścigiem Indianapolis 500 i Grand Prix Monako. Wszystkie trzy wygrał w historii tylko jeden kierowca: Brytyjczyk Graham Hill.</p>
+
+<h2><span class="num">Zakończenie</span>Za każdym fajnym autem stoi konflikt</h2>
+
+<p>Wróćmy do Le Mans w 1966 roku. Ford GT40 nie wziął się z natchnienia projektanta. Wziął się z urażonej dumy, nieudanej transakcji, ogromnych pieniędzy i inżynierów, którzy mieli kilka lat, żeby pokonać najlepszy zespół wyścigowy świata.</p>
+
+<p>Tak samo jest z resztą tego, co opisuję. Litery na klapie bagażnika wzięły się z przepisów wyścigowych. Turbo z walki o każdą kropelkę energii. Powrót V8 z przepychanki między regulacjami a klientami. A to, że Opel i Peugeot mają ten sam silnik, z decyzji podjętej w zarządzie koncernu.</p>
+
+<p>Kiedy następnym razem kamera w filmie najedzie na tylny spojler, zobaczymy w tym kadrze o wiele więcej niż ładną sylwetkę.</p>
+
+<hr class="sep">
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+<ol class="sources">
+  <li>Stellantis N.V., „Our Brands”, strona korporacyjna. <a href="https://www.stellantis.com/en/brands">stellantis.com</a></li>
+  <li>Volkswagen AG i Porsche AG, materiały o pierwszej ofercie publicznej Porsche AG (wrzesień 2022) i strukturze akcjonariatu.</li>
+  <li>Bugatti Rimac, komunikat o utworzeniu spółki (listopad 2021): Rimac Group 55%, Porsche 45%.</li>
+  <li>McLaren Group, „CYVN Holdings completes McLaren transaction”, 3.04.2025. <a href="https://investors.mclaren.com/group-news/2025/cyvn-holdings-completes-mclaren-transaction">investors.mclaren.com</a></li>
+  <li>Ferrari N.V., materiały dla inwestorów: wydzielenie z FCA i notowanie na giełdzie (2016).</li>
+  <li>Dane techniczne producentów: Bugatti (Veyron 16.4, Chiron), Koenigsegg (Jesko Absolut), Rimac (Nevera).</li>
+  <li>Stellantis North America, „The Legend Returns: 2026 Ram 1500 Offers 5.7-liter HEMI V-8”; zestawienie modeli 2026 z silnikiem Hemi: SlashGear, 9.01.2026. <a href="https://media.stellantisnorthamerica.com/newsrelease.do?id=26845&amp;mid=">media.stellantisnorthamerica.com</a>, <a href="https://www.slashgear.com/2067568/2026-car-models-with-hemi-engine/">slashgear.com</a></li>
+  <li>NBC Sports, „NASCAR resurrects ‘The Chase’ as the 10-race championship format returns for 2026 season”, 2026. <a href="https://www.nbcsports.com/nascar/news/nascar-resurrects-the-chase-as-the-10-race-championship-format-returns-for-2026-season">nbcsports.com</a></li>
+</ol>
+
+<footer class="end">Stan wiedzy: wrzesień 2026. Własność marek, oferta silników i przepisy wyścigowe zmieniają się szybko; przy konkretnych decyzjach warto sprawdzić najnowsze dane producenta.</footer>
+
+</div></body></html>
