@@ -1,0 +1,291 @@
+---
+// Generator AI — notatki → fiszki + quiz. Rama jak w sekcji Wiedza, logika po stronie przeglądarki + Cloudflare Worker.
+import Base from '../layouts/Base.astro';
+import '../styles/wiedza.css';
+import Bar from '../components/wiedza/Bar.astro';
+import Foot from '../components/wiedza/Foot.astro';
+
+const title = 'Generator AI — fiszki i quiz z notatek · Unicorner';
+const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. AI ułoży z nich fiszki i quiz z wyjaśnieniami. Beta.';
+---
+<Base title={title} description={description}>
+  <Fragment slot="head">
+    <link rel="canonical" href="https://unicorner.pl/generator.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Generator AI · Unicorner" />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content="https://unicorner.pl/generator.html" />
+    <meta property="og:locale" content="pl_PL" />
+  </Fragment>
+
+  <Bar crumbs={[{ label: 'Generator AI' }]} />
+
+  <main class="wz-wrap g-main">
+    <!-- ===== nagłówek ===== -->
+    <section class="g-hero">
+      <div class="g-hero-txt">
+        <span class="wz-eyebrow"><span class="dot"></span>Generator AI · beta</span>
+        <h1>Twoje notatki.<br><span class="grad">Gotowa nauka.</span></h1>
+        <p>Wrzuć PDF z wykładu, <b>zdjęcia notatek (także odręcznych)</b> albo wklej tekst. AI ułoży z tego fiszki i quiz z wyjaśnieniami, a Ty powiesz mu, na czym ma się skupić.</p>
+      </div>
+      <ol class="g-steps" aria-label="Jak to działa">
+        <li><span class="n">01</span><span><b>Wrzuć materiał</b>PDF, zdjęcia albo tekst</span></li>
+        <li><span class="n">02</span><span><b>Powiedz, czego chcesz</b>np. „pytania jak na egzaminie”</span></li>
+        <li><span class="n">03</span><span><b>Ucz się</b>fiszki, quiz i wynik od razu</span></li>
+      </ol>
+    </section>
+
+    <!-- ===== konsola ===== -->
+    <section class="g-console" aria-label="Generator">
+      <div class="g-sec">
+        <div class="g-label"><span>01</span> Materiał</div>
+        <div class="g-seg" role="tablist" aria-label="Rodzaj materiału">
+          <button type="button" role="tab" class="on" data-src="pdf" aria-selected="true">PDF</button>
+          <button type="button" role="tab" data-src="img" aria-selected="false">Zdjęcia<span class="hide-xs"> notatek</span></button>
+          <button type="button" role="tab" data-src="txt" aria-selected="false"><span class="hide-xs">Wklej tekst</span><span class="show-xs">Tekst</span></button>
+        </div>
+
+        <div class="g-src" id="srcFile">
+          <div class="g-drop" id="drop" tabindex="0" role="button" aria-label="Wybierz plik">
+            <svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 31V13m0 0-7 7m7-7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 30v5a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4v-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <div class="big" id="dropBig">Przeciągnij PDF tutaj</div>
+            <div class="small" id="dropSmall">albo kliknij, żeby wybrać · jeden plik, mniej więcej jeden wykład</div>
+          </div>
+          <input type="file" id="file" accept="application/pdf,.pdf" style="display:none" />
+          <div class="g-filechip" id="filechip"><span class="ic">PDF</span><span id="filename"></span></div>
+          <div class="g-thumbs" id="thumbs"></div>
+        </div>
+
+        <div class="g-src" id="srcText" hidden>
+          <textarea id="pasted" rows="8" maxlength="14000" placeholder="Wklej tutaj notatki, fragment skryptu albo opracowanie (min. ok. 300 znaków)…"></textarea>
+          <div class="g-count"><span id="pastedCount">0</span> / 14 000 znaków</div>
+        </div>
+      </div>
+
+      <div class="g-sec">
+        <div class="g-label"><span>02</span> Na czym się skupić <em>opcjonalnie</em></div>
+        <textarea id="instr" rows="2" maxlength="300" placeholder="np. skup się na rozdziale o inflacji, pytania jak na egzaminie, więcej przykładów liczbowych"></textarea>
+        <div class="g-chips" id="chips">
+          <button type="button" data-t="Pytania w stylu egzaminacyjnym, sprawdzające zrozumienie, a nie pamięć słówek.">Jak na egzaminie</button>
+          <button type="button" data-t="Skup się na definicjach i kluczowych pojęciach.">Definicje</button>
+          <button type="button" data-t="Więcej przykładów liczbowych i zadań z obliczeniami.">Przykłady liczbowe</button>
+          <button type="button" data-t="Trudniejsze pytania, wymagające łączenia kilku faktów.">Trudniej</button>
+          <button type="button" data-t="Prostszy język, jak dla kogoś, kto widzi ten temat pierwszy raz.">Po ludzku</button>
+        </div>
+      </div>
+
+      <div class="g-sec g-go">
+        <div class="g-code">
+          <label for="code">Kod dostępu <span>beta · kod z grupy</span></label>
+          <input type="password" id="code" placeholder="wpisz kod" autocomplete="off" />
+        </div>
+        <div class="g-actions">
+          <button class="g-btn" id="gen" disabled>
+            <span>Generuj fiszki i quiz</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="g-btn ghost" id="reset" hidden>Wyczyść</button>
+        </div>
+      </div>
+
+      <div class="g-progress" id="progress" hidden>
+        <div class="g-bar"><i></i></div>
+        <ol>
+          <li data-s="0">Przygotowuję materiał</li>
+          <li data-s="1">AI czyta i wybiera najważniejsze</li>
+          <li data-s="2">Układam fiszki i pytania</li>
+        </ol>
+      </div>
+      <div class="g-status" id="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- ===== wynik ===== -->
+    <section class="g-result" id="result" hidden>
+      <div class="g-rhead">
+        <div class="g-tabs" role="tablist">
+          <button class="g-tab on" data-pane="fc" role="tab">Fiszki <span id="fcCount">0</span></button>
+          <button class="g-tab" data-pane="qz" role="tab">Quiz <span id="qzCount">0</span></button>
+        </div>
+        <div class="g-score" id="score" hidden>
+          <span class="lbl">Wynik</span><b id="scoreVal">0 / 0</b>
+          <span class="g-meter"><i id="scoreBar"></i></span>
+          <button class="g-mini" id="quizAgain" type="button">Od nowa</button>
+        </div>
+      </div>
+
+      <div class="g-pane on" id="pane-fc">
+        <p class="g-hint">Kliknij fiszkę, żeby ją odwrócić.</p>
+        <div class="g-fc-grid" id="fcGrid"></div>
+      </div>
+      <div class="g-pane" id="pane-qz"><div id="qzList"></div></div>
+
+      <div class="g-tools">
+        <button class="g-btn" id="dlHtml">Pobierz jako plik (działa offline)</button>
+        <button class="g-btn ghost" id="dlJson">JSON</button>
+        <button class="g-btn ghost" id="forget">Usuń zapamiętane</button>
+      </div>
+    </section>
+
+    <details class="g-tips">
+      <summary>Gdzie zapisuje się wynik i jak go nie stracić</summary>
+      <div>
+        <p><b>Ostatni wynik zostaje w tej przeglądarce.</b> Po odświeżeniu albo powrocie na tym samym urządzeniu będzie na miejscu. To jednak nie jest trwały schowek:</p>
+        <ul>
+          <li><b>Tryb prywatny</b> — wynik znika po zamknięciu karty.</li>
+          <li><b>Telefon</b> — system (zwłaszcza iPhone) potrafi wyczyścić dane strony po kilku dniach.</li>
+          <li><b>Inna przeglądarka, inne urządzenie albo czyszczenie danych</b> — pusto.</li>
+        </ul>
+        <p><b>Chcesz mieć na stałe? Kliknij „Pobierz jako plik”.</b> Dostajesz jeden plik HTML z fiszkami i quizem, który działa offline. Zapisywanie talii na koncie jest w drodze.</p>
+      </div>
+    </details>
+
+    <p class="g-disc">
+      <b>Beta.</b> Materiały generuje AI i <b>mogą zawierać błędy</b> — sprawdzaj z oryginałem. Pliki trafiają do modelu AI wyłącznie po to, żeby wygenerować materiał; nie udostępniamy ich publicznie. Nie wgrywaj materiałów, do których nie masz praw.
+      Szczegóły: <a href="/regulamin.html">Regulamin</a> · <a href="/prywatnosc.html">Polityka prywatności</a>.
+    </p>
+  </main>
+
+  <Foot label="unicorner · generator ai" />
+
+  <style is:global>
+    .g-main{padding-bottom:30px;}
+    /* nagłówek */
+    .g-hero{display:grid;grid-template-columns:1.25fr 1fr;gap:40px;align-items:end;padding:56px 0 30px;}
+    .g-hero h1{font-family:var(--disp);font-weight:700;font-size:clamp(2.2rem,6vw,3.6rem);line-height:1.04;letter-spacing:-.5px;margin:0 0 18px;}
+    .g-hero h1 .grad{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
+    .g-hero p{font-size:1.04rem;color:var(--muted);max-width:560px;margin:0;}
+    .g-hero p b{color:var(--text);font-weight:600;}
+    .g-steps{list-style:none;margin:0;padding:0;display:grid;gap:10px;}
+    .g-steps li{display:flex;gap:14px;align-items:center;padding:13px 16px;background:linear-gradient(160deg,var(--surface),var(--ink2));
+      border:1px solid var(--line);font-size:.86rem;color:var(--muted);
+      clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);}
+    .g-steps li b{display:block;color:var(--text);font-family:var(--disp);font-size:.98rem;font-weight:600;}
+    .g-steps .n{font-family:var(--mono);font-weight:700;font-size:1.05rem;color:var(--cyan);min-width:26px;}
+    .g-steps li:nth-child(2) .n{color:var(--accent);} .g-steps li:nth-child(3) .n{color:var(--magenta);}
+
+    /* konsola */
+    .g-console{position:relative;background:radial-gradient(600px 240px at 0% 0%,rgba(39,232,255,.06),transparent 60%),radial-gradient(520px 260px at 100% 100%,rgba(255,46,151,.06),transparent 60%),linear-gradient(160deg,var(--surface),var(--ink2));
+      border:1px solid var(--line2);padding:8px 28px 26px;
+      clip-path:polygon(0 0,calc(100% - 22px) 0,100% 22px,100% 100%,22px 100%,0 calc(100% - 22px));}
+    .g-sec{padding:22px 0;border-bottom:1px solid var(--line);}
+    .g-sec:last-of-type,.g-go{border-bottom:0;}
+    .g-label{font-family:var(--mono);font-size:.8rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:14px;display:flex;gap:10px;align-items:baseline;}
+    .g-label span{color:var(--cyan);}
+    .g-label em{font-style:normal;font-weight:500;letter-spacing:.5px;text-transform:none;color:var(--muted2);font-family:'Inter',sans-serif;font-size:.82rem;}
+    .g-seg{display:inline-flex;gap:4px;padding:4px;background:var(--ink);border:1px solid var(--line);border-radius:999px;margin-bottom:14px;flex-wrap:wrap;}
+    .g-seg button{font-family:var(--mono);font-size:.82rem;font-weight:600;letter-spacing:.5px;color:var(--muted);background:none;border:0;border-radius:999px;padding:8px 16px;cursor:pointer;transition:.2s;}
+    .g-seg button:hover{color:var(--text);}
+    .g-seg button.on{color:#0b0713;background:var(--iris);box-shadow:0 4px 18px rgba(167,139,250,.3);}
+    .g-drop{display:grid;justify-items:center;gap:6px;border:1.5px dashed var(--line2);border-radius:6px;padding:30px 18px;text-align:center;cursor:pointer;background:rgba(7,6,15,.6);transition:.2s;}
+    .g-drop svg{width:38px;height:38px;color:var(--accent);margin-bottom:4px;transition:transform .25s var(--ease-out);}
+    .g-drop:hover,.g-drop.over{border-color:var(--accent);background:rgba(167,139,250,.06);}
+    .g-drop:hover svg,.g-drop.over svg{transform:translateY(-3px);}
+    .g-drop:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+    .g-drop .big{font-family:var(--disp);font-weight:600;font-size:1.05rem;}
+    .g-drop .small{font-size:.84rem;color:var(--muted2);}
+    .g-drop.has{border-style:solid;border-color:rgba(90,209,160,.45);}
+    .g-drop.has svg{color:var(--ok);}
+    .g-filechip{display:none;align-items:center;gap:10px;margin-top:12px;font-family:var(--mono);font-size:.88rem;color:var(--ok);}
+    .g-filechip .ic{font-size:.66rem;font-weight:700;letter-spacing:1px;color:#0b0713;background:var(--ok);padding:3px 6px;border-radius:3px;}
+    .g-thumbs{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+    .g-thumb{position:relative;width:86px;height:86px;border:1px solid rgba(90,209,160,.45);border-radius:4px;overflow:hidden;background:var(--ink);}
+    .g-thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+    .g-thumb button{position:absolute;top:4px;right:4px;width:22px;height:22px;border:0;border-radius:3px;background:rgba(7,6,15,.85);color:#f87a8e;cursor:pointer;font-size:.8rem;}
+    .g-main textarea,.g-code input{width:100%;font-family:'Inter',sans-serif;font-size:.95rem;color:var(--text);background:rgba(7,6,15,.7);border:1px solid var(--line2);border-radius:6px;padding:12px 14px;outline:none;resize:vertical;transition:border-color .2s,box-shadow .2s;}
+    .g-main textarea:focus,.g-code input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(167,139,250,.15);}
+    .g-main textarea::placeholder,.g-code input::placeholder{color:var(--muted2);}
+    .g-count{font-family:var(--mono);font-size:.74rem;color:var(--muted2);text-align:right;margin-top:6px;}
+    .g-chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px;}
+    .g-chips button{font-family:var(--mono);font-size:.76rem;font-weight:600;letter-spacing:.4px;color:var(--muted);background:var(--ink);border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer;transition:.2s;}
+    .g-chips button:hover{color:var(--text);border-color:var(--line2);}
+    .g-chips button.on{color:var(--text);border-color:var(--accent);background:rgba(167,139,250,.12);}
+    .g-go{display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap;}
+    .g-code{flex:1 1 220px;max-width:300px;}
+    .g-code label{display:block;font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+    .g-code label span{color:var(--muted2);text-transform:none;letter-spacing:0;font-weight:500;margin-left:6px;}
+    .g-code input{font-family:var(--mono);}
+    .g-actions{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto;}
+    .g-btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-weight:700;font-size:.92rem;letter-spacing:.6px;color:#0b0713;background:var(--iris);background-size:160% 100%;
+      border:0;border-radius:6px;padding:14px 22px;cursor:pointer;transition:transform .2s var(--ease-out),box-shadow .25s,background-position .4s,opacity .2s;box-shadow:0 8px 26px rgba(167,139,250,.25);}
+    .g-btn svg{width:18px;height:18px;transition:transform .25s;}
+    .g-btn:hover:not(:disabled){transform:translateY(-2px);background-position:100% 0;box-shadow:0 12px 34px rgba(255,46,151,.3);}
+    .g-btn:hover:not(:disabled) svg{transform:translateX(3px);}
+    .g-btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;}
+    .g-btn.ghost{background:transparent;color:var(--muted);border:1px solid var(--line2);box-shadow:none;}
+    .g-btn.ghost:hover{color:var(--text);border-color:var(--accent);box-shadow:none;}
+    .g-btn[hidden]{display:none;}
+    /* postęp */
+    .g-progress{margin-top:6px;}
+    .g-bar{height:3px;background:var(--line);border-radius:2px;overflow:hidden;}
+    .g-bar i{display:block;height:100%;width:40%;background:var(--iris);animation:gSlide 1.3s ease-in-out infinite;}
+    @keyframes gSlide{0%{transform:translateX(-100%)}100%{transform:translateX(260%)}}
+    .g-progress ol{list-style:none;margin:14px 0 0;padding:0;display:flex;gap:18px;flex-wrap:wrap;font-family:var(--mono);font-size:.8rem;color:var(--muted2);}
+    .g-progress li::before{content:"○ ";}
+    .g-progress li.on{color:var(--accent);} .g-progress li.on::before{content:"◉ ";}
+    .g-progress li.done{color:var(--ok);} .g-progress li.done::before{content:"✓ ";}
+    .g-status{font-family:var(--mono);font-size:.88rem;margin-top:12px;min-height:1px;}
+    .g-status.err{color:#f87a8e;} .g-status.info{color:var(--muted);}
+
+    /* wynik */
+    .g-result{margin-top:34px;}
+    .g-rhead{position:sticky;top:58px;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;padding:12px 0;margin-bottom:8px;background:linear-gradient(#050505 75%,rgba(5,5,5,0));}
+    .g-tabs{display:flex;gap:6px;}
+    .g-tab{font-family:var(--mono);font-size:.86rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);background:var(--ink2);border:1px solid var(--line);border-radius:999px;padding:9px 18px;cursor:pointer;transition:.2s;}
+    .g-tab span{color:var(--muted2);margin-left:6px;}
+    .g-tab.on{color:#0b0713;background:var(--iris);border-color:transparent;}
+    .g-tab.on span{color:rgba(11,7,19,.6);}
+    .g-score{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:.8rem;color:var(--muted);}
+    .g-score[hidden]{display:none;}
+    .g-score b{color:var(--text);font-size:1rem;font-variant-numeric:tabular-nums;}
+    .g-meter{width:110px;height:6px;background:var(--line);border-radius:3px;overflow:hidden;}
+    .g-meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ok),var(--cyan));transition:width .4s var(--ease-out);}
+    .g-mini{font-family:var(--mono);font-size:.74rem;font-weight:600;color:var(--muted);background:none;border:1px solid var(--line2);border-radius:999px;padding:5px 11px;cursor:pointer;}
+    .g-mini:hover{color:var(--text);border-color:var(--accent);}
+    .g-pane{display:none;} .g-pane.on{display:block;}
+    .show-xs{display:none;}
+    .g-hint{font-size:.84rem;color:var(--muted2);margin:0 0 12px;}
+    .g-fc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+    .g-fc{perspective:1100px;height:170px;cursor:pointer;}
+    .g-fc-in{position:relative;width:100%;height:100%;transition:transform .55s var(--ease-out);transform-style:preserve-3d;}
+    .g-fc.flip .g-fc-in{transform:rotateY(180deg);}
+    .g-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border:1px solid var(--line);padding:18px;display:flex;align-items:center;justify-content:center;text-align:center;overflow:auto;
+      clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+    .g-front{background:linear-gradient(160deg,var(--surface),var(--ink2));font-family:var(--disp);font-weight:600;font-size:1.06rem;}
+    .g-front::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);}
+    .g-fc:hover .g-front{border-color:var(--line2);}
+    .g-back{background:var(--surface2);transform:rotateY(180deg);font-size:.92rem;color:#cfcae8;}
+    .g-q{background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line);padding:20px;margin-bottom:12px;
+      clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);}
+    .g-qno{font-family:var(--mono);font-size:.72rem;color:var(--cyan);font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+    .g-qt{font-size:1.02rem;margin:8px 0 14px;font-weight:500;}
+    .g-opt{display:block;width:100%;text-align:left;background:rgba(7,6,15,.6);border:1px solid var(--line);border-radius:6px;padding:12px 14px;margin-bottom:8px;cursor:pointer;color:var(--text);font:inherit;font-size:.94rem;transition:.15s;}
+    .g-opt:hover:not(:disabled){border-color:var(--accent);background:rgba(167,139,250,.07);}
+    .g-opt:disabled{cursor:default;}
+    .g-opt.correct{border-color:rgba(90,209,160,.55);background:rgba(90,209,160,.1);color:#cdeede;}
+    .g-opt.wrong{border-color:rgba(248,122,142,.55);background:rgba(248,122,142,.1);color:#f7c9d1;}
+    .g-exp{display:none;font-size:.9rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:rgba(7,6,15,.6);padding:10px 12px;}
+    .g-exp.show{display:block;}
+    .g-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;}
+    .g-tips{margin:34px 0 0;background:var(--ink2);border:1px solid var(--line);}
+    .g-tips summary{font-family:var(--mono);font-size:.84rem;font-weight:600;color:var(--gold);padding:14px 18px;cursor:pointer;list-style:none;}
+    .g-tips summary::-webkit-details-marker{display:none;}
+    .g-tips summary::after{content:" ▾";color:var(--muted2);} .g-tips[open] summary::after{content:" ▴";}
+    .g-tips>div{padding:0 18px 16px;font-size:.9rem;color:var(--muted);}
+    .g-tips b{color:var(--text);font-weight:600;}
+    .g-tips ul{padding-left:18px;}
+    .g-disc{font-size:.8rem;color:var(--muted2);max-width:720px;margin:22px 0 0;line-height:1.6;}
+    .g-disc b{color:var(--muted);}
+    @media(max-width:860px){.g-hero{grid-template-columns:1fr;gap:26px;padding-top:40px;}}
+    @media(max-width:560px){
+      .g-console{padding:4px 16px 20px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+      .g-seg{display:flex;} .g-seg button{flex:1;padding:8px 10px;font-size:.76rem;}
+      .g-code{max-width:none;} .g-actions{margin-left:0;width:100%;} .g-actions .g-btn:not(.ghost){flex:1;justify-content:center;}
+      .g-score .lbl{display:none;} .g-meter{width:70px;}
+      .g-steps{display:none;} .hide-xs{display:none;} .show-xs{display:inline;}
+    }
+    @media(prefers-reduced-motion:reduce){.g-bar i{animation:none;width:100%;}.g-fc-in{transition:none;}}
+  </style>
+
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script is:inline src="/assets/generator.js"></script>
+</Base>
