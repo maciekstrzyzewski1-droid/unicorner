@@ -22,6 +22,7 @@
 const MODEL = "claude-haiku-4-5-20251001";
 const MAX_INPUT_CHARS = 14000;
 const MAX_TOKENS = 3000;
+const MAX_INSTRUCTION_CHARS = 300;     // „na czym się skupić” z generatora
 const MAX_IMAGES = 4;                    // maks. zdjęć notatek na jedno generowanie
 const MAX_IMAGE_B64 = 400_000;           // ~300 KB pliku po kompresji na froncie
 const GEN_LIMIT_PER_HOUR = 12;           // generowań na IP na godzinę
@@ -68,7 +69,7 @@ async function handleGenerate(request, env, cors) {
   try { body = await request.json(); }
   catch { return json({ error: "Bad JSON" }, 400, cors); }
 
-  const { text, code, images } = body || {};
+  const { text, code, images, instruction } = body || {};
 
   if (!env.ACCESS_CODE || code !== env.ACCESS_CODE)
     return json({ error: "Zły kod dostępu" }, 401, cors);
@@ -97,6 +98,13 @@ async function handleGenerate(request, env, cors) {
   }
 
   const material = hasText ? text.slice(0, MAX_INPUT_CHARS) : "";
+
+  // opcjonalna wskazówka użytkownika („na czym się skupić”) — krótka, bez znaków sterujących
+  const instr = typeof instruction === "string"
+    ? instruction.replace(/[\u0000-\u001f"]+/g, " ").trim().slice(0, MAX_INSTRUCTION_CHARS) : "";
+  const instrBlock = instr
+    ? `\n\nWSKAZÓWKA UŻYTKOWNIKA (uwzględnij ją, ale nadal bazuj WYŁĄCZNIE na materiale i zwróć ten sam format JSON): "${instr}"`
+    : "";
 
   const system =
     "Jesteś asystentem do nauki. Na podstawie WYŁĄCZNIE dostarczonego materiału " +
@@ -130,10 +138,10 @@ Zasady:
 3. Ze schematów i strzałek odtwórz relacje (co z czego wynika, co na co wpływa).
 4. Dopiero z tak odczytanej treści zrób fiszki i quiz.
 
-${rules}` + (material ? `\n\nDODATKOWY MATERIAŁ TEKSTOWY:\n"""\n${material}\n"""` : "");
+${rules}${instrBlock}` + (material ? `\n\nDODATKOWY MATERIAŁ TEKSTOWY:\n"""\n${material}\n"""` : "");
     userContent = [...imageBlocks, { type: "text", text: imgInstr }];
   } else {
-    userContent = `Z poniższego materiału zrób fiszki i quiz.\n\n${rules}\n\nMATERIAŁ:\n"""\n${material}\n"""`;
+    userContent = `Z poniższego materiału zrób fiszki i quiz.\n\n${rules}${instrBlock}\n\nMATERIAŁ:\n"""\n${material}\n"""`;
   }
 
   let aiRes;
