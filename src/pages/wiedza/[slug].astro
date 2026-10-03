@@ -20,7 +20,7 @@ const related = all.filter((x) => x.category === a.category && x.slug !== a.slug
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 let html = a.html;
 if (a.topic) html = html.replace('</h1>', `</h1><p class="wz-topic">${esc(a.topic)}</p>`);
-if (a.series) html = html.replace('</header>', `<div class="wz-solo"><b>Część ${a.part} z ${a.seriesTotal} · ${esc(a.seriesName.toLowerCase())}.</b> Nie musisz znać poprzednich części — ten tekst jest zamkniętą całością, a gdy nawiązuje do innej części, od razu przypomina, o co chodziło.</div></header>`);
+if (a.series) html = html.replace('</header>', `<div class="wz-solo"><b>Część ${a.part} z ${a.seriesTotal} · ${esc(a.seriesName.toLowerCase())}.</b> Nie musisz znać poprzednich części. Gdy tekst nawiązuje do czegoś z innej części, przy pojęciu jest numerek — najedź na niego albo go stuknij, a zobaczysz krótkie wyjaśnienie.</div></header>`);
 const url = `https://unicorner.pl${a.url}`;
 const ld = {
   '@context': 'https://schema.org', '@type': 'Article', headline: a.seoTitle, description: a.lede, inLanguage: 'pl',
@@ -100,28 +100,18 @@ const ld = {
   <Foot />
 
   <script is:inline>
-    // Przypisy w dymku: najechanie (mysz), fokus (klawiatura) albo stuknięcie (telefon) pokazuje treść
-    // przypisu przy numerku — bez zjeżdżania na koniec artykułu i szukania potem miejsca, w którym się skończyło.
+    // Objaśnienia w dymku: numerek przy pojęciu (np. „drabina dowodów”) po najechaniu (mysz), fokusie
+    // (klawiatura) albo stuknięciu (telefon) pokazuje w ramce, o co chodzi — bez wychodzenia z artykułu
+    // i szukania definicji w innej części. Treść objaśnień: <ol class="explain"> na końcu pliku artykułu.
     (function(){
       var art=document.querySelector('.art'), pop=document.getElementById('wzFn'); if(!art||!pop) return;
-      var lists=art.querySelectorAll('ol.sources, ol.notes'); if(!lists.length) return;
-      var items=[].slice.call(lists[lists.length-1].children);
-      function nums(t){
-        var out=[]; t.split(/[,;\s]+/).forEach(function(p){
-          var r=p.match(/^(\d+)[–-](\d+)$/);
-          if(r){ for(var i=+r[1];i<=+r[2]&&i-+r[1]<20;i++) out.push(i); } else if(/^\d+$/.test(p)) out.push(+p);
-        }); return out;
-      }
+      var notes={}; art.querySelectorAll('ol.explain li[data-ex]').forEach(function(li){ notes[li.dataset.ex]=li; });
       var cur=null, hideT=0;
       function show(sup){
-        clearTimeout(hideT); if(cur===sup&&!pop.hidden) return; cur=sup;
-        var a=sup.querySelector('a[href^="#"]'), target=a&&document.getElementById(a.getAttribute('href').slice(1));
-        var html=sup._n.map(function(n){
-          var li= target&&sup._n.length===1 ? target : items[n-1]; if(!li) return '';
-          return '<div class="fi"><span class="n">'+n+'</span><div class="t">'+li.innerHTML+'</div></div>';
-        }).join('');
-        if(!html){ return; }
-        pop.innerHTML=html; pop.hidden=false;
+        clearTimeout(hideT); if(cur===sup&&!pop.hidden) return;
+        var li=notes[sup.dataset.ex]; if(!li) return; cur=sup;
+        pop.innerHTML='<div class="fi"><span class="n">'+sup.textContent+'</span><div class="t">'+li.innerHTML+'</div></div>';
+        pop.hidden=false;
         pop.querySelectorAll('a').forEach(function(l){ l.target='_blank'; l.rel='noopener'; });
         var r=sup.getBoundingClientRect(), w=pop.offsetWidth, h=pop.offsetHeight, vw=document.documentElement.clientWidth;
         var left=Math.min(Math.max(12, r.left+r.width/2-w/2), vw-w-12);
@@ -131,11 +121,10 @@ const ld = {
       }
       function hide(){ if(cur) cur.setAttribute('aria-expanded','false'); pop.hidden=true; cur=null; }
       function later(){ clearTimeout(hideT); hideT=setTimeout(hide,220); }
-      art.querySelectorAll('sup').forEach(function(sup){
-        if(sup.closest('ol.sources, ol.notes')) return;
-        var n=nums(sup.textContent.trim()); if(!n.length) return;
-        sup._n=n; sup.classList.add('wz-sup'); sup.tabIndex=0; sup.setAttribute('role','button');
-        sup.setAttribute('aria-label','Przypis '+n.join(', ')); sup.setAttribute('aria-expanded','false');
+      art.querySelectorAll('sup.ex[data-ex]').forEach(function(sup){
+        if(!notes[sup.dataset.ex]) return;
+        sup.tabIndex=0; sup.setAttribute('role','button');
+        sup.setAttribute('aria-label','Objaśnienie '+sup.textContent); sup.setAttribute('aria-expanded','false');
         sup.addEventListener('pointerenter',function(e){ if(e.pointerType==='mouse') show(sup); });
         sup.addEventListener('pointerleave',function(e){ if(e.pointerType==='mouse') later(); });
         sup.addEventListener('focus',function(){ show(sup); });
