@@ -114,6 +114,7 @@ export function getArticles() {
       url: `/wiedza/${meta.slug}.html`,
     };
   });
+  for (const a of cache) if (a.series) a.seriesTotal = cache.filter((x) => x.series === a.series).length;
   return cache;
 }
 

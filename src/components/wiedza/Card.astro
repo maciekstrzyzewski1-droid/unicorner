@@ -1,13 +1,18 @@
 ---
+// Kafelek artykułu. Głównym nagłówkiem jest topic („o czym to jest”), a nazwa w stylu
+// „Anatomia litra” jest mniejszym napisem pod spodem — sama nazwa nic nie mówi komuś, kto przegląda listę.
 interface Props { a: any; feature?: boolean }
 const { a, feature = false } = Astro.props;
 ---
 <a class={`wz-card${feature ? ' feature' : ''}`} href={a.url} data-cat={a.category}>
   <div class="top">
     <span class="wz-tag">{a.categoryName}</span>
-    {a.series ? <span class="wz-part">{a.seriesName} · <b>cz. {a.part}</b></span> : <span class="wz-part">osobny tekst</span>}
+    {a.series
+      ? <span class="wz-part">cz. <b>{a.part}</b> z {a.seriesTotal} · czytasz osobno</span>
+      : <span class="wz-part">pojedynczy tekst</span>}
   </div>
-  <h3>{a.title}</h3>
+  <h3>{a.topic || a.title}</h3>
+  {a.topic && <span class="wz-name">{a.title}</span>}
   <p>{a.lede}</p>
   <div class="foot"><span>{a.minutes} min czytania</span><span class="go">Czytaj <span class="arr">→</span></span></div>
 </a>

@@ -15,6 +15,12 @@ const { prev, next } = seriesNeighbours(a);
 const seriesList = a.series ? all.filter((x) => x.series === a.series).sort((x, y) => x.part - y.part) : [];
 const related = all.filter((x) => x.category === a.category && x.slug !== a.slug && x.series !== a.series || (x.category === a.category && !a.series && x.slug !== a.slug))
   .filter((x, i, arr) => arr.findIndex((y) => y.slug === x.slug) === i).slice(0, 3);
+// Do nagłówka artykułu dokładamy: podtytuł „o czym to jest” (pod h1) i — w seriach —
+// informację, że część czyta się osobno (przed końcem <header>).
+const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+let html = a.html;
+if (a.topic) html = html.replace('</h1>', `</h1><p class="wz-topic">${esc(a.topic)}</p>`);
+if (a.series) html = html.replace('</header>', `<div class="wz-solo"><b>Część ${a.part} z ${a.seriesTotal} · ${esc(a.seriesName.toLowerCase())}.</b> Nie musisz znać poprzednich części — ten tekst jest zamkniętą całością, a gdy nawiązuje do innej części, od razu przypomina, o co chodziło.</div></header>`);
 const url = `https://unicorner.pl${a.url}`;
 const ld = {
   '@context': 'https://schema.org', '@type': 'Article', headline: a.seoTitle, description: a.lede, inLanguage: 'pl',
@@ -62,7 +68,8 @@ const ld = {
   <Bar crumbs={[{ label: 'Wiedza', href: '/wiedza.html' }, { label: a.categoryName, href: `/wiedza.html#${a.category}` }, { label: a.title }]}
        back={{ label: '← Wszystkie teksty', href: '/wiedza.html' }} progress={true} />
 
-  <article class="art art-shell" set:html={a.html} />
+  <article class="art art-shell" set:html={html} />
+  <div class="wz-fn" id="wzFn" role="tooltip" hidden></div>
 
   <div class="wz-after">
     {a.series && (
@@ -91,4 +98,59 @@ const ld = {
   )}
 
   <Foot />
+
+  <script is:inline>
+    // Przypisy w dymku: najechanie (mysz), fokus (klawiatura) albo stuknięcie (telefon) pokazuje treść
+    // przypisu przy numerku — bez zjeżdżania na koniec artykułu i szukania potem miejsca, w którym się skończyło.
+    (function(){
+      var art=document.querySelector('.art'), pop=document.getElementById('wzFn'); if(!art||!pop) return;
+      var lists=art.querySelectorAll('ol.sources, ol.notes'); if(!lists.length) return;
+      var items=[].slice.call(lists[lists.length-1].children);
+      function nums(t){
+        var out=[]; t.split(/[,;\s]+/).forEach(function(p){
+          var r=p.match(/^(\d+)[–-](\d+)$/);
+          if(r){ for(var i=+r[1];i<=+r[2]&&i-+r[1]<20;i++) out.push(i); } else if(/^\d+$/.test(p)) out.push(+p);
+        }); return out;
+      }
+      var cur=null, hideT=0;
+      function show(sup){
+        clearTimeout(hideT); if(cur===sup&&!pop.hidden) return; cur=sup;
+        var a=sup.querySelector('a[href^="#"]'), target=a&&document.getElementById(a.getAttribute('href').slice(1));
+        var html=sup._n.map(function(n){
+          var li= target&&sup._n.length===1 ? target : items[n-1]; if(!li) return '';
+          return '<div class="fi"><span class="n">'+n+'</span><div class="t">'+li.innerHTML+'</div></div>';
+        }).join('');
+        if(!html){ return; }
+        pop.innerHTML=html; pop.hidden=false;
+        pop.querySelectorAll('a').forEach(function(l){ l.target='_blank'; l.rel='noopener'; });
+        var r=sup.getBoundingClientRect(), w=pop.offsetWidth, h=pop.offsetHeight, vw=document.documentElement.clientWidth;
+        var left=Math.min(Math.max(12, r.left+r.width/2-w/2), vw-w-12);
+        var top= r.top-h-10 >= 66 ? r.top-h-10 : r.bottom+10;
+        pop.style.left=left+'px'; pop.style.top=top+'px';
+        sup.setAttribute('aria-expanded','true');
+      }
+      function hide(){ if(cur) cur.setAttribute('aria-expanded','false'); pop.hidden=true; cur=null; }
+      function later(){ clearTimeout(hideT); hideT=setTimeout(hide,220); }
+      art.querySelectorAll('sup').forEach(function(sup){
+        if(sup.closest('ol.sources, ol.notes')) return;
+        var n=nums(sup.textContent.trim()); if(!n.length) return;
+        sup._n=n; sup.classList.add('wz-sup'); sup.tabIndex=0; sup.setAttribute('role','button');
+        sup.setAttribute('aria-label','Przypis '+n.join(', ')); sup.setAttribute('aria-expanded','false');
+        sup.addEventListener('pointerenter',function(e){ if(e.pointerType==='mouse') show(sup); });
+        sup.addEventListener('pointerleave',function(e){ if(e.pointerType==='mouse') later(); });
+        sup.addEventListener('focus',function(){ show(sup); });
+        sup.addEventListener('blur',later);
+        sup.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation(); if(cur===sup&&!pop.hidden&&e.pointerType!=='mouse') hide(); else show(sup); });
+        sup.addEventListener('keydown',function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); show(sup); } });
+      });
+      pop.addEventListener('pointerenter',function(){ clearTimeout(hideT); });
+      pop.addEventListener('pointerleave',function(e){ if(e.pointerType==='mouse') later(); });
+      pop.addEventListener('focusin',function(){ clearTimeout(hideT); });
+      pop.addEventListener('focusout',later);
+      document.addEventListener('click',function(e){ if(!pop.hidden&&!pop.contains(e.target)) hide(); });
+      document.addEventListener('keydown',function(e){ if(e.key==='Escape') hide(); });
+      window.addEventListener('scroll',function(){ if(!pop.hidden&&!pop.matches(':hover')) hide(); },{passive:true});
+      window.addEventListener('resize',hide);
+    })();
+  </script>
 </Base>

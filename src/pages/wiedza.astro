@@ -51,6 +51,9 @@ const ld = {
     {groups.map((g) => (
       <section class="wz-group" data-group={g.id} id={g.id}>
         <div class="wz-glabel"><h2>{g.name}</h2><span class="line"></span><span class="d">{g.desc}</span></div>
+        {g.items.some((a) => a.series) && (
+          <p class="wz-snote"><b>Seria w {g.items.find((a) => a.series).seriesTotal} częściach — każdą przeczytasz osobno.</b> Zaczynaj od tematu, który cię ciekawi. Gdy tekst nawiązuje do innej części, od razu przypomina, o co chodziło.</p>
+        )}
         <div class="wz-grid">
           {g.items.map((a, i) => <Card a={a} feature={i === 0 && g.items.length > 3} />)}
         </div>
