@@ -1,6 +1,10 @@
+---
+interface Props { label?: string }
+const { label = 'unicorner · wiedza' } = Astro.props;
+---
 <footer class="wz-foot">
   <div class="wz-wrap">
-    <span>unicorner · wiedza</span>
+    <span>{label}</span>
     <nav aria-label="Stopka">
       <a href="/index.html">Strona główna</a>
       <a href="/wiedza.html">Wszystkie teksty</a>
