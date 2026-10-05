@@ -1,5 +1,5 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 8 (konta, kredyty, udostępnianie, błędy, powtórki)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 9 (konta, kredyty, udostępnianie, błędy, powtórki)
    ---------------------------------------------------------------------
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)
@@ -37,7 +37,7 @@
      ALLOWED_ORIGIN    — np. "https://unicorner.pl" (można kilka po przecinku)
      ADMIN_EMAILS      — opcjonalnie: Twoje maile (po przecinku) bez limitu generowań
      FREE_MONTHLY_CREDITS — opcjonalnie: darmowe kredyty na miesiąc (domyślnie 30)
-     ACCESS_CODE       — STARY wspólny kod; nadal działa (bez zapisu talii), można usunąć
+     (ACCESS_CODE — stary wspólny kod; od wersji 9 nieużywany, można usunąć ze zmiennych)
 
    Bindingi (panel → Worker → Settings → Bindings):
      UC_KV — namespace KV (opinie; limity na IP tylko awaryjnie, gdy brak bazy DB)
@@ -51,8 +51,10 @@ const SESSION_DAYS = 60;                 // ile dni trwa zalogowanie
 const FREE_MONTHLY_CREDITS_DEFAULT = 30; // darmowe kredyty na konto na miesiąc (beta)
 const COST = { generate: 3, deckEdit: 2, item: 1 }; // ile kredytów kosztuje akcja
 const MAX_ITEMS = 20;                    // maks. fiszek i pytań w talii
-const EDIT_MAX_TOKENS = 4096;            // odpowiedź przy przerabianiu całej talii
-const EDIT_LIMIT_PER_HOUR = 60;          // akcji edycji na IP na godzinę
+const EDIT_MAX_TOKENS = 8000;            // odpowiedź przy przerabianiu całej talii (duża talia ≈ 5–6 tys. tokenów)
+const EDIT_LIMIT_PER_HOUR = 60;          // akcji edycji na użytkownika na godzinę
+const IP_LIMIT_FACTOR = 4;               // limit na IP = 4× limit na użytkownika (akademik / sieć komórkowa = wspólne IP)
+const WRITE_LIMIT_PER_HOUR = 1500;       // zapisów odpowiedzi/powtórek/zmian na użytkownika na godzinę
 const MAX_DECKS_PER_USER = 300;
 const MAX_DECK_JSON = 120_000;           // maks. rozmiar zapisanej talii (znaki JSON)
 const MAX_INPUT_CHARS = 14000;
@@ -60,7 +62,7 @@ const MAX_TOKENS = 3000;
 const MAX_INSTRUCTION_CHARS = 300;     // „na czym się skupić” z generatora
 const MAX_IMAGES = 4;                    // maks. zdjęć notatek na jedno generowanie
 const MAX_IMAGE_B64 = 400_000;           // ~300 KB pliku po kompresji na froncie
-const GEN_LIMIT_PER_HOUR = 12;           // generowań na IP na godzinę
+const GEN_LIMIT_PER_HOUR = 12;           // generowań na użytkownika na godzinę
 const REVIEWS_LIMIT_PER_DAY = 5;         // opinii na IP na dobę
 const REVIEW_TEXT_MIN = 10;
 const REVIEW_TEXT_MAX = 600;
@@ -114,7 +116,7 @@ export default {
         return await handleReviewsPost(request, env, cors);
 
       if (path === "/admin/list" && request.method === "GET")
-        return await handleAdminList(url, env, cors);
+        return await handleAdminList(url, env, cors, request);
 
       if (path === "/admin/decide" && request.method === "POST")
         return await handleAdminDecide(request, env, cors);
@@ -133,17 +135,15 @@ async function handleGenerate(request, env, cors) {
   try { body = await request.json(); }
   catch { return json({ error: "Bad JSON" }, 400, cors); }
 
-  const { text, code, images, instruction, source } = body || {};
+  const { text, images, instruction, source } = body || {};
 
-  // kto generuje: zalogowany użytkownik albo (przejściowo) stary wspólny kod
+  // generować może tylko zalogowany użytkownik (kredyty)
   const user = env.DB ? await authUser(request, env) : null;
-  const legacy = !user && env.ACCESS_CODE && code === env.ACCESS_CODE;
-  if (!user && !legacy)
-    return json({ error: "Zaloguj się, żeby generować.", need_login: true }, 401, cors);
+  if (!user) return json({ error: "Zaloguj się, żeby generować.", need_login: true }, 401, cors);
 
-  // rate limit: N generowań / IP / h (ochrona przed skryptami)
-  const rl = await rateLimit(env, "g:" + clientIp(request), GEN_LIMIT_PER_HOUR, 3600);
-  if (!rl.ok) return json({ error: "Limit generowań na godzinę wykorzystany — spróbuj później." }, 429, cors);
+  // ochrona przed skryptami: limit na konto + luźniejszy na IP
+  if (!(await limitUserAndIp(env, request, user, "g", GEN_LIMIT_PER_HOUR)))
+    return json({ error: "Limit generowań na godzinę wykorzystany — spróbuj później." }, 429, cors);
 
   // --- walidacja wejścia: tekst LUB zdjęcia ---
   const imgs = Array.isArray(images) ? images : [];
@@ -167,12 +167,9 @@ async function handleGenerate(request, env, cors) {
   const material = hasText ? text.slice(0, MAX_INPUT_CHARS) : "";
 
   // miesięczny limit konta — rezerwujemy kredyty atomowo (zwracamy, jeśli AI zawiedzie)
-  let reserved = false;
-  if (user) {
-    const r = await reserveCredits(env, user, COST.generate);
-    if (!r.ok) return await noCredits(env, user, COST.generate, cors);
-    reserved = true;
-  }
+  const r0 = await reserveCredits(env, user, COST.generate);
+  if (!r0.ok) return await noCredits(env, user, COST.generate, cors);
+  const reserved = true;
 
   // opcjonalna wskazówka użytkownika („na czym się skupić”) — krótka, bez znaków sterujących
   const instr = typeof instruction === "string"
@@ -298,7 +295,8 @@ async function handleReviewsPost(request, env, cors) {
 
 function adminOk(env, code) { return env.ADMIN_CODE && code === env.ADMIN_CODE; }
 
-async function handleAdminList(url, env, cors) {
+async function handleAdminList(url, env, cors, request) {
+  if (!(await rateLimit(env, "adm:" + clientIp(request), 60, 3600)).ok) return json({ error: "Za dużo prób" }, 429, cors);
   if (!adminOk(env, url.searchParams.get("code"))) return json({ error: "Zły kod" }, 401, cors);
   const keys = (await env.UC_KV.list({ prefix: "rev:p:", limit: 100 })).keys;
   const out = [];
@@ -315,6 +313,7 @@ async function handleAdminDecide(request, env, cors) {
   try { body = await request.json(); }
   catch { return json({ error: "Bad JSON" }, 400, cors); }
   const { code, id, action } = body || {};
+  if (!(await rateLimit(env, "adm:" + clientIp(request), 60, 3600)).ok) return json({ error: "Za dużo prób" }, 429, cors);
   if (!adminOk(env, code)) return json({ error: "Zły kod" }, 401, cors);
   if (!id || !["approve", "reject"].includes(action)) return json({ error: "Złe parametry" }, 400, cors);
 
@@ -371,7 +370,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 8, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 9, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { out.db_error = String(e.message || e).slice(0, 120); }
@@ -388,7 +387,7 @@ async function handleAuthGoogle(request, env, cors) {
   try { body = await request.json(); }
   catch { return json({ error: "Bad JSON" }, 400, cors); }
 
-  const rl = await rateLimit(env, "a:" + clientIp(request), 30, 3600);
+  const rl = await rateLimit(env, "a:" + clientIp(request), 60, 3600);
   if (!rl.ok) return json({ error: "Za dużo prób logowania — spróbuj za chwilę." }, 429, cors);
 
   let claims;
@@ -531,6 +530,8 @@ async function callAI(env, { system, content, maxTokens }) {
   } catch { throw httpErr(502, "Nie udało się połączyć z AI"); }
   if (!res.ok) throw httpErr(502, "AI error " + res.status, (await res.text()).slice(0, 200));
   const data = await res.json();
+  if (data.stop_reason === "max_tokens")
+    throw httpErr(502, "Odpowiedź AI była za długa i została ucięta — spróbuj z mniejszą talią albo krótszym materiałem. Kredyty wróciły na konto.");
   return (data.content && data.content[0] && data.content[0].text) || "";
 }
 function httpErr(status, error, detail) { const e = new Error(error); e.status = status; e.detail = detail; return e; }
@@ -673,6 +674,7 @@ async function deckReviews(env, user, id) {
 async function handleReview(request, env, cors, id) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
+  if (!(await rateLimit(env, "w:" + user.id, WRITE_LIMIT_PER_HOUR, 3600)).ok) return json({ error: "Za dużo zapisów — zwolnij na chwilę." }, 429, cors);
   let body; try { body = await request.json(); } catch { return json({ error: "Bad JSON" }, 400, cors); }
   const key = String((body && body.ckey) || "");
   if (!/^[0-9a-f]{8}$/.test(key)) return json({ error: "Zły klucz fiszki" }, 400, cors);
@@ -694,6 +696,7 @@ async function handleReview(request, env, cors, id) {
 async function handleAnswer(request, env, cors, id) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
+  if (!(await rateLimit(env, "w:" + user.id, WRITE_LIMIT_PER_HOUR, 3600)).ok) return json({ error: "Za dużo zapisów — zwolnij na chwilę." }, 429, cors);
   let body; try { body = await request.json(); } catch { return json({ error: "Bad JSON" }, 400, cors); }
   const key = String((body && body.qkey) || "");
   if (!/^[0-9a-f]{8}$/.test(key)) return json({ error: "Zły klucz pytania" }, 400, cors);
@@ -714,6 +717,7 @@ const deckSummary = (d) => ({ flashcards: d.flashcards.map(({ term, def }) => ({
 async function handleDeckPut(request, env, cors, id) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
+  if (!(await rateLimit(env, "w:" + user.id, WRITE_LIMIT_PER_HOUR, 3600)).ok) return json({ error: "Za dużo zapisów — zwolnij na chwilę." }, 429, cors);
   let body; try { body = await request.json(); } catch { return json({ error: "Bad JSON" }, 400, cors); }
   const old = await loadOwnDeck(env, user, id);
   if (!old) return json({ error: "Nie ma takiej talii" }, 404, cors);
@@ -734,10 +738,12 @@ async function handleDeckEdit(request, env, cors, id) {
   if (weak && instr.length < 3) instr = "Dodaj 5 nowych pytań (i 1–3 fiszki, jeśli brakuje pojęć) ćwiczących zagadnienia, w których się mylę.";
   if (instr.length < 3) return json({ error: "Napisz, co zmienić w talii." }, 400, cors);
   const material = typeof body.material === "string" ? body.material.slice(0, MAX_INPUT_CHARS) : "";
-  const rl = await rateLimit(env, "e:" + clientIp(request), EDIT_LIMIT_PER_HOUR, 3600);
-  if (!rl.ok) return json({ error: "Za dużo zmian na godzinę — spróbuj za chwilę." }, 429, cors);
+  if (!(await limitUserAndIp(env, request, user, "e", EDIT_LIMIT_PER_HOUR)))
+    return json({ error: "Za dużo zmian na godzinę — spróbuj za chwilę." }, 429, cors);
   const deck = await loadOwnDeck(env, user, id);
   if (!deck) return json({ error: "Nie ma takiej talii" }, 404, cors);
+  if (weak && deck.quiz.length >= MAX_ITEMS)
+    return json({ error: `Ta talia ma już ${MAX_ITEMS} pytań (maksimum). Podmień pojedyncze pomylone pytania przyciskiem „Podmień pytanie” albo zrób nową talię.` }, 400, cors);
   let weakBlock = "";
   if (weak) {
     const ans = await deckAnswers(env, user, id);
@@ -768,6 +774,14 @@ ${OPTION_RULES}`;
     const d = normalizeDeck(parsed || {});
     if (!d.flashcards.length && !d.quiz.length) throw httpErr(502, "AI zwróciło nieprawidłowy format — spróbuj inaczej sformułować polecenie");
     d.title = d.title || deck.title;
+    // wyjaśnienia kupione wcześniej (1 kr. każde) przenosimy na niezmienione fiszki/pytania;
+    // bierzemy świeży stan z bazy, żeby nie zgubić wyjaśnienia dokupionego w trakcie edycji
+    const fresh = (await loadOwnDeck(env, user, id)) || deck;
+    const fcMore = {}, qzMore = {};
+    fresh.flashcards.forEach(c => { if (c.more) fcMore[qkey(c.term)] = c.more; });
+    fresh.quiz.forEach(q => { if (q.more) qzMore[qkey(q.q)] = q.more; });
+    d.flashcards.forEach(c => { const m = fcMore[qkey(c.term)]; if (m && !c.more) c.more = m; });
+    d.quiz.forEach(q => { const m = qzMore[qkey(q.q)]; if (m && !q.more) q.more = m; });
     await storeDeck(env, user, id, d);
     return { deck: { id, ...d } };
   });
@@ -782,8 +796,8 @@ async function handleDeckItem(request, env, cors, id) {
   const index = parseInt(body && body.index, 10);
   if (!["fc", "qz"].includes(kind) || !["explain", "replace"].includes(action) || !(index >= 0)) return json({ error: "Złe parametry" }, 400, cors);
   if (kind === "fc" && action === "replace") return json({ error: "Złe parametry" }, 400, cors);
-  const rl = await rateLimit(env, "e:" + clientIp(request), EDIT_LIMIT_PER_HOUR, 3600);
-  if (!rl.ok) return json({ error: "Za dużo akcji na godzinę — spróbuj za chwilę." }, 429, cors);
+  if (!(await limitUserAndIp(env, request, user, "e", EDIT_LIMIT_PER_HOUR)))
+    return json({ error: "Za dużo akcji na godzinę — spróbuj za chwilę." }, 429, cors);
   const deck = await loadOwnDeck(env, user, id);
   if (!deck) return json({ error: "Nie ma takiej talii" }, 404, cors);
   const list = kind === "fc" ? deck.flashcards : deck.quiz;
@@ -849,7 +863,7 @@ async function handleDecksList(request, env, cors) {
     "(SELECT COUNT(*) FROM answers a WHERE a.user_id = d.user_id AND a.deck_id = d.id AND a.last_ok = 0) AS mistakes, " +
     "(SELECT COUNT(*) FROM reviews r WHERE r.user_id = d.user_id AND r.deck_id = d.id AND r.due <= ?) AS due, " +
     "(SELECT COUNT(*) FROM reviews r WHERE r.user_id = d.user_id AND r.deck_id = d.id) AS seen " +
-    "FROM decks d LEFT JOIN shares s ON s.deck_id = d.id WHERE d.user_id = ? ORDER BY d.created_at DESC LIMIT 200"
+    "FROM decks d LEFT JOIN shares s ON s.deck_id = d.id WHERE d.user_id = ? ORDER BY d.created_at DESC LIMIT 300"
   ).bind(Date.now(), user.id).all();
   return json({ decks: results || [] }, 200, cors);
 }
@@ -908,9 +922,10 @@ async function handleShareCreate(request, env, cors, id) {
   if (!deck) return json({ error: "Nie ma takiej talii" }, 404, cors);
   const ex = await env.DB.prepare("SELECT share_id, views FROM shares WHERE deck_id = ?").bind(id).first();
   if (ex) return json({ share_id: ex.share_id, views: ex.views }, 200, cors);
-  const sid = newShareId();
-  await env.DB.prepare("INSERT INTO shares (share_id, deck_id, user_id, created_at) VALUES (?,?,?,?)").bind(sid, id, user.id, Date.now()).run();
-  return json({ share_id: sid, views: 0 }, 200, cors);
+  await env.DB.prepare("INSERT INTO shares (share_id, deck_id, user_id, created_at) VALUES (?,?,?,?) ON CONFLICT(deck_id) DO NOTHING")
+    .bind(newShareId(), id, user.id, Date.now()).run();
+  const sh = await env.DB.prepare("SELECT share_id, views FROM shares WHERE deck_id = ?").bind(id).first();
+  return json({ share_id: sh.share_id, views: sh.views }, 200, cors);
 }
 
 async function handleShareDelete(request, env, cors, id) {
@@ -992,7 +1007,17 @@ function corsHeaders(request, env) {
 }
 
 function clientIp(request) {
-  return request.headers.get("CF-Connecting-IP") || "0.0.0.0";
+  const ip = request.headers.get("CF-Connecting-IP") || "0.0.0.0";
+  // IPv6: jedno urządzenie łatwo zmienia końcówkę adresu — liczymy całą sieć /64
+  return ip.includes(":") ? ip.split(":").slice(0, 4).join(":") + "::/64" : ip;
+}
+
+/* limit na konto (dokładny) + na IP (luźniejszy, bo wiele osób może mieć to samo IP) */
+async function limitUserAndIp(env, request, user, kind, perUser) {
+  const u = await rateLimit(env, kind + "u:" + user.id, perUser, 3600);
+  if (!u.ok) return false;
+  const i = await rateLimit(env, kind + "i:" + clientIp(request), perUser * IP_LIMIT_FACTOR, 3600);
+  return i.ok;
 }
 
 /* licznik limitu w oknie ttl sekund.
