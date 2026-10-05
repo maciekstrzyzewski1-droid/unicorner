@@ -145,13 +145,13 @@ function startRename(el, d){
   inp.addEventListener("keydown", e=>{ if(e.key==="Enter") finish(true); if(e.key==="Escape") finish(false); });
   inp.addEventListener("blur", ()=>finish(true));
 }
-async function openDeck(id){
+async function openDeck(id, quiet){
   setStatus("Wczytuję talię…","info");
   const r=await api("/decks/"+id);
   if(!r.ok){ setStatus(r.data.error||"Nie udało się wczytać talii.","err"); return; }
   clearStatus(); currentDeckId=id; currentShareId=r.data.share_id||null; prevDeck=null; lastSourceText="";
   lastResult={ title:r.data.title, flashcards:r.data.flashcards, quiz:r.data.quiz };
-  render(lastResult, true, true); renderDecks();
+  render(lastResult, !quiet, true); renderDecks();
 }
 
 const delAcc=$("delAccount");
@@ -443,7 +443,7 @@ function render(data, scroll, saved){
   saveLocal();
 }
 
-function saveLocal(){ if(lastResult) ls.set(STORE_KEY, JSON.stringify(lastResult)); }
+function saveLocal(){ if(lastResult) ls.set(STORE_KEY, JSON.stringify({ ...lastResult, deckId: currentDeckId || null })); }
 
 let toastT=null;
 function toast(msg, err){ const t=$("toast"); t.textContent=msg; t.className="g-toast show"+(err?" err":""); clearTimeout(toastT); toastT=setTimeout(()=>{ t.className="g-toast"+(err?" err":""); }, err?6000:3000); }
@@ -513,6 +513,12 @@ shareOff && shareOff.addEventListener("click", async ()=>{
   renderShare(false); toast("Udostępnianie wyłączone — stary link już nie działa.");
 });
 
+/* po odświeżeniu: jeśli ostatni wynik był talią z konta, otwórz ją znowu (działają wtedy Udostępnij i Popraw) */
+let savedDeckId = null;
+function reopenSaved(){
+  if(savedDeckId && !currentDeckId && decks.some(d=>d.id===savedDeckId)) openDeck(savedDeckId, true);
+}
+
 /* ---------- „Zapisz u siebie” z linku znajomego (generator.html?zapisz=ID) ---------- */
 let importDone=false;
 async function runImport(){
@@ -581,13 +587,13 @@ setMode("pdf");
 renderAccount();
 initGoogle(0);
 if(token){
-  api("/me").then(async r=>{ if(r.ok){ setSession(token, r.data.user, r.data.usage); await loadDecks(); runImport(); } else if(pendingImport) importHint(); });
+  api("/me").then(async r=>{ if(r.ok){ setSession(token, r.data.user, r.data.usage); await loadDecks(); if(pendingImport) runImport(); else reopenSaved(); } else if(pendingImport) importHint(); });
 } else if(pendingImport) importHint();
 function importHint(){ setStatus("Zaloguj się w sekcji 03 Konto, a udostępniona talia od razu zapisze się na Twoim koncie.","info"); $("acctOut").scrollIntoView({behavior:"smooth",block:"center"}); }
 try{
   const saved = JSON.parse(ls.get(STORE_KEY) || "null");
   if(saved && (saved.flashcards || saved.quiz)){
-    lastResult = saved; render(saved, false);
+    lastResult = { title:saved.title, flashcards:saved.flashcards, quiz:saved.quiz }; savedDeckId = saved.deckId || null; render(lastResult, false);
     setStatus("Poniżej Twój ostatni materiał z tej przeglądarki. Nowe generowanie go nadpisze.","info");
   }
 }catch{ /* uszkodzony zapis — ignorujemy */ }
