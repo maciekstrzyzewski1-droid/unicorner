@@ -42,7 +42,7 @@ async function api(path, opts={}){
 
 function setSession(t, user, u){
   token = t || null; me = t ? user : null; usage = t ? u : null;
-  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; }
+  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; prevDeck=null; $("editPanel").hidden=true; }
   renderAccount(); refreshBtn();
 }
 
@@ -55,12 +55,19 @@ function renderAccount(){
   const av=$("meAvatar"); if(me.picture){ av.src=me.picture; av.hidden=false; } else av.hidden=true;
   renderUsage();
 }
+const COSTS = { generate:3, deckEdit:2, item:1 };
+let lastSourceText = "", prevDeck = null;
+function costs(){ return (usage && usage.costs) || COSTS; }
+function creditsLeft(){ if(!usage) return 0; if(usage.limit==null) return Infinity; return Math.max(0, usage.limit-usage.used); }
+function canEdit(){ return !!(me && currentDeckId); }
+function setUsage(u){ if(u){ usage=u; renderUsage(); refreshBtn(); } }
+
 function renderUsage(){
   if(!usage) return;
   const bar=$("meBar");
-  if(usage.limit==null){ $("meUsage").textContent = "Bez limitu · w tym miesiącu: "+usage.used; bar.style.width="0"; return; }
+  if(usage.limit==null){ $("meUsage").textContent = "Bez limitu · zużyte w tym miesiącu: "+usage.used+" kr."; bar.style.width="0"; return; }
   const left=Math.max(0, usage.limit-usage.used);
-  $("meUsage").textContent = "Zostało "+left+" z "+usage.limit+" generowań w tym miesiącu";
+  $("meUsage").textContent = "Zostało "+left+" z "+usage.limit+" kredytów w tym miesiącu";
   bar.style.width = Math.min(100, usage.used/usage.limit*100)+"%";
   bar.classList.toggle("full", left===0);
 }
@@ -92,6 +99,7 @@ $("logout").addEventListener("click", async ()=>{
 });
 
 /* ---------- moje talie ---------- */
+function plural(n,one,few,many){ if(n===1) return one; const d=n%10, h=n%100; return (d>=2&&d<=4&&(h<10||h>=20)) ? few : many; }
 const SRC_LABEL = { pdf:"PDF", img:"Zdjęcia", txt:"Tekst" };
 function fmtDate(ts){ const d=new Date(ts); return d.toLocaleDateString("pl-PL",{day:"numeric",month:"short"})+", "+d.toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"}); }
 
@@ -106,7 +114,7 @@ function renderDecks(){
   $("decksEmpty").hidden = decks.length>0;
   decks.forEach(d=>{
     const el=document.createElement("div"); el.className="g-deck"+(d.id===currentDeckId?" cur":""); el.tabIndex=0; el.setAttribute("role","button");
-    el.innerHTML=`<div class="t">${esc(d.title)}</div><div class="m"><span class="src">${SRC_LABEL[d.source]||"Materiał"}</span><span>${d.fc} fiszek · ${d.qz} pytań</span><span>${fmtDate(d.created_at)}</span></div><div class="acts"><button type="button" data-a="ren">Zmień nazwę</button><button type="button" data-a="del">Usuń</button></div>`;
+    el.innerHTML=`<div class="t">${esc(d.title)}</div><div class="m"><span class="src">${SRC_LABEL[d.source]||"Materiał"}</span><span>${d.fc} ${plural(d.fc,"fiszka","fiszki","fiszek")} · ${d.qz} ${plural(d.qz,"pytanie","pytania","pytań")}</span><span>${fmtDate(d.created_at)}</span></div><div class="acts"><button type="button" data-a="ren">Zmień nazwę</button><button type="button" data-a="del">Usuń</button></div>`;
     el.addEventListener("click", e=>{ if(e.target.closest(".acts")||e.target.tagName==="INPUT") return; openDeck(d.id); });
     el.addEventListener("keydown", e=>{ if(e.key==="Enter" && e.target===el) openDeck(d.id); });
     el.querySelector('[data-a="ren"]').addEventListener("click", ()=>startRename(el, d));
@@ -139,7 +147,7 @@ async function openDeck(id){
   setStatus("Wczytuję talię…","info");
   const r=await api("/decks/"+id);
   if(!r.ok){ setStatus(r.data.error||"Nie udało się wczytać talii.","err"); return; }
-  clearStatus(); currentDeckId=id;
+  clearStatus(); currentDeckId=id; prevDeck=null; lastSourceText="";
   lastResult={ title:r.data.title, flashcards:r.data.flashcards, quiz:r.data.quiz };
   render(lastResult, true, true); renderDecks();
 }
@@ -193,23 +201,29 @@ function hasMaterial(){
   return pasted.value.trim().length>=MIN_CHARS;
 }
 function refreshBtn(){
-  const noLeft = usage && usage.limit!=null && usage.used>=usage.limit;
-  $("genLabel").textContent = !me ? "Najpierw się zaloguj" : noLeft ? "Limit na ten miesiąc wykorzystany" : "Generuj fiszki i quiz";
+  const noLeft = usage && creditsLeft() < costs().generate;
+  $("genLabel").textContent = !me ? "Najpierw się zaloguj" : noLeft ? "Za mało kredytów" : "Generuj fiszki i quiz";
+  $("genCost").textContent = costs().generate+" kr.";
+  $("genCost").hidden = !me || noLeft;
   genBtn.disabled = !(me && !noLeft && hasMaterial());
   resetBtn.hidden = !(pickedPdf || pickedImages.length || pasted.value.trim() || lastResult);
 }
 pasted.addEventListener("input", ()=>{ $("pastedCount").textContent=pasted.value.length.toLocaleString("pl-PL"); refreshBtn(); });
 
 /* ---------- instrukcja + szybkie podpowiedzi ---------- */
-document.querySelectorAll("#chips button").forEach(b=>{
-  b.addEventListener("click",()=>{
-    const t=b.dataset.t; let v=instr.value.trim();
-    if(v.includes(t)){ v=v.replace(t,"").replace(/\s{2,}/g," ").trim(); b.classList.remove("on"); }
-    else { v=(v?v+" ":"")+t; b.classList.add("on"); }
-    instr.value=v.slice(0,MAX_INSTR);
+function bindChips(boxSel, field){
+  const btns=document.querySelectorAll(boxSel+" button");
+  btns.forEach(b=>{
+    b.addEventListener("click",()=>{
+      const t=b.dataset.t; let v=field.value.trim();
+      if(v.includes(t)){ v=v.replace(t,"").replace(/\s{2,}/g," ").trim(); b.classList.remove("on"); }
+      else { v=(v?v+" ":"")+t; b.classList.add("on"); }
+      field.value=v.slice(0,MAX_INSTR);
+    });
   });
-});
-instr.addEventListener("input",()=>{ document.querySelectorAll("#chips button").forEach(b=>b.classList.toggle("on", instr.value.includes(b.dataset.t))); });
+  field.addEventListener("input",()=>{ btns.forEach(b=>b.classList.toggle("on", field.value.includes(b.dataset.t))); });
+}
+bindChips("#chips", instr);
 
 /* ---------- pliki ---------- */
 drop.addEventListener("click", ()=>fileInput.click());
@@ -299,12 +313,14 @@ genBtn.addEventListener("click", async ()=>{
         catch(e){ return fail("Nie udało się odczytać jednego ze zdjęć — spróbuj JPG/PNG."); }
       }
       payload={ images, instruction, source:"img", mode:"both" };
+      lastSourceText = "";
     } else {
       let text = mode==="pdf" ? await extractText(pickedPdf) : pasted.value.trim();
       if(text.length<MIN_CHARS) return fail(mode==="pdf"
         ? "Za mało tekstu w pliku — to pewnie skan. Zrób zdjęcia stron i wybierz „Zdjęcia notatek”, generator je odczyta."
         : "Za mało tekstu — wklej co najmniej ok. 300 znaków.");
       payload={ text:text.slice(0,MAX_CHARS), instruction, source:mode, mode:"both" };
+      lastSourceText = payload.text;
     }
     progress(1);
     stepTimer=setTimeout(()=>progress(2), 6000);
@@ -313,12 +329,13 @@ genBtn.addEventListener("click", async ()=>{
     const data=r.data;
     if(r.status===401) return fail("Sesja wygasła — zaloguj się ponownie.");
     if(r.status===413) return fail("Zdjęcia za duże — usuń któreś albo zrób mniej stron naraz.");
-    if(r.status===429){ if(data.usage){ usage=data.usage; renderUsage(); } return fail(data.error || "Limit generowań wykorzystany — spróbuj później."); }
+    if(r.status===429){ setUsage(data.usage); return fail(data.error || "Limit wykorzystany — spróbuj później."); }
     if(!r.ok) return fail((data.error || "Coś poszło nie tak") + " ("+r.status+")");
     if(!data.flashcards && !data.quiz) return fail("AI nie zwróciło poprawnych danych. Spróbuj z innym albo krótszym fragmentem.");
     progress(-1);
-    if(data.usage){ usage=data.usage; renderUsage(); }
-    if(data.deck){ currentDeckId=data.deck.id; decks.unshift(data.deck); renderDecks(); }
+    setUsage(data.usage);
+    currentDeckId = data.deck ? data.deck.id : null; prevDeck=null;
+    if(data.deck){ decks.unshift(data.deck); renderDecks(); }
     lastResult={ title:data.title, flashcards:data.flashcards, quiz:data.quiz };
     render(lastResult, true, !!data.deck);
     if(data.save_error) setStatus(data.save_error+" — pobierz plik, żeby go nie stracić.","err");
@@ -337,29 +354,56 @@ function updScore(){
   $("scoreBar").style.width = (score.total? (score.ok/score.total*100):0)+"%";
 }
 
+function paras(t){ return String(t||"").split(/\n+/).filter(Boolean).map(x=>"<p>"+esc(x)+"</p>").join(""); }
+
+function buildQuestion(q, i, total){
+  const opts=Array.isArray(q.options)?q.options:[];
+  const correct=Number.isInteger(q.correct)?q.correct:0;
+  const order=opts.map((_,k)=>k).sort(()=>Math.random()-0.5);
+  const card=document.createElement("div"); card.className="g-q";
+  card.innerHTML=`<div class="g-qno">Pytanie ${i+1} / ${total}</div><div class="g-qt">${esc(q.q||q.question||"")}</div><div class="opts"></div><div class="g-exp">${esc(q.explain||q.explanation||"")}</div><div class="g-more" hidden></div><div class="g-qacts" hidden></div>`;
+  const box=card.querySelector(".opts"), exp=card.querySelector(".g-exp"), more=card.querySelector(".g-more"), acts=card.querySelector(".g-qacts");
+  let st=null;
+  order.forEach(k=>{
+    const b=document.createElement("button"); b.className="g-opt"; b.type="button"; b.textContent=opts[k]; b.dataset.k=k;
+    b.addEventListener("click", ()=>{
+      box.querySelectorAll(".g-opt").forEach(x=>x.disabled=true);
+      if(k===correct){ b.classList.add("correct"); score.ok++; st="ok"; }
+      else{ b.classList.add("wrong"); st="bad"; box.querySelectorAll(".g-opt").forEach(x=>{ if(+x.dataset.k===correct) x.classList.add("correct"); }); }
+      score.done++; updScore();
+      if(exp.textContent.trim()) exp.classList.add("show");
+      showActs();
+    });
+    box.appendChild(b);
+  });
+  function showActs(){
+    if(!canEdit()) return;
+    acts.hidden=false; acts.innerHTML="";
+    const cur=lastResult.quiz[i];
+    const ex=document.createElement("button"); ex.type="button"; ex.className="g-mini";
+    ex.innerHTML = cur.more ? "Pokaż wyjaśnienie" : 'Wytłumacz szerzej <span class="g-cost">'+costs().item+' kr.</span>';
+    ex.addEventListener("click", async ()=>{
+      if(lastResult.quiz[i].more){ more.hidden=!more.hidden; more.innerHTML=paras(lastResult.quiz[i].more); return; }
+      const it=await itemAction("qz", i, "explain", ex);
+      if(it){ more.innerHTML=paras(it.more); more.hidden=false; ex.textContent="Ukryj wyjaśnienie"; }
+    });
+    const rp=document.createElement("button"); rp.type="button"; rp.className="g-mini";
+    rp.innerHTML='Podmień pytanie <span class="g-cost">'+costs().item+' kr.</span>';
+    rp.addEventListener("click", async ()=>{
+      const it=await itemAction("qz", i, "replace", rp);
+      if(!it) return;
+      if(st==="ok") score.ok--; if(st) score.done--; updScore();
+      card.replaceWith(buildQuestion(it, i, total));
+    });
+    acts.appendChild(ex); acts.appendChild(rp);
+  }
+  return card;
+}
+
 function renderQuiz(qz){
   const list=$("qzList"); list.innerHTML="";
   score={ok:0,done:0,total:qz.length}; updScore();
-  qz.forEach((q,i)=>{
-    const opts=Array.isArray(q.options)?q.options:[];
-    const correct=Number.isInteger(q.correct)?q.correct:0;
-    const order=opts.map((_,k)=>k).sort(()=>Math.random()-0.5);
-    const card=document.createElement("div"); card.className="g-q";
-    card.innerHTML=`<div class="g-qno">Pytanie ${i+1} / ${qz.length}</div><div class="g-qt">${esc(q.q||q.question||"")}</div><div class="opts"></div><div class="g-exp">${esc(q.explain||q.explanation||"")}</div>`;
-    const box=card.querySelector(".opts"), exp=card.querySelector(".g-exp");
-    order.forEach(k=>{
-      const b=document.createElement("button"); b.className="g-opt"; b.type="button"; b.textContent=opts[k]; b.dataset.k=k;
-      b.addEventListener("click", ()=>{
-        box.querySelectorAll(".g-opt").forEach(x=>x.disabled=true);
-        if(k===correct){ b.classList.add("correct"); score.ok++; }
-        else{ b.classList.add("wrong"); box.querySelectorAll(".g-opt").forEach(x=>{ if(+x.dataset.k===correct) x.classList.add("correct"); }); }
-        score.done++; updScore();
-        if(exp.textContent.trim()) exp.classList.add("show");
-      });
-      box.appendChild(b);
-    });
-    list.appendChild(card);
-  });
+  qz.forEach((q,i)=>list.appendChild(buildQuestion(q, i, qz.length)));
 }
 
 function render(data, scroll, saved){
@@ -368,9 +412,18 @@ function render(data, scroll, saved){
   const fcs=Array.isArray(data.flashcards)?data.flashcards:[];
   const qz=Array.isArray(data.quiz)?data.quiz:[];
   const grid=$("fcGrid"); grid.innerHTML="";
-  fcs.forEach(c=>{
+  fcs.forEach((c,i)=>{
     const el=document.createElement("div"); el.className="g-fc"; el.tabIndex=0; el.setAttribute("role","button");
-    el.innerHTML=`<div class="g-fc-in"><div class="g-face g-front">${esc(c.term||"")}</div><div class="g-face g-back">${esc(c.def||c.definition||"")}</div></div>`;
+    const btn = canEdit() ? `<button class="g-fcbtn" type="button">${c.more ? "Pokaż wyjaśnienie" : "Wytłumacz · "+costs().item+" kr."}</button>` : "";
+    el.innerHTML=`<div class="g-fc-in"><div class="g-face g-front">${esc(c.term||"")}</div><div class="g-face g-back"><span>${esc(c.def||c.definition||"")}</span>${btn}</div></div>`;
+    const fb=el.querySelector(".g-fcbtn");
+    if(fb) fb.addEventListener("click", async e=>{
+      e.stopPropagation();
+      const cur=lastResult.flashcards[i];
+      if(cur.more) return openModal(cur.term, cur.more);
+      const it=await itemAction("fc", i, "explain", fb);
+      if(it){ fb.textContent="Pokaż wyjaśnienie"; openModal(it.term, it.more); }
+    });
     el.addEventListener("click", ()=>el.classList.toggle("flip"));
     el.addEventListener("keydown", e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); el.classList.toggle("flip"); } });
     grid.appendChild(el);
@@ -380,9 +433,70 @@ function render(data, scroll, saved){
   renderQuiz(qz);
   showPane(document.querySelector(".g-tab.on").dataset.pane);
   $("result").hidden=false; refreshBtn();
+  $("editPanel").hidden = !canEdit();
+  $("editUndo").hidden = !prevDeck;
+  $("editNote").textContent = lastSourceText ? "AI widzi też Twój materiał źródłowy z tego generowania." : "AI pracuje na treści talii (plików źródłowych nie przechowujemy).";
   if(scroll) $("result").scrollIntoView({behavior:"smooth",block:"start"});
-  ls.set(STORE_KEY, JSON.stringify({title:data.title||"", flashcards:fcs, quiz:qz}));
+  saveLocal();
 }
+
+function saveLocal(){ if(lastResult) ls.set(STORE_KEY, JSON.stringify(lastResult)); }
+
+let toastT=null;
+function toast(msg, err){ const t=$("toast"); t.textContent=msg; t.className="g-toast show"+(err?" err":""); clearTimeout(toastT); toastT=setTimeout(()=>{ t.className="g-toast"+(err?" err":""); }, err?6000:3000); }
+
+function openModal(title, text){ $("modalTitle").textContent=title||""; $("modalBody").innerHTML=paras(text); $("modal").hidden=false; $("modalX").focus(); }
+function closeModal(){ $("modal").hidden=true; }
+$("modalX").addEventListener("click", closeModal);
+$("modal").addEventListener("click", e=>{ if(e.target.id==="modal") closeModal(); });
+document.addEventListener("keydown", e=>{ if(e.key==="Escape" && !$("modal").hidden) closeModal(); });
+
+async function itemAction(kind, index, action, btn){
+  if(!canEdit()) return null;
+  const orig=btn.innerHTML; btn.disabled=true;
+  btn.innerHTML='<span class="g-spin"></span> '+(action==="explain" ? "Tłumaczę…" : "Układam nowe…");
+  const r=await api("/decks/"+currentDeckId+"/item", { method:"POST", body:{ kind, index, action } });
+  btn.disabled=false; btn.innerHTML=orig;
+  setUsage(r.data.usage);
+  if(!r.ok){ toast(r.data.error || "Nie udało się — spróbuj jeszcze raz.", true); return null; }
+  (kind==="fc" ? lastResult.flashcards : lastResult.quiz)[index] = r.data.item;
+  saveLocal();
+  return r.data.item;
+}
+
+function syncDeckInList(d){
+  const x=decks.find(z=>z.id===currentDeckId);
+  if(x){ x.title=d.title; x.fc=d.flashcards.length; x.qz=d.quiz.length; renderDecks(); }
+}
+
+const editInstr=$("editInstr");
+bindChips("#editChips", editInstr);
+$("editGo").addEventListener("click", async ()=>{
+  const ins=editInstr.value.trim();
+  if(ins.length<3){ toast("Napisz, co zmienić w talii, albo kliknij jedną z podpowiedzi.", true); editInstr.focus(); return; }
+  const btn=$("editGo"), orig=btn.innerHTML; btn.disabled=true;
+  btn.innerHTML='<span class="g-spin"></span><span>AI poprawia talię… to potrwa kilkanaście sekund</span>';
+  const before=JSON.parse(JSON.stringify(lastResult));
+  const body={ instruction: ins }; if(lastSourceText) body.material=lastSourceText;
+  const r=await api("/decks/"+currentDeckId+"/edit", { method:"POST", body });
+  btn.disabled=false; btn.innerHTML=orig;
+  setUsage(r.data.usage);
+  if(!r.ok){ toast(r.data.error || "Nie udało się poprawić talii.", true); return; }
+  prevDeck=before;
+  const d=r.data.deck;
+  lastResult={ title:d.title, flashcards:d.flashcards, quiz:d.quiz };
+  editInstr.value=""; document.querySelectorAll("#editChips button").forEach(b=>b.classList.remove("on"));
+  render(lastResult, false, true); syncDeckInList(d);
+  toast("Talia poprawiona ✓ — jeśli coś nie pasuje, kliknij „Cofnij zmianę”.");
+});
+$("editUndo").addEventListener("click", async ()=>{
+  if(!prevDeck) return;
+  const r=await api("/decks/"+currentDeckId, { method:"PUT", body:prevDeck });
+  if(!r.ok){ toast(r.data.error || "Nie udało się cofnąć.", true); return; }
+  lastResult=prevDeck; prevDeck=null;
+  render(lastResult, false, true); syncDeckInList(lastResult);
+  toast("Przywrócono poprzednią wersję talii.");
+});
 
 function showPane(p){
   document.querySelectorAll(".g-tab").forEach(x=>x.classList.toggle("on", x.dataset.pane===p));
@@ -401,7 +515,6 @@ $("dlHtml").addEventListener("click", ()=>{ if(lastResult) download(new Blob([bu
 $("forget").addEventListener("click", ()=>{ ls.del(STORE_KEY); setStatus("Usunięto zapamiętany materiał z tej przeglądarki. Pobrane pliki zostają u Ciebie.","info"); });
 
 /* ---------- start ---------- */
-$("freeN").textContent = "10";
 setMode("pdf");
 renderAccount();
 initGoogle(0);
