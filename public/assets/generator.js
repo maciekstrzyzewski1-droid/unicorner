@@ -43,7 +43,7 @@ async function api(path, opts={}){
 
 function setSession(t, user, u){
   token = t || null; me = t ? user : null; usage = t ? u : null;
-  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; currentShareId=null; prevDeck=null; $("editPanel").hidden=true; if($("shareBtn")){ $("shareBtn").hidden=true; $("shareBox").hidden=true; } if($("qMode")) $("qMode").hidden=true; answers={}; quizMode="all"; }
+  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; currentShareId=null; prevDeck=null; $("editPanel").hidden=true; if($("shareBtn")){ $("shareBtn").hidden=true; $("shareBox").hidden=true; } if($("qMode")) $("qMode").hidden=true; answers={}; quizMode="all"; reviews={}; if($("studyBar")) $("studyBar").hidden=true; }
   renderAccount(); refreshBtn();
 }
 
@@ -117,11 +117,12 @@ async function loadDecks(){
 }
 function renderDecks(){
   const grid=$("deckGrid"); grid.innerHTML="";
-  $("decksCount").textContent = decks.length ? decks.length+(decks.length===1?" talia":(decks.length%10>=2&&decks.length%10<=4&&(decks.length%100<10||decks.length%100>=20)?" talie":" talii")) : "";
+  const dueAll = decks.reduce((a,d)=>a+(d.due||0),0);
+  $("decksCount").textContent = decks.length ? decks.length+" "+plural(decks.length,"talia","talie","talii") + (dueAll ? " · dziś do powtórki: "+dueAll+" "+plural(dueAll,"fiszka","fiszki","fiszek") : "") : "";
   $("decksEmpty").hidden = decks.length>0;
   decks.forEach(d=>{
     const el=document.createElement("div"); el.className="g-deck"+(d.id===currentDeckId?" cur":""); el.tabIndex=0; el.setAttribute("role","button");
-    el.innerHTML=`<div class="t">${esc(d.title)}</div><div class="m"><span class="src">${SRC_LABEL[d.source]||"Materiał"}</span><span>${d.fc} ${plural(d.fc,"fiszka","fiszki","fiszek")} · ${d.qz} ${plural(d.qz,"pytanie","pytania","pytań")}</span><span>${fmtDate(d.created_at)}</span>${d.mistakes ? `<span class="bad">${d.mistakes} ${plural(d.mistakes,"błąd","błędy","błędów")} do powtórki</span>` : ""}${d.share_id ? `<span class="shr">udostępniona · ${d.views||0} ${plural(d.views||0,"wyświetlenie","wyświetlenia","wyświetleń")}</span>` : ""}</div><div class="acts"><button type="button" data-a="ren">Zmień nazwę</button><button type="button" data-a="del">Usuń</button></div>`;
+    el.innerHTML=`<div class="t">${esc(d.title)}</div><div class="m"><span class="src">${SRC_LABEL[d.source]||"Materiał"}</span><span>${d.fc} ${plural(d.fc,"fiszka","fiszki","fiszek")} · ${d.qz} ${plural(d.qz,"pytanie","pytania","pytań")}</span><span>${fmtDate(d.created_at)}</span>${d.due ? `<span class="due">${d.due} ${plural(d.due,"fiszka","fiszki","fiszek")} do powtórki</span>` : ""}${d.mistakes ? `<span class="bad">${d.mistakes} ${plural(d.mistakes,"błąd","błędy","błędów")} do powtórki</span>` : ""}${d.share_id ? `<span class="shr">udostępniona · ${d.views||0} ${plural(d.views||0,"wyświetlenie","wyświetlenia","wyświetleń")}</span>` : ""}</div><div class="acts"><button type="button" data-a="ren">Zmień nazwę</button><button type="button" data-a="del">Usuń</button></div>`;
     el.addEventListener("click", e=>{ if(e.target.closest(".acts")||e.target.tagName==="INPUT") return; openDeck(d.id); });
     el.addEventListener("keydown", e=>{ if(e.key==="Enter" && e.target===el) openDeck(d.id); });
     el.querySelector('[data-a="ren"]').addEventListener("click", ()=>startRename(el, d));
@@ -157,6 +158,7 @@ async function openDeck(id, quiet){
   clearStatus(); currentDeckId=id; currentShareId=r.data.share_id||null; prevDeck=null; lastSourceText="";
   lastResult={ title:r.data.title, flashcards:r.data.flashcards, quiz:r.data.quiz };
   answers = r.data.answers || {}; quizMode = "all";
+  reviews = r.data.reviews || {}; clockSkew = (r.data.now || Date.now()) - Date.now();
   render(lastResult, !quiet, true); renderDecks();
 }
 
@@ -345,7 +347,7 @@ genBtn.addEventListener("click", async ()=>{
     currentDeckId = data.deck ? data.deck.id : null; currentShareId=null; prevDeck=null;
     if(data.deck){ decks.unshift(data.deck); renderDecks(); }
     lastResult={ title:data.title, flashcards:data.flashcards, quiz:data.quiz };
-    answers = {}; quizMode = "all";
+    answers = {}; quizMode = "all"; reviews = {};
     render(lastResult, true, !!data.deck);
     if(data.save_error) setStatus(data.save_error+" — pobierz plik, żeby go nie stracić.","err");
   }catch(err){
@@ -476,6 +478,8 @@ function render(data, scroll, saved){
   $("result").hidden=false; refreshBtn();
   $("editPanel").hidden = !canEdit();
   renderShare(false);
+  if(study){ study=null; $("study").hidden=true; $("fcGrid").hidden=false; $("fcHint").hidden=false; }
+  renderStudyBar();
   $("editUndo").hidden = !prevDeck;
   $("editNote").textContent = lastSourceText ? "AI widzi też Twój materiał źródłowy z tego generowania." : "AI pracuje na treści talii (plików źródłowych nie przechowujemy).";
   if(scroll) $("result").scrollIntoView({behavior:"smooth",block:"start"});
@@ -617,6 +621,97 @@ $("editUndo").addEventListener("click", async ()=>{
   render(lastResult, false, true); syncDeckInList(lastResult);
   toast("Przywrócono poprzednią wersję talii.");
 });
+
+/* ---------- powtórki fiszek (pudełka Leitnera; ten sam rytm co w workerze) ---------- */
+const REVIEW_DAYS = [0, 1, 3, 7, 14, 30, 60];
+const NEW_PER_SESSION = 20;
+let reviews = {}, clockSkew = 0, study = null;
+const nowSrv = () => Date.now() + clockSkew;
+
+function studyQueue(){
+  const cards = (lastResult && lastResult.flashcards) || [];
+  const due = [], fresh = [];
+  cards.forEach((c,i)=>{ const r=reviews[qkey(c.term)]; if(!r) fresh.push(i); else if(r.due<=nowSrv()) due.push([r.due,i]); });
+  due.sort((a,b)=>a[0]-b[0]);
+  return { due: due.map(x=>x[1]), fresh, queue: due.map(x=>x[1]).concat(fresh.slice(0, NEW_PER_SESSION)) };
+}
+function nextDueText(){
+  const ds=Object.values(reviews).map(r=>r.due).filter(d=>d>nowSrv());
+  if(!ds.length) return "";
+  const days=Math.round((Math.min(...ds)-nowSrv())/86400e3);
+  return days<=0 ? "jeszcze dziś" : days===1 ? "jutro" : "za "+days+" "+plural(days,"dzień","dni","dni");
+}
+function renderStudyBar(){
+  const bar=$("studyBar"); if(!bar) return;
+  const show = canEdit() && ((lastResult && lastResult.flashcards) || []).length>0 && $("study").hidden;
+  bar.hidden = !show; if(!show) return;
+  const q=studyQueue(), n=q.queue.length;
+  const parts=[];
+  if(q.due.length) parts.push(q.due.length+" do powtórki");
+  if(q.fresh.length) parts.push(q.fresh.length+" "+plural(q.fresh.length,"nowa","nowe","nowych"));
+  $("sbInfo").textContent = n ? parts.join(" · ") : "Na dziś wszystko powtórzone" + (nextDueText() ? " — następna powtórka "+nextDueText() : "");
+  $("studyGo").disabled = !n;
+  $("studyGo").textContent = n ? "Ucz się ("+n+")" : "Gotowe ✓";
+}
+function syncDueInList(){
+  const d=decks.find(z=>z.id===currentDeckId); if(!d) return;
+  const vals=Object.values(reviews);
+  d.due=vals.filter(r=>r.due<=nowSrv()).length; d.seen=vals.length; renderDecks();
+}
+function startStudy(){
+  const q=studyQueue(); if(!q.queue.length) return;
+  study={ queue:q.queue.slice(), pos:0, total:q.queue.length, yes:0, no:0, again:{} };
+  $("studyBar").hidden=true; $("fcGrid").hidden=true; $("fcHint").hidden=true;
+  $("study").hidden=false; $("stDone").hidden=true; $("stCard").hidden=false; $("stActs").hidden=false;
+  showStudyCard();
+  $("study").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function showStudyCard(){
+  if(study.pos>=study.queue.length) return finishStudy();
+  const i=study.queue[study.pos], c=lastResult.flashcards[i], r=reviews[qkey(c.term)];
+  $("stKind").textContent = !r ? "nowa fiszka" : (study.again[i] ? "jeszcze raz" : "powtórka");
+  $("stKind").className = "g-study-k " + (!r ? "new" : "due");
+  $("stTerm").textContent=c.term; $("stDef").textContent=c.def; $("stDef").hidden=true;
+  $("stShow").hidden=false; $("stNo").hidden=true; $("stYes").hidden=true;
+  $("stProg").textContent=(study.pos+1)+" / "+study.queue.length;
+  $("stBar").style.width=(study.pos/study.queue.length*100)+"%";
+  $("stShow").focus({preventScroll:true});
+}
+function revealStudy(){ $("stDef").hidden=false; $("stShow").hidden=true; $("stNo").hidden=false; $("stYes").hidden=false; $("stYes").focus({preventScroll:true}); }
+function gradeStudy(ok){
+  const i=study.queue[study.pos], c=lastResult.flashcards[i], key=qkey(c.term);
+  const prev=reviews[key]; const box= ok ? Math.min((prev?prev.box:0)+1, REVIEW_DAYS.length-1) : 0;
+  reviews[key]={ box, due: box===0 ? nowSrv() : nowSrv()+REVIEW_DAYS[box]*86400e3-6*3600e3 };  // od razu; serwer i tak potwierdzi
+  api("/decks/"+currentDeckId+"/review", { method:"POST", body:{ ckey:key, ok } }).then(r=>{ if(r.ok) reviews[key]={ box:r.data.box, due:r.data.due }; });
+  if(ok) study.yes++; else { study.no++; if((study.again[i]||0)<2){ study.again[i]=(study.again[i]||0)+1; study.queue.push(i); } }
+  study.pos++; showStudyCard();
+}
+function finishStudy(){
+  $("stBar").style.width="100%"; $("stCard").hidden=true; $("stActs").hidden=true; $("stDone").hidden=false;
+  $("stProg").textContent=study.queue.length+" / "+study.queue.length;
+  const nd=nextDueText();
+  $("stSum").textContent = "Umiesz: "+study.yes+" · do poprawki: "+study.no+". " + (nd ? "Kolejna powtórka "+nd+" — licznik przy talii przypomni." : "");
+  syncDueInList();
+}
+function exitStudy(){
+  study=null; $("study").hidden=true; $("fcGrid").hidden=false; $("fcHint").hidden=false;
+  renderStudyBar(); syncDueInList();
+}
+if($("studyGo")){
+  $("studyGo").addEventListener("click", startStudy);
+  $("stShow").addEventListener("click", revealStudy);
+  $("stNo").addEventListener("click", ()=>gradeStudy(false));
+  $("stYes").addEventListener("click", ()=>gradeStudy(true));
+  $("stExit").addEventListener("click", exitStudy);
+  $("stBack").addEventListener("click", exitStudy);
+  $("stQuiz").addEventListener("click", ()=>{ exitStudy(); showPane("qz"); $("result").scrollIntoView({behavior:"smooth",block:"start"}); });
+  document.addEventListener("keydown", e=>{
+    if(!study || $("study").hidden || !$("stDone").hidden || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+    if(!$("stShow").hidden && (e.key===" "||e.key==="Enter")){ e.preventDefault(); revealStudy(); }
+    else if($("stShow").hidden && (e.key==="1"||e.key==="ArrowLeft")){ e.preventDefault(); gradeStudy(false); }
+    else if($("stShow").hidden && (e.key==="2"||e.key==="ArrowRight")){ e.preventDefault(); gradeStudy(true); }
+  });
+}
 
 function showPane(p){
   document.querySelectorAll(".g-tab").forEach(x=>x.classList.toggle("on", x.dataset.pane===p));
