@@ -43,7 +43,7 @@ async function api(path, opts={}){
 
 function setSession(t, user, u){
   token = t || null; me = t ? user : null; usage = t ? u : null;
-  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; currentShareId=null; prevDeck=null; $("editPanel").hidden=true; $("shareBtn").hidden=true; $("shareBox").hidden=true; }
+  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; currentShareId=null; prevDeck=null; $("editPanel").hidden=true; if($("shareBtn")){ $("shareBtn").hidden=true; $("shareBox").hidden=true; } }
   renderAccount(); refreshBtn();
 }
 
@@ -471,6 +471,7 @@ async function itemAction(kind, index, action, btn){
 function shareUrl(){ return location.origin + "/talia.html?s=" + currentShareId; }
 function renderShare(open){
   const btn=$("shareBtn"), box=$("shareBox");
+  if(!btn || !box) return; // stara wersja strony z pamięci przeglądarki
   btn.hidden = !canEdit();
   btn.classList.toggle("on", !!currentShareId);
   $("shareBtnTx").textContent = currentShareId ? "Udostępniona" : "Udostępnij";
@@ -481,7 +482,7 @@ function renderShare(open){
   $("shareViews").textContent = v ? v+" "+plural(v,"wyświetlenie","wyświetlenia","wyświetleń") : "Nikt jeszcze nie otworzył linku";
   $("shareNative").hidden = !navigator.share;
 }
-$("shareBtn").addEventListener("click", async ()=>{
+$("shareBtn") && $("shareBtn").addEventListener("click", async ()=>{
   if(!canEdit()) return;
   if(currentShareId){ $("shareBox").hidden = !$("shareBox").hidden; if(!$("shareBox").hidden) renderShare(true); return; }
   const btn=$("shareBtn"); btn.disabled=true;
@@ -493,17 +494,17 @@ $("shareBtn").addEventListener("click", async ()=>{
   renderShare(true);
   $("shareUrl").select();
 });
-$("shareCopy").addEventListener("click", async ()=>{
+$("shareCopy") && $("shareCopy").addEventListener("click", async ()=>{
   const u=$("shareUrl");
   try{ await navigator.clipboard.writeText(u.value); }
   catch{ u.select(); try{ document.execCommand("copy"); }catch{} }
   toast("Link skopiowany — wyślij go znajomym ✓");
 });
-$("shareNative").addEventListener("click", async ()=>{
+$("shareNative") && $("shareNative").addEventListener("click", async ()=>{
   try{ await navigator.share({ title: lastResult && lastResult.title || "Talia z Unicorner", text: "Fiszki i quiz na Unicorner", url: shareUrl() }); }catch{}
 });
 const shareOff=$("shareOff");
-shareOff.addEventListener("click", async ()=>{
+shareOff && shareOff.addEventListener("click", async ()=>{
   if(!shareOff.classList.contains("sure")){ shareOff.classList.add("sure"); shareOff.textContent="Na pewno? Obecny link przestanie działać"; setTimeout(()=>{ shareOff.classList.remove("sure"); shareOff.textContent="Wyłącz udostępnianie"; },4000); return; }
   const r=await api("/decks/"+currentDeckId+"/share", { method:"DELETE" });
   if(!r.ok){ toast(r.data.error || "Nie udało się wyłączyć.", true); return; }
