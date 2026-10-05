@@ -150,7 +150,17 @@ const v = Date.now().toString(36);
         <p class="g-hint">Kliknij fiszkę, żeby ją odwrócić.</p>
         <div class="g-fc-grid" id="fcGrid"></div>
       </div>
-      <div class="g-pane" id="pane-qz"><div id="qzList"></div></div>
+      <div class="g-pane" id="pane-qz">
+        <div class="g-qmode" id="qMode" hidden>
+          <div class="g-qmode-sw" role="tablist" aria-label="Które pytania">
+            <button class="on" data-m="all" type="button">Wszystkie <span id="qmAll">0</span></button>
+            <button data-m="bad" type="button">Moje błędy <span id="qmBad">0</span></button>
+          </div>
+          <button class="g-btn ghost g-weak" id="weakGo" type="button" hidden><span>Dorób pytania z moich błędów</span><span class="g-cost">2 kr.</span></button>
+        </div>
+        <p class="g-hint" id="qmEmpty" hidden>W tej talii nie masz teraz żadnych błędów. Rozwiąż quiz — pytania, w których się pomylisz, trafią tutaj, także na innym urządzeniu.</p>
+        <div id="qzList"></div>
+      </div>
 
       <div class="g-editp" id="editPanel" hidden>
         <div class="g-label"><span>AI</span> Popraw tę talię</div>
