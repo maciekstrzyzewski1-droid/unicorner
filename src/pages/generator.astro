@@ -75,13 +75,25 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
       </div>
 
       <div class="g-sec g-go">
-        <div class="g-code">
-          <label for="code">Kod dostępu <span>beta · kod z grupy</span></label>
-          <input type="password" id="code" placeholder="wpisz kod" autocomplete="off" />
+        <div class="g-acct">
+          <div class="g-label"><span>03</span> Konto</div>
+          <div id="acctOut">
+            <p class="g-acct-p"><b>Zaloguj się, żeby generować.</b> W becie masz <span id="freeN">10</span> darmowych generowań w miesiącu, a każda talia zapisuje się na Twoim koncie.</p>
+            <div id="gsiBtn" class="g-gsi"></div>
+          </div>
+          <div id="acctIn" class="g-who" hidden>
+            <img id="meAvatar" alt="" referrerpolicy="no-referrer" />
+            <div class="g-who-t">
+              <b id="meName"></b>
+              <span id="meUsage"></span>
+              <span class="g-meter g-umeter"><i id="meBar"></i></span>
+            </div>
+            <button class="g-mini" id="logout" type="button">Wyloguj</button>
+          </div>
         </div>
         <div class="g-actions">
           <button class="g-btn" id="gen" disabled>
-            <span>Generuj fiszki i quiz</span>
+            <span id="genLabel">Generuj fiszki i quiz</span>
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <button class="g-btn ghost" id="reset" hidden>Wyczyść</button>
@@ -101,6 +113,10 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
 
     <!-- ===== wynik ===== -->
     <section class="g-result" id="result" hidden>
+      <div class="g-rtitle">
+        <h2 id="deckTitle">Twój materiał</h2>
+        <span id="deckMeta"></span>
+      </div>
       <div class="g-rhead">
         <div class="g-tabs" role="tablist">
           <button class="g-tab on" data-pane="fc" role="tab">Fiszki <span id="fcCount">0</span></button>
@@ -126,22 +142,32 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
       </div>
     </section>
 
+    <!-- ===== moje talie ===== -->
+    <section class="g-decks" id="decksSec" hidden>
+      <div class="wz-glabel"><h2>Moje talie</h2><span class="d" id="decksCount"></span><span class="line"></span></div>
+      <div class="g-deck-grid" id="deckGrid"></div>
+      <p class="g-empty" id="decksEmpty" hidden>Tu pojawią się Twoje talie. Każde generowanie zapisuje się automatycznie.</p>
+      <div class="g-danger">
+        <button class="g-link" id="delAccount" type="button">Usuń konto i wszystkie talie</button>
+      </div>
+    </section>
+
     <details class="g-tips">
-      <summary>Gdzie zapisuje się wynik i jak go nie stracić</summary>
+      <summary>Gdzie zapisują się talie</summary>
       <div>
-        <p><b>Ostatni wynik zostaje w tej przeglądarce.</b> Po odświeżeniu albo powrocie na tym samym urządzeniu będzie na miejscu. To jednak nie jest trwały schowek:</p>
+        <p><b>Po zalogowaniu każda talia zapisuje się na Twoim koncie</b> i znajdziesz ją w „Moje talie” na każdym urządzeniu, na którym się zalogujesz.</p>
+        <p>Dodatkowo ostatni wynik zostaje w tej przeglądarce. To nie jest trwały schowek:</p>
         <ul>
           <li><b>Tryb prywatny</b> — wynik znika po zamknięciu karty.</li>
           <li><b>Telefon</b> — system (zwłaszcza iPhone) potrafi wyczyścić dane strony po kilku dniach.</li>
           <li><b>Inna przeglądarka, inne urządzenie albo czyszczenie danych</b> — pusto.</li>
         </ul>
-        <p><b>Chcesz mieć na stałe? Kliknij „Pobierz jako plik”.</b> Dostajesz jeden plik HTML z fiszkami i quizem, który działa offline. Zapisywanie talii na koncie jest w drodze.</p>
+        <p><b>Chcesz mieć na stałe? Kliknij „Pobierz jako plik”.</b> Dostajesz jeden plik HTML z fiszkami i quizem, który działa offline, bez internetu.</p>
       </div>
     </details>
 
     <p class="g-disc">
-      <b>Beta.</b> Materiały generuje AI i <b>mogą zawierać błędy</b> — sprawdzaj z oryginałem. Pliki trafiają do modelu AI wyłącznie po to, żeby wygenerować materiał; nie udostępniamy ich publicznie. Nie wgrywaj materiałów, do których nie masz praw.
-      Szczegóły: <a href="/regulamin.html">Regulamin</a> · <a href="/prywatnosc.html">Polityka prywatności</a>.
+      <b>Beta.</b> Materiały generuje AI i <b>mogą zawierać błędy</b> — sprawdzaj z oryginałem. Pliki trafiają do modelu AI wyłącznie po to, żeby wygenerować materiał; nie zapisujemy ich — na koncie zostaje tylko gotowa talia (fiszki i quiz). Nie wgrywaj materiałów, do których nie masz praw. Logując się, akceptujesz <a href="/regulamin.html">Regulamin</a> i <a href="/prywatnosc.html">Politykę prywatności</a>.
     </p>
   </main>
 
@@ -200,10 +226,42 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
     .g-chips button:hover{color:var(--text);border-color:var(--line2);}
     .g-chips button.on{color:var(--text);border-color:var(--accent);background:rgba(167,139,250,.12);}
     .g-go{display:flex;gap:18px;align-items:flex-end;flex-wrap:wrap;}
-    .g-code{flex:1 1 220px;max-width:300px;}
-    .g-code label{display:block;font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
-    .g-code label span{color:var(--muted2);text-transform:none;letter-spacing:0;font-weight:500;margin-left:6px;}
-    .g-code input{font-family:var(--mono);}
+    .g-acct{flex:1 1 320px;max-width:520px;}
+    .g-acct .g-label{margin-bottom:10px;}
+    .g-acct-p{font-size:.9rem;color:var(--muted);margin:0 0 12px;}
+    .g-acct-p b{color:var(--text);}
+    .g-gsi{min-height:44px;}
+    .g-gsi .soon{font-family:var(--mono);font-size:.8rem;color:var(--gold);}
+    .g-who{display:flex;align-items:center;gap:12px;padding:10px 12px;background:rgba(7,6,15,.6);border:1px solid var(--line2);border-radius:8px;}
+    .g-who[hidden]{display:none;}
+    .g-who img{width:40px;height:40px;border-radius:50%;border:1px solid var(--line2);object-fit:cover;background:var(--surface2);flex-shrink:0;}
+    .g-who-t{display:grid;gap:4px;min-width:0;flex:1;}
+    .g-who-t b{font-size:.94rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .g-who-t span:not(.g-meter){font-family:var(--mono);font-size:.74rem;color:var(--muted);}
+    .g-umeter{width:100%;max-width:200px;height:4px;}
+    .g-umeter i.full{background:linear-gradient(90deg,var(--gold),var(--magenta));}
+    .g-rtitle{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:4px;}
+    .g-rtitle h2{font-family:var(--disp);font-size:clamp(1.3rem,3vw,1.8rem);font-weight:700;margin:0;}
+    #deckMeta{font-family:var(--mono);font-size:.76rem;color:var(--ok);letter-spacing:.5px;}
+    .g-decks{margin-top:46px;}
+    .g-deck-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;}
+    .g-deck{position:relative;display:flex;flex-direction:column;gap:8px;padding:16px 16px 12px;background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line);
+      clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);cursor:pointer;transition:border-color .2s,transform .2s var(--ease-out);}
+    .g-deck:hover{border-color:var(--accent);transform:translateY(-2px);}
+    .g-deck.cur{border-color:var(--cyan);}
+    .g-deck .t{font-family:var(--disp);font-weight:600;font-size:1rem;line-height:1.25;word-break:break-word;}
+    .g-deck .m{font-family:var(--mono);font-size:.72rem;color:var(--muted2);display:flex;gap:8px;flex-wrap:wrap;}
+    .g-deck .m .src{color:var(--cyan);}
+    .g-deck .acts{display:flex;gap:6px;margin-top:auto;padding-top:4px;}
+    .g-deck .acts button{font-family:var(--mono);font-size:.7rem;font-weight:600;color:var(--muted);background:none;border:1px solid var(--line);border-radius:999px;padding:4px 10px;cursor:pointer;}
+    .g-deck .acts button:hover{color:var(--text);border-color:var(--line2);}
+    .g-deck .acts button.sure{color:#f87a8e;border-color:rgba(248,122,142,.55);}
+    .g-deck input{width:100%;font:inherit;font-family:var(--disp);font-weight:600;color:var(--text);background:rgba(7,6,15,.8);border:1px solid var(--accent);border-radius:4px;padding:4px 8px;}
+    .g-empty{font-size:.9rem;color:var(--muted2);}
+    .g-danger{margin-top:18px;}
+    .g-link{font-family:var(--mono);font-size:.74rem;color:var(--muted2);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px;}
+    .g-link:hover{color:#f87a8e;}
+    .g-link.sure{color:#f87a8e;font-weight:700;}
     .g-actions{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto;}
     .g-btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--mono);font-weight:700;font-size:.92rem;letter-spacing:.6px;color:#0b0713;background:var(--iris);background-size:160% 100%;
       border:0;border-radius:6px;padding:14px 22px;cursor:pointer;transition:transform .2s var(--ease-out),box-shadow .25s,background-position .4s,opacity .2s;box-shadow:0 8px 26px rgba(167,139,250,.25);}
@@ -279,7 +337,7 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
     @media(max-width:560px){
       .g-console{padding:4px 16px 20px;clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
       .g-seg{display:flex;} .g-seg button{flex:1;padding:8px 10px;font-size:.76rem;}
-      .g-code{max-width:none;} .g-actions{margin-left:0;width:100%;} .g-actions .g-btn:not(.ghost){flex:1;justify-content:center;}
+      .g-acct{max-width:none;} .g-actions{margin-left:0;width:100%;} .g-actions .g-btn:not(.ghost){flex:1;justify-content:center;}
       .g-score .lbl{display:none;} .g-meter{width:70px;}
       .g-steps{display:none;} .hide-xs{display:none;} .show-xs{display:inline;}
     }
@@ -287,5 +345,6 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
   </style>
 
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
   <script is:inline src="/assets/generator.js"></script>
 </Base>

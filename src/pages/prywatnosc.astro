@@ -2,7 +2,9 @@
 import Base from '../layouts/Base.astro';
 const title = "Polityka prywatności · Unicorner";
 const description = "Jak Unicorner przetwarza dane: opinie, generator AI i postęp nauki w Twojej przeglądarce. Bez ciasteczek śledzących.";
-const updated = "3 września 2026";
+const updated = "4 października 2026";
+// Administrator danych — przy kontach użytkowników musi to być konkretna osoba (imię i nazwisko).
+const admin = "Zespół Unicorner";
 const mail = "unicornernotatki@gmail.com";
 ---
 
@@ -93,7 +95,7 @@ const mail = "unicornernotatki@gmail.com";
 
   <section class="lsec">
     <h2><span class="n">01</span> Kto prowadzi serwis</h2>
-    <p>Serwis <b>Unicorner</b> (unicorner.pl) prowadzi <b>Zespół Unicorner</b> — nieformalna grupa studentów. W sprawach danych osobowych pełnimy rolę administratora danych.</p>
+    <p>Serwis <b>Unicorner</b> (unicorner.pl) prowadzi <b>{admin}</b>, który jest administratorem Twoich danych osobowych.</p>
     <p>Kontakt we wszystkich sprawach (w tym prywatności): <a href={`mailto:${mail}`}>{mail}</a>.</p>
   </section>
 
@@ -103,8 +105,11 @@ const mail = "unicornernotatki@gmail.com";
     <h3>Opinie</h3>
     <p>Jeśli zdecydujesz się wystawić opinię, przetwarzamy <b>treść i podpis, które sam wpiszesz</b>. Nie wymagamy imienia, nazwiska ani adresu e-mail — jeśli je podasz, robisz to dobrowolnie. Cel: wyświetlanie opinii na stronie. Podstawa: Twoja dobrowolna zgoda (art. 6 ust. 1 lit. a RODO). Opinie przechowujemy na serwerze (Cloudflare Workers).</p>
 
+    <h3>Konto (logowanie przez Google)</h3>
+    <p>Do korzystania z generatora logujesz się kontem Google. Dostajemy od Google <b>Twoje imię i nazwisko, adres e-mail, zdjęcie profilowe i identyfikator konta</b> — nic więcej (nie mamy dostępu do Twojej poczty, plików ani hasła). Na koncie przechowujemy też <b>Twoje talie</b> (wygenerowane fiszki i quizy, ich tytuły i wpisaną instrukcję) oraz <b>licznik generowań w danym miesiącu</b>. Cel: prowadzenie konta, zapisywanie talii i pilnowanie limitów. Podstawa: wykonanie usługi, z której korzystasz (art. 6 ust. 1 lit. b RODO). Dane trzymamy w bazie Cloudflare (D1).</p>
+    <p>Po zalogowaniu Twoja przeglądarka przechowuje <b>token sesji</b> (localStorage), dzięki któremu nie musisz logować się przy każdej wizycie. U siebie trzymamy wyłącznie jego zaszyfrowany skrót.</p>
     <h3>Generator AI</h3>
-    <p>Pliki, które wgrywasz do generatora, są <b>wysyłane do przetworzenia przez model AI wyłącznie po to, aby wygenerować fiszki i quiz</b>. Nie udostępniamy ich publicznie i nie wykorzystujemy do innych celów. Kod dostępu oraz ostatni wynik zapisują się <b>lokalnie w Twojej przeglądarce</b> (localStorage) — nie trzymamy ich u siebie.</p>
+    <p>Pliki i tekst, które wgrywasz do generatora, są <b>wysyłane do przetworzenia przez model AI wyłącznie po to, aby wygenerować fiszki i quiz</b>. <b>Samych plików nie zapisujemy</b> — na koncie zostaje tylko gotowa talia. Nie udostępniamy niczego publicznie i nie wykorzystujemy do innych celów. Ostatni wynik zapisuje się dodatkowo lokalnie w Twojej przeglądarce (localStorage).</p>
 
     <h3>Postęp w nauce</h3>
     <p>To, co odznaczysz jako „Umiem”, oraz wyniki quizów trzymane są <b>wyłącznie w Twojej przeglądarce</b> (localStorage). Nic z tego nie trafia na żaden serwer. Wyczyścisz dane przeglądarki lub otworzysz stronę w trybie prywatnym — zaczniesz od zera.</p>
@@ -118,7 +123,7 @@ const mail = "unicornernotatki@gmail.com";
 
   <section class="lsec">
     <h2><span class="n">03</span> Ciasteczka (cookies)</h2>
-    <p><b>Nie używamy ciasteczek śledzących ani reklamowych</b> — dlatego nie zobaczysz u nas natrętnego bannera zgody. Zapisujemy jedynie dane techniczne w pamięci Twojej przeglądarki (localStorage: postęp nauki, kod generatora). To nie są ciasteczka, nie są wysyłane na serwer i możesz je w każdej chwili usunąć w ustawieniach przeglądarki.</p>
+    <p><b>Nie używamy ciasteczek śledzących ani reklamowych</b> — dlatego nie zobaczysz u nas natrętnego bannera zgody. Zapisujemy jedynie dane techniczne w pamięci Twojej przeglądarki (localStorage: postęp nauki, ostatni wynik generatora, token sesji po zalogowaniu). To nie są ciasteczka, nie są wysyłane na serwer i możesz je w każdej chwili usunąć w ustawieniach przeglądarki.</p>
   </section>
 
   <section class="lsec">
@@ -126,7 +131,8 @@ const mail = "unicornernotatki@gmail.com";
     <p>Korzystamy z zaufanych dostawców, którzy przetwarzają dane w naszym imieniu:</p>
     <ul>
       <li><b>GitHub (GitHub Pages)</b> — hosting strony.</li>
-      <li><b>Cloudflare</b> — sieć CDN oraz serwer (Workers) obsługujący opinie i generator.</li>
+      <li><b>Cloudflare</b> — sieć CDN, serwer (Workers) obsługujący opinie i generator oraz baza danych kont i talii (D1).</li>
+      <li><b>Google</b> — logowanie („Zaloguj przez Google”).</li>
       <li><b>Dostawca modelu AI</b> — przetwarzanie plików wgranych do generatora w celu wygenerowania materiałów.</li>
     </ul>
     <p>Część z tych dostawców może przetwarzać dane poza Europejskim Obszarem Gospodarczym (np. w USA) — w oparciu o standardowe klauzule umowne i zabezpieczenia wymagane przez RODO.</p>
@@ -137,7 +143,8 @@ const mail = "unicornernotatki@gmail.com";
     <ul>
       <li><b>Opinie</b> — do czasu ich usunięcia (na Twoją prośbę lub gdy uznamy je za nieaktualne).</li>
       <li><b>Dane w przeglądarce</b> (localStorage) — do czasu, aż sam je wyczyścisz.</li>
-      <li><b>Pliki w generatorze</b> — przetwarzane jednorazowo w celu wygenerowania materiałów; nie budujemy z nich trwałej bazy.</li>
+      <li><b>Pliki w generatorze</b> — przetwarzane jednorazowo w celu wygenerowania materiałów; nie zapisujemy ich.</li>
+      <li><b>Konto i talie</b> — do czasu, aż usuniesz konto. Zrobisz to sam jednym przyciskiem („Usuń konto i wszystkie talie” w generatorze) — kasujemy wtedy od razu konto, wszystkie talie, liczniki i sesje. Pojedyncze talie usuwasz w każdej chwili.</li>
       <li><b>Logi techniczne</b> — zgodnie z politykami dostawców (GitHub, Cloudflare).</li>
     </ul>
   </section>

@@ -2,7 +2,8 @@
    Materiał: PDF (tekst wyciągany w przeglądarce), zdjęcia notatek (kompresja w przeglądarce) albo wklejony tekst.
    Wysyłka do Cloudflare Workera, który woła model AI i zwraca {flashcards, quiz}. */
 (function(){
-const WORKER_URL = "https://red-queen-3002.unicorner.workers.dev";
+const API = window.UC_API || "https://red-queen-3002.unicorner.workers.dev";
+const GOOGLE_CLIENT_ID = window.UC_GCID || "243769752280-r6h2cj3pn9n47p020seuk58n9ijj9si7.apps.googleusercontent.com";
 const MAX_CHARS = 14000;   // limit długości tekstu wysyłanego do AI (kontrola kosztu)
 const MIN_CHARS = 300;
 const MAX_PHOTOS = 4;
@@ -14,7 +15,7 @@ if (window.pdfjsLib) {
 }
 
 const $ = id => document.getElementById(id);
-const drop=$("drop"), fileInput=$("file"), codeInput=$("code"), pasted=$("pasted"), instr=$("instr");
+const drop=$("drop"), fileInput=$("file"), pasted=$("pasted"), instr=$("instr");
 const genBtn=$("gen"), resetBtn=$("reset"), statusEl=$("status");
 let mode="pdf", pickedPdf=null, pickedImages=[], lastResult=null;
 
@@ -23,7 +24,133 @@ const ls = {
   set(k,v){ try{ localStorage.setItem(k,v); }catch{} },
   del(k){ try{ localStorage.removeItem(k); }catch{} },
 };
-codeInput.value = ls.get("uc_gen_code") || "";
+
+/* ---------- konto ---------- */
+let token = ls.get("uc_token"), me = null, usage = null, decks = [], currentDeckId = null;
+
+async function api(path, opts={}){
+  const headers = {};
+  if(opts.body) headers["Content-Type"]="application/json";
+  if(token) headers["Authorization"]="Bearer "+token;
+  let r;
+  try{ r = await fetch(API+path, { method: opts.method||"GET", headers, body: opts.body ? JSON.stringify(opts.body) : undefined }); }
+  catch(e){ return { ok:false, status:0, data:{ error:"Brak połączenia z serwerem." } }; }
+  let data=null; try{ data=await r.json(); }catch{}
+  if(r.status===401 && token && path!=="/auth/google"){ setSession(null); }
+  return { ok:r.ok, status:r.status, data:data||{} };
+}
+
+function setSession(t, user, u){
+  token = t || null; me = t ? user : null; usage = t ? u : null;
+  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; }
+  renderAccount(); refreshBtn();
+}
+
+function renderAccount(){
+  $("acctOut").hidden = !!me;
+  $("acctIn").hidden = !me;
+  $("decksSec").hidden = !me;
+  if(!me) return;
+  $("meName").textContent = me.name || me.email || "Twoje konto";
+  const av=$("meAvatar"); if(me.picture){ av.src=me.picture; av.hidden=false; } else av.hidden=true;
+  renderUsage();
+}
+function renderUsage(){
+  if(!usage) return;
+  const bar=$("meBar");
+  if(usage.limit==null){ $("meUsage").textContent = "Bez limitu · w tym miesiącu: "+usage.used; bar.style.width="0"; return; }
+  const left=Math.max(0, usage.limit-usage.used);
+  $("meUsage").textContent = "Zostało "+left+" z "+usage.limit+" generowań w tym miesiącu";
+  bar.style.width = Math.min(100, usage.used/usage.limit*100)+"%";
+  bar.classList.toggle("full", left===0);
+}
+
+async function onGoogleCredential(resp){
+  setStatus("Loguję…","info");
+  const r = await api("/auth/google", { method:"POST", body:{ credential: resp.credential } });
+  if(!r.ok){ setStatus(r.data.error ? r.data.error+(r.data.detail?" ("+r.data.detail+")":"") : "Logowanie nieudane.","err"); return; }
+  setSession(r.data.token, r.data.user, r.data.usage);
+  clearStatus();
+  loadDecks();
+}
+
+function initGoogle(tries){
+  const box=$("gsiBtn");
+  if(GOOGLE_CLIENT_ID.startsWith("WSTAW")){ box.innerHTML='<span class="soon">Logowanie uruchamiamy lada dzień.</span>'; return; }
+  if(!(window.google && google.accounts && google.accounts.id)){
+    if((tries||0) < 50) return setTimeout(()=>initGoogle((tries||0)+1), 200);
+    box.innerHTML='<span class="soon">Nie udało się wczytać logowania Google — wyłącz blokowanie skryptów albo odśwież stronę.</span>'; return;
+  }
+  google.accounts.id.initialize({ client_id: GOOGLE_CLIENT_ID, callback: onGoogleCredential, auto_select:false, cancel_on_tap_outside:true, use_fedcm_for_button:true });
+  google.accounts.id.renderButton(box, { theme:"filled_black", size:"large", shape:"pill", text:"signin_with", locale:"pl", width: Math.min(300, box.clientWidth||300) });
+}
+
+$("logout").addEventListener("click", async ()=>{
+  await api("/auth/logout", { method:"POST" });
+  setSession(null);
+  if(window.google && google.accounts && google.accounts.id) google.accounts.id.disableAutoSelect();
+});
+
+/* ---------- moje talie ---------- */
+const SRC_LABEL = { pdf:"PDF", img:"Zdjęcia", txt:"Tekst" };
+function fmtDate(ts){ const d=new Date(ts); return d.toLocaleDateString("pl-PL",{day:"numeric",month:"short"})+", "+d.toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"}); }
+
+async function loadDecks(){
+  if(!me) return;
+  const r = await api("/decks");
+  if(r.ok){ decks = r.data.decks || []; renderDecks(); }
+}
+function renderDecks(){
+  const grid=$("deckGrid"); grid.innerHTML="";
+  $("decksCount").textContent = decks.length ? decks.length+(decks.length===1?" talia":(decks.length%10>=2&&decks.length%10<=4&&(decks.length%100<10||decks.length%100>=20)?" talie":" talii")) : "";
+  $("decksEmpty").hidden = decks.length>0;
+  decks.forEach(d=>{
+    const el=document.createElement("div"); el.className="g-deck"+(d.id===currentDeckId?" cur":""); el.tabIndex=0; el.setAttribute("role","button");
+    el.innerHTML=`<div class="t">${esc(d.title)}</div><div class="m"><span class="src">${SRC_LABEL[d.source]||"Materiał"}</span><span>${d.fc} fiszek · ${d.qz} pytań</span><span>${fmtDate(d.created_at)}</span></div><div class="acts"><button type="button" data-a="ren">Zmień nazwę</button><button type="button" data-a="del">Usuń</button></div>`;
+    el.addEventListener("click", e=>{ if(e.target.closest(".acts")||e.target.tagName==="INPUT") return; openDeck(d.id); });
+    el.addEventListener("keydown", e=>{ if(e.key==="Enter" && e.target===el) openDeck(d.id); });
+    el.querySelector('[data-a="ren"]').addEventListener("click", ()=>startRename(el, d));
+    const del=el.querySelector('[data-a="del"]');
+    del.addEventListener("click", async ()=>{
+      if(!del.classList.contains("sure")){ del.classList.add("sure"); del.textContent="Na pewno?"; setTimeout(()=>{ del.classList.remove("sure"); del.textContent="Usuń"; },3000); return; }
+      const r=await api("/decks/"+d.id,{method:"DELETE"});
+      if(r.ok){ decks=decks.filter(x=>x.id!==d.id); if(currentDeckId===d.id){ currentDeckId=null; $("deckMeta").textContent=""; } renderDecks(); }
+    });
+    grid.appendChild(el);
+  });
+}
+function startRename(el, d){
+  const t=el.querySelector(".t"); const inp=document.createElement("input"); inp.value=d.title; inp.maxLength=80;
+  t.replaceWith(inp); inp.focus(); inp.select();
+  let done=false;
+  const finish=async(save)=>{
+    if(done) return; done=true;
+    const v=inp.value.trim();
+    if(save && v && v!==d.title){
+      const r=await api("/decks/"+d.id,{method:"PATCH",body:{title:v}});
+      if(r.ok){ d.title=r.data.title; if(currentDeckId===d.id) $("deckTitle").textContent=d.title; }
+    }
+    renderDecks();
+  };
+  inp.addEventListener("keydown", e=>{ if(e.key==="Enter") finish(true); if(e.key==="Escape") finish(false); });
+  inp.addEventListener("blur", ()=>finish(true));
+}
+async function openDeck(id){
+  setStatus("Wczytuję talię…","info");
+  const r=await api("/decks/"+id);
+  if(!r.ok){ setStatus(r.data.error||"Nie udało się wczytać talii.","err"); return; }
+  clearStatus(); currentDeckId=id;
+  lastResult={ title:r.data.title, flashcards:r.data.flashcards, quiz:r.data.quiz };
+  render(lastResult, true, true); renderDecks();
+}
+
+const delAcc=$("delAccount");
+delAcc.addEventListener("click", async ()=>{
+  if(!delAcc.classList.contains("sure")){ delAcc.classList.add("sure"); delAcc.textContent="Kliknij jeszcze raz — usuniemy konto i wszystkie talie na zawsze"; setTimeout(()=>{ delAcc.classList.remove("sure"); delAcc.textContent="Usuń konto i wszystkie talie"; },5000); return; }
+  const r=await api("/me",{method:"DELETE"});
+  if(r.ok){ setSession(null); setStatus("Konto i wszystkie talie zostały usunięte.","info"); }
+  else setStatus(r.data.error||"Nie udało się usunąć konta.","err");
+});
 
 /* ---------- status i postęp ---------- */
 function setStatus(msg, kind){ statusEl.className="g-status "+(kind||""); statusEl.textContent=msg; }
@@ -66,10 +193,11 @@ function hasMaterial(){
   return pasted.value.trim().length>=MIN_CHARS;
 }
 function refreshBtn(){
-  genBtn.disabled = !(hasMaterial() && codeInput.value.trim().length>0);
+  const noLeft = usage && usage.limit!=null && usage.used>=usage.limit;
+  $("genLabel").textContent = !me ? "Najpierw się zaloguj" : noLeft ? "Limit na ten miesiąc wykorzystany" : "Generuj fiszki i quiz";
+  genBtn.disabled = !(me && !noLeft && hasMaterial());
   resetBtn.hidden = !(pickedPdf || pickedImages.length || pasted.value.trim() || lastResult);
 }
-codeInput.addEventListener("input", refreshBtn);
 pasted.addEventListener("input", ()=>{ $("pastedCount").textContent=pasted.value.length.toLocaleString("pl-PL"); refreshBtn(); });
 
 /* ---------- instrukcja + szybkie podpowiedzi ---------- */
@@ -159,8 +287,7 @@ resetBtn.addEventListener("click", ()=>{
 function fail(msg){ clearInterval(stepTimer); progress(-1); setStatus(msg,"err"); genBtn.disabled=false; }
 
 genBtn.addEventListener("click", async ()=>{
-  const code=codeInput.value.trim();
-  ls.set("uc_gen_code", code);
+  if(!me) return;
   genBtn.disabled=true; clearStatus(); progress(0);
   try{
     const instruction = instr.value.trim().slice(0,MAX_INSTR);
@@ -171,26 +298,30 @@ genBtn.addEventListener("click", async ()=>{
         try{ images.push(await compressImage(f)); }
         catch(e){ return fail("Nie udało się odczytać jednego ze zdjęć — spróbuj JPG/PNG."); }
       }
-      payload={ code, images, instruction, mode:"both" };
+      payload={ images, instruction, source:"img", mode:"both" };
     } else {
       let text = mode==="pdf" ? await extractText(pickedPdf) : pasted.value.trim();
       if(text.length<MIN_CHARS) return fail(mode==="pdf"
         ? "Za mało tekstu w pliku — to pewnie skan. Zrób zdjęcia stron i wybierz „Zdjęcia notatek”, generator je odczyta."
         : "Za mało tekstu — wklej co najmniej ok. 300 znaków.");
-      payload={ text:text.slice(0,MAX_CHARS), code, instruction, mode:"both" };
+      payload={ text:text.slice(0,MAX_CHARS), instruction, source:mode, mode:"both" };
     }
     progress(1);
     stepTimer=setTimeout(()=>progress(2), 6000);
-    const res=await fetch(WORKER_URL, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(payload) });
+    const r=await api("/generate", { method:"POST", body:payload });
     clearTimeout(stepTimer);
-    if(res.status===401) return fail("Zły kod dostępu.");
-    if(res.status===413) return fail("Zdjęcia za duże — usuń któreś albo zrób mniej stron naraz.");
-    if(res.status===429) return fail("Limit generowań na godzinę wykorzystany — spróbuj za chwilę.");
-    if(!res.ok){ const t=await res.text(); return fail("Coś poszło nie tak ("+res.status+"). "+t.slice(0,120)); }
-    const data=await res.json();
-    if(!data || (!data.flashcards && !data.quiz)) return fail("AI nie zwróciło poprawnych danych. Spróbuj z innym albo krótszym fragmentem.");
+    const data=r.data;
+    if(r.status===401) return fail("Sesja wygasła — zaloguj się ponownie.");
+    if(r.status===413) return fail("Zdjęcia za duże — usuń któreś albo zrób mniej stron naraz.");
+    if(r.status===429){ if(data.usage){ usage=data.usage; renderUsage(); } return fail(data.error || "Limit generowań wykorzystany — spróbuj później."); }
+    if(!r.ok) return fail((data.error || "Coś poszło nie tak") + " ("+r.status+")");
+    if(!data.flashcards && !data.quiz) return fail("AI nie zwróciło poprawnych danych. Spróbuj z innym albo krótszym fragmentem.");
     progress(-1);
-    lastResult=data; render(data, true);
+    if(data.usage){ usage=data.usage; renderUsage(); }
+    if(data.deck){ currentDeckId=data.deck.id; decks.unshift(data.deck); renderDecks(); }
+    lastResult={ title:data.title, flashcards:data.flashcards, quiz:data.quiz };
+    render(lastResult, true, !!data.deck);
+    if(data.save_error) setStatus(data.save_error+" — pobierz plik, żeby go nie stracić.","err");
   }catch(err){
     fail("Błąd: "+(err.message||err));
     return;
@@ -231,7 +362,9 @@ function renderQuiz(qz){
   });
 }
 
-function render(data, scroll){
+function render(data, scroll, saved){
+  $("deckTitle").textContent = data.title || "Twój materiał";
+  $("deckMeta").textContent = saved ? "✓ zapisano na koncie" : "";
   const fcs=Array.isArray(data.flashcards)?data.flashcards:[];
   const qz=Array.isArray(data.quiz)?data.quiz:[];
   const grid=$("fcGrid"); grid.innerHTML="";
@@ -248,7 +381,7 @@ function render(data, scroll){
   showPane(document.querySelector(".g-tab.on").dataset.pane);
   $("result").hidden=false; refreshBtn();
   if(scroll) $("result").scrollIntoView({behavior:"smooth",block:"start"});
-  ls.set(STORE_KEY, JSON.stringify({flashcards:fcs, quiz:qz}));
+  ls.set(STORE_KEY, JSON.stringify({title:data.title||"", flashcards:fcs, quiz:qz}));
 }
 
 function showPane(p){
@@ -267,8 +400,14 @@ $("dlJson").addEventListener("click", ()=>{ if(lastResult) download(new Blob([JS
 $("dlHtml").addEventListener("click", ()=>{ if(lastResult) download(new Blob([buildStandaloneHtml(lastResult)],{type:"text/html;charset=utf-8"}),"unicorner_fiszki_quiz.html"); });
 $("forget").addEventListener("click", ()=>{ ls.del(STORE_KEY); setStatus("Usunięto zapamiętany materiał z tej przeglądarki. Pobrane pliki zostają u Ciebie.","info"); });
 
-/* ---------- start: odtworzenie ostatniego wyniku ---------- */
+/* ---------- start ---------- */
+$("freeN").textContent = "10";
 setMode("pdf");
+renderAccount();
+initGoogle(0);
+if(token){
+  api("/me").then(r=>{ if(r.ok){ setSession(token, r.data.user, r.data.usage); loadDecks(); } });
+}
 try{
   const saved = JSON.parse(ls.get(STORE_KEY) || "null");
   if(saved && (saved.flashcards || saved.quiz)){
