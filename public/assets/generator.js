@@ -41,23 +41,9 @@ async function api(path, opts={}){
   return { ok:r.ok, status:r.status, data:data||{} };
 }
 
-/* chowa wynik i czyści cały stan bieżącej talii (sesja nauki, cofanie, udostępnianie, tryb błędów) */
-function closeDeckView(forgetLocal){
-  currentDeckId=null; currentShareId=null; prevDeck=null; lastResult=null; lastSourceText="";
-  answers={}; reviews={}; quizMode="all";
-  study=null;
-  ["result","editPanel","shareBox","qMode","studyBar","study"].forEach(id=>{ if($(id)) $(id).hidden=true; });
-  if($("shareBtn")) $("shareBtn").hidden=true;
-  if($("fcGrid")){ $("fcGrid").innerHTML=""; $("fcGrid").hidden=false; }
-  if($("qzList")) $("qzList").innerHTML="";
-  if($("fcHint")) $("fcHint").hidden=false;
-  if(forgetLocal) ls.del(STORE_KEY);
-}
-
 function setSession(t, user, u){
   token = t || null; me = t ? user : null; usage = t ? u : null;
-  // po wylogowaniu nic z konta nie zostaje na ekranie ani w tej przeglądarce (np. komputer w pracowni)
-  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; closeDeckView(true); }
+  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; currentShareId=null; prevDeck=null; $("editPanel").hidden=true; if($("shareBtn")){ $("shareBtn").hidden=true; $("shareBox").hidden=true; } if($("qMode")) $("qMode").hidden=true; answers={}; quizMode="all"; reviews={}; if($("studyBar")) $("studyBar").hidden=true; }
   renderAccount(); refreshBtn();
 }
 
@@ -144,7 +130,7 @@ function renderDecks(){
     del.addEventListener("click", async ()=>{
       if(!del.classList.contains("sure")){ del.classList.add("sure"); del.textContent="Na pewno?"; setTimeout(()=>{ del.classList.remove("sure"); del.textContent="Usuń"; },3000); return; }
       const r=await api("/decks/"+d.id,{method:"DELETE"});
-      if(r.ok){ decks=decks.filter(x=>x.id!==d.id); if(currentDeckId===d.id) closeDeckView(true); renderDecks(); }
+      if(r.ok){ decks=decks.filter(x=>x.id!==d.id); if(currentDeckId===d.id){ currentDeckId=null; $("deckMeta").textContent=""; } renderDecks(); }
     });
     grid.appendChild(el);
   });
@@ -317,7 +303,7 @@ async function extractText(file){
 
 resetBtn.addEventListener("click", ()=>{
   pickedPdf=null; pickedImages=[]; renderThumbs(); pasted.value=""; $("pastedCount").textContent="0";
-  closeDeckView(true);
+  $("result").hidden=true; $("fcGrid").innerHTML=""; $("qzList").innerHTML=""; lastResult=null;
   setMode(mode); clearStatus();
 });
 
@@ -515,12 +501,10 @@ async function itemAction(kind, index, action, btn){
   if(!canEdit()) return null;
   const orig=btn.innerHTML; btn.disabled=true;
   btn.innerHTML='<span class="g-spin"></span> '+(action==="explain" ? "Tłumaczę…" : "Układam nowe…");
-  const deckId=currentDeckId;
-  const r=await api("/decks/"+deckId+"/item", { method:"POST", body:{ kind, index, action } });
+  const r=await api("/decks/"+currentDeckId+"/item", { method:"POST", body:{ kind, index, action } });
   btn.disabled=false; btn.innerHTML=orig;
   setUsage(r.data.usage);
   if(!r.ok){ toast(r.data.error || "Nie udało się — spróbuj jeszcze raz.", true); return null; }
-  if(currentDeckId!==deckId || !lastResult) return null; // w międzyczasie otwarto inną talię — zmiana jest już zapisana na koncie
   (kind==="fc" ? lastResult.flashcards : lastResult.quiz)[index] = r.data.item;
   saveLocal();
   return r.data.item;
@@ -602,18 +586,12 @@ async function runEdit(body, btn, busy){
   const orig=btn.innerHTML; btn.disabled=true;
   btn.innerHTML='<span class="g-spin"></span><span>'+busy+'</span>';
   const before=JSON.parse(JSON.stringify(lastResult));
-  const deckId=currentDeckId;
   if(lastSourceText) body.material=lastSourceText;
-  const r=await api("/decks/"+deckId+"/edit", { method:"POST", body });
+  const r=await api("/decks/"+currentDeckId+"/edit", { method:"POST", body });
   btn.disabled=false; btn.innerHTML=orig;
   setUsage(r.data.usage);
   if(!r.ok){ toast(r.data.error || "Nie udało się poprawić talii.", true); return false; }
-  if(currentDeckId!==deckId){
-    const x=decks.find(z=>z.id===deckId); if(x){ x.title=r.data.deck.title; x.fc=r.data.deck.flashcards.length; x.qz=r.data.deck.quiz.length; renderDecks(); }
-    toast("Talia „"+r.data.deck.title+"” została poprawiona — otwórz ją z listy „Moje talie”.");
-    return false;
-  }
-  prevDeck={ ...before, _deckId: deckId };
+  prevDeck=before;
   const d=r.data.deck;
   lastResult={ title:d.title, flashcards:d.flashcards, quiz:d.quiz };
   render(lastResult, false, true); syncDeckInList(d);
@@ -636,12 +614,10 @@ $("weakGo").addEventListener("click", async ()=>{
   }
 });
 $("editUndo").addEventListener("click", async ()=>{
-  if(!prevDeck || prevDeck._deckId!==currentDeckId){ prevDeck=null; $("editUndo").hidden=true; return; }
-  const { _deckId, ...snapshot } = prevDeck;
-  const r=await api("/decks/"+_deckId, { method:"PUT", body:snapshot });
+  if(!prevDeck) return;
+  const r=await api("/decks/"+currentDeckId, { method:"PUT", body:prevDeck });
   if(!r.ok){ toast(r.data.error || "Nie udało się cofnąć.", true); return; }
-  if(currentDeckId!==_deckId) return;
-  lastResult=snapshot; prevDeck=null;
+  lastResult=prevDeck; prevDeck=null;
   render(lastResult, false, true); syncDeckInList(lastResult);
   toast("Przywrócono poprzednią wersję talii.");
 });
@@ -730,7 +706,7 @@ if($("studyGo")){
   $("stBack").addEventListener("click", exitStudy);
   $("stQuiz").addEventListener("click", ()=>{ exitStudy(); showPane("qz"); $("result").scrollIntoView({behavior:"smooth",block:"start"}); });
   document.addEventListener("keydown", e=>{
-    if(!study || !lastResult || $("study").hidden || !$("stDone").hidden || $("result").hidden || !$("pane-fc").classList.contains("on") || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
+    if(!study || $("study").hidden || !$("stDone").hidden || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
     if(!$("stShow").hidden && (e.key===" "||e.key==="Enter")){ e.preventDefault(); revealStudy(); }
     else if($("stShow").hidden && (e.key==="1"||e.key==="ArrowLeft")){ e.preventDefault(); gradeStudy(false); }
     else if($("stShow").hidden && (e.key==="2"||e.key==="ArrowRight")){ e.preventDefault(); gradeStudy(true); }
@@ -738,7 +714,6 @@ if($("studyGo")){
 }
 
 function showPane(p){
-  if(p!=="fc" && study){ exitStudy(); }
   document.querySelectorAll(".g-tab").forEach(x=>x.classList.toggle("on", x.dataset.pane===p));
   document.querySelectorAll(".g-pane").forEach(x=>x.classList.toggle("on", x.id==="pane-"+p));
   $("score").style.visibility = p==="qz" ? "visible" : "hidden";
