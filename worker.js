@@ -1,8 +1,8 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 3 (konta)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 4 (konta + kredyty)
    ---------------------------------------------------------------------
    Endpointy:
-     POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek)
+     POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)
      POST /                  → to samo (kompatybilność)
      GET  /health            → test po wdrożeniu: {ok, db, kv, ai_key}
      POST /auth/google       → {credential} z „Zaloguj przez Google” → {token, user, usage}
@@ -12,6 +12,9 @@
      GET  /decks             → lista talii użytkownika
      GET  /decks/:id         → jedna talia (fiszki + quiz)
      PATCH /decks/:id        → {title} zmiana nazwy
+     PUT  /decks/:id         → {flashcards, quiz} zapis talii bez AI (np. „Cofnij zmianę”)
+     POST /decks/:id/edit    → {instruction, material?} AI poprawia całą talię      (2 kredyty)
+     POST /decks/:id/item    → {kind, index, action} wyjaśnij / podmień jeden element (1 kredyt)
      DELETE /decks/:id       → usunięcie talii
      GET  /reviews           → zatwierdzone opinie (czyta strona główna)
      POST /reviews           → nowa opinia (trafia do moderacji)
@@ -26,19 +29,23 @@
      ADMIN_CODE        — kod do moderacji opinii
      ALLOWED_ORIGIN    — np. "https://unicorner.pl" (można kilka po przecinku)
      ADMIN_EMAILS      — opcjonalnie: Twoje maile (po przecinku) bez limitu generowań
-     FREE_MONTHLY_GENS — opcjonalnie: darmowy limit na miesiąc (domyślnie 10)
+     FREE_MONTHLY_CREDITS — opcjonalnie: darmowe kredyty na miesiąc (domyślnie 30)
      ACCESS_CODE       — STARY wspólny kod; nadal działa (bez zapisu talii), można usunąć
 
    Bindingi (panel → Worker → Settings → Bindings):
      UC_KV — namespace KV (opinie, limity na IP)
-     DB    — baza D1 „unicorner-db” (konta, sesje, talie, zużycie). Tabele
+     DB    — baza D1 „unicorner-db” (konta, sesje, talie, kredyty). Tabele
              tworzą się same przy pierwszym uruchomieniu.
    ===================================================================== */
 
 const MODEL = "claude-haiku-4-5-20251001";
 const GOOGLE_CLIENT_ID = "243769752280-r6h2cj3pn9n47p020seuk58n9ijj9si7.apps.googleusercontent.com"; // publiczny identyfikator z Google Cloud
 const SESSION_DAYS = 60;                 // ile dni trwa zalogowanie
-const FREE_MONTHLY_GENS_DEFAULT = 10;    // darmowe generowania na konto na miesiąc (beta)
+const FREE_MONTHLY_CREDITS_DEFAULT = 30; // darmowe kredyty na konto na miesiąc (beta)
+const COST = { generate: 3, deckEdit: 2, item: 1 }; // ile kredytów kosztuje akcja
+const MAX_ITEMS = 20;                    // maks. fiszek i pytań w talii
+const EDIT_MAX_TOKENS = 4096;            // odpowiedź przy przerabianiu całej talii
+const EDIT_LIMIT_PER_HOUR = 60;          // akcji edycji na IP na godzinę
 const MAX_DECKS_PER_USER = 300;
 const MAX_DECK_JSON = 120_000;           // maks. rozmiar zapisanej talii (znaki JSON)
 const MAX_INPUT_CHARS = 14000;
@@ -80,7 +87,11 @@ export default {
       const dm = path.match(/^\/decks\/([A-Za-z0-9-]{8,64})$/);
       if (dm && request.method === "GET")    return await handleDeckGet(request, env, cors, dm[1]);
       if (dm && request.method === "PATCH")  return await handleDeckRename(request, env, cors, dm[1]);
+      if (dm && request.method === "PUT")    return await handleDeckPut(request, env, cors, dm[1]);
       if (dm && request.method === "DELETE") return await handleDeckDelete(request, env, cors, dm[1]);
+      const da = path.match(/^\/decks\/([A-Za-z0-9-]{8,64})\/(edit|item)$/);
+      if (da && request.method === "POST")
+        return da[2] === "edit" ? await handleDeckEdit(request, env, cors, da[1]) : await handleDeckItem(request, env, cors, da[1]);
 
       if (path === "/reviews" && request.method === "GET")
         return await handleReviewsGet(env, cors);
@@ -141,12 +152,12 @@ async function handleGenerate(request, env, cors) {
 
   const material = hasText ? text.slice(0, MAX_INPUT_CHARS) : "";
 
-  // miesięczny limit konta — rezerwujemy 1 generowanie atomowo (zwracamy, jeśli AI zawiedzie)
+  // miesięczny limit konta — rezerwujemy kredyty atomowo (zwracamy, jeśli AI zawiedzie)
   let reserved = false;
   if (user) {
-    const r = await reserveGeneration(env, user);
-    if (!r.ok) return json({ error: `Wykorzystałeś darmowy limit (${r.limit}) w tym miesiącu. Odnowi się 1. dnia miesiąca.`, limit_reached: true, usage: r.usage }, 429, cors);
-    reserved = r.counted;
+    const r = await reserveCredits(env, user, COST.generate);
+    if (!r.ok) return await noCredits(env, user, COST.generate, cors);
+    reserved = true;
   }
 
   // opcjonalna wskazówka użytkownika („na czym się skupić”) — krótka, bez znaków sterujących
@@ -195,64 +206,21 @@ ${rules}${instrBlock}` + (material ? `\n\nDODATKOWY MATERIAŁ TEKSTOWY:\n"""\n${
     userContent = `Z poniższego materiału zrób fiszki i quiz.\n\n${rules}${instrBlock}\n\nMATERIAŁ:\n"""\n${material}\n"""`;
   }
 
-  let aiRes;
+  let parsed;
   try {
-    aiRes = await fetch(env.AI_URL || "https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "x-api-key": env.ANTHROPIC_API_KEY,
-        "anthropic-version": "2023-06-01",
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        max_tokens: MAX_TOKENS,
-        system,
-        messages: [{ role: "user", content: userContent }],
-      }),
-    });
-  } catch {
-    if (reserved) await releaseGeneration(env, user);
-    return json({ error: "Nie udało się połączyć z AI" }, 502, cors);
+    parsed = parseJsonLoose(await callAI(env, { system, content: userContent, maxTokens: MAX_TOKENS }));
+  } catch (e) {
+    if (reserved) await releaseCredits(env, user, COST.generate);
+    return json({ error: e.message, detail: e.detail }, e.status || 502, cors);
   }
-
-  if (!aiRes.ok) {
-    if (reserved) await releaseGeneration(env, user);
-    const detail = (await aiRes.text()).slice(0, 200);
-    return json({ error: "AI error " + aiRes.status, detail }, 502, cors);
-  }
-
-  const data = await aiRes.json();
-  let raw = (data.content && data.content[0] && data.content[0].text) || "";
-
-  let parsed = safeParse(raw);
-  if (!parsed) {
-    const m = raw.match(/\{[\s\S]*\}/);
-    if (m) parsed = safeParse(m[0]);
-  }
-  if (!parsed || (!parsed.flashcards && !parsed.quiz)) {
-    if (reserved) await releaseGeneration(env, user);
+  const deck = normalizeDeck(parsed || {});
+  if (!deck.flashcards.length && !deck.quiz.length) {
+    if (reserved) await releaseCredits(env, user, COST.generate);
     return json({ error: "AI zwróciło nieprawidłowy format" }, 502, cors);
   }
 
-  if (Array.isArray(parsed.quiz)) {
-    parsed.quiz = parsed.quiz
-      .filter(q => q && Array.isArray(q.options) && q.options.length === 4)
-      .map(q => ({
-        q: String(q.q || q.question || ""),
-        options: q.options.map(String),
-        correct: clampIndex(q.correct),
-        explain: String(q.explain || q.explanation || ""),
-      }));
-  }
-  if (Array.isArray(parsed.flashcards)) {
-    parsed.flashcards = parsed.flashcards
-      .filter(c => c && (c.term || c.front))
-      .map(c => ({ term: String(c.term || c.front || ""), def: String(c.def || c.definition || c.back || "") }));
-  }
-
-  const title = cleanTitle(parsed.title) || defaultTitle(source);
-  const out = { title, flashcards: parsed.flashcards || [], quiz: parsed.quiz || [] };
+  const title = deck.title || defaultTitle(source);
+  const out = { title, flashcards: deck.flashcards, quiz: deck.quiz };
 
   // zapis talii na koncie
   if (user) {
@@ -368,13 +336,15 @@ async function ensureSchema(env) {
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS decks_user ON decks(user_id, created_at DESC)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS usage (
       user_id TEXT NOT NULL, period TEXT NOT NULL, gens INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (user_id, period))`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS credits (
+      user_id TEXT NOT NULL, period TEXT NOT NULL, used INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (user_id, period))`),
   ]);
   schemaReady = true;
 }
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 3, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 4, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { out.db_error = String(e.message || e).slice(0, 120); }
@@ -444,6 +414,7 @@ async function handleDeleteMe(request, env, cors) {
   await env.DB.batch([
     env.DB.prepare("DELETE FROM decks WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM usage WHERE user_id = ?").bind(user.id),
+    env.DB.prepare("DELETE FROM credits WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM sessions WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM users WHERE id = ?").bind(user.id),
   ]);
@@ -516,37 +487,226 @@ async function verifyGoogleIdToken(token, env) {
   return claims;
 }
 
-/* ===================== LIMIT GENEROWAŃ ===================== */
+/* ===================== AI — wspólne ===================== */
+
+/* jedno wywołanie modelu; zwraca tekst odpowiedzi albo rzuca błąd z kodem HTTP do pokazania */
+async function callAI(env, { system, content, maxTokens }) {
+  let res;
+  try {
+    res = await fetch(env.AI_URL || "https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body: JSON.stringify({ model: MODEL, max_tokens: maxTokens || MAX_TOKENS, system, messages: [{ role: "user", content }] }),
+    });
+  } catch { throw httpErr(502, "Nie udało się połączyć z AI"); }
+  if (!res.ok) throw httpErr(502, "AI error " + res.status, (await res.text()).slice(0, 200));
+  const data = await res.json();
+  return (data.content && data.content[0] && data.content[0].text) || "";
+}
+function httpErr(status, error, detail) { const e = new Error(error); e.status = status; e.detail = detail; return e; }
+
+function parseJsonLoose(raw) {
+  let p = safeParse(raw);
+  if (!p) { const m = String(raw).match(/\{[\s\S]*\}/); if (m) p = safeParse(m[0]); }
+  return p;
+}
+
+const clip = (s, n) => String(s == null ? "" : s).slice(0, n);
+function normQuestion(q) {
+  if (!q || !Array.isArray(q.options) || q.options.length !== 4) return null;
+  const out = { q: clip(q.q || q.question, 600), options: q.options.map(o => clip(o, 300)), correct: clampIndex(q.correct), explain: clip(q.explain || q.explanation, 1200) };
+  if (q.more) out.more = clip(q.more, 3000);
+  return out.q ? out : null;
+}
+function normCard(c) {
+  if (!c || !(c.term || c.front)) return null;
+  const out = { term: clip(c.term || c.front, 200), def: clip(c.def || c.definition || c.back, 1200) };
+  if (c.more) out.more = clip(c.more, 3000);
+  return out;
+}
+/* wspólna normalizacja talii (z AI albo od przeglądarki) */
+function normalizeDeck(p) {
+  return {
+    title: cleanTitle(p && p.title),
+    flashcards: (Array.isArray(p && p.flashcards) ? p.flashcards : []).map(normCard).filter(Boolean).slice(0, MAX_ITEMS),
+    quiz: (Array.isArray(p && p.quiz) ? p.quiz : []).map(normQuestion).filter(Boolean).slice(0, MAX_ITEMS),
+  };
+}
+
+const OPTION_RULES =
+`- Każde pytanie ma DOKŁADNIE 4 opcje; "correct" to indeks 0–3 poprawnej.
+- Nie zdradzaj poprawnej odpowiedzi formą: opcje o ZBLIŻONEJ długości, poprawna nie jest najdłuższa ani jedyna z nawiasem/przykładem, pozycję poprawnej mieszaj.
+- Dystraktory prawdopodobne, nie absurdalne.`;
+
+/* ===================== KREDYTY ===================== */
 
 function period() { return new Date().toISOString().slice(0, 7); } // "2026-10" (UTC)
-function monthlyLimit(env) { const n = parseInt(env.FREE_MONTHLY_GENS, 10); return n > 0 ? n : FREE_MONTHLY_GENS_DEFAULT; }
+function monthlyLimit(env) { const n = parseInt(env.FREE_MONTHLY_CREDITS, 10); return n > 0 ? n : FREE_MONTHLY_CREDITS_DEFAULT; }
 
 async function getUsage(env, user) {
-  const row = await env.DB.prepare("SELECT gens FROM usage WHERE user_id = ? AND period = ?").bind(user.id, period()).first();
-  const unlimited = isAdmin(user, env);
-  return { used: row ? row.gens : 0, limit: unlimited ? null : monthlyLimit(env), period: period() };
+  const row = await env.DB.prepare("SELECT used FROM credits WHERE user_id = ? AND period = ?").bind(user.id, period()).first();
+  return { used: row ? row.used : 0, limit: isAdmin(user, env) ? null : monthlyLimit(env), period: period(), costs: COST };
 }
 
-/* atomowo: +1, ale tylko jeśli poniżej limitu (chroni przed wieloma równoległymi żądaniami) */
-async function reserveGeneration(env, user) {
+/* atomowo: +koszt, ale tylko jeśli zmieści się w limicie (chroni przed wieloma równoległymi żądaniami) */
+async function reserveCredits(env, user, cost) {
   const p = period();
   if (isAdmin(user, env)) {
-    await env.DB.prepare("INSERT INTO usage (user_id, period, gens) VALUES (?, ?, 1) ON CONFLICT(user_id, period) DO UPDATE SET gens = gens + 1")
-      .bind(user.id, p).run();
-    return { ok: true, counted: true };
+    await env.DB.prepare("INSERT INTO credits (user_id, period, used) VALUES (?, ?, ?) ON CONFLICT(user_id, period) DO UPDATE SET used = used + ?")
+      .bind(user.id, p, cost, cost).run();
+    return { ok: true };
   }
   const limit = monthlyLimit(env);
+  if (cost > limit) return { ok: false, limit };
   const row = await env.DB.prepare(
-    "INSERT INTO usage (user_id, period, gens) VALUES (?, ?, 1) ON CONFLICT(user_id, period) DO UPDATE SET gens = gens + 1 WHERE gens < ? RETURNING gens"
-  ).bind(user.id, p, limit).first();
-  if (!row) return { ok: false, limit, usage: { used: limit, limit, period: p } };
-  return { ok: true, counted: true };
+    "INSERT INTO credits (user_id, period, used) VALUES (?, ?, ?) ON CONFLICT(user_id, period) DO UPDATE SET used = used + ? WHERE used + ? <= ? RETURNING used"
+  ).bind(user.id, p, cost, cost, cost, limit).first();
+  return row ? { ok: true } : { ok: false, limit };
 }
 
-async function releaseGeneration(env, user) {
+async function releaseCredits(env, user, cost) {
   try {
-    await env.DB.prepare("UPDATE usage SET gens = MAX(gens - 1, 0) WHERE user_id = ? AND period = ?").bind(user.id, period()).run();
+    await env.DB.prepare("UPDATE credits SET used = MAX(used - ?, 0) WHERE user_id = ? AND period = ?").bind(cost, user.id, period()).run();
   } catch { /* trudno — najwyżej zostanie policzone */ }
+}
+
+async function noCredits(env, user, cost, cors) {
+  const usage = await getUsage(env, user);
+  const left = Math.max(0, (usage.limit || 0) - usage.used);
+  return json({ error: `Brakuje kredytów: ta akcja kosztuje ${cost}, a zostało Ci ${left} w tym miesiącu. Limit odnawia się 1. dnia miesiąca.`, limit_reached: true, usage }, 429, cors);
+}
+
+/* wykonuje fn() z zarezerwowanymi kredytami; przy błędzie oddaje je */
+async function withCredits(env, user, cost, cors, fn) {
+  const r = await reserveCredits(env, user, cost);
+  if (!r.ok) return await noCredits(env, user, cost, cors);
+  try {
+    const out = await fn();
+    out.usage = await getUsage(env, user);
+    return json(out, 200, cors);
+  } catch (e) {
+    await releaseCredits(env, user, cost);
+    return json({ error: e.message || "Błąd", detail: e.detail }, e.status || 500, cors);
+  }
+}
+
+/* ===================== EDYCJA TALII ===================== */
+
+async function loadOwnDeck(env, user, id) {
+  const row = await env.DB.prepare("SELECT id, title, source, data FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id).first();
+  if (!row) return null;
+  const d = safeParse(row.data) || {};
+  return { id: row.id, title: row.title, source: row.source, flashcards: d.flashcards || [], quiz: d.quiz || [] };
+}
+
+async function storeDeck(env, user, id, deck) {
+  const data = JSON.stringify({ flashcards: deck.flashcards, quiz: deck.quiz });
+  if (data.length > MAX_DECK_JSON) throw httpErr(413, "Talia za duża — usuń część fiszek lub pytań");
+  await env.DB.prepare("UPDATE decks SET title = ?, data = ?, fc_count = ?, qz_count = ?, updated_at = ? WHERE id = ? AND user_id = ?")
+    .bind(deck.title, data, deck.flashcards.length, deck.quiz.length, Date.now(), id, user.id).run();
+}
+
+const deckSummary = (d) => ({ flashcards: d.flashcards.map(({ term, def }) => ({ term, def })),
+  quiz: d.quiz.map(({ q, options, correct, explain }) => ({ q, options, correct, explain })) });
+
+/* PUT /decks/:id — zapis talii przysłanej przez przeglądarkę (np. „Cofnij zmianę”), bez AI */
+async function handleDeckPut(request, env, cors, id) {
+  const user = env.DB ? await authUser(request, env) : null;
+  if (!user) return json({ error: "Niezalogowany" }, 401, cors);
+  let body; try { body = await request.json(); } catch { return json({ error: "Bad JSON" }, 400, cors); }
+  const old = await loadOwnDeck(env, user, id);
+  if (!old) return json({ error: "Nie ma takiej talii" }, 404, cors);
+  const d = normalizeDeck(body);
+  if (!d.flashcards.length && !d.quiz.length) return json({ error: "Pusta talia" }, 400, cors);
+  d.title = d.title || old.title;
+  try { await storeDeck(env, user, id, d); } catch (e) { return json({ error: e.message }, e.status || 500, cors); }
+  return json({ ok: true, deck: { id, ...d } }, 200, cors);
+}
+
+/* POST /decks/:id/edit {instruction, material?} — AI przerabia całą talię według polecenia */
+async function handleDeckEdit(request, env, cors, id) {
+  const user = env.DB ? await authUser(request, env) : null;
+  if (!user) return json({ error: "Zaloguj się" }, 401, cors);
+  let body; try { body = await request.json(); } catch { return json({ error: "Bad JSON" }, 400, cors); }
+  const instr = String((body && body.instruction) || "").replace(/[\u0000-\u001f]+/g, " ").trim().slice(0, MAX_INSTRUCTION_CHARS);
+  if (instr.length < 3) return json({ error: "Napisz, co zmienić w talii." }, 400, cors);
+  const material = typeof body.material === "string" ? body.material.slice(0, MAX_INPUT_CHARS) : "";
+  const rl = await rateLimit(env, "e:" + clientIp(request), EDIT_LIMIT_PER_HOUR, 3600);
+  if (!rl.ok) return json({ error: "Za dużo zmian na godzinę — spróbuj za chwilę." }, 429, cors);
+  const deck = await loadOwnDeck(env, user, id);
+  if (!deck) return json({ error: "Nie ma takiej talii" }, 404, cors);
+
+  return withCredits(env, user, COST.deckEdit, cors, async () => {
+    const system = "Jesteś asystentem do nauki. Poprawiasz istniejącą talię fiszek i quizu po polsku według polecenia użytkownika. Odpowiadasz CZYSTYM JSON-em, bez markdownu, bez komentarzy.";
+    const content =
+`POLECENIE UŻYTKOWNIKA: "${instr.replace(/"/g, "'")}"
+
+AKTUALNA TALIA (tytuł: ${deck.title}):
+${JSON.stringify(deckSummary(deck))}
+${material ? `\nMATERIAŁ ŹRÓDŁOWY (bazuj przede wszystkim na nim):\n"""\n${material}\n"""\n` : ""}
+ZASADY:
+- Zwróć CAŁĄ talię po zmianach w formacie {"title": "...", "flashcards": [{"term","def"}], "quiz": [{"q","options","correct","explain"}]}.
+- Zmieniaj tylko to, czego dotyczy polecenie; resztę zostaw bez zmian.
+- Trzymaj się tematów z talii${material ? " i materiału źródłowego" : ""}. Jeśli dodajesz nowe treści, opieraj się na powszechnie przyjętej wiedzy akademickiej — nie wymyślaj konkretnych liczb, dat, nazwisk ani definicji „z wykładu”, których tu nie ma.
+- Maksymalnie ${MAX_ITEMS} fiszek i ${MAX_ITEMS} pytań.
+- Jeśli polecenie nie dotyczy nauki z tej talii, zwróć talię bez zmian.
+${OPTION_RULES}`;
+    const raw = await callAI(env, { system, content, maxTokens: EDIT_MAX_TOKENS });
+    const parsed = parseJsonLoose(raw);
+    const d = normalizeDeck(parsed || {});
+    if (!d.flashcards.length && !d.quiz.length) throw httpErr(502, "AI zwróciło nieprawidłowy format — spróbuj inaczej sformułować polecenie");
+    d.title = d.title || deck.title;
+    await storeDeck(env, user, id, d);
+    return { deck: { id, ...d } };
+  });
+}
+
+/* POST /decks/:id/item {kind:"fc"|"qz", index, action:"explain"|"replace"} — akcja na jednej fiszce/pytaniu */
+async function handleDeckItem(request, env, cors, id) {
+  const user = env.DB ? await authUser(request, env) : null;
+  if (!user) return json({ error: "Zaloguj się" }, 401, cors);
+  let body; try { body = await request.json(); } catch { return json({ error: "Bad JSON" }, 400, cors); }
+  const { kind, action } = body || {};
+  const index = parseInt(body && body.index, 10);
+  if (!["fc", "qz"].includes(kind) || !["explain", "replace"].includes(action) || !(index >= 0)) return json({ error: "Złe parametry" }, 400, cors);
+  if (kind === "fc" && action === "replace") return json({ error: "Złe parametry" }, 400, cors);
+  const rl = await rateLimit(env, "e:" + clientIp(request), EDIT_LIMIT_PER_HOUR, 3600);
+  if (!rl.ok) return json({ error: "Za dużo akcji na godzinę — spróbuj za chwilę." }, 429, cors);
+  const deck = await loadOwnDeck(env, user, id);
+  if (!deck) return json({ error: "Nie ma takiej talii" }, 404, cors);
+  const list = kind === "fc" ? deck.flashcards : deck.quiz;
+  const item = list[index];
+  if (!item) return json({ error: "Nie ma takiego elementu — odśwież talię" }, 404, cors);
+
+  // wyjaśnienie już jest zapisane — oddajemy za darmo
+  if (action === "explain" && item.more) return json({ item, index, kind, cached: true, usage: await getUsage(env, user) }, 200, cors);
+
+  return withCredits(env, user, COST.item, cors, async () => {
+    const ctx = `Talia: ${deck.title}. Pojęcia w talii: ${deck.flashcards.map(c => c.term).slice(0, 30).join(", ")}.`;
+    if (action === "explain") {
+      const system = "Jesteś cierpliwym korepetytorem. Tłumaczysz po polsku, prostym językiem, bez markdownu (bez gwiazdek, nagłówków i list z myślnikami). Piszesz 4–7 zdań, z jednym konkretnym przykładem.";
+      const content = kind === "fc"
+        ? `${ctx}\nWyjaśnij szerzej pojęcie „${item.term}”. Definicja z talii: „${item.def}”. Pokaż, o co w nim chodzi i jak je zapamiętać.`
+        : `${ctx}\nPytanie: „${item.q}”\nOpcje: ${item.options.map((o, i) => `${"ABCD"[i]}) ${o}`).join("; ")}\nPoprawna: ${"ABCD"[item.correct]}.\nWyjaśnij, dlaczego poprawna odpowiedź jest dobra i krótko, dlaczego każda z pozostałych jest błędna.`;
+      const text = (await callAI(env, { system, content, maxTokens: 700 })).replace(/[*#`]+/g, "").trim();
+      if (!text) throw httpErr(502, "AI nie zwróciło wyjaśnienia");
+      item.more = clip(text, 3000);
+    } else {
+      const system = "Jesteś asystentem do nauki. Układasz pytania testowe po polsku. Odpowiadasz CZYSTYM JSON-em, bez markdownu.";
+      const content =
+`${ctx}
+Zastąp to pytanie NOWYM, sprawdzającym to samo zagadnienie w inny sposób (inne sformułowanie, inne dystraktory):
+${JSON.stringify({ q: item.q, options: item.options, correct: item.correct })}
+Zwróć {"q": "...", "options": ["A","B","C","D"], "correct": 0, "explain": "krótkie uzasadnienie"}.
+${OPTION_RULES}
+- Nie wymyślaj konkretnych liczb, dat ani nazwisk, których nie ma w pytaniu lub talii.`;
+      const q = normQuestion(parseJsonLoose(await callAI(env, { system, content, maxTokens: 700 })));
+      if (!q) throw httpErr(502, "AI zwróciło nieprawidłowe pytanie — spróbuj jeszcze raz");
+      list[index] = q;
+    }
+    await storeDeck(env, user, id, deck);
+    return { item: list[index], index, kind };
+  });
 }
 
 /* ===================== TALIE ===================== */
@@ -642,7 +802,7 @@ function corsHeaders(request, env) {
   else allow = conf.includes(reqOrigin) ? reqOrigin : conf[0] || "*";
   return {
     "Access-Control-Allow-Origin": allow,
-    "Access-Control-Allow-Methods": "GET, POST, PATCH, DELETE, OPTIONS",
+    "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
     "Access-Control-Allow-Headers": "Content-Type, Authorization",
     "Access-Control-Max-Age": "86400",
     "Vary": "Origin",

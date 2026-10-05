@@ -78,7 +78,8 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
         <div class="g-acct">
           <div class="g-label"><span>03</span> Konto</div>
           <div id="acctOut">
-            <p class="g-acct-p"><b>Zaloguj się, żeby generować.</b> W becie masz <span id="freeN">10</span> darmowych generowań w miesiącu, a każda talia zapisuje się na Twoim koncie.</p>
+            <p class="g-acct-p"><b>Zaloguj się, żeby generować.</b> W becie dostajesz <b>30 kredytów</b> miesięcznie za darmo, a każda talia zapisuje się na Twoim koncie.</p>
+            <p class="g-prices">Nowa talia <b>3 kr.</b> · poprawka całej talii <b>2 kr.</b> · wyjaśnienie albo nowe pytanie <b>1 kr.</b></p>
             <div id="gsiBtn" class="g-gsi"></div>
           </div>
           <div id="acctIn" class="g-who" hidden>
@@ -93,7 +94,7 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
         </div>
         <div class="g-actions">
           <button class="g-btn" id="gen" disabled>
-            <span id="genLabel">Generuj fiszki i quiz</span>
+            <span id="genLabel">Generuj fiszki i quiz</span><span class="g-cost" id="genCost">3 kr.</span>
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </button>
           <button class="g-btn ghost" id="reset" hidden>Wyczyść</button>
@@ -135,6 +136,23 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
       </div>
       <div class="g-pane" id="pane-qz"><div id="qzList"></div></div>
 
+      <div class="g-editp" id="editPanel" hidden>
+        <div class="g-label"><span>AI</span> Popraw tę talię</div>
+        <textarea id="editInstr" rows="2" maxlength="300" placeholder="np. zrób trudniejsze pytania, dodaj 5 pytań o stopy procentowe, więcej przykładów liczbowych"></textarea>
+        <div class="g-chips" id="editChips">
+          <button type="button" data-t="Zrób pytania trudniejsze, wymagające łączenia kilku faktów.">Trudniej</button>
+          <button type="button" data-t="Dodaj 5 nowych pytań do quizu.">+5 pytań</button>
+          <button type="button" data-t="Dodaj 5 nowych fiszek z pojęciami, których jeszcze nie ma w talii.">+5 fiszek</button>
+          <button type="button" data-t="Dodaj więcej konkretnych przykładów do definicji i wyjaśnień.">Więcej przykładów</button>
+          <button type="button" data-t="Przepisz definicje i wyjaśnienia prostszym językiem.">Prościej</button>
+        </div>
+        <div class="g-editrow">
+          <button class="g-btn" id="editGo" type="button"><span>Popraw talię</span><span class="g-cost">2 kr.</span></button>
+          <button class="g-btn ghost" id="editUndo" type="button" hidden>Cofnij zmianę</button>
+          <span class="g-note" id="editNote"></span>
+        </div>
+      </div>
+
       <div class="g-tools">
         <button class="g-btn" id="dlHtml">Pobierz jako plik (działa offline)</button>
         <button class="g-btn ghost" id="dlJson">JSON</button>
@@ -170,6 +188,16 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
       <b>Beta.</b> Materiały generuje AI i <b>mogą zawierać błędy</b> — sprawdzaj z oryginałem. Pliki trafiają do modelu AI wyłącznie po to, żeby wygenerować materiał; nie zapisujemy ich — na koncie zostaje tylko gotowa talia (fiszki i quiz). Nie wgrywaj materiałów, do których nie masz praw. Logując się, akceptujesz <a href="/regulamin.html">Regulamin</a> i <a href="/prywatnosc.html">Politykę prywatności</a>.
     </p>
   </main>
+
+  <div class="g-modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="g-modal-box">
+      <button class="g-modal-x" id="modalX" type="button" aria-label="Zamknij">✕</button>
+      <div class="g-modal-k">Wyjaśnienie AI</div>
+      <h3 id="modalTitle"></h3>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+  <div class="g-toast" id="toast" role="status" aria-live="polite"></div>
 
   <Foot label="unicorner · generator ai" />
 
@@ -324,6 +352,42 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
     .g-exp{display:none;font-size:.9rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:rgba(7,6,15,.6);padding:10px 12px;}
     .g-exp.show{display:block;}
     .g-tools{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px;}
+    .g-prices{font-family:var(--mono);font-size:.74rem;color:var(--muted2);margin:-4px 0 12px;}
+    .g-prices b{color:var(--muted);}
+    .g-cost{font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.3px;padding:2px 7px;border-radius:999px;background:rgba(11,7,19,.18);margin-left:2px;white-space:nowrap;}
+    .g-btn.ghost .g-cost,.g-mini .g-cost{background:rgba(167,139,250,.14);color:var(--accent);}
+    .g-spin{display:inline-block;width:12px;height:12px;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;animation:gSpin .7s linear infinite;vertical-align:-1px;}
+    @keyframes gSpin{to{transform:rotate(360deg)}}
+    .g-editp{margin-top:26px;padding:18px 20px 16px;background:radial-gradient(420px 160px at 100% 0%,rgba(167,139,250,.08),transparent 60%),linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line2);
+      clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,14px 100%,0 calc(100% - 14px));}
+    .g-editp[hidden]{display:none;}
+    .g-editp .g-label{margin-bottom:10px;}
+    .g-editp .g-label span{color:var(--magenta);}
+    .g-editrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;}
+    .g-note{font-size:.78rem;color:var(--muted2);}
+    .g-back{flex-direction:column;gap:10px;}
+    .g-fcbtn{font-family:var(--mono);font-size:.7rem;font-weight:600;color:var(--accent);background:rgba(7,6,15,.55);border:1px solid rgba(167,139,250,.4);border-radius:999px;padding:4px 10px;cursor:pointer;flex-shrink:0;}
+    .g-fcbtn:hover{color:var(--text);border-color:var(--accent);}
+    .g-fc:not(.flip) .g-fcbtn{pointer-events:none;}
+    .g-qacts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;}
+    .g-qacts[hidden]{display:none;}
+    .g-more{font-size:.9rem;color:#d6d1ee;margin-top:8px;border-left:3px solid var(--magenta);background:rgba(7,6,15,.6);padding:10px 12px;}
+    .g-more[hidden]{display:none;}
+    .g-more p{margin:0 0 6px;} .g-more p:last-child{margin:0;}
+    .g-modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:16px;background:rgba(3,2,8,.72);backdrop-filter:blur(4px);}
+    .g-modal[hidden]{display:none;}
+    .g-modal-box{position:relative;width:min(560px,100%);max-height:85vh;overflow:auto;padding:22px 22px 18px;background:linear-gradient(160deg,var(--surface),var(--ink2));border:1px solid var(--line2);
+      clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,16px 100%,0 calc(100% - 16px));}
+    .g-modal-k{font-family:var(--mono);font-size:.68rem;letter-spacing:2px;text-transform:uppercase;color:var(--magenta);margin-bottom:6px;}
+    .g-modal-box h3{font-family:var(--disp);font-size:1.2rem;margin:0 30px 12px 0;}
+    #modalBody{font-size:.95rem;color:#d6d1ee;line-height:1.65;}
+    #modalBody p{margin:0 0 10px;}
+    .g-modal-x{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;border:1px solid var(--line2);background:none;color:var(--muted);cursor:pointer;}
+    .g-modal-x:hover{color:var(--text);border-color:var(--accent);}
+    .g-toast{position:fixed;left:50%;bottom:22px;transform:translate(-50%,20px);z-index:60;max-width:min(520px,calc(100vw - 32px));padding:11px 16px;border-radius:8px;background:#1c1928;border:1px solid var(--line2);
+      color:var(--text);font-size:.88rem;box-shadow:0 14px 40px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;}
+    .g-toast.show{opacity:1;transform:translate(-50%,0);}
+    .g-toast.err{border-color:rgba(248,122,142,.55);}
     .g-tips{margin:34px 0 0;background:var(--ink2);border:1px solid var(--line);}
     .g-tips summary{font-family:var(--mono);font-size:.84rem;font-weight:600;color:var(--gold);padding:14px 18px;cursor:pointer;list-style:none;}
     .g-tips summary::-webkit-details-marker{display:none;}
