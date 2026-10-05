@@ -235,3 +235,17 @@
 .t-promo h2{font-family:var(--disp);font-size:1.3rem;margin:0 0 6px;}
 .t-promo p{color:var(--muted);margin:0 0 14px;font-size:.92rem;}
 @media(max-width:560px){.g-sharebtn{margin-left:0;}}
+
+/* quiz: tryb „Moje błędy” */
+.g-qmode{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px;}
+.g-qmode[hidden]{display:none;}
+.g-qmode-sw{display:inline-flex;gap:4px;padding:4px;background:var(--ink);border:1px solid var(--line);border-radius:999px;}
+.g-qmode-sw button{font-family:var(--mono);font-size:.78rem;font-weight:700;letter-spacing:.4px;color:var(--muted);background:none;border:0;border-radius:999px;padding:7px 14px;cursor:pointer;transition:.2s;}
+.g-qmode-sw button span{color:var(--muted2);margin-left:4px;}
+.g-qmode-sw button.on{color:var(--text);background:var(--surface2);}
+.g-qmode-sw button[data-m="bad"].on{color:#0b0713;background:linear-gradient(90deg,var(--magenta),var(--gold));}
+.g-qmode-sw button[data-m="bad"].on span{color:rgba(11,7,19,.65);}
+.g-weak{padding:9px 16px;font-size:.8rem;}
+.g-weak[hidden]{display:none;}
+.g-deck .m .bad{color:var(--magenta);}
+.g-wasbad{color:var(--magenta);letter-spacing:.5px;}

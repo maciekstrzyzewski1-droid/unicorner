@@ -1,5 +1,5 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 5 (konta + kredyty + udostępnianie)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 6 (konta, kredyty, udostępnianie, błędy)
    ---------------------------------------------------------------------
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)
@@ -13,9 +13,11 @@
      GET  /decks/:id         → jedna talia (fiszki + quiz)
      PATCH /decks/:id        → {title} zmiana nazwy
      PUT  /decks/:id         → {flashcards, quiz} zapis talii bez AI (np. „Cofnij zmianę”)
-     POST /decks/:id/edit    → {instruction, material?} AI poprawia całą talię      (2 kredyty)
+     POST /decks/:id/edit    → {instruction, material?, weak?} AI poprawia całą talię (2 kredyty);
+                               weak: true = dorób pytania z tematów, w których się mylisz
      POST /decks/:id/item    → {kind, index, action} wyjaśnij / podmień jeden element (1 kredyt)
      DELETE /decks/:id       → usunięcie talii
+     POST /decks/:id/answer  → {qkey, ok} zapis odpowiedzi w quizie (do „Moje błędy”)
      POST /decks/:id/share   → włącza udostępnianie linkiem → {share_id}
      DELETE /decks/:id/share → wyłącza udostępnianie
      GET  /s/:share_id       → publiczny podgląd udostępnionej talii (bez logowania)
@@ -93,10 +95,11 @@ export default {
       if (dm && request.method === "PATCH")  return await handleDeckRename(request, env, cors, dm[1]);
       if (dm && request.method === "PUT")    return await handleDeckPut(request, env, cors, dm[1]);
       if (dm && request.method === "DELETE") return await handleDeckDelete(request, env, cors, dm[1]);
-      const da = path.match(/^\/decks\/([A-Za-z0-9-]{8,64})\/(edit|item|share)$/);
+      const da = path.match(/^\/decks\/([A-Za-z0-9-]{8,64})\/(edit|item|share|answer)$/);
+      if (da && da[2] === "answer" && request.method === "POST") return await handleAnswer(request, env, cors, da[1]);
       if (da && da[2] === "share" && request.method === "POST")   return await handleShareCreate(request, env, cors, da[1]);
       if (da && da[2] === "share" && request.method === "DELETE") return await handleShareDelete(request, env, cors, da[1]);
-      if (da && da[2] !== "share" && request.method === "POST")
+      if (da && (da[2] === "edit" || da[2] === "item") && request.method === "POST")
         return da[2] === "edit" ? await handleDeckEdit(request, env, cors, da[1]) : await handleDeckItem(request, env, cors, da[1]);
       const sm = path.match(/^\/s\/([A-Za-z0-9]{6,20})(\/copy)?$/);
       if (sm && !sm[2] && request.method === "GET")  return await handleSharedGet(env, cors, sm[1]);
@@ -347,6 +350,10 @@ async function ensureSchema(env) {
       share_id TEXT PRIMARY KEY, deck_id TEXT UNIQUE NOT NULL, user_id TEXT NOT NULL,
       created_at INTEGER NOT NULL, views INTEGER NOT NULL DEFAULT 0)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS shares_user ON shares(user_id)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS answers (
+      user_id TEXT NOT NULL, deck_id TEXT NOT NULL, qkey TEXT NOT NULL,
+      right_n INTEGER NOT NULL DEFAULT 0, wrong_n INTEGER NOT NULL DEFAULT 0, last_ok INTEGER NOT NULL DEFAULT 1,
+      updated_at INTEGER NOT NULL, PRIMARY KEY (user_id, deck_id, qkey))`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS usage (
       user_id TEXT NOT NULL, period TEXT NOT NULL, gens INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (user_id, period))`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS credits (
@@ -357,7 +364,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 5, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 6, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { out.db_error = String(e.message || e).slice(0, 120); }
@@ -426,6 +433,7 @@ async function handleDeleteMe(request, env, cors) {
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   await env.DB.batch([
     env.DB.prepare("DELETE FROM shares WHERE user_id = ?").bind(user.id),
+    env.DB.prepare("DELETE FROM answers WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM decks WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM usage WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM credits WHERE user_id = ?").bind(user.id),
@@ -616,8 +624,45 @@ async function loadOwnDeck(env, user, id) {
 async function storeDeck(env, user, id, deck) {
   const data = JSON.stringify({ flashcards: deck.flashcards, quiz: deck.quiz });
   if (data.length > MAX_DECK_JSON) throw httpErr(413, "Talia za duża — usuń część fiszek lub pytań");
-  await env.DB.prepare("UPDATE decks SET title = ?, data = ?, fc_count = ?, qz_count = ?, updated_at = ? WHERE id = ? AND user_id = ?")
-    .bind(deck.title, data, deck.flashcards.length, deck.quiz.length, Date.now(), id, user.id).run();
+  await env.DB.batch([
+    env.DB.prepare("UPDATE decks SET title = ?, data = ?, fc_count = ?, qz_count = ?, updated_at = ? WHERE id = ? AND user_id = ?")
+      .bind(deck.title, data, deck.flashcards.length, deck.quiz.length, Date.now(), id, user.id),
+    // odpowiedzi do pytań, których po zmianie już nie ma, przestają się liczyć jako błędy
+    env.DB.prepare("DELETE FROM answers WHERE user_id = ? AND deck_id = ? AND qkey NOT IN (SELECT value FROM json_each(?))")
+      .bind(user.id, id, JSON.stringify(deck.quiz.map(q => qkey(q.q)))),
+  ]);
+}
+
+/* klucz pytania = skrót jego treści (ten sam algorytm co w generator.js) — przetrwa przestawienie kolejności pytań */
+function qkey(text) {
+  let h = 0x811c9dc5;
+  const s = String(text || "").trim().toLowerCase();
+  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 0x01000193) >>> 0; }
+  return h.toString(16).padStart(8, "0");
+}
+
+async function deckAnswers(env, user, id) {
+  const { results } = await env.DB.prepare("SELECT qkey, right_n, wrong_n, last_ok FROM answers WHERE user_id = ? AND deck_id = ?").bind(user.id, id).all();
+  const out = {};
+  for (const r of results || []) out[r.qkey] = { r: r.right_n, w: r.wrong_n, ok: !!r.last_ok };
+  return out;
+}
+
+/* POST /decks/:id/answer {qkey, ok} — bez kredytów */
+async function handleAnswer(request, env, cors, id) {
+  const user = env.DB ? await authUser(request, env) : null;
+  if (!user) return json({ error: "Niezalogowany" }, 401, cors);
+  let body; try { body = await request.json(); } catch { return json({ error: "Bad JSON" }, 400, cors); }
+  const key = String((body && body.qkey) || "");
+  if (!/^[0-9a-f]{8}$/.test(key)) return json({ error: "Zły klucz pytania" }, 400, cors);
+  const ok = body.ok ? 1 : 0;
+  const own = await env.DB.prepare("SELECT 1 AS x FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id).first();
+  if (!own) return json({ error: "Nie ma takiej talii" }, 404, cors);
+  await env.DB.prepare(
+    "INSERT INTO answers (user_id, deck_id, qkey, right_n, wrong_n, last_ok, updated_at) VALUES (?,?,?,?,?,?,?) " +
+    "ON CONFLICT(user_id, deck_id, qkey) DO UPDATE SET right_n = right_n + excluded.right_n, wrong_n = wrong_n + excluded.wrong_n, last_ok = excluded.last_ok, updated_at = excluded.updated_at"
+  ).bind(user.id, id, key, ok, 1 - ok, ok, Date.now()).run();
+  return json({ ok: true }, 200, cors);
 }
 
 const deckSummary = (d) => ({ flashcards: d.flashcards.map(({ term, def }) => ({ term, def })),
@@ -642,13 +687,23 @@ async function handleDeckEdit(request, env, cors, id) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Zaloguj się" }, 401, cors);
   let body; try { body = await request.json(); } catch { return json({ error: "Bad JSON" }, 400, cors); }
-  const instr = String((body && body.instruction) || "").replace(/[\u0000-\u001f]+/g, " ").trim().slice(0, MAX_INSTRUCTION_CHARS);
+  const weak = !!(body && body.weak);
+  let instr = String((body && body.instruction) || "").replace(/[\u0000-\u001f]+/g, " ").trim().slice(0, MAX_INSTRUCTION_CHARS);
+  if (weak && instr.length < 3) instr = "Dodaj 5 nowych pytań (i 1–3 fiszki, jeśli brakuje pojęć) ćwiczących zagadnienia, w których się mylę.";
   if (instr.length < 3) return json({ error: "Napisz, co zmienić w talii." }, 400, cors);
   const material = typeof body.material === "string" ? body.material.slice(0, MAX_INPUT_CHARS) : "";
   const rl = await rateLimit(env, "e:" + clientIp(request), EDIT_LIMIT_PER_HOUR, 3600);
   if (!rl.ok) return json({ error: "Za dużo zmian na godzinę — spróbuj za chwilę." }, 429, cors);
   const deck = await loadOwnDeck(env, user, id);
   if (!deck) return json({ error: "Nie ma takiej talii" }, 404, cors);
+  let weakBlock = "";
+  if (weak) {
+    const ans = await deckAnswers(env, user, id);
+    const wrongQs = deck.quiz.filter(q => ans[qkey(q.q)] && !ans[qkey(q.q)].ok).slice(0, 10);
+    if (!wrongQs.length) return json({ error: "Nie masz teraz żadnych błędów w tej talii — najpierw rozwiąż quiz." }, 400, cors);
+    weakBlock = "\nPYTANIA, W KTÓRYCH UŻYTKOWNIK SIĘ POMYLIŁ (ćwicz właśnie te zagadnienia, innymi słowami i z innej strony; nie kopiuj tych pytań):\n" +
+      wrongQs.map((q, i) => `${i + 1}. ${q.q} (poprawna: ${q.options[q.correct]})`).join("\n") + "\n";
+  }
 
   return withCredits(env, user, COST.deckEdit, cors, async () => {
     const system = "Jesteś asystentem do nauki. Poprawiasz istniejącą talię fiszek i quizu po polsku według polecenia użytkownika. Odpowiadasz CZYSTYM JSON-em, bez markdownu, bez komentarzy.";
@@ -657,6 +712,7 @@ async function handleDeckEdit(request, env, cors, id) {
 
 AKTUALNA TALIA (tytuł: ${deck.title}):
 ${JSON.stringify(deckSummary(deck))}
+${weakBlock}
 ${material ? `\nMATERIAŁ ŹRÓDŁOWY (bazuj przede wszystkim na nim):\n"""\n${material}\n"""\n` : ""}
 ZASADY:
 - Zwróć CAŁĄ talię po zmianach w formacie {"title": "...", "flashcards": [{"term","def"}], "quiz": [{"q","options","correct","explain"}]}.
@@ -747,7 +803,9 @@ async function handleDecksList(request, env, cors) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   const { results } = await env.DB.prepare(
-    "SELECT d.id, d.title, d.source, d.fc_count AS fc, d.qz_count AS qz, d.created_at, s.share_id, s.views FROM decks d LEFT JOIN shares s ON s.deck_id = d.id WHERE d.user_id = ? ORDER BY d.created_at DESC LIMIT 200"
+    "SELECT d.id, d.title, d.source, d.fc_count AS fc, d.qz_count AS qz, d.created_at, s.share_id, s.views, " +
+    "(SELECT COUNT(*) FROM answers a WHERE a.user_id = d.user_id AND a.deck_id = d.id AND a.last_ok = 0) AS mistakes " +
+    "FROM decks d LEFT JOIN shares s ON s.deck_id = d.id WHERE d.user_id = ? ORDER BY d.created_at DESC LIMIT 200"
   ).bind(user.id).all();
   return json({ decks: results || [] }, 200, cors);
 }
@@ -761,7 +819,8 @@ async function handleDeckGet(request, env, cors, id) {
   if (!row) return json({ error: "Nie ma takiej talii" }, 404, cors);
   const data = safeParse(row.data) || {};
   return json({ id: row.id, title: row.title, source: row.source, instruction: row.instruction, created_at: row.created_at,
-    share_id: row.share_id || null, views: row.views || 0, flashcards: data.flashcards || [], quiz: data.quiz || [] }, 200, cors);
+    share_id: row.share_id || null, views: row.views || 0, flashcards: data.flashcards || [], quiz: data.quiz || [],
+    answers: await deckAnswers(env, user, id) }, 200, cors);
 }
 
 async function handleDeckRename(request, env, cors, id) {
@@ -783,6 +842,7 @@ async function handleDeckDelete(request, env, cors, id) {
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   await env.DB.batch([
     env.DB.prepare("DELETE FROM shares WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
+    env.DB.prepare("DELETE FROM answers WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
     env.DB.prepare("DELETE FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id),
   ]);
   return json({ ok: true }, 200, cors);

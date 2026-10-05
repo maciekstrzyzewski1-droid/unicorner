@@ -43,7 +43,7 @@ async function api(path, opts={}){
 
 function setSession(t, user, u){
   token = t || null; me = t ? user : null; usage = t ? u : null;
-  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; currentShareId=null; prevDeck=null; $("editPanel").hidden=true; if($("shareBtn")){ $("shareBtn").hidden=true; $("shareBox").hidden=true; } }
+  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; currentShareId=null; prevDeck=null; $("editPanel").hidden=true; if($("shareBtn")){ $("shareBtn").hidden=true; $("shareBox").hidden=true; } if($("qMode")) $("qMode").hidden=true; answers={}; quizMode="all"; }
   renderAccount(); refreshBtn();
 }
 
@@ -57,6 +57,11 @@ function renderAccount(){
   renderUsage();
 }
 const COSTS = { generate:3, deckEdit:2, item:1 };
+let answers = {}, quizMode = "all";
+/* klucz pytania = skrót treści (ten sam algorytm co w workerze) */
+function qkey(text){ let h=0x811c9dc5; const s=String(text||"").trim().toLowerCase(); for(let i=0;i<s.length;i++){ h^=s.charCodeAt(i); h=Math.imul(h,0x01000193)>>>0; } return h.toString(16).padStart(8,"0"); }
+function isBad(q){ const a=answers[qkey(q.q)]; return !!(a && !a.ok); }
+function badCount(){ return lastResult && Array.isArray(lastResult.quiz) ? lastResult.quiz.filter(isBad).length : 0; }
 let lastSourceText = "", prevDeck = null;
 function costs(){ return (usage && usage.costs) || COSTS; }
 function creditsLeft(){ if(!usage) return 0; if(usage.limit==null) return Infinity; return Math.max(0, usage.limit-usage.used); }
@@ -116,7 +121,7 @@ function renderDecks(){
   $("decksEmpty").hidden = decks.length>0;
   decks.forEach(d=>{
     const el=document.createElement("div"); el.className="g-deck"+(d.id===currentDeckId?" cur":""); el.tabIndex=0; el.setAttribute("role","button");
-    el.innerHTML=`<div class="t">${esc(d.title)}</div><div class="m"><span class="src">${SRC_LABEL[d.source]||"Materiał"}</span><span>${d.fc} ${plural(d.fc,"fiszka","fiszki","fiszek")} · ${d.qz} ${plural(d.qz,"pytanie","pytania","pytań")}</span><span>${fmtDate(d.created_at)}</span>${d.share_id ? `<span class="shr">udostępniona · ${d.views||0} ${plural(d.views||0,"wyświetlenie","wyświetlenia","wyświetleń")}</span>` : ""}</div><div class="acts"><button type="button" data-a="ren">Zmień nazwę</button><button type="button" data-a="del">Usuń</button></div>`;
+    el.innerHTML=`<div class="t">${esc(d.title)}</div><div class="m"><span class="src">${SRC_LABEL[d.source]||"Materiał"}</span><span>${d.fc} ${plural(d.fc,"fiszka","fiszki","fiszek")} · ${d.qz} ${plural(d.qz,"pytanie","pytania","pytań")}</span><span>${fmtDate(d.created_at)}</span>${d.mistakes ? `<span class="bad">${d.mistakes} ${plural(d.mistakes,"błąd","błędy","błędów")} do powtórki</span>` : ""}${d.share_id ? `<span class="shr">udostępniona · ${d.views||0} ${plural(d.views||0,"wyświetlenie","wyświetlenia","wyświetleń")}</span>` : ""}</div><div class="acts"><button type="button" data-a="ren">Zmień nazwę</button><button type="button" data-a="del">Usuń</button></div>`;
     el.addEventListener("click", e=>{ if(e.target.closest(".acts")||e.target.tagName==="INPUT") return; openDeck(d.id); });
     el.addEventListener("keydown", e=>{ if(e.key==="Enter" && e.target===el) openDeck(d.id); });
     el.querySelector('[data-a="ren"]').addEventListener("click", ()=>startRename(el, d));
@@ -151,6 +156,7 @@ async function openDeck(id, quiet){
   if(!r.ok){ setStatus(r.data.error||"Nie udało się wczytać talii.","err"); return; }
   clearStatus(); currentDeckId=id; currentShareId=r.data.share_id||null; prevDeck=null; lastSourceText="";
   lastResult={ title:r.data.title, flashcards:r.data.flashcards, quiz:r.data.quiz };
+  answers = r.data.answers || {}; quizMode = "all";
   render(lastResult, !quiet, true); renderDecks();
 }
 
@@ -339,6 +345,7 @@ genBtn.addEventListener("click", async ()=>{
     currentDeckId = data.deck ? data.deck.id : null; currentShareId=null; prevDeck=null;
     if(data.deck){ decks.unshift(data.deck); renderDecks(); }
     lastResult={ title:data.title, flashcards:data.flashcards, quiz:data.quiz };
+    answers = {}; quizMode = "all";
     render(lastResult, true, !!data.deck);
     if(data.save_error) setStatus(data.save_error+" — pobierz plik, żeby go nie stracić.","err");
   }catch(err){
@@ -358,12 +365,13 @@ function updScore(){
 
 function paras(t){ return String(t||"").split(/\n+/).filter(Boolean).map(x=>"<p>"+esc(x)+"</p>").join(""); }
 
-function buildQuestion(q, i, total){
+function buildQuestion(q, i, total, n){
+  n = n || i+1;
   const opts=Array.isArray(q.options)?q.options:[];
   const correct=Number.isInteger(q.correct)?q.correct:0;
   const order=opts.map((_,k)=>k).sort(()=>Math.random()-0.5);
   const card=document.createElement("div"); card.className="g-q";
-  card.innerHTML=`<div class="g-qno">Pytanie ${i+1} / ${total}</div><div class="g-qt">${esc(q.q||q.question||"")}</div><div class="opts"></div><div class="g-exp">${esc(q.explain||q.explanation||"")}</div><div class="g-more" hidden></div><div class="g-qacts" hidden></div>`;
+  card.innerHTML=`<div class="g-qno">Pytanie ${n} / ${total}${isBad(q) ? ' <span class="g-wasbad">· ostatnio źle</span>' : ""}</div><div class="g-qt">${esc(q.q||q.question||"")}</div><div class="opts"></div><div class="g-exp">${esc(q.explain||q.explanation||"")}</div><div class="g-more" hidden></div><div class="g-qacts" hidden></div>`;
   const box=card.querySelector(".opts"), exp=card.querySelector(".g-exp"), more=card.querySelector(".g-more"), acts=card.querySelector(".g-qacts");
   let st=null;
   order.forEach(k=>{
@@ -373,6 +381,7 @@ function buildQuestion(q, i, total){
       if(k===correct){ b.classList.add("correct"); score.ok++; st="ok"; }
       else{ b.classList.add("wrong"); st="bad"; box.querySelectorAll(".g-opt").forEach(x=>{ if(+x.dataset.k===correct) x.classList.add("correct"); }); }
       score.done++; updScore();
+      recordAnswer(q, k===correct);
       if(exp.textContent.trim()) exp.classList.add("show");
       showActs();
     });
@@ -395,7 +404,8 @@ function buildQuestion(q, i, total){
       const it=await itemAction("qz", i, "replace", rp);
       if(!it) return;
       if(st==="ok") score.ok--; if(st) score.done--; updScore();
-      card.replaceWith(buildQuestion(it, i, total));
+      delete answers[qkey(q.q)]; updateQuizMode();
+      card.replaceWith(buildQuestion(it, i, total, n));
     });
     acts.appendChild(ex); acts.appendChild(rp);
   }
@@ -404,8 +414,37 @@ function buildQuestion(q, i, total){
 
 function renderQuiz(qz){
   const list=$("qzList"); list.innerHTML="";
-  score={ok:0,done:0,total:qz.length}; updScore();
-  qz.forEach((q,i)=>list.appendChild(buildQuestion(q, i, qz.length)));
+  const pick = qz.map((q,i)=>[q,i]).filter(([q])=> quizMode!=="bad" || isBad(q));
+  score={ok:0,done:0,total:pick.length}; updScore();
+  pick.forEach(([q,i],n)=>list.appendChild(buildQuestion(q, i, pick.length, n+1)));
+  $("qmEmpty").hidden = !(quizMode==="bad" && pick.length===0);
+  updateQuizMode();
+}
+
+/* tryb „Moje błędy” */
+function updateQuizMode(){
+  const show = canEdit();
+  $("qMode").hidden = !show;
+  if(!show) return;
+  const bad = badCount();
+  $("qmAll").textContent = (lastResult.quiz||[]).length;
+  $("qmBad").textContent = bad;
+  document.querySelectorAll("#qMode [data-m]").forEach(b=>b.classList.toggle("on", b.dataset.m===quizMode));
+  $("weakGo").hidden = bad===0;
+  const d=decks.find(z=>z.id===currentDeckId);
+  if(d && d.mistakes!==bad){ d.mistakes=bad; renderDecks(); }
+}
+document.querySelectorAll("#qMode [data-m]").forEach(b=>b.addEventListener("click", ()=>{
+  quizMode=b.dataset.m; renderQuiz(lastResult.quiz||[]);
+}));
+
+function recordAnswer(q, ok){
+  if(!canEdit()) return;
+  const key=qkey(q.q), a=answers[key] || { r:0, w:0, ok:true };
+  if(ok) a.r++; else a.w++;
+  a.ok=ok; answers[key]=a;
+  api("/decks/"+currentDeckId+"/answer", { method:"POST", body:{ qkey:key, ok } });
+  updateQuizMode();
 }
 
 function render(data, scroll, saved){
@@ -539,23 +578,36 @@ function syncDeckInList(d){
 
 const editInstr=$("editInstr");
 bindChips("#editChips", editInstr);
-$("editGo").addEventListener("click", async ()=>{
-  const ins=editInstr.value.trim();
-  if(ins.length<3){ toast("Napisz, co zmienić w talii, albo kliknij jedną z podpowiedzi.", true); editInstr.focus(); return; }
-  const btn=$("editGo"), orig=btn.innerHTML; btn.disabled=true;
-  btn.innerHTML='<span class="g-spin"></span><span>AI poprawia talię… to potrwa kilkanaście sekund</span>';
+async function runEdit(body, btn, busy){
+  const orig=btn.innerHTML; btn.disabled=true;
+  btn.innerHTML='<span class="g-spin"></span><span>'+busy+'</span>';
   const before=JSON.parse(JSON.stringify(lastResult));
-  const body={ instruction: ins }; if(lastSourceText) body.material=lastSourceText;
+  if(lastSourceText) body.material=lastSourceText;
   const r=await api("/decks/"+currentDeckId+"/edit", { method:"POST", body });
   btn.disabled=false; btn.innerHTML=orig;
   setUsage(r.data.usage);
-  if(!r.ok){ toast(r.data.error || "Nie udało się poprawić talii.", true); return; }
+  if(!r.ok){ toast(r.data.error || "Nie udało się poprawić talii.", true); return false; }
   prevDeck=before;
   const d=r.data.deck;
   lastResult={ title:d.title, flashcards:d.flashcards, quiz:d.quiz };
-  editInstr.value=""; document.querySelectorAll("#editChips button").forEach(b=>b.classList.remove("on"));
   render(lastResult, false, true); syncDeckInList(d);
-  toast("Talia poprawiona ✓ — jeśli coś nie pasuje, kliknij „Cofnij zmianę”.");
+  return true;
+}
+$("editGo").addEventListener("click", async ()=>{
+  const ins=editInstr.value.trim();
+  if(ins.length<3){ toast("Napisz, co zmienić w talii, albo kliknij jedną z podpowiedzi.", true); editInstr.focus(); return; }
+  if(await runEdit({ instruction: ins }, $("editGo"), "AI poprawia talię… to potrwa kilkanaście sekund")){
+    editInstr.value=""; document.querySelectorAll("#editChips button").forEach(b=>b.classList.remove("on"));
+    toast("Talia poprawiona ✓ — jeśli coś nie pasuje, kliknij „Cofnij zmianę”.");
+  }
+});
+$("weakGo").addEventListener("click", async ()=>{
+  const before=(lastResult.quiz||[]).length;
+  if(await runEdit({ weak: true }, $("weakGo"), "AI układa pytania z Twoich słabych tematów…")){
+    const added=(lastResult.quiz||[]).length-before;
+    quizMode="all"; renderQuiz(lastResult.quiz||[]); showPane("qz");
+    toast(added>0 ? "Dodano "+added+" "+plural(added,"pytanie","pytania","pytań")+" z Twoich słabych tematów ✓ — są na końcu quizu." : "Talia zaktualizowana ✓");
+  }
 });
 $("editUndo").addEventListener("click", async ()=>{
   if(!prevDeck) return;
