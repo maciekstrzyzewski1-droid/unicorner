@@ -1,5 +1,5 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 6 (konta, kredyty, udostępnianie, błędy)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 7 (konta, kredyty, udostępnianie, błędy, limity w D1)
    ---------------------------------------------------------------------
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)
@@ -39,7 +39,7 @@
      ACCESS_CODE       — STARY wspólny kod; nadal działa (bez zapisu talii), można usunąć
 
    Bindingi (panel → Worker → Settings → Bindings):
-     UC_KV — namespace KV (opinie, limity na IP)
+     UC_KV — namespace KV (opinie; limity na IP tylko awaryjnie, gdy brak bazy DB)
      DB    — baza D1 „unicorner-db” (konta, sesje, talie, kredyty). Tabele
              tworzą się same przy pierwszym uruchomieniu.
    ===================================================================== */
@@ -350,6 +350,7 @@ async function ensureSchema(env) {
       share_id TEXT PRIMARY KEY, deck_id TEXT UNIQUE NOT NULL, user_id TEXT NOT NULL,
       created_at INTEGER NOT NULL, views INTEGER NOT NULL DEFAULT 0)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS shares_user ON shares(user_id)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS rate (k TEXT PRIMARY KEY, n INTEGER NOT NULL, exp INTEGER NOT NULL)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS answers (
       user_id TEXT NOT NULL, deck_id TEXT NOT NULL, qkey TEXT NOT NULL,
       right_n INTEGER NOT NULL DEFAULT 0, wrong_n INTEGER NOT NULL DEFAULT 0, last_ok INTEGER NOT NULL DEFAULT 1,
@@ -364,7 +365,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 6, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 7, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { out.db_error = String(e.message || e).slice(0, 120); }
@@ -950,13 +951,25 @@ function clientIp(request) {
   return request.headers.get("CF-Connecting-IP") || "0.0.0.0";
 }
 
-/* prosty licznik w KV: zwiększa i sprawdza limit w oknie ttl sekund */
+/* licznik limitu w oknie ttl sekund.
+   W bazie D1 (ok. 100 tys. zapisów/dzień za darmo, atomowo); KV tylko awaryjnie, bo darmowe KV ma ok. 1000 zapisów/dzień. */
 async function rateLimit(env, key, limit, ttl) {
   const bucket = Math.floor(Date.now() / (ttl * 1000));
-  const k = "rl:" + key + ":" + bucket;
-  const n = parseInt(await env.UC_KV.get(k), 10) || 0;
+  const k = key + ":" + bucket;
+  if (env.DB) {
+    try {
+      await ensureSchema(env);
+      const row = await env.DB.prepare(
+        "INSERT INTO rate (k, n, exp) VALUES (?, 1, ?) ON CONFLICT(k) DO UPDATE SET n = n + 1 WHERE n < ? RETURNING n"
+      ).bind(k, (bucket + 1) * ttl * 1000, limit).first();
+      if (Math.random() < 0.02) await env.DB.prepare("DELETE FROM rate WHERE exp < ?").bind(Date.now()).run(); // sprzątanie
+      return { ok: !!row };
+    } catch { return { ok: true }; } // awaria licznika nie może blokować użytkowników
+  }
+  const kk = "rl:" + k;
+  const n = parseInt(await env.UC_KV.get(kk), 10) || 0;
   if (n >= limit) return { ok: false };
-  await env.UC_KV.put(k, String(n + 1), { expirationTtl: ttl + 60 });
+  await env.UC_KV.put(kk, String(n + 1), { expirationTtl: ttl + 60 });
   return { ok: true };
 }
 
