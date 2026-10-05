@@ -1,5 +1,5 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 7 (konta, kredyty, udostępnianie, błędy, limity w D1)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 8 (konta, kredyty, udostępnianie, błędy, powtórki)
    ---------------------------------------------------------------------
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)
@@ -18,6 +18,7 @@
      POST /decks/:id/item    → {kind, index, action} wyjaśnij / podmień jeden element (1 kredyt)
      DELETE /decks/:id       → usunięcie talii
      POST /decks/:id/answer  → {qkey, ok} zapis odpowiedzi w quizie (do „Moje błędy”)
+     POST /decks/:id/review  → {ckey, ok} powtórka fiszki („Umiem” / „Jeszcze nie”) → {box, due}
      POST /decks/:id/share   → włącza udostępnianie linkiem → {share_id}
      DELETE /decks/:id/share → wyłącza udostępnianie
      GET  /s/:share_id       → publiczny podgląd udostępnionej talii (bez logowania)
@@ -95,7 +96,8 @@ export default {
       if (dm && request.method === "PATCH")  return await handleDeckRename(request, env, cors, dm[1]);
       if (dm && request.method === "PUT")    return await handleDeckPut(request, env, cors, dm[1]);
       if (dm && request.method === "DELETE") return await handleDeckDelete(request, env, cors, dm[1]);
-      const da = path.match(/^\/decks\/([A-Za-z0-9-]{8,64})\/(edit|item|share|answer)$/);
+      const da = path.match(/^\/decks\/([A-Za-z0-9-]{8,64})\/(edit|item|share|answer|review)$/);
+      if (da && da[2] === "review" && request.method === "POST") return await handleReview(request, env, cors, da[1]);
       if (da && da[2] === "answer" && request.method === "POST") return await handleAnswer(request, env, cors, da[1]);
       if (da && da[2] === "share" && request.method === "POST")   return await handleShareCreate(request, env, cors, da[1]);
       if (da && da[2] === "share" && request.method === "DELETE") return await handleShareDelete(request, env, cors, da[1]);
@@ -351,6 +353,10 @@ async function ensureSchema(env) {
       created_at INTEGER NOT NULL, views INTEGER NOT NULL DEFAULT 0)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS shares_user ON shares(user_id)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS rate (k TEXT PRIMARY KEY, n INTEGER NOT NULL, exp INTEGER NOT NULL)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS reviews (
+      user_id TEXT NOT NULL, deck_id TEXT NOT NULL, ckey TEXT NOT NULL,
+      box INTEGER NOT NULL DEFAULT 0, due INTEGER NOT NULL, updated_at INTEGER NOT NULL,
+      PRIMARY KEY (user_id, deck_id, ckey))`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS answers (
       user_id TEXT NOT NULL, deck_id TEXT NOT NULL, qkey TEXT NOT NULL,
       right_n INTEGER NOT NULL DEFAULT 0, wrong_n INTEGER NOT NULL DEFAULT 0, last_ok INTEGER NOT NULL DEFAULT 1,
@@ -365,7 +371,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 7, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 8, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { out.db_error = String(e.message || e).slice(0, 120); }
@@ -435,6 +441,7 @@ async function handleDeleteMe(request, env, cors) {
   await env.DB.batch([
     env.DB.prepare("DELETE FROM shares WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM answers WHERE user_id = ?").bind(user.id),
+    env.DB.prepare("DELETE FROM reviews WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM decks WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM usage WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM credits WHERE user_id = ?").bind(user.id),
@@ -631,6 +638,8 @@ async function storeDeck(env, user, id, deck) {
     // odpowiedzi do pytań, których po zmianie już nie ma, przestają się liczyć jako błędy
     env.DB.prepare("DELETE FROM answers WHERE user_id = ? AND deck_id = ? AND qkey NOT IN (SELECT value FROM json_each(?))")
       .bind(user.id, id, JSON.stringify(deck.quiz.map(q => qkey(q.q)))),
+    env.DB.prepare("DELETE FROM reviews WHERE user_id = ? AND deck_id = ? AND ckey NOT IN (SELECT value FROM json_each(?))")
+      .bind(user.id, id, JSON.stringify(deck.flashcards.map(c => qkey(c.term)))),
   ]);
 }
 
@@ -647,6 +656,38 @@ async function deckAnswers(env, user, id) {
   const out = {};
   for (const r of results || []) out[r.qkey] = { r: r.right_n, w: r.wrong_n, ok: !!r.last_ok };
   return out;
+}
+
+/* ===== powtórki fiszek (system pudełek Leitnera) =====
+   „Umiem” przesuwa fiszkę do kolejnego pudełka i odsuwa powtórkę: 1 → 3 → 7 → 14 → 30 → 60 dni.
+   „Jeszcze nie” cofa ją do pudełka 0 — wraca jeszcze dziś. */
+const REVIEW_DAYS = [0, 1, 3, 7, 14, 30, 60];
+
+async function deckReviews(env, user, id) {
+  const { results } = await env.DB.prepare("SELECT ckey, box, due FROM reviews WHERE user_id = ? AND deck_id = ?").bind(user.id, id).all();
+  const out = {};
+  for (const r of results || []) out[r.ckey] = { box: r.box, due: r.due };
+  return out;
+}
+
+async function handleReview(request, env, cors, id) {
+  const user = env.DB ? await authUser(request, env) : null;
+  if (!user) return json({ error: "Niezalogowany" }, 401, cors);
+  let body; try { body = await request.json(); } catch { return json({ error: "Bad JSON" }, 400, cors); }
+  const key = String((body && body.ckey) || "");
+  if (!/^[0-9a-f]{8}$/.test(key)) return json({ error: "Zły klucz fiszki" }, 400, cors);
+  const own = await env.DB.prepare("SELECT 1 AS x FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id).first();
+  if (!own) return json({ error: "Nie ma takiej talii" }, 404, cors);
+  const prev = await env.DB.prepare("SELECT box FROM reviews WHERE user_id = ? AND deck_id = ? AND ckey = ?").bind(user.id, id, key).first();
+  const now = Date.now();
+  const box = body.ok ? Math.min((prev ? prev.box : 0) + 1, REVIEW_DAYS.length - 1) : 0;
+  // powtórka w dniu docelowym od rana (−6 h zapasu), a „jeszcze nie” = od razu
+  const due = box === 0 ? now : now + REVIEW_DAYS[box] * 86400e3 - 6 * 3600e3;
+  await env.DB.prepare(
+    "INSERT INTO reviews (user_id, deck_id, ckey, box, due, updated_at) VALUES (?,?,?,?,?,?) " +
+    "ON CONFLICT(user_id, deck_id, ckey) DO UPDATE SET box = excluded.box, due = excluded.due, updated_at = excluded.updated_at"
+  ).bind(user.id, id, key, box, due, now).run();
+  return json({ box, due }, 200, cors);
 }
 
 /* POST /decks/:id/answer {qkey, ok} — bez kredytów */
@@ -805,9 +846,11 @@ async function handleDecksList(request, env, cors) {
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   const { results } = await env.DB.prepare(
     "SELECT d.id, d.title, d.source, d.fc_count AS fc, d.qz_count AS qz, d.created_at, s.share_id, s.views, " +
-    "(SELECT COUNT(*) FROM answers a WHERE a.user_id = d.user_id AND a.deck_id = d.id AND a.last_ok = 0) AS mistakes " +
+    "(SELECT COUNT(*) FROM answers a WHERE a.user_id = d.user_id AND a.deck_id = d.id AND a.last_ok = 0) AS mistakes, " +
+    "(SELECT COUNT(*) FROM reviews r WHERE r.user_id = d.user_id AND r.deck_id = d.id AND r.due <= ?) AS due, " +
+    "(SELECT COUNT(*) FROM reviews r WHERE r.user_id = d.user_id AND r.deck_id = d.id) AS seen " +
     "FROM decks d LEFT JOIN shares s ON s.deck_id = d.id WHERE d.user_id = ? ORDER BY d.created_at DESC LIMIT 200"
-  ).bind(user.id).all();
+  ).bind(Date.now(), user.id).all();
   return json({ decks: results || [] }, 200, cors);
 }
 
@@ -821,7 +864,7 @@ async function handleDeckGet(request, env, cors, id) {
   const data = safeParse(row.data) || {};
   return json({ id: row.id, title: row.title, source: row.source, instruction: row.instruction, created_at: row.created_at,
     share_id: row.share_id || null, views: row.views || 0, flashcards: data.flashcards || [], quiz: data.quiz || [],
-    answers: await deckAnswers(env, user, id) }, 200, cors);
+    answers: await deckAnswers(env, user, id), reviews: await deckReviews(env, user, id), now: Date.now() }, 200, cors);
 }
 
 async function handleDeckRename(request, env, cors, id) {
@@ -844,6 +887,7 @@ async function handleDeckDelete(request, env, cors, id) {
   await env.DB.batch([
     env.DB.prepare("DELETE FROM shares WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
     env.DB.prepare("DELETE FROM answers WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
+    env.DB.prepare("DELETE FROM reviews WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
     env.DB.prepare("DELETE FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id),
   ]);
   return json({ ok: true }, 200, cors);

@@ -147,7 +147,36 @@ const v = Date.now().toString(36);
       </div>
 
       <div class="g-pane on" id="pane-fc">
-        <p class="g-hint">Kliknij fiszkę, żeby ją odwrócić.</p>
+        <div class="g-sbar" id="studyBar" hidden>
+          <div class="g-sbar-t">
+            <b>Powtórki</b>
+            <span id="sbInfo"></span>
+          </div>
+          <button class="g-btn" id="studyGo" type="button">Ucz się</button>
+        </div>
+        <div class="g-study" id="study" hidden>
+          <div class="g-study-top">
+            <span id="stProg"></span>
+            <span class="g-study-bar"><i id="stBar"></i></span>
+            <button class="g-mini" id="stExit" type="button">Zakończ</button>
+          </div>
+          <div class="g-study-card" id="stCard">
+            <div class="g-study-k" id="stKind"></div>
+            <div class="g-study-term" id="stTerm"></div>
+            <div class="g-study-def" id="stDef" hidden></div>
+          </div>
+          <div class="g-study-acts" id="stActs">
+            <button class="g-btn" id="stShow" type="button">Pokaż odpowiedź <kbd>spacja</kbd></button>
+            <button class="g-btn ghost g-no" id="stNo" type="button" hidden>Jeszcze nie <kbd>1</kbd></button>
+            <button class="g-btn g-yes" id="stYes" type="button" hidden>Umiem <kbd>2</kbd></button>
+          </div>
+          <div class="g-study-done" id="stDone" hidden>
+            <h3>Na dziś gotowe 🎯</h3>
+            <p id="stSum"></p>
+            <div class="g-editrow"><button class="g-btn" id="stQuiz" type="button">Sprawdź się w quizie</button><button class="g-btn ghost" id="stBack" type="button">Wróć do fiszek</button></div>
+          </div>
+        </div>
+        <p class="g-hint" id="fcHint">Kliknij fiszkę, żeby ją odwrócić.</p>
         <div class="g-fc-grid" id="fcGrid"></div>
       </div>
       <div class="g-pane" id="pane-qz">
