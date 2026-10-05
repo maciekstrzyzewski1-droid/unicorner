@@ -4,6 +4,7 @@
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek)
      POST /                  → to samo (kompatybilność)
+     GET  /health            → test po wdrożeniu: {ok, db, kv, ai_key}
      POST /auth/google       → {credential} z „Zaloguj przez Google” → {token, user, usage}
      POST /auth/logout       → kończy sesję
      GET  /me                → {user, usage}
@@ -35,7 +36,7 @@
    ===================================================================== */
 
 const MODEL = "claude-haiku-4-5-20251001";
-const GOOGLE_CLIENT_ID = "WSTAW_CLIENT_ID.apps.googleusercontent.com"; // publiczny identyfikator z Google Cloud
+const GOOGLE_CLIENT_ID = "243769752280-r6h2cj3pn9n47p020seuk58n9ijj9si7.apps.googleusercontent.com"; // publiczny identyfikator z Google Cloud
 const SESSION_DAYS = 60;                 // ile dni trwa zalogowanie
 const FREE_MONTHLY_GENS_DEFAULT = 10;    // darmowe generowania na konto na miesiąc (beta)
 const MAX_DECKS_PER_USER = 300;
@@ -62,6 +63,9 @@ export default {
     try {
       if ((path === "/" || path === "/generate") && request.method === "POST")
         return await handleGenerate(request, env, cors);
+
+      if (path === "/health" && request.method === "GET")
+        return await handleHealth(env, cors);
 
       if (path === "/auth/google" && request.method === "POST")
         return await handleAuthGoogle(request, env, cors);
@@ -366,6 +370,17 @@ async function ensureSchema(env) {
       user_id TEXT NOT NULL, period TEXT NOT NULL, gens INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (user_id, period))`),
   ]);
   schemaReady = true;
+}
+
+/* szybki test po wdrożeniu: otwórz /health w przeglądarce */
+async function handleHealth(env, cors) {
+  const out = { ok: true, version: 3, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  if (env.DB) {
+    try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
+    catch (e) { out.db_error = String(e.message || e).slice(0, 120); }
+  }
+  out.ok = out.ai_key && out.kv && out.db;
+  return json(out, 200, cors);
 }
 
 /* ===================== LOGOWANIE (Google) ===================== */

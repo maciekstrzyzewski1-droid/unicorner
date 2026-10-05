@@ -3,7 +3,7 @@
    Wysyłka do Cloudflare Workera, który woła model AI i zwraca {flashcards, quiz}. */
 (function(){
 const API = window.UC_API || "https://red-queen-3002.unicorner.workers.dev";
-const GOOGLE_CLIENT_ID = window.UC_GCID || "WSTAW_CLIENT_ID.apps.googleusercontent.com";
+const GOOGLE_CLIENT_ID = window.UC_GCID || "243769752280-r6h2cj3pn9n47p020seuk58n9ijj9si7.apps.googleusercontent.com";
 const MAX_CHARS = 14000;   // limit długości tekstu wysyłanego do AI (kontrola kosztu)
 const MIN_CHARS = 300;
 const MAX_PHOTOS = 4;
