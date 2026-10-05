@@ -9,6 +9,8 @@ import Foot from '../components/wiedza/Foot.astro';
 
 const title = 'Talia od znajomego · Unicorner';
 const description = 'Fiszki i quiz udostępnione na Unicorner. Ucz się bez logowania albo zrób własną talię ze swoich notatek.';
+// numer wersji skryptu = moment builda (żeby przeglądarka nie brała starego pliku z pamięci)
+const v = Date.now().toString(36);
 ---
 <Base title={title} description={description}>
   <Fragment slot="head">
@@ -73,5 +75,5 @@ const description = 'Fiszki i quiz udostępnione na Unicorner. Ucz się bez logo
 
   <Foot label="unicorner · talia" />
 
-  <script is:inline src="/assets/talia.js"></script>
+  <script is:inline src={`/assets/talia.js?v=${v}`}></script>
 </Base>

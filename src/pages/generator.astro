@@ -8,6 +8,8 @@ import Foot from '../components/wiedza/Foot.astro';
 
 const title = 'Generator AI — fiszki i quiz z notatek · Unicorner';
 const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. AI ułoży z nich fiszki i quiz z wyjaśnieniami. Beta.';
+// numer wersji skryptu = moment builda (żeby przeglądarka nie brała starego pliku z pamięci)
+const v = Date.now().toString(36);
 ---
 <Base title={title} description={description}>
   <Fragment slot="head">
@@ -218,5 +220,5 @@ const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. A
 
   <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
-  <script is:inline src="/assets/generator.js"></script>
+  <script is:inline src={`/assets/generator.js?v=${v}`}></script>
 </Base>
