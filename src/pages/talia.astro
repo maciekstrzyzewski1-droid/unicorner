@@ -1,0 +1,77 @@
+---
+// Publiczny podgląd talii udostępnionej linkiem: /talia.html?s=ID
+// Treść ładuje się z workera w przeglądarce; strona nie jest indeksowana (to materiały użytkowników).
+import Base from '../layouts/Base.astro';
+import '../styles/wiedza.css';
+import '../styles/generator.css';
+import Bar from '../components/wiedza/Bar.astro';
+import Foot from '../components/wiedza/Foot.astro';
+
+const title = 'Talia od znajomego · Unicorner';
+const description = 'Fiszki i quiz udostępnione na Unicorner. Ucz się bez logowania albo zrób własną talię ze swoich notatek.';
+---
+<Base title={title} description={description}>
+  <Fragment slot="head">
+    <meta name="robots" content="noindex, nofollow" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Fiszki i quiz na Unicorner" />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="pl_PL" />
+  </Fragment>
+
+  <Bar crumbs={[{ label: 'Udostępniona talia' }]} back={{ label: '→ Generator', href: '/generator.html' }} />
+
+  <main class="wz-wrap g-main">
+    <div class="t-loading" id="tLoading"><p class="g-hint"><span class="g-spin"></span> Wczytuję talię…</p></div>
+
+    <section class="t-err" id="tErr" hidden>
+      <span class="wz-eyebrow"><span class="dot"></span>Link nie działa</span>
+      <h1>Nie ma tu talii</h1>
+      <p id="tErrMsg">Ten link wygasł albo autor wyłączył udostępnianie.</p>
+      <div class="t-cta"><a class="g-btn" href="/generator.html">Zrób własną talię z notatek</a></div>
+    </section>
+
+    <section id="tDeck" hidden>
+      <div class="t-hero">
+        <span class="wz-eyebrow"><span class="dot"></span>Udostępniona talia</span>
+        <h1 id="tTitle"></h1>
+        <div class="t-meta" id="tMeta"></div>
+        <div class="t-cta">
+          <a class="g-btn" id="tSave" href="/generator.html">Zapisz u siebie</a>
+          <a class="g-btn ghost" href="/generator.html">Zrób własną z notatek</a>
+        </div>
+      </div>
+
+      <div class="g-result">
+        <div class="g-rhead">
+          <div class="g-tabs" role="tablist">
+            <button class="g-tab on" data-pane="fc" role="tab">Fiszki <span id="fcCount">0</span></button>
+            <button class="g-tab" data-pane="qz" role="tab">Quiz <span id="qzCount">0</span></button>
+          </div>
+          <div class="g-score" id="score">
+            <span class="lbl">Wynik</span><b id="scoreVal">0 / 0</b>
+            <span class="g-meter"><i id="scoreBar"></i></span>
+            <button class="g-mini" id="quizAgain" type="button">Od nowa</button>
+          </div>
+        </div>
+        <div class="g-pane on" id="pane-fc">
+          <p class="g-hint">Kliknij fiszkę, żeby ją odwrócić.</p>
+          <div class="g-fc-grid" id="fcGrid"></div>
+        </div>
+        <div class="g-pane" id="pane-qz"><div id="qzList"></div></div>
+      </div>
+
+      <div class="t-promo">
+        <h2>Masz własne notatki?</h2>
+        <p>Wrzuć PDF z wykładu, zdjęcia notatek albo wklej tekst — AI zrobi z tego taką samą talię fiszek i quiz. Za darmo w becie.</p>
+        <a class="g-btn" href="/generator.html">Otwórz generator</a>
+      </div>
+
+      <p class="g-disc">Talię utworzył użytkownik Unicorner z pomocą AI — może zawierać błędy. Sprawdzaj z materiałami z zajęć. <a href="/regulamin.html">Regulamin</a> · <a href="/prywatnosc.html">Prywatność</a>.</p>
+    </section>
+  </main>
+
+  <Foot label="unicorner · talia" />
+
+  <script is:inline src="/assets/talia.js"></script>
+</Base>

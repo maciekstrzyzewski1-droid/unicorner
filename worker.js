@@ -1,5 +1,5 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 4 (konta + kredyty)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 5 (konta + kredyty + udostępnianie)
    ---------------------------------------------------------------------
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)
@@ -16,6 +16,10 @@
      POST /decks/:id/edit    → {instruction, material?} AI poprawia całą talię      (2 kredyty)
      POST /decks/:id/item    → {kind, index, action} wyjaśnij / podmień jeden element (1 kredyt)
      DELETE /decks/:id       → usunięcie talii
+     POST /decks/:id/share   → włącza udostępnianie linkiem → {share_id}
+     DELETE /decks/:id/share → wyłącza udostępnianie
+     GET  /s/:share_id       → publiczny podgląd udostępnionej talii (bez logowania)
+     POST /s/:share_id/copy  → zapisuje kopię udostępnionej talii na swoim koncie
      GET  /reviews           → zatwierdzone opinie (czyta strona główna)
      POST /reviews           → nowa opinia (trafia do moderacji)
      GET  /admin/list?code=… → opinie oczekujące (moderacja.html)
@@ -89,9 +93,14 @@ export default {
       if (dm && request.method === "PATCH")  return await handleDeckRename(request, env, cors, dm[1]);
       if (dm && request.method === "PUT")    return await handleDeckPut(request, env, cors, dm[1]);
       if (dm && request.method === "DELETE") return await handleDeckDelete(request, env, cors, dm[1]);
-      const da = path.match(/^\/decks\/([A-Za-z0-9-]{8,64})\/(edit|item)$/);
-      if (da && request.method === "POST")
+      const da = path.match(/^\/decks\/([A-Za-z0-9-]{8,64})\/(edit|item|share)$/);
+      if (da && da[2] === "share" && request.method === "POST")   return await handleShareCreate(request, env, cors, da[1]);
+      if (da && da[2] === "share" && request.method === "DELETE") return await handleShareDelete(request, env, cors, da[1]);
+      if (da && da[2] !== "share" && request.method === "POST")
         return da[2] === "edit" ? await handleDeckEdit(request, env, cors, da[1]) : await handleDeckItem(request, env, cors, da[1]);
+      const sm = path.match(/^\/s\/([A-Za-z0-9]{6,20})(\/copy)?$/);
+      if (sm && !sm[2] && request.method === "GET")  return await handleSharedGet(env, cors, sm[1]);
+      if (sm && sm[2] && request.method === "POST")  return await handleSharedCopy(request, env, cors, sm[1]);
 
       if (path === "/reviews" && request.method === "GET")
         return await handleReviewsGet(env, cors);
@@ -334,6 +343,10 @@ async function ensureSchema(env) {
       data TEXT NOT NULL, fc_count INTEGER NOT NULL DEFAULT 0, qz_count INTEGER NOT NULL DEFAULT 0,
       created_at INTEGER NOT NULL, updated_at INTEGER NOT NULL)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS decks_user ON decks(user_id, created_at DESC)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS shares (
+      share_id TEXT PRIMARY KEY, deck_id TEXT UNIQUE NOT NULL, user_id TEXT NOT NULL,
+      created_at INTEGER NOT NULL, views INTEGER NOT NULL DEFAULT 0)`),
+    env.DB.prepare(`CREATE INDEX IF NOT EXISTS shares_user ON shares(user_id)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS usage (
       user_id TEXT NOT NULL, period TEXT NOT NULL, gens INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (user_id, period))`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS credits (
@@ -344,7 +357,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 4, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 5, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { out.db_error = String(e.message || e).slice(0, 120); }
@@ -412,6 +425,7 @@ async function handleDeleteMe(request, env, cors) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   await env.DB.batch([
+    env.DB.prepare("DELETE FROM shares WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM decks WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM usage WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM credits WHERE user_id = ?").bind(user.id),
@@ -733,7 +747,7 @@ async function handleDecksList(request, env, cors) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   const { results } = await env.DB.prepare(
-    "SELECT id, title, source, fc_count AS fc, qz_count AS qz, created_at FROM decks WHERE user_id = ? ORDER BY created_at DESC LIMIT 200"
+    "SELECT d.id, d.title, d.source, d.fc_count AS fc, d.qz_count AS qz, d.created_at, s.share_id, s.views FROM decks d LEFT JOIN shares s ON s.deck_id = d.id WHERE d.user_id = ? ORDER BY d.created_at DESC LIMIT 200"
   ).bind(user.id).all();
   return json({ decks: results || [] }, 200, cors);
 }
@@ -741,12 +755,13 @@ async function handleDecksList(request, env, cors) {
 async function handleDeckGet(request, env, cors, id) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
-  const row = await env.DB.prepare("SELECT id, title, source, instruction, data, created_at FROM decks WHERE id = ? AND user_id = ?")
-    .bind(id, user.id).first();
+  const row = await env.DB.prepare(
+    "SELECT d.id, d.title, d.source, d.instruction, d.data, d.created_at, s.share_id, s.views FROM decks d LEFT JOIN shares s ON s.deck_id = d.id WHERE d.id = ? AND d.user_id = ?"
+  ).bind(id, user.id).first();
   if (!row) return json({ error: "Nie ma takiej talii" }, 404, cors);
   const data = safeParse(row.data) || {};
   return json({ id: row.id, title: row.title, source: row.source, instruction: row.instruction, created_at: row.created_at,
-    flashcards: data.flashcards || [], quiz: data.quiz || [] }, 200, cors);
+    share_id: row.share_id || null, views: row.views || 0, flashcards: data.flashcards || [], quiz: data.quiz || [] }, 200, cors);
 }
 
 async function handleDeckRename(request, env, cors, id) {
@@ -766,8 +781,70 @@ async function handleDeckRename(request, env, cors, id) {
 async function handleDeckDelete(request, env, cors, id) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
-  await env.DB.prepare("DELETE FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id).run();
+  await env.DB.batch([
+    env.DB.prepare("DELETE FROM shares WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
+    env.DB.prepare("DELETE FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id),
+  ]);
   return json({ ok: true }, 200, cors);
+}
+
+/* ===================== UDOSTĘPNIANIE ===================== */
+
+function newShareId() {
+  const abc = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789"; // bez 0/O/1/l/I
+  const b = new Uint8Array(10); crypto.getRandomValues(b);
+  return [...b].map(x => abc[x % abc.length]).join("");
+}
+
+async function handleShareCreate(request, env, cors, id) {
+  const user = env.DB ? await authUser(request, env) : null;
+  if (!user) return json({ error: "Niezalogowany" }, 401, cors);
+  const deck = await env.DB.prepare("SELECT id FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id).first();
+  if (!deck) return json({ error: "Nie ma takiej talii" }, 404, cors);
+  const ex = await env.DB.prepare("SELECT share_id, views FROM shares WHERE deck_id = ?").bind(id).first();
+  if (ex) return json({ share_id: ex.share_id, views: ex.views }, 200, cors);
+  const sid = newShareId();
+  await env.DB.prepare("INSERT INTO shares (share_id, deck_id, user_id, created_at) VALUES (?,?,?,?)").bind(sid, id, user.id, Date.now()).run();
+  return json({ share_id: sid, views: 0 }, 200, cors);
+}
+
+async function handleShareDelete(request, env, cors, id) {
+  const user = env.DB ? await authUser(request, env) : null;
+  if (!user) return json({ error: "Niezalogowany" }, 401, cors);
+  await env.DB.prepare("DELETE FROM shares WHERE deck_id = ? AND user_id = ?").bind(id, user.id).run();
+  return json({ ok: true }, 200, cors);
+}
+
+async function sharedDeck(env, sid) {
+  await ensureSchema(env);
+  return await env.DB.prepare(
+    "SELECT s.share_id, s.user_id, d.id AS deck_id, d.title, d.data, d.updated_at FROM shares s JOIN decks d ON d.id = s.deck_id WHERE s.share_id = ?"
+  ).bind(sid).first();
+}
+
+/* publiczny podgląd — bez logowania; nie zdradza autora ani jego maila */
+async function handleSharedGet(env, cors, sid) {
+  if (!env.DB) return json({ error: "Niedostępne" }, 503, cors);
+  const row = await sharedDeck(env, sid);
+  if (!row) return json({ error: "Ten link wygasł albo autor wyłączył udostępnianie." }, 404, cors);
+  try { await env.DB.prepare("UPDATE shares SET views = views + 1 WHERE share_id = ?").bind(sid).run(); } catch {}
+  const d = safeParse(row.data) || {};
+  return json({ title: row.title, updated_at: row.updated_at, flashcards: d.flashcards || [], quiz: d.quiz || [] },
+    200, { ...cors, "Cache-Control": "public, max-age=30" });
+}
+
+/* „Zapisz u siebie” — kopia udostępnionej talii na koncie zalogowanego (bez kredytów) */
+async function handleSharedCopy(request, env, cors, sid) {
+  const user = env.DB ? await authUser(request, env) : null;
+  if (!user) return json({ error: "Zaloguj się, żeby zapisać talię u siebie.", need_login: true }, 401, cors);
+  const row = await sharedDeck(env, sid);
+  if (!row) return json({ error: "Ten link wygasł albo autor wyłączył udostępnianie." }, 404, cors);
+  if (row.user_id === user.id) return json({ deck: { id: row.deck_id, title: row.title }, own: true }, 200, cors);
+  const d = normalizeDeck({ ...(safeParse(row.data) || {}), title: row.title });
+  try {
+    const deck = await saveDeck(env, user, { title: d.title || "Talia od znajomego", source: "share", instruction: "", flashcards: d.flashcards, quiz: d.quiz });
+    return json({ deck }, 200, cors);
+  } catch (e) { return json({ error: "Nie udało się zapisać talii (" + (e.message || "błąd") + ")" }, 400, cors); }
 }
 
 /* ===================== KRYPTO / BASE64 ===================== */
