@@ -1,7 +1,7 @@
 // Mapa strony dla Google: wszystkie strony z src/pages + artykuły z sekcji Wiedza.
 import { getArticles } from '../lib/wiedza.js';
 
-const SKIP = ['404', 'sitemap.xml'];
+const SKIP = ['404', 'sitemap.xml', 'talia']; // talia = podgląd udostępnionych talii (noindex)
 export function GET() {
   const pages = Object.keys(import.meta.glob('./*.astro'))
     .map((p) => p.replace('./', '').replace('.astro', ''))

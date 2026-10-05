@@ -26,7 +26,8 @@ const ls = {
 };
 
 /* ---------- konto ---------- */
-let token = ls.get("uc_token"), me = null, usage = null, decks = [], currentDeckId = null;
+let token = ls.get("uc_token"), me = null, usage = null, decks = [], currentDeckId = null, currentShareId = null;
+const pendingImport = new URLSearchParams(location.search).get("zapisz");
 
 async function api(path, opts={}){
   const headers = {};
@@ -42,7 +43,7 @@ async function api(path, opts={}){
 
 function setSession(t, user, u){
   token = t || null; me = t ? user : null; usage = t ? u : null;
-  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; prevDeck=null; $("editPanel").hidden=true; }
+  if(t) ls.set("uc_token", t); else { ls.del("uc_token"); decks=[]; currentDeckId=null; currentShareId=null; prevDeck=null; $("editPanel").hidden=true; $("shareBtn").hidden=true; $("shareBox").hidden=true; }
   renderAccount(); refreshBtn();
 }
 
@@ -78,7 +79,8 @@ async function onGoogleCredential(resp){
   if(!r.ok){ setStatus(r.data.error ? r.data.error+(r.data.detail?" ("+r.data.detail+")":"") : "Logowanie nieudane.","err"); return; }
   setSession(r.data.token, r.data.user, r.data.usage);
   clearStatus();
-  loadDecks();
+  await loadDecks();
+  runImport();
 }
 
 function initGoogle(tries){
@@ -100,7 +102,7 @@ $("logout").addEventListener("click", async ()=>{
 
 /* ---------- moje talie ---------- */
 function plural(n,one,few,many){ if(n===1) return one; const d=n%10, h=n%100; return (d>=2&&d<=4&&(h<10||h>=20)) ? few : many; }
-const SRC_LABEL = { pdf:"PDF", img:"Zdjęcia", txt:"Tekst" };
+const SRC_LABEL = { pdf:"PDF", img:"Zdjęcia", txt:"Tekst", share:"Od znajomego" };
 function fmtDate(ts){ const d=new Date(ts); return d.toLocaleDateString("pl-PL",{day:"numeric",month:"short"})+", "+d.toLocaleTimeString("pl-PL",{hour:"2-digit",minute:"2-digit"}); }
 
 async function loadDecks(){
@@ -114,7 +116,7 @@ function renderDecks(){
   $("decksEmpty").hidden = decks.length>0;
   decks.forEach(d=>{
     const el=document.createElement("div"); el.className="g-deck"+(d.id===currentDeckId?" cur":""); el.tabIndex=0; el.setAttribute("role","button");
-    el.innerHTML=`<div class="t">${esc(d.title)}</div><div class="m"><span class="src">${SRC_LABEL[d.source]||"Materiał"}</span><span>${d.fc} ${plural(d.fc,"fiszka","fiszki","fiszek")} · ${d.qz} ${plural(d.qz,"pytanie","pytania","pytań")}</span><span>${fmtDate(d.created_at)}</span></div><div class="acts"><button type="button" data-a="ren">Zmień nazwę</button><button type="button" data-a="del">Usuń</button></div>`;
+    el.innerHTML=`<div class="t">${esc(d.title)}</div><div class="m"><span class="src">${SRC_LABEL[d.source]||"Materiał"}</span><span>${d.fc} ${plural(d.fc,"fiszka","fiszki","fiszek")} · ${d.qz} ${plural(d.qz,"pytanie","pytania","pytań")}</span><span>${fmtDate(d.created_at)}</span>${d.share_id ? `<span class="shr">udostępniona · ${d.views||0} ${plural(d.views||0,"wyświetlenie","wyświetlenia","wyświetleń")}</span>` : ""}</div><div class="acts"><button type="button" data-a="ren">Zmień nazwę</button><button type="button" data-a="del">Usuń</button></div>`;
     el.addEventListener("click", e=>{ if(e.target.closest(".acts")||e.target.tagName==="INPUT") return; openDeck(d.id); });
     el.addEventListener("keydown", e=>{ if(e.key==="Enter" && e.target===el) openDeck(d.id); });
     el.querySelector('[data-a="ren"]').addEventListener("click", ()=>startRename(el, d));
@@ -147,7 +149,7 @@ async function openDeck(id){
   setStatus("Wczytuję talię…","info");
   const r=await api("/decks/"+id);
   if(!r.ok){ setStatus(r.data.error||"Nie udało się wczytać talii.","err"); return; }
-  clearStatus(); currentDeckId=id; prevDeck=null; lastSourceText="";
+  clearStatus(); currentDeckId=id; currentShareId=r.data.share_id||null; prevDeck=null; lastSourceText="";
   lastResult={ title:r.data.title, flashcards:r.data.flashcards, quiz:r.data.quiz };
   render(lastResult, true, true); renderDecks();
 }
@@ -334,7 +336,7 @@ genBtn.addEventListener("click", async ()=>{
     if(!data.flashcards && !data.quiz) return fail("AI nie zwróciło poprawnych danych. Spróbuj z innym albo krótszym fragmentem.");
     progress(-1);
     setUsage(data.usage);
-    currentDeckId = data.deck ? data.deck.id : null; prevDeck=null;
+    currentDeckId = data.deck ? data.deck.id : null; currentShareId=null; prevDeck=null;
     if(data.deck){ decks.unshift(data.deck); renderDecks(); }
     lastResult={ title:data.title, flashcards:data.flashcards, quiz:data.quiz };
     render(lastResult, true, !!data.deck);
@@ -434,6 +436,7 @@ function render(data, scroll, saved){
   showPane(document.querySelector(".g-tab.on").dataset.pane);
   $("result").hidden=false; refreshBtn();
   $("editPanel").hidden = !canEdit();
+  renderShare(false);
   $("editUndo").hidden = !prevDeck;
   $("editNote").textContent = lastSourceText ? "AI widzi też Twój materiał źródłowy z tego generowania." : "AI pracuje na treści talii (plików źródłowych nie przechowujemy).";
   if(scroll) $("result").scrollIntoView({behavior:"smooth",block:"start"});
@@ -462,6 +465,64 @@ async function itemAction(kind, index, action, btn){
   (kind==="fc" ? lastResult.flashcards : lastResult.quiz)[index] = r.data.item;
   saveLocal();
   return r.data.item;
+}
+
+/* ---------- udostępnianie linkiem ---------- */
+function shareUrl(){ return location.origin + "/talia.html?s=" + currentShareId; }
+function renderShare(open){
+  const btn=$("shareBtn"), box=$("shareBox");
+  btn.hidden = !canEdit();
+  btn.classList.toggle("on", !!currentShareId);
+  $("shareBtnTx").textContent = currentShareId ? "Udostępniona" : "Udostępnij";
+  if(!canEdit() || !currentShareId){ box.hidden=true; return; }
+  if(open) box.hidden=false;
+  $("shareUrl").value = shareUrl();
+  const d=decks.find(z=>z.id===currentDeckId); const v=(d && d.views) || 0;
+  $("shareViews").textContent = v ? v+" "+plural(v,"wyświetlenie","wyświetlenia","wyświetleń") : "Nikt jeszcze nie otworzył linku";
+  $("shareNative").hidden = !navigator.share;
+}
+$("shareBtn").addEventListener("click", async ()=>{
+  if(!canEdit()) return;
+  if(currentShareId){ $("shareBox").hidden = !$("shareBox").hidden; if(!$("shareBox").hidden) renderShare(true); return; }
+  const btn=$("shareBtn"); btn.disabled=true;
+  const r=await api("/decks/"+currentDeckId+"/share", { method:"POST" });
+  btn.disabled=false;
+  if(!r.ok){ toast(r.data.error || "Nie udało się utworzyć linku.", true); return; }
+  currentShareId=r.data.share_id;
+  const d=decks.find(z=>z.id===currentDeckId); if(d){ d.share_id=currentShareId; d.views=r.data.views||0; renderDecks(); }
+  renderShare(true);
+  $("shareUrl").select();
+});
+$("shareCopy").addEventListener("click", async ()=>{
+  const u=$("shareUrl");
+  try{ await navigator.clipboard.writeText(u.value); }
+  catch{ u.select(); try{ document.execCommand("copy"); }catch{} }
+  toast("Link skopiowany — wyślij go znajomym ✓");
+});
+$("shareNative").addEventListener("click", async ()=>{
+  try{ await navigator.share({ title: lastResult && lastResult.title || "Talia z Unicorner", text: "Fiszki i quiz na Unicorner", url: shareUrl() }); }catch{}
+});
+const shareOff=$("shareOff");
+shareOff.addEventListener("click", async ()=>{
+  if(!shareOff.classList.contains("sure")){ shareOff.classList.add("sure"); shareOff.textContent="Na pewno? Obecny link przestanie działać"; setTimeout(()=>{ shareOff.classList.remove("sure"); shareOff.textContent="Wyłącz udostępnianie"; },4000); return; }
+  const r=await api("/decks/"+currentDeckId+"/share", { method:"DELETE" });
+  if(!r.ok){ toast(r.data.error || "Nie udało się wyłączyć.", true); return; }
+  currentShareId=null; shareOff.classList.remove("sure"); shareOff.textContent="Wyłącz udostępnianie";
+  const d=decks.find(z=>z.id===currentDeckId); if(d){ d.share_id=null; renderDecks(); }
+  renderShare(false); toast("Udostępnianie wyłączone — stary link już nie działa.");
+});
+
+/* ---------- „Zapisz u siebie” z linku znajomego (generator.html?zapisz=ID) ---------- */
+let importDone=false;
+async function runImport(){
+  if(!pendingImport || importDone || !me) return;
+  importDone=true;
+  history.replaceState(null, "", location.pathname);
+  const r=await api("/s/"+encodeURIComponent(pendingImport)+"/copy", { method:"POST" });
+  if(!r.ok){ toast(r.data.error || "Nie udało się zapisać talii.", true); return; }
+  if(!r.data.own){ await loadDecks(); }
+  await openDeck(r.data.deck.id);
+  toast(r.data.own ? "To Twoja własna talia — otwieram ją." : "Zapisano talię na Twoim koncie ✓");
 }
 
 function syncDeckInList(d){
@@ -519,8 +580,9 @@ setMode("pdf");
 renderAccount();
 initGoogle(0);
 if(token){
-  api("/me").then(r=>{ if(r.ok){ setSession(token, r.data.user, r.data.usage); loadDecks(); } });
-}
+  api("/me").then(async r=>{ if(r.ok){ setSession(token, r.data.user, r.data.usage); await loadDecks(); runImport(); } else if(pendingImport) importHint(); });
+} else if(pendingImport) importHint();
+function importHint(){ setStatus("Zaloguj się w sekcji 03 Konto, a udostępniona talia od razu zapisze się na Twoim koncie.","info"); $("acctOut").scrollIntoView({behavior:"smooth",block:"center"}); }
 try{
   const saved = JSON.parse(ls.get(STORE_KEY) || "null");
   if(saved && (saved.flashcards || saved.quiz)){
