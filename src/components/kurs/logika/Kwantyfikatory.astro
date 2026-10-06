@@ -1,0 +1,51 @@
+---
+// Grupa 6 osób, każdą można przełączyć „zdał / nie zdał”. Pod spodem wartości zdań z ∀ i ∃ oraz ich negacji.
+// Pokazuje na żywo, że ¬∀ to to samo co ∃¬ (prawo de Morgana dla kwantyfikatorów).
+import { tex } from '../../../lib/tex.js';
+const OSOBY = ['Ala', 'Bartek', 'Celina', 'Darek', 'Ewa', 'Filip'];
+const START = [1, 1, 1, 0, 1, 1];
+const ZDANIA = [
+  { k: 'all', t: '\\forall_{x}\\; Z(x)', czyt: 'każdy zdał' },
+  { k: 'ex', t: '\\exists_{x}\\; Z(x)', czyt: 'ktoś zdał (co najmniej jedna osoba)' },
+  { k: 'nall', t: '\\neg\\, \\forall_{x}\\; Z(x)', czyt: 'nieprawda, że każdy zdał' },
+  { k: 'exn', t: '\\exists_{x}\\; \\neg Z(x)', czyt: 'ktoś nie zdał' },
+  { k: 'nex', t: '\\neg\\, \\exists_{x}\\; Z(x)', czyt: 'nieprawda, że ktoś zdał' },
+  { k: 'alln', t: '\\forall_{x}\\; \\neg Z(x)', czyt: 'każdy nie zdał (nikt nie zdał)' },
+];
+---
+<section class="k-kw" data-kw>
+  <div class="k-pyt-head"><span class="k-pyt-tag">Symulator</span><h3 class="k-pyt-h">Grupa ćwiczeniowa: kliknij osobę, żeby zmienić jej wynik</h3></div>
+  <p class="k-kw-leg"><span set:html={tex('Z(x)')} /> = „osoba <span set:html={tex('x')} /> zdała kolokwium”</p>
+  <div class="k-kw-ludzie">
+    {OSOBY.map((o, i) => (
+      <button type="button" class="k-kw-o" data-i={i} aria-pressed={START[i] ? 'true' : 'false'}>
+        <span class="k-kw-av" aria-hidden="true">{o[0]}</span><span class="k-kw-n">{o}</span><span class="k-kw-s">{START[i] ? 'zdał(a)' : 'nie zdał(a)'}</span>
+      </button>
+    ))}
+  </div>
+  <ul class="k-kw-zd">
+    {ZDANIA.map((z) => (
+      <li data-k={z.k}><span class="k-sym-f" set:html={tex(z.t)} /><span class="k-sym-c">„{z.czyt}”</span><span class="k-sym-v" data-v>?</span></li>
+    ))}
+  </ul>
+  <p class="k-sym-hint">Zauważ: wiersze 3 i 4 mają <b>zawsze</b> tę samą wartość. Tak samo wiersze 5 i 6. Klikaj, ile chcesz — nie da się ich rozdzielić. To właśnie prawa de Morgana dla kwantyfikatorów.</p>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-kw]').forEach((box) => {
+    const btns = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-kw-o'));
+    const st = btns.map((b) => (b.getAttribute('aria-pressed') === 'true' ? 1 : 0));
+    const render = () => {
+      btns.forEach((b, i) => { b.setAttribute('aria-pressed', String(!!st[i])); b.querySelector('.k-kw-s')!.textContent = st[i] ? 'zdał(a)' : 'nie zdał(a)'; });
+      const all = st.every(Boolean), ex = st.some(Boolean);
+      const V: Record<string, boolean> = { all, ex, nall: !all, exn: st.some((s) => !s), nex: !ex, alln: st.every((s) => !s) };
+      box.querySelectorAll<HTMLElement>('.k-kw-zd li').forEach((li) => {
+        const v = V[li.dataset.k!] ? 1 : 0;
+        li.querySelector('[data-v]')!.textContent = String(v);
+        li.classList.toggle('is-1', v === 1); li.classList.toggle('is-0', v === 0);
+      });
+    };
+    btns.forEach((b, i) => b.addEventListener('click', () => { st[i] ^= 1; render(); }));
+    render();
+  });
+</script>

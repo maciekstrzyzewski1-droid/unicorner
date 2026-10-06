@@ -1,0 +1,72 @@
+---
+// Symulator spójników: przełączasz p i q, a pod spodem widać wartość każdego spójnika + zdanie, dlaczego tak.
+// Historia jest jedna dla wszystkich spójników: p = „dostaniesz 5 z kolokwium”, q = „stawiam ci pizzę”.
+import { tex } from '../../../lib/tex.js';
+const ROWS = [
+  { k: 'neg', t: '\\neg p', czyt: 'nieprawda, że dostałeś 5' },
+  { k: 'and', t: 'p \\land q', czyt: 'dostałeś 5 i stawiam pizzę' },
+  { k: 'or', t: 'p \\lor q', czyt: 'dostałeś 5 lub stawiam pizzę' },
+  { k: 'imp', t: 'p \\Rightarrow q', czyt: 'jeśli dostaniesz 5, to stawiam pizzę' },
+  { k: 'eq', t: 'p \\Leftrightarrow q', czyt: 'stawiam pizzę wtedy i tylko wtedy, gdy dostaniesz 5' },
+];
+---
+<section class="k-sym" data-sym>
+  <div class="k-pyt-head"><span class="k-pyt-tag">Symulator</span><h3 class="k-pyt-h">Przełącz p i q — patrz, co się dzieje</h3></div>
+  <div class="k-sym-in">
+    <button type="button" class="k-sw" data-var="p" aria-pressed="true">
+      <span class="k-sw-n" set:html={tex('p')} /><span class="k-sw-d">dostaniesz 5 z kolokwium</span><span class="k-sw-v">1 · prawda</span>
+    </button>
+    <button type="button" class="k-sw" data-var="q" aria-pressed="false">
+      <span class="k-sw-n" set:html={tex('q')} /><span class="k-sw-d">stawiam ci pizzę</span><span class="k-sw-v">0 · fałsz</span>
+    </button>
+  </div>
+  <ul class="k-sym-out">
+    {ROWS.map((r) => (
+      <li data-k={r.k}>
+        <span class="k-sym-f" set:html={tex(r.t)} />
+        <span class="k-sym-c">„{r.czyt}”</span>
+        <span class="k-sym-v" data-v>?</span>
+        <span class="k-sym-e" data-e></span>
+      </li>
+    ))}
+  </ul>
+  <p class="k-sym-hint" data-js-only hidden>Zacznij od ustawienia, które jest na start: <b>p = 1, q = 0</b>. To jedyna sytuacja, w której implikacja jest fałszywa.</p>
+</section>
+
+<script>
+  const EXPL: Record<string, (p: number, q: number) => string> = {
+    neg: (p) => p ? 'p jest prawdą, więc „nieprawda, że p” jest fałszem. Negacja zawsze odwraca.' : 'p jest fałszem, więc „nieprawda, że p” jest prawdą. Negacja zawsze odwraca.',
+    and: (p, q) => p && q ? 'Oba zdania prawdziwe — „i” jest spełnione.' : `„i” wymaga obu, a ${!p && !q ? 'oba są fałszywe' : !p ? 'p jest fałszywe' : 'q jest fałszywe'}.`,
+    or: (p, q) => p || q ? `Wystarczy jedno prawdziwe — tu ${p && q ? 'prawdziwe są oba (to też się liczy!)' : p ? 'prawdziwe jest p' : 'prawdziwe jest q'}.` : '„lub” jest fałszywe tylko wtedy, gdy oba zdania są fałszywe — i tak jest teraz.',
+    imp: (p, q) => p && !q ? 'Obietnica złamana: 5 jest, pizzy nie ma. To jedyny przypadek, gdy implikacja = 0.'
+      : p && q ? 'Obietnica dotrzymana: 5 jest i pizza jest.'
+      : q ? 'Nie było 5, a pizza i tak jest. Obietnica nie mówiła, co będzie bez 5 — więc nie została złamana.'
+      : 'Nie było 5 i nie ma pizzy. Warunek nie zaszedł, obietnica nie została złamana.',
+    eq: (p, q) => p === q ? `Oba zdania mają tę samą wartość (${p}), więc „wtedy i tylko wtedy” jest prawdziwe.` : 'Zdania mają różne wartości — równoważność jest fałszywa.',
+  };
+  const VAL: Record<string, (p: number, q: number) => number> = {
+    neg: (p) => 1 - p, and: (p, q) => p & q, or: (p, q) => p | q, imp: (p, q) => (!p || q ? 1 : 0), eq: (p, q) => (p === q ? 1 : 0),
+  };
+  document.querySelectorAll<HTMLElement>('[data-sym]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => (el.hidden = false));
+    const st: Record<string, number> = { p: 1, q: 0 };
+    const render = () => {
+      box.querySelectorAll<HTMLButtonElement>('.k-sw').forEach((b) => {
+        const v = st[b.dataset.var!];
+        b.setAttribute('aria-pressed', String(!!v));
+        b.querySelector('.k-sw-v')!.textContent = v ? '1 · prawda' : '0 · fałsz';
+      });
+      box.querySelectorAll<HTMLElement>('.k-sym-out li').forEach((li) => {
+        const k = li.dataset.k!;
+        const v = VAL[k](st.p, st.q);
+        const el = li.querySelector<HTMLElement>('[data-v]')!;
+        el.textContent = String(v);
+        li.classList.toggle('is-1', v === 1);
+        li.classList.toggle('is-0', v === 0);
+        li.querySelector('[data-e]')!.textContent = EXPL[k](st.p, st.q);
+      });
+    };
+    box.querySelectorAll<HTMLButtonElement>('.k-sw').forEach((b) => b.addEventListener('click', () => { st[b.dataset.var!] ^= 1; render(); }));
+    render();
+  });
+</script>

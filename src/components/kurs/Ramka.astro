@@ -1,0 +1,26 @@
+---
+// Ramka w treści kursu. Każdy rodzaj ma stały kolor i etykietę, żeby student od razu wiedział,
+// czy czyta intuicję, umowę („bo tak”), pułapkę, czy granicę metody.
+interface Props {
+  kind?: 'intuicja' | 'skad' | 'botak' | 'pulapka' | 'granica' | 'zapamietaj' | 'liceum' | 'excel' | 'podobny' | 'gdzie';
+  tytul?: string;
+}
+const LABELS = {
+  intuicja: 'Po ludzku',
+  skad: 'Skąd to się bierze?',
+  botak: 'Bo tak — to umowa',
+  pulapka: 'Pułapka',
+  granica: 'Granica metody — kiedy to NIE działa',
+  zapamietaj: 'Zapamiętaj',
+  liceum: 'Przypomnienie z liceum',
+  excel: 'To samo w Excelu',
+  podobny: 'Podobny przykład',
+  gdzie: 'Gdzie to wróci',
+};
+const ICONS = { intuicja: '◐', skad: '?', botak: '§', pulapka: '!', granica: '⊘', zapamietaj: '★', liceum: '↺', excel: 'fx', podobny: '≈', gdzie: '→' };
+const { kind = 'intuicja', tytul } = Astro.props;
+---
+<aside class={`k-ramka k-${kind}`}>
+  <div class="k-ramka-lbl"><span class="k-ramka-ic" aria-hidden="true">{ICONS[kind]}</span>{LABELS[kind]}{tytul && <span class="k-ramka-t">· {tytul}</span>}</div>
+  <div class="k-ramka-body"><slot /></div>
+</aside>

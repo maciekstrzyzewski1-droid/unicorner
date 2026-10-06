@@ -1,0 +1,51 @@
+---
+// Słowniczek kursu (symbole albo pojęcia), pogrupowany wg modułów. Dane: SLOWNICZEK w src/data/kursy/<kurs>.js.
+// Pozycja: { t?: LaTeX symbolu, nazwa, czytamy?, znaczy, modul }. Bez pola t (np. w przedmiotach bez wzorów) kolumna z symbolem znika.
+import Base from '../../layouts/Base.astro';
+import 'katex/dist/katex.min.css';
+import '../../styles/wiedza.css';
+import '../../styles/kurs.css';
+import Bar from '../wiedza/Bar.astro';
+import { getKurs, moduleUrl, courseUrl } from '../../data/kursy/index.js';
+import { tex, texInline } from '../../lib/tex.js';
+
+interface Props { kurs: string; lede?: string }
+const { COURSE, MODULES, SLOWNICZEK } = getKurs(Astro.props.kurs);
+const sl = COURSE.slowniczek;
+const grupy = MODULES.map((m) => ({ m, s: SLOWNICZEK.filter((x) => x.modul === m.slug) })).filter((g) => g.s.length);
+const maSymbole = SLOWNICZEK.some((x) => x.t);
+const maCzyt = SLOWNICZEK.some((x) => x.czytamy);
+const lede = Astro.props.lede ?? 'Wszystko, co pojawia się w kursie, w jednym miejscu: jak to nazwać, jak przeczytać na głos i co to znaczy. Słowniczek rośnie razem z kolejnymi modułami.';
+---
+<Base title={`${sl.tytul} — ${COURSE.name} · Unicorner`} description={`${sl.tytul} z kursu „${COURSE.name}”: nazwa, sposób czytania i znaczenie każdej pozycji.`}>
+  <Fragment slot="head"><link rel="canonical" href={`https://unicorner.pl${sl.url}`} /></Fragment>
+  <Bar crumbs={[{ label: COURSE.name, href: courseUrl(COURSE.slug) }, { label: sl.tytul }]} back={{ label: '← Wszystkie moduły', href: courseUrl(COURSE.slug) }} />
+  <div class="k-shell">
+    <header class="k-hero">
+      <span class="wz-eyebrow"><span class="dot"></span>{COURSE.name} · ściąga</span>
+      <h1>{sl.tytul} <span class="grad">— jak to przeczytać i co to znaczy</span></h1>
+      <p class="k-lede">{lede}</p>
+    </header>
+    {grupy.map((g) => (
+      <section class="k-hub-sec">
+        <h2 class="k-hub-h">Moduł {g.m.nr}: {g.m.status === 'live' ? <a href={moduleUrl(COURSE.slug, g.m)} class="k-link">{g.m.title}</a> : g.m.title}</h2>
+        <div class="k-tab">
+          <table class="k-slow">
+            <thead><tr>{maSymbole && <th>{sl.kolumna ?? 'Symbol'}</th>}<th>Nazwa</th>{maCzyt && <th>Czytamy</th>}<th>Co znaczy</th></tr></thead>
+            <tbody>
+              {g.s.map((s) => (
+                <tr>
+                  {maSymbole && <td class="k-slow-s" set:html={s.t ? tex(s.t) : ''} />}
+                  <td><b>{s.nazwa}</b></td>
+                  {maCzyt && <td>{s.czytamy ? `„${s.czytamy}”` : ''}</td>}
+                  <td set:html={texInline(s.znaczy)} />
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </section>
+    ))}
+  </div>
+  <footer class="wz-foot"><div class="wz-wrap"><span>unicorner · {COURSE.name.toLowerCase()}</span><nav aria-label="Stopka"><a href="/index.html">Strona główna</a><a href={courseUrl(COURSE.slug)}>Wszystkie moduły</a><a href="/kontakt.html">Kontakt</a></nav></div></footer>
+</Base>

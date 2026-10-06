@@ -1,0 +1,115 @@
+---
+// Szablon modułu kursu (strony .mdx w src/pages/<kurs>/<slug>.mdx). Dane kursu: src/data/kursy/<kurs>.js.
+// Frontmatter MDX: kurs, slug, title, podtytul, description, lede, wymaga, umiesz[].
+import Base from './Base.astro';
+import 'katex/dist/katex.min.css';
+import '../styles/wiedza.css';
+import '../styles/kurs.css';
+import Bar from '../components/wiedza/Bar.astro';
+import { getKurs, moduleUrl as modUrl, courseUrl, neighbours as neigh } from '../data/kursy/index.js';
+
+const { frontmatter: fm, headings = [] } = Astro.props;
+if (!fm.kurs) throw new Error(`Moduł „${fm.slug}”: brak pola „kurs” we frontmatterze`);
+const { COURSE: C, MODULES } = getKurs(fm.kurs);
+const COURSE = { ...C, url: courseUrl(C.slug) };
+const moduleUrl = (m) => modUrl(C.slug, m);
+const mod = MODULES.find((m) => m.slug === fm.slug);
+if (!mod) throw new Error(`Kurs ${fm.kurs}: brak modułu „${fm.slug}” w src/data/kursy/${fm.kurs}.js`);
+const { prev, next } = neigh(C.slug, fm.slug);
+const toc = headings.filter((h) => h.depth === 2);
+const url = `https://unicorner.pl${moduleUrl(mod)}`;
+const title = `${fm.title} — ${fm.podtytul} · ${COURSE.name} · Unicorner`;
+const ld = {
+  '@context': 'https://schema.org', '@type': 'LearningResource', name: `${fm.title} — ${fm.podtytul}`, description: fm.description,
+  inLanguage: 'pl', url, educationalLevel: 'Studia I stopnia', learningResourceType: 'Kurs online',
+  isPartOf: { '@type': 'Course', name: COURSE.seoTitle ?? COURSE.name, url: `https://unicorner.pl${COURSE.url}` },
+  publisher: { '@type': 'Organization', name: 'Unicorner', url: 'https://unicorner.pl' },
+};
+---
+<Base title={title} description={fm.description}>
+  <Fragment slot="head">
+    <link rel="canonical" href={url} />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content={`${fm.title} — ${fm.podtytul}`} />
+    <meta property="og:description" content={fm.description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:locale" content="pl_PL" />
+    <script type="application/ld+json" set:html={JSON.stringify(ld)} />
+  </Fragment>
+
+  <Bar crumbs={[{ label: COURSE.name, href: COURSE.url }, { label: `${mod.nr}. ${fm.title}` }]} back={{ label: '← Wszystkie moduły', href: COURSE.url }} progress />
+
+  <div class="k-shell">
+    <header class="k-hero">
+      <span class="wz-eyebrow"><span class="dot"></span>{COURSE.name} · moduł {mod.nr} z {MODULES.length}</span>
+      <h1>{fm.title} <span class="grad">— {fm.podtytul}</span></h1>
+      <p class="k-lede">{fm.lede}</p>
+      <div class="k-meta">
+        <div><span class="k-meta-k">Czas</span><b>ok. {mod.minutes} min</b></div>
+        <div><span class="k-meta-k">Potrzebujesz</span><b>{fm.wymaga}</b></div>
+      </div>
+      {fm.umiesz && (
+        <div class="k-cele">
+          <div class="k-cele-k">Po tym module umiesz:</div>
+          <ul>{fm.umiesz.map((u) => <li>{u}</li>)}</ul>
+        </div>
+      )}
+    </header>
+
+    <div class="k-grid">
+      <nav class="k-toc" aria-label="Spis treści modułu">
+        <details open>
+          <summary>Spis treści</summary>
+          <ol>{toc.map((h) => <li><a href={`#${h.slug}`} data-toc={h.slug}>{h.text}</a></li>)}</ol>
+        </details>
+      </nav>
+
+      <article class="art k-prose">
+        <slot />
+      </article>
+    </div>
+
+    <div class="k-after">
+      <div class="wz-pn">
+        {prev && <a href={moduleUrl(prev)} class="prev"><span class="k">← Poprzedni moduł</span><span class="t">{prev.nr}. {prev.title}</span></a>}
+        {next
+          ? <a href={moduleUrl(next)} class="next"><span class="k">Następny moduł →</span><span class="t">{next.nr}. {next.title}</span></a>
+          : <a href={COURSE.url} class="next"><span class="k">Wróć do kursu →</span><span class="t">Wszystkie moduły</span></a>}
+      </div>
+      <p class="k-bug">Widzisz błąd albo coś jest niejasne? <a href="/kontakt.html">Napisz do nas</a> — poprawiamy szybko.<br />Kurs to nasze własne opracowanie, niepowiązane z UEP ani prowadzącymi. Konwencje zapisu mogą się różnić między grupami — gdy prowadzący zapisuje coś inaczej, liczy się jego wersja.</p>
+    </div>
+  </div>
+
+  <footer class="wz-foot">
+    <div class="wz-wrap">
+      <span>unicorner · {COURSE.name.toLowerCase()}</span>
+      <nav aria-label="Stopka">
+        <a href="/index.html">Strona główna</a>
+        <a href={COURSE.url}>Wszystkie moduły</a>
+        {COURSE.slowniczek && <a href={COURSE.slowniczek.url}>{COURSE.slowniczek.tytul}</a>}
+        <a href="/kontakt.html">Kontakt</a>
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    // Szerokie tabele na telefonie: podpowiedź „przesuń w bok”, gdy tabela się nie mieści.
+    const markScroll = () => document.querySelectorAll<HTMLElement>('.k-tp-scroll, .k-tab').forEach((el) => el.classList.toggle('k-scrollable', el.scrollWidth > el.clientWidth + 4));
+    markScroll(); addEventListener('resize', markScroll);
+    // Podświetlenie bieżącej sekcji w spisie treści + zwijanie spisu na telefonie.
+    const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc]'));
+    const det = document.querySelector<HTMLDetailsElement>('.k-toc details');
+    if (det && matchMedia('(max-width: 1099px)').matches) det.open = false;
+    links.forEach((a) => a.addEventListener('click', () => { if (det && matchMedia('(max-width: 1099px)').matches) det.open = false; }));
+    const heads = links.map((a) => document.getElementById(a.dataset.toc!)).filter(Boolean) as HTMLElement[];
+    if ('IntersectionObserver' in window && heads.length) {
+      const io = new IntersectionObserver((es) => {
+        es.forEach((e) => {
+          if (!e.isIntersecting) return;
+          links.forEach((a) => a.classList.toggle('is-cur', a.dataset.toc === e.target.id));
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      heads.forEach((h) => io.observe(h));
+    }
+  </script>
+</Base>

@@ -10,6 +10,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@astrojs/mdx": "^4.3.14",
     "@astrojs/react": "^4",
     "@gsap/react": "^2.1.2",
     "@react-three/drei": "^9.122.0",
@@ -19,10 +20,13 @@
     "clsx": "^2",
     "framer-motion": "^11",
     "gsap": "^3.15.0",
+    "katex": "^0.16.47",
     "ogl": "^1.0.11",
     "postprocessing": "^6.39.4",
     "react": "^18",
     "react-dom": "^18",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
     "tailwind-merge": "^2",
     "three": "^0.185.1"
   },

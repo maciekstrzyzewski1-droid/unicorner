@@ -1,0 +1,88 @@
+---
+// Strona główna kursu: po co, jak czytać ramki, lista modułów. Użycie: src/pages/<kurs>.astro → <KursHub kurs="<kurs>" />
+import Base from '../../layouts/Base.astro';
+import '../../styles/wiedza.css';
+import '../../styles/kurs.css';
+import Bar from '../wiedza/Bar.astro';
+import { getKurs, moduleUrl, courseUrl } from '../../data/kursy/index.js';
+
+interface Props { kurs: string }
+const { COURSE, MODULES } = getKurs(Astro.props.kurs);
+const live = MODULES.filter((m) => m.status === 'live').length;
+const RAMKI = [
+  ['intuicja', '◐', 'Po ludzku', 'Porównanie z życia, które działa tak samo jak pojęcie — nie tylko „brzmi podobnie”.'],
+  ['skad', '?', 'Skąd to się bierze?', 'Dlaczego coś wygląda tak, a nie inaczej.'],
+  ['botak', '§', 'Bo tak — to umowa', 'Rzeczy, których nie da się wywnioskować: tak się po prostu przyjęło. Mówimy to wprost.'],
+  ['pulapka', '!', 'Pułapka', 'Błąd, który najczęściej pojawia się na kolokwiach.'],
+  ['granica', '⊘', 'Granica metody', 'Kiedy dana metoda przestaje działać — i co wtedy.'],
+  ['podobny', '≈', 'Podobny przykład', 'Drugi przykład tej samej metody albo antyprzykład.'],
+];
+const url = `https://unicorner.pl${courseUrl(COURSE.slug)}`;
+---
+<Base title={`${COURSE.seoTitle} · Unicorner`} description={COURSE.seoDesc}>
+  <Fragment slot="head">
+    <link rel="canonical" href={url} />
+    <meta property="og:title" content={COURSE.seoTitle} />
+    <meta property="og:description" content={COURSE.seoDesc} />
+    <meta property="og:url" content={url} />
+    <meta property="og:locale" content="pl_PL" />
+  </Fragment>
+
+  <Bar crumbs={[{ label: COURSE.name }]} />
+
+  <div class="k-shell">
+    <header class="k-hero">
+      <span class="wz-eyebrow"><span class="dot"></span>Kurs · {live} z {MODULES.length} modułów gotowe</span>
+      <h1>{COURSE.h1} <span class="grad">{COURSE.h1Grad}</span></h1>
+      <p class="k-lede">Na zajęciach wszystko leci szybko: nowe pojęcie, wzór, następny przykład. Wystarczy zgubić wątek w dziesiątej minucie, a reszta zajęć jest już w obcym języku. Ten kurs idzie wolniej. Każde pojęcie i każdy symbol ma tu wyjaśnienie, każdy krok ma swoje „dlaczego”, a każda metoda — przykład, w którym przestaje działać.</p>
+      <div class="k-meta">
+        <div><span class="k-meta-k">Dla kogo</span><b>{COURSE.dlaKogo}</b></div>
+        <div><span class="k-meta-k">Wymagania</span><b>{COURSE.wymagania}</b></div>
+        {COURSE.slowniczek && <div><span class="k-meta-k">Ściąga</span><b><a href={COURSE.slowniczek.url} class="k-link">{COURSE.slowniczek.tytul} →</a></b></div>}
+      </div>
+    </header>
+
+    <section class="k-hub-sec">
+      <h2 class="k-hub-h">Moduły</h2>
+      <ol class="k-mods">
+        {MODULES.map((m) => (
+          <li class={`k-mod ${m.status === 'live' ? 'is-live' : 'is-soon'}`}>
+            {m.status === 'live' ? (
+              <a href={moduleUrl(COURSE.slug, m)}>
+                <span class="k-mod-nr">{String(m.nr).padStart(2, '0')}</span>
+                <span class="k-mod-t"><b>{m.title}</b><span>{m.short}</span></span>
+                <span class="k-mod-go">{m.minutes ? `${m.minutes} min` : ''} <i>→</i></span>
+              </a>
+            ) : (
+              <div>
+                <span class="k-mod-nr">{String(m.nr).padStart(2, '0')}</span>
+                <span class="k-mod-t"><b>{m.title}</b><span>{m.short}</span></span>
+                <span class="k-mod-go k-mod-soon">wkrótce</span>
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <section class="k-hub-sec">
+      <h2 class="k-hub-h">Jak czytać ten kurs</h2>
+      <p class="k-hub-p">W tekście pojawiają się kolorowe ramki. Każdy kolor znaczy zawsze to samo:</p>
+      <div class="k-legenda">
+        {RAMKI.map(([k, ic, l, d]) => (
+          <div class={`k-ramka k-${k}`}><div class="k-ramka-lbl"><span class="k-ramka-ic" aria-hidden="true">{ic}</span>{l}</div><div class="k-ramka-body"><p>{d}</p></div></div>
+        ))}
+      </div>
+      <p class="k-hub-p">Zadania są rozpisane krok po kroku, ale kroki odsłaniasz po jednym — najpierw spróbuj sam. Tabele w zadaniach liczy komputer, więc nie ma w nich literówek. Pod każdym modułem jest quiz z wyjaśnieniem każdej odpowiedzi.</p>
+    </section>
+
+    <p class="k-bug">Kurs to nasze własne opracowanie — nie kopiujemy slajdów ani skryptów i nie jesteśmy powiązani z uczelnią ani prowadzącymi. Zapis bywa różny w różnych grupach; gdy prowadzący zapisuje coś inaczej, liczy się jego wersja. Błąd albo niejasność? <a href="/kontakt.html">Napisz</a>.</p>
+  </div>
+
+  <footer class="wz-foot">
+    <div class="wz-wrap">
+      <span>unicorner · {COURSE.name.toLowerCase()}</span>
+      <nav aria-label="Stopka"><a href="/index.html">Strona główna</a>{COURSE.slowniczek && <a href={COURSE.slowniczek.url}>{COURSE.slowniczek.tytul}</a>}<a href="/kontakt.html">Kontakt</a></nav>
+    </div>
+  </footer>
+</Base>

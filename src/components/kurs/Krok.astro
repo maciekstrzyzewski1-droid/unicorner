@@ -1,0 +1,9 @@
+---
+// Jeden krok rozwiązania (używać wewnątrz <Rozwiazanie>). Numer nadaje CSS.
+interface Props { tytul: string }
+const { tytul } = Astro.props;
+---
+<li class="k-krok">
+  <div class="k-krok-t">{tytul}</div>
+  <div class="k-krok-body"><slot /></div>
+</li>

@@ -1,0 +1,43 @@
+---
+// Zadanie rozwiązane krok po kroku. Kroki odsłania się po jednym — student może najpierw spróbować sam.
+// Bez JavaScriptu wszystkie kroki są widoczne (nic nie znika na stałe).
+interface Props { tytul: string; zrodlo?: string; odslaniaj?: boolean }
+const { tytul, zrodlo, odslaniaj = true } = Astro.props;
+---
+<section class="k-rozw" data-rozw={odslaniaj ? '' : undefined}>
+  <header class="k-rozw-head">
+    <span class="k-rozw-tag">Zadanie · krok po kroku</span>
+    <h3 class="k-rozw-h">{tytul}</h3>
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </header>
+  {Astro.slots.has('tresc') && <div class="k-rozw-tresc"><slot name="tresc" /></div>}
+  {odslaniaj && <p class="k-rozw-tip" data-js-only hidden>Spróbuj najpierw sam. Potem odkrywaj kroki po jednym — w każdym jest „co robimy” i „dlaczego”.</p>}
+  <ol class="k-kroki"><slot /></ol>
+  {odslaniaj && (
+    <div class="k-rozw-ctl" data-js-only hidden>
+      <button type="button" class="k-btn" data-next>Pokaż następny krok</button>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Pokaż wszystko</button>
+    </div>
+  )}
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rozw]').forEach((box) => {
+    const steps = Array.from(box.querySelectorAll<HTMLElement>(':scope > .k-kroki > .k-krok'));
+    if (steps.length < 2) return;
+    // Tylko własne elementy — w krokach mogą siedzieć tabele z własnymi przyciskami [data-next]/[data-all].
+    box.querySelectorAll<HTMLElement>(':scope > [data-js-only]').forEach((el) => (el.hidden = false));
+    const ctl = box.querySelector<HTMLElement>(':scope > .k-rozw-ctl')!;
+    const next = ctl.querySelector<HTMLButtonElement>('[data-next]')!;
+    const all = ctl.querySelector<HTMLButtonElement>('[data-all]')!;
+    let shown = 1;
+    const render = () => {
+      steps.forEach((s, i) => s.classList.toggle('k-ukryty', i >= shown));
+      if (shown >= steps.length) { ctl.hidden = true; return; }
+      next.textContent = `Pokaż krok ${shown + 1} z ${steps.length}`;
+    };
+    next.addEventListener('click', () => { shown++; render(); steps[shown - 1]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); });
+    all.addEventListener('click', () => { shown = steps.length; render(); });
+    render();
+  });
+</script>

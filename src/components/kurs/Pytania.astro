@@ -1,0 +1,64 @@
+---
+// Pytania z natychmiastową odpowiedzią: jedno („Sprawdź się” w środku tekstu) albo cały quiz z wynikiem.
+// Każde pytanie ma wyjaśnienie — także wtedy, gdy odpowiedź jest dobra (żeby nie zgadywać na ślepo).
+import { texInline } from '../../lib/tex.js';
+interface Q { q: string; opcje: string[]; dobra: number; dlaczego: string }
+interface Props { pytania: Q[]; tytul?: string; licznik?: boolean }
+const { pytania, tytul = 'Sprawdź się', licznik = false } = Astro.props;
+for (const p of pytania) if (p.dobra < 0 || p.dobra >= p.opcje.length) throw new Error(`Pytania: zły indeks dobrej odpowiedzi w „${p.q}”`);
+---
+<section class={`k-pyt ${licznik ? 'k-quiz' : ''}`} data-pyt>
+  <div class="k-pyt-head"><span class="k-pyt-tag">{licznik ? `Quiz · ${pytania.length} pytań` : 'Sprawdź się'}</span>{tytul && licznik && <h3 class="k-pyt-h">{tytul}</h3>}</div>
+  <ol class="k-pyt-lista">
+    {pytania.map((p) => (
+      <li class="k-pyt-item" data-dobra={p.dobra}>
+        <p class="k-pyt-q" set:html={texInline(p.q)} />
+        <div class="k-pyt-opcje" role="group">
+          {p.opcje.map((o, i) => <button type="button" class="k-opt" data-i={i}><span class="k-opt-l">{String.fromCharCode(65 + i)}</span><span set:html={texInline(o)} /></button>)}
+        </div>
+        <div class="k-pyt-wyj" hidden><b class="k-pyt-ok">Dobrze.</b><b class="k-pyt-bad">Nie tym razem.</b> <span set:html={texInline(p.dlaczego)} /></div>
+      </li>
+    ))}
+  </ol>
+  {licznik && (
+    <div class="k-pyt-wynik" hidden>
+      <span>Wynik: <b data-wynik>0</b> / {pytania.length}</span>
+      <button type="button" class="k-btn k-btn-ghost" data-reset>Od nowa</button>
+    </div>
+  )}
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-pyt]').forEach((box) => {
+    const items = Array.from(box.querySelectorAll<HTMLElement>('.k-pyt-item'));
+    const wynik = box.querySelector<HTMLElement>('.k-pyt-wynik');
+    const upd = () => {
+      if (!wynik) return;
+      const done = items.filter((it) => it.dataset.done);
+      wynik.querySelector('[data-wynik]')!.textContent = String(done.filter((it) => it.dataset.done === 'ok').length);
+      wynik.hidden = done.length !== items.length;
+    };
+    items.forEach((it) => {
+      const good = Number(it.dataset.dobra);
+      const opts = Array.from(it.querySelectorAll<HTMLButtonElement>('.k-opt'));
+      opts.forEach((b) => b.addEventListener('click', () => {
+        if (it.dataset.done) return;
+        const i = Number(b.dataset.i);
+        it.dataset.done = i === good ? 'ok' : 'bad';
+        opts.forEach((o, j) => { o.disabled = true; if (j === good) o.classList.add('is-good'); });
+        if (i !== good) b.classList.add('is-bad');
+        it.querySelector<HTMLElement>('.k-pyt-wyj')!.hidden = false;
+        upd();
+      }));
+    });
+    box.querySelector('[data-reset]')?.addEventListener('click', () => {
+      items.forEach((it) => {
+        delete it.dataset.done;
+        it.querySelectorAll<HTMLButtonElement>('.k-opt').forEach((o) => { o.disabled = false; o.classList.remove('is-good', 'is-bad'); });
+        it.querySelector<HTMLElement>('.k-pyt-wyj')!.hidden = true;
+      });
+      upd();
+      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>

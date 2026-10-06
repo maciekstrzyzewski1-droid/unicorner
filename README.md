@@ -60,6 +60,22 @@ z natychmiastową informacją zwrotną. Bez logowania, działa na telefonie.
 
 ---
 
+## Kursy krok po kroku (np. Matematyka)
+
+Przedmioty prowadzone jako kurs: strona kursu `/<kurs>.html`, moduły `/<kurs>/<slug>.html`, słowniczek.
+
+| Ścieżka | Co to jest |
+| --- | --- |
+| `src/data/kursy/<kurs>.js` | Opis kursu (`COURSE`), lista modułów (`MODULES`, status `live`/`soon`), słowniczek. Rejestr: `src/data/kursy/index.js`. |
+| `src/pages/<kurs>/<slug>.mdx` | Treść modułu (MDX, wzory `$…$` liczone przy buildzie przez KaTeX). Wzór: `src/pages/matematyka/logika.mdx`. |
+| `src/layouts/Kurs.astro` | Szablon modułu: nagłówek, spis treści, poprzedni/następny moduł. |
+| `src/components/kurs/` | Komponenty: ramki, rozbiór wzoru, karty symboli, rozwiązanie krok po kroku, tabele 0-1 liczone kodem, pytania/quiz, `KursHub`, `KursSlowniczek`. |
+| `src/styles/kurs.css` | Style kursów (na bazie `wiedza.css`). |
+
+Nowy moduł: plik `.mdx` + `status: 'live'` w danych kursu. Nowy kurs: plik danych + wpis w rejestrze + `src/pages/<kurs>.astro` z `<KursHub kurs="…" />` + kafelek w `SUBJECTS` (`src/pages/index.astro`).
+
+---
+
 ## Wdrożenie i pułapki
 
 - **Deploy:** każdy push na `main` odpala workflow `pages-build-deployment`. Nowy plik **musi** być zacommitowany (`git status` → nie zostawiaj „untracked"). `git add .` łapie wszystko nowe.

@@ -1,0 +1,22 @@
+---
+// „Rozbiór” wzoru: wzór na górze, pod nim jak go czytać na głos i co znaczy każdy kawałek.
+// Zasada kursu: żaden symbol nie zostaje bez wyjaśnienia.
+import { tex, texInline } from '../../lib/tex.js';
+interface Part { t: string; o: string }
+interface Props { t: string; czytamy?: string; czesci?: Part[] }
+const { t, czytamy, czesci = [] } = Astro.props;
+---
+<figure class="k-rozbior">
+  <div class="k-rozbior-wzor" set:html={tex(t, true)} />
+  {czytamy && <p class="k-rozbior-czyt"><span class="k-lbl">Czytamy:</span> <span set:html={texInline(czytamy)} /></p>}
+  {czesci.length > 0 && (
+    <dl class="k-rozbior-lista">
+      {czesci.map((c) => (
+        <div class="k-rozbior-row">
+          <dt set:html={tex(c.t)} />
+          <dd set:html={texInline(c.o)} />
+        </div>
+      ))}
+    </dl>
+  )}
+</figure>

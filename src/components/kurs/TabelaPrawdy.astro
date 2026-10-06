@@ -1,0 +1,72 @@
+---
+// Tabela zero-jedynkowa liczona przy buildzie: wartości wylicza funkcja `f`, więc w tabeli nie ma literówek.
+// Wiersze idą jak liczenie w systemie dwójkowym (000, 001, 010, …) — tak samo jak na zajęciach.
+// `odslaniaj` = kolumny wyników odkrywa się po jednej (budowanie tabeli krok po kroku).
+import { tex } from '../../lib/tex.js';
+type V = Record<string, number>;
+interface Col { t: string; f: (v: V) => unknown; typ?: 'pomoc' | 'wynik' }
+interface Props {
+  zmienne: string[];
+  kolumny: Col[];
+  zaznacz?: (v: V, wyniki: number[]) => boolean;
+  zaznaczOpis?: string;
+  odslaniaj?: boolean;
+}
+const { zmienne, kolumny, zaznacz, zaznaczOpis, odslaniaj = false } = Astro.props;
+const n = zmienne.length;
+const rows = Array.from({ length: 2 ** n }, (_, k) => {
+  const v: V = {};
+  zmienne.forEach((z, i) => (v[z] = (k >> (n - 1 - i)) & 1));
+  const wyniki = kolumny.map((c) => (c.f(v) ? 1 : 0));
+  return { v, wyniki, mark: zaznacz ? !!zaznacz(v, wyniki) : false };
+});
+---
+<figure class="k-tp" data-tp={odslaniaj ? '' : undefined}>
+  <div class="k-tp-scroll">
+    <table>
+      <thead>
+        <tr>
+          {zmienne.map((z) => <th class="k-tp-var" set:html={tex(z)} />)}
+          {kolumny.map((c, i) => <th class={`k-tp-${c.typ ?? 'pomoc'}`} data-col={i} set:html={tex(c.t)} />)}
+        </tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr class={r.mark ? 'k-tp-mark' : ''}>
+            {zmienne.map((z) => <td class={`k-tp-var v${r.v[z]}`}>{r.v[z]}</td>)}
+            {r.wyniki.map((w, i) => <td class={`k-tp-${kolumny[i].typ ?? 'pomoc'} v${w}`} data-col={i}>{w}</td>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  {odslaniaj && (
+    <div class="k-tp-ctl" data-js-only hidden>
+      <button type="button" class="k-btn" data-next>Wypełnij następną kolumnę</button>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Wypełnij całą tabelę</button>
+    </div>
+  )}
+  <figcaption>
+    <span class="k-lbl">Jak czytać tę tabelę:</span> <slot />
+    {zaznaczOpis && <span class="k-tp-legend"><i></i>{zaznaczOpis}</span>}
+  </figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tp]').forEach((box) => {
+    const cols = new Set(Array.from(box.querySelectorAll<HTMLElement>('thead [data-col]')).map((c) => Number(c.dataset.col)));
+    const total = cols.size;
+    if (!total) return;
+    box.querySelectorAll<HTMLElement>(':scope > [data-js-only]').forEach((el) => (el.hidden = false));
+    const ctl = box.querySelector<HTMLElement>(':scope > .k-tp-ctl')!;
+    let shown = 0;
+    const render = () => {
+      box.querySelectorAll<HTMLElement>('tbody [data-col]').forEach((td) => td.classList.toggle('k-tp-hid', Number(td.dataset.col) >= shown));
+      box.querySelectorAll<HTMLElement>('tbody tr.k-tp-mark').forEach((tr) => tr.classList.toggle('k-tp-mark-off', shown < total));
+      if (shown >= total) ctl.hidden = true;
+    };
+    ctl.querySelector('[data-next]')!.addEventListener('click', () => { shown++; render(); });
+    ctl.querySelector('[data-all]')!.addEventListener('click', () => { shown = total; render(); });
+    render();
+  });
+</script>

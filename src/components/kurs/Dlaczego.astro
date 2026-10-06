@@ -1,0 +1,6 @@
+---
+// Krótkie „dlaczego tak?” wewnątrz kroku rozwiązania.
+interface Props { etykieta?: string }
+const { etykieta = 'Dlaczego?' } = Astro.props;
+---
+<div class="k-why"><span class="k-why-l">{etykieta}</span><div class="k-why-b"><slot /></div></div>
