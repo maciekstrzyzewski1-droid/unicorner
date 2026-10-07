@@ -8,12 +8,22 @@ export function tex(src, display = false) {
 }
 
 // Tekst z wstawkami $…$ (np. w treści pytań quizu podanych jako props) → HTML.
+// Znak interpunkcyjny tuż po wzorze (kropka, przecinek…) sklejamy ze wzorem, żeby nie spadał sam do nowej linii.
 export function texInline(text) {
   if (text == null) return '';
-  return String(text)
-    .split(/(\$[^$]+\$)/g)
-    .map((part) => (part.startsWith('$') && part.endsWith('$') && part.length > 2 ? tex(part.slice(1, -1)) : escapeKeepTags(part)))
-    .join('');
+  const parts = String(text).split(/(\$[^$]+\$)/g);
+  let out = '';
+  for (let i = 0; i < parts.length; i++) {
+    const part = parts[i];
+    if (part.startsWith('$') && part.endsWith('$') && part.length > 2) {
+      const m = (parts[i + 1] ?? '').match(/^[.,;:!?)\]”…]+/);
+      if (m) {
+        out += `<span class="k-nw">${tex(part.slice(1, -1))}${escapeKeepTags(m[0])}</span>`;
+        parts[i + 1] = parts[i + 1].slice(m[0].length);
+      } else out += tex(part.slice(1, -1));
+    } else out += escapeKeepTags(part);
+  }
+  return out;
 }
 
 // Przepuszcza proste znaczniki <b>, <i>, <br>, <code>; resztę traktuje jako tekst.

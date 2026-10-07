@@ -1,0 +1,134 @@
+---
+// Ćwiczenie „wypisz elementy”: dla każdego działania uczeń stuka elementy U, które do wyniku należą.
+// „Sprawdź” koloruje: zielone = dobrze zaznaczone, różowe = zaznaczone, a nie powinno, przerywane = brakuje.
+// Wyjaśnienie każdego błędu liczone przy buildzie (lib/zbiory.js → dlaczego()).
+import { tex, texInline } from '../../../lib/tex.js';
+import { DZIALANIA, sprawdz, wynik, zapis, dlaczego, nalezy } from '../../../lib/zbiory.js';
+type El = number | string;
+interface Props { tytul: string; U: El[]; A: El[]; B: El[]; dzialania: string[]; zrodlo?: string }
+const { tytul, U, A, B, dzialania, zrodlo } = Astro.props;
+sprawdz(U, A, B);
+const wiersze = dzialania.map((k) => ({ k, t: DZIALANIA[k].t, w: wynik(U, A, B, k) }));
+---
+<section class="k-ct k-cz" data-cz>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Wypisz elementy</span>
+    <h3 class="k-pyt-h">{tytul}</h3>
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </div>
+  <div class="k-ct-tresc"><slot /></div>
+  <p class="k-ct-how" data-js-only hidden set:html={texInline('Przy każdym działaniu stuknij elementy, które należą do wyniku (drugie stuknięcie odznacza). Jeśli nic nie zaznaczysz, odpowiadasz: zbiór pusty $\\emptyset$. Kiedy skończysz, kliknij „Sprawdź”.')} />
+  <div class="k-cz-rows">
+    {wiersze.map((r, ri) => (
+      <div class="k-cz-row" data-row={ri}>
+        <div class="k-cz-lab" set:html={tex(`${r.t} = \\{`)} />
+        <div class="k-cz-chips">
+          {U.map((x, xi) => (
+            <button type="button" class="k-cz-c" aria-pressed="false" data-ok={nalezy(r.w, x) ? '1' : '0'} data-e={`${ri}-${xi}`}>{x}</button>
+          ))}
+          <span class="k-cz-end" set:html={tex('\\}')} />
+        </div>
+        <div class="k-cz-ans" hidden set:html={tex(`${r.t} = ${zapis(r.w)}`)} />
+      </div>
+    ))}
+  </div>
+  <div class="k-ct-ctl" data-js-only hidden>
+    <button type="button" class="k-btn" data-check>Sprawdź</button>
+    <button type="button" class="k-btn k-btn-ghost" data-show>Pokaż odpowiedzi</button>
+    <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
+  </div>
+  <div class="k-ct-wynik" hidden aria-live="polite">
+    <p class="k-ct-sum" data-sum></p>
+    <ul class="k-ct-bledy" data-bledy></ul>
+  </div>
+  <ul hidden data-expl>
+    {wiersze.map((r, ri) => U.map((x, xi) => <li data-e={`${ri}-${xi}`} set:html={dlaczego(A, B, r.k, x)} />))}
+  </ul>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cz]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-cz]') === box) el.hidden = false; });
+    const chips = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-cz-c'));
+    const rows = Array.from(box.querySelectorAll<HTMLElement>('.k-cz-row'));
+    const wynik = box.querySelector<HTMLElement>('.k-ct-wynik')!;
+    const sum = box.querySelector<HTMLElement>('[data-sum]')!;
+    const bledy = box.querySelector<HTMLElement>('[data-bledy]')!;
+    const clearMarks = () => {
+      chips.forEach((c) => c.classList.remove('is-good', 'is-bad', 'is-miss'));
+      rows.forEach((r) => { r.classList.remove('is-ok', 'is-no'); r.querySelector<HTMLElement>('.k-cz-ans')!.hidden = true; });
+    };
+    chips.forEach((c) => c.addEventListener('click', () => {
+      c.setAttribute('aria-pressed', c.getAttribute('aria-pressed') === 'true' ? 'false' : 'true');
+      c.classList.remove('is-good', 'is-bad', 'is-miss');
+    }));
+    box.querySelector('[data-check]')!.addEventListener('click', () => {
+      clearMarks();
+      const zle: HTMLButtonElement[] = [];
+      let okRows = 0;
+      rows.forEach((r) => {
+        let ok = true;
+        r.querySelectorAll<HTMLButtonElement>('.k-cz-c').forEach((c) => {
+          const on = c.getAttribute('aria-pressed') === 'true', need = c.dataset.ok === '1';
+          if (on && need) c.classList.add('is-good');
+          else if (on && !need) { c.classList.add('is-bad'); zle.push(c); ok = false; }
+          else if (!on && need) { c.classList.add('is-miss'); zle.push(c); ok = false; }
+        });
+        r.classList.add(ok ? 'is-ok' : 'is-no');
+        if (ok) okRows++;
+      });
+      bledy.innerHTML = '';
+      if (!zle.length) sum.innerHTML = `<b class="k-ct-ok">Wszystko dobrze!</b> Każdy z ${rows.length} zbiorów się zgadza.`;
+      else {
+        sum.innerHTML = `Dobrze: <b>${okRows}</b> z ${rows.length} zbiorów. Różowe = zaznaczone, a nie powinno. Przerywane = brakuje. Po jednym wyjaśnieniu dla każdego złego zbioru:`;
+        rows.forEach((r) => {
+          const bad = Array.from(r.querySelectorAll<HTMLButtonElement>('.k-cz-c.is-bad'));
+          const miss = Array.from(r.querySelectorAll<HTMLButtonElement>('.k-cz-c.is-miss'));
+          const first = bad[0] ?? miss[0];
+          if (!first) return;
+          const src = box.querySelector(`[data-expl] [data-e="${first.dataset.e}"]`);
+          if (!src) return;
+          const li = document.createElement('li');
+          const n = bad.length + miss.length;
+          li.innerHTML = src.innerHTML + (n > 1 ? ` <span class="k-cz-more">(błędnych pól w tym zbiorze: ${n})</span>` : '');
+          bledy.appendChild(li);
+        });
+      }
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-show]')!.addEventListener('click', () => {
+      clearMarks();
+      chips.forEach((c) => c.setAttribute('aria-pressed', c.dataset.ok === '1' ? 'true' : 'false'));
+      rows.forEach((r) => (r.querySelector<HTMLElement>('.k-cz-ans')!.hidden = false));
+      sum.innerHTML = 'Tak wyglądają poprawne odpowiedzi. Spróbuj jeszcze raz sam — „Wyczyść” odznacza wszystko.';
+      bledy.innerHTML = '';
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-clear]')!.addEventListener('click', () => {
+      clearMarks();
+      chips.forEach((c) => c.setAttribute('aria-pressed', 'false'));
+      wynik.hidden = true;
+    });
+  });
+</script>
+
+<style>
+  .k-cz-rows{display:grid;gap:10px;margin:6px 0 12px;}
+  .k-cz-row{display:grid;grid-template-columns:110px 1fr;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);background:rgba(255,255,255,.02);}
+  .k-cz-row.is-ok{border-color:var(--ok);}
+  .k-cz-row.is-no{border-color:var(--magenta);}
+  .k-cz-lab{font-size:1rem;white-space:nowrap;}
+  .k-cz-chips{display:flex;flex-wrap:wrap;align-items:center;gap:6px;}
+  .k-cz-c{min-width:38px;height:38px;padding:0 8px;font-family:var(--mono);font-weight:800;font-size:1rem;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid var(--line2);cursor:pointer;transition:background .15s,border-color .15s,color .15s;}
+  .k-cz-c[aria-pressed="true"]{color:#0b0918;background:var(--cyan);border-color:var(--cyan);}
+  .k-cz-c.is-good{background:var(--ok);border-color:var(--ok);color:#0b0918;}
+  .k-cz-c.is-bad{background:var(--magenta);border-color:var(--magenta);color:#fff;}
+  .k-cz-c.is-miss{border:2px dashed var(--ok);color:var(--ok);}
+  .k-cz-c:focus-visible{outline:2px solid var(--cyan);outline-offset:2px;}
+  .k-cz-end{font-size:1rem;}
+  .k-cz-ans{grid-column:1 / -1;font-size:.92rem;color:var(--gold);}
+  .k-cz :global(.k-cz-more){color:var(--muted2);font-size:.86em;}
+  @media (max-width:560px){
+    .k-cz-row{grid-template-columns:1fr;}
+  }
+</style>

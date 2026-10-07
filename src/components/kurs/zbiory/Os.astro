@@ -1,0 +1,71 @@
+---
+// Oś liczbowa: każdy wiersz to osobna oś z przedziałami (gruba kreska) i/lub pojedynczymi punktami.
+// Kółko pełne = koniec należy do zbioru (nawias kwadratowy), kółko puste = nie należy (nawias okrągły).
+// od: null = −∞, do: null = +∞ (strzałka do krawędzi). Wiersz `wynik` rysowany na złoto.
+import { tex } from '../../../lib/tex.js';
+interface Prz { od: number | null; do: number | null; lewy?: 'o' | 'z'; prawy?: 'o' | 'z' }
+interface Wiersz { t: string; zapis?: string; przedzialy?: Prz[]; punkty?: number[]; wynik?: boolean }
+interface Props { min: number; max: number; wiersze: Wiersz[]; ticki?: number[] }
+const { min, max, wiersze } = Astro.props;
+const W = 420, H = 56, y = 20, L = 22, Rr = W - 22;
+const X = (v: number) => +(L + 14 + ((v - min) / (max - min)) * (Rr - L - 28)).toFixed(1);
+const auto = new Set<number>();
+for (const w of wiersze) {
+  for (const p of w.przedzialy ?? []) { if (p.od !== null) auto.add(p.od); if (p.do !== null) auto.add(p.do); }
+  for (const p of w.punkty ?? []) auto.add(p);
+}
+if (min <= 0 && max >= 0) auto.add(0);
+const ticki = (Astro.props.ticki ?? [...auto]).filter((v) => v >= min && v <= max).sort((a, b) => a - b);
+for (const w of wiersze) for (const p of w.przedzialy ?? []) {
+  if (p.od !== null && (p.od < min || p.od > max)) throw new Error(`Os: koniec ${p.od} poza zakresem osi`);
+  if (p.do !== null && (p.do < min || p.do > max)) throw new Error(`Os: koniec ${p.do} poza zakresem osi`);
+}
+---
+<figure class="k-fig k-os">
+  <div class="k-fig-box">
+    {wiersze.map((w) => {
+      const c = w.wynik ? '#ffd84a' : '#27e8ff';
+      return (
+        <div class={`k-os-row ${w.wynik ? 'is-wynik' : ''}`}>
+          <div class="k-os-t"><span set:html={tex(w.t)} />{w.zapis && <span class="k-os-z"> → <span set:html={tex(w.zapis)} /></span>}</div>
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`oś liczbowa: ${w.t}`}>
+            <line x1={L - 10} y1={y} x2={Rr + 10} y2={y} stroke="#6f679a" stroke-width="1.5" />
+            <path d={`M${Rr + 10},${y} l-8,-4 v8 z`} fill="#6f679a" />
+            {ticki.map((v) => (
+              <g>
+                <line x1={X(v)} y1={y - 5} x2={X(v)} y2={y + 5} stroke="#6f679a" stroke-width="1.5" />
+                <text x={X(v)} y={y + 28} text-anchor="middle" class="k-os-tick">{v}</text>
+              </g>
+            ))}
+            {(w.przedzialy ?? []).map((p) => {
+              const x1 = p.od === null ? L - 6 : X(p.od), x2 = p.do === null ? Rr + 6 : X(p.do);
+              return (
+                <g>
+                  <line x1={x1} y1={y} x2={x2} y2={y} stroke={c} stroke-width="5" stroke-linecap="butt" />
+                  {p.od === null && <path d={`M${L - 12},${y} l10,-7 v14 z`} fill={c} />}
+                  {p.do === null && <path d={`M${Rr + 12},${y} l-10,-7 v14 z`} fill={c} />}
+                  {p.od !== null && <circle cx={x1} cy={y} r="6.5" fill={p.lewy === 'z' ? c : '#0d0c13'} stroke={c} stroke-width="2.5" />}
+                  {p.do !== null && <circle cx={x2} cy={y} r="6.5" fill={p.prawy === 'z' ? c : '#0d0c13'} stroke={c} stroke-width="2.5" />}
+                </g>
+              );
+            })}
+            {(w.punkty ?? []).map((v) => <circle cx={X(v)} cy={y} r="5.5" fill={c} />)}
+          </svg>
+        </div>
+      );
+    })}
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<style>
+  .k-os .k-fig-box{display:grid;gap:4px;}
+  .k-os-row{max-width:600px;width:100%;margin:0 auto;}
+  .k-os-row + .k-os-row{border-top:1px dashed var(--line);padding-top:8px;}
+  .k-os-row.is-wynik{border-top:1px solid rgba(255,216,74,.4);}
+  .k-os-t{font-size:.95rem;color:var(--text);}
+  .k-os-z{color:var(--muted);}
+  .is-wynik .k-os-t{color:var(--gold);}
+  .k-os svg{max-width:600px;}
+  .k-os-tick{font-family:var(--mono);font-size:16px;font-weight:600;fill:#9b93c4;}
+</style>

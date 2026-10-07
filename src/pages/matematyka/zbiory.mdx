@@ -1,0 +1,978 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: matematyka
+slug: zbiory
+title: Zbiory
+podtytul: działania, przedziały, iloczyn kartezjański i zasada włączeń i wyłączeń
+description: Zbiory od zera dla studentów ekonomii — zapis zbioru, moc, przedziały na osi liczbowej, suma, część wspólna, różnica i dopełnienie, zawieranie się zbiorów, iloczyn kartezjański w układzie współrzędnych i zasada włączeń i wyłączeń. Przepisy, zadania krok po kroku i ćwiczenia.
+lede: Zbiór to po prostu „worek” z elementami — ale ten worek ma swoje zasady, swój zapis i swoje działania. Tu poznasz je po kolei, a do każdego polecenia z kolokwium dostaniesz przepis, rozwiązane zadania z zajęć i ćwiczenia z natychmiastową odpowiedzią.
+wymaga: Nic poza liceum. Symbole z logiki (∧, ∨, ∈) przypominamy na miejscu.
+umiesz:
+  - wypisać elementy zbioru zapisanego warunkiem i policzyć jego moc
+  - zapisać zbiór w postaci przedziału i zaznaczyć go na osi liczbowej
+  - wyznaczyć sumę, część wspólną, różnicę i dopełnienie zbiorów
+  - ustalić, który zbiór zawiera się w którym
+  - wypisać iloczyn kartezjański i narysować go w układzie współrzędnych
+  - policzyć elementy sumy trzech zbiorów zasadą włączeń i wyłączeń
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Venn from '../../components/kurs/zbiory/Venn.astro';
+import Venn3 from '../../components/kurs/zbiory/Venn3.astro';
+import Os from '../../components/kurs/zbiory/Os.astro';
+import Pary from '../../components/kurs/zbiory/Pary.astro';
+import Obszar from '../../components/kurs/zbiory/Obszar.astro';
+import TabelaPrzynaleznosci from '../../components/kurs/zbiory/TabelaPrzynaleznosci.astro';
+import CwiczenieZbiory from '../../components/kurs/zbiory/CwiczenieZbiory.astro';
+
+
+## Po co ekonomiście zbiory?
+
+Otwierasz sklep internetowy i klikasz filtry: „laptopy do 3000 zł” **i** „16 GB RAM”. Sklep pokazuje tylko te modele, które spełniają oba warunki naraz. Potem zaznaczasz marki: „Lenovo” **lub** „Dell” — i lista się wydłuża, bo wystarczy jedna z marek. Na koniec odhaczasz „bez produktów z outletu” — i część modeli znika.
+
+Właśnie wykonałeś trzy działania na zbiorach: **część wspólną**, **sumę** i **różnicę**. Sklep robi to tysiące razy na sekundę.
+
+W ekonomii zbiory są wszędzie. Dział marketingu porównuje klientów ze stycznia ($A$) i z lutego ($B$): ci, którzy kupili w obu miesiącach, to klienci lojalni ($A \cap B$), ci tylko ze stycznia — klienci utraceni ($A \setminus B$), a ci tylko z lutego — nowi ($B \setminus A$). Ankieter liczy, ile osób korzysta z co najmniej jednej z trzech usług, i musi uważać, żeby nikogo nie policzyć dwa razy — to zasada włączeń i wyłączeń z końca tego modułu.
+
+<Ramka kind="excel">
+W Excelu też pracujesz na zbiorach. Filtr z kilkoma warunkami to część wspólna, a „Usuń duplikaty” robi z listy zbiór — bo w zbiorze nic się nie powtarza.
+</Ramka>
+
+## Co będzie na kolokwium
+
+Ze zbiorów na kolokwium wraca siedem typów poleceń. Każde ma tu swój przepis, rozwiązane przykłady i ćwiczenia z natychmiastową odpowiedzią. Jeśli powtarzasz na ostatnią chwilę, zacznij od tej listy.
+
+<Polecenia items={[
+  { polecenie: 'Wypisz elementy zbioru / wyznacz moc zbioru', jak: 'Sprawdzasz liczby po kolei, aż przestaną spełniać warunek. Moc to liczba wypisanych elementów.', przepis: 'polecenie-moc', cwiczenia: 'cw-moc', zrodlo: 'jak w Zad. 1, str. 31' },
+  { polecenie: 'Zapisz zbiór w postaci przedziału i zaznacz go na osi liczbowej', jak: 'Każdą nierówność zamieniasz na przedział. Potem $\\land$ to część wspólna, a $\\lor$ — suma.', przepis: 'polecenie-przedzialy', cwiczenia: 'cw-przedzialy', zrodlo: 'jak w Zad. 2, str. 31' },
+  { polecenie: "Wyznacz $A \\cup B$, $A \\cap B$, $A \\setminus B$, $B \\setminus A$, $A'$, $B'$", jak: 'Wypisujesz elementy $U$, $A$ i $B$, wpisujesz je do diagramu Venna i odczytujesz każde działanie.', przepis: 'polecenie-dzialania', cwiczenia: 'cw-dzialania', zrodlo: 'jak w Zad. 3, str. 31–32' },
+  { polecenie: 'Określ relacje zawierania się i równości zbiorów', jak: 'Dla każdej pary szukasz „wyrzutka” — elementu pierwszego zbioru, którego nie ma w drugim.', przepis: 'polecenie-zawieranie', cwiczenia: 'cw-zawieranie', zrodlo: 'jak w Zad. 4, str. 32' },
+  { polecenie: 'Wyznacz $A \\times B$ i $B \\times A$', jak: 'Każdy element $A$ łączysz w parę z każdym elementem $B$. W parze pierwszy jest zawsze element pierwszego zbioru.', przepis: 'polecenie-kartezjanski', cwiczenia: 'cw-kartezjanski', zrodlo: 'jak w Zad. 1, str. 36' },
+  { polecenie: 'Przedstaw $A \\times B$ w układzie współrzędnych', jak: 'Pierwszy zbiór na osi $x$, drugi na osi $y$. Brzeg ciągły, gdy koniec należy, przerywany, gdy nie należy.', przepis: 'polecenie-uklad', cwiczenia: 'cw-kartezjanski', zrodlo: 'jak w Zad. 2, str. 36' },
+  { polecenie: 'Zadanie tekstowe: ile elementów ma co najmniej jedną cechę, a ile żadnej?', jak: 'Wzór włączeń i wyłączeń: dodajesz pojedyncze zbiory, odejmujesz pary, dodajesz część wspólną wszystkich trzech.', przepis: 'polecenie-wlaczenia', cwiczenia: 'cw-wlaczenia', zrodlo: 'jak w Zad. 4, str. 40' },
+]} />
+
+Polecenia mogą brzmieć trochę inaczej („podaj”, „wyznacz”, „przedstaw”, „zbadaj”). Liczy się to, o co pyta zadanie: o elementy, o przedział, o działanie, o zawieranie, o pary czy o liczbę elementów.
+
+## Zbiór — pojęcia od podstaw
+
+<Ramka kind="zapamietaj">
+**Zbiór** to kolekcja elementów, w której **nic się nie powtarza** i **kolejność nie ma znaczenia**.
+</Ramka>
+
+Przykład z życia: lista gości na urodziny. Kasia nie przyjdzie dwa razy tylko dlatego, że ktoś wpisał ją na listę dwa razy. A to, czy jej nazwisko jest na górze, czy na dole listy, nie zmienia tego, kto przyjdzie.
+
+Przykład liczbowy: zbiór cyfr w numerze 2024 to $\{0, 2, 4\}$. Dwójka występuje w numerze dwa razy, ale w zbiorze — raz.
+
+<Ramka kind="podobny" tytul="Antyprzykład">
+Lista zakupów „3 bułki, mleko, 2 jogurty” **nie jest** zbiorem, bo ważne są powtórzenia (ile sztuk). Zbiorem jest dopiero odpowiedź na pytanie „co trzeba kupić?”: $\{\text{bułki}, \text{mleko}, \text{jogurty}\}$.
+</Ramka>
+
+<Ramka kind="pulapka">
+$\{1, 2, 2\}$ i $\{1, 2\}$ to **ten sam** zbiór — powtórzenie niczego nie dodaje. Tak samo $\{1, 2, 3\} = \{3, 1, 2\}$ — kolejność nie gra roli. Moc zbioru $\{1, 2, 2\}$ to 2, a nie 3.
+</Ramka>
+
+Zbiory oznaczamy **wielkimi** literami ($A$, $B$, $C$), a elementy — **małymi** ($a$, $b$, $x$). Oto symbole, które pojawiają się od pierwszej minuty zajęć:
+
+<div class="k-symbole">
+  <Znak t="\{\ \}" nazwa="Nawiasy klamrowe" czytamy="zbiór" znaczy="W środku wypisujemy elementy zbioru albo warunek, który je opisuje: $\{1, 2, 3\}$." pamiec="klamry „obejmują” elementy jak worek." />
+  <Znak t="x \in A" nazwa="Należenie" czytamy="x należy do A" znaczy="Element $x$ jest w zbiorze $A$. Np. $2 \in \{1, 2, 3\}$." pamiec="$\in$ to wystylizowane „e” — <i>element</i>." />
+  <Znak t="x \notin A" nazwa="Nienależenie" czytamy="x nie należy do A" znaczy="Elementu $x$ nie ma w zbiorze $A$. Np. $5 \notin \{1, 2, 3\}$." pamiec="przekreślenie znaczy „nie”, jak przy $\neq$." />
+  <Znak t="|A|" nazwa="Moc zbioru" czytamy="moc zbioru A" znaczy="Liczba elementów zbioru. $|\{1, 2, 3\}| = 3$." pamiec="kreski jak przy wartości bezwzględnej — tu też wychodzi zwykła liczba." />
+  <Znak t="\emptyset" nazwa="Zbiór pusty" czytamy="zbiór pusty" znaczy="Zbiór bez żadnego elementu. $|\emptyset| = 0$." pamiec="kółko przekreślone: w środku nic nie ma." />
+  <Znak t="U" nazwa="Uniwersum (przestrzeń)" czytamy="u, uniwersum" znaczy="Wszystkie elementy, które w danym zadaniu nas interesują. Np. $U = \{0, 1, \ldots, 8\}$ albo $U = \mathbb{R}$." pamiec="U jak „ustalony świat” zadania — poza nim nic nie istnieje." />
+</div>
+
+<Ramka kind="liceum">
+Najważniejsze zbiory liczb z liceum:
+
+- $\mathbb{N}$ — liczby naturalne: $0, 1, 2, 3, \ldots$ **Na zajęciach zero jest liczbą naturalną** (tak liczymy w Zad. 3, str. 31–32). W niektórych książkach $\mathbb{N}$ zaczyna się od 1 — w razie wątpliwości pytaj prowadzącego.
+- $\mathbb{Z}$ — liczby całkowite: $\ldots, -2, -1, 0, 1, 2, \ldots$
+- $\mathbb{R}$ — liczby rzeczywiste: wszystkie liczby z osi liczbowej, także $0{,}5$, $\sqrt{2}$, $\pi$.
+</Ramka>
+
+<Pytania pytania={[
+  { q: 'Ile elementów ma zbiór $\\{5, 5, 7, 7, 7\\}$?', opcje: ['2', '5', '3'], dobra: 0, dlaczego: 'W zbiorze nic się nie powtarza: $\\{5, 5, 7, 7, 7\\} = \\{5, 7\\}$. Moc to 2.' },
+]} />
+
+## Trzy sposoby zapisu zbioru
+
+Ten sam pomysł — „jakieś liczby” — można zapisać na trzy sposoby.
+
+**1. Wyliczenie elementów** — wypisujemy wszystko w klamrach: $A = \{1, 2, 3, 4\}$. Najprostsze, ale działa tylko wtedy, gdy elementów jest niewiele.
+
+**2. Warunek** — podajemy, skąd bierzemy kandydatów i jaki warunek mają spełnić:
+
+<Rozbior
+  t="B = \{x \in \mathbb{N} : x \geq 1 \land x \leq 4\}"
+  czytamy="zbiór takich $x$ należących do $\mathbb{N}$, że $x \geq 1$ i $x \leq 4$"
+  czesci={[
+    { t: '\\{\\ \\}', o: 'klamry: „zbiór”' },
+    { t: 'x \\in \\mathbb{N}', o: '<b>kandydaci</b>: skąd bierzemy $x$ — tu z liczb naturalnych' },
+    { t: ':', o: 'dwukropek czytamy <b>„takich, że”</b> — oddziela kandydatów od warunku' },
+    { t: 'x \\geq 1 \\land x \\leq 4', o: '<b>warunek</b>: oba naraz, bo $\\land$ to „i” (z logiki)' },
+  ]}
+/>
+
+Kandydaci to $0, 1, 2, 3, \ldots$, a warunek przepuszcza tylko $1, 2, 3, 4$. Czyli $B = \{1, 2, 3, 4\}$ — to ten sam zbiór co $A$.
+
+**3. Przedział** — dla liczb rzeczywistych: $C = (1, 4)$ to wszystkie liczby **między** 1 a 4.
+
+<Ramka kind="pulapka">
+$(1, 4)$ to **zupełnie inny zbiór** niż $\{1, 2, 3, 4\}$. W przedziale $(1, 4)$ nie ma ani 1, ani 4 (nawiasy okrągłe), za to są $1{,}5$, $2{,}71$, $\pi$ i nieskończenie wiele innych liczb. Przedział to „kawałek osi”, a nie lista liczb całkowitych.
+</Ramka>
+
+Najważniejsze w zapisie z warunkiem jest to, **skąd** bierzemy $x$. Ten sam warunek daje różne zbiory:
+
+| Zapis | Kandydaci | Wynik |
+|---|---|---|
+| $\{x \in \mathbb{N} : x < 3\}$ | $0, 1, 2, 3, \ldots$ | $\{0, 1, 2\}$ |
+| $\{x \in \mathbb{Z} : -2 < x < 3\}$ | $\ldots, -2, -1, 0, 1, \ldots$ | $\{-1, 0, 1, 2\}$ |
+| $\{x \in \mathbb{R} : x < 3\}$ | cała oś liczbowa | $(-\infty, 3)$ — przedział |
+
+<Ramka kind="granica">
+Wypisać elementy da się tylko wtedy, gdy jest ich skończenie wiele. Zbioru $\{x \in \mathbb{R} : 1 < x < 4\}$ nie wypiszesz — między 1 a 4 jest nieskończenie wiele liczb. Wtedy zapisujesz go jako przedział $(1, 4)$.
+</Ramka>
+
+## Wypisz elementy i policz moc
+
+<a id="polecenie-moc" class="k-anchor"></a>
+
+<Ramka kind="polecenie">
+„Wypisz elementy zbioru $A = \{x \in \mathbb{N} : 2 < x < 8\}$ i wyznacz jego moc.” albo „Wyznacz moc zbioru $D = \{12, 14, 16, \ldots, 26\}$.”
+
+1. Sprawdź, skąd są kandydaci: $\mathbb{N}$ zaczyna się od 0, $\mathbb{Z}$ ma też liczby ujemne.
+2. Przetłumacz warunek na słowa, np. „większe od 2 i mniejsze od 8”.
+3. Sprawdzaj kandydatów po kolei od najmniejszego. Uważaj na końce: przy $<$ koniec odpada, przy $\leq$ zostaje.
+4. Moc to liczba wypisanych elementów. Przy długim ciągu ze stałym krokiem użyj skrótu: $\dfrac{\text{ostatni} - \text{pierwszy}}{\text{krok}} + 1$.
+</Ramka>
+
+Trzy przykłady, od najprostszego:
+
+<Rozbior t="\{x \in \mathbb{N} : x < 5\} = \{0, 1, 2, 3, 4\}" czesci={[
+  { t: '0', o: 'zero jest liczbą naturalną — łatwo je zgubić' },
+  { t: '5', o: 'odpada, bo warunek to $x < 5$, a nie $x \\leq 5$' },
+  { t: '|\\ldots| = 5', o: 'moc: pięć elementów' },
+]} />
+
+<Rozbior t="\{x \in \mathbb{Z} : -2 \leq x < 3\} = \{-2, -1, 0, 1, 2\}" czesci={[
+  { t: '-2', o: 'należy, bo przy $-2$ stoi $\\leq$' },
+  { t: '3', o: 'nie należy, bo przy 3 stoi $<$' },
+  { t: '|\\ldots| = 5', o: 'moc: pięć elementów' },
+]} />
+
+<Rozbior t="\{x \in \mathbb{N} : x^2 < 10\} = \{0, 1, 2, 3\}" czesci={[
+  { t: '3^2 = 9', o: '$9 < 10$, więc 3 należy' },
+  { t: '4^2 = 16', o: '$16 > 10$ — tu się zatrzymujemy; większe liczby tym bardziej odpadną' },
+  { t: '|\\ldots| = 4', o: 'moc: cztery elementy' },
+]} />
+
+<Rozwiazanie tytul="Wyznacz moc zbioru D = {12, 14, 16, …, 26}" zrodlo="Zad. 1, str. 31, d)">
+<Krok tytul="Zrozum, co znaczy wielokropek">
+Pierwsze elementy to $12, 14, 16$ — każdy kolejny jest o 2 większy. Wielokropek $\ldots$ znaczy „dalej w ten sam sposób” aż do 26.
+</Krok>
+
+<Krok tytul="Wypisz wszystkie elementy">
+$$
+D = \{12, 14, 16, 18, 20, 22, 24, 26\}
+$$
+
+Liczymy: $|D| = 8$.
+
+<Dlaczego>
+Moc to liczba elementów zbioru. Przy ośmiu elementach najpewniej po prostu je wypisać i policzyć.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdź skrótem">
+$$
+\frac{26 - 12}{2} + 1 = \frac{14}{2} + 1 = 7 + 1 = 8
+$$
+
+<Dlaczego>
+Od 12 do 26 robimy $14 : 2 = 7$ „skoków” co 2. Elementów jest o jeden więcej niż skoków — jak w płocie: 7 przęseł wymaga 8 słupków. Stąd „$+1$”.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="kiedy">
+Skrót $\frac{\text{ostatni} - \text{pierwszy}}{\text{krok}} + 1$ przydaje się, gdy elementów jest dużo, np. $\{5, 10, 15, \ldots, 500\}$: $\frac{500 - 5}{5} + 1 = 100$. Przy kilku elementach szybciej je wypisać.
+</Ramka>
+
+<Ramka kind="granica">
+Skrót działa tylko przy **stałym kroku**. W $\{1, 2, 4, 8, \ldots, 64\}$ każdy element jest dwa razy większy od poprzedniego — kroki są różne. Tu wypisujesz: $1, 2, 4, 8, 16, 32, 64$, czyli moc 7. A $|\{x \in \mathbb{R} : 1 < x < 4\}|$ w ogóle nie jest liczbą — elementów jest nieskończenie wiele.
+</Ramka>
+
+## Przedziały i oś liczbowa
+
+<a id="polecenie-przedzialy" class="k-anchor"></a>
+
+Gdy $x$ jest z $\mathbb{R}$, zbiór to zwykle kawałek osi liczbowej, czyli **przedział**. Przedział zapisujemy dwoma końcami w nawiasach — a rodzaj nawiasu mówi, czy koniec należy do zbioru.
+
+<div class="k-symbole">
+  <Znak t="(a, b)" nazwa="Nawias okrągły" czytamy="przedział otwarty od a do b" znaczy="Koniec <b>nie należy</b> do przedziału. Na osi: <b>puste kółko</b>." pamiec="okrągły nawias „odpycha” koniec." />
+  <Znak t="[a, b]" nazwa="Nawias kwadratowy" czytamy="przedział domknięty od a do b" znaczy="Koniec <b>należy</b> do przedziału. Na osi: <b>pełne kółko</b>." pamiec="kwadratowy nawias „trzyma” koniec jak klamra." />
+  <Znak t="\infty" nazwa="Nieskończoność" czytamy="nieskończoność" znaczy="Przedział biegnie bez końca w prawo ($\infty$) albo w lewo ($-\infty$). Zawsze z nawiasem okrągłym." pamiec="leżąca ósemka — pętla bez końca." />
+</div>
+
+Rodzaje przedziałów (nazwy jak na zajęciach):
+
+- **otwarte** — oba końce odpadają: $(2, 4)$, $(5, \infty)$, $(-\infty, 8)$;
+- **jednostronnie domknięte** — jeden koniec należy: $[4, \infty)$, $(3, 8]$;
+- **obustronnie domknięte** — oba końce należą: $[5, 12]$.
+
+Jak to wygląda na osi — każda nierówność i jej przedział:
+
+<Os min={-2} max={7} wiersze={[
+  { t: 'x > 2', zapis: '(2, \\infty)', przedzialy: [{ od: 2, do: null }] },
+  { t: 'x \\geq 2', zapis: '[2, \\infty)', przedzialy: [{ od: 2, do: null, lewy: 'z' }] },
+  { t: 'x < 5', zapis: '(-\\infty, 5)', przedzialy: [{ od: null, do: 5 }] },
+  { t: 'x \\leq 5', zapis: '(-\\infty, 5]', przedzialy: [{ od: null, do: 5, prawy: 'z' }] },
+  { t: '2 < x \\leq 5', zapis: '(2, 5]', przedzialy: [{ od: 2, do: 5, prawy: 'z' }] },
+]}>
+każdy wiersz to osobna oś. Gruba kreska to liczby należące do zbioru. Pełne kółko = koniec należy (znak $\leq$ albo $\geq$, nawias kwadratowy), puste kółko = nie należy (znak $<$ albo $>$, nawias okrągły). Strzałka na końcu kreski = przedział biegnie w nieskończoność.
+</Os>
+
+<Ramka kind="botak">
+Przy $\infty$ i $-\infty$ zawsze stoi **nawias okrągły**. Nieskończoność to nie liczba — nie da się do niej dojść, więc nie może „należeć” do przedziału.
+</Ramka>
+
+<Ramka kind="botak" tytul="Przecinek czy średnik?">
+Na zajęciach końce przedziału oddziela się przecinkiem: $(2, 4)$. W liceum często pisze się średnik: $(2; 4)$. Oba zapisy znaczą to samo — średnik bywa wygodny, gdy liczby mają przecinek dziesiętny, np. $(2{,}5; 4)$.
+</Ramka>
+
+<Ramka kind="polecenie">
+„Zapisz zbiór $\{x \in \mathbb{R} : \ldots\}$ w postaci przedziału (sumy przedziałów) i zaznacz go na osi liczbowej.”
+
+1. Każdą pojedynczą nierówność zamień na przedział i narysuj na osobnej osi (jedna pod drugą, ta sama skala).
+2. Jeśli są nawiasy, zacznij od nich — tak jak w logice.
+3. $\land$ („i”) → **część wspólna**: zostaje tylko to, co zamalowane na **obu** osiach.
+4. $\lor$ („lub”) → **suma**: bierzesz wszystko, co zamalowane na **którejkolwiek** osi.
+5. Odczytaj wynik z ostatniej osi. Kawałki, które się nie stykają, łączysz znakiem $\cup$.
+</Ramka>
+
+Przykład z „i”: $\{x \in \mathbb{R} : x > -1 \land x \leq 3\}$.
+
+<Os min={-3} max={5} wiersze={[
+  { t: 'x > -1', zapis: '(-1, \\infty)', przedzialy: [{ od: -1, do: null }] },
+  { t: 'x \\leq 3', zapis: '(-\\infty, 3]', przedzialy: [{ od: null, do: 3, prawy: 'z' }] },
+  { t: 'x > -1 \\land x \\leq 3', zapis: '(-1, 3]', przedzialy: [{ od: -1, do: 3, prawy: 'z' }], wynik: true },
+]}>
+dwie pierwsze osie to osobne nierówności. „I” zostawia tylko ten kawałek, który jest zamalowany na obu osiach naraz — to złota oś na dole.
+</Os>
+
+Przykład z „lub”: $\{x \in \mathbb{R} : x < 0 \lor x \geq 2\}$.
+
+<Os min={-2} max={4} wiersze={[
+  { t: 'x < 0', zapis: '(-\\infty, 0)', przedzialy: [{ od: null, do: 0 }] },
+  { t: 'x \\geq 2', zapis: '[2, \\infty)', przedzialy: [{ od: 2, do: null, lewy: 'z' }] },
+  { t: 'x < 0 \\lor x \\geq 2', zapis: '(-\\infty, 0) \\cup [2, \\infty)', przedzialy: [{ od: null, do: 0 }, { od: 2, do: null, lewy: 'z' }], wynik: true },
+]}>
+„lub” bierze wszystko, co zamalowane na którejkolwiek osi. Kawałki się nie stykają, więc wynik to suma dwóch przedziałów — znak $\cup$ między nimi.
+</Os>
+
+<Rozwiazanie tytul="Zapisz zbiór {x ∈ ℝ : x ≤ 1 ∨ (x ≥ 7 ∧ x < 8)} jako przedział" zrodlo="Zad. 2, str. 31, g)">
+<Krok tytul="Zacznij od nawiasu">
+W nawiasie jest $x \geq 7 \land x < 8$: liczby co najmniej 7 **i** mniejsze od 8. Część wspólna to $[7, 8)$.
+
+<Os min={-1} max={10} wiersze={[
+  { t: 'x \\geq 7', zapis: '[7, \\infty)', przedzialy: [{ od: 7, do: null, lewy: 'z' }] },
+  { t: 'x < 8', zapis: '(-\\infty, 8)', przedzialy: [{ od: null, do: 8 }] },
+  { t: 'x \\geq 7 \\land x < 8', zapis: '[7, 8)', przedzialy: [{ od: 7, do: 8, lewy: 'z' }], wynik: true },
+]}>
+7 należy (znak $\geq$ — pełne kółko), 8 nie należy (znak $<$ — puste kółko).
+</Os>
+
+<Dlaczego>
+Nawiasy liczymy najpierw — jak w logice. Bez tego nie wiadomo, do czego odnosi się „lub”.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zamień drugą część na przedział">
+$x \leq 1$ to wszystkie liczby od $-\infty$ do 1 włącznie: $(-\infty, 1]$.
+</Krok>
+
+<Krok tytul="Połącz „lubem”, czyli sumą">
+$$
+(-\infty, 1] \cup [7, 8)
+$$
+
+<Os min={-1} max={10} wiersze={[
+  { t: 'x \\leq 1', zapis: '(-\\infty, 1]', przedzialy: [{ od: null, do: 1, prawy: 'z' }] },
+  { t: 'x \\geq 7 \\land x < 8', zapis: '[7, 8)', przedzialy: [{ od: 7, do: 8, lewy: 'z' }] },
+  { t: 'x \\leq 1 \\lor (x \\geq 7 \\land x < 8)', zapis: '(-\\infty, 1] \\cup [7, 8)', przedzialy: [{ od: null, do: 1, prawy: 'z' }, { od: 7, do: 8, lewy: 'z' }], wynik: true },
+]}>
+na dole oba kawałki naraz. Między 1 a 7 jest przerwa, więc zostają dwa przedziały połączone znakiem $\cup$.
+</Os>
+
+<Dlaczego>
+„Lub” wystarczy jeden spełniony warunek, więc bierzemy wszystko, co należy do któregokolwiek kawałka. Kawałków nie da się skleić w jeden przedział, bo liczby między 1 a 7 (np. 4) nie spełniają żadnego warunku.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="granica">
+Czasem wynik to zbiór pusty albo cała oś:
+
+- $\{x \in \mathbb{R} : x < 1 \land x > 3\} = \emptyset$ — żadna liczba nie jest naraz mniejsza od 1 i większa od 3.
+- $\{x \in \mathbb{R} : x < 3 \lor x > 1\} = \mathbb{R}$ — każda liczba spełnia co najmniej jeden warunek.
+
+Narysuj obie osie, a od razu to zobaczysz.
+</Ramka>
+
+<Ramka kind="pulapka">
+Przedział opisuje **tylko** liczby rzeczywiste. $\{x \in \mathbb{Z} : -3 < x < 8\}$ to nie $(-3, 8)$, tylko $\{-2, -1, 0, \ldots, 7\}$ — same liczby całkowite. Na osi rysujesz wtedy pojedyncze kropki, a nie kreskę.
+</Ramka>
+
+<Pytania pytania={[
+  { q: 'Jak zapisać $\\{x \\in \\mathbb{R} : x \\geq -3 \\land x < 2\\}$?', opcje: ['$(-3, 2]$', '$[-3, 2)$', '$[-3, 2]$'], dobra: 1, dlaczego: 'Przy $-3$ stoi $\\geq$ — koniec należy, nawias kwadratowy. Przy 2 stoi $<$ — koniec nie należy, nawias okrągły.' },
+]} />
+
+## Działania na zbiorach
+
+<a id="polecenie-dzialania" class="k-anchor"></a>
+
+Działania na zbiorach to te same filtry co w sklepie internetowym. Każde ma swój symbol — oto cała czwórka:
+
+<div class="k-symbole">
+  <Znak t="A \cup B" nazwa="Suma zbiorów" czytamy="A suma B" znaczy="Elementy, które są <b>w A lub w B</b> (w co najmniej jednym)." pamiec="$\cup$ wygląda jak kubek: wrzucasz do niego wszystko z obu zbiorów." />
+  <Znak t="A \cap B" nazwa="Iloczyn (część wspólna, przekrój)" czytamy="A iloczyn B, część wspólna A i B" znaczy="Elementy, które są <b>w A i w B</b> naraz." pamiec="$\cap$ to odwrócony kubek — przykrywa tylko to, co wspólne." />
+  <Znak t="A \setminus B" nazwa="Różnica zbiorów" czytamy="A minus B, różnica A i B" znaczy="Elementy, które są <b>w A i nie są w B</b>." pamiec="ukośnik „odcina”: z A wycinasz wszystko, co jest w B." />
+  <Znak t="A'" nazwa="Dopełnienie" czytamy="dopełnienie A (A prim)" znaczy="Wszystko z uniwersum $U$, czego <b>nie ma w A</b>." pamiec="$A'$ to „reszta świata” poza $A$." />
+</div>
+
+Te działania to logika w przebraniu. Element należy do wyniku, gdy spełnia warunek z ostatniej kolumny:
+
+| Działanie | Czytamy | Spójnik z logiki | $x$ należy do wyniku, gdy… |
+|---|---|---|---|
+| $A \cup B$ | A suma B | $\lor$ (lub) | $x \in A \lor x \in B$ |
+| $A \cap B$ | A iloczyn B | $\land$ (i) | $x \in A \land x \in B$ |
+| $A \setminus B$ | A minus B | $\land$ + $\neg$ | $x \in A \land x \notin B$ |
+| $A'$ | dopełnienie A | $\neg$ (nieprawda, że) | $x \in U$ i $x \notin A$ |
+
+Najprościej zobaczyć to na **diagramie Venna**: każdy zbiór to koło, a prostokąt dookoła to uniwersum $U$. Poniżej przykład z zajęć: $U = \{0, 1, \ldots, 8\}$, $A = \{0, 1, 2, 3, 4\}$, $B = \{3, 4, 5, 6, 7\}$.
+
+<Venn U={[0, 1, 2, 3, 4, 5, 6, 7, 8]} A={[0, 1, 2, 3, 4]} B={[3, 4, 5, 6, 7]}>
+niebieskie koło to $A$, różowe to $B$, prostokąt to $U$. Liczby w części wspólnej kół (3 i 4) należą do obu zbiorów, liczby tylko w jednym kole — do jednego zbioru, a 8 leży poza kołami: należy tylko do $U$. Kliknij działanie, a jego wynik podświetli się na złoto. Kliknij drugi raz, żeby zgasić.
+</Venn>
+
+<Ramka kind="polecenie">
+„Dane są zbiory $A$, $B$ i uniwersum $U$. Wyznacz $A \cup B$, $A \cap B$, $A \setminus B$, $B \setminus A$, $A'$, $B'$.”
+
+1. Wypisz elementy $U$, $A$ i $B$ (z warunków — jak w sekcji o mocy).
+2. Narysuj diagram Venna i wpisz każdy element $U$ w jego miejsce: część wspólna kół, tylko $A$, tylko $B$, poza kołami.
+3. Odczytaj działania z rysunku: $A \cap B$ — środek; $A \setminus B$ — tylko $A$; $B \setminus A$ — tylko $B$; $A \cup B$ — oba koła w całości.
+4. Dopełnienie licz zawsze względem $U$: $A'$ to wszystko poza kołem $A$ (razem z tym, co poza oboma kołami).
+5. Jeśli żaden element nie pasuje, wynik to $\emptyset$ — nie „0” i nie „brak”.
+</Ramka>
+
+<Rozwiazanie tytul="Wyznacz A′, B′, A ∪ B, A ∩ B, A ∖ B, B ∖ A" zrodlo="Zad. 3, str. 31–32, c)">
+<div slot="tresc">
+
+$A = \{x \in \mathbb{N} : x < 5\}$, $B = \{x \in \mathbb{N} : 2 < x < 8\}$, $U = \{x \in \mathbb{N} : x < 9\}$.
+
+</div>
+
+<Krok tytul="Wypisz elementy zbiorów">
+$$
+A = \{0, 1, 2, 3, 4\}, \quad B = \{3, 4, 5, 6, 7\}, \quad U = \{0, 1, 2, \ldots, 8\}
+$$
+
+<Dlaczego>
+Zero jest liczbą naturalną, więc należy do $A$ i do $U$. W $B$ obie nierówności są ostre ($2 < x < 8$), więc ani 2, ani 8 nie należą do $B$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Rozmieść elementy na diagramie">
+- w obu zbiorach: $3, 4$;
+- tylko w $A$: $0, 1, 2$;
+- tylko w $B$: $5, 6, 7$;
+- poza $A$ i $B$: $8$.
+
+To dokładnie rysunek powyżej.
+
+<Dlaczego>
+Każdy element $U$ trafia w jedno z czterech miejsc. Gdy elementy są już rozmieszczone, każde działanie to tylko wskazanie właściwych miejsc.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odczytaj dopełnienia">
+$$
+A' = \{5, 6, 7, 8\}, \qquad B' = \{0, 1, 2, 8\}
+$$
+
+<Dlaczego>
+$A'$ to wszystko z $U$ poza kołem $A$: część „tylko $B$” (5, 6, 7) i to, co poza kołami (8). Łatwo zapomnieć o ósemce — ona nie jest w żadnym kole, ale jest w $U$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odczytaj sumę i część wspólną">
+$$
+A \cup B = \{0, 1, 2, 3, 4, 5, 6, 7\}, \qquad A \cap B = \{3, 4\}
+$$
+
+<Dlaczego>
+Suma to oba koła w całości (wszystko oprócz 8). Część wspólna to tylko środek, gdzie koła na siebie zachodzą.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odczytaj różnice">
+$$
+A \setminus B = \{0, 1, 2\}, \qquad B \setminus A = \{5, 6, 7\}
+$$
+
+<Dlaczego>
+$A \setminus B$: bierzemy $A$ i wycinamy z niego wszystko, co jest też w $B$ (3 i 4). Zostaje „tylko $A$”. Przy $B \setminus A$ jest odwrotnie — dlatego różnice wychodzą różne.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+Drugi sposób na to samo — **tabela przynależności**. Każdy wiersz to jeden element $U$, a 1 i 0 znaczą „należy” i „nie należy”. To dokładnie tabela zero-jedynkowa z logiki: kolumna $A \cap B$ liczy się jak $\land$, a $A \cup B$ jak $\lor$.
+
+<TabelaPrzynaleznosci odslaniaj U={[0, 1, 2, 3, 4, 5, 6, 7, 8]} A={[0, 1, 2, 3, 4]} B={[3, 4, 5, 6, 7]} dzialania={['suma', 'iloczyn', 'roznicaAB', 'roznicaBA', 'dopA', 'dopB']}>
+wiersz to jeden element. W kolumnie $x \in A \cap B$ jest 1 tylko tam, gdzie w obu kolumnach $x \in A$ i $x \in B$ stoi 1 (jak $\land$). W $x \in A \setminus B$ — tam, gdzie $x \in A$ ma 1, a $x \in B$ ma 0. Pod tabelą zbiory odczytane z jedynek.
+</TabelaPrzynaleznosci>
+
+<Ramka kind="kiedy">
+Diagram Venna jest najszybszy na kolokwium. Tabela przydaje się, gdy elementów jest dużo, gdy działanie jest złożone, np. $(A \cup B)'$, albo gdy chcesz mieć pewność, że niczego nie zgubiłeś — sprawdzasz element po elemencie.
+</Ramka>
+
+<Ramka kind="pulapka">
+- $A \setminus B$ i $B \setminus A$ to **różne** zbiory (wyżej: $\{0, 1, 2\}$ i $\{5, 6, 7\}$). Kolejność w różnicy ma znaczenie, w sumie i części wspólnej — nie.
+- $A'$ zależy od $U$. Gdyby $U = \mathbb{N}$, to $A' = \{5, 6, 7, \ldots\}$ — nieskończenie wiele liczb. Zawsze sprawdź, jakie jest uniwersum.
+- „Iloczyn zbiorów” to $A \cap B$ (część wspólna). Nie myl go z **iloczynem kartezjańskim** $A \times B$ — o nim później.
+- $\cap$ i $\cup$ łączą **zbiory**, a $\land$ i $\lor$ — **zdania**. Zapis $|A \land B|$ jest błędny; poprawnie: $|A \cap B|$.
+</Ramka>
+
+### Prawa de Morgana dla zbiorów
+
+Prawa de Morgana z logiki działają też dla zbiorów:
+
+$$
+(A \cup B)' = A' \cap B' \qquad\qquad (A \cap B)' = A' \cup B'
+$$
+
+Czytamy: „dopełnienie sumy to część wspólna dopełnień” i „dopełnienie części wspólnej to suma dopełnień”. Po ludzku: „nie ma go ani w $A$, ani w $B$” to to samo co „nie ma go w $A$ **i** nie ma go w $B$”.
+
+<TabelaPrzynaleznosci U={[0, 1, 2, 3, 4, 5, 6, 7, 8]} A={[0, 1, 2, 3, 4]} B={[3, 4, 5, 6, 7]} dzialania={['dopSumy', 'dopAidopB', 'dopIloczynu', 'dopAlubdopB']}>
+kolumny 1 i 2 są identyczne, tak samo kolumny 3 i 4 — to właśnie sprawdzenie praw de Morgana na przykładzie z zajęć.
+</TabelaPrzynaleznosci>
+
+<Pytania pytania={[
+  { q: '$U = \\{1, 2, 3, 4, 5\\}$, $A = \\{1, 2\\}$, $B = \\{2, 3\\}$. Ile wynosi $(A \\cup B)\'$?', opcje: ['$\\{4, 5\\}$', '$\\{1, 3, 4, 5\\}$', '$\\{2\\}$'], dobra: 0, dlaczego: '$A \\cup B = \\{1, 2, 3\\}$, a dopełnienie to reszta $U$: $\\{4, 5\\}$. Odpowiedź $\\{1, 3, 4, 5\\}$ to $(A \\cap B)\'$ — dopełnienie części wspólnej.' },
+]} />
+
+## Zawieranie się i równość zbiorów
+
+<a id="polecenie-zawieranie" class="k-anchor"></a>
+
+<div class="k-symbole">
+  <Znak t="A \subset B" nazwa="Zawieranie się" czytamy="A zawiera się w B, A jest podzbiorem B" znaczy="<b>Każdy</b> element $A$ należy też do $B$." pamiec="$\subset$ wygląda jak „C” otwarte w stronę większego zbioru." />
+  <Znak t="A = B" nazwa="Równość zbiorów" czytamy="A równa się B" znaczy="Oba zbiory mają <b>dokładnie te same</b> elementy." pamiec="równe = żaden nie ma niczego „ekstra”." />
+  <Znak t="A \not\subset B" nazwa="Nie zawiera się" czytamy="A nie zawiera się w B" znaczy="Jest <b>co najmniej jeden</b> element $A$, którego nie ma w $B$." pamiec="przekreślenie jak przy $\notin$." />
+</div>
+
+Przykład z życia: wszyscy studenci Twojej grupy ćwiczeniowej są studentami uczelni. Grupa $\subset$ uczelnia. W drugą stronę nie: uczelnia ma studentów spoza Twojej grupy.
+
+<Ramka kind="pulapka">
+$A \subset B$ **nie oznacza**, że $A = B$. $\{1, 2\} \subset \{1, 2, 3\}$, ale te zbiory nie są równe — w $B$ jest „nadmiarowa” trójka. Równość zachodzi dopiero wtedy, gdy zawieranie działa **w obie strony**: $A \subset B$ i $B \subset A$.
+</Ramka>
+
+<Ramka kind="botak">
+- Na zajęciach $A \subset B$ dopuszcza też równość zbiorów. W niektórych książkach spotkasz $\subseteq$ — znaczy to samo.
+- $\emptyset \subset A$ dla każdego zbioru $A$: w zbiorze pustym nie ma elementu, który mógłby „wystawać” poza $A$.
+- Każdy zbiór zawiera się w sobie samym: $A \subset A$. W zadaniach takie oczywiste pary się pomija.
+</Ramka>
+
+<Ramka kind="polecenie">
+„Dane są zbiory $A$, $B$, $C$, … Określ relacje zawierania się i równości między nimi.”
+
+1. Wypisz elementy zbiorów albo narysuj je jeden pod drugim na osiach o tej samej skali.
+2. Dla każdej pary $(X, Y)$ zapytaj: **czy jest element $X$, którego nie ma w $Y$?** Szukasz jednego „wyrzutka”.
+3. Znalazłeś wyrzutka → $X \not\subset Y$. Nie ma żadnego → $X \subset Y$.
+4. Jeśli $X \subset Y$ i $Y \subset X$, zapisz $X = Y$.
+</Ramka>
+
+<Ramka kind="kiedy">
+Dwa szybkie wyrzutki oszczędzają mnóstwo sprawdzania:
+
+- **Ułamek.** Przedział (np. $(-3, 8)$) nigdy nie zawiera się w zbiorze liczb całkowitych — ma w sobie np. $0{,}5$. Takie pary skreślasz od razu.
+- **Koniec przedziału.** Nawias okrągły wyrzuca koniec. Jeśli $X$ ma tę liczbę, a $Y$ nie — mamy wyrzutka (np. $-3 \in [-3, 8]$, ale $-3 \notin (-3, 8)$).
+</Ramka>
+
+<Rozwiazanie tytul="Określ relacje zawierania się i równości zbiorów A, B, C, D, E" zrodlo="Zad. 4, str. 32, c)">
+<div slot="tresc">
+
+$A = \{-2, -1, 2, 4, 8\}$, $B = \{x \in \mathbb{Z} : x \geq -3 \land x \leq 8\}$, $C = (-3, 8)$, $D = [-3, 8]$, $E = \{x \in \mathbb{Z} : x > -3 \land x < 8\}$.
+
+</div>
+
+<Krok tytul="Wypisz elementy tam, gdzie się da">
+$$
+B = \{-3, -2, -1, 0, 1, \ldots, 8\}, \qquad E = \{-2, -1, 0, 1, \ldots, 7\}
+$$
+
+$C$ i $D$ to przedziały — zostają przedziałami.
+
+<Dlaczego>
+$B$ i $E$ mają $x \in \mathbb{Z}$, więc to same liczby całkowite. W $B$ nierówności są nieostre ($\geq$, $\leq$), więc $-3$ i $8$ należą. W $E$ są ostre, więc odpadają.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Narysuj wszystko na jednej skali">
+<Os min={-4} max={9} wiersze={[
+  { t: 'A', przedzialy: [], punkty: [-2, -1, 2, 4, 8] },
+  { t: 'B', punkty: [-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8] },
+  { t: 'C = (-3, 8)', przedzialy: [{ od: -3, do: 8 }] },
+  { t: 'D = [-3, 8]', przedzialy: [{ od: -3, do: 8, lewy: 'z', prawy: 'z' }] },
+  { t: 'E', punkty: [-2, -1, 0, 1, 2, 3, 4, 5, 6, 7] },
+]} ticki={[-3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7, 8]}>
+kropki to pojedyncze liczby całkowite, kreski to przedziały. Zbiór $X$ zawiera się w $Y$, jeśli pod każdą kropką (każdym kawałkiem kreski) $X$-a jest coś zamalowanego w wierszu $Y$.
+</Os>
+</Krok>
+
+<Krok tytul="Sprawdź każdą parę — szukaj wyrzutka">
+W wierszu jest zbiór $X$, w kolumnie $Y$. „✓” znaczy $X \subset Y$, a przy „✗” podany jest wyrzutek.
+
+| $X \subset Y$? | $A$ | $B$ | $C$ | $D$ | $E$ |
+|---|---|---|---|---|---|
+| $A$ | — | ✓ | ✗ ($8$) | ✓ | ✗ ($8$) |
+| $B$ | ✗ ($0$) | — | ✗ ($-3$) | ✓ | ✗ ($-3$) |
+| $C$ | ✗ ($0{,}5$) | ✗ ($0{,}5$) | — | ✓ | ✗ ($0{,}5$) |
+| $D$ | ✗ ($0{,}5$) | ✗ ($0{,}5$) | ✗ ($-3$) | — | ✗ ($0{,}5$) |
+| $E$ | ✗ ($0$) | ✓ | ✓ | ✓ | — |
+
+<Dlaczego>
+Do obalenia zawierania wystarczy **jeden** wyrzutek — tak jak jeden kontrprzykład obala „dla każdego” w logice. Żeby potwierdzić zawieranie, trzeba sprawdzić wszystkie elementy (tu pomaga rysunek).
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zapisz wynik">
+$$
+A \subset B,\ A \subset D,\ B \subset D,\ C \subset D,\ E \subset B,\ E \subset C,\ E \subset D
+$$
+
+Równych zbiorów tu nie ma.
+
+<Dlaczego>
+Równość wymaga zawierania w obie strony. Dla każdej pary z „✓” po drugiej stronie tabeli jest „✗” (np. $A \subset B$, ale $B \not\subset A$), więc żadne dwa zbiory nie są równe.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="podobny">
+$\{x \in \mathbb{N} : x < 3\}$ i $\{0, 1, 2\}$ — tu zawieranie działa w obie strony, więc to **równe** zbiory, tylko inaczej zapisane. Gdyby prowadzący liczył $\mathbb{N}$ od 1, pierwszy zbiór byłby $\{1, 2\}$ i zostałoby tylko $\{1, 2\} \subset \{0, 1, 2\}$.
+</Ramka>
+
+## Iloczyn kartezjański — zbiór par
+
+<a id="polecenie-kartezjanski" class="k-anchor"></a>
+
+Restauracja ma zestaw obiadowy: zupa do wyboru $Z = \{\text{pomidorowa}, \text{rosół}\}$ i drugie danie $D = \{\text{schabowy}, \text{pierogi}, \text{ryba}\}$. Ile jest różnych zestawów? Każda zupa z każdym drugim daniem: $2 \cdot 3 = 6$. Każdy zestaw to **para**: (zupa, drugie danie). Zbiór wszystkich takich par to właśnie **iloczyn kartezjański** $Z \times D$.
+
+<Rozbior
+  t="A \times B = \{(x, y) : x \in A \land y \in B\}"
+  czytamy="A razy B to zbiór par $(x, y)$ takich, że $x$ należy do $A$ i $y$ należy do $B$"
+  czesci={[
+    { t: '\\times', o: 'znak iloczynu kartezjańskiego; czytamy „razy”' },
+    { t: '(x, y)', o: '<b>para uporządkowana</b> — nawiasy okrągłe, a kolejność ma znaczenie' },
+    { t: 'x \\in A', o: 'pierwszy element pary zawsze z <b>pierwszego</b> zbioru' },
+    { t: 'y \\in B', o: 'drugi element pary zawsze z <b>drugiego</b> zbioru' },
+  ]}
+/>
+
+<div class="k-symbole">
+  <Znak t="(x, y)" nazwa="Para uporządkowana" czytamy="para x, y" znaczy="Dwa elementy w ustalonej kolejności. $(1, 2) \neq (2, 1)$." pamiec="jak współrzędne punktu: najpierw $x$, potem $y$." />
+  <Znak t="A^2" nazwa="Potęga zbioru" czytamy="A do kwadratu" znaczy="Skrót od $A \times A$ — pary, w których oba elementy są z $A$." pamiec="jak $a^2 = a \cdot a$, tylko zamiast mnożenia liczb — pary." />
+</div>
+
+<Ramka kind="zapamietaj">
+- $A \times B \neq B \times A$ — w parze liczy się kolejność: (rosół, schabowy) to zestaw, a (schabowy, rosół) — już nie.
+- Liczba par: $|A \times B| = |A| \cdot |B|$.
+</Ramka>
+
+<Ramka kind="pulapka">
+- $\{1, 2\} = \{2, 1\}$ (zbiór — kolejność bez znaczenia), ale $(1, 2) \neq (2, 1)$ (para — kolejność ważna).
+- $(2, 4)$ może być przedziałem albo parą. Rozpoznasz po kontekście: w iloczynie kartezjańskim to para.
+- $A^2$ to nie „elementy do kwadratu”. Dla $A = \{1, 2\}$: $A^2 = \{(1, 1), (1, 2), (2, 1), (2, 2)\}$, a nie $\{1, 4\}$.
+</Ramka>
+
+<Ramka kind="polecenie">
+„Wyznacz $A \times B$ oraz $B \times A$.”
+
+1. Narysuj tabelkę: wiersze = elementy pierwszego zbioru, kolumny = elementy drugiego.
+2. W każdej kratce wpisz parę (element z wiersza, element z kolumny).
+3. Przepisz pary wiersz po wierszu do klamer.
+4. Sprawdź liczbę par: $|A| \cdot |B|$.
+5. $B \times A$: zamieniasz role — teraz wiersze to elementy $B$ (albo po prostu odwracasz każdą parę).
+</Ramka>
+
+<Rozwiazanie tytul="Wyznacz A × B i B × A dla A = {3, 4, 5}, B = {−2, −1, 0}" zrodlo="Zad. 1, str. 36, c)">
+<Krok tytul="Zbuduj tabelkę par">
+Wiersze to elementy $A$, kolumny to elementy $B$:
+
+| $A \times B$ | $-2$ | $-1$ | $0$ |
+|---|---|---|---|
+| $3$ | $(3, -2)$ | $(3, -1)$ | $(3, 0)$ |
+| $4$ | $(4, -2)$ | $(4, -1)$ | $(4, 0)$ |
+| $5$ | $(5, -2)$ | $(5, -1)$ | $(5, 0)$ |
+
+<Dlaczego>
+Tabelka gwarantuje, że żadna para nie zginie: każdy wiersz z każdą kolumną to dokładnie „każdy z każdym”.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zapisz A × B">
+$$
+A \times B = \{(3, -2), (3, -1), (3, 0), (4, -2), (4, -1), (4, 0), (5, -2), (5, -1), (5, 0)\}
+$$
+
+Sprawdzenie: $|A| \cdot |B| = 3 \cdot 3 = 9$ par. Zgadza się.
+</Krok>
+
+<Krok tytul="Zapisz B × A">
+Teraz pierwszy element pary pochodzi z $B$:
+
+$$
+B \times A = \{(-2, 3), (-2, 4), (-2, 5), (-1, 3), (-1, 4), (-1, 5), (0, 3), (0, 4), (0, 5)\}
+$$
+
+<Dlaczego>
+To te same liczby, ale w odwrotnej kolejności w parze. Ponieważ $(3, -2) \neq (-2, 3)$, zbiory $A \times B$ i $B \times A$ są różne — choć oba mają po 9 par.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Narysuj oba zbiory w układzie współrzędnych">
+<Pary A={[3, 4, 5]} B={[-2, -1, 0]}>
+każda kropka to jedna para: pierwszy element pary to współrzędna $x$ (w poziomie), drugi to $y$ (w pionie). Przełączaj $A \times B$ i $B \times A$. W trybie „oba naraz” widać, że jeden zbiór kropek to odbicie drugiego.
+</Pary>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="podobny">
+$A = \{1, 2\}$, $B = \{7\}$. Wtedy $A \times B = \{(1, 7), (2, 7)\}$ — tylko $2 \cdot 1 = 2$ pary. A gdy jeden ze zbiorów jest pusty, np. $A \times \emptyset$, nie ma z czym tworzyć par: wynik to $\emptyset$ ($2 \cdot 0 = 0$).
+</Ramka>
+
+### Iloczyn kartezjański przedziałów w układzie współrzędnych
+
+<a id="polecenie-uklad" class="k-anchor"></a>
+
+Gdy $A$ i $B$ są przedziałami, par jest nieskończenie wiele — nie wypiszesz ich, ale narysujesz. Wszystkie punkty $(x, y)$ z $x \in A$ i $y \in B$ tworzą **obszar** (zwykle prostokąt, czasem nieskończony).
+
+<Ramka kind="polecenie">
+„Przedstaw $A \times B$ (oraz $B \times A$) w układzie współrzędnych.”
+
+1. Pierwszy zbiór zaznacz na osi $x$, drugi na osi $y$.
+2. Zamaluj wszystkie punkty, których $x$ jest w pierwszym zbiorze, a $y$ w drugim.
+3. Brzegi: koniec należy (nawias $[\ ]$) → **linia ciągła**; nie należy (nawias $(\ )$) → **linia przerywana**.
+4. Róg obszaru: kółko pełne tylko wtedy, gdy oba końce należą; w przeciwnym razie puste.
+5. $\infty$ → obszar ciągnie się do krawędzi rysunku i dalej.
+6. $B \times A$: zamieniasz role — $B$ na osi $x$, $A$ na osi $y$.
+</Ramka>
+
+Najpierw prosty przykład: $A = [1, 3]$, $B = [2, 4]$. Oba przedziały domknięte, więc wszystkie brzegi są ciągłe.
+
+<Obszar A={{ od: 1, do: 3, lewy: 'z', prawy: 'z' }} B={{ od: 2, do: 4, lewy: 'z', prawy: 'z' }} lo={-1} hi={6}>
+zamalowany prostokąt to $A \times B$: każdy jego punkt ma $x$ od 1 do 3 i $y$ od 2 do 4. Przełącz na $B \times A$ — prostokąt „kładzie się” na boku, bo teraz $x$ jest z $B$, a $y$ z $A$.
+</Obszar>
+
+<Rozwiazanie tytul="Przedstaw A × B i B × A dla A = (−∞, 5), B = [2, ∞)" zrodlo="Zad. 2, str. 36, b)">
+<Krok tytul="Przetłumacz przedziały na nierówności">
+$A = (-\infty, 5)$ to $x < 5$ (5 nie należy). $B = [2, \infty)$ to $y \geq 2$ (2 należy).
+
+<Dlaczego>
+W $A \times B$ pierwszy element pary (współrzędna $x$) jest z $A$, a drugi ($y$) z $B$. Dlatego warunek z $A$ dotyczy $x$, a z $B$ — $y$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Narysuj brzegi">
+- $x = 5$ — prosta pionowa **przerywana**, bo $5 \notin A$ (nawias okrągły);
+- $y = 2$ — prosta pozioma **ciągła**, bo $2 \in B$ (nawias kwadratowy).
+</Krok>
+
+<Krok tytul="Zamaluj obszar">
+$A \times B$ to punkty na lewo od $x = 5$ i nad $y = 2$ (razem z tą prostą). Obszar ciągnie się w nieskończoność w lewo i w górę.
+
+<Obszar A={{ od: null, do: 5 }} B={{ od: 2, do: null, lewy: 'z' }} lo={-2} hi={8}>
+niebieski obszar to $A \times B$, strzałki pokazują, w którą stronę biegnie bez końca. Brzeg przerywany = te punkty nie należą do zbioru, ciągły = należą. Róg $(5, 2)$ jest pustym kółkiem, bo $5 \notin A$. Przełącz na $B \times A$, żeby zobaczyć drugą część zadania.
+</Obszar>
+</Krok>
+
+<Krok tytul="Narysuj B × A">
+Teraz $x \in B$, czyli $x \geq 2$ (prosta $x = 2$ **ciągła**), a $y \in A$, czyli $y < 5$ (prosta $y = 5$ **przerywana**). Obszar leży na prawo od $x = 2$ i pod $y = 5$ — to odbicie poprzedniego obszaru względem prostej $y = x$.
+
+<Dlaczego>
+W $B \times A$ zamieniamy role zbiorów: teraz to $B$ wyznacza $x$, a $A$ wyznacza $y$. Dlatego ciągła i przerywana linia zamieniają się miejscami.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="granica">
+Obszar wychodzi tylko wtedy, gdy **oba** zbiory są przedziałami. Gdy oba są skończone (jak $\{3, 4, 5\}$), rysujesz pojedyncze kropki. Gdy jeden jest skończony, a drugi jest przedziałem, np. $\{1, 2\} \times [0, 3]$, dostajesz pionowe odcinki: nad $x = 1$ i nad $x = 2$, każdy od $y = 0$ do $y = 3$.
+</Ramka>
+
+## Zasada włączeń i wyłączeń
+
+<a id="polecenie-wlaczenia" class="k-anchor"></a>
+
+W grupie jest 30 osób. 20 lubi pizzę, 15 lubi sushi, a 5 lubi jedno i drugie. Ile osób lubi cokolwiek z tych dwóch? Kusi, żeby dodać: $20 + 15 = 35$. Ale to więcej, niż jest osób w grupie! Problem: te 5 osób, które lubią oba dania, policzyliśmy **dwa razy** — raz wśród „pizzowych”, raz wśród „sushi”. Trzeba je raz odjąć: $35 - 5 = 30$.
+
+<Rozbior
+  t="|A \cup B| = |A| + |B| - |A \cap B|"
+  czytamy="moc sumy A i B równa się moc A plus moc B minus moc części wspólnej"
+  czesci={[
+    { t: '|A| + |B|', o: '<b>włączamy</b> oba zbiory — część wspólna wchodzi dwa razy' },
+    { t: '- |A \\cap B|', o: '<b>wyłączamy</b> część wspólną raz, żeby każdy był policzony dokładnie raz' },
+  ]}
+/>
+
+Dla trzech zbiorów (wzór ze slajdów):
+
+<Rozbior
+  t="|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|"
+  czesci={[
+    { t: '|A| + |B| + |C|', o: 'dodajemy trzy zbiory' },
+    { t: '- |A \\cap B| - |A \\cap C| - |B \\cap C|', o: 'odejmujemy trzy części wspólne par' },
+    { t: '+ |A \\cap B \\cap C|', o: 'dodajemy z powrotem część wspólną wszystkich trzech' },
+  ]}
+/>
+
+<Ramka kind="skad" tytul="Skąd ten „+” na końcu?">
+Sprawdźmy, ile razy wzór liczy element z każdego miejsca diagramu:
+
+| Element należy do… | dodany w $\lvert A\rvert + \lvert B\rvert + \lvert C\rvert$ | odjęty w parach | dodany na końcu | razem |
+|---|---|---|---|---|
+| jednego zbioru | 1 raz | 0 razy | 0 razy | **1** |
+| dokładnie dwóch | 2 razy | 1 raz | 0 razy | **1** |
+| wszystkich trzech | 3 razy | 3 razy | 1 raz | **1** |
+
+Bez ostatniego składnika element z trzech zbiorów zostałby dodany 3 razy i odjęty 3 razy — czyli w ogóle by go nie było. Dlatego dodajemy go z powrotem.
+</Ramka>
+
+<Ramka kind="polecenie">
+„Zadanie tekstowe: ile obiektów ma co najmniej jedną cechę? Ile nie ma żadnej?”
+
+1. Nazwij zbiory literami: $A$ = …, $B$ = …, $C$ = … (każdy zbiór to jedna cecha).
+2. Wypisz dane: $|A|$, $|B|$, $|C|$, części wspólne par, część wspólną trzech i liczbę wszystkich obiektów ($|U|$).
+3. Uważaj na słowo „tylko” (patrz pułapka niżej).
+4. Policz $|A \cup B \cup C|$ ze wzoru — to obiekty z **co najmniej jedną** cechą.
+5. „Żadnej cechy” = $|U| - |A \cup B \cup C|$.
+6. Odpowiedz słownie na pytanie z zadania.
+</Ramka>
+
+<Rozwiazanie tytul="Czy przedsiębiorca może wysłać w trasę co najmniej połowę ciężarówek?" zrodlo="Zad. 4, str. 40">
+<div slot="tresc">
+
+Firma ma 85 ciężarówek. Przegląd wykazał, że 20 nie spełnia norm emisji spalin, 30 ma uszkodzone amortyzatory, a 10 niesprawne hamulce. 10 ciężarówek ma problem ze spalinami i amortyzatorami, 7 — z amortyzatorami i hamulcami, 7 — ze spalinami i hamulcami, a 5 ma wszystkie trzy usterki. W trasę mogą jechać tylko ciężarówki bez usterek. Czy przedsiębiorca może wysłać w trasę co najmniej połowę z nich?
+
+</div>
+
+<Krok tytul="Nazwij zbiory">
+- $A$ — ciężarówki, które nie spełniają norm emisji spalin,
+- $B$ — ciężarówki z uszkodzonymi amortyzatorami,
+- $C$ — ciężarówki z niesprawnymi hamulcami.
+
+<Dlaczego>
+Każda usterka to jeden zbiór. Ciężarówka z dwiema usterkami należy do dwóch zbiorów naraz — dlatego koła na diagramie się przecinają.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wypisz dane">
+$$
+|U| = 85, \quad |A| = 20, \quad |B| = 30, \quad |C| = 10
+$$
+
+$$
+|A \cap B| = 10, \quad |B \cap C| = 7, \quad |A \cap C| = 7, \quad |A \cap B \cap C| = 5
+$$
+</Krok>
+
+<Krok tytul="Policz ciężarówki z co najmniej jedną usterką">
+$$
+|A \cup B \cup C| = 20 + 30 + 10 - 10 - 7 - 7 + 5 = 41
+$$
+
+<Dlaczego>
+Suma $A \cup B \cup C$ to ciężarówki, które mają **co najmniej jedną** usterkę. Gdybyśmy dodali tylko $20 + 30 + 10 = 60$, ciężarówki z kilkoma usterkami policzylibyśmy kilka razy.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz sprawne i odpowiedz">
+Sprawne to te bez żadnej usterki: $85 - 41 = 44$. Połowa floty to $85 : 2 = 42{,}5$.
+
+Ponieważ $44 > 42{,}5$, **przedsiębiorca może wysłać w trasę co najmniej połowę ciężarówek**.
+
+<Dlaczego>
+„Bez żadnej usterki” to dopełnienie sumy: $(A \cup B \cup C)'$. Jego moc to wszystkie ciężarówki minus te z usterką.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdź na diagramie">
+Wpisz liczby do diagramu od środka na zewnątrz. Jeśli wszystko się zsumuje do 85, wynik jest dobry.
+
+<Venn3 dane={{ A: 20, B: 30, C: 10, AB: 10, AC: 7, BC: 7, ABC: 5, U: 85 }} nazwy={{ A: 'nie spełnia norm spalin', B: 'uszkodzone amortyzatory', C: 'niesprawne hamulce' }}>
+liczba w każdym kawałku to ciężarówki z dokładnie tym zestawem usterek. Środek — wszystkie trzy usterki, kawałki między dwoma kołami — dokładnie dwie, kawałki tylko w jednym kole — jedna. Liczba w lewym dolnym rogu to ciężarówki sprawne.
+</Venn3>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="„A i B” a „tylko A i B”">
+„10 ciężarówek ma problem ze spalinami i amortyzatorami” to $|A \cap B| = 10$ — **razem** z tymi pięcioma, które mają też zepsute hamulce. Gdyby zadanie mówiło „**tylko** spaliny i amortyzatory”, chodziłoby o kawałek bez środka: wtedy $|A \cap B| = \text{tylko} + |A \cap B \cap C|$. Zanim wstawisz liczbę do wzoru, sprawdź, czy w treści jest „tylko” albo „wyłącznie”.
+</Ramka>
+
+<Ramka kind="podobny">
+Dwa zbiory: w ankiecie wzięło udział 100 osób, 60 ma Netflixa, 45 — Spotify, a 30 — jedno i drugie.
+
+- Co najmniej jedna usługa: $60 + 45 - 30 = 75$.
+- Żadnej usługi: $100 - 75 = 25$.
+- Tylko Netflix: $60 - 30 = 30$.
+</Ramka>
+
+<Ramka kind="granica">
+Wzór potrzebuje wszystkich części wspólnych. Jeśli zadanie podaje liczby „tylko” dla każdego kawałka diagramu, nie potrzebujesz wzoru — po prostu dodajesz kawałki. A jeśli brakuje części wspólnej trzech zbiorów, zadania nie da się rozwiązać jednoznacznie.
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Zbiór</b>Nic się nie powtarza, kolejność bez znaczenia: $\{1, 2, 2\} = \{2, 1\}$.</div>
+  <div><b>∈, ∉, moc</b>$x \in A$ — należy. $|A|$ — liczba elementów. $|\emptyset| = 0$.</div>
+  <div><b>Zapis z warunkiem</b>$\{x \in \mathbb{N} : \ldots\}$ — dwukropek to „takich, że”. Na zajęciach $0 \in \mathbb{N}$.</div>
+  <div><b>Moc ciągu</b>$\frac{\text{ostatni} - \text{pierwszy}}{\text{krok}} + 1$ — tylko przy stałym kroku.</div>
+  <div><b>Przedziały</b>$( )$ — koniec nie należy, puste kółko. $[ ]$ — należy, pełne kółko. Przy $\infty$ zawsze $( )$.</div>
+  <div><b>∧ i ∨ na osi</b>$\land$ — część wspólna (zamalowane na obu osiach). $\lor$ — suma (na którejkolwiek).</div>
+  <div><b>Działania</b>$\cup$ — lub. $\cap$ — i. $A \setminus B$ — w A i nie w B. $A'$ — w U i nie w A.</div>
+  <div><b>Uwaga</b>$A \setminus B \neq B \setminus A$. $A'$ zależy od $U$. Pusty wynik to $\emptyset$.</div>
+  <div><b>De Morgan</b>$(A \cup B)' = A' \cap B'$; $(A \cap B)' = A' \cup B'$.</div>
+  <div><b>Zawieranie</b>$A \subset B$: każdy element A jest w B. Jeden wyrzutek obala. Równość = zawieranie w obie strony.</div>
+  <div><b>A × B</b>Pary $(x, y)$: $x \in A$, $y \in B$. Kolejność ważna. $|A \times B| = |A| \cdot |B|$.</div>
+  <div><b>A × B na rysunku</b>$A$ na osi $x$, $B$ na osi $y$. Brzeg ciągły — koniec należy, przerywany — nie.</div>
+  <div><b>Włączenia i wyłączenia</b>Dodaj pojedyncze, odejmij pary, dodaj trójkę. „Żadnej cechy” = $|U|$ minus wynik.</div>
+</div>
+
+<Ramka kind="gdzie">
+- **Relacje (moduł 3):** relacja to po prostu podzbiór iloczynu kartezjańskiego $A \times B$ — zbiór wybranych par.
+- **Programowanie liniowe (moduł 6):** zbiór rozwiązań dopuszczalnych to część wspólna obszarów wyznaczonych przez nierówności — dokładnie jak $A \times B$ na rysunku, tylko z ukośnymi brzegami.
+- **Statystyka i prawdopodobieństwo:** $P(A \cup B) = P(A) + P(B) - P(A \cap B)$ to ten sam wzór włączeń i wyłączeń.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania z natychmiastową odpowiedzią, ułożone według poleceń z kolokwium. Przy każdej odpowiedzi — dobrej i złej — zobaczysz, dlaczego tak jest. Wszystko da się zrobić na telefonie.
+
+<a id="cw-moc" class="k-anchor"></a>
+
+### Wypisz elementy i policz moc
+
+<Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
+  { q: 'Wypisz elementy zbioru $\\{x \\in \\mathbb{N} : x < 4\\}$.', opcje: ['$\\{1, 2, 3\\}$', '$\\{0, 1, 2, 3\\}$', '$\\{0, 1, 2, 3, 4\\}$'], dobra: 1, dlaczego: 'Na zajęciach $0 \\in \\mathbb{N}$, więc zaczynamy od zera. Warunek $x < 4$ wyklucza czwórkę.' },
+  { q: 'Wypisz elementy zbioru $\\{x \\in \\mathbb{Z} : -2 < x \\leq 2\\}$.', opcje: ['$\\{-2, -1, 0, 1, 2\\}$', '$\\{-1, 0, 1\\}$', '$\\{-1, 0, 1, 2\\}$'], dobra: 2, dlaczego: 'Przy $-2$ stoi $<$, więc $-2$ odpada. Przy 2 stoi $\\leq$, więc 2 zostaje. Liczby całkowite pomiędzy: $-1, 0, 1, 2$.' },
+  { q: 'Ile wynosi moc zbioru $\\{3, 6, 9, \\ldots, 30\\}$?', opcje: ['9', '10', '27'], dobra: 1, dlaczego: 'Stały krok 3: $\\frac{30 - 3}{3} + 1 = 9 + 1 = 10$. Odpowiedź 9 to liczba „skoków”, a elementów jest o jeden więcej. 27 to sama różnica $30 - 3$.' },
+  { q: 'Ile wynosi moc zbioru $\\{x \\in \\mathbb{N} : 3 \\leq x < 10\\}$?', opcje: ['7', '6', '8'], dobra: 0, dlaczego: 'Elementy: $3, 4, 5, 6, 7, 8, 9$ — siedem liczb. 3 należy ($\\leq$), 10 nie ($<$).' },
+  { q: 'Ile wynosi moc zbioru $\\{1, 1, 2, 3, 3, 3\\}$?', opcje: ['6', '4', '3'], dobra: 2, dlaczego: 'W zbiorze nic się nie powtarza: to zbiór $\\{1, 2, 3\\}$, więc moc 3. Szóstka to liczba wpisanych symboli, a nie elementów.' },
+  { q: 'Ile wynosi moc zbioru $\\{x \\in \\mathbb{N} : x^2 \\leq 16\\}$?', opcje: ['4', '5', '9'], dobra: 1, dlaczego: 'Elementy: $0, 1, 2, 3, 4$ (bo $4^2 = 16 \\leq 16$, a $5^2 = 25$ już nie). Moc 5. Odpowiedź 9 wyszłaby dla liczb całkowitych od $-4$ do $4$ — ale ujemnych nie ma w $\\mathbb{N}$.' },
+  { q: 'Ile elementów ma zbiór $\\{x \\in \\mathbb{R} : 1 < x < 3\\}$?', opcje: ['1', 'nieskończenie wiele', '3'], dobra: 1, dlaczego: 'To przedział $(1, 3)$. Należą do niego np. $1{,}5$, $2$, $2{,}01$, $\\sqrt{5}$… — nieskończenie wiele liczb. Odpowiedź 1 to sama liczba całkowita 2.' },
+]} />
+
+<a id="cw-przedzialy" class="k-anchor"></a>
+
+### Zapisz jako przedział
+
+<Pytania licznik tag="Ćwiczenia · 8 zadań" tytul="" pytania={[
+  { q: 'Zapisz $\\{x \\in \\mathbb{R} : x \\geq -2\\}$.', opcje: ['$[-2, \\infty)$', '$(-2, \\infty)$', '$[-2, \\infty]$'], dobra: 0, dlaczego: '$\\geq$ — koniec należy, nawias kwadratowy. Przy $\\infty$ zawsze nawias okrągły, więc $[-2, \\infty]$ jest błędne.' },
+  { q: 'Zapisz $\\{x \\in \\mathbb{R} : 1 < x \\leq 6\\}$.', opcje: ['$[1, 6)$', '$(1, 6)$', '$(1, 6]$'], dobra: 2, dlaczego: 'Przy 1 stoi $<$ (nawias okrągły), przy 6 stoi $\\leq$ (nawias kwadratowy).' },
+  { q: 'Zapisz $\\{x \\in \\mathbb{R} : x > 0 \\land x < 5\\}$.', opcje: ['$(0, 5)$', '$(-\\infty, 0) \\cup (5, \\infty)$', '$(0, 5]$'], dobra: 0, dlaczego: '„I” to część wspólna: liczby większe od 0 i jednocześnie mniejsze od 5. Oba końce odpadają (znaki ostre).' },
+  { q: 'Zapisz $\\{x \\in \\mathbb{R} : x < -1 \\lor x \\geq 4\\}$.', opcje: ['$(-1, 4]$', '$(-\\infty, -1) \\cup [4, \\infty)$', '$(-\\infty, -1] \\cup (4, \\infty)$'], dobra: 1, dlaczego: '„Lub” to suma: dwa kawałki osi. $-1$ nie należy ($<$), 4 należy ($\\geq$). Pierwsza odpowiedź to dokładnie „dziura” między kawałkami.' },
+  { q: 'Zapisz $\\{x \\in \\mathbb{R} : x > 3 \\land x < 1\\}$.', opcje: ['$(1, 3)$', '$\\mathbb{R}$', '$\\emptyset$'], dobra: 2, dlaczego: 'Żadna liczba nie jest naraz większa od 3 i mniejsza od 1. Część wspólna tych przedziałów jest pusta.' },
+  { q: 'Zapisz $\\{x \\in \\mathbb{R} : x < 5 \\lor x > 2\\}$.', opcje: ['$(2, 5)$', '$\\mathbb{R}$', '$\\emptyset$'], dobra: 1, dlaczego: 'Każda liczba spełnia co najmniej jeden warunek: mniejsze od 5 — pierwszy, a 5 i większe — drugi. Suma to cała oś. $(2, 5)$ to część wspólna, czyli wynik dla „i”.' },
+  { q: 'Na osi jest pełne kółko w 2, puste kółko w 7 i gruba kreska między nimi. Jaki to przedział?', opcje: ['$[2, 7)$', '$(2, 7]$', '$[2, 7]$'], dobra: 0, dlaczego: 'Pełne kółko = koniec należy = nawias kwadratowy. Puste kółko = nie należy = nawias okrągły.' },
+  { q: 'Zapisz $\\{x \\in \\mathbb{R} : x \\leq 0 \\lor (x > 3 \\land x \\leq 5)\\}$.', opcje: ['$(-\\infty, 5]$', '$(-\\infty, 0] \\cup (3, 5]$', '$(-\\infty, 0] \\cap (3, 5]$'], dobra: 1, dlaczego: 'Najpierw nawias: $x > 3 \\land x \\leq 5$ daje $(3, 5]$. Potem „lub” z $(-\\infty, 0]$ — suma, więc znak $\\cup$. Liczby między 0 a 3 (np. 1) nie spełniają żadnego warunku, więc $(-\\infty, 5]$ jest za duże.' },
+]} />
+
+<a id="cw-dzialania" class="k-anchor"></a>
+
+### Działania na zbiorach
+
+<CwiczenieZbiory tytul="Liczby od 1 do 10" U={[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]} A={[2, 4, 6, 8, 10]} B={[1, 2, 3, 4, 5]} dzialania={['suma', 'iloczyn', 'roznicaAB', 'roznicaBA', 'dopA', 'dopB']}>
+$U = \{1, 2, \ldots, 10\}$, $A$ — liczby parzyste z $U$, $B = \{x \in U : x \leq 5\}$. Zaznacz elementy każdego zbioru.
+</CwiczenieZbiory>
+
+<CwiczenieZbiory tytul="Gdy jeden zbiór siedzi w drugim" U={[0, 1, 2, 3, 4, 5, 6]} A={[1, 2]} B={[1, 2, 3, 4]} dzialania={['iloczyn', 'suma', 'roznicaAB', 'roznicaBA', 'dopB', 'dopSumy']}>
+$U = \{x \in \mathbb{N} : x \leq 6\}$, $A = \{x \in \mathbb{N} : 0 < x < 3\}$, $B = \{x \in \mathbb{N} : 1 \leq x \leq 4\}$. Najpierw wypisz elementy $U$, $A$ i $B$ na kartce, potem zaznacz elementy każdego zbioru.
+</CwiczenieZbiory>
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: '$A = \\{1, 2, 3\\}$, $B = \\{3, 4\\}$. Ile wynosi $A \\cup B$?', opcje: ['$\\{3\\}$', '$\\{1, 2, 3, 4\\}$', '$\\{1, 2, 3, 3, 4\\}$'], dobra: 1, dlaczego: 'Suma to wszystko z obu zbiorów, ale 3 wpisujemy raz — w zbiorze nic się nie powtarza. $\\{3\\}$ to część wspólna.' },
+  { q: '$A = \\{a, b, c, d\\}$, $B = \\{c, d, e\\}$. Ile wynosi $A \\setminus B$?', opcje: ['$\\{a, b\\}$', '$\\{e\\}$', '$\\{a, b, e\\}$'], dobra: 0, dlaczego: 'Z $A$ wycinamy to, co jest w $B$ ($c$ i $d$). Zostaje $\\{a, b\\}$. $\\{e\\}$ to $B \\setminus A$ — odwrotna kolejność.' },
+  { q: '$U = \\{1, 2, 3, 4, 5, 6\\}$, $A = \\{2, 4, 6\\}$. Ile wynosi $A\'$?', opcje: ['$\\emptyset$', '$\\{1, 3, 5, 7, \\ldots\\}$', '$\\{1, 3, 5\\}$'], dobra: 2, dlaczego: 'Dopełnienie to reszta uniwersum: elementy $U$, których nie ma w $A$. Siódemki nie ma w $U$, więc nie może być w $A\'$.' },
+  { q: '$A = \\{1, 2\\}$, $B = \\{3, 4\\}$. Ile wynosi $A \\cap B$?', opcje: ['$\\emptyset$', '$\\{0\\}$', '$\\{1, 2, 3, 4\\}$'], dobra: 0, dlaczego: 'Zbiory nie mają wspólnego elementu, więc część wspólna jest pusta: $\\emptyset$. Zapis $\\{0\\}$ to zbiór z liczbą zero — to nie to samo co zbiór pusty.' },
+  { q: 'Do zbioru $(A \\cup B)\'$ należą elementy, które…', opcje: ['należą do $A$ i do $B$', 'nie należą ani do $A$, ani do $B$', 'nie należą do $A$ lub nie należą do $B$'], dobra: 1, dlaczego: 'To dopełnienie sumy: wszystko poza oboma kołami. Ostatnia odpowiedź opisuje $(A \\cap B)\'$ — wszystko poza częścią wspólną.' },
+  { q: 'Z prawa de Morgana $(A \\cap B)\'$ to:', opcje: ["$A' \\cap B'$", "$A' \\cup B'$", '$A \\cup B$'], dobra: 1, dlaczego: 'Dopełnienie części wspólnej to suma dopełnień — jak w logice: $\\neg(p \\land q) \\Leftrightarrow \\neg p \\lor \\neg q$. $A\' \\cap B\'$ to $(A \\cup B)\'$.' },
+]} />
+
+<a id="cw-zawieranie" class="k-anchor"></a>
+
+### Zawieranie się i równość
+
+<Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
+  { q: '$A = \\{1, 2\\}$, $B = \\{1, 2, 3\\}$. Co jest prawdą?', opcje: ['$A = B$', '$B \\subset A$', '$A \\subset B$'], dobra: 2, dlaczego: 'Każdy element $A$ (1 i 2) jest w $B$, więc $A \\subset B$. W drugą stronę nie: $3 \\in B$, a $3 \\notin A$ — to wyrzutek. Dlatego zbiory nie są równe.' },
+  { q: '$A = \\{x \\in \\mathbb{N} : x < 3\\}$, $B = \\{0, 1, 2\\}$. Co jest prawdą?', opcje: ['$A = B$', '$A \\subset B$, ale $A \\neq B$', 'żaden nie zawiera się w drugim'], dobra: 0, dlaczego: '$A = \\{0, 1, 2\\}$ (zero jest liczbą naturalną). To dokładnie te same elementy co w $B$, więc zbiory są równe.' },
+  { q: 'Czy $[1, 3] \\subset (0, 4)$?', opcje: ['Tak', 'Nie, bo 1 nie należy do $(0, 4)$', 'Nie, bo przedziały nie mogą się zawierać'], dobra: 0, dlaczego: 'Każda liczba od 1 do 3 (z końcami) jest większa od 0 i mniejsza od 4. Nie ma wyrzutka. A 1 należy do $(0, 4)$, bo $0 < 1 < 4$.' },
+  { q: 'Czy $[1, 5] \\subset (1, 5]$?', opcje: ['Tak, to te same liczby', 'Nie, bo $1 \\in [1, 5]$, a $1 \\notin (1, 5]$', 'Nie, bo $5 \\notin (1, 5]$'], dobra: 1, dlaczego: 'Wyrzutkiem jest koniec 1: w $[1, 5]$ jest (nawias kwadratowy), w $(1, 5]$ go nie ma (nawias okrągły). Piątka należy do obu.' },
+  { q: 'Czy $\\{x \\in \\mathbb{Z} : 0 < x < 4\\} \\subset (0, 4)$?', opcje: ['Tak', 'Nie, bo w $(0, 4)$ są ułamki', 'Nie, bo 4 nie należy'], dobra: 0, dlaczego: 'Pierwszy zbiór to $\\{1, 2, 3\\}$ i każda z tych liczb leży w $(0, 4)$. Ułamki w przedziale nie przeszkadzają — sprawdzamy elementy <b>pierwszego</b> zbioru.' },
+  { q: 'Czy $(0, 4) \\subset \\{x \\in \\mathbb{Z} : 0 \\leq x \\leq 4\\}$?', opcje: ['Tak', 'Nie, bo np. $0{,}5 \\in (0, 4)$, a nie jest liczbą całkowitą', 'Nie, bo $0 \\notin (0, 4)$'], dobra: 1, dlaczego: 'Przedział ma ułamki, a drugi zbiór to tylko $\\{0, 1, 2, 3, 4\\}$. To, że $0 \\notin (0, 4)$, nie jest wyrzutkiem — wyrzutek musi należeć do <b>pierwszego</b> zbioru.' },
+  { q: 'Czy $\\emptyset \\subset \\{1, 2\\}$?', opcje: ['Nie, bo $\\emptyset$ nie ma elementów', 'Tak', 'Tylko gdy $U = \\{1, 2\\}$'], dobra: 1, dlaczego: 'Zbiór pusty zawiera się w każdym zbiorze: nie ma w nim żadnego elementu, który mógłby być wyrzutkiem.' },
+]} />
+
+<a id="cw-kartezjanski" class="k-anchor"></a>
+
+### Iloczyn kartezjański
+
+<Pytania licznik tag="Ćwiczenia · 8 zadań" tytul="" pytania={[
+  { q: '$A = \\{1, 2\\}$, $B = \\{5, 6, 7\\}$. Ile par ma $A \\times B$?', opcje: ['5', '8', '6'], dobra: 2, dlaczego: '$|A \\times B| = |A| \\cdot |B| = 2 \\cdot 3 = 6$. Odpowiedź 5 to $2 + 3$ (dodawanie zamiast mnożenia), a 8 to $2^3$.' },
+  { q: '$A = \\{1, 2\\}$, $B = \\{3\\}$. Ile wynosi $A \\times B$?', opcje: ['$\\{(1, 3), (2, 3)\\}$', '$\\{(3, 1), (3, 2)\\}$', '$\\{1, 2, 3\\}$'], dobra: 0, dlaczego: 'Pierwszy element pary z $A$, drugi z $B$. Druga odpowiedź to $B \\times A$, a trzecia to $A \\cup B$.' },
+  { q: '$A = \\{1, 2\\}$, $B = \\{4, 5\\}$. Czy $(4, 1) \\in A \\times B$?', opcje: ['Tak, bo 4 i 1 są w tych zbiorach', 'Nie, bo pierwszy element pary musi być z $A$'], dobra: 1, dlaczego: 'W $A \\times B$ na pierwszym miejscu stoi element $A$. $4 \\notin A$, więc $(4, 1) \\notin A \\times B$. Ta para należy do $B \\times A$.' },
+  { q: 'Dla $A = \\{0, 1\\}$ ile wynosi $A^2$?', opcje: ['$\\{0, 1\\}$', '$\\{(0, 0), (0, 1), (1, 0), (1, 1)\\}$', '$\\{(0, 1), (1, 0)\\}$'], dobra: 1, dlaczego: '$A^2 = A \\times A$ — wszystkie pary z elementów $A$, także z powtórzeniem: $(0, 0)$ i $(1, 1)$. Podnoszenie elementów do kwadratu dałoby $\\{0, 1\\}$ — ale to nie jest potęga zbioru.' },
+  { q: '$|A| = 4$, $|B| = 3$. Ile par ma $B \\times A$?', opcje: ['12', '7', '64'], dobra: 0, dlaczego: '$|B \\times A| = 3 \\cdot 4 = 12$ — tyle samo co $A \\times B$. Zmienia się kolejność w parach, a nie ich liczba.' },
+  { q: '$A = [0, 2]$, $B = [1, 3]$. Jak wygląda $A \\times B$ w układzie współrzędnych?', opcje: ['prostokąt: $x$ od 1 do 3, $y$ od 0 do 2', 'prostokąt: $x$ od 0 do 2, $y$ od 1 do 3, brzegi ciągłe', 'odcinek od 0 do 3 na osi $x$'], dobra: 1, dlaczego: 'Pierwszy zbiór wyznacza $x$, drugi $y$. Oba przedziały są domknięte, więc wszystkie brzegi są ciągłe. Pierwsza odpowiedź to $B \\times A$.' },
+  { q: '$A = (-\\infty, 1)$, $B = [0, \\infty)$. Jaka jest prosta $x = 1$ na rysunku $A \\times B$?', opcje: ['ciągła', 'przerywana', 'nie ma jej na rysunku'], dobra: 1, dlaczego: '$x$ pochodzi z $A$, a $1 \\notin A$ (nawias okrągły). Punkty na tej prostej nie należą do zbioru, więc rysujemy ją przerywaną.' },
+  { q: '$A = (-\\infty, 1)$, $B = [0, \\infty)$. Który opis pasuje do $B \\times A$?', opcje: ['$x < 1$ i $y \\geq 0$', '$x \\geq 0$ i $y < 1$', '$x \\geq 0$ i $y \\geq 1$'], dobra: 1, dlaczego: 'W $B \\times A$ współrzędna $x$ jest z $B$ ($x \\geq 0$), a $y$ z $A$ ($y < 1$). Pierwsza odpowiedź opisuje $A \\times B$.' },
+]} />
+
+<a id="cw-wlaczenia" class="k-anchor"></a>
+
+### Zasada włączeń i wyłączeń
+
+<Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
+  { q: '$|A| = 12$, $|B| = 9$, $|A \\cap B| = 4$. Ile wynosi $|A \\cup B|$?', opcje: ['21', '17', '25'], dobra: 1, dlaczego: '$12 + 9 - 4 = 17$. 21 to suma bez odjęcia części wspólnej (4 elementy policzone dwa razy), a 25 to dodanie jej zamiast odjęcia.' },
+  { q: 'W grupie 40 osób: 25 uczy się angielskiego, 18 niemieckiego, 10 obu języków. Ile osób nie uczy się żadnego z nich?', opcje: ['7', '33', '−3'], dobra: 0, dlaczego: 'Co najmniej jeden język: $25 + 18 - 10 = 33$. Żadnego: $40 - 33 = 7$. 33 to odpowiedź na inne pytanie, a $-3$ wychodzi, gdy zapomnisz odjąć tych, którzy uczą się obu.' },
+  { q: 'W tej samej grupie: ile osób uczy się <b>tylko</b> angielskiego?', opcje: ['25', '15', '35'], dobra: 1, dlaczego: 'Z 25 osób uczących się angielskiego 10 uczy się też niemieckiego. Tylko angielski: $25 - 10 = 15$.' },
+  { q: '$|A| = 10$, $|B| = 8$, $|C| = 6$, $|A \\cap B| = 3$, $|A \\cap C| = 2$, $|B \\cap C| = 4$, $|A \\cap B \\cap C| = 1$. Ile wynosi $|A \\cup B \\cup C|$?', opcje: ['16', '15', '24'], dobra: 0, dlaczego: '$10 + 8 + 6 - 3 - 2 - 4 + 1 = 16$. 15 wychodzi, gdy zapomnisz dodać $|A \\cap B \\cap C|$ na końcu, a 24 to samo dodanie trzech zbiorów.' },
+  { q: 'Zadanie mówi: „4 osoby mają <b>tylko</b> cechy A i B (bez C), a 2 osoby mają wszystkie trzy cechy”. Ile wynosi $|A \\cap B|$?', opcje: ['4', '2', '6'], dobra: 2, dlaczego: '$A \\cap B$ to wszyscy z cechami A i B — także ci, którzy mają też C. $|A \\cap B| = 4 + 2 = 6$.' },
+  { q: 'Dlaczego we wzorze dla trzech zbiorów na końcu dodajemy $|A \\cap B \\cap C|$?', opcje: ['Bo elementy z trzech zbiorów zostały trzy razy dodane i trzy razy odjęte — trzeba je policzyć raz', 'Bo tak wygląda wzór i nie ma to uzasadnienia', 'Bo elementy z trzech zbiorów trzeba policzyć dwa razy'], dobra: 0, dlaczego: 'Element z trzech zbiorów jest w $|A|$, $|B|$, $|C|$ (3 razy dodany) i w każdej z trzech par (3 razy odjęty). Bez ostatniego składnika wypadłby z wyniku.' },
+  { q: 'Wśród 60 studentów 30 ma laptopa, 25 tablet, 20 smartwatch. Laptop i tablet: 10, laptop i smartwatch: 8, tablet i smartwatch: 6, wszystkie trzy: 4. Ilu studentów nie ma żadnego z tych urządzeń?', opcje: ['5', '55', '9'], dobra: 0, dlaczego: 'Co najmniej jedno: $30 + 25 + 20 - 10 - 8 - 6 + 4 = 55$. Żadnego: $60 - 55 = 5$. Odpowiedź 9 wychodzi, gdy zapomnisz o $+4$.' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Zbiory — 10 pytań" pytania={[
+  { q: 'Który zbiór jest równy zbiorowi $\\{1, 2, 3\\}$?', opcje: ['$(1, 3)$', '$\\{3, 1, 2, 2\\}$', '$\\{1, 2, 3, 4\\}$'], dobra: 1, dlaczego: 'Kolejność i powtórzenia nie mają znaczenia: $\\{3, 1, 2, 2\\} = \\{1, 2, 3\\}$. $(1, 3)$ to przedział liczb rzeczywistych między 1 a 3 — bez 1 i 3.' },
+  { q: 'Ile wynosi $|\\emptyset|$?', opcje: ['1', '0', 'nie da się policzyć'], dobra: 1, dlaczego: 'Zbiór pusty nie ma żadnego elementu, więc jego moc to 0.' },
+  { q: 'Co na zajęciach nazywamy „iloczynem zbiorów” $A$ i $B$?', opcje: ['$A \\times B$', '$A \\cap B$', '$A \\cup B$'], dobra: 1, dlaczego: '„Iloczyn zbiorów” to część wspólna $A \\cap B$. $A \\times B$ to iloczyn <b>kartezjański</b> — zbiór par. Podobne nazwy, zupełnie różne działania.' },
+  { q: 'Nawias kwadratowy przy końcu przedziału oznacza, że…', opcje: ['koniec nie należy do przedziału', 'koniec należy do przedziału', 'przedział jest nieskończony'], dobra: 1, dlaczego: 'Nawias kwadratowy „trzyma” koniec: należy do przedziału, na osi rysujemy pełne kółko.' },
+  { q: 'Dlaczego przy $\\infty$ zawsze stoi nawias okrągły?', opcje: ['Bo $\\infty$ to nie liczba i nie może należeć do przedziału', 'Bo przedziały z $\\infty$ są zawsze otwarte z obu stron', 'Bo nawias kwadratowy przy $\\infty$ oznacza zbiór pusty'], dobra: 0, dlaczego: 'Nieskończoność to nie liczba — nie da się do niej dojść. Drugi koniec może mieć nawias kwadratowy, np. $[4, \\infty)$.' },
+  { q: 'Działaniu $\\cap$ na zbiorach odpowiada w logice spójnik:', opcje: ['$\\lor$', '$\\Rightarrow$', '$\\land$'], dobra: 2, dlaczego: '$x \\in A \\cap B$ wtedy, gdy $x \\in A \\land x \\in B$. Suma $\\cup$ odpowiada $\\lor$.' },
+  { q: 'Od czego zależy dopełnienie $A\'$?', opcje: ['od uniwersum $U$', 'od zbioru $B$', 'od niczego — zawsze jest takie samo'], dobra: 0, dlaczego: '$A\'$ to elementy $U$, których nie ma w $A$. Zmień $U$, a zmieni się dopełnienie.' },
+  { q: 'Wiemy, że $A \\subset B$ i $B \\subset A$. Co z tego wynika?', opcje: ['$A = \\emptyset$', '$A = B$', 'nic'], dobra: 1, dlaczego: 'Każdy element $A$ jest w $B$ i każdy element $B$ jest w $A$ — czyli zbiory mają te same elementy.' },
+  { q: 'Czym się różnią $(1, 2)$ jako element iloczynu kartezjańskiego i $\\{1, 2\\}$?', opcje: ['Niczym', '$(1, 2)$ to para — liczy się kolejność; $\\{1, 2\\}$ to zbiór — kolejność bez znaczenia', '$(1, 2)$ ma trzy elementy'], dobra: 1, dlaczego: '$(1, 2) \\neq (2, 1)$, ale $\\{1, 2\\} = \\{2, 1\\}$.' },
+  { q: '$|A| = 5$, $|B| = 2$. Ile wynosi $|A \\times B|$?', opcje: ['7', '25', '10'], dobra: 2, dlaczego: 'Każdy z 5 elementów $A$ łączymy z każdym z 2 elementów $B$: $5 \\cdot 2 = 10$ par.' },
+]} />

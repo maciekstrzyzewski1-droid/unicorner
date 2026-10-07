@@ -1,0 +1,127 @@
+---
+// Iloczyn kartezjański dwóch przedziałów jako obszar w układzie współrzędnych (przełącznik A×B / B×A).
+// Brzeg ciągły = koniec należy do przedziału [ ], przerywany = nie należy ( ). Strzałki = obszar biegnie w nieskończoność.
+import { tex, texInline } from '../../../lib/tex.js';
+interface Prz { od: number | null; do: number | null; lewy?: 'o' | 'z'; prawy?: 'o' | 'z' }
+interface Props { A: Prz; B: Prz; lo?: number; hi?: number }
+const { A, B } = Astro.props;
+const ends = [A.od, A.do, B.od, B.do, 0].filter((v): v is number => v !== null);
+const lo = Astro.props.lo ?? Math.min(...ends) - 3, hi = Astro.props.hi ?? Math.max(...ends) + 3;
+const n = hi - lo, s = Math.max(22, Math.min(34, Math.floor(330 / n))), pad = 28, size = n * s + 2 * pad;
+const X = (v: number) => pad + (v - lo) * s, Y = (v: number) => pad + (hi - v) * s;
+
+const przedz = (p: Prz) => `${p.od === null ? '(-\\infty' : (p.lewy === 'z' ? '[' : '(') + p.od}, ${p.do === null ? '\\infty)' : p.do + (p.prawy === 'z' ? ']' : ')')}`;
+const nier = (p: Prz, v: string) => {
+  const l = p.od === null ? '' : `${p.od} ${p.lewy === 'z' ? '\\leq' : '<'} `;
+  const r = p.do === null ? '' : ` ${p.prawy === 'z' ? '\\leq' : '<'} ${p.do}`;
+  if (p.od !== null && p.do === null) return `${v} ${p.lewy === 'z' ? '\\geq' : '>'} ${p.od}`;
+  return `${l}${v}${r}`;
+};
+const tryby = [
+  { k: 'ab', nazwa: 'A \\times B', PX: A, PY: B, nx: 'A', ny: 'B', fill: 'rgba(39,232,255,.2)', c: '#27e8ff' },
+  { k: 'ba', nazwa: 'B \\times A', PX: B, PY: A, nx: 'B', ny: 'A', fill: 'rgba(255,46,151,.18)', c: '#ff2e97' },
+].map((t) => {
+  const x1 = t.PX.od === null ? pad : X(t.PX.od), x2 = t.PX.do === null ? size - pad : X(t.PX.do);
+  const y1 = t.PY.do === null ? pad : Y(t.PY.do), y2 = t.PY.od === null ? size - pad : Y(t.PY.od);
+  const linie: { x1: number; y1: number; x2: number; y2: number; dash: boolean }[] = [];
+  if (t.PX.od !== null) linie.push({ x1, y1, x2: x1, y2, dash: t.PX.lewy !== 'z' });
+  if (t.PX.do !== null) linie.push({ x1: x2, y1, x2, y2, dash: t.PX.prawy !== 'z' });
+  if (t.PY.do !== null) linie.push({ x1, y1, x2, y2: y1, dash: t.PY.prawy !== 'z' });
+  if (t.PY.od !== null) linie.push({ x1, y1: y2, x2, y2, dash: t.PY.lewy !== 'z' });
+  const rogi: { x: number; y: number; pelny: boolean }[] = [];
+  for (const [vx, zx] of [[t.PX.od, t.PX.lewy], [t.PX.do, t.PX.prawy]] as const)
+    for (const [vy, zy] of [[t.PY.od, t.PY.lewy], [t.PY.do, t.PY.prawy]] as const)
+      if (vx !== null && vy !== null) rogi.push({ x: X(vx), y: Y(vy), pelny: zx === 'z' && zy === 'z' });
+  const cx = (x1 + x2) / 2, cy = (y1 + y2) / 2;
+  const strzalki: string[] = [];
+  if (t.PX.od === null) strzalki.push(`M${pad - 2},${cy} l11,-7 v14 z`);
+  if (t.PX.do === null) strzalki.push(`M${size - pad + 2},${cy} l-11,-7 v14 z`);
+  if (t.PY.do === null) strzalki.push(`M${cx},${pad - 2} l-7,11 h14 z`);
+  if (t.PY.od === null) strzalki.push(`M${cx},${size - pad + 2} l-7,-11 h14 z`);
+  const opis = (p: Prz, os: 'x' | 'y', nz: string) => {
+    const out: string[] = [];
+    const kon = (v: number, z?: 'o' | 'z') => `prosta $${os} = ${v}$ ${z === 'z' ? `— <b>ciągła</b>, bo $${v} \\in ${nz}$ (nawias kwadratowy)` : `— <b>przerywana</b>, bo $${v} \\notin ${nz}$ (nawias okrągły)`}`;
+    if (p.od !== null) out.push(kon(p.od, p.lewy));
+    if (p.do !== null) out.push(kon(p.do, p.prawy));
+    return out;
+  };
+  return {
+    ...t, x1, x2, y1, y2, linie, rogi, strzalki,
+    wzor: `${t.nazwa} = \\{(x, y) : x \\in ${przedz(t.PX)} \\land y \\in ${przedz(t.PY)}\\}`,
+    warunki: `$${nier(t.PX, 'x')}$ i $${nier(t.PY, 'y')}$`,
+    opisy: [...opis(t.PX, 'x', t.nx), ...opis(t.PY, 'y', t.ny)],
+  };
+});
+const ticks = Array.from({ length: n - 1 }, (_, i) => lo + 1 + i);
+---
+<figure class="k-fig k-obsz" data-obsz data-tryb="ab">
+  <div class="k-obsz-ctl" data-js-only hidden>
+    {tryby.map((t, i) => <button type="button" class={`k-opt k-opt-sm ${i === 0 ? 'is-on' : ''}`} data-t={t.k} set:html={tex(t.nazwa)} />)}
+  </div>
+  <div class="k-fig-box">
+    <svg viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`Obszar ${tryby[0].wzor.replace(/\\/g, '')}`}>
+      {Array.from({ length: n + 1 }, (_, i) => lo + i).map((v) => (
+        <g stroke="rgba(255,255,255,.06)" stroke-width="1">
+          <line x1={X(v)} y1={pad} x2={X(v)} y2={size - pad} />
+          <line x1={pad} y1={Y(v)} x2={size - pad} y2={Y(v)} />
+        </g>
+      ))}
+      {tryby.map((t) => (
+        <g class="k-obsz-g" data-g={t.k}>
+          <rect x={t.x1} y={t.y1} width={t.x2 - t.x1} height={t.y2 - t.y1} fill={t.fill} />
+          {t.linie.map((l) => <line x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} stroke={t.c} stroke-width="2.6" stroke-dasharray={l.dash ? '7 6' : undefined} />)}
+          {t.rogi.map((r) => <circle cx={r.x} cy={r.y} r="5.5" fill={r.pelny ? t.c : '#0d0c13'} stroke={t.c} stroke-width="2.4" />)}
+          {t.strzalki.map((d) => <path d={d} fill={t.c} />)}
+        </g>
+      ))}
+      <g stroke="#9b93c4" stroke-width="1.5">
+        <line x1={pad - 4} y1={Y(0)} x2={size - pad + 4} y2={Y(0)} />
+        <line x1={X(0)} y1={size - pad + 4} x2={X(0)} y2={pad - 4} />
+      </g>
+      <text x={size - pad + 6} y={Y(0) - 8} class="k-obsz-ax">x</text>
+      <text x={X(0) + 8} y={pad + 4} class="k-obsz-ax">y</text>
+      {ticks.map((v) => v !== 0 && (
+        <g class="k-obsz-t">
+          <text x={X(v)} y={Y(0) + 16} text-anchor="middle">{v}</text>
+          <text x={X(0) - 6} y={Y(v) + 4.5} text-anchor="end">{v}</text>
+        </g>
+      ))}
+    </svg>
+  </div>
+  <div class="k-obsz-l">
+    {tryby.map((t) => (
+      <div data-g={t.k}>
+        <p set:html={tex(t.wzor)} />
+        <p set:html={texInline(`Zamalowane są punkty, dla których ${t.warunki}.`)} />
+        <ul>{t.opisy.map((o) => <li set:html={texInline(o)} />)}</ul>
+      </div>
+    ))}
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-obsz]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-obsz]') === box) el.hidden = false; });
+    const set = (t: string) => {
+      box.dataset.tryb = t;
+      box.querySelectorAll<HTMLButtonElement>('[data-t]').forEach((b) => b.classList.toggle('is-on', b.dataset.t === t));
+      box.querySelectorAll<HTMLElement>('.k-obsz-l [data-g]').forEach((p) => (p.hidden = p.dataset.g !== t));
+    };
+    box.querySelectorAll<HTMLButtonElement>('[data-t]').forEach((b) => b.addEventListener('click', () => set(b.dataset.t!)));
+    set('ab');
+  });
+</script>
+
+<style>
+  .k-obsz svg{max-width:400px;}
+  .k-obsz-ctl{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+  .k-obsz-ctl .k-opt{justify-content:center;min-width:72px;min-height:38px;}
+  .k-obsz-ctl .k-opt.is-on{border-color:var(--gold);background:rgba(255,216,74,.12);}
+  .k-obsz-ax{font-family:var(--mono);font-size:17px;font-style:italic;fill:#eef0ff;}
+  .k-obsz-t text{font-family:var(--mono);font-size:14px;fill:#9b93c4;}
+  [data-tryb="ab"] .k-obsz-g[data-g="ba"],[data-tryb="ba"] .k-obsz-g[data-g="ab"]{display:none;}
+  .k-obsz-l{margin-top:10px;font-size:.92rem;line-height:1.6;overflow-x:auto;}
+  .k-obsz-l p{margin:0 0 6px!important;}
+  .k-obsz-l ul{margin:4px 0 0!important;padding-left:1.2em!important;list-style:disc;color:var(--muted);}
+</style>

@@ -5,6 +5,8 @@ import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import rehypeTabele from './src/lib/rehype-tabele.mjs';
+import rehypeInterpunkcja from './src/lib/rehype-interpunkcja.mjs';
 
 // unicorner.pl (GitHub Pages, domena w public/CNAME)
 // https://astro.build/config
@@ -16,7 +18,7 @@ export default defineConfig({
   // wzory $...$ i $$...$$ w plikach .md/.mdx renderowane przy buildzie (KaTeX) — zero JS po stronie przegladarki
   markdown: {
     remarkPlugins: [remarkMath],
-    rehypePlugins: [[rehypeKatex, { strict: false }]],
+    rehypePlugins: [[rehypeKatex, { strict: false }], rehypeInterpunkcja, rehypeTabele],
   },
   vite: {
     plugins: [tailwindcss()],
