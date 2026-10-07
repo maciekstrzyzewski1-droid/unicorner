@@ -47,6 +47,7 @@ const ld = {
       <div class="k-meta">
         <div><span class="k-meta-k">Czas</span><b>ok. {mod.minutes} min</b></div>
         <div><span class="k-meta-k">Potrzebujesz</span><b>{fm.wymaga}</b></div>
+        {mod.cwiczenia && <div><span class="k-meta-k">Szybka powtórka</span><b><a href={`#${mod.cwiczenia}`}>Same ćwiczenia ↓</a></b></div>}
       </div>
       {fm.umiesz && (
         <div class="k-cele">

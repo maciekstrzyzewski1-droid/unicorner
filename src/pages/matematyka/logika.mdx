@@ -4,15 +4,15 @@ kurs: matematyka
 slug: logika
 title: Logika
 podtytul: zdania, spójniki i kwantyfikatory
-description: Logika od zera dla studentów ekonomii — zdania logiczne, spójniki (¬, ∧, ∨, ⇒, ⇔), tabele zero-jedynkowe, tautologie, prawa de Morgana i kwantyfikatory ∀, ∃. Każdy symbol wyjaśniony, zadania krok po kroku.
-lede: Logika to gramatyka matematyki. Każdy następny temat — zbiory, relacje, programowanie liniowe — pisze się jej symbolami. Tu poznasz je po kolei, bez skrótów myślowych, z przykładami z życia i z interaktywnymi tabelkami.
+description: Logika od zera dla studentów ekonomii — zdania logiczne, spójniki (¬, ∧, ∨, ⇒, ⇔), tabele zero-jedynkowe, tautologie, prawa de Morgana, kwantyfikatory ∀ i ∃ oraz negacja. Każde polecenie z kolokwium z przepisem, przykładami i ćwiczeniami.
+lede: Logika to gramatyka matematyki. Każdy następny temat — zbiory, relacje, programowanie liniowe — pisze się jej symbolami. Tu poznasz je po kolei, a do każdego polecenia z kolokwium dostaniesz przepis, rozwiązane przykłady i ćwiczenia z natychmiastową odpowiedzią.
 wymaga: Nic. Zaczynamy od zera.
 umiesz:
   - odróżnić zdanie logiczne od zdania, które nim nie jest
-  - przeczytać na głos i zrozumieć symbole ¬ ∧ ∨ ⇒ ⇔ ∀ ∃
-  - zbudować tabelę zero-jedynkową i sprawdzić, czy zdanie jest tautologią
-  - poprawnie zaprzeczyć zdaniu z „każdy” albo „istnieje”
+  - przeczytać symbole ¬ ∧ ∨ ⇒ ⇔ ∀ ∃ i całe zdania złożone
+  - obliczyć wartość zdania i sprawdzić tabelą, czy jest tautologią
   - ustalić, czy zdanie z kwantyfikatorami jest prawdziwe
+  - zapisać zaprzeczenie zdania z kwantyfikatorami
 ---
 
 import Ramka from '../../components/kurs/Ramka.astro';
@@ -23,14 +23,14 @@ import Krok from '../../components/kurs/Krok.astro';
 import Dlaczego from '../../components/kurs/Dlaczego.astro';
 import Pytania from '../../components/kurs/Pytania.astro';
 import TabelaPrawdy from '../../components/kurs/TabelaPrawdy.astro';
+import CwiczenieTabela from '../../components/kurs/CwiczenieTabela.astro';
 import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
 import Symulator from '../../components/kurs/logika/Symulator.astro';
 import Kwantyfikatory from '../../components/kurs/logika/Kwantyfikatory.astro';
 import Obwod from '../../components/kurs/logika/Obwod.astro';
-import Drzewko from '../../components/kurs/logika/Drzewko.astro';
+import Uklad from '../../components/kurs/logika/Uklad.astro';
 
-export const imp = (a, b) => !a || b;
-export const rown = (a, b) => !!a === !!b;
 
 ## Po co ekonomiście logika?
 
@@ -41,8 +41,23 @@ Ten moduł robi coś prostego: **przedstawia te znaczki po kolei, jeden po drugi
 Dlaczego warto? Bo logika to nie osobny dział, który zaliczysz i zapomnisz. To **język**, w którym zapisane są wszystkie kolejne tematy. Zbiór liczb od 1 do 4 zapiszemy jako $\{x \in \mathbb{N} : x \geq 1 \land x \leq 4\}$ — i bez znajomości $\land$ nie przeczytasz nawet definicji.
 
 <Ramka kind="excel">
-Jeśli liczyłeś coś kiedyś w Excelu, znasz już logikę — tylko pod innymi nazwami. Funkcje `ORAZ()`, `LUB()` i `NIE()` to dokładnie spójniki, które zaraz poznamy. Excel też myśli w kategoriach PRAWDA/FAŁSZ, a w obliczeniach traktuje je jak 1 i 0. Przy każdym spójniku pokażemy jego odpowiednik w Excelu.
+Jeśli liczyłeś coś kiedyś w Excelu, znasz już logikę — tylko pod innymi nazwami. Funkcje `ORAZ()`, `LUB()` i `NIE()` to dokładnie spójniki, które zaraz poznamy. Excel też myśli w kategoriach PRAWDA/FAŁSZ, a w obliczeniach traktuje je jak 1 i 0.
 </Ramka>
+
+## Co będzie na kolokwium
+
+Z logiki na kolokwium wraca kilka typów poleceń. Każde ma w tym module swój przepis, rozwiązane przykłady i ćwiczenia z natychmiastową odpowiedzią. Jeśli powtarzasz na ostatnią chwilę, zacznij od tej listy.
+
+<Polecenia items={[
+  { polecenie: 'Oblicz wartość logiczną zdania dla $p = 1$, $q = 0$, $r = 0$', jak: 'Wstawiasz 0 i 1 w miejsce literek i liczysz spójnik po spójniku, od środka nawiasów.', przepis: 'polecenie-oblicz', cwiczenia: 'cw-oblicz' },
+  { polecenie: 'Odczytaj zdanie / zapisz je za pomocą symboli', jak: 'Ustalasz kolejność działań, znajdujesz spójnik główny i czytasz od niego.', przepis: 'polecenie-odczytaj', cwiczenia: 'cw-odczytaj' },
+  { polecenie: 'Sprawdź, czy zdanie jest tautologią', jak: 'Budujesz tabelę zero-jedynkową. Same jedynki w ostatniej kolumnie — tautologia.', przepis: 'polecenie-tautologia', cwiczenia: 'cw-tautologia', zrodlo: 'jak w Zad. 1, str. 14–15' },
+  { polecenie: 'Dla jakich wartości $p$, $q$, $r$ zdania … są jednocześnie prawdziwe?', jak: 'Ta sama tabela, ale szukasz wierszy, w których wszystkie podane zdania mają 1.', przepis: 'polecenie-dla-jakich', cwiczenia: 'cw-dla-jakich', zrodlo: 'jak w Zad. 2, str. 15' },
+  { polecenie: 'Zapisz słownie zdanie z kwantyfikatorami i określ jego wartość logiczną', jak: 'Czytasz od lewej. Przy $\\forall$ szukasz kontrprzykładu, przy $\\exists$ — przykładu.', przepis: 'polecenie-kwantyfikatory', cwiczenia: 'cw-kwantyfikatory', zrodlo: 'jak w Zad. 1, str. 19–20' },
+  { polecenie: 'Zapisz negację (zaprzeczenie) zdania', jak: '$\\forall$ zamieniasz na $\\exists$ i odwrotnie, a na końcu zaprzeczasz warunek.', przepis: 'polecenie-negacja', cwiczenia: 'cw-negacja', zrodlo: 'jak w Zad. 3, str. 20' },
+]} />
+
+Słowa w poleceniu mogą być inne („zbadaj”, „ustal”, „wyznacz”). Liczy się to, o co pyta zadanie: o wartość, o tautologię, o wiersze, o zapis słowny czy o zaprzeczenie.
 
 ## Zdanie logiczne — co nim jest, a co nie
 
@@ -64,7 +79,7 @@ Zdaniami logicznymi **nie są**:
 - **opinie** („Matematyka jest nudna”) — zależą od gustu, nie od faktów.
 
 <Ramka kind="botak">
-To, że prognozy nie są zdaniami logicznymi, to umowa przyjęta na zajęciach: liczy się, czy możemy zweryfikować zdanie **teraz**. W poważniejszej logice ludzie budują osobne systemy do mówienia o przyszłości, ale na tym przedmiocie po prostu przyjmujemy: prognoza — nie jest zdaniem logicznym.
+To, że prognozy nie są zdaniami logicznymi, to umowa przyjęta na zajęciach: liczy się, czy możemy sprawdzić zdanie **teraz**.
 </Ramka>
 
 <Klasyfikator
@@ -75,7 +90,7 @@ To, że prognozy nie są zdaniami logicznymi, to umowa przyjęta na zajęciach: 
     { tekst: '„2 + 2 = 5”', kat: 0, dlaczego: 'To fałsz, ale <b>pewny</b> fałsz. Zdanie fałszywe to też zdanie logiczne.' },
     { tekst: '„Zamknij drzwi!”', kat: 1, dlaczego: 'Rozkaz nie jest ani prawdziwy, ani fałszywy.' },
     { tekst: '„Która jest godzina?”', kat: 1, dlaczego: 'Pytanie niczego nie stwierdza.' },
-    { tekst: '„Jutro w Poznaniu będzie padać.”', kat: 1, dlaczego: 'To prognoza — dziś nie da się jej zweryfikować.' },
+    { tekst: '„Jutro w Poznaniu będzie padać.”', kat: 1, dlaczego: 'To prognoza — dziś nie da się jej sprawdzić.' },
     { tekst: '„Warszawa jest stolicą Niemiec.”', kat: 0, dlaczego: 'Fałsz, ale da się go sprawdzić — więc to zdanie logiczne (o wartości 0).' },
     { tekst: '„$x + 3 = 7$”', kat: 1, dlaczego: 'Nie wiadomo, ile wynosi $x$. Dla $x = 4$ to prawda, dla innych liczb fałsz. Takie wyrażenie to <b>funkcja zdaniowa</b> — poznasz ją pod koniec modułu.' },
     { tekst: '„Pizza hawajska jest najlepsza.”', kat: 1, dlaczego: 'Opinia. Nie ma faktu, który by ją rozstrzygnął.' },
@@ -90,7 +105,7 @@ Pisanie „prawda” i „fałsz” szybko by się znudziło, więc matematycy u
 - zdanie **fałszywe** ma **wartość logiczną 0**.
 
 <Ramka kind="botak">
-Dlaczego akurat 1 i 0, a nie np. T i N? To umowa, która okazała się bardzo wygodna: działa jak włącznik światła (włączony/wyłączony) i jak bity w komputerze. Za chwilę zobaczysz też, że dzięki niej spójniki dają się liczyć jak zwykłe działania na liczbach.
+To umowa: cyfry są krótsze niż słowa, a za chwilę zobaczysz, że z zerami i jedynkami wygodnie się liczy.
 </Ramka>
 
 ### Zdania proste i złożone
@@ -105,12 +120,16 @@ Zdania proste oznaczamy małymi literami: $p$, $q$, $r$… Litera to tylko **skr
 Zdania proste sklejamy w złożone za pomocą **spójników**. Na zajęciach jest ich pięć. Oto cała piątka w jednym miejscu — dalej omówimy każdy osobno.
 
 <div class="k-symbole">
-  <Znak t="\neg" nazwa="Negacja" czytamy="nieprawda, że…" znaczy="Odwraca wartość zdania: z prawdy robi fałsz, z fałszu prawdę." pamiec="wygląda jak kreska z haczykiem, która „przekreśla” zdanie." />
+  <Znak t="\neg" nazwa="Negacja" czytamy="nieprawda, że…" znaczy="Odwraca wartość zdania: z prawdy robi fałsz, z fałszu prawdę." pamiec="kreska z haczykiem, która „przekreśla” zdanie." />
   <Znak t="\land" nazwa="Koniunkcja" czytamy="i" znaczy="Prawdziwa tylko wtedy, gdy <b>oba</b> zdania są prawdziwe." pamiec="daszek ∧ jak litera A z angielskiego <i>And</i>." />
   <Znak t="\lor" nazwa="Alternatywa" czytamy="lub" znaczy="Prawdziwa, gdy <b>co najmniej jedno</b> zdanie jest prawdziwe." pamiec="∨ jak „v” z łacińskiego <i>vel</i> (lub). To odwrócony daszek koniunkcji." />
   <Znak t="\Rightarrow" nazwa="Implikacja" czytamy="jeżeli …, to …" znaczy="Fałszywa tylko w jednym przypadku: z prawdy wychodzi fałsz." pamiec="strzałka pokazuje kierunek: od warunku do skutku." />
   <Znak t="\Leftrightarrow" nazwa="Równoważność" czytamy="… wtedy i tylko wtedy, gdy …" znaczy="Prawdziwa, gdy oba zdania mają <b>tę samą</b> wartość." pamiec="strzałka w obie strony = implikacja w obie strony." />
 </div>
+
+<Ramka kind="zapamietaj">
+Negację zawsze czytamy **„nieprawda, że …”** — także wtedy, gdy stoi tuż przy literce. $\neg p$ to „nieprawda, że $p$”, a $\neg(p \lor q)$ to „nieprawda, że ($p$ lub $q$)”.
+</Ramka>
 
 <Ramka kind="pulapka">
 Najczęściej mylone są $\land$ i $\lor$. Pomaga skojarzenie: **$\land$ wygląda jak litera A** (angielskie *And*, czyli „i”). Drugi znak, $\lor$, to odwrócony daszek — więc znaczy „to drugie”, czyli „lub”.
@@ -125,7 +144,7 @@ Negacja to najprostszy spójnik. Bierze **jedno** zdanie i odwraca jego wartoś�
 - $p$: „Pada deszcz” — powiedzmy, że to prawda (1).
 - $\neg p$: „Nieprawda, że pada deszcz” — fałsz (0).
 
-<TabelaPrawdy zmienne={['p']} kolumny={[{ t: '\\neg p', f: (v) => !v.p, typ: 'wynik' }]}>
+<TabelaPrawdy zmienne={['p']} kolumny={[{ t: '\\neg p', op: 'not', a: 'p', typ: 'wynik' }]}>
 w lewej kolumnie są wszystkie możliwe wartości $p$ (tylko dwie: 0 i 1). W prawej — wartość $\neg p$. W każdym wierszu prawa kolumna jest odwrotnością lewej.
 </TabelaPrawdy>
 
@@ -143,8 +162,8 @@ Koniunkcja $p \land q$ jest prawdziwa **tylko wtedy, gdy oba zdania są prawdziw
 
 Przykład z życia: „Do egzaminu jesteś dopuszczony, jeśli masz zaliczone ćwiczenia **i** oddany projekt”. Samo zaliczenie nie wystarczy. Sam projekt też nie. Potrzebne są oba warunki.
 
-<TabelaPrawdy zmienne={['p', 'q']} kolumny={[{ t: 'p \\land q', f: (v) => v.p && v.q, typ: 'wynik' }]}>
-dwa zdania mają razem 4 możliwe układy wartości (00, 01, 10, 11). Jedynka w kolumnie $p \land q$ jest tylko w ostatnim wierszu — tam, gdzie $p = 1$ i $q = 1$.
+<TabelaPrawdy zmienne={['p', 'q']} kolumny={[{ t: 'p \\land q', op: 'and', a: 'p', b: 'q', typ: 'wynik' }]}>
+dwa zdania mają razem 4 możliwe układy wartości. Jedynka w kolumnie $p \land q$ jest tylko w ostatnim wierszu — tam, gdzie $p = 1$ i $q = 1$.
 </TabelaPrawdy>
 
 <Obwod typ="szeregowo">
@@ -152,7 +171,7 @@ włączniki $p$ i $q$ stoją jeden za drugim (**szeregowo**). Prąd musi przejś
 </Obwod>
 
 <Ramka kind="skad">
-Koniunkcję da się policzyć jak **mnożenie**: $p \land q = p \cdot q$. Sprawdź: $1 \cdot 1 = 1$, a wystarczy jedno zero, żeby iloczyn był zerem. To jeden z powodów, dla których umowa „prawda = 1, fałsz = 0” jest taka wygodna.
+Koniunkcję da się policzyć jak **mnożenie**: $p \land q = p \cdot q$. Sprawdź: $1 \cdot 1 = 1$, a wystarczy jedno zero, żeby iloczyn był zerem.
 </Ramka>
 
 <Ramka kind="excel">
@@ -163,7 +182,7 @@ Koniunkcję da się policzyć jak **mnożenie**: $p \land q = p \cdot q$. Sprawd
 
 Alternatywa $p \lor q$ jest prawdziwa, gdy **co najmniej jedno** ze zdań jest prawdziwe. Fałszywa jest tylko wtedy, gdy **oba** są fałszywe.
 
-<TabelaPrawdy zmienne={['p', 'q']} kolumny={[{ t: 'p \\lor q', f: (v) => v.p || v.q, typ: 'wynik' }]}>
+<TabelaPrawdy zmienne={['p', 'q']} kolumny={[{ t: 'p \\lor q', op: 'or', a: 'p', b: 'q', typ: 'wynik' }]}>
 jedyne zero jest w pierwszym wierszu, gdzie oba zdania są fałszywe. Zwróć uwagę na ostatni wiersz: gdy prawdziwe są **oba** zdania, alternatywa też jest prawdziwa.
 </TabelaPrawdy>
 
@@ -185,49 +204,37 @@ Przykład, który oddaje sens logicznego „lub”: „Zniżka przysługuje stud
   { q: 'Wiemy, że $p$ jest fałszywe (0), a $q$ prawdziwe (1). Ile wynosi $p \\land q$, a ile $p \\lor q$?', opcje: ['$p \\land q = 1$, $p \\lor q = 1$', '$p \\land q = 0$, $p \\lor q = 1$', '$p \\land q = 0$, $p \\lor q = 0$'], dobra: 1, dlaczego: 'Koniunkcja potrzebuje <b>obu</b> prawdziwych zdań, a $p$ jest fałszywe — więc 0. Alternatywie wystarczy jedno prawdziwe — $q$ jest prawdziwe, więc 1.' },
 ]} />
 
-## Implikacja — spójnik, na którym gubi się najwięcej osób
+## Implikacja — „jeżeli…, to…”
 
-Implikacja $p \Rightarrow q$ to zdanie typu „**jeżeli** $p$, **to** $q$”. Ma swoje nazwy części:
+Implikacja $p \Rightarrow q$ to zdanie typu „**jeżeli** $p$, **to** $q$”. Jej części mają swoje nazwy:
 
 <Rozbior t="p \Rightarrow q" czytamy="jeżeli $p$, to $q$" czesci={[
   { t: 'p', o: '<b>poprzednik</b> (założenie, warunek) — to, co stoi przed strzałką' },
-  { t: '\\Rightarrow', o: 'strzałka implikacji — „wynika”, „pociąga za sobą”' },
+  { t: '\\Rightarrow', o: 'strzałka implikacji' },
   { t: 'q', o: '<b>następnik</b> (wniosek, skutek) — to, co stoi za strzałką' },
 ]} />
 
-Teraz najważniejsze: **implikacja jest fałszywa tylko w jednym przypadku — gdy poprzednik jest prawdziwy, a następnik fałszywy.** We wszystkich trzech pozostałych przypadkach jest prawdziwa.
+Z całej implikacji trzeba zapamiętać jedną regułę:
 
-<TabelaPrawdy zmienne={['p', 'q']} kolumny={[{ t: 'p \\Rightarrow q', f: (v) => imp(v.p, v.q), typ: 'wynik' }]} zaznacz={(v) => v.p === 1 && v.q === 0} zaznaczOpis="jedyny przypadek, gdy implikacja jest fałszywa">
-trzy wiersze dają 1. Zero jest tylko w trzecim wierszu: $p = 1$, $q = 0$ — z prawdziwego założenia wyszedł fałszywy wniosek.
-</TabelaPrawdy>
-
-Dlaczego tak? Najlepiej pomyśleć o implikacji jak o **obietnicy**.
-
-<Ramka kind="intuicja">
-Mówię: „**Jeśli** dostaniesz 5 z kolokwium, **to** stawiam ci pizzę”. Kiedy złamałem obietnicę?
-
-1. Dostałeś 5 i postawiłem pizzę — obietnica dotrzymana. **Prawda.**
-2. Dostałeś 5, a pizzy nie ma — obietnica złamana. **Fałsz.**
-3. Nie dostałeś 5, ale i tak postawiłem pizzę — obietnica nie mówiła nic o tej sytuacji. Nie złamałem jej. **Prawda.**
-4. Nie dostałeś 5 i nie ma pizzy — warunek nie zaszedł, nie ma o co mieć pretensji. **Prawda.**
-
-Obietnica jest złamana **tylko** w punkcie 2. Dokładnie tak działa $\Rightarrow$.
+<Ramka kind="zapamietaj">
+Implikacja jest fałszywa (0) **tylko** wtedy, gdy poprzednik jest prawdziwy, a następnik fałszywy: $1 \Rightarrow 0$. We wszystkich pozostałych przypadkach jest prawdziwa (1).
 </Ramka>
 
-Punkty 3 i 4 wydają się dziwne: jak „jeśli…, to…” może być prawdziwe, skoro warunek w ogóle nie zaszedł? To moment, w którym większość osób się gubi, więc zatrzymajmy się na chwilę.
+<TabelaPrawdy zmienne={['p', 'q']} kolumny={[{ t: 'p \\Rightarrow q', op: 'imp', a: 'p', b: 'q', typ: 'wynik' }]} zaznacz={(v) => v.p === 1 && v.q === 0} zaznaczOpis="jedyny przypadek, gdy implikacja jest fałszywa">
+trzy wiersze dają 1. Zero jest tylko w trzecim wierszu: $p = 1$, $q = 0$ — prawda na początku, fałsz na końcu.
+</TabelaPrawdy>
 
 <Ramka kind="botak">
-Że „z fałszu wynika cokolwiek” (czyli $0 \Rightarrow 0$ i $0 \Rightarrow 1$ to prawda), to **umowa**. Nie da się jej udowodnić. Przyjęto ją jednak z bardzo konkretnego powodu, który widać na przykładzie:
+Tak ustalono — tego się nie wyprowadza. Do zapamiętania wystarczy zasada: **z prawdziwych założeń nie można wyciągnąć fałszywych wniosków**. Prawda na początku i fałsz na końcu to jedyna sytuacja, która łamie tę zasadę, więc tylko tam implikacja ma wartość 0.
+</Ramka>
 
-„**Dla każdej liczby** $x$: jeśli $x > 5$, to $x > 3$.”
+<Ramka kind="intuicja">
+Pomyśl o implikacji jak o **obietnicy**: „**Jeśli** dostaniesz 5 z kolokwium, **to** stawiam ci pizzę”.
 
-Każdy się zgodzi, że to prawda. Ale sprawdźmy kilka liczb:
-
-- $x = 7$: $7 > 5$ (1) i $7 > 3$ (1) → $1 \Rightarrow 1$
-- $x = 4$: $4 > 5$ (0) i $4 > 3$ (1) → $0 \Rightarrow 1$
-- $x = 1$: $1 > 5$ (0) i $1 > 3$ (0) → $0 \Rightarrow 0$
-
-Gdyby $0 \Rightarrow 1$ albo $0 \Rightarrow 0$ były fałszem, to nasze oczywiście prawdziwe zdanie „dla każdego $x$…” okazałoby się fałszywe — przez liczby, których ono wcale nie dotyczy. Dlatego umówiliśmy się, że gdy warunek nie zachodzi, implikacja jest prawdziwa.
+1. Dostałeś 5 i jest pizza — obietnica dotrzymana: **1**.
+2. Dostałeś 5, a pizzy nie ma — obietnica złamana: **0**.
+3. Nie dostałeś 5, a pizza i tak jest — obietnica nie mówiła, co bez piątki. Nie została złamana: **1**.
+4. Nie dostałeś 5 i nie ma pizzy — warunek nie zaszedł, obietnica nie została złamana: **1**.
 </Ramka>
 
 <Ramka kind="pulapka">
@@ -249,12 +256,7 @@ W Excelu nie ma osobnej funkcji implikacji, ale da się ją zbudować: `=LUB(NIE
 Równoważność $p \Leftrightarrow q$ jest prawdziwa, gdy oba zdania mają **tę samą wartość**: oba prawdziwe albo oba fałszywe.
 
 <Ramka kind="intuicja">
-Bramka w metrze: „Bramka się otwiera **wtedy i tylko wtedy, gdy** przyłożysz ważny bilet”. To działa w obie strony:
-
-- przyłożysz bilet → bramka się otwiera,
-- bramka się otworzyła → musiałeś przyłożyć bilet.
-
-Bramka, która otwiera się bez biletu, jest zepsuta. Bramka, która nie otwiera się mimo biletu — też. Wszystko gra tylko wtedy, gdy „bilet” i „otwarcie” idą w parze.
+Bramka w metrze: „Bramka się otwiera **wtedy i tylko wtedy, gdy** przyłożysz ważny bilet”. Przyłożysz bilet — bramka się otwiera. Bramka się otworzyła — musiałeś przyłożyć bilet. Wszystko gra tylko wtedy, gdy „bilet” i „otwarcie” idą w parze: oba są albo oba nie są.
 </Ramka>
 
 Stąd nazwa: równoważność to **implikacja w obie strony** — $p \Rightarrow q$ i jednocześnie $q \Rightarrow p$. W skrócie piszemy „wtw” (wtedy i tylko wtedy).
@@ -268,18 +270,24 @@ Codzienne „**albo** …, **albo** …” („albo zdasz, albo poprawka”) to 
 Tę tabelę warto mieć w głowie. Dla dwóch zdań są 4 możliwe układy wartości, a każdy spójnik daje w nich swój wynik:
 
 <TabelaPrawdy zmienne={['p', 'q']} kolumny={[
-  { t: '\\neg p', f: (v) => !v.p },
-  { t: 'p \\land q', f: (v) => v.p && v.q, typ: 'wynik' },
-  { t: 'p \\lor q', f: (v) => v.p || v.q, typ: 'wynik' },
-  { t: 'p \\Rightarrow q', f: (v) => imp(v.p, v.q), typ: 'wynik' },
-  { t: 'p \\Leftrightarrow q', f: (v) => rown(v.p, v.q), typ: 'wynik' },
+  { t: '\\neg p', op: 'not', a: 'p' },
+  { t: 'p \\land q', op: 'and', a: 'p', b: 'q', typ: 'wynik' },
+  { t: 'p \\lor q', op: 'or', a: 'p', b: 'q', typ: 'wynik' },
+  { t: 'p \\Rightarrow q', op: 'imp', a: 'p', b: 'q', typ: 'wynik' },
+  { t: 'p \\Leftrightarrow q', op: 'eq', a: 'p', b: 'q', typ: 'wynik' },
 ]}>
-każdy wiersz to jeden możliwy świat (np. trzeci wiersz: $p$ prawdziwe, $q$ fałszywe). Każda kolumna mówi, jaką wartość ma dany spójnik w tym świecie. Najłatwiej zapamiętać kolumny po ich „wyjątkach”: $\land$ ma jedną jedynkę (oba = 1), $\lor$ ma jedno zero (oba = 0), $\Rightarrow$ ma jedno zero (z 1 wychodzi 0), $\Leftrightarrow$ daje 1, gdy wartości są równe.
+każdy wiersz to jeden możliwy układ (np. trzeci wiersz: $p$ prawdziwe, $q$ fałszywe). Każda kolumna mówi, jaką wartość ma dany spójnik w tym układzie. Najłatwiej zapamiętać kolumny po ich „wyjątkach”: $\land$ ma jedną jedynkę (oba = 1), $\lor$ ma jedno zero (oba = 0), $\Rightarrow$ ma jedno zero (z 1 wychodzi 0), $\Leftrightarrow$ daje 1, gdy wartości są równe.
 </TabelaPrawdy>
 
 <Symulator />
 
-## Kolejność działań i nawiasy
+## Jak czytać zdanie złożone
+
+<a id="polecenie-odczytaj" class="k-anchor"></a>
+
+<Ramka kind="polecenie">
+„Odczytaj zdanie”, „Wskaż spójnik główny”, „Zapisz zdanie za pomocą symboli”. Wszystkie trzy wymagają tego samego: wiedzy, w jakiej kolejności łączą się spójniki.
+</Ramka>
 
 W arytmetyce najpierw mnożymy, potem dodajemy: $2 + 3 \cdot 4 = 14$, a nie $20$. Ze spójnikami jest tak samo — mają swoją kolejność:
 
@@ -293,61 +301,177 @@ $$
 [(\neg p) \lor q] \Leftrightarrow (p \land q) \qquad\text{to samo co}\qquad \neg p \lor q \Leftrightarrow p \land q
 $$
 
-W drugim zapisie: negacja „przykleja się” tylko do $p$, potem liczymy $\neg p \lor q$ i $p \land q$, a na samym końcu łączymy je równoważnością.
+### Przepis: jak odczytać zdanie
+
+1. **Negacja** dotyczy tylko tego, co stoi tuż za nią: jednej literki ($\neg p$) albo całego nawiasu ($\neg(p \lor q)$).
+2. **Nawiasy** liczysz najpierw — to, co w nawiasie, traktuj jak jedną całość.
+3. **Koniunkcja i alternatywa** łączą sąsiednie kawałki.
+4. **Implikacja albo równoważność** stojąca poza nawiasami zostaje na koniec. Spójnik liczony na samym końcu to **spójnik główny** — to on mówi, czym jest całe zdanie.
+5. **Czytasz od spójnika głównego**: przy $\Rightarrow$ — „jeżeli [lewa strona], to [prawa strona]”, przy $\Leftrightarrow$ — „[lewa strona] wtedy i tylko wtedy, gdy [prawa strona]”.
+
+### Przykłady
+
+<Rozbior t="\neg p \lor q \Rightarrow r" czytamy="jeżeli nieprawda, że $p$, lub $q$, to $r$" czesci={[
+  { t: '\\neg p', o: 'negacja dotyczy tylko $p$ — stoi tuż przy nim' },
+  { t: '\\neg p \\lor q', o: 'potem alternatywa łączy $\\neg p$ z $q$ — to cała lewa strona' },
+  { t: '\\Rightarrow', o: 'na końcu implikacja — to <b>spójnik główny</b>. Prawa strona to $r$' },
+  { t: '[(\\neg p) \\lor q] \\Rightarrow r', o: 'to samo zdanie ze wszystkimi nawiasami' },
+]} />
+
+<Rozbior t="\neg(p \land q) \Leftrightarrow \neg p \lor \neg q" czytamy="nieprawda, że ($p$ i $q$) wtedy i tylko wtedy, gdy nieprawda, że $p$, lub nieprawda, że $q$" czesci={[
+  { t: '\\neg(p \\land q)', o: 'negacja stoi przed nawiasem, więc dotyczy <b>całego</b> nawiasu' },
+  { t: '\\neg p \\lor \\neg q', o: 'tu każda negacja dotyczy tylko swojej literki, a potem obie łączy $\\lor$' },
+  { t: '\\Leftrightarrow', o: '<b>spójnik główny</b> — łączy lewą i prawą stronę' },
+]} />
+
+<Rozbior t="(p \land \neg q) \Rightarrow r" czytamy="zapis zdania „Jeżeli pada deszcz i nieprawda, że mam parasol, to zmoknę”" czesci={[
+  { t: 'p,\\ q,\\ r', o: '$p$ = „pada deszcz”, $q$ = „mam parasol”, $r$ = „zmoknę”' },
+  { t: '\\Rightarrow', o: '„jeżeli …, to …” — to implikacja i zarazem spójnik główny' },
+  { t: 'p \\land \\neg q', o: 'warunek „pada deszcz i nieprawda, że mam parasol” — stoi przed strzałką' },
+]} />
 
 <Ramka kind="granica">
-Według tej kolejności $\land$ i $\lor$ są **na tym samym poziomie** — tak samo $\Rightarrow$ i $\Leftrightarrow$. Zapis $p \land q \lor r$ jest więc **niejednoznaczny**: nie wiadomo, czy chodzi o $(p \land q) \lor r$, czy o $p \land (q \lor r)$. A to są różne zdania — dla $p = 0$, $r = 1$ pierwsze jest prawdziwe, drugie fałszywe. Gdy w jednym wyrażeniu mieszasz $\land$ z $\lor$ albo $\Rightarrow$ z $\Leftrightarrow$, **zawsze stawiaj nawiasy**.
+Według tej kolejności $\land$ i $\lor$ są **na tym samym poziomie** — tak samo $\Rightarrow$ i $\Leftrightarrow$. Zapis $p \land q \lor r$ jest więc **niejednoznaczny**: nie wiadomo, czy chodzi o $(p \land q) \lor r$, czy o $p \land (q \lor r)$. A to są różne zdania. Gdy w jednym wyrażeniu mieszasz $\land$ z $\lor$ albo $\Rightarrow$ z $\Leftrightarrow$, **zawsze stawiaj nawiasy**.
 </Ramka>
 
-<Ramka kind="zapamietaj">
-Spójnik, który liczymy **na samym końcu**, nazywamy **spójnikiem głównym**. To on decyduje, czym jest całe zdanie: w $\neg p \lor q \Leftrightarrow p \land q$ spójnikiem głównym jest $\Leftrightarrow$, więc całość to równoważność. Spójnik główny przyda się za chwilę przy tabelkach.
+<Pytania pytania={[
+  { q: 'Który spójnik jest główny w zdaniu $p \\lor \\neg q \\Leftrightarrow r$?', opcje: ['$\\lor$', '$\\neg$', '$\\Leftrightarrow$'], dobra: 2, dlaczego: 'Najpierw liczymy $\\neg q$, potem $p \\lor \\neg q$, a na końcu $\\Leftrightarrow$. To, co liczymy na końcu, jest spójnikiem głównym.' },
+]} />
+
+## Obliczanie wartości zdania złożonego
+
+<a id="polecenie-oblicz" class="k-anchor"></a>
+
+<Ramka kind="polecenie">
+„Oblicz wartość logiczną zdania $(p \Rightarrow q) \lor \neg r$, jeśli $p = 1$, $q = 0$, $r = 0$.”
+
+1. Przepisz zdanie i w miejsce literek wstaw ich wartości.
+2. Licz od środka: najpierw nawiasy, a w nich najpierw negacje.
+3. Każdy spójnik licz z jego reguły: $\land$ — 1 tylko dla 1 i 1; $\lor$ — 0 tylko dla 0 i 0; $\Rightarrow$ — 0 tylko dla $1 \Rightarrow 0$; $\Leftrightarrow$ — 1, gdy obie strony są takie same.
+4. Spójnik główny liczysz na końcu — jego wynik to wartość całego zdania.
 </Ramka>
 
-## Tabela zero-jedynkowa i tautologia
+<Rozwiazanie tytul="Oblicz (p ⇒ q) ∨ ¬r dla p = 1, q = 0, r = 0">
+<Krok tytul="Wstaw wartości w miejsce literek">
+$$
+(1 \Rightarrow 0) \lor \neg 0
+$$
+</Krok>
 
-### Tautologia
+<Krok tytul="Policz nawias">
+$1 \Rightarrow 0 = 0$.
+
+<Dlaczego>
+To jedyny przypadek, w którym implikacja jest fałszywa: prawda na początku, fałsz na końcu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz negację">
+$\neg 0 = 1$ — negacja odwraca wartość.
+</Krok>
+
+<Krok tytul="Policz spójnik główny">
+Zostało $0 \lor 1 = 1$. Zdanie jest **prawdziwe**.
+
+<Dlaczego>
+Alternatywie wystarczy jedna jedynka. Spójnik główny to $\lor$, bo nawias i negację policzyliśmy wcześniej.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="podobny">
+$\neg(p \land q) \Leftrightarrow r$ dla $p = 1$, $q = 1$, $r = 0$:
+
+$$
+\neg(1 \land 1) \Leftrightarrow 0 \;\;\to\;\; \neg 1 \Leftrightarrow 0 \;\;\to\;\; 0 \Leftrightarrow 0 \;\;\to\;\; 1
+$$
+
+Najpierw nawias ($1 \land 1 = 1$), potem negacja przed nawiasem ($\neg 1 = 0$), na końcu równoważność: obie strony to 0, więc wynik to 1.
+</Ramka>
+
+<Ramka kind="pulapka">
+Negacja przed nawiasem działa dopiero **po** policzeniu nawiasu. W $\neg(1 \land 1)$ najpierw liczysz $1 \land 1 = 1$, a dopiero potem $\neg 1 = 0$.
+</Ramka>
+
+## Tabela zero-jedynkowa: ile wierszy i jak ją wypełnić
+
+Obliczanie wartości dla jednego układu zer i jedynek już znasz. **Tabela zero-jedynkowa** robi to samo dla **wszystkich** możliwych układów naraz — każdy wiersz to jeden układ.
+
+<Uklad>
+każda tabela zawiera wszystkie możliwe układy zer i jedynek dla swoich literek. Złota kreska dzieli tabelę na połowy: w górnej pierwsza literka ma 0, w dolnej 1. Zobacz, że w tabeli dla $p$, $q$, $r$ obie połowy kolumn $q$ i $r$ wyglądają dokładnie jak tabela dla dwóch literek. Dlatego każda nowa literka podwaja liczbę wierszy.
+</Uklad>
+
+<Ramka kind="botak" tytul="jak wypełniać kolumny z literkami">
+Kolumny z literkami wypełniamy zawsze w ten sam sposób:
+
+- w **pierwszej** kolumnie: połowa zer, potem połowa jedynek (przy 8 wierszach: 4 zera, potem 4 jedynki),
+- w **drugiej**: bloki o połowę krótsze (2 zera, 2 jedynki, 2 zera, 2 jedynki),
+- w **ostatniej**: 0 i 1 na zmianę.
+
+To nie jest prawo matematyki, tylko wygodny zwyczaj. Dzięki niemu na pewno wypiszesz wszystkie możliwe układy i żadnego dwa razy. Rób tak zawsze — wtedy tabelę łatwo sprawdzić, także prowadzącemu.
+</Ramka>
+
+Liczbę wierszy liczysz ze wzoru:
+
+<Rozbior t="\text{liczba wierszy} = 2^n" czesci={[
+  { t: 'n', o: 'liczba <b>różnych</b> literek w zdaniu (np. $p, q, r$ → $n = 3$). Jeśli $p$ występuje w zdaniu trzy razy, liczy się raz.' },
+  { t: '2^n', o: 'każda literka ma 2 możliwe wartości, a każda nowa literka podwaja tabelę: $2 \\to 4 \\to 8 \\to 16$' },
+]} />
+
+| liczba literek $n$ | 1 | 2 | 3 | 4 |
+|---|---|---|---|---|
+| liczba wierszy $2^n$ | 2 | 4 | 8 | 16 |
+
+## Tautologia: czy zdanie jest zawsze prawdziwe?
+
+<a id="polecenie-tautologia" class="k-anchor"></a>
 
 <Ramka kind="zapamietaj">
-**Tautologia** to zdanie złożone, które jest **zawsze prawdziwe** — bez względu na to, jakie wartości mają zdania proste, z których jest zbudowane.
+**Tautologia** to zdanie złożone, które jest **zawsze prawdziwe** — bez względu na to, jakie wartości mają literki, z których jest zbudowane.
 </Ramka>
 
 Przykład z życia: „Jutro będzie padać lub jutro nie będzie padać”. Nie wiem, jaka będzie pogoda, ale wiem, że to zdanie jest prawdziwe. W symbolach: $p \lor \neg p$. Jego prawdziwość wynika z samej budowy zdania, nie z faktów.
 
-Jak sprawdzić, czy zdanie jest tautologią? Trzeba je policzyć **dla każdej możliwej kombinacji** wartości zdań prostych. Jeśli zawsze wychodzi 1 — to tautologia. Jeśli choć raz wyjdzie 0 — nie jest. Tę metodę nazywa się **metodą tabelkową** albo **zero-jedynkową**.
+<Ramka kind="polecenie">
+„Sprawdź (metodą zero-jedynkową), czy zdanie … jest tautologią.”
 
-### Ile wierszy ma tabela? 2ⁿ
-
-Jeśli w zdaniu występuje $n$ różnych zdań prostych, tabela ma $2^n$ wierszy.
-
-<Rozbior t="\text{liczba wierszy} = 2^n" czesci={[
-  { t: 'n', o: 'liczba <b>różnych</b> zdań prostych w wyrażeniu (np. $p, q, r$ → $n = 3$). Jeśli $p$ występuje w zdaniu trzy razy, liczy się raz.' },
-  { t: '2', o: 'każde zdanie proste ma <b>2</b> możliwe wartości: 0 albo 1' },
-  { t: '2^n', o: '$2 \\cdot 2 \\cdot \\ldots \\cdot 2$ ($n$ razy) — tyle jest wszystkich kombinacji' },
-]} />
-
-Dlaczego potęga? Bo wybory się mnożą. Masz 2 koszulki i 2 pary spodni — możesz się ubrać na $2 \cdot 2 = 4$ sposoby. Dorzuć 2 pary butów — już $2 \cdot 2 \cdot 2 = 8$. Ze zdaniami jest identycznie.
-
-<Drzewko>
-każde piętro to jedno zdanie proste. Z każdego kółka wychodzą dwie gałęzie: 0 (szara) i 1 (niebieska). Ścieżka od góry do dołu to jeden wiersz tabeli — na przykład skrajna prawa ścieżka to $p = 1$, $q = 1$, $r = 1$. Na dole jest $2 \cdot 2 \cdot 2 = 8$ ścieżek, więc tabela dla trzech zdań ma 8 wierszy.
-</Drzewko>
-
-| liczba zdań prostych $n$ | 1 | 2 | 3 | 4 |
-|---|---|---|---|---|
-| liczba wierszy $2^n$ | 2 | 4 | 8 | 16 |
-
-### Jak budować tabelę — przepis
-
-1. **Policz zdania proste** ($n$) i wypisz je w pierwszych kolumnach.
-2. **Wypełnij je systematycznie.** Najprościej liczyć jak w systemie dwójkowym: 000, 001, 010, 011, 100… Ostatnia kolumna zmienia się co wiersz (0, 1, 0, 1…), przedostatnia co dwa (0, 0, 1, 1…), pierwsza co cztery.
-3. **Dodaj kolumny pomocnicze** — od środka nawiasów na zewnątrz, jak przy liczeniu $2 \cdot (3 + 4)$: najpierw nawias, potem reszta.
-4. **Ostatnia kolumna to całe zdanie**, czyli wynik spójnika głównego.
-5. **Odczytaj wynik:** same jedynki → tautologia. Choć jedno zero → nie jest tautologią.
-
-<Ramka kind="botak">
-Kolejność wierszy (000, 001, 010…) to tylko porządek, nie reguła matematyczna. Możesz ułożyć wiersze inaczej i wynik będzie ten sam. Systematyczne liczenie chroni jednak przed tym, żeby jakiegoś wiersza zapomnieć — albo napisać go dwa razy.
+1. Policz różne literki ($n$) — tabela ma $2^n$ wierszy.
+2. Wypełnij kolumny z literkami według stałego wzoru (połowa zer, połowa jedynek, … , w ostatniej 0 i 1 na zmianę).
+3. Ustal kolejność działań i zrób kolumnę pomocniczą dla każdego kawałka zdania — od środka nawiasów na zewnątrz.
+4. Ostatnia kolumna to całe zdanie, czyli wynik spójnika głównego.
+5. Same jedynki w ostatniej kolumnie — **tautologia**. Choć jedno zero — **nie jest** tautologią.
 </Ramka>
 
-<Rozwiazanie tytul="Czy zdanie (p ∨ q) ∧ (p ∧ r) ⇒ p ∧ q ∧ r jest tautologią?" zrodlo="Zad. 1, str. 14–15, przykład r)">
+<Rozwiazanie tytul="Przykład 1 (dwie literki): czy (p ∧ q) ⇒ p jest tautologią?">
+<Krok tytul="Policz literki i wiersze">
+Literki: $p$ i $q$, czyli $n = 2$. Tabela ma $2^2 = 4$ wiersze. Kolumna $p$: 0, 0, 1, 1. Kolumna $q$: 0, 1, 0, 1.
+</Krok>
+
+<Krok tytul="Znajdź spójnik główny i kolumny pomocnicze">
+Nawias liczymy najpierw, więc spójnikiem głównym jest $\Rightarrow$. Lewa strona to $p \land q$ (kolumna pomocnicza), prawa to samo $p$ (mamy je już w tabeli).
+</Krok>
+
+<Krok tytul="Wypełnij tabelę kolumna po kolumnie">
+Policz kolumnę w głowie albo na kartce, a potem ją odkryj.
+
+<TabelaPrawdy odslaniaj zmienne={['p', 'q']} kolumny={[
+  { id: 'a', t: 'p \\land q', op: 'and', a: 'p', b: 'q' },
+  { t: '(p \\land q) \\Rightarrow p', op: 'imp', a: 'a', b: 'p', typ: 'wynik' },
+]}>
+kolumna $p \land q$ ma jedynkę tylko w ostatnim wierszu. Ostatnia kolumna to implikacja: z kolumny $p \land q$ do kolumny $p$.
+</TabelaPrawdy>
+</Krok>
+
+<Krok tytul="Odczytaj wynik">
+W ostatniej kolumnie są **same jedynki** — zdanie **jest tautologią**.
+
+<Dlaczego>
+Implikacja dałaby 0 tylko przy lewej stronie = 1 i prawej = 0. Lewa strona ($p \land q$) jest równa 1 tylko w ostatnim wierszu, a tam prawa strona ($p$) też jest równa 1. Po ludzku: „jeśli mam kartę i PIN, to mam kartę” — tego nie da się złamać.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Rozwiazanie tytul="Przykład 2 (trzy literki): czy (p ∨ q) ∧ (p ∧ r) ⇒ p ∧ q ∧ r jest tautologią?" zrodlo="Zad. 1, str. 14–15, przykład r)">
 <div slot="tresc">
 
 Sprawdź metodą zero-jedynkową, czy zdanie
@@ -360,8 +484,8 @@ jest tautologią.
 
 </div>
 
-<Krok tytul="Policz zdania proste i wiersze">
-W zdaniu występują trzy różne zdania proste: $p$, $q$, $r$. Czyli $n = 3$, a tabela ma $2^3 = 8$ wierszy.
+<Krok tytul="Policz literki i wiersze">
+W zdaniu występują trzy różne literki: $p$, $q$, $r$. Czyli $n = 3$, a tabela ma $2^3 = 8$ wierszy. Kolumna $p$: cztery zera, cztery jedynki. Kolumna $q$: po dwa na zmianę. Kolumna $r$: 0 i 1 na zmianę.
 </Krok>
 
 <Krok tytul="Znajdź spójnik główny">
@@ -381,21 +505,21 @@ Liczymy od środka na zewnątrz:
 1. $p \lor q$
 2. $p \land r$
 3. $(p \lor q) \land (p \land r)$ — cała lewa strona
-4. $p \land q \land r$ — prawa strona (prawdziwa tylko, gdy wszystkie trzy zdania są prawdziwe)
+4. $p \land q \land r$ — prawa strona (prawdziwa tylko, gdy wszystkie trzy literki są prawdziwe)
 5. całe zdanie: lewa $\Rightarrow$ prawa
 </Krok>
 
 <Krok tytul="Wypełnij tabelę kolumna po kolumnie">
-Kliknij „Wypełnij następną kolumnę” i sprawdzaj każdą kolumnę w głowie, zanim ją odkryjesz.
+Policz kolumnę w głowie albo na kartce, a potem ją odkryj.
 
 <TabelaPrawdy odslaniaj zmienne={['p', 'q', 'r']} kolumny={[
-  { t: 'p \\lor q', f: (v) => v.p || v.q },
-  { t: 'p \\land r', f: (v) => v.p && v.r },
-  { t: '(p \\lor q) \\land (p \\land r)', f: (v) => (v.p || v.q) && (v.p && v.r) },
-  { t: 'p \\land q \\land r', f: (v) => v.p && v.q && v.r },
-  { t: '\\ldots \\Rightarrow p \\land q \\land r', f: (v) => imp((v.p || v.q) && (v.p && v.r), v.p && v.q && v.r), typ: 'wynik' },
+  { id: 'a', t: 'p \\lor q', op: 'or', a: 'p', b: 'q' },
+  { id: 'b', t: 'p \\land r', op: 'and', a: 'p', b: 'r' },
+  { id: 'L', t: '(p \\lor q) \\land (p \\land r)', op: 'and', a: 'a', b: 'b' },
+  { id: 'R', t: 'p \\land q \\land r', f: (v) => v.p && v.q && v.r },
+  { t: '\\ldots \\Rightarrow p \\land q \\land r', op: 'imp', a: 'L', b: 'R', typ: 'wynik' },
 ]} zaznacz={(v, w) => w[4] === 0} zaznaczOpis="wiersz, w którym zdanie jest fałszywe">
-pierwsze trzy kolumny to wszystkie 8 kombinacji. Kolumna 3 (lewa strona) i kolumna 4 (prawa strona) to wejścia do implikacji. Ostatnia kolumna to wynik całego zdania.
+pierwsze trzy kolumny to wszystkie 8 układów. Kolumna 3 (lewa strona) i kolumna 4 (prawa strona) to wejścia do implikacji. Ostatnia kolumna to wynik całego zdania.
 </TabelaPrawdy>
 </Krok>
 
@@ -403,13 +527,13 @@ pierwsze trzy kolumny to wszystkie 8 kombinacji. Kolumna 3 (lewa strona) i kolum
 W ostatniej kolumnie jest **jedno zero** — w wierszu $p = 1$, $q = 0$, $r = 1$. Zdanie **nie jest tautologią**.
 
 <Dlaczego>
-W tym wierszu lewa strona jest prawdziwa: $p \lor q = 1 \lor 0 = 1$ oraz $p \land r = 1 \land 1 = 1$, więc $1 \land 1 = 1$. Prawa strona jest fałszywa: $p \land q \land r = 1 \land 0 \land 1 = 0$. Implikacja $1 \Rightarrow 0$ to jedyny fałszywy przypadek implikacji — „obietnica złamana”.
+W tym wierszu lewa strona jest prawdziwa: $p \lor q = 1 \lor 0 = 1$ oraz $p \land r = 1 \land 1 = 1$, więc $1 \land 1 = 1$. Prawa strona jest fałszywa: $p \land q \land r = 1 \land 0 \land 1 = 0$. Implikacja $1 \Rightarrow 0$ to jedyny fałszywy przypadek implikacji.
 </Dlaczego>
 </Krok>
 </Rozwiazanie>
 
 <Ramka kind="intuicja" tytul="szybsza droga: szukaj kontrprzykładu">
-Gdy spójnikiem głównym jest $\Rightarrow$, nie trzeba liczyć całej tabeli. Implikacja może być fałszywa tylko przy **lewej stronie = 1 i prawej = 0**. Wystarczy więc sprawdzić, czy da się to osiągnąć:
+Gdy spójnikiem głównym jest $\Rightarrow$, nie trzeba liczyć całej tabeli. Implikacja może być fałszywa tylko przy **lewej stronie = 1 i prawej = 0**. Wystarczy sprawdzić, czy da się to osiągnąć:
 
 - lewa strona $= 1$ wymaga $p \land r = 1$, czyli $p = 1$ i $r = 1$ (wtedy $p \lor q$ i tak jest 1);
 - prawa strona $= 0$ przy $p = 1$ i $r = 1$ wymaga $q = 0$.
@@ -418,83 +542,22 @@ Znaleźliśmy $p = 1$, $q = 0$, $r = 1$ — zdanie nie jest tautologią. Gdyby t
 </Ramka>
 
 <Ramka kind="granica">
-Ten skrót działa wygodnie, gdy główny spójnik to $\Rightarrow$ (jeden przypadek do sprawdzenia: 1 → 0) albo $\lor$ (wystarczy sprawdzić, czy obie strony mogą być naraz zerem). Przy $\land$ i $\Leftrightarrow$ przypadków jest więcej i łatwo któryś przeoczyć. Wtedy pewniejsza jest pełna tabela. Jeśli prowadzący wymaga „metody zero-jedynkowej”, na kolokwium i tak rysuj całą tabelę.
+Ten skrót działa wygodnie, gdy spójnik główny to $\Rightarrow$ (jeden przypadek do sprawdzenia: $1 \Rightarrow 0$). Przy innych spójnikach przypadków jest więcej i łatwo któryś przeoczyć — wtedy pewniejsza jest pełna tabela. Jeśli polecenie mówi „metodą zero-jedynkową”, na kolokwium i tak rysuj całą tabelę.
 </Ramka>
 
-<Ramka kind="podobny">
-Zdanie $(p \land q) \Rightarrow p$ **jest** tautologią. Spróbuj znaleźć kontrprzykład: lewa strona $= 1$ wymaga $p = 1$ i $q = 1$, ale wtedy prawa strona, czyli $p$, też jest 1. Nie da się zrobić „1 → 0”, więc zdanie jest zawsze prawdziwe. Po ludzku: „jeśli mam kartę i PIN, to mam kartę” — nie da się tego złamać.
+Pięć kolejnych zdań do sprawdzenia — z tabelą, którą wypełniasz sam i od razu widzisz błędy — czeka w [ćwiczeniach na końcu modułu](#cw-tautologia).
 
-<TabelaPrawdy zmienne={['p', 'q']} kolumny={[
-  { t: 'p \\land q', f: (v) => v.p && v.q },
-  { t: '(p \\land q) \\Rightarrow p', f: (v) => imp(v.p && v.q, v.p), typ: 'wynik' },
-]}>
-ostatnia kolumna to same jedynki, więc to tautologia.
-</TabelaPrawdy>
+## Dla jakich wartości zdania są prawdziwe?
+
+<a id="polecenie-dla-jakich" class="k-anchor"></a>
+
+<Ramka kind="polecenie">
+„Dla jakich wartości logicznych zdań $p$, $q$, $r$ prawdziwe są jednocześnie zdania … oraz …?”
+
+1. Zbuduj jedną tabelę: kolumny z literkami, kolumny pomocnicze i po jednej kolumnie dla każdego z podanych zdań.
+2. Zaznacz wiersze, w których **wszystkie** podane zdania mają 1.
+3. Wypisz te wiersze jako trójki $(p, q, r)$ i — jeśli się da — opisz je słowami.
 </Ramka>
-
-## Prawa logiki, które warto znać
-
-Niektóre tautologie przydają się tak często, że mają własne nazwy. Na zajęciach pojawiają się te:
-
-<Rozbior t="\neg\neg p \Leftrightarrow p" czytamy="nieprawda, że nieprawda, że $p$ — wtedy i tylko wtedy, gdy $p$. Nazwa: <b>prawo podwójnego przeczenia</b>." czesci={[
-  { t: '\\neg\\neg p', o: 'podwójne zaprzeczenie. Po ludzku: „Nieprawda, że nie zdałem” = „Zdałem”. Dwa przełączenia światła wracają do stanu wyjściowego.' },
-]} />
-
-<Rozbior t="p \Leftrightarrow p" czesci={[
-  { t: 'p \\Leftrightarrow p', o: 'każde zdanie jest równoważne samemu sobie. Na zajęciach nazywane <b>prawem równoważności</b> (w innych książkach: prawem tożsamości). Oczywiste — ale formalnie to też tautologia.' },
-]} />
-
-### Prawa de Morgana
-
-To najważniejsze prawa tego modułu. Mówią, **jak zaprzeczyć** zdaniu z „i” albo z „lub”.
-
-<Rozbior t="\neg(p \lor q) \Leftrightarrow (\neg p \land \neg q)" czytamy="nieprawda, że ($p$ lub $q$) — to samo, co (nie $p$) i (nie $q$)" czesci={[
-  { t: '\\neg(p \\lor q)', o: '„Nieprawda, że pada deszcz lub wieje wiatr”' },
-  { t: '\\neg p \\land \\neg q', o: '„Nie pada deszcz <b>i</b> nie wieje wiatr”' },
-]} />
-
-<Rozbior t="\neg(p \land q) \Leftrightarrow (\neg p \lor \neg q)" czytamy="nieprawda, że ($p$ i $q$) — to samo, co (nie $p$) lub (nie $q$)" czesci={[
-  { t: '\\neg(p \\land q)', o: '„Nieprawda, że mam kartę i znam PIN”' },
-  { t: '\\neg p \\lor \\neg q', o: '„Nie mam karty <b>lub</b> nie znam PIN-u” (a może jedno i drugie)' },
-]} />
-
-<Ramka kind="skad">
-Dlaczego przy zaprzeczaniu „lub” zamienia się w „i”? Przypomnij sobie, kiedy alternatywa jest fałszywa: **tylko wtedy, gdy oba zdania są fałszywe**. Powiedzieć „nieprawda, że $p$ lub $q$” to więc powiedzieć „oba są fałszywe”, czyli „nie $p$ **i** nie $q$”.
-
-Analogicznie: koniunkcja jest fałszywa, gdy **choć jedno** zdanie zawiedzie — dlatego „nieprawda, że $p$ i $q$” to „nie $p$ **lub** nie $q$”.
-
-Każde prawo da się też sprawdzić tabelą:
-
-<TabelaPrawdy zmienne={['p', 'q']} kolumny={[
-  { t: 'p \\lor q', f: (v) => v.p || v.q },
-  { t: '\\neg(p \\lor q)', f: (v) => !(v.p || v.q) },
-  { t: '\\neg p', f: (v) => !v.p },
-  { t: '\\neg q', f: (v) => !v.q },
-  { t: '\\neg p \\land \\neg q', f: (v) => !v.p && !v.q },
-  { t: '\\neg(p \\lor q) \\Leftrightarrow (\\neg p \\land \\neg q)', f: (v) => rown(!(v.p || v.q), !v.p && !v.q), typ: 'wynik' },
-]}>
-kolumna 2 i kolumna 5 są identyczne w każdym wierszu. Dlatego ich równoważność (ostatnia kolumna) to same jedynki — tautologia.
-</TabelaPrawdy>
-</Ramka>
-
-<Ramka kind="pulapka">
-Negacja **nie rozkłada się** na nawias jak mnożenie. $\neg(p \lor q)$ to **nie** jest $\neg p \lor \neg q$. Przy zaprzeczaniu trzeba zrobić dwie rzeczy: zanegować każde zdanie **i** zamienić spójnik ($\lor \leftrightarrow \land$). Najczęstszy błąd na kolokwium to zrobienie tylko pierwszej.
-</Ramka>
-
-### Dwa prawa spoza slajdów, które oszczędzają czas
-
-Tych praw może nie być na wykładzie, ale bardzo się przydają — możesz je sprawdzić tabelą tak samo jak de Morgana.
-
-- $(p \Rightarrow q) \Leftrightarrow (\neg p \lor q)$ — implikację zawsze da się zapisać jako alternatywę. Z tego korzysta formuła z Excela `=LUB(NIE(A1);B1)`.
-- $(p \Rightarrow q) \Leftrightarrow (\neg q \Rightarrow \neg p)$ — **prawo kontrapozycji**. „Jeśli pada, to ulica jest mokra” znaczy to samo, co „jeśli ulica nie jest mokra, to nie pada”.
-
-<Ramka kind="granica" tytul="antyprzykład">
-Kontrapozycja to **nie to samo** co odwrócenie implikacji. Zdanie $(p \Rightarrow q) \Leftrightarrow (q \Rightarrow p)$ **nie jest** tautologią — dla $p = 0$, $q = 1$ lewa strona jest prawdziwa ($0 \Rightarrow 1$), a prawa fałszywa ($1 \Rightarrow 0$). Wolno odwrócić strzałkę tylko razem z zaprzeczeniem obu stron.
-</Ramka>
-
-## Zadanie: kiedy oba zdania są prawdziwe?
-
-Czasem zamiast „czy to tautologia?” zadanie pyta: dla jakich wartości $p$, $q$, $r$ kilka zdań jest prawdziwych **jednocześnie**? Używamy tej samej tabeli — tylko inaczej ją czytamy.
 
 <Rozwiazanie tytul="Dla jakich wartości p, q, r prawdziwe są jednocześnie zdania p ⇒ q ∨ r oraz q ⇒ r?" zrodlo="Zad. 2, str. 15, przykład e)">
 <Krok tytul="Ustal, jak czytać pierwsze zdanie">
@@ -506,14 +569,14 @@ $$
 </Krok>
 
 <Krok tytul="Zbuduj tabelę dla obu zdań">
-Trzy zdania proste → 8 wierszy. Kolumna pomocnicza: $q \lor r$. Potem dwa zdania, które nas interesują.
+Trzy literki → 8 wierszy. Kolumna pomocnicza: $q \lor r$. Potem dwa zdania, które nas interesują. Policz kolumnę, a potem ją odkryj.
 
-<TabelaPrawdy zmienne={['p', 'q', 'r']} kolumny={[
-  { t: 'q \\lor r', f: (v) => v.q || v.r },
-  { t: 'p \\Rightarrow q \\lor r', f: (v) => imp(v.p, v.q || v.r), typ: 'wynik' },
-  { t: 'q \\Rightarrow r', f: (v) => imp(v.q, v.r), typ: 'wynik' },
+<TabelaPrawdy odslaniaj zmienne={['p', 'q', 'r']} kolumny={[
+  { id: 'a', t: 'q \\lor r', op: 'or', a: 'q', b: 'r' },
+  { t: 'p \\Rightarrow q \\lor r', op: 'imp', a: 'p', b: 'a', typ: 'wynik' },
+  { t: 'q \\Rightarrow r', op: 'imp', a: 'q', b: 'r', typ: 'wynik' },
 ]} zaznacz={(v, w) => w[1] === 1 && w[2] === 1} zaznaczOpis="wiersze, w których oba zdania są prawdziwe">
-interesują nas wiersze, w których **obie** fioletowe kolumny mają 1. Takich wierszy jest pięć.
+interesują nas wiersze, w których **obie** fioletowe kolumny mają 1. Po odkryciu całej tabeli zostaną zaznaczone.
 </TabelaPrawdy>
 </Krok>
 
@@ -522,13 +585,78 @@ $(p, q, r) = (0, 0, 0),\ (0, 0, 1),\ (0, 1, 1),\ (1, 0, 1),\ (1, 1, 1)$.
 </Krok>
 
 <Krok tytul="Opisz wynik słowami">
-Oba zdania są prawdziwe, gdy **$r$ jest prawdziwe** (wtedy $p$ i $q$ mogą być dowolne), albo gdy **wszystkie trzy zdania są fałszywe**.
+Oba zdania są prawdziwe, gdy **$r$ jest prawdziwe** (wtedy $p$ i $q$ mogą być dowolne), albo gdy **wszystkie trzy literki są fałszywe**.
 
 <Dlaczego>
-Można to zobaczyć bez tabeli. Jeśli $r = 1$, to $q \lor r = 1$ i $q \Rightarrow r = 1$ — następniki obu implikacji są prawdziwe, więc obie implikacje są prawdziwe niezależnie od reszty. Jeśli $r = 0$, to $q \Rightarrow 0$ jest prawdziwe tylko przy $q = 0$. Wtedy $q \lor r = 0$, a $p \Rightarrow 0$ jest prawdziwe tylko przy $p = 0$. Zostaje jeden wiersz: 0, 0, 0.
+Jeśli $r = 1$, to $q \lor r = 1$ i $q \Rightarrow r = 1$ — następniki obu implikacji są prawdziwe, więc obie implikacje są prawdziwe niezależnie od reszty. Jeśli $r = 0$, to $q \Rightarrow 0$ jest prawdziwe tylko przy $q = 0$. Wtedy $q \lor r = 0$, a $p \Rightarrow 0$ jest prawdziwe tylko przy $p = 0$. Zostaje jeden wiersz: 0, 0, 0.
 </Dlaczego>
 </Krok>
 </Rozwiazanie>
+
+<Ramka kind="podobny">
+Jeśli polecenie pyta, kiedy zdania są jednocześnie **fałszywe**, robisz to samo, ale szukasz wierszy, w których wszystkie podane zdania mają 0. W tym zadaniu takiego wiersza nie ma — nigdzie obie fioletowe kolumny nie mają naraz 0.
+</Ramka>
+
+## Prawa logiki, które warto znać
+
+Niektóre tautologie przydają się tak często, że mają własne nazwy.
+
+<Rozbior t="\neg\neg p \Leftrightarrow p" czytamy="nieprawda, że nieprawda, że $p$ — wtedy i tylko wtedy, gdy $p$. Nazwa: <b>prawo podwójnego przeczenia</b>." czesci={[
+  { t: '\\neg\\neg p', o: 'podwójne zaprzeczenie. Po ludzku: „Nieprawda, że nie zdałem” = „Zdałem”.' },
+]} />
+
+<Rozbior t="p \Leftrightarrow p" czesci={[
+  { t: 'p \\Leftrightarrow p', o: 'każde zdanie jest równoważne samemu sobie. Na zajęciach nazywane <b>prawem równoważności</b>. Oczywiste — ale formalnie to też tautologia.' },
+]} />
+
+### Prawa de Morgana
+
+To najważniejsze prawa tego modułu. Mówią, **jak zaprzeczyć** zdaniu z „i” albo z „lub”.
+
+<Rozbior t="\neg(p \lor q) \Leftrightarrow (\neg p \land \neg q)" czytamy="nieprawda, że ($p$ lub $q$) wtedy i tylko wtedy, gdy nieprawda, że $p$, i nieprawda, że $q$" czesci={[
+  { t: '\\neg(p \\lor q)', o: '„Nieprawda, że (pada deszcz lub wieje wiatr)”' },
+  { t: '\\neg p \\land \\neg q', o: '„Nieprawda, że pada deszcz, <b>i</b> nieprawda, że wieje wiatr” — po ludzku: nie pada i nie wieje' },
+]} />
+
+<Rozbior t="\neg(p \land q) \Leftrightarrow (\neg p \lor \neg q)" czytamy="nieprawda, że ($p$ i $q$) wtedy i tylko wtedy, gdy nieprawda, że $p$, lub nieprawda, że $q$" czesci={[
+  { t: '\\neg(p \\land q)', o: '„Nieprawda, że (mam kartę i znam PIN)”' },
+  { t: '\\neg p \\lor \\neg q', o: '„Nieprawda, że mam kartę, <b>lub</b> nieprawda, że znam PIN” (a może jedno i drugie)' },
+]} />
+
+<Ramka kind="skad">
+Dlaczego przy zaprzeczaniu „lub” zamienia się w „i”? Alternatywa jest fałszywa **tylko wtedy, gdy oba zdania są fałszywe**. Powiedzieć „nieprawda, że ($p$ lub $q$)” to więc powiedzieć „oba są fałszywe”, czyli „nieprawda, że $p$, **i** nieprawda, że $q$”.
+
+Koniunkcja jest fałszywa, gdy **choć jedno** zdanie zawiedzie — dlatego „nieprawda, że ($p$ i $q$)” to „nieprawda, że $p$, **lub** nieprawda, że $q$”.
+
+Każde prawo da się sprawdzić tabelą. Policz kolumnę, a potem ją odkryj:
+
+<TabelaPrawdy odslaniaj zmienne={['p', 'q']} kolumny={[
+  { id: 'a', t: 'p \\lor q', op: 'or', a: 'p', b: 'q' },
+  { id: 'L', t: '\\neg(p \\lor q)', op: 'not', a: 'a' },
+  { id: 'np', t: '\\neg p', op: 'not', a: 'p' },
+  { id: 'nq', t: '\\neg q', op: 'not', a: 'q' },
+  { id: 'R', t: '\\neg p \\land \\neg q', op: 'and', a: 'np', b: 'nq' },
+  { t: '\\neg(p \\lor q) \\Leftrightarrow (\\neg p \\land \\neg q)', op: 'eq', a: 'L', b: 'R', typ: 'wynik' },
+]}>
+kolumna 2 i kolumna 5 są identyczne w każdym wierszu. Dlatego ich równoważność (ostatnia kolumna) to same jedynki — tautologia.
+</TabelaPrawdy>
+</Ramka>
+
+<Ramka kind="pulapka">
+Negacja **nie rozkłada się** na nawias jak mnożenie. $\neg(p \lor q)$ to **nie** jest $\neg p \lor \neg q$. Przy zaprzeczaniu trzeba zrobić dwie rzeczy: zanegować każde zdanie **i** zamienić spójnik ($\lor \leftrightarrow \land$). Najczęstszy błąd na kolokwium to zrobienie tylko pierwszej.
+</Ramka>
+
+### Trzy prawa spoza slajdów, które oszczędzają czas
+
+Te prawa możesz sprawdzić tabelą tak samo jak de Morgana.
+
+- $(p \Rightarrow q) \Leftrightarrow (\neg p \lor q)$ — implikację zawsze da się zapisać jako alternatywę. Z tego korzysta formuła z Excela `=LUB(NIE(A1);B1)`.
+- $(p \Rightarrow q) \Leftrightarrow (\neg q \Rightarrow \neg p)$ — **prawo kontrapozycji**. Czytamy: „jeżeli nieprawda, że $q$, to nieprawda, że $p$”. „Jeśli pada, to ulica jest mokra” znaczy to samo, co „jeśli ulica nie jest mokra, to nie pada”.
+- $\neg(p \Rightarrow q) \Leftrightarrow (p \land \neg q)$ — **zaprzeczenie implikacji**. Implikacja jest fałszywa tylko przy $1 \Rightarrow 0$, czyli gdy $p$ zachodzi, a $q$ nie. „Nieprawda, że jeśli dostaniesz 5, to stawiam pizzę” znaczy: „dostałeś 5 i nieprawda, że stawiam pizzę”. Przyda się przy zaprzeczaniu zdań z kwantyfikatorami.
+
+<Ramka kind="granica" tytul="antyprzykład">
+Kontrapozycja to **nie to samo** co odwrócenie implikacji. Zdanie $(p \Rightarrow q) \Leftrightarrow (q \Rightarrow p)$ **nie jest** tautologią — dla $p = 0$, $q = 1$ lewa strona jest prawdziwa ($0 \Rightarrow 1$), a prawa fałszywa ($1 \Rightarrow 0$). Wolno odwrócić strzałkę tylko razem z zaprzeczeniem obu stron.
+</Ramka>
 
 ## Funkcja zdaniowa — zdanie z dziurą
 
@@ -548,8 +676,6 @@ Takie wyrażenie to **funkcja zdaniowa**. Zapisujemy ją jako $P(x)$ — „$P$ 
 
 <Ramka kind="intuicja">
 Funkcja zdaniowa to jak formularz z pustym polem: „Student ______ zdał egzamin”. Dopóki pole jest puste, zdanie nie jest ani prawdziwe, ani fałszywe. Wpisz konkretne nazwisko — i już da się to sprawdzić.
-
-W Excelu to formuła `=A1>3`: jej wynik zależy od tego, co jest w komórce A1.
 </Ramka>
 
 Funkcję zdaniową można zamienić w zdanie logiczne na dwa sposoby:
@@ -557,7 +683,9 @@ Funkcję zdaniową można zamienić w zdanie logiczne na dwa sposoby:
 1. **wstawić konkretną wartość** zmiennej (jak wyżej: $x = 5$),
 2. **powiedzieć, dla ilu wartości** ma zachodzić — „dla każdego $x$” albo „istnieje $x$”. Do tego służą **kwantyfikatory**.
 
-## Kwantyfikatory ∀ i ∃
+## Kwantyfikatory ∀ i ∃ — jak je czytać
+
+<a id="polecenie-kwantyfikatory" class="k-anchor"></a>
 
 <div class="k-symbole">
   <Znak t="\forall" nazwa="Kwantyfikator ogólny" czytamy="dla każdego…" znaczy="Warunek ma być spełniony przez <b>wszystkie</b> elementy, bez wyjątku." pamiec="odwrócone A — od angielskiego <i>All</i> (wszystkie)." />
@@ -565,15 +693,13 @@ Funkcję zdaniową można zamienić w zdanie logiczne na dwa sposoby:
   <Znak t="\exists!" nazwa="Kwantyfikator „dokładnie jeden”" czytamy="istnieje dokładnie jeden…" znaczy="Warunek spełnia jeden element — nie zero i nie dwa. Używany rzadko, w zadaniach z zajęć praktycznie się nie pojawia." />
 </div>
 
-### Jak to się zapisuje
-
 Zdanie „dla każdej liczby rzeczywistej $x$ zachodzi $x^2 \geq 0$” spotkasz w jednym z dwóch zapisów. Oba znaczą to samo:
 
 $$
 \forall_{x \in \mathbb{R}}\ \ x^2 \geq 0 \qquad\qquad \forall x \in \mathbb{R}:\ x^2 \geq 0
 $$
 
-<Rozbior t="\forall_{x \in \mathbb{R}}\ \ x^2 \geq 0" czytamy="dla każdego $x$ należącego do zbioru liczb rzeczywistych, $x$ do kwadratu jest większe lub równe zero" czesci={[
+<Rozbior t="\forall_{x \in \mathbb{R}}\ \ x^2 \geq 0" czytamy="dla każdej liczby rzeczywistej $x$: $x$ do kwadratu jest większe lub równe zero" czesci={[
   { t: '\\forall', o: '„dla każdego”' },
   { t: 'x \\in \\mathbb{R}', o: '„$x$ należące do $\\mathbb{R}$” — skąd bierzemy $x$. Znak $\\in$ czytamy „należy do”.' },
   { t: 'x^2 \\geq 0', o: 'warunek, czyli funkcja zdaniowa, która ma być spełniona' },
@@ -584,15 +710,40 @@ $$
 - $\mathbb{Z}$ — **liczby całkowite**: $\ldots, -2, -1, 0, 1, 2, \ldots$ (naturalne plus ujemne)
 - $\mathbb{R}$ — **liczby rzeczywiste**: wszystkie liczby z osi liczbowej, także ułamki, $\sqrt{2}$ czy $\pi$
 - $x \in A$ — „$x$ należy do zbioru $A$”; $x \notin A$ — „$x$ nie należy do $A$”
-
-Więcej o zbiorach będzie w module 2.
 </Ramka>
 
 <Ramka kind="botak">
-Czy zero jest liczbą naturalną? **Zależy od umowy.** W części książek $\mathbb{N}$ zaczyna się od 1, w części od 0. W tym kursie (i w rozwiązaniach zadań z zajęć) przyjmujemy, że $0 \in \mathbb{N}$. Jeśli prowadzący przyjmuje inaczej, liczy się jego wersja — a jedno zadanie niżej pokazuje, że od tej umowy potrafi zależeć wynik.
+Czy zero jest liczbą naturalną? **Zależy od umowy.** W części książek $\mathbb{N}$ zaczyna się od 1, w części od 0. W tym kursie (i w rozwiązaniach zadań z zajęć) przyjmujemy, że $0 \in \mathbb{N}$. Jeśli prowadzący przyjmuje inaczej, liczy się jego wersja.
 </Ramka>
 
-### Jak sprawdzić, czy zdanie z kwantyfikatorem jest prawdziwe
+<Ramka kind="polecenie">
+„Zapisz słownie zdanie …” (często razem z „… i określ jego wartość logiczną”).
+
+1. Czytaj od lewej do prawej.
+2. Każdy kwantyfikator czytaj razem z jego dolnym indeksem: $\forall_{x \in \mathbb{R}}$ to „dla każdej liczby rzeczywistej $x$”, a $\exists_{x \in \mathbb{N}}$ to „istnieje liczba naturalna $x$ taka, że”.
+3. Dwa kwantyfikatory tego samego rodzaju zapisane razem czytasz razem: $\exists_{m, n \in \mathbb{N}}$ to „istnieją liczby naturalne $m$ i $n$ takie, że”.
+4. Na końcu przeczytaj warunek.
+</Ramka>
+
+<Rozbior t="\forall_{x \in \mathbb{R}}\ \exists_{y \in \mathbb{R}}\ \ y > x" czytamy="dla każdej liczby rzeczywistej $x$ istnieje liczba rzeczywista $y$ taka, że $y > x$" czesci={[
+  { t: '\\forall_{x \\in \\mathbb{R}}', o: '„dla każdej liczby rzeczywistej $x$”' },
+  { t: '\\exists_{y \\in \\mathbb{R}}', o: '„istnieje liczba rzeczywista $y$ taka, że”' },
+  { t: 'y > x', o: 'warunek: „$y$ jest większe od $x$”' },
+]} />
+
+<Rozbior t="\exists_{m, n \in \mathbb{N}}\ \forall_{x \in \mathbb{R}}\ \ mn = mx" czytamy="istnieją liczby naturalne $m$ i $n$ takie, że dla każdej liczby rzeczywistej $x$ iloczyn $mn$ jest równy iloczynowi $mx$" czesci={[
+  { t: '\\exists_{m, n \\in \\mathbb{N}}', o: '„istnieją liczby naturalne $m$ i $n$ takie, że” — dwa kwantyfikatory $\\exists$ zapisane razem' },
+  { t: '\\forall_{x \\in \\mathbb{R}}', o: '„dla każdej liczby rzeczywistej $x$”' },
+  { t: 'mn = mx', o: 'warunek: równanie, w którym lewa strona to $m \\cdot n$, a prawa to $m \\cdot x$' },
+]} />
+
+## Czy zdanie z kwantyfikatorami jest prawdziwe?
+
+<Ramka kind="polecenie">
+„Określ wartość logiczną zdania …”. Sposób zależy od tego, jakie kwantyfikatory stoją na początku — niżej masz przepis dla każdego przypadku.
+</Ramka>
+
+### Jeden kwantyfikator
 
 <Ramka kind="zapamietaj">
 - **Zdanie z $\forall$** jest prawdziwe, gdy warunek spełniają **wszystkie** elementy. Żeby pokazać, że jest **fałszywe**, wystarczy **jeden kontrprzykład**.
@@ -600,19 +751,193 @@ Czy zero jest liczbą naturalną? **Zależy od umowy.** W części książek $\m
 </Ramka>
 
 <Ramka kind="intuicja">
-„**Każdy** w grupie ma legitymację” — wystarczy znaleźć jedną osobę bez legitymacji i zdanie upada.
-
-„**Ktoś** w grupie ma ładowarkę” — wystarczy jedna osoba z ładowarką i zdanie jest prawdziwe.
+„**Każdy** w grupie ma legitymację” — wystarczy znaleźć jedną osobę bez legitymacji i zdanie upada. „**Ktoś** w grupie ma ładowarkę” — wystarczy jedna osoba z ładowarką i zdanie jest prawdziwe.
 </Ramka>
-
-Przykłady:
 
 - $\forall_{x \in \mathbb{R}}\ x^2 \geq 0$ — **prawda**. Kwadrat liczby nigdy nie jest ujemny.
 - $\forall_{x \in \mathbb{R}}\ x^2 > 0$ — **fałsz**. Kontrprzykład: $x = 0$, bo $0^2 = 0$, a nie $> 0$.
 - $\exists_{x \in \mathbb{R}}\ x^2 = 4$ — **prawda**. Przykład: $x = 2$.
 - $\exists_{x \in \mathbb{R}}\ x^2 = -1$ — **fałsz**. Żaden kwadrat liczby rzeczywistej nie jest ujemny.
 
-## Negowanie zdań z kwantyfikatorami
+### Dwa kwantyfikatory: liczy się kolejność
+
+Kwantyfikatory **tego samego rodzaju** można zamieniać miejscami: „dla każdego $x$ i dla każdego $y$” znaczy to samo, co „dla każdego $y$ i dla każdego $x$”. Kwantyfikatorów **różnego rodzaju** zamieniać nie wolno — zmienia się sens zdania.
+
+<Ramka kind="intuicja">
+- „**Każdy** człowiek ma **jakąś** matkę” — prawda: każdy swoją.
+- „**Istnieje jedna** matka **wszystkich** ludzi” — fałsz.
+
+Te same słowa, inna kolejność — zupełnie inne zdanie. W pierwszym matkę dobieramy do konkretnego człowieka. W drugim musi to być jedna i ta sama osoba dla wszystkich.
+</Ramka>
+
+Jak to sprawdzać w zadaniu? Zależy od tego, co stoi pierwsze:
+
+<div class="k-dwa">
+<div>
+
+**Najpierw $\forall$, potem $\exists$**
+
+$$
+\forall_{x}\ \exists_{y}\ \ldots
+$$
+
+„Do **każdego** $x$ da się dobrać **jakieś** $y$.”
+
+1. Weź dowolne $x$.
+2. Poszukaj $y$, które do niego pasuje. Wolno, żeby $y$ zależało od $x$ — np. $y = x + 1$.
+3. Umiesz podać taki przepis na $y$ — zdanie jest **prawdziwe**. Istnieje $x$, do którego nie pasuje żadne $y$ — **fałszywe** (podaj to $x$).
+
+</div>
+<div>
+
+**Najpierw $\exists$, potem $\forall$**
+
+$$
+\exists_{y}\ \forall_{x}\ \ldots
+$$
+
+„Istnieje **jedno** $y$, które działa dla **wszystkich** $x$ naraz.”
+
+1. Wybierz jedną konkretną liczbę $y$ — bez $x$ w środku. Najczęściej warto sprawdzić 0 albo 1.
+2. Sprawdź, czy z tym $y$ warunek zachodzi dla każdego $x$.
+3. Tak — zdanie jest **prawdziwe**. Każde $y$ da się „zepsuć” jakimś $x$ — **fałszywe**.
+
+</div>
+</div>
+
+<Ramka kind="pulapka">
+Cała różnica w jednym zdaniu: przy $\forall_x \exists_y$ liczba $y$ może się zmieniać razem z $x$, a przy $\exists_y \forall_x$ — nie. Musi być jedna i ta sama dla wszystkich $x$.
+</Ramka>
+
+<Rozwiazanie tytul="Przykład 1: czy ∀x∈ℝ ∃y∈ℝ  y > x jest prawdziwe?">
+<Krok tytul="Przeczytaj zdanie">
+„Dla każdej liczby rzeczywistej $x$ istnieje liczba rzeczywista $y$ taka, że $y > x$.” Czyli: do każdej liczby da się znaleźć większą.
+</Krok>
+
+<Krok tytul="Rozpoznaj typ">
+Najpierw $\forall$, potem $\exists$. Do każdego $x$ szukamy pasującego $y$ — i $y$ może zależeć od $x$.
+</Krok>
+
+<Krok tytul="Znajdź przepis na y">
+Weźmy $y = x + 1$. Na przykład: $x = 5 \to y = 6$, $x = -3 \to y = -2$.
+</Krok>
+
+<Krok tytul="Sprawdź przepis dla każdego x">
+Wstawiamy $y = x + 1$ do warunku $y > x$ i dostajemy $x + 1 > x$. Dodanie 1 zawsze daje liczbę większą, więc nierówność zachodzi dla każdego $x$.
+
+<Dlaczego>
+Sprawdzamy przepis ogólnie, a nie tylko dla kilku liczb, bo $\forall$ wymaga, żeby działało dla **każdego** $x$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wniosek">
+Zdanie jest **prawdziwe**.
+</Krok>
+</Rozwiazanie>
+
+<Rozwiazanie tytul="Przykład 2: czy ∃y∈ℝ ∀x∈ℝ  y > x jest prawdziwe?">
+<Krok tytul="Przeczytaj zdanie">
+„Istnieje liczba rzeczywista $y$ taka, że dla każdej liczby rzeczywistej $x$: $y > x$.” Czyli: istnieje liczba większa od wszystkich liczb.
+</Krok>
+
+<Krok tytul="Rozpoznaj typ">
+Najpierw $\exists$, potem $\forall$. Musimy wskazać **jedno konkretne** $y$, a potem ono musi być większe od każdego $x$.
+</Krok>
+
+<Krok tytul="Spróbuj kilku kandydatów">
+$y = 1000$? Nie działa, bo $x = 1001$ jest większe. $y = 1\,000\,000$? Psuje je $x = 1\,000\,001$.
+</Krok>
+
+<Krok tytul="Pokaż, że każde y da się zepsuć">
+Jakie $y$ nie wybierzesz, weź $x = y + 1$. Wtedy $y > y + 1$ jest fałszem. Żadne $y$ nie działa dla wszystkich $x$.
+</Krok>
+
+<Krok tytul="Wniosek">
+Zdanie jest **fałszywe**.
+
+<Dlaczego>
+W przykładzie 1 dobieraliśmy $y$ do każdego $x$ osobno. Tutaj $y$ musi być ustalone z góry — i to robi różnicę.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="podobny" tytul="jeszcze trzy zdania">
+- $\forall_{x \in \mathbb{R}}\ \exists_{y \in \mathbb{R}}\ x + y = 0$ — **prawda**: do każdego $x$ bierzemy $y = -x$, bo $x + (-x) = 0$.
+- $\exists_{y \in \mathbb{R}}\ \forall_{x \in \mathbb{R}}\ x + y = 0$ — **fałsz**: jedno $y$ musiałoby pasować do wszystkich $x$. Weź np. $y = 0$: dla $x = 1$ wychodzi $1 \neq 0$. Jakie $y$ nie weźmiesz, $x = 1 - y$ da $x + y = 1$.
+- $\forall_{x \in \mathbb{R}}\ \exists_{y \in \mathbb{R}}\ x \cdot y = 1$ — **fałsz**, choć zaczyna się od $\forall \exists$: dla $x = 0$ każde $y$ daje $0 \cdot y = 0$, a nie 1. Jeden taki $x$ wystarczy.
+</Ramka>
+
+<Ramka kind="kiedy" tytul="szukanie liczby 0 albo 1">
+Gdy na początku stoi $\exists$, a za nim $\forall$, potrzebujesz liczby, przy której zmienna z $\forall$ **przestaje mieć znaczenie**. Najczęściej to:
+
+- **0 przy mnożeniu** — bo $0 \cdot x = 0$ dla każdego $x$,
+- **0 przy dodawaniu** — bo $x + 0 = x$ dla każdego $x$,
+- **1 przy mnożeniu** — bo $1 \cdot x = x$ dla każdego $x$.
+
+Przykład: $\exists_{a \in \mathbb{R}}\ \forall_{x \in \mathbb{R}}\ a \cdot x = 0$ jest prawdziwe — wystarczy $a = 0$.
+</Ramka>
+
+<Rozwiazanie tytul="Czy zdanie ∃m,n∈ℕ ∀x∈ℝ  mn = mx jest prawdziwe?" zrodlo="Zad. 1, str. 19–20, przykład h)">
+<div slot="tresc">
+
+Zapisz słownie i określ wartość logiczną zdania
+
+$$
+\exists_{m, n \in \mathbb{N}}\ \forall_{x \in \mathbb{R}}\ \ mn = mx
+$$
+
+</div>
+
+<Krok tytul="Przeczytaj zdanie i nazwij jego części">
+„Istnieją liczby naturalne $m$ i $n$ takie, że dla każdej liczby rzeczywistej $x$ iloczyn $mn$ jest równy iloczynowi $mx$.”
+
+Warunek to **równanie**. Lewa strona: $m \cdot n$. Prawa strona: $m \cdot x$.
+</Krok>
+
+<Krok tytul="Rozpoznaj typ">
+Najpierw $\exists$, potem $\forall$. Szukamy więc konkretnych liczb $m$ i $n$ (bez $x$), przy których równanie jest prawdziwe **dla każdego** $x$.
+</Krok>
+
+<Krok tytul="Zobacz, która strona zależy od x">
+Lewa strona $m \cdot n$ nie ma w sobie $x$. Gdy wybierzemy $m$ i $n$, jest jedną stałą liczbą. Prawa strona $m \cdot x$ zmienia się razem z $x$ — np. dla $m = 2$: przy $x = 1$ daje 2, przy $x = 5$ daje 10.
+
+<Dlaczego>
+Stała liczba nie może być równa czemuś, co ciągle się zmienia. Musimy więc tak dobrać $m$, żeby prawa strona przestała zależeć od $x$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wybierz m, przy którym x przestaje mieć znaczenie">
+W prawej stronie $x$ jest mnożone przez $m$. Przy mnożeniu zmienna przestaje mieć znaczenie, gdy mnożymy przez 0 (ramka „Kiedy tego użyć” wyżej). Bierzemy $m = 0$. Liczbę $n$ wybieramy dowolnie, np. $n = 0$.
+
+<Dlaczego>
+$n$ występuje tylko po lewej stronie, a ta przy $m = 0$ i tak wyjdzie 0. Dlatego wartość $n$ nie ma tu znaczenia.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdź równanie: policz każdą stronę osobno">
+Lewa strona: $m \cdot n = 0 \cdot 0 = 0$.
+
+Prawa strona: $m \cdot x = 0 \cdot x = 0$ — dla każdego $x$, bo zero razy dowolna liczba daje zero.
+
+Obie strony są równe: $0 = 0$.
+
+<Dlaczego>
+Równanie jest prawdziwe wtedy, gdy lewa i prawa strona mają tę samą wartość. Dlatego zawsze sprawdzamy je tak samo: liczymy lewą stronę, liczymy prawą stronę i porównujemy wyniki.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wniosek">
+Znaleźliśmy $m = 0$ i $n = 0$, przy których równanie zachodzi dla wszystkich $x$. Zdanie jest **prawdziwe**.
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="granica" tytul="co, gdyby ℕ zaczynało się od 1?">
+Wtedy $m = 0$ jest niedozwolone, a dla $m \geq 1$ prawa strona $m \cdot x$ zawsze zmienia się razem z $x$. Kontrprzykład dla dowolnych $m \geq 1$ i $n$: $x = n + 1$, bo wtedy $m \cdot x = mn + m \neq mn$. Zdanie byłoby **fałszywe**. Ten sam zapis, inna umowa co do $\mathbb{N}$ — inny wynik.
+</Ramka>
+
+## Zaprzeczanie zdań z kwantyfikatorami
+
+<a id="polecenie-negacja" class="k-anchor"></a>
 
 Jak zaprzeczyć zdaniu „Wszyscy zdali”? Bardzo częsta odpowiedź brzmi „Nikt nie zdał” — i jest **błędna**. Żeby „wszyscy zdali” było nieprawdą, wystarczy, że **ktoś nie zdał**.
 
@@ -624,26 +949,23 @@ $$
 \neg\left(\exists_{x}\ P(x)\right) \Leftrightarrow \forall_{x}\ \neg P(x)
 $$
 
-<Rozbior t="\neg\left(\forall_{x}\ P(x)\right) \Leftrightarrow \exists_{x}\ \neg P(x)" czytamy="nieprawda, że dla każdego $x$ zachodzi $P(x)$ — wtedy i tylko wtedy, gdy istnieje $x$, dla którego nie zachodzi $P(x)$" czesci={[
+<Rozbior t="\neg\left(\forall_{x}\ P(x)\right) \Leftrightarrow \exists_{x}\ \neg P(x)" czytamy="nieprawda, że dla każdego $x$ zachodzi $P(x)$ — wtedy i tylko wtedy, gdy istnieje $x$ taki, że nieprawda, że $P(x)$" czesci={[
   { t: '\\neg(\\forall_x\\, P(x))', o: '„nieprawda, że każdy zdał”' },
   { t: '\\exists_x\\, \\neg P(x)', o: '„istnieje ktoś, kto nie zdał”' },
 ]} />
 
-<Ramka kind="zapamietaj" tytul="przepis na zaprzeczenie">
-Negację „przepychamy” przez kwantyfikatory od lewej do prawej:
+<Ramka kind="polecenie">
+„Zapisz negację (zaprzeczenie) zdania …”
 
-1. każde $\forall$ zamień na $\exists$,
-2. każde $\exists$ zamień na $\forall$,
-3. na końcu **zaneguj sam warunek**.
-
-Kwantyfikatory zostają w tej samej kolejności i z tymi samymi zbiorami ($x \in \mathbb{R}$ itd.) — zmienia się tylko ich rodzaj.
+1. Każde $\forall$ zamień na $\exists$, a każde $\exists$ na $\forall$.
+2. Kolejność kwantyfikatorów i zbiory ($x \in \mathbb{R}$ itd.) zostają bez zmian.
+3. Zaprzecz warunek: $=$ na $\neq$, $<$ na $\geq$, $>$ na $\leq$ (tabela niżej).
+4. Jeśli warunek jest złożony, zaprzecz go prawami logiki: $\land$ zamienia się w $\lor$ i odwrotnie (de Morgan), a $p \Rightarrow q$ zamienia się w $p \land \neg q$.
 </Ramka>
 
 <Kwantyfikatory />
 
 ### Jak zaprzeczać warunki
-
-Ostatni krok przepisu to zanegowanie warunku. Przy nierównościach łatwo o błąd:
 
 | warunek | zaprzeczenie | po ludzku |
 |---|---|---|
@@ -657,6 +979,25 @@ Ostatni krok przepisu to zanegowanie warunku. Przy nierównościach łatwo o bł
 Zaprzeczeniem $x < 3$ **nie jest** $x > 3$. Zapomnielibyśmy o $x = 3$: dla trójki nie zachodzi ani $3 < 3$, ani $3 > 3$. Poprawne zaprzeczenie to $x \geq 3$.
 </Ramka>
 
+### Przykłady krok po kroku
+
+<Rozbior t="\forall_{x \in \mathbb{R}}\ \ x^2 \geq 0" czytamy="zaprzeczenie: $\exists_{x \in \mathbb{R}}\ x^2 < 0$" czesci={[
+  { t: '\\forall \\;\\to\\; \\exists', o: 'zamieniamy kwantyfikator' },
+  { t: '\\geq \\;\\to\\; <', o: 'zaprzeczamy warunek' },
+  { t: '\\exists_{x \\in \\mathbb{R}}\\ x^2 < 0', o: '<b>wynik</b>: „istnieje liczba rzeczywista, której kwadrat jest ujemny”. Zdanie wyjściowe było prawdziwe, więc zaprzeczenie jest fałszywe.' },
+]} />
+
+<Rozbior t="\forall_{x \in \mathbb{R}}\ \exists_{y \in \mathbb{R}}\ \ y > x" czytamy="zaprzeczenie: $\exists_{x \in \mathbb{R}}\ \forall_{y \in \mathbb{R}}\ y \leq x$" czesci={[
+  { t: '\\forall_x \\exists_y \\;\\to\\; \\exists_x \\forall_y', o: 'oba kwantyfikatory zmieniają rodzaj, ale <b>kolejność zostaje</b>: najpierw $x$, potem $y$' },
+  { t: '> \\;\\to\\; \\leq', o: 'zaprzeczamy warunek' },
+]} />
+
+<Rozbior t="\exists_{x \in \mathbb{R}}\ (x > 2 \land x < 5)" czytamy="zaprzeczenie: $\forall_{x \in \mathbb{R}}\ (x \leq 2 \lor x \geq 5)$" czesci={[
+  { t: '\\exists \\;\\to\\; \\forall', o: 'zamieniamy kwantyfikator' },
+  { t: '\\land \\;\\to\\; \\lor', o: 'warunek to koniunkcja, więc prawo de Morgana zamienia ją w alternatywę' },
+  { t: '> 2 \\;\\to\\; \\leq 2,\\ \\ < 5 \\;\\to\\; \\geq 5', o: 'każdą nierówność zaprzeczamy osobno' },
+]} />
+
 <Rozwiazanie tytul="Zaneguj zdanie ∃m,n∈ℕ ∀x∈ℝ  mn = mx" zrodlo="Zad. 3, str. 20, przykład h)">
 <div slot="tresc">
 
@@ -669,10 +1010,10 @@ $$
 </div>
 
 <Krok tytul="Przeczytaj zdanie na głos">
-„Istnieją liczby naturalne $m$ i $n$ takie, że dla każdej liczby rzeczywistej $x$ zachodzi $m \cdot n = m \cdot x$.”
+„Istnieją liczby naturalne $m$ i $n$ takie, że dla każdej liczby rzeczywistej $x$: $m \cdot n = m \cdot x$.”
 
 <Dlaczego>
-Zapis $\exists_{m, n \in \mathbb{N}}$ to skrót od dwóch kwantyfikatorów tego samego typu: „istnieje $m$” i „istnieje $n$”. Piszemy je razem, bo mają ten sam rodzaj i ten sam zbiór.
+Zapis $\exists_{m, n \in \mathbb{N}}$ to skrót od dwóch kwantyfikatorów tego samego typu: „istnieje $m$” i „istnieje $n$”. Oba zmienią się w $\forall$.
 </Dlaczego>
 </Krok>
 
@@ -680,7 +1021,7 @@ Zapis $\exists_{m, n \in \mathbb{N}}$ to skrót od dwóch kwantyfikatorów tego 
 $\exists_{m, n \in \mathbb{N}}$ zamienia się w $\forall_{m, n \in \mathbb{N}}$, a $\forall_{x \in \mathbb{R}}$ w $\exists_{x \in \mathbb{R}}$. Kolejność i zbiory zostają bez zmian.
 </Krok>
 
-<Krok tytul="Zaneguj warunek">
+<Krok tytul="Zaprzecz warunek">
 Zaprzeczeniem $mn = mx$ jest $mn \neq mx$. Cały wynik:
 
 $$
@@ -689,76 +1030,27 @@ $$
 
 Czytamy: „dla każdych liczb naturalnych $m$, $n$ istnieje liczba rzeczywista $x$, dla której $mn \neq mx$”.
 </Krok>
-</Rozwiazanie>
 
-## Kolejność kwantyfikatorów ma znaczenie
-
-- Kwantyfikatory **tego samego rodzaju** można zamieniać miejscami. „Dla każdego $x$ i dla każdego $y$” znaczy to samo, co „dla każdego $y$ i dla każdego $x$”.
-- Kwantyfikatorów **różnego rodzaju** zamieniać nie wolno — zmienia się sens zdania.
-
-<Ramka kind="intuicja">
-Porównaj dwa zdania:
-
-- $\forall$ człowieka $\exists$ matka — „każdy człowiek ma **jakąś** matkę”. Prawda: każdy swoją.
-- $\exists$ matka $\forall$ człowieka — „istnieje **jedna** matka wszystkich ludzi”. Fałsz.
-
-Te same słowa, inna kolejność — zupełnie inne zdanie. W pierwszym matkę dobieramy do konkretnego człowieka. W drugim musimy ją wskazać z góry, zanim zobaczymy ludzi.
-</Ramka>
-
-To samo na liczbach:
-
-- $\forall_{x \in \mathbb{R}}\ \exists_{y \in \mathbb{R}}\ \ y > x$ — **prawda**. Do każdej liczby znajdziesz większą (np. $y = x + 1$).
-- $\exists_{y \in \mathbb{R}}\ \forall_{x \in \mathbb{R}}\ \ y > x$ — **fałsz**. To by znaczyło, że istnieje największa liczba, większa od wszystkich. A takiej nie ma — dla dowolnego $y$ kontrprzykładem jest $x = y$.
-
-<Ramka kind="zapamietaj">
-Czytaj kwantyfikatory **od lewej do prawej** jak grę dwóch osób. Przy $\exists$ to **ty** wybierasz element. Przy $\forall$ wybiera **przeciwnik**, i to w najgorszy dla ciebie sposób. Kto wybiera później, ten widzi wybory tego, kto wybierał wcześniej.
-</Ramka>
-
-<Rozwiazanie tytul="Czy zdanie ∃m,n∈ℕ ∀x∈ℝ  mn = mx jest prawdziwe?" zrodlo="Zad. 1, str. 19–20, przykład h)">
-<Krok tytul="Ustal, kto co wybiera">
-Najpierw jest $\exists_{m, n}$ — więc **my** wybieramy $m$ i $n$. Potem jest $\forall_{x}$ — przeciwnik podaje **dowolne** $x$, a równość $mn = mx$ ma zachodzić dla każdego takiego $x$.
-</Krok>
-
-<Krok tytul="Szukaj sprytnego m i n">
-Weźmy $m = 0$ (i dowolne $n$, np. $n = 0$). Wtedy dla każdego $x$:
-
-$$
-m \cdot n = 0 \cdot n = 0 \qquad\text{oraz}\qquad m \cdot x = 0 \cdot x = 0
-$$
-
-Czyli $0 = 0$ — równość zachodzi bez względu na to, jakie $x$ poda przeciwnik.
-
-<Dlaczego>
-Przy $\exists$ wystarczy **jeden** dobry przykład. Zero „zjada” każdą liczbę w mnożeniu, więc $x$ przestaje mieć znaczenie.
-</Dlaczego>
-</Krok>
-
-<Krok tytul="Wniosek">
-Zdanie jest **prawdziwe** (przy umowie $0 \in \mathbb{N}$). A skoro tak, to jego zaprzeczenie z poprzedniego zadania jest **fałszywe** — dla $m = 0$ nie znajdziemy $x$, przy którym $0 \neq 0$.
+<Krok tytul="Jeśli trzeba: wartość zaprzeczenia">
+Zdanie wyjściowe jest prawdziwe ($m = 0$, zobacz zadanie wyżej). Zaprzeczenie prawdziwego zdania jest zawsze fałszywe — tu: dla $m = 0$ nie znajdziemy $x$, przy którym $0 \neq 0$.
 </Krok>
 </Rozwiazanie>
-
-<Ramka kind="granica" tytul="co, gdyby ℕ zaczynało się od 1?">
-Wtedy $m = 0$ jest niedozwolone, a dla $m \geq 1$ możemy podzielić obie strony przez $m$: $mn = mx$ daje $n = x$. Równość miałaby zachodzić **dla każdego** $x$, czyli każda liczba rzeczywista musiałaby być równa $n$. Kontrprzykład: $x = n + 1$. Zdanie byłoby **fałszywe**.
-
-Ten sam zapis, inna umowa co do $\mathbb{N}$ — inny wynik. Dlatego warto znać konwencję prowadzącego.
-</Ramka>
 
 ## Ściąga przed kolokwium
 
 <div class="k-sciaga">
   <div><b>Zdanie logiczne</b>Da się powiedzieć „prawda” (1) albo „fałsz” (0). Nie są nimi: rozkazy, pytania, prognozy, opinie, wyrażenia ze zmienną.</div>
-  <div><b>¬ negacja</b>Odwraca wartość. $\neg\neg p \Leftrightarrow p$.</div>
+  <div><b>¬ negacja</b>Czytamy „nieprawda, że”. Odwraca wartość. $\neg\neg p \Leftrightarrow p$.</div>
   <div><b>∧ koniunkcja „i”</b>1 tylko gdy oba = 1. Działa jak mnożenie.</div>
   <div><b>∨ alternatywa „lub”</b>0 tylko gdy oba = 0. „Lub” nie wyklucza obu naraz.</div>
-  <div><b>⇒ implikacja</b>0 tylko dla 1 ⇒ 0. Nie wolno jej odwracać.</div>
+  <div><b>⇒ implikacja</b>0 tylko dla $1 \Rightarrow 0$: z prawdy nie wynika fałsz. Nie wolno jej odwracać.</div>
   <div><b>⇔ równoważność</b>1 gdy wartości są równe. To implikacja w obie strony.</div>
   <div><b>Kolejność</b>¬, potem ∧ i ∨, na końcu ⇒ i ⇔. Mieszasz ∧ z ∨? Daj nawiasy.</div>
-  <div><b>Tautologia</b>Zawsze 1. Tabela ma $2^n$ wierszy. Jedno 0 → nie tautologia.</div>
+  <div><b>Wypełnianie tabeli</b>$2^n$ wierszy. Pierwsza kolumna: połowa zer, połowa jedynek. Każda następna: bloki o połowę krótsze. Ostatnia: 0, 1 na zmianę.</div>
+  <div><b>Tautologia</b>Same jedynki w ostatniej kolumnie. Jedno 0 — nie jest tautologią.</div>
   <div><b>De Morgan</b>$\neg(p \lor q) \Leftrightarrow \neg p \land \neg q$; $\neg(p \land q) \Leftrightarrow \neg p \lor \neg q$.</div>
-  <div><b>Kwantyfikatory</b>∀ — wszystkie (obalasz jednym kontrprzykładem). ∃ — wystarczy jeden przykład.</div>
-  <div><b>Negacja z kwantyfikatorami</b>∀ ↔ ∃, kolejność bez zmian, na końcu zaneguj warunek ($<$ ↔ $\geq$).</div>
-  <div><b>Kolejność ∀ i ∃</b>Różne rodzaje — nie zamieniaj. Ten sam rodzaj — możesz.</div>
+  <div><b>∀ i ∃</b>∀ — obalasz jednym kontrprzykładem. ∃ — wystarczy jeden przykład. $\forall_x \exists_y$: $y$ może zależeć od $x$. $\exists_y \forall_x$: jedno $y$ dla wszystkich (szukaj 0 albo 1).</div>
+  <div><b>Negacja z kwantyfikatorami</b>∀ ↔ ∃, kolejność bez zmian, na końcu zaprzecz warunek ($<$ ↔ $\geq$, $\land$ ↔ $\lor$).</div>
 </div>
 
 <Ramka kind="gdzie">
@@ -767,17 +1059,147 @@ Ten sam zapis, inna umowa co do $\mathbb{N}$ — inny wynik. Dlatego warto znać
 - **Programowanie liniowe (moduł 6):** warunki ograniczające to koniunkcja nierówności — wszystkie muszą być spełnione naraz.
 </Ramka>
 
-## Quiz — sprawdź, co zostało w głowie
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania z natychmiastową odpowiedzią, ułożone według poleceń z kolokwium. Przy każdej odpowiedzi — dobrej i złej — zobaczysz, dlaczego tak jest. Wszystko da się zrobić na telefonie.
+
+<a id="cw-oblicz" class="k-anchor"></a>
+
+### Oblicz wartość zdania
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: 'Oblicz $(p \\Rightarrow q) \\lor \\neg p$ dla $p = 1$, $q = 0$.', opcje: ['0', '1'], dobra: 0, dlaczego: 'Wstawiamy: $(1 \\Rightarrow 0) \\lor \\neg 1$. Nawias: $1 \\Rightarrow 0 = 0$ (jedyny fałszywy przypadek implikacji). Negacja: $\\neg 1 = 0$. Na końcu $0 \\lor 0 = 0$.' },
+  { q: 'Oblicz $\\neg p \\land (q \\Rightarrow r)$ dla $p = 0$, $q = 1$, $r = 0$.', opcje: ['0', '1'], dobra: 0, dlaczego: '$\\neg 0 = 1$, a nawias $1 \\Rightarrow 0 = 0$. Na końcu $1 \\land 0 = 0$ — koniunkcja potrzebuje dwóch jedynek.' },
+  { q: 'Oblicz $p \\land q \\Rightarrow r$ dla $p = 0$, $q = 1$, $r = 0$.', opcje: ['0', '1'], dobra: 1, dlaczego: 'Najpierw $\\land$ (liczymy go przed $\\Rightarrow$): $0 \\land 1 = 0$. Potem $0 \\Rightarrow 0 = 1$ — gdy założenie jest fałszywe, implikacja jest prawdziwa.' },
+  { q: 'Oblicz $\\neg(p \\lor q) \\Leftrightarrow r$ dla $p = 0$, $q = 0$, $r = 1$.', opcje: ['0', '1'], dobra: 1, dlaczego: 'Nawias: $0 \\lor 0 = 0$, negacja całego nawiasu: $\\neg 0 = 1$. Równoważność $1 \\Leftrightarrow 1 = 1$ — obie strony są takie same.' },
+  { q: 'Oblicz $p \\lor q \\Rightarrow \\neg r$ dla $p = 1$, $q = 0$, $r = 1$.', opcje: ['0', '1'], dobra: 0, dlaczego: '$p \\lor q = 1 \\lor 0 = 1$, $\\neg r = \\neg 1 = 0$. Spójnik główny to $\\Rightarrow$: $1 \\Rightarrow 0 = 0$.' },
+  { q: 'Oblicz $(p \\Leftrightarrow q) \\land (q \\lor r)$ dla $p = 1$, $q = 1$, $r = 0$.', opcje: ['0', '1'], dobra: 1, dlaczego: '$1 \\Leftrightarrow 1 = 1$ oraz $1 \\lor 0 = 1$, więc $1 \\land 1 = 1$.' },
+]} />
+
+<a id="cw-odczytaj" class="k-anchor"></a>
+
+### Odczytaj zdanie i zapisz je symbolami
+
+<Pytania licznik tag="Ćwiczenia · 9 zadań" tytul="" pytania={[
+  { q: 'Który spójnik jest główny w zdaniu $\\neg p \\lor q \\Rightarrow r$?', opcje: ['$\\neg$', '$\\lor$', '$\\Rightarrow$'], dobra: 2, dlaczego: 'Negacja dotyczy tylko $p$, potem liczymy $\\lor$, a na końcu $\\Rightarrow$. To, co liczymy na końcu, jest spójnikiem głównym. Z nawiasami: $[(\\neg p) \\lor q] \\Rightarrow r$.' },
+  { q: 'Jak wstawić nawiasy w zdaniu $p \\land q \\Rightarrow \\neg r$?', opcje: ['$p \\land (q \\Rightarrow \\neg r)$', '$(p \\land q) \\Rightarrow \\neg r$', '$\\neg(p \\land q \\Rightarrow r)$'], dobra: 1, dlaczego: 'Koniunkcję liczymy przed implikacją, więc $p \\land q$ tworzy całość po lewej stronie strzałki, a $\\neg r$ — po prawej.' },
+  { q: 'Jak przeczytać $\\neg p \\land q$?', opcje: ['„nieprawda, że ($p$ i $q$)”', '„nieprawda, że $p$, i $q$”', '„jeżeli nieprawda, że $p$, to $q$”'], dobra: 1, dlaczego: 'Negacja dotyczy tylko $p$, bo stoi tuż przy nim. Żeby zaprzeczyć całości, potrzebny jest nawias: $\\neg(p \\land q)$.' },
+  { q: 'Jak zapisać symbolami „nieprawda, że ($p$ lub $q$)”?', opcje: ['$\\neg p \\lor q$', '$\\neg(p \\lor q)$', '$\\neg p \\lor \\neg q$'], dobra: 1, dlaczego: 'Negacja ma dotyczyć całego „$p$ lub $q$”, więc stawiamy ją przed nawiasem. $\\neg p \\lor q$ to „nieprawda, że $p$, lub $q$”, a $\\neg p \\lor \\neg q$ to jeszcze inne zdanie.' },
+  { q: '$p$ = „uczę się”, $q$ = „zdam”. Jak zapisać „Jeżeli się uczę, to zdam”?', opcje: ['$q \\Rightarrow p$', '$p \\land q$', '$p \\Rightarrow q$'], dobra: 2, dlaczego: '„Jeżeli …” wskazuje poprzednik (przed strzałką), „to …” — następnik. Zapis $q \\Rightarrow p$ znaczyłby „jeżeli zdam, to się uczę” — to inne zdanie.' },
+  { q: '$p$ = „pada deszcz”, $q$ = „wieje wiatr”, $r$ = „zostaję w domu”. Jak zapisać „Jeżeli pada deszcz lub wieje wiatr, to zostaję w domu”?', opcje: ['$(p \\lor q) \\Rightarrow r$', '$p \\lor (q \\Rightarrow r)$', '$p \\lor q \\land r$'], dobra: 0, dlaczego: 'Warunkiem jest całe „pada deszcz lub wieje wiatr”, więc ta część stoi przed strzałką. Zapis bez nawiasów $p \\lor q \\Rightarrow r$ znaczy to samo, bo $\\lor$ liczymy przed $\\Rightarrow$.' },
+  { q: 'Jak przeczytać $p \\Rightarrow q \\land r$?', opcje: ['„jeżeli $p$, to ($q$ i $r$)”', '„(jeżeli $p$, to $q$) i $r$”'], dobra: 0, dlaczego: '$\\land$ liczymy przed $\\Rightarrow$, więc $q \\land r$ to jedna całość po prawej stronie strzałki.' },
+  { q: 'Spójnikiem głównym w zdaniu $(p \\Rightarrow q) \\land \\neg(q \\lor r)$ jest:', opcje: ['$\\Rightarrow$', '$\\land$', '$\\neg$', '$\\lor$'], dobra: 1, dlaczego: '$\\Rightarrow$ i $\\lor$ siedzą w nawiasach, a $\\neg$ dotyczy tylko drugiego nawiasu. Poza nawiasami zostaje $\\land$ — liczymy go na końcu.' },
+  { q: 'Jak przeczytać $\\neg p \\Rightarrow \\neg q$?', opcje: ['„nieprawda, że jeżeli $p$, to $q$”', '„jeżeli nieprawda, że $p$, to nieprawda, że $q$”', '„jeżeli $p$, to nieprawda, że $q$”'], dobra: 1, dlaczego: 'Każda negacja stoi tuż przy swojej literce, więc dotyczy tylko jej. Spójnik główny to $\\Rightarrow$. Pierwsza odpowiedź to zdanie $\\neg(p \\Rightarrow q)$.' },
+]} />
+
+<a id="cw-tautologia" class="k-anchor"></a>
+
+### Czy to tautologia?
+
+Każdą tabelę wypełniasz sam. Kolumny z literkami są już gotowe — w kolejnych wpisujesz 0 albo 1. Po „Sprawdź” zobaczysz, które pola są złe i jak je policzyć.
+
+<CwiczenieTabela tytul="Zadanie 1 · jedna literka" zmienne={['p']} kolumny={[
+  { id: 'a', t: '\\neg p', op: 'not', a: 'p' },
+  { t: 'p \\lor \\neg p', op: 'or', a: 'p', b: 'a' },
+]}>
+Sprawdź, czy zdanie $p \lor \neg p$ jest tautologią. Jedna literka, więc tabela ma $2^1 = 2$ wiersze.
+</CwiczenieTabela>
+
+<CwiczenieTabela tytul="Zadanie 2 · odwrócona implikacja" zmienne={['p', 'q']} kolumny={[
+  { id: 'a', t: 'p \\Rightarrow q', op: 'imp', a: 'p', b: 'q' },
+  { id: 'b', t: 'q \\Rightarrow p', op: 'imp', a: 'q', b: 'p' },
+  { t: '(p \\Rightarrow q) \\Rightarrow (q \\Rightarrow p)', op: 'imp', a: 'a', b: 'b' },
+]}>
+Sprawdź, czy zdanie $(p \Rightarrow q) \Rightarrow (q \Rightarrow p)$ jest tautologią.
+</CwiczenieTabela>
+
+<CwiczenieTabela tytul="Zadanie 3 · dwie literki" zmienne={['p', 'q']} kolumny={[
+  { id: 'a', t: 'p \\Rightarrow q', op: 'imp', a: 'p', b: 'q' },
+  { id: 'b', t: '(p \\Rightarrow q) \\land p', op: 'and', a: 'a', b: 'p' },
+  { t: '[(p \\Rightarrow q) \\land p] \\Rightarrow q', op: 'imp', a: 'b', b: 'q' },
+]}>
+Sprawdź, czy zdanie $[(p \Rightarrow q) \land p] \Rightarrow q$ jest tautologią.
+</CwiczenieTabela>
+
+<CwiczenieTabela tytul="Zadanie 4 · trzy literki" zmienne={['p', 'q', 'r']} kolumny={[
+  { id: 'a', t: 'p \\lor q', op: 'or', a: 'p', b: 'q' },
+  { id: 'b', t: '(p \\lor q) \\land r', op: 'and', a: 'a', b: 'r' },
+  { t: '(p \\lor q) \\land r \\Rightarrow p', op: 'imp', a: 'b', b: 'p' },
+]}>
+Sprawdź, czy zdanie $(p \lor q) \land r \Rightarrow p$ jest tautologią.
+</CwiczenieTabela>
+
+<CwiczenieTabela tytul="Zadanie 5 · trzy literki, łańcuch implikacji" zdanie="(p \Rightarrow q) \land (q \Rightarrow r) \Rightarrow (p \Rightarrow r)" zmienne={['p', 'q', 'r']} kolumny={[
+  { id: 'a', t: 'p \\Rightarrow q', op: 'imp', a: 'p', b: 'q' },
+  { id: 'b', t: 'q \\Rightarrow r', op: 'imp', a: 'q', b: 'r' },
+  { id: 'c', t: '(p \\Rightarrow q) \\land (q \\Rightarrow r)', op: 'and', a: 'a', b: 'b' },
+  { id: 'd', t: 'p \\Rightarrow r', op: 'imp', a: 'p', b: 'r' },
+  { t: '\\ldots \\Rightarrow (p \\Rightarrow r)', op: 'imp', a: 'c', b: 'd' },
+]}>
+Sprawdź, czy zdanie $(p \Rightarrow q) \land (q \Rightarrow r) \Rightarrow (p \Rightarrow r)$ jest tautologią.
+</CwiczenieTabela>
+
+<a id="cw-dla-jakich" class="k-anchor"></a>
+
+### Dla jakich wartości zdania są prawdziwe?
+
+<CwiczenieTabela tytul="Dwa zdania naraz" wniosek="brak" zmienne={['p', 'q', 'r']} kolumny={[
+  { id: 'np', t: '\\neg p', op: 'not', a: 'p' },
+  { id: 'a', t: 'p \\lor q', op: 'or', a: 'p', b: 'q', typ: 'wynik' },
+  { t: '\\neg p \\Rightarrow r', op: 'imp', a: 'np', b: 'r', typ: 'wynik' },
+]}>
+Dla jakich wartości $p$, $q$, $r$ prawdziwe są jednocześnie zdania $p \lor q$ oraz $\neg p \Rightarrow r$? Wypełnij tabelę, a potem odpowiedz na pytanie pod nią.
+</CwiczenieTabela>
+
+<Pytania tag="Odpowiedź" tytul="" pytania={[
+  { q: 'W których wierszach oba zdania ($p \\lor q$ oraz $\\neg p \\Rightarrow r$) mają wartość 1?', opcje: ['gdy $p = 1$ ($q$ i $r$ dowolne) oraz gdy $p = 0$, $q = 1$, $r = 1$', 'tylko gdy $p = q = r = 1$', 'gdy $r = 1$ ($p$ i $q$ dowolne)'], dobra: 0, dlaczego: 'Gdy $p = 1$, oba zdania są prawdziwe: $1 \\lor q = 1$, a $\\neg 1 \\Rightarrow r$, czyli $0 \\Rightarrow r$, daje 1. Gdy $p = 0$, pierwsze zdanie wymaga $q = 1$, a drugie ($1 \\Rightarrow r$) wymaga $r = 1$. Razem pięć wierszy.' },
+]} />
+
+<a id="cw-kwantyfikatory" class="k-anchor"></a>
+
+### Kwantyfikatory: przeczytaj i oceń
+
+<Pytania licznik tag="Ćwiczenia · 9 zadań" tytul="" pytania={[
+  { q: 'Jak przeczytać $\\exists_{x \\in \\mathbb{N}}\\ \\forall_{y \\in \\mathbb{N}}\\ \\ x \\leq y$?', opcje: ['„dla każdej liczby naturalnej $y$ istnieje liczba naturalna $x$ taka, że $x \\leq y$”', '„istnieje liczba naturalna $x$ taka, że dla każdej liczby naturalnej $y$: $x \\leq y$”', '„dla każdych liczb naturalnych $x$ i $y$: $x \\leq y$”'], dobra: 1, dlaczego: 'Czytamy od lewej: najpierw $\\exists_{x \\in \\mathbb{N}}$ („istnieje liczba naturalna $x$ taka, że”), potem $\\forall_{y \\in \\mathbb{N}}$, na końcu warunek. Pierwsza odpowiedź zamienia kolejność kwantyfikatorów — a to zmienia sens.' },
+  { q: 'Czy zdanie $\\exists_{x \\in \\mathbb{N}}\\ \\forall_{y \\in \\mathbb{N}}\\ \\ x \\leq y$ jest prawdziwe?', opcje: ['Prawda', 'Fałsz'], dobra: 0, dlaczego: 'Najpierw $\\exists$, więc szukamy jednej liczby $x$, która działa dla wszystkich $y$. Taką liczbą jest $x = 0$ — najmniejsza liczba naturalna, mniejsza lub równa każdej.' },
+  { q: 'Czy zdanie $\\forall_{x \\in \\mathbb{R}}\\ \\ x^2 > 0$ jest prawdziwe?', opcje: ['Prawda', 'Fałsz'], dobra: 1, dlaczego: 'Przy $\\forall$ wystarczy jeden kontrprzykład: $x = 0$, bo $0^2 = 0$, a nie $> 0$.' },
+  { q: 'Czy zdanie $\\exists_{x \\in \\mathbb{R}}\\ \\ x^2 = 9$ jest prawdziwe?', opcje: ['Prawda', 'Fałsz'], dobra: 0, dlaczego: 'Przy $\\exists$ wystarczy jeden przykład: $x = 3$ (albo $x = -3$).' },
+  { q: 'Czy zdanie $\\forall_{x \\in \\mathbb{R}}\\ \\exists_{y \\in \\mathbb{R}}\\ \\ x + y = 5$ jest prawdziwe?', opcje: ['Prawda', 'Fałsz'], dobra: 0, dlaczego: 'Najpierw $\\forall$, potem $\\exists$ — do każdego $x$ dobieramy $y$. Przepis: $y = 5 - x$. Sprawdzenie: $x + (5 - x) = 5$.' },
+  { q: 'Czy zdanie $\\exists_{y \\in \\mathbb{R}}\\ \\forall_{x \\in \\mathbb{R}}\\ \\ x + y = 5$ jest prawdziwe?', opcje: ['Prawda', 'Fałsz'], dobra: 1, dlaczego: 'Najpierw $\\exists$ — jedno $y$ musiałoby pasować do wszystkich $x$. Weź np. $y = 5$: dla $x = 0$ działa, ale dla $x = 1$ wychodzi $6 \\neq 5$. Każde $y$ da się tak zepsuć.' },
+  { q: 'Czy zdanie $\\exists_{a \\in \\mathbb{R}}\\ \\forall_{x \\in \\mathbb{R}}\\ \\ a \\cdot x = 0$ jest prawdziwe?', opcje: ['Prawda', 'Fałsz'], dobra: 0, dlaczego: 'Szukamy jednej liczby, przy której $x$ przestaje mieć znaczenie. Przy mnożeniu to 0: $0 \\cdot x = 0$ dla każdego $x$.' },
+  { q: 'Czy zdanie $\\forall_{x \\in \\mathbb{R}}\\ \\exists_{y \\in \\mathbb{R}}\\ \\ x \\cdot y = 1$ jest prawdziwe?', opcje: ['Prawda', 'Fałsz'], dobra: 1, dlaczego: 'Dla większości $x$ zadziała $y = \\frac{1}{x}$, ale nie dla $x = 0$: $0 \\cdot y = 0$ dla każdego $y$. Przy $\\forall$ jeden taki $x$ wystarczy, żeby zdanie było fałszywe.' },
+  { q: 'Czy zdanie $\\exists_{a \\in \\mathbb{R}}\\ \\forall_{x \\in \\mathbb{R}}\\ \\ a \\cdot x = x$ jest prawdziwe?', opcje: ['Prawda', 'Fałsz'], dobra: 0, dlaczego: 'Szukamy liczby, która przy mnożeniu nie zmienia $x$. To 1: $1 \\cdot x = x$ dla każdego $x$.' },
+]} />
+
+<a id="cw-negacja" class="k-anchor"></a>
+
+### Zaneguj zdanie
+
+<Pytania licznik tag="Ćwiczenia · 9 zadań" tytul="" pytania={[
+  { q: 'Zaprzeczenie zdania $\\forall_{x \\in \\mathbb{R}}\\ \\ x^2 \\geq 0$ to:', opcje: ['$\\forall_{x \\in \\mathbb{R}}\\ x^2 < 0$', '$\\exists_{x \\in \\mathbb{R}}\\ x^2 < 0$', '$\\exists_{x \\in \\mathbb{R}}\\ x^2 \\leq 0$'], dobra: 1, dlaczego: '$\\forall$ zamieniamy na $\\exists$, a $\\geq$ na $<$. Pierwsza odpowiedź zapomina zamienić kwantyfikator, trzecia źle zaprzecza nierówność (zaprzeczeniem $\\geq$ jest $<$, nie $\\leq$).' },
+  { q: 'Zaprzeczenie zdania $\\exists_{x \\in \\mathbb{N}}\\ \\ x + 3 = 7$ to:', opcje: ['$\\exists_{x \\in \\mathbb{N}}\\ x + 3 \\neq 7$', '$\\forall_{x \\in \\mathbb{N}}\\ x + 3 = 7$', '$\\forall_{x \\in \\mathbb{N}}\\ x + 3 \\neq 7$'], dobra: 2, dlaczego: '$\\exists$ zamieniamy na $\\forall$, a $=$ na $\\neq$. Pierwsza odpowiedź nie zamienia kwantyfikatora, druga nie zaprzecza warunku.' },
+  { q: 'Zaprzeczenie zdania $\\forall_{x \\in \\mathbb{R}}\\ \\exists_{y \\in \\mathbb{R}}\\ \\ y > x$ to:', opcje: ['$\\exists_{x \\in \\mathbb{R}}\\ \\forall_{y \\in \\mathbb{R}}\\ y \\leq x$', '$\\exists_{y \\in \\mathbb{R}}\\ \\forall_{x \\in \\mathbb{R}}\\ y \\leq x$', '$\\exists_{x \\in \\mathbb{R}}\\ \\forall_{y \\in \\mathbb{R}}\\ y < x$'], dobra: 0, dlaczego: 'Oba kwantyfikatory zmieniają rodzaj, ale zostają w tej samej kolejności ($x$ pierwszy, $y$ drugi). Zaprzeczeniem $>$ jest $\\leq$, nie $<$.' },
+  { q: 'Zaprzeczenie zdania $\\exists_{x \\in \\mathbb{R}}\\ \\forall_{y \\in \\mathbb{R}}\\ \\ x \\cdot y = 0$ to:', opcje: ['$\\forall_{x \\in \\mathbb{R}}\\ \\forall_{y \\in \\mathbb{R}}\\ x \\cdot y \\neq 0$', '$\\neg\\exists_{x \\in \\mathbb{R}}\\ \\forall_{y \\in \\mathbb{R}}\\ x \\cdot y \\neq 0$', '$\\forall_{x \\in \\mathbb{R}}\\ \\exists_{y \\in \\mathbb{R}}\\ x \\cdot y \\neq 0$'], dobra: 2, dlaczego: 'Zamieniamy <b>każdy</b> kwantyfikator: $\\exists$ na $\\forall$ i $\\forall$ na $\\exists$. Pierwsza odpowiedź zmienia tylko pierwszy. Druga zostawia $\\neg$ przed kwantyfikatorem i jednocześnie zaprzecza warunek — czyli neguje dwa razy.' },
+  { q: 'Zaprzeczenie zdania $\\exists_{x \\in \\mathbb{R}}\\ (x > 2 \\land x < 5)$ to:', opcje: ['$\\forall_{x \\in \\mathbb{R}}\\ (x \\leq 2 \\land x \\geq 5)$', '$\\forall_{x \\in \\mathbb{R}}\\ (x \\leq 2 \\lor x \\geq 5)$', '$\\forall_{x \\in \\mathbb{R}}\\ (x < 2 \\lor x > 5)$'], dobra: 1, dlaczego: 'Warunek to koniunkcja, więc zaprzeczamy go prawem de Morgana: $\\land$ zamienia się w $\\lor$, a każda nierówność się odwraca ($>$ na $\\leq$, $<$ na $\\geq$). Pierwsza odpowiedź zapomina zamienić $\\land$ na $\\lor$.' },
+  { q: 'Zaprzeczenie zdania $\\forall_{x \\in \\mathbb{R}}\\ (x < 0 \\lor x \\geq 1)$ to:', opcje: ['$\\exists_{x \\in \\mathbb{R}}\\ (x \\geq 0 \\land x < 1)$', '$\\exists_{x \\in \\mathbb{R}}\\ (x \\geq 0 \\lor x < 1)$', '$\\exists_{x \\in \\mathbb{R}}\\ (x > 0 \\land x < 1)$'], dobra: 0, dlaczego: '$\\forall$ na $\\exists$, $\\lor$ na $\\land$, $x < 0$ na $x \\geq 0$, $x \\geq 1$ na $x < 1$. Trzecia odpowiedź źle zaprzecza $x < 0$ (powinno być $x \\geq 0$ — z zerem).' },
+  { q: 'Zaprzeczeniem zdania „Istnieje student, który zdał wszystkie kolokwia” jest:', opcje: ['„Żaden student nie zdał żadnego kolokwium”', '„Istnieje student, który nie zdał żadnego kolokwium”', '„Każdy student ma co najmniej jedno niezdane kolokwium”'], dobra: 2, dlaczego: 'Zdanie ma budowę „$\\exists$ student $\\forall$ kolokwium: zdał”. Zaprzeczenie: „$\\forall$ student $\\exists$ kolokwium: nie zdał” — każdy ma co najmniej jedno niezdane.' },
+  { q: 'Zaprzeczenie zdania $\\exists_{m \\in \\mathbb{N}}\\ \\forall_{x \\in \\mathbb{R}}\\ \\ m \\cdot x = 0$ to:', opcje: ['$\\forall_{m \\in \\mathbb{N}}\\ \\exists_{x \\in \\mathbb{R}}\\ m \\cdot x = 0$', '$\\forall_{m \\in \\mathbb{N}}\\ \\exists_{x \\in \\mathbb{R}}\\ m \\cdot x \\neq 0$', '$\\exists_{m \\in \\mathbb{N}}\\ \\forall_{x \\in \\mathbb{R}}\\ m \\cdot x \\neq 0$'], dobra: 1, dlaczego: 'Zamieniamy oba kwantyfikatory i zaprzeczamy równość. Przy okazji: zdanie wyjściowe jest prawdziwe ($m = 0$), więc jego zaprzeczenie jest fałszywe.' },
+  { q: 'Zaprzeczenie zdania $\\forall_{x \\in \\mathbb{R}}\\ (x > 3 \\Rightarrow x^2 > 9)$ to:', opcje: ['$\\exists_{x \\in \\mathbb{R}}\\ (x \\leq 3 \\Rightarrow x^2 \\leq 9)$', '$\\exists_{x \\in \\mathbb{R}}\\ (x > 3 \\Rightarrow x^2 \\leq 9)$', '$\\exists_{x \\in \\mathbb{R}}\\ (x > 3 \\land x^2 \\leq 9)$'], dobra: 2, dlaczego: 'Zaprzeczeniem implikacji jest $p \\land \\neg q$: „poprzednik zachodzi, a następnik nie”. Tu: $x > 3$ i jednocześnie $x^2 \\leq 9$. Implikacja w odpowiedzi to typowy błąd.' },
+]} />
+
+## Quiz z teorii
 
 <Pytania licznik tytul="Logika — 10 pytań" pytania={[
   { q: 'Które z tych wyrażeń jest zdaniem logicznym?', opcje: ['„Oddaj mi notatki!”', '„$3 > 7$”', '„$x > 7$”', '„Czy zdasz kolokwium?”'], dobra: 1, dlaczego: '„$3 > 7$” jest fałszywe, ale da się to sprawdzić — więc to zdanie logiczne. Rozkaz i pytanie nimi nie są, a „$x > 7$” to funkcja zdaniowa (nie wiadomo, ile to $x$).' },
   { q: 'Jak przeczytać $p \\land q$?', opcje: ['„$p$ lub $q$”', '„$p$ i $q$”', '„jeżeli $p$, to $q$”', '„nieprawda, że $p$”'], dobra: 1, dlaczego: '$\\land$ to koniunkcja — „i”. Skojarzenie: daszek jak litera A (<i>And</i>).' },
   { q: '$p = 1$, $q = 1$. Ile wynosi $p \\lor q$?', opcje: ['0', '1'], dobra: 1, dlaczego: 'Logiczne „lub” nie wyklucza obu naraz. Jest fałszywe tylko wtedy, gdy oba zdania są fałszywe.' },
-  { q: 'Kiedy implikacja $p \\Rightarrow q$ jest fałszywa?', opcje: ['gdy $p = 0$ i $q = 1$', 'gdy $p = 1$ i $q = 0$', 'gdy $p = 0$ i $q = 0$', 'gdy $p$ i $q$ mają różne wartości'], dobra: 1, dlaczego: 'Tylko wtedy, gdy z prawdy wychodzi fałsz — „obietnica złamana”. Ostatnia odpowiedź opisuje fałszywą <b>równoważność</b>, a nie implikację.' },
-  { q: 'Ile wierszy ma tabela zero-jedynkowa dla zdania $(p \\Rightarrow q) \\land (q \\lor \\neg p) \\Rightarrow r$?', opcje: ['3', '6', '8', '16'], dobra: 2, dlaczego: 'Różne zdania proste to $p$, $q$, $r$ — czyli $n = 3$, a $2^3 = 8$. To, że $p$ i $q$ występują dwa razy, nie ma znaczenia.' },
-  { q: 'Co jest zaprzeczeniem zdania $p \\land q$?', opcje: ['$\\neg p \\land \\neg q$', '$\\neg p \\lor \\neg q$', '$p \\lor q$', '$\\neg p \\Rightarrow q$'], dobra: 1, dlaczego: 'Prawo de Morgana: negujemy oba zdania <b>i</b> zamieniamy $\\land$ na $\\lor$. „Nieprawda, że mam kartę i PIN” = „nie mam karty lub nie mam PIN-u”.' },
+  { q: 'Kiedy implikacja $p \\Rightarrow q$ jest fałszywa?', opcje: ['gdy $p = 0$ i $q = 1$', 'gdy $p = 1$ i $q = 0$', 'gdy $p = 0$ i $q = 0$', 'gdy $p$ i $q$ mają różne wartości'], dobra: 1, dlaczego: 'Tylko wtedy, gdy z prawdy wychodzi fałsz. Ostatnia odpowiedź opisuje fałszywą <b>równoważność</b>, a nie implikację.' },
+  { q: 'Ile wierszy ma tabela zero-jedynkowa dla zdania $(p \\Rightarrow q) \\land (q \\lor \\neg p) \\Rightarrow r$?', opcje: ['3', '6', '8', '16'], dobra: 2, dlaczego: 'Różne literki to $p$, $q$, $r$ — czyli $n = 3$, a $2^3 = 8$. To, że $p$ i $q$ występują dwa razy, nie ma znaczenia.' },
+  { q: 'Jak wypełnia się kolumnę $p$ w tabeli dla trzech literek $p$, $q$, $r$?', opcje: ['0 i 1 na zmianę', 'cztery zera, potem cztery jedynki', 'dwa zera, dwie jedynki — i tak na zmianę'], dobra: 1, dlaczego: 'Pierwsza kolumna: połowa zer, potem połowa jedynek. Przy 8 wierszach to 4 zera i 4 jedynki. „0 i 1 na zmianę” to ostatnia kolumna ($r$).' },
+  { q: 'Co jest zaprzeczeniem zdania $p \\land q$?', opcje: ['$\\neg p \\land \\neg q$', '$\\neg p \\lor \\neg q$', '$p \\lor q$', '$\\neg p \\Rightarrow q$'], dobra: 1, dlaczego: 'Prawo de Morgana: negujemy oba zdania <b>i</b> zamieniamy $\\land$ na $\\lor$: „nieprawda, że $p$, lub nieprawda, że $q$”.' },
   { q: 'Zdanie jest tautologią, gdy…', opcje: ['w ostatniej kolumnie tabeli jest choć jedna jedynka', 'w ostatniej kolumnie tabeli są same jedynki', 'jest prawdziwe dla $p = 1$', 'zawiera implikację'], dobra: 1, dlaczego: 'Tautologia jest prawdziwa <b>zawsze</b>, czyli w każdym wierszu tabeli.' },
   { q: 'Zaprzeczeniem zdania „Każdy student zdał” jest:', opcje: ['„Żaden student nie zdał”', '„Istnieje student, który nie zdał”', '„Istnieje student, który zdał”', '„Każdy student nie zdał”'], dobra: 1, dlaczego: '$\\neg\\forall \\Leftrightarrow \\exists\\neg$. Żeby „każdy zdał” było nieprawdą, wystarczy jedna osoba, która nie zdała.' },
-  { q: 'Jaka jest negacja warunku $x < 5$?', opcje: ['$x > 5$', '$x \\geq 5$', '$x \\leq 5$', '$x \\neq 5$'], dobra: 1, dlaczego: 'Jeśli liczba nie jest mniejsza od 5, to jest większa <b>lub równa</b> 5. Zapominając o „równa”, zgubilibyśmy $x = 5$.' },
-  { q: 'Które zdanie jest prawdziwe?', opcje: ['$\\exists_{y \\in \\mathbb{R}}\\ \\forall_{x \\in \\mathbb{R}}\\ y > x$', '$\\forall_{x \\in \\mathbb{R}}\\ \\exists_{y \\in \\mathbb{R}}\\ y > x$', '$\\forall_{x \\in \\mathbb{R}}\\ x^2 > 0$', '$\\exists_{x \\in \\mathbb{R}}\\ x^2 < 0$'], dobra: 1, dlaczego: 'Do każdej liczby $x$ znajdziemy większą, np. $y = x + 1$. Pierwsze zdanie twierdzi, że istnieje liczba największa — nie istnieje. Trzecie obala $x = 0$, a czwarte jest fałszywe, bo kwadrat nie bywa ujemny.' },
+  { q: 'Czym różni się $\\forall_x \\exists_y$ od $\\exists_y \\forall_x$?', opcje: ['niczym — kolejność kwantyfikatorów nie ma znaczenia', 'przy $\\forall_x \\exists_y$ liczba $y$ może zależeć od $x$, a przy $\\exists_y \\forall_x$ musi być jedna dla wszystkich $x$', 'przy $\\exists_y \\forall_x$ liczba $y$ może zależeć od $x$'], dobra: 1, dlaczego: 'Przy $\\forall_x \\exists_y$ dobierasz $y$ do każdego $x$ osobno. Przy $\\exists_y \\forall_x$ wybierasz jedno $y$ z góry i ono musi działać dla wszystkich $x$. Kwantyfikatorów różnego rodzaju nie wolno zamieniać miejscami.' },
 ]} />

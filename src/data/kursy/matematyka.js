@@ -1,5 +1,6 @@
 // Kurs „Matematyka” (UEP, 1. rok) — opis kursu i lista modułów.
 // status: 'live' = strona istnieje w src/pages/matematyka/<slug>.mdx i jest linkowana; 'soon' = kafelek „wkrótce”.
+// cwiczenia: id kotwicy sekcji „Ćwiczenia przed kolokwium” w module (link na stronie kursu i w nagłówku modułu).
 // Kolejność = kolejność tematów na zajęciach (Temat 1 … Temat 13).
 import { SLOWNICZEK } from './matematyka-slowniczek.js';
 
@@ -17,7 +18,7 @@ export const COURSE = {
 };
 
 export const MODULES = [
-  { nr: 1, slug: 'logika', title: 'Logika', short: 'Zdania, spójniki, tabelki zero-jedynkowe, tautologie i kwantyfikatory.', status: 'live', minutes: 45 },
+  { nr: 1, slug: 'logika', title: 'Logika', short: 'Zdania, spójniki, tabelki zero-jedynkowe, tautologie i kwantyfikatory.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
   { nr: 2, slug: 'zbiory', title: 'Zbiory', short: 'Działania na zbiorach, przedziały, iloczyn kartezjański, zasada włączeń i wyłączeń.', status: 'soon' },
   { nr: 3, slug: 'relacje', title: 'Relacje', short: 'Macierz i graf relacji, własności, złożenie, relacje preferencji i dominacja.', status: 'soon' },
   { nr: 4, slug: 'macierze', title: 'Macierze', short: 'Mnożenie, wyznacznik, rząd i macierz odwrotna — kiedy działa, a kiedy nie.', status: 'soon' },

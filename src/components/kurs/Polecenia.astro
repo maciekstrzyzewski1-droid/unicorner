@@ -1,0 +1,24 @@
+---
+// Mapa poleceń z kolokwium: jak brzmi polecenie → co robisz w skrócie → link do przepisu i do ćwiczeń.
+// Kotwice (id) stawiaj w treści modułu: <a id="…" class="k-anchor"></a> tuż przed sekcją z przepisem / ćwiczeniami.
+import { texInline } from '../../lib/tex.js';
+interface P { polecenie: string; jak: string; przepis: string; cwiczenia?: string; zrodlo?: string }
+interface Props { items: P[] }
+const { items } = Astro.props;
+---
+<ol class="k-pol">
+  {items.map((p, i) => (
+    <li class="k-pol-i">
+      <span class="k-pol-n">{i + 1}</span>
+      <div class="k-pol-b">
+        <div class="k-pol-q" set:html={`„${texInline(p.polecenie)}”`} />
+        <p class="k-pol-jak" set:html={texInline(p.jak)} />
+        <div class="k-pol-l">
+          <a href={`#${p.przepis}`}>Przepis i przykłady ↓</a>
+          {p.cwiczenia && <a href={`#${p.cwiczenia}`}>Ćwiczenia ↓</a>}
+          {p.zrodlo && <span>{p.zrodlo}</span>}
+        </div>
+      </div>
+    </li>
+  ))}
+</ol>

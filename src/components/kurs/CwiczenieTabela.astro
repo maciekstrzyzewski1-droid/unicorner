@@ -1,0 +1,145 @@
+---
+// Ćwiczenie „wypełnij tabelę sam”: kolumny z literkami są gotowe, resztę uczeń stuka (· → 0 → 1).
+// „Sprawdź” koloruje komórki i przy błędach pisze, jak policzyć daną komórkę (lib/logika.js → dlaczego()).
+// Kolumny muszą mieć postać { id?, t, op, a, b?, typ? } — wtedy wyjaśnienia powstają automatycznie.
+// wniosek: 'tautologia' = pod tabelą pytanie „Czy to tautologia?”; 'brak' = bez pytania (dołóż własne <Pytania>).
+import { tex, texInline } from '../../lib/tex.js';
+import { licz, dlaczego } from '../../lib/logika.js';
+import Pytania from './Pytania.astro';
+interface Col { id?: string; t: string; op: string; a: string; b?: string; typ?: 'pomoc' | 'wynik' }
+interface Props { tytul: string; zmienne: string[]; kolumny: Col[]; wniosek?: 'tautologia' | 'brak'; zrodlo?: string; zdanie?: string }
+// zdanie: pełny LaTeX badanego zdania (gdy nagłówek ostatniej kolumny jest skrócony, np. „\ldots \Rightarrow r”).
+const { tytul, zmienne, kolumny, wniosek = 'tautologia', zrodlo, zdanie } = Astro.props;
+for (const c of kolumny) if (!c.op) throw new Error(`CwiczenieTabela „${tytul}”: każda kolumna potrzebuje „op”`);
+const rows = licz(zmienne, kolumny);
+const last = kolumny.length - 1;
+const typ = (i: number) => kolumny[i].typ ?? (i === last && wniosek === 'tautologia' ? 'wynik' : 'pomoc');
+const zero = rows.find((r) => r.wyniki[last] === 0);
+const gdzie = (r) => zmienne.map((z) => `${z} = ${r.v[z]}`).join(',\\ ');
+const pyt = wniosek === 'tautologia'
+  ? [{
+      q: `Czy zdanie $${zdanie ?? kolumny[last].t}$ jest tautologią?`,
+      opcje: ['Tak, to tautologia', 'Nie, to nie jest tautologia'],
+      dobra: zero ? 1 : 0,
+      dlaczego: zero
+        ? `W ostatniej kolumnie jest 0 (np. w wierszu $${gdzie(zero)}$). Wystarczy jedno zero, żeby zdanie nie było tautologią.`
+        : 'W ostatniej kolumnie są same jedynki — zdanie jest prawdziwe w każdym wierszu, więc to tautologia.',
+    }]
+  : [];
+const numery = kolumny.length >= 3;
+---
+<section class={`k-ct ${numery ? 'k-tp-num' : ''}`} data-ct>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Wypełnij tabelę</span>
+    <h3 class="k-pyt-h">{tytul}</h3>
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </div>
+  <div class="k-ct-tresc"><slot /></div>
+  <p class="k-ct-how" data-js-only hidden>Stuknij w pole, żeby wpisać wartość (każde stuknięcie: · → 0 → 1). Na komputerze możesz też wpisywać 0 i 1 z klawiatury. Kiedy skończysz, kliknij „Sprawdź”.</p>
+  {numery && (
+    <ol class="k-leg" aria-hidden="true">
+      {kolumny.map((c, i) => <li><span class="k-nr">{i + 1}</span><span set:html={tex(c.t)} /></li>)}
+    </ol>
+  )}
+  <div class="k-tp k-ct-tab">
+    <div class="k-tp-scroll">
+      <table>
+        <thead>
+          <tr>
+            {zmienne.map((z) => <th class="k-tp-var" set:html={tex(z)} />)}
+            {kolumny.map((c, i) => (
+              <th class={`k-tp-${typ(i)}`}>
+                <span class="k-th-full" set:html={tex(c.t)} />
+                {numery && <span class="k-nr k-th-nr">{i + 1}</span>}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, ri) => (
+            <tr>
+              {zmienne.map((z) => <td class={`k-tp-var v${r.v[z]}`}>{r.v[z]}</td>)}
+              {r.wyniki.map((w, ci) => (
+                <td class={`k-tp-${typ(ci)}`}>
+                  <button type="button" class="k-ct-c" data-ok={w} data-r={ri} data-c={ci} aria-label={`wiersz ${ri + 1}, kolumna ${ci + 1}`}>·</button>
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="k-ct-ctl" data-js-only hidden>
+    <button type="button" class="k-btn" data-check>Sprawdź</button>
+    <button type="button" class="k-btn k-btn-ghost" data-show>Pokaż odpowiedzi</button>
+    <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
+  </div>
+  <div class="k-ct-wynik" hidden aria-live="polite">
+    <p class="k-ct-sum" data-sum></p>
+    <ul class="k-ct-bledy" data-bledy></ul>
+  </div>
+  <ul hidden data-expl>
+    {rows.map((r, ri) => kolumny.map((_, ci) => <li data-cell={`${ri}-${ci}`} set:html={dlaczego(zmienne, kolumny, r, ci)} />))}
+  </ul>
+  {pyt.length > 0 && <Pytania pytania={pyt} tag="Wniosek" tytul="" />}
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ct]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-ct]') === box) el.hidden = false; });
+    const cells = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-ct-c'));
+    const at = (r: number, c: number) => cells.find((b) => Number(b.dataset.r) === r && Number(b.dataset.c) === c);
+    const wynik = box.querySelector<HTMLElement>('.k-ct-wynik')!;
+    const sum = box.querySelector<HTMLElement>('[data-sum]')!;
+    const bledy = box.querySelector<HTMLElement>('[data-bledy]')!;
+    const set = (b: HTMLButtonElement, v: string) => {
+      b.dataset.v = v;
+      b.textContent = v === '' ? '·' : v;
+      b.classList.remove('is-good', 'is-bad', 'is-empty', 'is-shown');
+    };
+    cells.forEach((b) => {
+      b.addEventListener('click', () => { const v = b.dataset.v ?? ''; set(b, v === '' ? '0' : v === '0' ? '1' : ''); });
+      b.addEventListener('keydown', (e) => {
+        const r = Number(b.dataset.r), c = Number(b.dataset.c);
+        const go = (nr: number, nc: number) => { const t = at(nr, nc); if (t) { e.preventDefault(); t.focus(); } };
+        if (e.key === '0' || e.key === '1') { e.preventDefault(); set(b, e.key); at(r + 1, c)?.focus(); }
+        else if (e.key === 'Backspace' || e.key === 'Delete') { e.preventDefault(); set(b, ''); }
+        else if (e.key === 'ArrowDown') go(r + 1, c);
+        else if (e.key === 'ArrowUp') go(r - 1, c);
+        else if (e.key === 'ArrowRight') go(r, c + 1);
+        else if (e.key === 'ArrowLeft') go(r, c - 1);
+      });
+    });
+    box.querySelector('[data-check]')!.addEventListener('click', () => {
+      let good = 0, empty = 0;
+      const wrong: HTMLButtonElement[] = [];
+      cells.forEach((b) => {
+        const v = b.dataset.v ?? '';
+        b.classList.remove('is-good', 'is-bad', 'is-empty');
+        if (v === '') { empty++; b.classList.add('is-empty'); }
+        else if (v === b.dataset.ok) { good++; b.classList.add('is-good'); }
+        else { wrong.push(b); b.classList.add('is-bad'); }
+      });
+      bledy.innerHTML = '';
+      if (!wrong.length && !empty) sum.innerHTML = '<b class="k-ct-ok">Wszystko dobrze!</b> Każda komórka się zgadza. Odpowiedz jeszcze na pytanie pod tabelą.';
+      else {
+        sum.innerHTML = `Dobrze: <b>${good}</b> · Źle: <b>${wrong.length}</b> · Puste: <b>${empty}</b>` +
+          (wrong.length ? ' — tak policzysz pola oznaczone na różowo:' : ' — uzupełnij puste pola (szare) i sprawdź jeszcze raz.');
+        wrong.slice(0, 5).forEach((b) => {
+          const src = box.querySelector(`[data-expl] [data-cell="${b.dataset.r}-${b.dataset.c}"]`);
+          if (src) { const li = document.createElement('li'); li.innerHTML = src.innerHTML; bledy.appendChild(li); }
+        });
+        if (wrong.length > 5) { const li = document.createElement('li'); li.textContent = `…i jeszcze ${wrong.length - 5}. Popraw te powyżej i sprawdź ponownie.`; bledy.appendChild(li); }
+      }
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-show]')!.addEventListener('click', () => {
+      cells.forEach((b) => { set(b, b.dataset.ok!); b.classList.add('is-shown'); });
+      sum.innerHTML = 'Tak wygląda wypełniona tabela. Spróbuj policzyć ją jeszcze raz sam — „Wyczyść” zeruje pola.';
+      bledy.innerHTML = '';
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-clear]')!.addEventListener('click', () => { cells.forEach((b) => set(b, '')); wynik.hidden = true; });
+  });
+</script>

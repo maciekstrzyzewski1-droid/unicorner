@@ -1,10 +1,12 @@
 ---
-// Tabela zero-jedynkowa liczona przy buildzie: wartości wylicza funkcja `f`, więc w tabeli nie ma literówek.
-// Wiersze idą jak liczenie w systemie dwójkowym (000, 001, 010, …) — tak samo jak na zajęciach.
-// `odslaniaj` = kolumny wyników odkrywa się po jednej (budowanie tabeli krok po kroku).
+// Tabela zero-jedynkowa liczona przy buildzie (lib/logika.js), więc w tabeli nie ma literówek.
+// Kolumna: { t, f } albo { id?, t, op, a, b? } (patrz lib/logika.js). typ: 'pomoc' | 'wynik'.
+// `odslaniaj` = kolumny wyników są na start ukryte i odkrywa się je po jednej (samosprawdzenie).
+// Przy 3+ kolumnach na telefonie nagłówki zamieniają się w numery, a pełne wzory są w legendzie nad tabelą.
 import { tex } from '../../lib/tex.js';
+import { licz } from '../../lib/logika.js';
 type V = Record<string, number>;
-interface Col { t: string; f: (v: V) => unknown; typ?: 'pomoc' | 'wynik' }
+interface Col { id?: string; t: string; f?: (v: V) => unknown; op?: string; a?: string; b?: string; typ?: 'pomoc' | 'wynik' }
 interface Props {
   zmienne: string[];
   kolumny: Col[];
@@ -13,21 +15,26 @@ interface Props {
   odslaniaj?: boolean;
 }
 const { zmienne, kolumny, zaznacz, zaznaczOpis, odslaniaj = false } = Astro.props;
-const n = zmienne.length;
-const rows = Array.from({ length: 2 ** n }, (_, k) => {
-  const v: V = {};
-  zmienne.forEach((z, i) => (v[z] = (k >> (n - 1 - i)) & 1));
-  const wyniki = kolumny.map((c) => (c.f(v) ? 1 : 0));
-  return { v, wyniki, mark: zaznacz ? !!zaznacz(v, wyniki) : false };
-});
+const rows = licz(zmienne, kolumny).map((r) => ({ ...r, mark: zaznacz ? !!zaznacz(r.v, r.wyniki) : false }));
+const numery = kolumny.length >= 3;
 ---
-<figure class="k-tp" data-tp={odslaniaj ? '' : undefined}>
+<figure class={`k-tp ${numery ? 'k-tp-num' : ''}`} data-tp={odslaniaj ? '' : undefined}>
+  {numery && (
+    <ol class="k-leg" aria-hidden="true">
+      {kolumny.map((c, i) => <li><span class="k-nr">{i + 1}</span><span set:html={tex(c.t)} /></li>)}
+    </ol>
+  )}
   <div class="k-tp-scroll">
     <table>
       <thead>
         <tr>
           {zmienne.map((z) => <th class="k-tp-var" set:html={tex(z)} />)}
-          {kolumny.map((c, i) => <th class={`k-tp-${c.typ ?? 'pomoc'}`} data-col={i} set:html={tex(c.t)} />)}
+          {kolumny.map((c, i) => (
+            <th class={`k-tp-${c.typ ?? 'pomoc'}`} data-col={i}>
+              <span class="k-th-full" set:html={tex(c.t)} />
+              {numery && <span class="k-nr k-th-nr">{i + 1}</span>}
+            </th>
+          ))}
         </tr>
       </thead>
       <tbody>
@@ -42,11 +49,12 @@ const rows = Array.from({ length: 2 ** n }, (_, k) => {
   </div>
   {odslaniaj && (
     <div class="k-tp-ctl" data-js-only hidden>
-      <button type="button" class="k-btn" data-next>Wypełnij następną kolumnę</button>
-      <button type="button" class="k-btn k-btn-ghost" data-all>Wypełnij całą tabelę</button>
+      <button type="button" class="k-btn" data-next>Odkryj następną kolumnę</button>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Odkryj całą tabelę</button>
     </div>
   )}
   <figcaption>
+    {odslaniaj && <span class="k-tp-tip" data-js-only hidden>Policz kolumnę w głowie albo na kartce, a potem ją odkryj i sprawdź się. </span>}
     <span class="k-lbl">Jak czytać tę tabelę:</span> <slot />
     {zaznaczOpis && <span class="k-tp-legend"><i></i>{zaznaczOpis}</span>}
   </figcaption>
@@ -57,13 +65,14 @@ const rows = Array.from({ length: 2 ** n }, (_, k) => {
     const cols = new Set(Array.from(box.querySelectorAll<HTMLElement>('thead [data-col]')).map((c) => Number(c.dataset.col)));
     const total = cols.size;
     if (!total) return;
-    box.querySelectorAll<HTMLElement>(':scope > [data-js-only]').forEach((el) => (el.hidden = false));
+    box.querySelectorAll<HTMLElement>(':scope [data-js-only]').forEach((el) => { if (el.closest('[data-tp]') === box) el.hidden = false; });
     const ctl = box.querySelector<HTMLElement>(':scope > .k-tp-ctl')!;
     let shown = 0;
     const render = () => {
       box.querySelectorAll<HTMLElement>('tbody [data-col]').forEach((td) => td.classList.toggle('k-tp-hid', Number(td.dataset.col) >= shown));
       box.querySelectorAll<HTMLElement>('tbody tr.k-tp-mark').forEach((tr) => tr.classList.toggle('k-tp-mark-off', shown < total));
       if (shown >= total) ctl.hidden = true;
+      else ctl.querySelector('[data-next]')!.textContent = `Odkryj kolumnę ${shown + 1} z ${total}`;
     };
     ctl.querySelector('[data-next]')!.addEventListener('click', () => { shown++; render(); });
     ctl.querySelector('[data-all]')!.addEventListener('click', () => { shown = total; render(); });

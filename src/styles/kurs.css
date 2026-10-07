@@ -306,3 +306,84 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
 /* podpowiedź przewijania szerokich tabel */
 .k-tp-scroll.k-scrollable,.k-tab.k-scrollable{position:relative;}
 .k-tp-scroll.k-scrollable::before,.k-tab.k-scrollable::before{content:"↔ przesuń tabelę w bok";position:sticky;left:0;display:block;padding:5px 10px;font-family:var(--mono);font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(255,216,74,.06);border-bottom:1px solid var(--line);}
+
+/* --- ramki: polecenie na kolokwium, kiedy tego użyć --- */
+.k-polecenie{--c:#7aa2ff;--bg:rgba(122,162,255,.07);}
+.k-kiedy{--c:#b6f36b;--bg:rgba(182,243,107,.05);}
+.k-polecenie .k-ramka-body blockquote,.k-pol-q{font-family:var(--disp);font-weight:600;color:#fff;}
+.k-anchor{display:block;position:relative;top:-96px;visibility:hidden;height:0;}
+
+/* --- mapa poleceń --- */
+.k-pol{list-style:none!important;margin:1.2em 0 1.6em!important;padding:0!important;display:grid;gap:8px;}
+.k-pol-i{display:grid;grid-template-columns:34px 1fr;gap:12px;max-width:none!important;margin:0!important;padding:12px 14px!important;border:1px solid var(--line2);background:var(--ink2);}
+.k-pol-n{width:28px;height:28px;display:grid;place-items:center;font-family:var(--mono);font-weight:800;font-size:.86rem;color:#0b0918;background:#7aa2ff;}
+.k-pol-b{min-width:0;}
+.k-pol-q{font-size:1rem;line-height:1.45;margin:0 0 4px;}
+.k-pol-jak{font-size:.9rem;line-height:1.55;color:#d6d2ea;margin:0 0 8px!important;}
+.k-pol-l{display:flex;flex-wrap:wrap;gap:6px 14px;font-family:var(--mono);font-size:.76rem;letter-spacing:.4px;}
+.k-pol-l a{color:#9fe9ff;text-decoration:none;border-bottom:1px solid rgba(39,232,255,.35);}
+.k-pol-l a:hover{border-bottom-color:var(--cyan);}
+.k-pol-l span{color:var(--muted2);}
+
+/* --- numerowane kolumny + legenda (telefon) --- */
+.k-nr{display:inline-grid;place-items:center;min-width:22px;height:22px;padding:0 5px;font-family:var(--mono);font-weight:800;font-size:.76rem;color:#0b0918;background:var(--accent);}
+.k-th-nr{display:none;}
+.k-leg{display:none;list-style:none!important;margin:0 0 8px!important;padding:0!important;}
+.k-leg li{display:flex;align-items:center;gap:10px;max-width:none!important;margin:0!important;padding:5px 0!important;font-size:.95rem;border-bottom:1px dashed var(--line);}
+.k-leg li:last-child{border-bottom:none;}
+@media(max-width:560px){
+  .k-tp-num .k-th-full{display:none;}
+  .k-tp-num .k-th-nr{display:inline-grid;}
+  .k-tp-num .k-leg{display:block;}
+}
+.k-tp-tip{color:var(--gold);}
+
+/* --- ćwiczenie: wypełnij tabelę --- */
+.k-ct{margin:1.8em 0 2em;border:1px solid var(--line2);background:rgba(13,12,19,.9);padding:16px 18px 12px;}
+.k-ct-tag{background:#7aa2ff!important;}
+.k-ct-tresc>p{margin:0 0 .7em;}
+.k-ct-how{font-size:.86rem;color:var(--muted);margin:0 0 10px!important;}
+.k-ct-tab{margin:0 0 10px;}
+.k-ct-tab td:not(.k-tp-var){padding:3px 4px;}
+.k-ct-c{width:100%;min-width:40px;height:38px;font-family:var(--mono);font-weight:800;font-size:1.05rem;color:var(--text);background:rgba(255,255,255,.04);border:1px dashed var(--line2);cursor:pointer;transition:background .15s,border-color .15s;}
+.k-ct-c:hover{border-color:var(--accent);}
+.k-ct-c:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+.k-ct-c[data-v="1"]{color:var(--cyan);border-style:solid;}
+.k-ct-c[data-v="0"]{color:#c9c3e6;border-style:solid;}
+.k-ct-c.is-good{background:rgba(90,209,160,.16);border-color:var(--ok);}
+.k-ct-c.is-bad{background:rgba(255,46,151,.2);border-color:var(--magenta);color:#ffd0e6;}
+.k-ct-c.is-empty{background:rgba(255,216,74,.08);border-color:rgba(255,216,74,.5);}
+.k-ct-c.is-shown{background:rgba(167,139,250,.12);border-color:rgba(167,139,250,.5);}
+.k-ct-ctl{display:flex;flex-wrap:wrap;gap:10px;margin:4px 0 10px;}
+.k-ct-wynik{margin:0 0 6px;padding:10px 12px;border-left:2px solid var(--accent);background:rgba(167,139,250,.06);font-size:.92rem;line-height:1.6;}
+.k-ct-sum{margin:0 0 6px!important;}
+.k-ct-ok{color:var(--ok);}
+.k-ct-bledy{margin:0!important;padding-left:1.2em!important;}
+.k-ct-bledy li{margin:0 0 6px!important;max-width:none!important;}
+.k-ct .k-pyt{margin:12px 0 2px;}
+@media(max-width:560px){.k-ct{padding:14px 12px 10px;}.k-ct-c{min-width:34px;height:40px;}}
+
+/* --- tabele z literkami obok siebie (1, 2, 3 literki) --- */
+.k-uklad-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;}
+.k-uklad-t{border:1px solid var(--line2);background:var(--ink2);padding:10px 12px 8px;}
+.k-uklad-h{font-family:var(--mono);font-size:.74rem;letter-spacing:1.2px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;}
+.k-uklad-t table{border-collapse:collapse;margin:0 0 8px;font-variant-numeric:tabular-nums;}
+.k-uklad-t th,.k-uklad-t td{width:38px;padding:4px 0;text-align:center;border-bottom:1px solid var(--line);}
+.k-uklad-t th{color:#fff;border-bottom:1px solid var(--line2);}
+.k-uklad-t td{font-family:var(--mono);font-weight:700;}
+.k-uklad-t td.v1{color:var(--cyan);} .k-uklad-t td.v0{color:var(--muted2);}
+.k-uklad-t tr.k-uklad-pol td{border-top:2px solid var(--gold);}
+.k-uklad-opis{list-style:none!important;margin:0!important;padding:0!important;font-size:.8rem;line-height:1.45;color:var(--muted);}
+.k-uklad-opis li{margin:0 0 2px!important;max-width:none!important;}
+
+/* --- dwa przypadki obok siebie --- */
+.k-dwa{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:1.3em 0 1.6em;}
+.k-dwa>div{border:1px solid var(--line2);background:var(--ink2);padding:14px 16px 6px;font-size:.95rem;line-height:1.6;min-width:0;}
+.k-dwa>div>p:first-child{margin-bottom:.5em;}
+.k-dwa .katex-display{margin:.4em 0 .8em;padding:8px;}
+@media(max-width:640px){.k-dwa{grid-template-columns:1fr;}}
+
+/* --- hub: link do ćwiczeń --- */
+.k-mod-cw{display:inline-block;margin:6px 0 0 60px;font-family:var(--mono);font-size:.76rem;color:#9fe9ff;text-decoration:none;border-bottom:1px solid rgba(39,232,255,.35);}
+@media(max-width:560px){.k-mod-cw{margin-left:46px;}}
+.k-meta a{color:#9fe9ff;text-decoration:none;}
