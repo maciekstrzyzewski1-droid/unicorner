@@ -265,6 +265,10 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
   .k-hero{padding-top:36px;}
   .k-prose{font-size:16.5px;}
   .k-prose .katex-display{padding:12px 10px;}
+  .k-prose .katex-display>.katex{font-size:1.04em;}
+  .k-prose .k-tab table{font-size:.88rem;}
+  .k-prose .k-tab th,.k-prose .k-tab td{padding:6px 7px;}
+  .k-prose .k-ramka .k-tab th,.k-prose .k-ramka .k-tab td{padding:6px 5px;}
   .k-rozw-head,.k-rozw-tresc{padding-left:14px;padding-right:14px;}
   .k-kroki{padding:6px 14px 4px!important;}
   .k-krok{padding-left:38px!important;}
@@ -308,7 +312,8 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
   .k-slow td{border:none;padding:2px 0;}.k-slow-s{grid-row:span 3;}}
 
 /* podpowiedź przewijania szerokich tabel */
-.k-tp-scroll.k-scrollable,.k-tab.k-scrollable{position:relative;}
+.k-tp-scroll.k-scrollable,.k-tab.k-scrollable,.katex-display.k-scrollable{position:relative;}
+.katex-display.k-scrollable::before{content:"↔ przesuń wzór w bok";position:sticky;left:0;display:block;margin:-4px 0 8px;font-family:var(--mono);font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);text-align:left;}
 .k-tp-scroll.k-scrollable::before,.k-tab.k-scrollable::before{content:"↔ przesuń tabelę w bok";position:sticky;left:0;display:block;padding:5px 10px;font-family:var(--mono);font-size:.68rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold);background:rgba(255,216,74,.06);border-bottom:1px solid var(--line);}
 
 /* --- ramki: polecenie na kolokwium, kiedy tego użyć --- */

@@ -298,7 +298,11 @@ W arytmetyce najpierw mnożymy, potem dodajemy: $2 + 3 \cdot 4 = 14$, a nie $20$
 Dzięki temu można pominąć część nawiasów. Te dwa zapisy znaczą dokładnie to samo:
 
 $$
-[(\neg p) \lor q] \Leftrightarrow (p \land q) \qquad\text{to samo co}\qquad \neg p \lor q \Leftrightarrow p \land q
+\begin{gathered}
+[(\neg p) \lor q] \Leftrightarrow (p \land q) \\
+\text{to samo co} \\
+\neg p \lor q \Leftrightarrow p \land q
+\end{gathered}
 $$
 
 ### Przepis: jak odczytać zdanie
@@ -383,7 +387,10 @@ Alternatywie wystarczy jedna jedynka. Spójnik główny to $\lor$, bo nawias i n
 $\neg(p \land q) \Leftrightarrow r$ dla $p = 1$, $q = 1$, $r = 0$:
 
 $$
-\neg(1 \land 1) \Leftrightarrow 0 \;\;\to\;\; \neg 1 \Leftrightarrow 0 \;\;\to\;\; 0 \Leftrightarrow 0 \;\;\to\;\; 1
+\begin{aligned}
+&\neg(1 \land 1) \Leftrightarrow 0 \;\;\to\;\; \neg 1 \Leftrightarrow 0 \\
+&\to\;\; 0 \Leftrightarrow 0 \;\;\to\;\; 1
+\end{aligned}
 $$
 
 Najpierw nawias ($1 \land 1 = 1$), potem negacja przed nawiasem ($\neg 1 = 0$), na końcu równoważność: obie strony to 0, więc wynik to 1.
@@ -944,9 +951,10 @@ Jak zaprzeczyć zdaniu „Wszyscy zdali”? Bardzo częsta odpowiedź brzmi „N
 To jest treść **praw de Morgana dla kwantyfikatorów**:
 
 $$
-\neg\left(\forall_{x}\ P(x)\right) \Leftrightarrow \exists_{x}\ \neg P(x)
-\qquad\qquad
+\begin{gathered}
+\neg\left(\forall_{x}\ P(x)\right) \Leftrightarrow \exists_{x}\ \neg P(x) \\
 \neg\left(\exists_{x}\ P(x)\right) \Leftrightarrow \forall_{x}\ \neg P(x)
+\end{gathered}
 $$
 
 <Rozbior t="\neg\left(\forall_{x}\ P(x)\right) \Leftrightarrow \exists_{x}\ \neg P(x)" czytamy="nieprawda, że dla każdego $x$ zachodzi $P(x)$ — wtedy i tylko wtedy, gdy istnieje $x$ taki, że nieprawda, że $P(x)$" czesci={[
@@ -1025,7 +1033,10 @@ $\exists_{m, n \in \mathbb{N}}$ zamienia się w $\forall_{m, n \in \mathbb{N}}$,
 Zaprzeczeniem $mn = mx$ jest $mn \neq mx$. Cały wynik:
 
 $$
-\neg\left(\exists_{m, n \in \mathbb{N}}\ \forall_{x \in \mathbb{R}}\ mn = mx\right) \;\Leftrightarrow\; \forall_{m, n \in \mathbb{N}}\ \exists_{x \in \mathbb{R}}\ \ mn \neq mx
+\begin{aligned}
+&\neg\left(\exists_{m, n \in \mathbb{N}}\ \forall_{x \in \mathbb{R}}\ mn = mx\right) \\
+&\Leftrightarrow\; \forall_{m, n \in \mathbb{N}}\ \exists_{x \in \mathbb{R}}\ \ mn \neq mx
+\end{aligned}
 $$
 
 Czytamy: „dla każdych liczb naturalnych $m$, $n$ istnieje liczba rzeczywista $x$, dla której $mn \neq mx$”.

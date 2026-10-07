@@ -382,7 +382,11 @@ $A = \{x \in \mathbb{N} : x < 5\}$, $B = \{x \in \mathbb{N} : 2 < x < 8\}$, $U =
 
 <Krok tytul="Wypisz elementy zbiorów">
 $$
-A = \{0, 1, 2, 3, 4\}, \quad B = \{3, 4, 5, 6, 7\}, \quad U = \{0, 1, 2, \ldots, 8\}
+\begin{gathered}
+A = \{0, 1, 2, 3, 4\} \\
+B = \{3, 4, 5, 6, 7\} \\
+U = \{0, 1, 2, \ldots, 8\}
+\end{gathered}
 $$
 
 <Dlaczego>
@@ -405,7 +409,10 @@ Każdy element $U$ trafia w jedno z czterech miejsc. Gdy elementy są już rozmi
 
 <Krok tytul="Odczytaj dopełnienia">
 $$
-A' = \{5, 6, 7, 8\}, \qquad B' = \{0, 1, 2, 8\}
+\begin{gathered}
+A' = \{5, 6, 7, 8\} \\
+B' = \{0, 1, 2, 8\}
+\end{gathered}
 $$
 
 <Dlaczego>
@@ -415,7 +422,10 @@ $A'$ to wszystko z $U$ poza kołem $A$: część „tylko $B$” (5, 6, 7) i to,
 
 <Krok tytul="Odczytaj sumę i część wspólną">
 $$
-A \cup B = \{0, 1, 2, 3, 4, 5, 6, 7\}, \qquad A \cap B = \{3, 4\}
+\begin{gathered}
+A \cup B = \{0, 1, 2, 3, 4, 5, 6, 7\} \\
+A \cap B = \{3, 4\}
+\end{gathered}
 $$
 
 <Dlaczego>
@@ -425,7 +435,10 @@ Suma to oba koła w całości (wszystko oprócz 8). Część wspólna to tylko �
 
 <Krok tytul="Odczytaj różnice">
 $$
-A \setminus B = \{0, 1, 2\}, \qquad B \setminus A = \{5, 6, 7\}
+\begin{gathered}
+A \setminus B = \{0, 1, 2\} \\
+B \setminus A = \{5, 6, 7\}
+\end{gathered}
 $$
 
 <Dlaczego>
@@ -456,7 +469,10 @@ Diagram Venna jest najszybszy na kolokwium. Tabela przydaje się, gdy elementów
 Prawa de Morgana z logiki działają też dla zbiorów:
 
 $$
-(A \cup B)' = A' \cap B' \qquad\qquad (A \cap B)' = A' \cup B'
+\begin{gathered}
+(A \cup B)' = A' \cap B' \\
+(A \cap B)' = A' \cup B'
+\end{gathered}
 $$
 
 Czytamy: „dopełnienie sumy to część wspólna dopełnień” i „dopełnienie części wspólnej to suma dopełnień”. Po ludzku: „nie ma go ani w $A$, ani w $B$” to to samo co „nie ma go w $A$ **i** nie ma go w $B$”.
@@ -516,7 +532,10 @@ $A = \{-2, -1, 2, 4, 8\}$, $B = \{x \in \mathbb{Z} : x \geq -3 \land x \leq 8\}$
 
 <Krok tytul="Wypisz elementy tam, gdzie się da">
 $$
-B = \{-3, -2, -1, 0, 1, \ldots, 8\}, \qquad E = \{-2, -1, 0, 1, \ldots, 7\}
+\begin{gathered}
+B = \{-3, -2, -1, 0, 1, \ldots, 8\} \\
+E = \{-2, -1, 0, 1, \ldots, 7\}
+\end{gathered}
 $$
 
 $C$ i $D$ to przedziały — zostają przedziałami.
@@ -556,7 +575,10 @@ Do obalenia zawierania wystarczy **jeden** wyrzutek — tak jak jeden kontrprzyk
 
 <Krok tytul="Zapisz wynik">
 $$
-A \subset B,\ A \subset D,\ B \subset D,\ C \subset D,\ E \subset B,\ E \subset C,\ E \subset D
+\begin{gathered}
+A \subset B,\ \ A \subset D,\ \ B \subset D,\ \ C \subset D, \\
+E \subset B,\ \ E \subset C,\ \ E \subset D
+\end{gathered}
 $$
 
 Równych zbiorów tu nie ma.
@@ -631,7 +653,11 @@ Tabelka gwarantuje, że żadna para nie zginie: każdy wiersz z każdą kolumną
 
 <Krok tytul="Zapisz A × B">
 $$
-A \times B = \{(3, -2), (3, -1), (3, 0), (4, -2), (4, -1), (4, 0), (5, -2), (5, -1), (5, 0)\}
+\begin{aligned}
+A \times B = \{&(3, -2), (3, -1), (3, 0), \\
+&(4, -2), (4, -1), (4, 0), \\
+&(5, -2), (5, -1), (5, 0)\}
+\end{aligned}
 $$
 
 Sprawdzenie: $|A| \cdot |B| = 3 \cdot 3 = 9$ par. Zgadza się.
@@ -641,7 +667,11 @@ Sprawdzenie: $|A| \cdot |B| = 3 \cdot 3 = 9$ par. Zgadza się.
 Teraz pierwszy element pary pochodzi z $B$:
 
 $$
-B \times A = \{(-2, 3), (-2, 4), (-2, 5), (-1, 3), (-1, 4), (-1, 5), (0, 3), (0, 4), (0, 5)\}
+\begin{aligned}
+B \times A = \{&(-2, 3), (-2, 4), (-2, 5), \\
+&(-1, 3), (-1, 4), (-1, 5), \\
+&(0, 3), (0, 4), (0, 5)\}
+\end{aligned}
 $$
 
 <Dlaczego>
@@ -736,7 +766,7 @@ W grupie jest 30 osób. 20 lubi pizzę, 15 lubi sushi, a 5 lubi jedno i drugie. 
 Dla trzech zbiorów (wzór ze slajdów):
 
 <Rozbior
-  t="|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|"
+  t="\begin{aligned} &|A \cup B \cup C| = \\ &\quad |A| + |B| + |C| \\ &\quad - |A \cap B| - |A \cap C| - |B \cap C| \\ &\quad + |A \cap B \cap C| \end{aligned}"
   czesci={[
     { t: '|A| + |B| + |C|', o: 'dodajemy trzy zbiory' },
     { t: '- |A \\cap B| - |A \\cap C| - |B \\cap C|', o: 'odejmujemy trzy części wspólne par' },
@@ -747,11 +777,11 @@ Dla trzech zbiorów (wzór ze slajdów):
 <Ramka kind="skad" tytul="Skąd ten „+” na końcu?">
 Sprawdźmy, ile razy wzór liczy element z każdego miejsca diagramu:
 
-| Element należy do… | dodany w $\lvert A\rvert + \lvert B\rvert + \lvert C\rvert$ | odjęty w parach | dodany na końcu | razem |
+| Element jest w… | dodany w $\lvert A\rvert$, $\lvert B\rvert$, $\lvert C\rvert$ | odjęty w parach | dodany na końcu | razem |
 |---|---|---|---|---|
-| jednego zbioru | 1 raz | 0 razy | 0 razy | **1** |
-| dokładnie dwóch | 2 razy | 1 raz | 0 razy | **1** |
-| wszystkich trzech | 3 razy | 3 razy | 1 raz | **1** |
+| 1 zbiorze | 1 raz | 0 razy | 0 razy | **1** |
+| 2 zbiorach | 2 razy | 1 raz | 0 razy | **1** |
+| 3 zbiorach | 3 razy | 3 razy | 1 raz | **1** |
 
 Bez ostatniego składnika element z trzech zbiorów zostałby dodany 3 razy i odjęty 3 razy — czyli w ogóle by go nie było. Dlatego dodajemy go z powrotem.
 </Ramka>
@@ -786,17 +816,27 @@ Każda usterka to jeden zbiór. Ciężarówka z dwiema usterkami należy do dwó
 
 <Krok tytul="Wypisz dane">
 $$
-|U| = 85, \quad |A| = 20, \quad |B| = 30, \quad |C| = 10
+\begin{gathered}
+|U| = 85, \quad |A| = 20, \\
+|B| = 30, \quad |C| = 10
+\end{gathered}
 $$
 
 $$
-|A \cap B| = 10, \quad |B \cap C| = 7, \quad |A \cap C| = 7, \quad |A \cap B \cap C| = 5
+\begin{gathered}
+|A \cap B| = 10, \quad |B \cap C| = 7, \\
+|A \cap C| = 7, \quad |A \cap B \cap C| = 5
+\end{gathered}
 $$
 </Krok>
 
 <Krok tytul="Policz ciężarówki z co najmniej jedną usterką">
 $$
-|A \cup B \cup C| = 20 + 30 + 10 - 10 - 7 - 7 + 5 = 41
+\begin{aligned}
+|A \cup B \cup C| &= 20 + 30 + 10 \\
+&\quad - 10 - 7 - 7 + 5 \\
+&= 41
+\end{aligned}
 $$
 
 <Dlaczego>
