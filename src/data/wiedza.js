@@ -31,6 +31,7 @@ export const ARTICLES = [
   { slug: 'anatomia-tlumu', topic: 'Pompy, zrzuty i płatne polecenia: jak w krypto zarabia się na naiwnych',      category: 'krypto', series: 'krypto', part: 5, seoTitle: 'Anatomia tłumu — pump and dump, shilling i oszustwa w krypto' },
   { slug: 'anatomia-zaufania', topic: 'Jak w osiem dni upadła giełda FTX i jej założyciel',   category: 'krypto', series: 'krypto', part: 6, seoTitle: 'Anatomia zaufania — jak upadła giełda FTX' },
   { slug: 'anatomia-konfliktu', topic: 'Memecoin Trumpa i pieniądze, które jego rodzina zarobiła na krypto',  category: 'krypto', series: 'krypto', part: 7, seoTitle: 'Anatomia konfliktu — memecoin Trumpa i pieniądze z krypto' },
+  { slug: 'anatomia-wartosci', topic: 'Jak czytać TVL, opłaty i przychody kryptowalut i szukać tokenów z potencjałem',  category: 'krypto', series: 'krypto', part: 8, seoTitle: 'Anatomia wartości — TVL, fees i revenue: jak analizować altcoiny' },
   { slug: 'anatomia-obietnicy', topic: 'Czy stablecoin Tether (USDT) naprawdę jest wart dolara',  category: 'krypto', seoTitle: 'Anatomia obietnicy — czy Tether (USDT) jest wart dolara?' },
 
   // --- Seria polityczna ---
