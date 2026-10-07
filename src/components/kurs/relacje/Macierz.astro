@@ -1,0 +1,63 @@
+---
+// Macierz relacji z etykietami: wiersze = pierwszy element pary (dziedzina), kolumny = drugi (przeciwdziedzina).
+// tryb: 'pokaz' (wartości widać), 'ukryj' (· zamiast wartości, wartość w data-v — odsłania skrypt rodzica),
+//       'cwicz' (komórki to przyciski do wypełniania — obsługuje CwiczenieMacierz).
+// oznacz: [{ i, j, styl }] — styl: 'kolko' (zakreślona), 'skresl' (wyzerowana w tym kroku), 'zloto', 'roz' (kontrprzykład), 'ok'.
+import { tex } from '../../../lib/tex.js';
+type El = number | string;
+interface Mark { i: number; j: number; styl: 'kolko' | 'skresl' | 'zloto' | 'roz' | 'ok' }
+interface Props {
+  w: El[]; k: El[]; m: number[][]; t?: string;
+  przekatna?: boolean; oznacz?: Mark[]; kolumny?: number[];
+  tryb?: 'pokaz' | 'ukryj' | 'cwicz'; mxid?: string;
+}
+const { w, k, m, t, przekatna = false, oznacz = [], kolumny = [], tryb = 'pokaz', mxid } = Astro.props;
+if (m.length !== w.length || m.some((r) => r.length !== k.length)) throw new Error(`Macierz ${t ?? ''}: rozmiar nie zgadza się z etykietami`);
+const styl = new Map(oznacz.map((o) => [`${o.i}-${o.j}`, o.styl]));
+const n = k.length;
+// szerokość kolumny dopasowana do najdłuższej etykiety (np. \text{FRA})
+const vis = (v: El) => String(v).replace(/\\text\{([^}]*)\}/g, '$1').replace(/[\\{}]/g, '').length;
+const cw = Math.max(2.2, 0.62 * Math.max(...k.map(vis)) + 0.7).toFixed(2);
+---
+<div class="k-mx" data-mx={mxid}>
+  {t && <div class="k-mx-t" set:html={tex(t)} />}
+  <div class="k-mx-grid" style={`--n:${n};--cw:${cw}em`}>
+    <span class="k-mx-corner"></span>
+    <div class="k-mx-ch">{k.map((c, j) => <span class={kolumny.includes(j) ? 'is-col' : ''} set:html={tex(String(c))} />)}</div>
+    <div class="k-mx-rh">{w.map((r) => <span set:html={tex(String(r))} />)}</div>
+    <div class="k-mx-vals">
+      {m.map((row, i) => row.map((v, j) => {
+        const cls = ['k-mx-c', przekatna && i === j ? 'is-diag' : '', kolumny.includes(j) ? 'is-col' : '', styl.get(`${i}-${j}`) ? `is-${styl.get(`${i}-${j}`)}` : ''].filter(Boolean).join(' ');
+        if (tryb === 'cwicz') return <span class={cls}><button type="button" class="k-ct-c k-mx-btn" data-ok={v} data-r={i} data-c={j} aria-label={`wiersz ${w[i]}, kolumna ${k[j]}`}>·</button></span>;
+        return <span class={cls} data-i={i} data-j={j} data-v={tryb === 'ukryj' ? v : undefined}>{tryb === 'ukryj' ? '·' : v}</span>;
+      }))}
+    </div>
+  </div>
+</div>
+
+<style>
+  .k-mx{display:inline-flex;flex-direction:column;align-items:flex-start;gap:4px;font-family:var(--mono);}
+  .k-mx-t{font-size:1.05rem;color:#fff;font-family:inherit;}
+  .k-mx-grid{display:grid;grid-template-columns:auto auto;grid-template-rows:auto auto;column-gap:6px;row-gap:2px;}
+  .k-mx-ch{display:grid;grid-template-columns:repeat(var(--n),var(--cw));padding:0 10px;}
+  .k-mx-ch span{text-align:center;color:var(--muted);font-size:.9rem;}
+  .k-mx-ch span.is-col{color:var(--gold);}
+  .k-mx-rh{display:grid;grid-auto-rows:2.2em;align-items:center;padding:4px 0;}
+  .k-mx-rh span{text-align:right;color:var(--muted);font-size:.9rem;}
+  .k-mx-vals{display:grid;grid-template-columns:repeat(var(--n),var(--cw));grid-auto-rows:2.2em;padding:4px 8px;
+    border-left:2px solid var(--muted);border-right:2px solid var(--muted);
+    background:
+      linear-gradient(var(--muted),var(--muted)) left top/7px 2px no-repeat,
+      linear-gradient(var(--muted),var(--muted)) right top/7px 2px no-repeat,
+      linear-gradient(var(--muted),var(--muted)) left bottom/7px 2px no-repeat,
+      linear-gradient(var(--muted),var(--muted)) right bottom/7px 2px no-repeat;}
+  .k-mx-c{display:grid;place-items:center;font-weight:800;font-size:1.02rem;color:var(--text);border-radius:3px;transition:background .15s,color .15s,box-shadow .15s;}
+  .k-mx-c.is-diag{background:rgba(167,139,250,.14);}
+  .k-mx-c.is-col{background:rgba(255,216,74,.1);}
+  .k-mx-c.is-kolko{box-shadow:inset 0 0 0 2px var(--cyan);border-radius:50%;}
+  .k-mx-c.is-skresl{color:var(--magenta);text-decoration:line-through;}
+  .k-mx-c.is-zloto{background:rgba(255,216,74,.28);color:#fff;}
+  .k-mx-c.is-roz{background:rgba(255,46,151,.3);color:#fff;}
+  .k-mx-c.is-ok{background:rgba(90,209,160,.25);color:#fff;}
+  .k-mx-btn{width:100%;height:100%;min-width:0;}
+</style>

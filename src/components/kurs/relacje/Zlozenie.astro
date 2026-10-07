@@ -1,0 +1,70 @@
+---
+// Złożenie Q∘P na macierzach (najpierw P ⊂ A×B, potem Q ⊂ B×C). Wynik startuje ukryty:
+// kliknięcie komórki wyniku odsłania ją, podświetla wiersz x w P i kolumnę z w Q oraz wspólne „przesiadki” y.
+import { tex } from '../../../lib/tex.js';
+import { zlozenie, posrednie, dlaczegoZlozenie } from '../../../lib/relacje.js';
+import Macierz from './Macierz.astro';
+type El = number | string;
+interface Props { A: El[]; B: El[]; C: El[]; mP: number[][]; mQ: number[][]; nP?: string; nQ?: string }
+const { A, B, C, mP, mQ, nP = 'P', nQ = 'Q' } = Astro.props;
+const mR = zlozenie(mP, mQ);
+const nR = `${nQ} \\circ ${nP}`;
+const opisy = A.map((_, i) => C.map((_, k) => ({ i, k, ys: posrednie(mP, mQ, i, k).join(','), html: dlaczegoZlozenie(mP, mQ, A, B, C, i, k, nP, nQ) })));
+---
+<figure class="k-fig k-zl" data-zl>
+  <div class="k-fig-box">
+    <div class="k-zl-row">
+      <Macierz w={A} k={B} m={mP} t={nP} mxid="P" />
+      <Macierz w={B} k={C} m={mQ} t={nQ} mxid="Q" />
+      <Macierz w={A} k={C} m={mR} t={nR} mxid="R" tryb="ukryj" />
+    </div>
+    <p class="k-zl-hint" data-js-only hidden>Kliknij komórkę macierzy <span set:html={tex(nR)} />, żeby ją odkryć i zobaczyć, skąd się wzięła.</p>
+    <div class="k-zl-out" aria-live="polite" data-out></div>
+    <div class="k-zl-ctl" data-js-only hidden>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Odkryj cały wynik</button>
+    </div>
+    <ul hidden data-expl>
+      {opisy.flat().map((o) => <li data-cell={`${o.i}-${o.k}`} data-ys={o.ys} set:html={`<b>Komórka</b> ${tex(`(${A[o.i]}, ${C[o.k]})`)}: ${o.html}`} />)}
+    </ul>
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-zl]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-zl]') === box) el.hidden = false; });
+    const mx = (id: string) => box.querySelector<HTMLElement>(`[data-mx="${id}"]`)!;
+    const R = mx('R'), P = mx('P'), Q = mx('Q');
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const cells = Array.from(R.querySelectorAll<HTMLElement>('.k-mx-c'));
+    const show = (c: HTMLElement) => { c.textContent = c.dataset.v!; c.classList.add('is-shown'); };
+    const clear = () => box.querySelectorAll('.k-mx-c').forEach((c) => c.classList.remove('is-zloto', 'is-ok', 'is-kolko'));
+    cells.forEach((c) => {
+      c.tabIndex = 0; c.setAttribute('role', 'button');
+      const pick = () => {
+        const i = c.dataset.i!, k = c.dataset.j!;
+        clear(); show(c); c.classList.add('is-kolko');
+        P.querySelectorAll<HTMLElement>(`.k-mx-c[data-i="${i}"]`).forEach((x) => x.classList.add('is-zloto'));
+        Q.querySelectorAll<HTMLElement>(`.k-mx-c[data-j="${k}"]`).forEach((x) => x.classList.add('is-zloto'));
+        const li = box.querySelector<HTMLElement>(`[data-expl] [data-cell="${i}-${k}"]`)!;
+        (li.dataset.ys ? li.dataset.ys.split(',') : []).forEach((y) => {
+          P.querySelector(`.k-mx-c[data-i="${i}"][data-j="${y}"]`)?.classList.add('is-ok');
+          Q.querySelector(`.k-mx-c[data-i="${y}"][data-j="${k}"]`)?.classList.add('is-ok');
+        });
+        out.innerHTML = li.innerHTML;
+      };
+      c.addEventListener('click', pick);
+      c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });
+    });
+    box.querySelector('[data-all]')!.addEventListener('click', () => { cells.forEach(show); clear(); out.innerHTML = 'Cały wynik odkryty. Kliknij dowolną komórkę, żeby zobaczyć, skąd się wzięła.'; });
+  });
+</script>
+
+<style>
+  .k-zl-row{display:flex;flex-wrap:wrap;gap:18px 26px;align-items:flex-end;}
+  .k-zl-hint{font-size:.88rem;color:var(--muted);margin:12px 0 6px!important;}
+  .k-zl-out{min-height:1.5em;font-size:.92rem;line-height:1.6;padding:8px 12px;border-left:2px solid var(--gold);background:rgba(255,216,74,.06);}
+  .k-zl-out:empty{display:none;}
+  .k-zl-ctl{margin-top:10px;}
+  .k-zl [data-mx="R"] :global(.k-mx-c){cursor:pointer;}
+</style>

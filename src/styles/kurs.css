@@ -72,6 +72,8 @@
 .k-lbl{font-family:var(--mono);font-size:.74rem;font-weight:600;letter-spacing:1.4px;text-transform:uppercase;color:var(--cyan);}
 
 /* zwykłe tabele z markdownu */
+/* kilka macierzy obok siebie (moduł Relacje) */
+.k-macierze{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-end;margin:1em 0 1.3em;max-width:100%;overflow-x:auto;padding-bottom:4px;}
 /* tabele z markdownu: rehype-tabele.mjs owija je w .k-tab (przewijanie w bok na telefonie) */
 .k-tab{overflow-x:auto;margin:1.2em 0 1.4em;}
 .k-prose .k-tab table{width:100%;border-collapse:collapse;font-size:.94rem;}

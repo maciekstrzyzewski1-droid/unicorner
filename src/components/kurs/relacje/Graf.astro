@@ -1,0 +1,73 @@
+---
+// Graf relacji. Relacja w jednym zbiorze (bez B): wierzchołki na okręgu, strzałka x → y, gdy xPy, pętelka, gdy xPx.
+// Relacja między dwoma zbiorami (z B): elementy A po lewej, B po prawej, strzałki z lewej na prawą.
+import { tex } from '../../../lib/tex.js';
+type El = number | string;
+interface Props { A: El[]; B?: El[]; m: number[][]; t?: string }
+const { A, B, m, t } = Astro.props;
+const uid = Math.random().toString(36).slice(2, 8);
+const r = 17;
+type P = { x: number; y: number };
+const unit = (a: P, b: P) => { const dx = b.x - a.x, dy = b.y - a.y, l = Math.hypot(dx, dy) || 1; return { x: dx / l, y: dy / l }; };
+const f = (v: number) => +v.toFixed(1);
+let W: number, H: number, wezA: P[], wezB: P[] = [];
+const strzalki: string[] = [], petle: string[] = [];
+if (!B) {
+  const n = A.length, cx = 160, cy = 140, R = n <= 3 ? 80 : 95;
+  W = 320; H = 280;
+  wezA = A.map((_, i) => ({ x: cx + R * Math.sin((2 * Math.PI * i) / n), y: cy - R * Math.cos((2 * Math.PI * i) / n) }));
+  m.forEach((row, i) => row.forEach((v, j) => {
+    if (!v) return;
+    const p = wezA[i];
+    if (i === j) {
+      const o = unit({ x: cx, y: cy }, p);
+      const rot = (a: number) => ({ x: o.x * Math.cos(a) - o.y * Math.sin(a), y: o.x * Math.sin(a) + o.y * Math.cos(a) });
+      const s = rot(-0.55), e = rot(0.55), c1 = rot(-0.75), c2 = rot(0.75);
+      petle.push(`M${f(p.x + s.x * r)},${f(p.y + s.y * r)} C${f(p.x + c1.x * (r + 38))},${f(p.y + c1.y * (r + 38))} ${f(p.x + c2.x * (r + 38))},${f(p.y + c2.y * (r + 38))} ${f(p.x + e.x * (r + 2))},${f(p.y + e.y * (r + 2))}`);
+      return;
+    }
+    const q = wezA[j], d = unit(p, q), nrm = { x: -d.y, y: d.x };
+    const c = { x: (p.x + q.x) / 2 + nrm.x * 16, y: (p.y + q.y) / 2 + nrm.y * 16 };
+    const s = unit(p, c), e = unit(q, c);
+    strzalki.push(`M${f(p.x + s.x * r)},${f(p.y + s.y * r)} Q${f(c.x)},${f(c.y)} ${f(q.x + e.x * (r + 2))},${f(q.y + e.y * (r + 2))}`);
+  }));
+} else {
+  const n = Math.max(A.length, B.length);
+  W = 320; H = Math.max(140, n * 54 + 30);
+  const ys = (len: number) => Array.from({ length: len }, (_, i) => H / 2 + (i - (len - 1) / 2) * 54);
+  wezA = ys(A.length).map((y) => ({ x: 60, y }));
+  wezB = ys(B.length).map((y) => ({ x: 260, y }));
+  m.forEach((row, i) => row.forEach((v, j) => {
+    if (!v) return;
+    const p = wezA[i], q = wezB[j], d = unit(p, q);
+    strzalki.push(`M${f(p.x + d.x * r)},${f(p.y + d.y * r)} L${f(q.x - d.x * (r + 2))},${f(q.y - d.y * (r + 2))}`);
+  }));
+}
+const etykieta = (v: El) => String(v).replace(/^-/, "−");
+---
+<figure class="k-fig k-graf">
+  <div class="k-fig-box">
+    {t && <div class="k-graf-t" set:html={tex(t)} />}
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Graf relacji${t ? ' ' + t : ''}`}>
+      <defs>
+        <marker id={`gr-${uid}`} viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="#ffd84a" />
+        </marker>
+      </defs>
+      {B && <text x="60" y="16" text-anchor="middle" class="k-graf-set">A</text>}
+      {B && <text x="260" y="16" text-anchor="middle" class="k-graf-set">B</text>}
+      {strzalki.map((d) => <path d={d} fill="none" stroke="#ffd84a" stroke-width="2" marker-end={`url(#gr-${uid})`} />)}
+      {petle.map((d) => <path d={d} fill="none" stroke="#ffd84a" stroke-width="2" marker-end={`url(#gr-${uid})`} />)}
+      {wezA.map((p, i) => <g><circle cx={f(p.x)} cy={f(p.y)} r={r} fill="#15131d" stroke="#27e8ff" stroke-width="2" /><text x={f(p.x)} y={f(p.y) + 5} text-anchor="middle" class="k-graf-l">{etykieta(A[i])}</text></g>)}
+      {B && wezB.map((p, i) => <g><circle cx={f(p.x)} cy={f(p.y)} r={r} fill="#15131d" stroke="#ff2e97" stroke-width="2" /><text x={f(p.x)} y={f(p.y) + 5} text-anchor="middle" class="k-graf-l">{etykieta(B[i])}</text></g>)}
+    </svg>
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten graf:</span> <slot /></figcaption>
+</figure>
+
+<style>
+  .k-graf svg{max-width:340px;}
+  .k-graf-t{font-size:1.05rem;color:#fff;margin-bottom:4px;}
+  .k-graf-l{font-family:var(--mono);font-size:15px;font-weight:800;fill:#eef0ff;}
+  .k-graf-set{font-family:var(--mono);font-size:14px;font-weight:800;font-style:italic;fill:#9b93c4;}
+</style>

@@ -36,4 +36,14 @@ export const SLOWNICZEK = [
   { t: 'A \\times B', nazwa: 'Iloczyn kartezjański', czytamy: 'A razy B', znaczy: 'Zbiór par $(x, y)$, gdzie $x \\in A$, $y \\in B$. $|A \\times B| = |A| \\cdot |B|$.', modul: 'zbiory' },
   { t: '(x, y)', nazwa: 'Para uporządkowana', czytamy: 'para x, y', znaczy: 'Dwa elementy w ustalonej kolejności: $(1, 2) \\neq (2, 1)$.', modul: 'zbiory' },
   { t: 'A^2', nazwa: 'Potęga zbioru', czytamy: 'A do kwadratu', znaczy: 'Skrót od $A \\times A$.', modul: 'zbiory' },
+  // --- Relacje ---
+  { t: 'P \\subset A \\times B', nazwa: 'Relacja', czytamy: 'P zawiera się w A razy B', znaczy: 'Zbiór wybranych par $(x, y)$, gdzie $x \\in A$, $y \\in B$.', modul: 'relacje' },
+  { t: 'xPy', nazwa: 'Bycie w relacji', czytamy: 'x jest w relacji P z y', znaczy: 'Para $(x, y)$ należy do relacji $P$. Kolejność ma znaczenie.', modul: 'relacje' },
+  { t: 'D(P),\\ D^{-1}(P)', nazwa: 'Dziedzina i przeciwdziedzina', czytamy: 'dziedzina, przeciwdziedzina relacji P', znaczy: 'Przy $P \\subset A \\times B$: dziedzina to $A$ (pierwszy element pary), przeciwdziedzina to $B$.', modul: 'relacje' },
+  { t: "P'", nazwa: 'Dopełnienie relacji', czytamy: 'dopełnienie P', znaczy: 'Pary z $A \\times B$, których nie ma w $P$. Na macierzy: 0 ↔ 1.', modul: 'relacje' },
+  { t: 'P^{-1}', nazwa: 'Relacja odwrotna', czytamy: 'P do minus pierwszej', znaczy: 'Odwrócone pary $(y, x)$. Na macierzy: wiersze ↔ kolumny.', modul: 'relacje' },
+  { t: 'Q \\circ P', nazwa: 'Złożenie relacji', czytamy: 'Q po P', znaczy: 'Najpierw $P$, potem $Q$: $x\\,(Q \\circ P)\\,z$, gdy istnieje $y$: $xPy$ i $yQz$.', modul: 'relacje' },
+  { t: 'P_E,\\ P_S', nazwa: 'Relacje preferencji', czytamy: 'pe e, pe es', znaczy: 'Dla każdego kryterium osobno: $X$ w relacji z $Y$, gdy $X$ jest nie gorszy od $Y$.', modul: 'relacje' },
+  { t: "S = (M^{-1})' \\cap M", nazwa: 'Zaostrzenie relacji', czytamy: 'S równa się dopełnienie M do minus pierwszej, część wspólna z M', znaczy: 'W $M$ zeruje przekątną i symetryczne jedynki. Jedynka w $(X, Y)$ znaczy: $X$ dominuje $Y$.', modul: 'relacje' },
+  { nazwa: 'Zbiór Pareto', znaczy: 'Warianty niezdominowane przez żaden inny — kolumny z samych zer w macierzy $S$.', modul: 'relacje' },
 ];
