@@ -439,3 +439,6 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
   .k-krok::before{width:26px;height:26px;font-size:.8rem;}
   .k-kroki{padding:8px 14px 6px!important;}
 }
+/* Rozbiór z wzorem w slocie (macierz z Mx zamiast KaTeX) */
+.k-rozbior-slot{padding:12px 0 8px;}
+.k-rozbior-slot .k-rown{margin:0;}

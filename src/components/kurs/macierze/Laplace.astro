@@ -24,7 +24,7 @@ const bloki = linie.map((l: any) => {
     return {
       t, zero: false,
       head: tex(`a_{${ij}} \\cdot (-1)^{${t.i + 1}+${t.j + 1}} \\cdot M_{${ij}} = ${t.a.tex(true)} \\cdot (${t.znak > 0 ? '+1' : '-1'}) \\cdot ${t.M.tex(true)} = ${t.wartosc.tex()}`),
-      minor: tex(`M_{${ij}} = \\det${bmatrix(t.sub)}`),
+      minorT: `M_{${ij}} = \\det`,
       rach: tex(`= ${minorRach(t.sub, t.M)}`),
       sarrus: t.sub.length === 3,
     };
@@ -59,7 +59,7 @@ const startId = `${start.typ}${start.idx}`;
               {s.zero ? <span set:html={s.html} /> : (
                 <>
                   <div class="k-lp-l" set:html={s.head} />
-                  <div class="k-lp-l k-lp-m"><span set:html={s.minor} /> <span set:html={s.rach} /></div>
+                  <div class="k-lp-l k-lp-m"><Mx m={s.t.sub} t={s.minorT} maly /> <span set:html={s.rach} /></div>
                   {s.sarrus && <div class="k-lp-note">minor 3×3 liczymy regułą Sarrusa</div>}
                 </>
               )}

@@ -2,7 +2,9 @@
 // Pytania z natychmiastową odpowiedzią: jedno („Sprawdź się” w środku tekstu) albo cały quiz z wynikiem.
 // Każde pytanie ma wyjaśnienie — także wtedy, gdy odpowiedź jest dobra (żeby nie zgadywać na ślepo).
 import { texInline } from '../../lib/tex.js';
-interface Q { q: string; opcje: string[]; dobra: number; dlaczego: string }
+import Mx from './macierze/Mx.astro';
+// mx — opcjonalne macierze pod treścią pytania (komponent Mx, jak w tekście modułu): [{ m, t }]
+interface Q { q: string; opcje: string[]; dobra: number; dlaczego: string; mx?: { m: any[][]; t?: string }[] }
 interface Props { pytania: Q[]; tytul?: string; licznik?: boolean; tag?: string }
 const { pytania, tytul = 'Sprawdź się', licznik = false, tag } = Astro.props;
 for (const p of pytania) if (p.dobra < 0 || p.dobra >= p.opcje.length) throw new Error(`Pytania: zły indeks dobrej odpowiedzi w „${p.q}”`);
@@ -13,6 +15,7 @@ for (const p of pytania) if (p.dobra < 0 || p.dobra >= p.opcje.length) throw new
     {pytania.map((p) => (
       <li class="k-pyt-item" data-dobra={p.dobra}>
         <p class="k-pyt-q" set:html={texInline(p.q)} />
+        {p.mx && <div class="k-rown k-pyt-mx">{p.mx.map((x) => <Mx m={x.m} t={x.t} maly />)}</div>}
         <div class="k-pyt-opcje" role="group">
           {p.opcje.map((o, i) => <button type="button" class="k-opt" data-i={i}><span class="k-opt-l">{String.fromCharCode(65 + i)}</span><span set:html={texInline(o)} /></button>)}
         </div>

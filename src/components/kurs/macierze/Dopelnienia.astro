@@ -3,7 +3,7 @@
 // skreśla jej wiersz i kolumnę, pokazuje minor 2×2, znak z szachownicy i gotowe D_ij w macierzy D.
 // Pod spodem: wszystkie 9 rachunków naraz (do porównania z własnym).
 import { tex } from '../../../lib/tex.js';
-import { mat, podmacierz, minor, znak, macierzDop, bmatrix } from '../../../lib/macierze.js';
+import { mat, podmacierz, minor, znak, macierzDop } from '../../../lib/macierze.js';
 import Mx from './Mx.astro';
 interface Props { A: any[][]; nA?: string }
 const { A, nA = 'A' } = Astro.props;
@@ -17,10 +17,10 @@ const karty = M.flatMap((r, i) => r.map((_, j) => {
   const zn = znak(i, j);
   const id = `${i + 1}${j + 1}`;
   const l1 = `D_{${id}} = (-1)^{${i + 1}+${j + 1}} \\cdot M_{${id}}`;
-  const l2 = `M_{${id}} = \\det${bmatrix(s)} = ${s[0][0].tex(true)} \\cdot ${s[1][1].tex(true)} - ${s[0][1].tex(true)} \\cdot ${s[1][0].tex(true)} = ${Mij.tex()}`;
+  const l2 = `= ${s[0][0].tex(true)} \\cdot ${s[1][1].tex(true)} - ${s[0][1].tex(true)} \\cdot ${s[1][0].tex(true)} = ${Mij.tex()}`;
   const l3 = `D_{${id}} = ${zn > 0 ? '(+1)' : '(-1)'} \\cdot ${Mij.tex(true)} = ${D[i][j].tex()}`;
   const slowa = `Skreślasz <b>wiersz ${i + 1}</b> i <b>kolumnę ${j + 1}</b>. Zostają cztery liczby — to macierz 2×2, a jej wyznacznik to minor ${tex(`M_{${id}}`)}. Znak bierzesz z szachownicy: ${tex(`(-1)^{${i + 1}+${j + 1}} = (-1)^{${i + j + 2}} = ${zn > 0 ? '+1' : '-1'}`)}${zn > 0 ? ' (suma numerów parzysta)' : ' (suma numerów nieparzysta)'}.`;
-  return { i, j, html: `<p>${slowa}</p>` + [l1, l2, l3].map((l) => `<div class="k-dp-l">${tex(l)}</div>`).join('') };
+  return { i, j, id, s, slowa, l1, l2, l3 };
 }));
 ---
 <figure class="k-fig k-dp" data-dp>
@@ -37,13 +37,26 @@ const karty = M.flatMap((r, i) => r.map((_, j) => {
       <button type="button" class="k-btn" data-next>Policz D₁₁</button>
       <button type="button" class="k-btn k-btn-ghost" data-all>Pokaż całą macierz D</button>
     </div>
-    <ul hidden data-expl>{karty.map((k) => <li data-cell={`${k.i}-${k.j}`} set:html={k.html} />)}</ul>
+    <ul hidden data-expl>{karty.map((k) => (
+      <li data-cell={`${k.i}-${k.j}`}>
+        <p set:html={k.slowa} />
+        <div class="k-dp-l" set:html={tex(k.l1)} />
+        <div class="k-rown k-dp-m"><Mx m={k.s} t={`M_{${k.id}} = \\det`} maly /><span set:html={tex(k.l2)} /></div>
+        <div class="k-dp-l" set:html={tex(k.l3)} />
+      </li>
+    ))}</ul>
   </div>
   <div class="k-dp-out k-live" aria-live="polite" data-out><span data-js-only hidden>Stuknij dowolną liczbę w macierzy {nA} albo kliknij „Policz D₁₁”.</span></div>
   <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
   <details class="k-dp-all">
     <summary>Wszystkie 9 dopełnień naraz</summary>
-    <div class="k-dp-grid">{karty.map((k) => <div class="k-dp-card" set:html={k.html.replace(/^<p>.*?<\/p>/, '')} />)}</div>
+    <div class="k-dp-grid">{karty.map((k) => (
+      <div class="k-dp-card">
+        <div class="k-dp-l" set:html={tex(k.l1)} />
+        <div class="k-rown k-dp-m"><Mx m={k.s} t={`M_{${k.id}} = \\det`} maly /><span set:html={tex(k.l2)} /></div>
+        <div class="k-dp-l" set:html={tex(k.l3)} />
+      </div>
+    ))}</div>
   </details>
 </figure>
 
@@ -97,6 +110,7 @@ const karty = M.flatMap((r, i) => r.map((_, j) => {
   .k-dp-out{margin-top:10px;padding:8px 12px;border-left:2px solid var(--ok);background:rgba(90,209,160,.05);font-size:.92rem;line-height:1.6;min-height:1.6em;overflow-x:auto;}
   .k-dp-out :global(p){margin:0 0 6px!important;}
   .k-dp :global(.k-dp-l){margin:2px 0;overflow-x:auto;overflow-y:hidden;}
+  .k-dp :global(.k-dp-m){margin:4px 0!important;gap:4px 8px!important;}
   .k-dp-all{margin-top:12px;}
   .k-dp-all summary{cursor:pointer;font-family:var(--mono);font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);}
   .k-dp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-top:8px;}

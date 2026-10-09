@@ -5,6 +5,7 @@
 // oznacz: [{ i, j, styl }], wiersze: [{ i, styl }], kolumny: [{ j, styl }] — style: zloto, cyan, ok, roz, kolko, fiolet, plus, minus.
 // kolory — macierz indeksów koloru tła (0–4, -1 = brak); wyblakle — kolumny dopisane (np. przy regule Sarrusa).
 // skresl: { w: [i], k: [j] } — wiersze/kolumny przekreślone (minor). et: { w: [...], k: [...] } — etykiety wierszy/kolumn (tekst).
+// Komórka może być liczbą (3, '-2/3', Q) albo dowolnym wyrażeniem LaTeX ('1 - 5', '3 \\cdot (-2)', 'a_{11}', '+').
 import { tex } from '../../../lib/tex.js';
 import { Q } from '../../../lib/macierze.js';
 type V = number | string | Q;
@@ -16,12 +17,17 @@ interface Props {
   et?: { w?: string[]; k?: string[] }; mxid?: string; maly?: boolean;
 }
 const { m, t, wym = false, kreska, oznacz = [], wiersze = [], kolumny = [], kolory, wyblakle = [], skresl = {}, et, mxid, maly = false } = Astro.props;
-const M = m.map((r) => r.map((v) => Q.of(v)));
+// liczba → Q (ułamki skracane, minus jako znak), wszystko inne → surowy LaTeX
+const LICZBA = /^\s*[-−]?\d+(\/\d+)?\s*$/;
+type C = Q | { raw: string };
+const M: C[][] = m.map((r) => r.map((v) => (v instanceof Q || typeof v === 'number' || LICZBA.test(String(v)) ? Q.of(v) : { raw: String(v) })));
+const isQ = (v: C): v is Q => v instanceof Q;
+const texKom = (v: C) => (isQ(v) ? v.tex() : v.raw).replace(/\\frac/g, '\\dfrac');
 const rows = M.length, n = M[0].length;
 if (M.some((r) => r.length !== n)) throw new Error('Mx: wiersze mają różne długości');
 if (et?.w && et.w.length !== rows) throw new Error('Mx: liczba etykiet wierszy ≠ liczba wierszy');
 if (et?.k && et.k.length !== n) throw new Error('Mx: liczba etykiet kolumn ≠ liczba kolumn');
-const ulamki = M.some((r) => r.some((v) => !v.calk));
+const ulamki = M.some((r) => r.some((v) => (isQ(v) ? !v.calk : v.raw.includes('\\frac'))));
 const cls = (i: number, j: number) => {
   const c = ['k-nm-c'];
   wiersze.filter((x) => x.i === i).forEach((x) => c.push(`is-${x.styl}`));
@@ -35,19 +41,19 @@ const cls = (i: number, j: number) => {
   return c.join(' ');
 };
 // szerokość kolumny przy etykietach: ułamek ~1.7em, liczba ~0.62em na znak
-const szer = (v: Q) => (v.calk ? 0.62 * v.txt().length + 0.9 : 1.9);
+const szer = (v: C) => (isQ(v) ? (v.calk ? 0.62 * v.txt().length + 0.9 : 1.9) : 0.5 * v.raw.replace(/\\[a-z]+|[{}_^ ]/g, '').length + 0.9);
 const cw = et ? Math.max(...M.flat().map(szer), ...(et.k ?? []).map((s) => 0.45 * s.length + 0.5)).toFixed(2) : null;
 const rhw = et?.w ? (0.45 * Math.max(...et.w.map((s) => s.length)) + 0.5).toFixed(2) : '0';
 ---
 <div class:list={['k-nm', { 'k-nm-maly': maly, 'k-nm-ul': ulamki, 'k-nm-et': !!et }]} data-mx={mxid}>
-  {t && <div class="k-nm-t" set:html={tex(t)} />}
+  {t && <div class="k-nm-t" set:html={tex(t.replace(/\\frac/g, '\\dfrac'))} />}
   <div class="k-nm-col">
     <div class="k-nm-wrap" style={`--n:${n};${cw ? `--cw:${cw}rem;--rhw:${rhw}rem;` : ''}`}>
       {et?.k && <div class="k-nm-ch">{et.k.map((s) => <span>{s}</span>)}</div>}
       <div class="k-nm-body">
         {et?.w && <div class="k-nm-rh">{et.w.map((s) => <span>{s}</span>)}</div>}
         <div class="k-nm-vals">
-          {M.map((row, i) => row.map((v, j) => <span class={cls(i, j)} data-i={i} data-j={j}><span class="k-nm-v" set:html={tex(v.tex().replace('\\frac', '\\dfrac'))} /></span>))}
+          {M.map((row, i) => row.map((v, j) => <span class={cls(i, j)} data-i={i} data-j={j}><span class="k-nm-v" set:html={tex(texKom(v))} /></span>))}
         </div>
       </div>
     </div>

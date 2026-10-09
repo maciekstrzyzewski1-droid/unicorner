@@ -36,6 +36,7 @@ import GaleriaWyznacznika from '../../components/kurs/macierze/GaleriaWyznacznik
 import CwiczenieLiczby from '../../components/kurs/macierze/CwiczenieLiczby.astro';
 import Indeksy from '../../components/kurs/macierze/Indeksy.astro';
 import Wymiary from '../../components/kurs/macierze/Wymiary.astro';
+import Tx from '../../components/kurs/macierze/Tx.astro';
 import { Q, mat, dodaj, odejmij, razyLiczba, T, mnoz, det, kratka, kratkaHtml, krok, lancuch, odwrotna, macierzDop, podmacierz, minor, znak, bmatrix, kolumnyJednostkowe, jednostkowa } from '../../lib/macierze.js';
 
 export const A1 = [[2, -1, 0], [4, 3, 5]];
@@ -144,7 +145,7 @@ export const inv2opis = (A) => (i, j) => {
 };
 export const cwD = [[1, 2, 0], [0, 1, 1], [1, 0, 2]];
 export const cwDm = macierzDop(cwD);
-export const cwDopis = (i, j) => { const s = podmacierz(cwD, i, j), m = minor(cwD, i, j), z = znak(i, j); return `$D_{${i + 1}${j + 1}}$: skreślasz wiersz ${i + 1} i kolumnę ${j + 1}. Zostaje $${bmatrix(s)}$, więc $M_{${i + 1}${j + 1}} = ${s[0][0].tex(true)} \\cdot ${s[1][1].tex(true)} - ${s[0][1].tex(true)} \\cdot ${s[1][0].tex(true)} = ${m.tex()}$. Znak $(-1)^{${i + 1}+${j + 1}} = ${z > 0 ? '+1' : '-1'}$, więc $D_{${i + 1}${j + 1}} = ${m.mul(z).tex()}$.`; };
+export const cwDopis = (i, j) => { const s = podmacierz(cwD, i, j), m = minor(cwD, i, j), z = znak(i, j); return `$D_{${i + 1}${j + 1}}$: skreślasz wiersz ${i + 1} i kolumnę ${j + 1}. Zostają dwa wiersze: $(${s[0][0].tex()},\\ ${s[0][1].tex()})$ i $(${s[1][0].tex()},\\ ${s[1][1].tex()})$, więc $M_{${i + 1}${j + 1}} = ${s[0][0].tex(true)} \\cdot ${s[1][1].tex(true)} - ${s[0][1].tex(true)} \\cdot ${s[1][0].tex(true)} = ${m.tex()}$. Znak $(-1)^{${i + 1}+${j + 1}} = ${z > 0 ? '+1' : '-1'}$, więc $D_{${i + 1}${j + 1}} = ${m.mul(z).tex()}$.`; };
 export const cwOpM = [[1, 2, -1], [2, 3, 0], [-1, 1, 4]];
 export const cwOp = krok(cwOpM, [{ t: 'dod', w: 1, z: 0, c: -2 }, { t: 'dod', w: 2, z: 0, c: 1 }]);
 export const cwOpOpis = (i, j) => {
@@ -241,7 +242,13 @@ Dwa szczególne rodzaje macierzy kwadratowych:
 <Mx m={nieDiag} oznacz={[...przek, { i: 2, j: 0, styl: 'roz' }]} />
 </div>
 
-Ta macierz **nie jest** diagonalna. Poza przekątną, w wierszu 3 i kolumnie 1, stoi 1 — a poza przekątną mają być same zera. Z kolei $\begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix}$ jest diagonalna, ale nie jest jednostkowa, bo na przekątnej stoi 2.
+Ta macierz **nie jest** diagonalna. Poza przekątną, w wierszu 3 i kolumnie 1, stoi 1 — a poza przekątną mają być same zera.
+
+<div class="k-rown">
+<Mx m={[[1, 0], [0, 2]]} oznacz={[{ i: 0, j: 0, styl: 'fiolet' }, { i: 1, j: 1, styl: 'fiolet' }]} />
+</div>
+
+Ta z kolei jest diagonalna, ale nie jest jednostkowa, bo na przekątnej stoi 2.
 </Ramka>
 
 Macierz z jednym wierszem (wymiar $1 \times n$) to **wektor wierszowy**, a z jedną kolumną ($n \times 1$) — **wektor kolumnowy**. Spotkasz je w zadaniu z zajęć o mnożeniu.
@@ -268,21 +275,35 @@ Dodajesz liczby, które stoją **w tym samym miejscu**: element z wiersza 1 i ko
 
 Zakreślone kratki to wiersz 1, kolumna 2: $2 + 0 = 2$. W wierszu 2, kolumnie 1: $3 + (-1) = 2$. Odejmowanie działa tak samo — odejmujesz liczby z tych samych miejsc:
 
-$$
-A - B = \begin{bmatrix} 1 - 5 & 2 - 0 \\ 3 - (-1) & 4 - 2 \end{bmatrix} = \begin{bmatrix} -4 & 2 \\ 4 & 2 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={[['1 - 5', '2 - 0'], ['3 - (-1)', '4 - 2']]} t="A - B =" />
+<span class="k-zn">=</span>
+<Mx m={dRoz} />
+</div>
 
 <Ramka kind="granica">
-Dodawać i odejmować można tylko macierze **o tych samych wymiarach**. $\begin{bmatrix} 1 & 2 & 3 \end{bmatrix} + \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}$ nie istnieje: pierwsza macierz ma wymiar $1 \times 3$, druga $3 \times 1$. Liczby nie mają par na tych samych miejscach.
+Dodawać i odejmować można tylko macierze **o tych samych wymiarach**. Taka suma nie istnieje:
+
+<div class="k-rown">
+<Mx m={[[1, 2, 3]]} wym />
+<span class="k-zn">+</span>
+<Mx m={[[1], [2], [3]]} wym />
+</div>
+
+Pierwsza macierz ma wymiar $1 \times 3$, druga $3 \times 1$. Liczby nie mają par na tych samych miejscach.
 </Ramka>
 
 ### Mnożenie przez liczbę
 
 Każdy element macierzy mnożysz przez tę liczbę. Działa dla macierzy o dowolnym wymiarze.
 
-$$
-3 \cdot \begin{bmatrix} 1 & -2 \\ 0 & 4 \end{bmatrix} = \begin{bmatrix} 3 \cdot 1 & 3 \cdot (-2) \\ 3 \cdot 0 & 3 \cdot 4 \end{bmatrix} = \begin{bmatrix} 3 & -6 \\ 0 & 12 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={d3x} t="3 \cdot" />
+<span class="k-zn">=</span>
+<Mx m={[['3 \\cdot 1', '3 \\cdot (-2)'], ['3 \\cdot 0', '3 \\cdot 4']]} />
+<span class="k-zn">=</span>
+<Mx m={d3} />
+</div>
 
 W poleceniach działania często się łączą, np. $2A - B$ (macierze $A$ i $B$ z przykładu o dodawaniu). Kolejność jak w liceum: najpierw mnożenie przez liczbę, potem odejmowanie.
 
@@ -307,11 +328,13 @@ każdy wiersz macierzy $A$ ma swój kolor. Kolumna $A^T$ w tym samym kolorze ma 
 </div>
 
 <Ramka kind="podobny" tytul="Transpozycja macierzy kwadratowej">
-$$
-\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}^T = \begin{bmatrix} 1 & 3 \\ 2 & 4 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={tS} t="A =" oznacz={[{ i: 0, j: 0, styl: 'fiolet' }, { i: 1, j: 1, styl: 'fiolet' }, { i: 0, j: 1, styl: 'zloto' }, { i: 1, j: 0, styl: 'zloto' }]} />
+<span class="k-zn">→</span>
+<Mx m={T(tS)} t="A^T =" oznacz={[{ i: 0, j: 0, styl: 'fiolet' }, { i: 1, j: 1, styl: 'fiolet' }, { i: 0, j: 1, styl: 'zloto' }, { i: 1, j: 0, styl: 'zloto' }]} />
+</div>
 
-Główna przekątna (1 i 4) zostaje na miejscu. Pozostałe liczby (2 i 3) zamieniają się miejscami — jakby macierz odbiła się w lustrze ustawionym wzdłuż przekątnej.
+Główna przekątna (1 i 4, fioletowe tło) zostaje na miejscu. Pozostałe liczby (2 i 3, złote) zamieniają się miejscami — jakby macierz odbiła się w lustrze ustawionym wzdłuż przekątnej.
 </Ramka>
 
 ### Mnożenie macierzy
@@ -376,7 +399,14 @@ Mówimy, że mnożenie macierzy **nie jest przemienne**.
 <Rozwiazanie tytul="Pomnóż macierz B przez A transponowaną" zrodlo="Zad. 1, str. 73, d)">
 <div slot="tresc">
 
-Dane są macierze $A = \begin{bmatrix} 1 & 7 & 3 & -2 \end{bmatrix}$ i $B = \begin{bmatrix} 3 & -2 & 1 & -1 \end{bmatrix}$. Oblicz $B \cdot A^T$.
+Dane są macierze:
+
+<div class="k-rown">
+<Mx m={zA} t="A =" />
+<Mx m={zB} t="B =" />
+</div>
+
+Oblicz $B \cdot A^T$.
 
 </div>
 
@@ -539,22 +569,26 @@ Macierz $1 \times 1$ to jedna liczba i jej wyznacznik to ta sama liczba: $\det\b
 
 Dla macierzy $2 \times 2$ liczysz dwa iloczyny po przekątnych i odejmujesz:
 
-<Rozbior t="\det\begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix} = a_{11}a_{22} - a_{12}a_{21}" czytamy="iloczyn na głównej przekątnej minus iloczyn na drugiej przekątnej" czesci={[
-  { t: 'a_{11}a_{22}', o: 'liczby z <b>głównej przekątnej</b> (lewy górny i prawy dolny róg) — ten iloczyn <b>dodajesz</b>' },
-  { t: 'a_{12}a_{21}', o: 'liczby z <b>drugiej przekątnej</b> (prawy górny i lewy dolny róg) — ten iloczyn <b>odejmujesz</b>' },
-]} />
+<Rozbior czytamy="iloczyn na głównej przekątnej minus iloczyn na drugiej przekątnej" czesci={[
+  { t: 'a_{11}a_{22}', o: 'liczby z <b>głównej przekątnej</b> (zielone: lewy górny i prawy dolny róg) — ten iloczyn <b>dodajesz</b>' },
+  { t: 'a_{12}a_{21}', o: 'liczby z <b>drugiej przekątnej</b> (różowe: prawy górny i lewy dolny róg) — ten iloczyn <b>odejmujesz</b>' },
+]}>
+<div slot="wzor" class="k-rown">
+<Mx m={[['a_{11}', 'a_{12}'], ['a_{21}', 'a_{22}']]} t="\det" oznacz={[{ i: 0, j: 0, styl: 'plus' }, { i: 1, j: 1, styl: 'plus' }, { i: 0, j: 1, styl: 'minus' }, { i: 1, j: 0, styl: 'minus' }]} />
+<Tx t="= a_{11}a_{22} - a_{12}a_{21}" />
+</div>
+</Rozbior>
 
 <Przekatne A={[[3, 2], [1, 4]]}>
 zielona przekątna daje iloczyn, który dodajesz: $3 \cdot 4 = 12$. Różowa daje iloczyn, który odejmujesz: $2 \cdot 1 = 2$. Kliknij składnik, żeby podświetlić jego liczby. Wynik: $\det(A) = 12 - 2 = 10$.
 </Przekatne>
 
 <Ramka kind="pulapka" tytul="Minus razy minus">
-$$
-\begin{aligned}
-\det\begin{bmatrix} 2 & -3 \\ 1 & 4 \end{bmatrix} &= 2 \cdot 4 - (-3) \cdot 1 \\
-&= 8 - (-3) = 8 + 3 = 11
-\end{aligned}
-$$
+<div class="k-rown">
+<Mx m={[[2, -3], [1, 4]]} t="\det" oznacz={[{ i: 0, j: 0, styl: 'plus' }, { i: 1, j: 1, styl: 'plus' }, { i: 0, j: 1, styl: 'minus' }, { i: 1, j: 0, styl: 'minus' }]} />
+<Tx t="= 2 \cdot 4 - (-3) \cdot 1" />
+<Tx t="= 8 - (-3) = 8 + 3 = 11" />
+</div>
 
 Drugi iloczyn bierz w nawias. Gdy jest ujemny, odjęcie zmienia się w dodawanie.
 </Ramka>
@@ -597,14 +631,9 @@ Rozwinięcie Laplace’a sprowadza duży wyznacznik do kilku mniejszych. Potrzeb
 <Mx m={A123} t="A =" skresl={{ w: [0], k: [0] }} oznacz={[{ i: 0, j: 0, styl: 'kolko' }]} />
 <span class="k-zn">→</span>
 <Mx m={[[5, 6], [8, 9]]} t="M_{11} = \det" />
+<Tx t="= 5 \cdot 9 - 6 \cdot 8" />
+<Tx t="= 45 - 48 = -3" />
 </div>
-
-$$
-\begin{aligned}
-M_{11} &= \det\begin{bmatrix} 5 & 6 \\ 8 & 9 \end{bmatrix} = 5 \cdot 9 - 6 \cdot 8 \\
-&= 45 - 48 = -3
-\end{aligned}
-$$
 
 **Dopełnienie algebraiczne** $D_{ij}$ to minor z odpowiednim znakiem:
 
@@ -617,9 +646,9 @@ W przykładzie: $D_{11} = (-1)^{1+1} \cdot M_{11} = (+1) \cdot (-3) = -3$.
 
 Znaki układają się w szachownicę. Zaczyna się od plusa w lewym górnym rogu, a dalej plus i minus na zmianę:
 
-$$
-\begin{bmatrix} + & - & + \\ - & + & - \\ + & - & + \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={[['+', '-', '+'], ['-', '+', '-'], ['+', '-', '+']]} oznacz={[0, 1, 2].flatMap((i) => [0, 1, 2].map((j) => ({ i, j, styl: (i + j) % 2 === 0 ? 'plus' : 'minus' })))} />
+</div>
 
 <Ramka kind="zapamietaj">
 **Rozwinięcie Laplace’a.** Wybierz dowolny wiersz (albo kolumnę). Wyznacznik to suma: każdy element tego wiersza razy jego dopełnienie algebraiczne.
@@ -664,9 +693,9 @@ po operacjach w kolumnie 1 zostały same zera poza jedynką na górze. Rozwinię
 <Rozwiazanie tytul="Oblicz wyznacznik macierzy" zrodlo="Zad. 1, str. 87–88, f)">
 <div slot="tresc">
 
-$$
-A = \begin{bmatrix} 3 & 3 & 3 \\ 2 & 2 & 2 \\ 1 & 1 & 1 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={A87} t="A =" />
+</div>
 
 </div>
 
@@ -735,9 +764,9 @@ Dwa wiersze (albo dwie kolumny) proporcjonalne — jeden jest wielokrotnością 
 <Rozwiazanie tytul="Kiedy macierz jest osobliwa?" zrodlo="wariant polecenia — przykład własny">
 <div slot="tresc">
 
-$$
-A = \begin{bmatrix} a & 2 \\ 3 & a + 1 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={[['a', 2], [3, 'a + 1']]} t="A =" />
+</div>
 
 </div>
 
@@ -785,7 +814,14 @@ Równanie $ax^2 + bx + c = 0$: $\Delta = b^2 - 4ac$, a pierwiastki to $x_1 = \fr
 Macierz jest osobliwa dla $a = -3$ lub $a = 2$. Dla pozostałych $a$ wyznacznik jest różny od zera, więc macierz ma odwrotną: $a \in \mathbb{R} \setminus \{-3, 2\}$, czyli dla każdej liczby rzeczywistej oprócz $-3$ i $2$.
 
 <Dlaczego>
-Sprawdzenie dla $a = 2$: macierz to $\begin{bmatrix} 2 & 2 \\ 3 & 3 \end{bmatrix}$, a jej wyznacznik to $6 - 6 = 0$. Kolumny są równe — zgadza się z regułą o proporcjonalnych kolumnach.
+Sprawdzenie dla $a = 2$:
+
+<div class="k-rown">
+<Mx m={[[2, 2], [3, 3]]} t="\det" />
+<Tx t="= 2 \cdot 3 - 2 \cdot 3 = 0" />
+</div>
+
+Kolumny są równe — zgadza się z regułą o proporcjonalnych kolumnach.
 </Dlaczego>
 </Krok>
 </Rozwiazanie>
@@ -817,11 +853,15 @@ We wzorach na macierz odwrotną dzielisz przez $\det(A)$. Przez zero dzielić ni
 
 ### Macierz 2×2 — szybki wzór
 
-<Rozbior t="A^{-1} = \frac{1}{\det(A)} \begin{bmatrix} a_{22} & -a_{12} \\ -a_{21} & a_{11} \end{bmatrix}" czytamy="A do minus pierwszej to jeden przez wyznacznik A razy macierz…" czesci={[
-  { t: 'a_{11} \\leftrightarrow a_{22}', o: 'liczby z <b>głównej przekątnej</b> zamieniają się miejscami' },
-  { t: '-a_{12},\\ -a_{21}', o: 'dwie pozostałe liczby zostają na miejscu, ale <b>zmieniają znak</b>' },
+<Rozbior czytamy="A do minus pierwszej to jeden przez wyznacznik A razy macierz…" czesci={[
+  { t: 'a_{11} \\leftrightarrow a_{22}', o: 'liczby z <b>głównej przekątnej</b> zamieniają się miejscami (złote)' },
+  { t: '-a_{12},\\ -a_{21}', o: 'dwie pozostałe liczby zostają na miejscu, ale <b>zmieniają znak</b> (różowe)' },
   { t: '\\frac{1}{\\det(A)}', o: 'na końcu każdą liczbę <b>dzielisz przez wyznacznik</b>' },
-]} />
+]}>
+<div slot="wzor" class="k-rown">
+<Mx m={[['a_{22}', '-a_{12}'], ['-a_{21}', 'a_{11}']]} t="A^{-1} = \frac{1}{\det(A)} \cdot" oznacz={[{ i: 0, j: 0, styl: 'zloto' }, { i: 1, j: 1, styl: 'zloto' }, { i: 0, j: 1, styl: 'roz' }, { i: 1, j: 0, styl: 'roz' }]} />
+</div>
+</Rozbior>
 
 <div class="k-rown">
 <Mx m={r2} t="A =" oznacz={[{ i: 0, j: 0, styl: 'zloto' }, { i: 1, j: 1, styl: 'zloto' }, { i: 0, j: 1, styl: 'roz' }, { i: 1, j: 0, styl: 'roz' }]} />
@@ -837,12 +877,15 @@ to sprawdzenie $A \cdot A^{-1}$. Każda kratka liczy się jak zwykle: wiersz raz
 
 Gdy wyznacznik nie jest jedynką, pojawiają się ułamki. Tu $\det = 3 \cdot 4 - 2 \cdot 1 = 10$:
 
-$$
-\begin{aligned}
-\begin{bmatrix} 3 & 2 \\ 1 & 4 \end{bmatrix}^{-1} &= \frac{1}{10} \begin{bmatrix} 4 & -2 \\ -1 & 3 \end{bmatrix} \\
-&= \begin{bmatrix} \frac{4}{10} & -\frac{2}{10} \\ -\frac{1}{10} & \frac{3}{10} \end{bmatrix} = \begin{bmatrix} \frac{2}{5} & -\frac{1}{5} \\ -\frac{1}{10} & \frac{3}{10} \end{bmatrix}
-\end{aligned}
-$$
+<div class="k-rown">
+<Mx m={f2} t="A =" oznacz={[{ i: 0, j: 0, styl: 'zloto' }, { i: 1, j: 1, styl: 'zloto' }, { i: 0, j: 1, styl: 'roz' }, { i: 1, j: 0, styl: 'roz' }]} />
+<span class="k-zn">→</span>
+<Mx m={f2d} t="A^{-1} = \frac{1}{10} \cdot" oznacz={[{ i: 0, j: 0, styl: 'zloto' }, { i: 1, j: 1, styl: 'zloto' }, { i: 0, j: 1, styl: 'roz' }, { i: 1, j: 0, styl: 'roz' }]} />
+<span class="k-zn">=</span>
+<Mx m={[['\\frac{4}{10}', '-\\frac{2}{10}'], ['-\\frac{1}{10}', '\\frac{3}{10}']]} />
+<span class="k-zn">=</span>
+<Mx m={f2i} />
+</div>
 
 Ułamki skracasz na końcu.
 
@@ -873,9 +916,9 @@ Dla macierzy $3 \times 3$ (i większych) używasz wzoru ze slajdu:
 <Rozwiazanie tytul="Odwróć macierz metodą wyznacznikową" zrodlo="przykład z zajęć">
 <div slot="tresc">
 
-$$
-A = \begin{bmatrix} 2 & 1 & 0 \\ -1 & 3 & 2 \\ 0 & 1 & 1 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={Az} t="A =" />
+</div>
 
 </div>
 
@@ -944,7 +987,13 @@ $\frac{1}{\det(A)} = \frac{1}{3}$. Każdą liczbę $D^T$ mnożysz przez $\frac{1
 </div>
 
 <Dlaczego typ="inaczej">
-Możesz zostawić ułamek przed macierzą: $A^{-1} = \frac{1}{3}\begin{bmatrix} 1 & -1 & 2 \\ 1 & 2 & -4 \\ -1 & -2 & 7 \end{bmatrix}$. Obie postacie oznaczają to samo.
+Możesz zostawić ułamek przed macierzą:
+
+<div class="k-rown">
+<Mx m={DzT} t="A^{-1} = \frac{1}{3} \cdot" />
+</div>
+
+Obie postacie oznaczają to samo.
 </Dlaczego>
 </Krok>
 
@@ -994,9 +1043,9 @@ W tej metodzie wolno używać wyłącznie operacji na wierszach — tak jest na 
 <Rozwiazanie tytul="Odwróć macierz metodą operacji elementarnych" zrodlo="Zad. 1, str. 92–93, e)">
 <div slot="tresc">
 
-$$
-A = \begin{bmatrix} 2 & 5 & 7 \\ -2 & 1 & -3 \\ 1 & 1 & 3 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={A92} t="A =" />
+</div>
 
 </div>
 
@@ -1108,9 +1157,10 @@ Tego na slajdach nie ma, ale to częsty wariant polecenia z macierzą odwrotną:
 <Rozwiazanie tytul="Rozwiąż równanie A · X = B" zrodlo="wariant spoza slajdów — przykład własny">
 <div slot="tresc">
 
-$$
-A = \begin{bmatrix} 2 & 1 \\ 5 & 3 \end{bmatrix}, \qquad B = \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={r2} t="A =" />
+<Mx m={rB} t="B =" />
+</div>
 
 </div>
 
@@ -1159,7 +1209,11 @@ $\det(A) = 2 \cdot 3 - 1 \cdot 5 = 1$. Zamieniasz 2 i 3 miejscami, a 1 i 5 dosta
 każda kratka $X$ to wiersz $A^{-1}$ razy kolumna $B$.
 </Mnozenie>
 
-Wynik: $X = \begin{bmatrix} 1 & -1 \\ -1 & 2 \end{bmatrix}$.
+Wynik:
+
+<div class="k-rown">
+<Mx m={rX} t="X =" />
+</div>
 
 <Dlaczego>
 Sprawdzenie: $A \cdot X$ ma dać $B$. Na przykład pierwsza kratka: $2 \cdot 1 + 1 \cdot (-1) = 1$ — zgadza się z $b_{11} = 1$.
@@ -1218,9 +1272,9 @@ Rząd liczysz operacjami elementarnymi. Sprowadzasz macierz do **postaci bazowej
 <Rozwiazanie tytul="Wyznacz rząd macierzy" zrodlo="Zad. 1, str. 83, e)">
 <div slot="tresc">
 
-$$
-A = \begin{bmatrix} 1 & 2 & 2 & 1 \\ 1 & 1 & 3 & 3 \\ 6 & 12 & 14 & 16 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={A83} t="A =" />
+</div>
 
 </div>
 
@@ -1281,9 +1335,9 @@ Rząd nie może przekroczyć liczby wierszy ani liczby kolumn. Macierz ma 3 wier
 <Rozwiazanie tytul="Rząd, gdy pojawia się wiersz zer" zrodlo="przykład własny">
 <div slot="tresc">
 
-$$
-A = \begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 3 \\ 3 & 6 & 4 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={E3} t="A =" />
+</div>
 
 </div>
 
@@ -1329,9 +1383,9 @@ Kolumna 2 $(2, 0, 0)$ nie dostanie jedynki w nowym wierszu — w wierszach 2 i 3
 </Rozwiazanie>
 
 <Ramka kind="podobny" tytul="Rząd macierzy z zadania o wyznaczniku">
-$$
-\begin{bmatrix} 3 & 3 & 3 \\ 2 & 2 & 2 \\ 1 & 1 & 1 \end{bmatrix}
-$$
+<div class="k-rown">
+<Mx m={A87} />
+</div>
 
 Po $w_1' = w_1 - 3w_3$ i $w_2' = w_2 - 2w_3$ zostaje jeden niezerowy wiersz $(1, 1, 1)$. Przenosisz go na górę, a wiersze zer na dół. Jedynki są tylko w jednym wierszu, więc macierz jednostkowa ma stopień 1 — rząd to 1.
 </Ramka>
@@ -1380,11 +1434,21 @@ Krótkie zadania z natychmiastową odpowiedzią, ułożone według poleceń z ko
 ### Działania na macierzach
 
 <CwiczenieLiczby tytul="Policz iloczyn A · B" m={cwAB} t="A \cdot B =" dlaczego={(i, j) => `Wiersz ${i + 1} macierzy $A$ razy kolumna ${j + 1} macierzy $B$: $${kratka(cwA, cwB, i, j).tex}$.`}>
-$A = \begin{bmatrix} 2 & -1 & 3 \\ 0 & 4 & 1 \end{bmatrix}$, $B = \begin{bmatrix} 1 & 2 \\ 3 & 0 \\ -1 & 1 \end{bmatrix}$. Wymiary: $2 \times 3$ razy $3 \times 2$, więc wynik ma wymiar $2 \times 2$.
+<div class="k-rown">
+<Mx m={cwA} t="A =" />
+<Mx m={cwB} t="B =" />
+</div>
+
+Wymiary: $2 \times 3$ razy $3 \times 2$, więc wynik ma wymiar $2 \times 2$.
 </CwiczenieLiczby>
 
 <CwiczenieLiczby tytul="Policz 2A − Bᵀ" m={cw2} t="2A - B^T =" dlaczego={cw2opis}>
-$A = \begin{bmatrix} 1 & 0 \\ -2 & 3 \end{bmatrix}$, $B = \begin{bmatrix} 4 & 1 \\ 2 & -1 \end{bmatrix}$. Najpierw transponuj $B$, potem pomnóż $A$ przez 2 i odejmij.
+<div class="k-rown">
+<Mx m={cw2A} t="A =" />
+<Mx m={cw2B} t="B =" />
+</div>
+
+Najpierw transponuj $B$, potem pomnóż $A$ przez 2 i odejmij.
 </CwiczenieLiczby>
 
 <Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
@@ -1392,7 +1456,7 @@ $A = \begin{bmatrix} 1 & 0 \\ -2 & 3 \end{bmatrix}$, $B = \begin{bmatrix} 4 & 1 
   { q: '$A$ i $B$ mają wymiar $2 \\times 3$. Które działanie jest wykonalne?', opcje: ['$A \\cdot B$', '$A + B^T$', '$A \\cdot B^T$'], dobra: 2, dlaczego: '$A \\cdot B^T$: $2 \\times 3$ razy $3 \\times 2$ — środkowe 3 i 3, wynik $2 \\times 2$. $A \\cdot B$: środkowe 3 i 2 — niewykonalne. $A + B^T$: wymiary $2 \\times 3$ i $3 \\times 2$ są różne.' },
   { q: '$A$ ma wymiar $2 \\times 5$. Jaki wymiar ma $A^T$?', opcje: ['$5 \\times 2$', '$2 \\times 5$', '$5 \\times 5$'], dobra: 0, dlaczego: 'Transpozycja zamienia wiersze na kolumny: 2 wiersze stają się 2 kolumnami, a 5 kolumn — 5 wierszami.' },
   { q: 'Kratka $c_{21}$ iloczynu $C = A \\cdot B$ to:', opcje: ['wiersz 1 macierzy $A$ razy kolumna 2 macierzy $B$', 'wiersz 2 macierzy $A$ razy kolumna 1 macierzy $B$', '$a_{21} \\cdot b_{21}$'], dobra: 1, dlaczego: 'Pierwszy indeks mówi, który wiersz $A$, drugi — która kolumna $B$. Mnożenia „kratka przez kratkę” w mnożeniu macierzy nie ma.' },
-  { q: 'Czy dla macierzy kwadratowych zawsze $A \\cdot B = B \\cdot A$?', opcje: ['tak', 'tak, jeśli mają ten sam wymiar', 'nie — kolejność zwykle zmienia wynik'], dobra: 2, dlaczego: 'Np. dla $A = \\begin{bmatrix} 1 & 2 \\\\ 0 & 1 \\end{bmatrix}$ i $B = \\begin{bmatrix} 1 & 0 \\\\ 3 & 1 \\end{bmatrix}$: $A \\cdot B = \\begin{bmatrix} 7 & 2 \\\\ 3 & 1 \\end{bmatrix}$, a $B \\cdot A = \\begin{bmatrix} 1 & 2 \\\\ 3 & 7 \\end{bmatrix}$. Mnożenie macierzy nie jest przemienne.' },
+  { q: 'Czy dla macierzy kwadratowych zawsze $A \\cdot B = B \\cdot A$?', opcje: ['tak', 'tak, jeśli mają ten sam wymiar', 'nie — kolejność zwykle zmienia wynik'], dobra: 2, dlaczego: 'Zobacz ramkę „A · B to nie B · A” w sekcji o mnożeniu: dla dwóch macierzy $2 \\times 2$ wyszło $A \\cdot B$ z liczbą 7 w lewym górnym rogu, a $B \\cdot A$ — z liczbą 1. Mnożenie macierzy nie jest przemienne.' },
   { q: 'Ile iloczynów dodajesz, licząc jedną kratkę wyniku $(2 \\times 3) \\cdot (3 \\times 4)$?', opcje: ['3', '2', '4'], dobra: 0, dlaczego: 'Wiersz pierwszej macierzy ma 3 liczby (tyle, ile ma kolumn), więc są 3 pary i 3 iloczyny. Wynik ma $2 \\cdot 4 = 8$ kratek.' },
 ]} />
 
@@ -1401,14 +1465,14 @@ $A = \begin{bmatrix} 1 & 0 \\ -2 & 3 \end{bmatrix}$, $B = \begin{bmatrix} 4 & 1 
 ### Wyznacznik
 
 <Pytania licznik tag="Ćwiczenia · 9 zadań" tytul="" pytania={[
-  { q: '$\\det\\begin{bmatrix} 5 & 3 \\\\ 2 & 4 \\end{bmatrix} = ?$', opcje: ['14', '26', '−14'], dobra: 0, dlaczego: '$5 \\cdot 4 - 3 \\cdot 2 = 20 - 6 = 14$. 26 to dodanie iloczynów zamiast odjęcia, a $-14$ to odjęcie w złej kolejności (druga przekątna minus główna).' },
-  { q: '$\\det\\begin{bmatrix} -2 & 3 \\\\ 4 & -1 \\end{bmatrix} = ?$', opcje: ['14', '−10', '10'], dobra: 1, dlaczego: '$(-2) \\cdot (-1) - 3 \\cdot 4 = 2 - 12 = -10$. 14 to $2 + 12$ (zły znak przy odejmowaniu), a 10 to $12 - 2$ (odwrócona kolejność).' },
-  { q: 'Reguła Sarrusa: $\\det\\begin{bmatrix} 2 & 1 & 3 \\\\ 1 & 0 & 2 \\\\ 4 & 1 & 1 \\end{bmatrix} = ?$', opcje: ['11', '16', '6'], dobra: 2, dlaczego: 'Przekątne w dół: $2 \\cdot 0 \\cdot 1 + 1 \\cdot 2 \\cdot 4 + 3 \\cdot 1 \\cdot 1 = 0 + 8 + 3 = 11$. Przekątne w górę: $3 \\cdot 0 \\cdot 4 + 2 \\cdot 2 \\cdot 1 + 1 \\cdot 1 \\cdot 1 = 0 + 4 + 1 = 5$. Wynik: $11 - 5 = 6$. Odpowiedź 11 pomija przekątne w górę, a 16 je dodaje zamiast odejmować.' },
+  { q: 'Policz wyznacznik:', mx: [{ m: [[5, 3], [2, 4]], t: '\\det' }], opcje: ['14', '26', '−14'], dobra: 0, dlaczego: '$5 \\cdot 4 - 3 \\cdot 2 = 20 - 6 = 14$. 26 to dodanie iloczynów zamiast odjęcia, a $-14$ to odjęcie w złej kolejności (druga przekątna minus główna).' },
+  { q: 'Policz wyznacznik:', mx: [{ m: [[-2, 3], [4, -1]], t: '\\det' }], opcje: ['14', '−10', '10'], dobra: 1, dlaczego: '$(-2) \\cdot (-1) - 3 \\cdot 4 = 2 - 12 = -10$. 14 to $2 + 12$ (zły znak przy odejmowaniu), a 10 to $12 - 2$ (odwrócona kolejność).' },
+  { q: 'Policz wyznacznik regułą Sarrusa:', mx: [{ m: [[2, 1, 3], [1, 0, 2], [4, 1, 1]], t: '\\det' }], opcje: ['11', '16', '6'], dobra: 2, dlaczego: 'Przekątne w dół: $2 \\cdot 0 \\cdot 1 + 1 \\cdot 2 \\cdot 4 + 3 \\cdot 1 \\cdot 1 = 0 + 8 + 3 = 11$. Przekątne w górę: $3 \\cdot 0 \\cdot 4 + 2 \\cdot 2 \\cdot 1 + 1 \\cdot 1 \\cdot 1 = 0 + 4 + 1 = 5$. Wynik: $11 - 5 = 6$. Odpowiedź 11 pomija przekątne w górę, a 16 je dodaje zamiast odejmować.' },
   { q: 'Jak dopełnienie algebraiczne $D_{23}$ zależy od minora $M_{23}$?', opcje: ['$D_{23} = -M_{23}$', '$D_{23} = +M_{23}$', 'zależy od wartości $a_{23}$'], dobra: 0, dlaczego: '$(-1)^{2+3} = (-1)^5 = -1$, więc $D_{23} = -M_{23}$. Na szachownicy znaków wiersz 2 i kolumna 3 to minus. Ten znak zależy tylko od numerów wiersza i kolumny, a nie od liczby w kratce.' },
   { q: '$\\det(A) = 4$. Zamieniasz miejscami dwa wiersze. Ile wynosi nowy wyznacznik?', opcje: ['4', '0', '−4'], dobra: 2, dlaczego: 'Zamiana dwóch wierszy zmienia znak wyznacznika (własność 3).' },
   { q: '$A$ to macierz $3 \\times 3$ i $\\det(A) = 4$. Ile wynosi $\\det(2A)$?', opcje: ['8', '32', '16'], dobra: 1, dlaczego: '$2A$ to każdy z trzech wierszy razy 2. Każde pomnożenie wiersza przez 2 podwaja wyznacznik (własność 4): $4 \\cdot 2 \\cdot 2 \\cdot 2 = 32$. Odpowiedź 8 uwzględnia tylko jeden wiersz.' },
   { q: 'W macierzy $3 \\times 3$ wiersz 3 jest taki sam jak wiersz 1. Wyznacznik:', opcje: ['jest równy 0', 'jest ujemny', 'nie da się nic powiedzieć bez liczenia'], dobra: 0, dlaczego: 'Operacja $w_3\' = w_3 - w_1$ nie zmienia wyznacznika i daje wiersz zer, a macierz z wierszem zer ma wyznacznik 0 (własności 1 i 2).' },
-  { q: 'Dla jakich $a$ macierz $\\begin{bmatrix} a & 4 \\\\ 1 & a \\end{bmatrix}$ jest osobliwa?', opcje: ['$a = 4$', '$a = 0$', '$a = -2$ lub $a = 2$'], dobra: 2, dlaczego: '$\\det = a \\cdot a - 4 \\cdot 1 = a^2 - 4 = 0$, więc $a^2 = 4$ i $a = -2$ lub $a = 2$. Dla $a = 0$ wyznacznik to $-4 \\neq 0$.' },
+  { q: 'Dla jakich $a$ ta macierz jest osobliwa?', mx: [{ m: [['a', 4], [1, 'a']] }], opcje: ['$a = 4$', '$a = 0$', '$a = -2$ lub $a = 2$'], dobra: 2, dlaczego: '$\\det = a \\cdot a - 4 \\cdot 1 = a^2 - 4 = 0$, więc $a^2 = 4$ i $a = -2$ lub $a = 2$. Dla $a = 0$ wyznacznik to $-4 \\neq 0$.' },
   { q: 'Wyznacznik macierzy $2 \\times 3$:', opcje: ['nie istnieje — macierz nie jest kwadratowa', 'liczysz regułą Sarrusa', 'to iloczyn przekątnych'], dobra: 0, dlaczego: 'Wyznacznik liczymy tylko z macierzy kwadratowej.' },
 ]} />
 
@@ -1417,15 +1481,27 @@ $A = \begin{bmatrix} 1 & 0 \\ -2 & 3 \end{bmatrix}$, $B = \begin{bmatrix} 4 & 1 
 ### Macierz odwrotna i równanie macierzowe
 
 <CwiczenieLiczby tytul="Odwróć macierz 2×2" m={odwrotna(cwI1)} t="A^{-1} =" dlaczego={inv2opis(cwI1)}>
-$A = \begin{bmatrix} 4 & 3 \\ 1 & 1 \end{bmatrix}$. Najpierw policz wyznacznik.
+<div class="k-rown">
+<Mx m={cwI1} t="A =" />
+</div>
+
+Najpierw policz wyznacznik.
 </CwiczenieLiczby>
 
 <CwiczenieLiczby tytul="Odwróć macierz 2×2 (z ułamkami)" m={odwrotna(cwI2)} t="A^{-1} =" dlaczego={inv2opis(cwI2)}>
-$A = \begin{bmatrix} 2 & 3 \\ 1 & 4 \end{bmatrix}$. Ułamek możesz wpisać jako ułamek zwykły albo dziesiętny (np. 1/2 albo 0,5).
+<div class="k-rown">
+<Mx m={cwI2} t="A =" />
+</div>
+
+Ułamek możesz wpisać jako ułamek zwykły albo dziesiętny (np. 1/2 albo 0,5).
 </CwiczenieLiczby>
 
 <CwiczenieLiczby tytul="Policz macierz dopełnień D" m={cwDm} t="D =" dlaczego={cwDopis}>
-$A = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 1 \\ 1 & 0 & 2 \end{bmatrix}$. Wpisz macierz dopełnień algebraicznych $D$ — jeszcze bez transponowania. Na miejscu $(i, j)$ stoi $D_{ij} = (-1)^{i+j} M_{ij}$.
+<div class="k-rown">
+<Mx m={cwD} t="A =" />
+</div>
+
+Wpisz macierz dopełnień algebraicznych $D$ — jeszcze bez transponowania. Na miejscu $(i, j)$ stoi $D_{ij} = (-1)^{i+j} M_{ij}$.
 </CwiczenieLiczby>
 
 <Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
@@ -1433,7 +1509,7 @@ $A = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 1 \\ 1 & 0 & 2 \end{bmatrix}$. Wpisz m
   { q: 'Czy macierz $2 \\times 3$ ma macierz odwrotną?', opcje: ['nie — odwracamy tylko macierze kwadratowe', 'tak, jeśli jej wyznacznik jest różny od 0', 'tak, to jej transpozycja'], dobra: 0, dlaczego: 'Macierz odwrotna istnieje tylko dla macierzy kwadratowej (i tylko gdy jej wyznacznik nie jest zerem). Macierz $2 \\times 3$ nie ma nawet wyznacznika.' },
   { q: 'W metodzie wyznacznikowej $A^{-1} = \\frac{1}{\\det(A)} \\cdot \\ldots$', opcje: ['$D$', '$D^T$', '$A^T$'], dobra: 1, dlaczego: 'Wzór ma transponowaną macierz dopełnień $D^T$. Pominięcie transpozycji to najczęstszy błąd w tej metodzie.' },
   { q: 'W metodzie operacji elementarnych wolno używać:', opcje: ['operacji na wierszach i kolumnach', 'tylko operacji na kolumnach', 'tylko operacji na wierszach'], dobra: 2, dlaczego: 'Przekształcasz $[A \\mid I]$ w $[I \\mid A^{-1}]$ wyłącznie operacjami na wierszach. Na kolumnach — przy rzędzie, nie przy odwracaniu.' },
-  { q: '$\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}^{-1} = \\frac{1}{ad - bc} \\cdot \\ldots$', opcje: ['$\\begin{bmatrix} d & -b \\\\ -c & a \\end{bmatrix}$', '$\\begin{bmatrix} -a & b \\\\ c & -d \\end{bmatrix}$', '$\\begin{bmatrix} d & b \\\\ c & a \\end{bmatrix}$'], dobra: 0, dlaczego: 'Liczby z głównej przekątnej ($a$, $d$) zamieniają się miejscami, a pozostałe ($b$, $c$) zmieniają znak.' },
+  { q: 'Jak powstaje $A^{-1}$ dla takiej macierzy $2 \\times 2$?', mx: [{ m: [['a', 'b'], ['c', 'd']], t: 'A =' }], opcje: ['zamieniasz miejscami $a$ i $d$, zmieniasz znak $b$ i $c$, dzielisz przez $ad - bc$', 'zmieniasz znak $a$ i $d$, zamieniasz miejscami $b$ i $c$, dzielisz przez $ad - bc$', 'zamieniasz miejscami $a$ i $d$ oraz $b$ i $c$, bez dzielenia'], dobra: 0, dlaczego: 'Liczby z głównej przekątnej ($a$, $d$) zamieniają się miejscami, a pozostałe ($b$, $c$) zmieniają znak. Na końcu wszystko dzielisz przez wyznacznik $ad - bc$.' },
   { q: 'Równanie $X \\cdot A = B$. Ile wynosi $X$?', opcje: ['$A^{-1} \\cdot B$', '$B \\cdot A^{-1}$', '$\\frac{B}{A}$'], dobra: 1, dlaczego: '$A$ stoi z prawej strony $X$, więc mnożysz obie strony przez $A^{-1}$ z prawej: $X \\cdot A \\cdot A^{-1} = B \\cdot A^{-1}$, czyli $X = B \\cdot A^{-1}$. Macierzy nie dzielimy.' },
   { q: 'Sprawdzasz wynik odwracania. Co ma wyjść z $A \\cdot A^{-1}$?', opcje: ['macierz zerowa', '$A$', 'macierz jednostkowa $I$'], dobra: 2, dlaczego: 'To definicja macierzy odwrotnej: $A \\cdot A^{-1} = I$ — jedynki na przekątnej, zera poza nią.' },
 ]} />
@@ -1443,15 +1519,19 @@ $A = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 1 \\ 1 & 0 & 2 \end{bmatrix}$. Wpisz m
 ### Operacje elementarne i rząd
 
 <CwiczenieLiczby tytul="Wykonaj operacje elementarne" m={cwOp.po} dlaczego={cwOpOpis}>
-$A = \begin{bmatrix} 1 & 2 & -1 \\ 2 & 3 & 0 \\ -1 & 1 & 4 \end{bmatrix}$. Wykonaj w jednym kroku $w_2' = w_2 - 2w_1$ i $w_3' = w_3 + w_1$. Wpisz całą macierz po tym kroku.
+<div class="k-rown">
+<Mx m={cwOpM} t="A =" />
+</div>
+
+Wykonaj w jednym kroku $w_2' = w_2 - 2w_1$ i $w_3' = w_3 + w_1$. Wpisz całą macierz po tym kroku.
 </CwiczenieLiczby>
 
 <Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
-  { q: '$r\\left(\\begin{bmatrix} 1 & 2 \\\\ 2 & 4 \\end{bmatrix}\\right) = ?$', opcje: ['2', '1', '0'], dobra: 1, dlaczego: 'Wiersz 2 to 2 razy wiersz 1. Po $w_2\' = w_2 - 2w_1$ zostaje wiersz zer i jedna kolumna jednostkowa, więc rząd to 1.' },
+  { q: 'Jaki rząd ma ta macierz?', mx: [{ m: [[1, 2], [2, 4]] }], opcje: ['2', '1', '0'], dobra: 1, dlaczego: 'Wiersz 2 to 2 razy wiersz 1. Po $w_2\' = w_2 - 2w_1$ zostaje wiersz zer i jedna kolumna jednostkowa, więc rząd to 1.' },
   { q: 'Macierz ma wymiar $3 \\times 5$. Jaki może być jej największy rząd?', opcje: ['3', '5', '15'], dobra: 0, dlaczego: 'Rząd nie przekracza ani liczby wierszy, ani liczby kolumn: najwyżej $\\min(3, 5) = 3$.' },
-  { q: 'Postać bazowa to $\\begin{bmatrix} 1 & 0 & 2 \\\\ 0 & 1 & -1 \\\\ 0 & 0 & 0 \\end{bmatrix}$. Rząd to:', opcje: ['3', '1', '2'], dobra: 2, dlaczego: 'Kolumny 1 i 2 tworzą macierz jednostkową stopnia 2. Trzeci wiersz to same zera, więc trzeciej jedynki nie będzie.' },
+  { q: 'Postać bazowa wygląda tak. Jaki jest rząd?', mx: [{ m: [[1, 0, 2], [0, 1, -1], [0, 0, 0]] }], opcje: ['3', '1', '2'], dobra: 2, dlaczego: 'Kolumny 1 i 2 tworzą macierz jednostkową stopnia 2. Trzeci wiersz to same zera, więc trzeciej jedynki nie będzie.' },
   { q: 'Macierz $3 \\times 3$ ma wyznacznik różny od zera. Jej rząd:', opcje: ['to 3', 'jest mniejszy niż 3', 'nie da się go określić'], dobra: 0, dlaczego: 'Macierz kwadratowa z $\\det \\neq 0$ ma pełny rząd — tu 3.' },
-  { q: '$r\\left(\\begin{bmatrix} 1 & 2 & 3 \\\\ 2 & 4 & 6 \\\\ 1 & 1 & 1 \\end{bmatrix}\\right) = ?$', opcje: ['1', '2', '3'], dobra: 1, dlaczego: 'Wiersz 2 to 2 razy wiersz 1, więc da się go wyzerować. Wiersze 1 i 3 nie są proporcjonalne. Zostają dwa niezależne wiersze: rząd 2.' },
+  { q: 'Jaki rząd ma ta macierz?', mx: [{ m: [[1, 2, 3], [2, 4, 6], [1, 1, 1]] }], opcje: ['1', '2', '3'], dobra: 1, dlaczego: 'Wiersz 2 to 2 razy wiersz 1, więc da się go wyzerować. Wiersze 1 i 3 nie są proporcjonalne. Zostają dwa niezależne wiersze: rząd 2.' },
   { q: 'Który ruch <b>nie jest</b> operacją elementarną?', opcje: ['zamiana dwóch wierszy', 'pomnożenie wiersza przez 0', 'dodanie do wiersza 3 razy inny wiersz'], dobra: 1, dlaczego: 'Mnożyć wolno tylko przez liczbę różną od zera. Po pomnożeniu przez 0 wiersz zamienia się w zera i tego nie da się cofnąć.' },
 ]} />
 

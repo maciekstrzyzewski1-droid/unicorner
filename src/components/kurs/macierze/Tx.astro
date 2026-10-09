@@ -1,0 +1,12 @@
+---
+// Kawałek wzoru w rzędzie macierzy (.k-rown), np. „= 5 · 9 − 6 · 8 = −3” obok macierzy z komponentu Mx.
+// Każdy Tx to osobny element: na wąskim ekranie przechodzi do nowej linii w całości, zamiast wychodzić poza ekran.
+import { tex } from '../../../lib/tex.js';
+interface Props { t: string }
+const { t } = Astro.props;
+---
+<span class="k-tx" set:html={tex(t)} />
+
+<style>
+  .k-tx{white-space:nowrap;color:#fff;}
+</style>

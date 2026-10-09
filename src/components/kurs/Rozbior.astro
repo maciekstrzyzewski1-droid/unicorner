@@ -3,11 +3,13 @@
 // Zasada kursu: żaden symbol nie zostaje bez wyjaśnienia.
 import { tex, texInline } from '../../lib/tex.js';
 interface Part { t: string; o: string }
-interface Props { t: string; czytamy?: string; czesci?: Part[] }
+// Zamiast `t` można podać wzór w slocie „wzor” (np. macierz z komponentu Mx w rzędzie .k-rown).
+interface Props { t?: string; czytamy?: string; czesci?: Part[] }
 const { t, czytamy, czesci = [] } = Astro.props;
+if (!t && !Astro.slots.has('wzor')) throw new Error('Rozbior: podaj wzór w `t` albo w slocie „wzor”');
 ---
 <figure class="k-rozbior">
-  <div class="k-rozbior-wzor" set:html={tex(t, true)} />
+  {Astro.slots.has('wzor') ? <div class="k-rozbior-wzor k-rozbior-slot"><slot name="wzor" /></div> : <div class="k-rozbior-wzor" set:html={tex(t, true)} />}
   {czytamy && <p class="k-rozbior-czyt"><span class="k-lbl">Czytamy:</span> <span set:html={texInline(czytamy)} /></p>}
   {czesci.length > 0 && (
     <dl class="k-rozbior-lista">
