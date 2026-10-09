@@ -1,0 +1,79 @@
+---
+// Relacja odwrotna krok po kroku: każdy wiersz P ma swój kolor, a ten sam kolor ma odpowiadająca mu kolumna P⁻¹.
+// „Przepisz następny wiersz” odsłania kolejną kolumnę P⁻¹. Kliknięcie komórki P pokazuje, dokąd trafia w P⁻¹.
+import { texInline } from '../../../lib/tex.js';
+import { odwrotna } from '../../../lib/relacje.js';
+import Macierz from './Macierz.astro';
+type El = number | string;
+interface Props { A: El[]; B: El[]; m: number[][]; n?: string }
+const { A, B, m, n = 'P' } = Astro.props;
+const mi = odwrotna(m);
+const kolP = m.map((row, i) => row.map(() => i % 5));
+const kolI = mi.map((row) => row.map((_, j) => j % 5));
+const kroki = A.map((x, i) => texInline(`<b>Wiersz $${x}$</b> macierzy $${n}$ to $(${m[i].join(', ')})$ — czytamy go od lewej do prawej. Te same liczby wpisujemy w <b>kolumnę $${x}$</b> macierzy $${n}^{-1}$, z góry na dół. Ten sam kolor = te same liczby.`));
+const pary = A.flatMap((x, i) => B.map((y, j) => ({ id: `${i}-${j}`, h: texInline(`Komórka w wierszu $${x}$ i kolumnie $${y}$ macierzy $${n}$ (para $(${x}, ${y})$, wartość ${m[i][j]}) trafia do wiersza $${y}$ i kolumny $${x}$ macierzy $${n}^{-1}$ — tam jest para $(${y}, ${x})$ z tą samą wartością.`) })));
+---
+<figure class="k-fig k-odw" data-odw>
+  <div class="k-fig-box">
+    <div class="k-macierze">
+      <div data-mx-wrap="P"><Macierz w={A} k={B} m={m} t={`${n} \\subset A \\times B`} kolory={kolP} /></div>
+      <div data-mx-wrap="I"><Macierz w={B} k={A} m={mi} t={`${n}^{-1} \\subset B \\times A`} kolory={kolI} tryb="ukryj" /></div>
+    </div>
+    <div class="k-odw-ctl" data-js-only hidden>
+      <button type="button" class="k-btn" data-next>Przepisz wiersz {String(A[0])}</button>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Pokaż całą macierz</button>
+    </div>
+    <ul hidden data-kroki>{kroki.map((h, i) => <li data-k={i} set:html={h} />)}</ul>
+    <ul hidden data-pary>{pary.map((p) => <li data-cell={p.id} set:html={p.h} />)}</ul>
+  </div>
+    <div class="k-odw-out k-live" aria-live="polite" data-out><span data-js-only hidden>Kliknij „Przepisz wiersz”, żeby przenieść pierwszy wiersz. Możesz też stuknąć dowolną komórkę lewej macierzy.</span></div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-odw]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-odw]') === box) el.hidden = false; });
+    const P = box.querySelector<HTMLElement>('[data-mx-wrap="P"]')!, I = box.querySelector<HTMLElement>('[data-mx-wrap="I"]')!;
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const next = box.querySelector<HTMLButtonElement>('[data-next]')!;
+    const rows = Array.from(box.querySelectorAll<HTMLElement>('[data-kroki] li'));
+    const labels = Array.from(P.querySelectorAll<HTMLElement>('.k-mx-rh > span')).map((s) => s.textContent!.trim());
+    let shown = 0;
+    const clear = () => box.querySelectorAll('.k-mx-c.is-kolko').forEach((c) => c.classList.remove('is-kolko'));
+    const reveal = (col: number) => I.querySelectorAll<HTMLElement>(`.k-mx-c[data-j="${col}"]`).forEach((c) => { c.textContent = c.dataset.v!; });
+    const step = () => {
+      if (shown >= rows.length) return;
+      clear(); reveal(shown);
+      P.querySelectorAll(`.k-mx-c[data-i="${shown}"]`).forEach((c) => c.classList.add('is-kolko'));
+      I.querySelectorAll(`.k-mx-c[data-j="${shown}"]`).forEach((c) => c.classList.add('is-kolko'));
+      out.innerHTML = rows[shown].innerHTML;
+      out.classList.add('is-live');
+      shown++;
+      if (shown >= rows.length) { next.hidden = true; } else next.textContent = `Przepisz wiersz ${labels[shown]}`;
+    };
+    next.addEventListener('click', step);
+    box.querySelector('[data-all]')!.addEventListener('click', () => {
+      for (let c = 0; c < rows.length; c++) reveal(c);
+      shown = rows.length; next.hidden = true; clear();
+      out.innerHTML = 'Cała macierz przepisana: każdy wiersz lewej macierzy jest teraz kolumną prawej (ten sam kolor). Stuknij komórkę lewej macierzy, żeby zobaczyć, dokąd trafiła.';
+    });
+    P.querySelectorAll<HTMLElement>('.k-mx-c').forEach((c) => {
+      c.style.cursor = 'pointer'; c.tabIndex = 0;
+      const go = () => {
+        const i = c.dataset.i!, j = c.dataset.j!;
+        clear(); c.classList.add('is-kolko');
+        const t = I.querySelector<HTMLElement>(`.k-mx-c[data-i="${j}"][data-j="${i}"]`)!;
+        t.textContent = t.dataset.v!; t.classList.add('is-kolko');
+        out.innerHTML = box.querySelector(`[data-pary] [data-cell="${i}-${j}"]`)!.innerHTML;
+        out.classList.add('is-live');
+      };
+      c.addEventListener('click', go);
+      c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    });
+  });
+</script>
+
+<style>
+  .k-odw-ctl{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+  .k-odw-out{margin-top:10px;padding:8px 12px;border-left:2px solid var(--cyan);background:rgba(39,232,255,.05);font-size:.92rem;line-height:1.65;min-height:1.6em;}
+</style>

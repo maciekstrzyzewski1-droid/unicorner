@@ -19,7 +19,6 @@ const opisy = A.map((_, i) => C.map((_, k) => ({ i, k, ys: posrednie(mP, mQ, i, 
       <Macierz w={A} k={C} m={mR} t={nR} mxid="R" tryb="ukryj" />
     </div>
     <p class="k-zl-hint" data-js-only hidden>Kliknij komórkę macierzy <span set:html={tex(nR)} />, żeby ją odkryć i zobaczyć, skąd się wzięła.</p>
-    <div class="k-zl-out" aria-live="polite" data-out></div>
     <div class="k-zl-ctl" data-js-only hidden>
       <button type="button" class="k-btn k-btn-ghost" data-all>Odkryj cały wynik</button>
     </div>
@@ -27,6 +26,7 @@ const opisy = A.map((_, i) => C.map((_, k) => ({ i, k, ys: posrednie(mP, mQ, i, 
       {opisy.flat().map((o) => <li data-cell={`${o.i}-${o.k}`} data-ys={o.ys} set:html={`<b>Komórka</b> ${tex(`(${A[o.i]}, ${C[o.k]})`)}: ${o.html}`} />)}
     </ul>
   </div>
+  <div class="k-zl-out k-live" aria-live="polite" data-out></div>
   <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
 </figure>
 
@@ -52,6 +52,7 @@ const opisy = A.map((_, i) => C.map((_, k) => ({ i, k, ys: posrednie(mP, mQ, i, 
           Q.querySelector(`.k-mx-c[data-i="${y}"][data-j="${k}"]`)?.classList.add('is-ok');
         });
         out.innerHTML = li.innerHTML;
+        out.classList.add('is-live');
       };
       c.addEventListener('click', pick);
       c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(); } });

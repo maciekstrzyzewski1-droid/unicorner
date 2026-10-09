@@ -96,7 +96,7 @@ const ld = {
   <script>
     // Szerokie tabele i wzory na telefonie: podpowiedź „przesuń w bok”, gdy coś się nie mieści.
     // Sprawdzamy też po każdym kliknięciu, bo odkryte kroki rozwiązań mogą pokazać nowe szerokie wzory.
-    const markScroll = () => document.querySelectorAll<HTMLElement>('.k-tp-scroll, .k-tab, .k-prose .katex-display').forEach((el) => el.classList.toggle('k-scrollable', el.scrollWidth > el.clientWidth + 4));
+    const markScroll = () => document.querySelectorAll<HTMLElement>('.k-tp-scroll, .k-tab, .k-prose .katex-display, .k-obl-scroll').forEach((el) => el.classList.toggle('k-scrollable', el.scrollWidth > el.clientWidth + 4));
     markScroll(); addEventListener('resize', markScroll);
     document.addEventListener('click', () => requestAnimationFrame(markScroll));
     // Podświetlenie bieżącej sekcji w spisie treści + zwijanie spisu na telefonie.

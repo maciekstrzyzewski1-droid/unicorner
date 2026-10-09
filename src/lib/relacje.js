@@ -97,14 +97,18 @@ export function typPorzadku(w) {
 // ---------- opisy komórek do ćwiczeń ----------
 export const fmtParaTex = (x, y) => `(${x}, ${y})`;
 export function dlaczegoZlozenie(mP, mQ, A, B, C, i, k, nP = 'P', nQ = 'Q') {
+  // Tabelka „przyłóż wiersz do kolumny”: wiersz x macierzy P i kolumna z macierzy Q zapisane pod sobą.
   const ys = posrednie(mP, mQ, i, k);
   const x = A[i], z = C[k];
+  const td = (v, j) => `<td class="${ys.includes(j) ? 'is-hit' : ''}">${v}</td>`;
+  const tab = `<table class="k-zl-tab"><tr><th>pozycja ${L('y')}</th>${B.map((b) => `<th class="k-zl-y">${L(b)}</th>`).join('')}</tr>` +
+    `<tr><th>wiersz ${L(x)} w ${L(nP)}</th>${B.map((_, j) => td(mP[i][j], j)).join('')}</tr>` +
+    `<tr><th>kolumna ${L(z)} w ${L(nQ)}</th>${B.map((_, j) => td(mQ[j][k], j)).join('')}</tr></table>`;
   if (ys.length) {
     const y = B[ys[0]];
-    return texInline(`$${x}\\,${nP}\\,${y}$ i $${y}\\,${nQ}\\,${z}$ — da się przejść z $${x}$ do $${z}$ przez $${y}$, więc 1.`);
+    return tab + texInline(`Na pozycji $y = ${y}$ obie mają 1: $${x}\\,${nP}\\,${y}$ i $${y}\\,${nQ}\\,${z}$. Da się przejść z $${x}$ do $${z}$ przez $${y}$, więc w komórce $(${x}, ${z})$ wpisujemy 1.`);
   }
-  const zP = B.filter((_, j) => mP[i][j]), doQ = B.filter((_, j) => mQ[j][k]);
-  return texInline(`Wiersz $${x}$ w $${nP}$ ma jedynki przy ${zP.length ? zP.map((v) => `$${v}$`).join(', ') : 'żadnym elemencie'}, a kolumna $${z}$ w $${nQ}$ — przy ${doQ.length ? doQ.map((v) => `$${v}$`).join(', ') : 'żadnym elemencie'}. Nie ma wspólnej „przesiadki”, więc 0.`);
+  return tab + texInline(`Nie ma pozycji, na której obie mają 1 — nie da się przejść z $${x}$ do $${z}$ przez żaden element. W komórce $(${x}, ${z})$ wpisujemy 0.`);
 }
 export function dlaczegoZaostrzenie(m, et, i, j) {
   const a = et[i], b = et[j];

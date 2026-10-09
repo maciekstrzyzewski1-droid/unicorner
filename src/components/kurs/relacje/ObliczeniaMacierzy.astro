@@ -1,0 +1,95 @@
+---
+// Siatka obliczeń: w każdej komórce widać cały rachunek dla pary (x, y) — co wstawiamy, co wychodzi i jaka cyfra trafia do macierzy.
+// rachunek(x, y) → [linia 1, linia 2] w LaTeX-u, np. ['2 \\cdot 3 = 6', '6 > 2'].  spelnia(x, y) → czy para należy do relacji.
+// Kliknięcie komórki podświetla jej wiersz i kolumnę (jak w statkach) i pokazuje pełne zdanie pod siatką.
+import { tex, texInline } from '../../../lib/tex.js';
+type El = number | string;
+interface Props { w: El[]; k: El[]; rachunek: (x: El, y: El) => [string, string]; spelnia: (x: El, y: El) => boolean; warunek: string }
+const { w, k, rachunek, spelnia, warunek } = Astro.props;
+const komorki = w.map((x, i) => k.map((y, j) => {
+  const [l1, l2] = rachunek(x, y);
+  const ok = !!spelnia(x, y);
+  return { i, j, l1, l2, ok, opis: texInline(`Wiersz $x = ${x}$, kolumna $y = ${y}$. Wstawiamy do warunku $${warunek}$: $${l1}$, a $${l2}$. ${ok ? 'Warunek jest spełniony, więc wpisujemy <b>1</b> — para należy do relacji.' : 'Warunek nie jest spełniony, więc wpisujemy <b>0</b> — para nie należy do relacji.'}`) };
+}));
+---
+<figure class="k-fig k-obl" data-obl>
+  <div class="k-fig-box">
+    <div class="k-obl-scroll">
+      <table class="k-obl-t">
+        <thead>
+          <tr>
+            <th class="k-obl-corner"><span set:html={tex('x \\backslash y')} /></th>
+            {k.map((y, j) => <th data-j={j} set:html={tex(`y = ${y}`)} />)}
+          </tr>
+        </thead>
+        <tbody>
+          {komorki.map((row, i) => (
+            <tr>
+              <th data-i={i} set:html={tex(`x = ${w[i]}`)} />
+              {row.map((c) => (
+                <td class={c.ok ? 'is-1' : 'is-0'} data-i={c.i} data-j={c.j} tabindex="0">
+                  <span class="k-obl-l" set:html={tex(c.l1)} />
+                  <span class="k-obl-l" set:html={tex(c.l2)} />
+                  <b class="k-obl-v">→ {c.ok ? 1 : 0}</b>
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <ul hidden data-expl>{komorki.flat().map((c) => <li data-cell={`${c.i}-${c.j}`} set:html={c.opis} />)}</ul>
+  </div>
+  <p class="k-obl-out k-live" aria-live="polite" data-out>
+      <span data-js-only hidden>Stuknij dowolną komórkę, żeby zobaczyć jej rachunek opisany słowami.</span>
+    </p>
+  <figcaption><span class="k-lbl">Jak czytać tę siatkę:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-obl]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-obl]') === box) el.hidden = false; });
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const cells = Array.from(box.querySelectorAll<HTMLElement>('td[data-i]'));
+    const pick = (c: HTMLElement) => {
+      const i = c.dataset.i, j = c.dataset.j;
+      box.querySelectorAll('.is-on, .is-row, .is-col').forEach((x) => x.classList.remove('is-on', 'is-row', 'is-col'));
+      c.classList.add('is-on');
+      box.querySelector(`th[data-i="${i}"]`)?.classList.add('is-row');
+      box.querySelector(`th[data-j="${j}"]`)?.classList.add('is-col');
+      out.innerHTML = box.querySelector(`[data-expl] [data-cell="${i}-${j}"]`)!.innerHTML;
+      out.classList.add('is-live');
+    };
+    cells.forEach((c) => {
+      c.addEventListener('click', () => pick(c));
+      c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(c); } });
+    });
+  });
+</script>
+
+<style>
+  .k-obl-scroll{overflow-x:auto;}
+  .k-obl-t{border-collapse:separate;border-spacing:4px;margin:0 auto;}
+  .k-obl-t th{font-size:.82rem;color:var(--muted);font-weight:500;padding:2px 4px;text-align:center;white-space:nowrap;transition:color .15s,background .15s;}
+  .k-obl-t tbody th{text-align:right;}
+  .k-obl-t th.is-row,.k-obl-t th.is-col{color:var(--gold);background:rgba(255,216,74,.1);}
+  .k-obl-t td{min-width:92px;padding:6px 8px;border:1px solid var(--line2);background:rgba(255,255,255,.02);text-align:center;cursor:pointer;vertical-align:middle;transition:border-color .15s,background .15s;}
+  .k-obl-t td.is-1{border-color:rgba(90,209,160,.45);}
+  .k-obl-t td.is-on{border-color:var(--gold);background:rgba(255,216,74,.1);}
+  .k-obl-t td:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-obl-l{display:block;font-size:.82rem;line-height:1.5;white-space:nowrap;}
+  .k-obl-v{display:block;margin-top:2px;font-family:var(--mono);font-size:.95rem;}
+  .is-1 .k-obl-v{color:var(--ok);}
+  .is-0 .k-obl-v{color:var(--muted);}
+  .k-obl-out{margin:10px 0 0!important;padding:8px 12px;border-left:2px solid var(--gold);background:rgba(255,216,74,.06);font-size:.92rem;line-height:1.6;min-height:1.6em;}
+  /* telefon: każdy wiersz siatki to osobny blok — etykieta „x = …” nad kratkami, kratki w jednym rzędzie */
+  @media(max-width:560px){
+    .k-obl-t,.k-obl-t tbody{display:block;}
+    .k-obl-t thead{display:none;}
+    .k-obl-t tr{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px;}
+    .k-obl-t tbody th{flex:0 0 100%;text-align:left;padding:0 2px;}
+    .k-obl-t td{flex:1 1 64px;min-width:0;padding:5px 3px;}
+    .k-obl-l{font-size:.76rem;}
+  }
+  @media(max-width:380px){ .k-obl-l{font-size:.72rem;} .k-obl-t td{padding:5px 2px;} }
+</style>

@@ -31,6 +31,11 @@ import Wlasnosci from '../../components/kurs/relacje/Wlasnosci.astro';
 import SchematPorzadkow from '../../components/kurs/relacje/SchematPorzadkow.astro';
 import CwiczenieMacierz from '../../components/kurs/relacje/CwiczenieMacierz.astro';
 import CwiczenieWlasnosci from '../../components/kurs/relacje/CwiczenieWlasnosci.astro';
+import ObliczeniaMacierzy from '../../components/kurs/relacje/ObliczeniaMacierzy.astro';
+import DzialaniaRelacji from '../../components/kurs/relacje/DzialaniaRelacji.astro';
+import Odwrotna from '../../components/kurs/relacje/Odwrotna.astro';
+import GaleriaWlasnosci from '../../components/kurs/relacje/GaleriaWlasnosci.astro';
+import PrzylozWiersz from '../../components/kurs/relacje/PrzylozWiersz.astro';
 import { macierz, pary, odwrotna, dopelnienie, suma, iloczyn, roznica, zlozenie, zaostrzenie, zeroweKolumny, preferencja, oznaczZaostrzenie, jedynki, dlaczegoZlozenie, dlaczegoZaostrzenie } from '../../lib/relacje.js';
 
 export const A = [-1, 0, 1, 2];
@@ -39,6 +44,19 @@ export const C = [0, 1];
 export const P = macierz(A, B, (x, y) => x * y <= 2);
 export const Q = macierz(B, C, (x, y) => x * y >= 1);
 export const R = macierz(A, B, (x, y) => x + y >= 3);
+export const pn = (x) => (x < 0 ? `(${x})` : `${x}`);
+export const wiersz = (m, i, styl) => m[i].map((_, j) => ({ i, j, styl }));
+export const kolumna = (m, j, styl) => m.map((_, i) => ({ i, j, styl }));
+export const dA = [1, 2];
+export const dB = [1, 2, 3];
+export const dP = macierz(dA, dB, (x, y) => x < y);
+export const dR = macierz(dA, dB, (x, y) => x + y >= 4);
+export const zzA = [1, 2];
+export const zzB = [1, 2, 3];
+export const zzC = [1, 2, 3];
+export const zzP = macierz(zzA, zzB, (x, y) => x < y);
+export const zzQ = macierz(zzB, zzC, (y, z) => y + z === 4);
+export const Rremis = preferencja([20, 30, 30], 'max');
 export const parySlownie = (X, Y, m) => pary(X, Y, m).map(([x, y]) => `(${x}, ${y})`).join(', ');
 
 export const miasta = ['\\text{POZ}', '\\text{WRO}'];
@@ -49,6 +67,9 @@ export const loty2 = [[1, 0], [0, 1], [0, 0]];
 
 export const S4 = [1, 2, 3, 4];
 export const Rs = macierz(S4, S4, (x, y) => Math.abs(x - y) <= 1);
+export const RRs = zlozenie(Rs, Rs);
+export const RRroz = RRs.flatMap((row, i) => row.map((v, j) => (v && !Rs[i][j] ? { i, j, styl: 'roz' } : null))).filter(Boolean);
+export const RRkolka = RRroz.map(({ i, j }) => ({ i, j, styl: 'kolko' }));
 export const Dz = [1, 2, 3, 6];
 export const Rdz = macierz(Dz, Dz, (x, y) => y % x === 0);
 export const N3 = [1, 2, 3];
@@ -137,20 +158,39 @@ Często obie strony pary pochodzą z **jednego** zbioru: $P \subset A \times A$,
 
 <a id="polecenie-macierz" class="k-anchor"></a>
 
-Gdy zbiory są skończone, relację można zapisać na trzy sposoby: **wypisać pary**, zapisać **macierz** albo narysować **graf**. Wszystkie trzy niosą tę samą informację.
+Gdy zbiory są skończone, relację można zapisać na trzy sposoby: **wypisać pary**, zapisać **macierz** albo narysować **graf**. Wszystkie trzy niosą tę samą informację. Wybierasz ten zapis, o który prosi polecenie.
+
+### Jak czytać macierz — jak w statkach
+
+Macierz relacji to tabelka z zerami i jedynkami. Każda kratka odpowiada **jednej parze** $(x, y)$:
+
+- $x$ odczytujesz **z lewej strony** — to etykieta wiersza;
+- $y$ odczytujesz **z góry** — to etykieta kolumny.
+
+Działa to jak w grze w statki: pole „B4” to kolumna B i wiersz 4. Tutaj mówimy „kratka $(1, 3)$” — wiersz 1, kolumna 3. Cyfra w kratce mówi, czy para należy do relacji: **1 — należy, 0 — nie należy**.
+
+<div class="k-macierze">
+<Macierz w={dA} k={dB} m={dP} t="P" oznacz={[{ i: 0, j: 2, styl: 'kolko' }]} />
+</div>
+
+Zakreślona kratka to $(1, 3)$: wiersz 1, kolumna 3. Jest w niej 1, więc para $(1, 3)$ należy do relacji $P$. Kratka obok, $(1, 2)$, też ma 1. A kratka $(2, 1)$ — w drugim wierszu, w pierwszej kolumnie — ma 0, więc pary $(2, 1)$ w relacji nie ma.
+
+<Ramka kind="botak">
+- Wiersze to **pierwszy** element pary, kolumny — **drugi**. Dzięki tej umowie każdy czyta macierz tak samo.
+- 1 znaczy „para należy do relacji”, 0 — „nie należy”. To te same cyfry co prawda i fałsz w logice.
+</Ramka>
 
 <Ramka kind="polecenie">
 „Dana jest relacja $P \subset A \times B$: $xPy \Leftrightarrow xy \leq 2$. Wypisz pary relacji i zapisz ją w postaci macierzy.”
 
 1. Wypisz elementy $A$ i $B$ (z warunków — jak w module o zbiorach).
-2. Narysuj pustą tabelkę: **wiersze** = elementy pierwszego zbioru ($A$), **kolumny** = elementy drugiego ($B$).
-3. Dla każdej komórki wstaw $x$ z wiersza i $y$ z kolumny do warunku: spełniony → **1**, niespełniony → **0**. Idź wiersz po wierszu.
-4. Pary relacji to komórki z jedynkami: (element wiersza, element kolumny).
+2. Narysuj pustą tabelkę. Wiersze to elementy $A$ — tyle wierszy, ile elementów ma $A$. Kolumny to elementy $B$.
+3. Wypełniaj kratki po kolei, wiersz po wierszu. W każdej kratce:
+   - odczytaj $x$ (z lewej) i $y$ (z góry),
+   - wstaw je do warunku i policz,
+   - warunek spełniony → wpisz **1**, niespełniony → wpisz **0**.
+4. Pary relacji to kratki z jedynkami: (liczba z lewej, liczba z góry).
 5. Graf: kółko dla każdego elementu i strzałka $x \to y$ dla każdej jedynki.
-</Ramka>
-
-<Ramka kind="botak">
-Wiersze to **pierwszy** element pary, kolumny — **drugi**. To umowa: dzięki niej każdy czyta macierz tak samo. Gdybyś zamienił wiersze z kolumnami, dostałbyś macierz innej relacji — odwrotnej (o niej za chwilę).
 </Ramka>
 
 <Rozwiazanie tytul="Zapisz relacje P i Q w postaci macierzy" zrodlo="Zad. 3, str. 49–50, c) — część 1">
@@ -160,31 +200,66 @@ $A = \{-1, 0, 1, 2\}$, $B = \{1, 2, 3\}$, $C = \{x \in \mathbb{N} : x < 2\}$. Re
 
 </div>
 
+<div slot="plan">
+
+1. Wypisujemy elementy wszystkich zbiorów. Bez tego nie wiemy, ile wierszy i kolumn ma macierz.
+2. Wypełniamy macierz $P$ kratka po kratce: dla każdej pary sprawdzamy warunek $xy \leq 2$.
+3. Z jedynek odczytujemy pary i rysujemy graf — to ta sama relacja w innym zapisie.
+4. Tak samo budujemy macierz $Q$.
+
+Innej drogi nie ma: macierz relacji zawsze powstaje przez sprawdzenie warunku dla każdej pary.
+
+</div>
+
 <Krok tytul="Wypisz elementy zbiorów">
 $A$ i $B$ są już wypisane. $C = \{0, 1\}$, bo liczby naturalne mniejsze od 2 to 0 i 1.
 
-<Dlaczego>
-Na zajęciach $0 \in \mathbb{N}$. Bez zera macierz $Q$ miałaby jedną kolumnę zamiast dwóch.
+Z tego wynika rozmiar macierzy: $P$ ma 4 wiersze (bo $A$ ma 4 elementy) i 3 kolumny (bo $B$ ma 3). Razem 12 kratek, czyli 12 par do sprawdzenia.
+
+<Dlaczego typ="umowa">
+Na zajęciach $0 \in \mathbb{N}$. Bez zera zbiór $C$ miałby jeden element, a macierz $Q$ — jedną kolumnę zamiast dwóch.
 </Dlaczego>
 </Krok>
 
-<Krok tytul="Policz warunek xy ≤ 2 wiersz po wierszu">
-- $x = -1$: iloczyny $-1, -2, -3$ — wszystkie $\leq 2$, więc 1, 1, 1;
-- $x = 0$: iloczyny $0, 0, 0$ — 1, 1, 1;
-- $x = 1$: iloczyny $1, 2, 3$ — 1, 1, 0 (bo $3 > 2$);
-- $x = 2$: iloczyny $2, 4, 6$ — 1, 0, 0.
+<Krok tytul="Wypełnij macierz P kratka po kratce">
+W każdej kratce odpowiadamy na to samo pytanie: **czy para $(x, y)$ spełnia warunek $xy \leq 2$?**
+
+Jak to zrobić dla jednej kratki:
+
+1. Odczytaj $x$ — liczbę z lewej strony wiersza — i $y$ — liczbę nad kolumną.
+2. Wstaw je do warunku. Zapis $xy$ znaczy **$x$ razy $y$**.
+3. Pomnóż.
+4. Porównaj wynik z 2. Wynik **mniejszy albo równy 2** → wpisz **1**. Wynik **większy od 2** → wpisz **0**.
+
+Przykład — kratka w wierszu 1 i kolumnie 3. Tu $x = 1$ i $y = 3$. Mnożymy: $1 \cdot 3 = 3$. Czy $3 \leq 2$? Nie, 3 jest większe od 2. Wpisujemy **0**.
+
+<Dlaczego typ="umowa">
+Dwie litery obok siebie bez znaku między nimi oznaczają mnożenie: $xy = x \cdot y$. Tak samo w liceum $2a$ znaczyło $2 \cdot a$.
+</Dlaczego>
+
+Tak wygląda rachunek dla wszystkich 12 kratek:
+
+<ObliczeniaMacierzy w={A} k={B} warunek="xy \leq 2" rachunek={(x, y) => [`${pn(x)} \\cdot ${y} = ${x * y}`, `${x * y} ${x * y <= 2 ? '\\leq' : '>'} 2`]} spelnia={(x, y) => x * y <= 2}>
+każda kratka to jedna para: $x$ z lewej, $y$ z góry. Górna linijka to mnożenie, dolna — porównanie z 2. Strzałka pokazuje cyfrę, która trafia do macierzy. Stuknij kratkę, a pod siatką zobaczysz jej rachunek opisany słowami.
+</ObliczeniaMacierzy>
+
+Gotowa macierz $P$ to same cyfry ze strzałek:
 
 <div class="k-macierze">
 <Macierz w={A} k={B} m={P} t="P" />
 </div>
 
 <Dlaczego>
-Każda komórka to jedno pytanie „czy para spełnia warunek?”. Wiersz $x = 2$, kolumna $y = 2$: $2 \cdot 2 = 4 > 2$, więc 0 — para $(2, 2)$ nie należy do $P$.
+Idziemy wiersz po wierszu, żeby nie pominąć żadnej kratki. Kolejność nie zmienia wyniku — każda kratka to osobne pytanie.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Możesz najpierw wypisać pary, które spełniają warunek, a potem wpisać jedynki w ich kratki i resztę uzupełnić zerami. Przy małych zbiorach to szybkie, ale łatwiej coś przeoczyć.
 </Dlaczego>
 </Krok>
 
 <Krok tytul="Odczytaj pary i narysuj graf">
-Pary to komórki z jedynkami:
+Każda jedynka to jedna para: (liczba z lewej, liczba z góry).
 
 $$
 \begin{aligned}
@@ -195,87 +270,111 @@ P = \{&(-1, 1), (-1, 2), (-1, 3), \\
 $$
 
 <Graf A={A} B={B} m={P}>
-po lewej elementy $A$, po prawej elementy $B$. Strzałka $x \to y$ znaczy $xPy$. Z $-1$ i z $0$ wychodzą strzałki do wszystkich elementów $B$, a z $2$ — tylko do 1.
+po lewej elementy $A$, po prawej elementy $B$. Strzałka $x \to y$ znaczy $xPy$ — jedna strzałka na każdą jedynkę z macierzy. Z $-1$ i z $0$ wychodzą strzałki do wszystkich elementów $B$, a z $2$ — tylko do 1.
 </Graf>
+
+<Dlaczego>
+Pary, macierz i graf to trzy zapisy tej samej relacji. Polecenie mówi, który z nich podać.
+</Dlaczego>
 </Krok>
 
 <Krok tytul="Tak samo zbuduj macierz Q">
-$Q \subset B \times C$, więc wiersze to $1, 2, 3$, a kolumny to $0, 1$. Dla $y = 0$ iloczyn $x \cdot 0 = 0 < 1$ — zawsze 0. Dla $y = 1$ iloczyn to $x$, a $x \geq 1$ — zawsze 1.
+$Q \subset B \times C$, więc wiersze to $1, 2, 3$ (elementy $B$), a kolumny to $0, 1$ (elementy $C$). Warunek: $xy \geq 1$ — iloczyn **większy albo równy 1**.
+
+<ObliczeniaMacierzy w={B} k={C} warunek="xy \geq 1" rachunek={(x, y) => [`${x} \\cdot ${y} = ${x * y}`, `${x * y} ${x * y >= 1 ? '\\geq' : '<'} 1`]} spelnia={(x, y) => x * y >= 1}>
+tak samo jak wyżej: górna linijka to mnożenie, dolna — porównanie z 1.
+</ObliczeniaMacierzy>
 
 <div class="k-macierze">
 <Macierz w={B} k={C} m={Q} t="Q" />
 </div>
+
+<Dlaczego>
+W kolumnie $0$ są same zera, bo każda liczba razy 0 daje 0, a $0 < 1$. W kolumnie $1$ iloczyn to po prostu $x$, a każdy element $B$ jest co najmniej równy 1.
+</Dlaczego>
 </Krok>
 </Rozwiazanie>
 
 <Ramka kind="granica">
-Macierz i graf mają sens tylko dla zbiorów skończonych (i niezbyt dużych). Relacja „$x \leq y$” na całym $\mathbb{R}$ ma nieskończenie wiele par — tam zostaje zapis warunkiem.
+Macierz i graf mają sens tylko dla zbiorów skończonych i niezbyt dużych. Relacja „$x \leq y$” na całym $\mathbb{R}$ ma nieskończenie wiele par. Tam zostaje zapis warunkiem.
 </Ramka>
 
-Graf relacji **w jednym zbiorze** rysujemy inaczej: jedno kółko na każdy element, a gdy element jest w relacji sam ze sobą ($xPx$), rysujemy **pętelkę**. Przykład: relacja „$x$ jest dzielnikiem $y$” w zbiorze $\{1, 2, 3, 6\}$.
+Graf relacji **w jednym zbiorze** rysujemy inaczej: jedno kółko na każdy element. Gdy element jest w relacji sam ze sobą ($xPx$), rysujemy **pętelkę**. Przykład: relacja „$x$ jest dzielnikiem $y$” w zbiorze $\{1, 2, 3, 6\}$.
 
 <div class="k-macierze">
 <Macierz w={Dz} k={Dz} m={Rdz} t="R" przekatna />
 </div>
 
 <Graf A={Dz} m={Rdz}>
-pętelka przy każdym elemencie, bo każda liczba jest swoim dzielnikiem (na macierzy: jedynki na przekątnej, podświetlonej na fioletowo). Strzałka $1 \to 6$ znaczy „1 dzieli 6”. Między 2 a 3 nie ma strzałki — żadna z tych liczb nie dzieli drugiej.
+pętelka przy każdym elemencie, bo każda liczba jest swoim dzielnikiem — na macierzy to jedynki na przekątnej (fioletowe tło). Strzałka $1 \to 6$ znaczy „1 dzieli 6”. Między 2 a 3 nie ma strzałki, bo żadna z tych liczb nie dzieli drugiej.
 </Graf>
 
 ## Działania na relacjach
 
 <a id="polecenie-dzialania" class="k-anchor"></a>
 
-Relacja to zbiór par, więc działa na niej wszystko, co znasz ze zbiorów: suma, część wspólna, różnica, dopełnienie. Na macierzach robisz to **komórka po komórce**.
+Relacja to zbiór par. Dlatego na relacjach działa wszystko, co znasz ze zbiorów: suma, część wspólna, różnica i dopełnienie. Najłatwiej to zobaczyć na kołach.
+
+Mały przykład: $A = \{1, 2\}$, $B = \{1, 2, 3\}$. Wszystkich par w $A \times B$ jest 6. Relacja $P$: $x < y$. Relacja $R$: $x + y \geq 4$.
+
+<DzialaniaRelacji A={dA} B={dB} mP={dP} mR={dR}>
+prostokąt to wszystkie 6 par z $A \times B$. Niebieskie koło to pary relacji $P$, różowe — pary relacji $R$. Para w części wspólnej kół należy do obu relacji. Pod kołami te same relacje jako macierze. Kliknij działanie: na kołach podświetli się obszar wyniku, a w macierzy wyniku — jej jedynki. Kliknij parę na kołach albo kratkę w macierzy: ta sama kratka zakreśli się w każdej macierzy, a pod spodem zobaczysz, ile wynosi w każdym działaniu.
+</DzialaniaRelacji>
 
 <Ramka kind="zapamietaj">
-Działania wykonujemy tylko na relacjach z **tymi samymi dziedzinami i przeciwdziedzinami** (obie w tym samym $A \times B$). Inaczej macierze mają inne wiersze i kolumny i nie da się ich na siebie nałożyć.
+Działania wykonujemy tylko na relacjach z **tymi samymi dziedzinami i przeciwdziedzinami** — obie muszą być w tym samym $A \times B$. Inaczej macierze mają inne wiersze i kolumny i nie da się ich nałożyć na siebie.
 </Ramka>
 
-| Działanie | Komórka wyniku to 1, gdy… |
+Na macierzach liczysz **kratka po kratce**: bierzesz kratkę w tym samym miejscu w obu macierzach i stosujesz regułę z tabeli.
+
+| Działanie | Kratka wyniku to 1, gdy… |
 |---|---|
 | $P \cup R$ (suma) | w $P$ **lub** w $R$ jest 1 |
 | $P \cap R$ (część wspólna) | w $P$ **i** w $R$ jest 1 |
 | $P \setminus R$ (różnica) | w $P$ jest 1, a w $R$ jest 0 |
-| $P'$ (dopełnienie) | w $P$ jest 0 — zamieniasz każde 0 na 1 i każde 1 na 0 |
+| $P'$ (dopełnienie) | w $P$ jest 0 — każde 0 zamieniasz na 1, a każde 1 na 0 |
 
-Do tego dochodzi działanie, którego nie było przy zbiorach — **odwrócenie relacji**.
+To samo na większych macierzach z zadania z zajęć: $P$ to $xy \leq 2$, a druga relacja $R$ na tych samych zbiorach to $x + y \geq 3$.
+
+<DzialaniaRelacji A={A} B={B} mP={P} mR={R} venn={false}>
+wszystkie macierze mają te same wiersze ($A$) i kolumny ($B$). Kliknij dowolną kratkę, np. w wierszu 1 i kolumnie 2: zakreśli się ta sama kratka we wszystkich macierzach, a pod spodem zobaczysz, skąd wzięła się każda wartość.
+</DzialaniaRelacji>
+
+### Relacja odwrotna
 
 <div class="k-symbole">
-  <Znak t="P'" nazwa="Dopełnienie relacji" czytamy="dopełnienie P (P prim)" znaczy="Wszystkie pary z $A \times B$, których <b>nie ma</b> w $P$. Na macierzy: 0 ↔ 1." pamiec="jak negacja w logice — odwraca każdą wartość." />
-  <Znak t="P^{-1}" nazwa="Relacja odwrotna" czytamy="P do minus pierwszej, relacja odwrotna do P" znaczy="Te same pary, ale odwrócone: $(y, x)$ zamiast $(x, y)$. $P^{-1} \subset B \times A$. Na macierzy: <b>wiersze stają się kolumnami</b>." pamiec="$yP^{-1}x$ wtedy, gdy $xPy$ — „ta sama strzałka, czytana od końca”." />
+  <Znak t="P'" nazwa="Dopełnienie relacji" czytamy="dopełnienie P (P prim)" znaczy="Wszystkie pary z $A \times B$, których <b>nie ma</b> w $P$. Na macierzy: 0 ↔ 1." pamiec="jak negacja w logice — zmienia każdą cyfrę." />
+  <Znak t="P^{-1}" nazwa="Relacja odwrotna" czytamy="P do minus pierwszej" znaczy="Te same pary zapisane w drugą stronę: $(y, x)$ zamiast $(x, y)$. $P^{-1} \subset B \times A$." pamiec="para $(0, 3)$ staje się parą $(3, 0)$." />
 </div>
 
-Przykład na zbiorach z zajęć: obok $P$ ($xy \leq 2$) bierzemy drugą relację $R \subset A \times B$: $xRy \Leftrightarrow x + y \geq 3$.
+Relacja odwrotna $P^{-1}$ ma te same pary co $P$, tylko z zamienioną kolejnością: para $(0, 3)$ staje się parą $(3, 0)$.
 
-<div class="k-macierze">
-<Macierz w={A} k={B} m={P} t="P" />
-<Macierz w={A} k={B} m={R} t="R" />
-<Macierz w={A} k={B} m={suma(P, R)} t="P \cup R" />
-<Macierz w={A} k={B} m={iloczyn(P, R)} t="P \cap R" />
-<Macierz w={A} k={B} m={roznica(P, R)} t="P \setminus R" />
-<Macierz w={A} k={B} m={dopelnienie(P)} t="P'" />
-</div>
+Co to zmienia w macierzy? Pierwszy element pary wskazuje wiersz, a drugi — kolumnę. Skoro elementy w parze zamieniają się miejscami, to **wiersze zamieniają się z kolumnami**. Cyfry zostają te same.
 
-Jak czytać te macierze: wszystkie mają te same wiersze ($A$) i kolumny ($B$), więc porównujesz komórki w tym samym miejscu. Np. komórka $(1, 2)$: w $P$ jest 1, w $R$ też 1 — w sumie i w części wspólnej 1, a w różnicy $P \setminus R$ — 0.
+Jak to zrobić:
 
-Relacja odwrotna do $P$ ma odwrócone pary, więc jej macierz jest „obrócona”: pierwszy wiersz $P$ staje się pierwszą kolumną $P^{-1}$.
+1. Narysuj pustą macierz $P^{-1}$. Jej wiersze to elementy $B$, a kolumny — elementy $A$ (odwrotnie niż w $P$).
+2. Weź pierwszy wiersz $P$ i wpisz go jako pierwszą kolumnę $P^{-1}$, z góry na dół.
+3. Powtórz to dla każdego wiersza.
 
-<div class="k-macierze">
-<Macierz w={A} k={B} m={P} t="P \subset A \times B" />
-<Macierz w={B} k={A} m={odwrotna(P)} t="P^{-1} \subset B \times A" />
-</div>
+<Odwrotna A={A} B={B} m={P}>
+każdy wiersz lewej macierzy ma swój kolor. Ten sam kolor ma kolumna prawej macierzy, do której ten wiersz trafia. Klikaj „Przepisz wiersz” i patrz, jak wiersz staje się kolumną. Stuknij kratkę lewej macierzy, a zobaczysz, gdzie jest w prawej.
+</Odwrotna>
 
-<Ramka kind="pulapka">
-- $P'$ i $P^{-1}$ to **zupełnie różne** relacje. Dopełnienie zamienia wartości (0 ↔ 1), odwrotność zamienia wiersze z kolumnami (wartości zostają).
-- Dopełnienie zmienia **każdą** komórkę. Dla $Q$ z zadania z zajęć: $Q$ ma same 0 w kolumnie 0 i same 1 w kolumnie 1, więc $Q'$ ma same 1 w kolumnie 0 i same 0 w kolumnie 1. Jeśli Twoja $Q'$ wygląda tak samo jak $Q$, to nic nie zostało zamienione.
-</Ramka>
+<Ramka kind="pulapka" tytul="Dopełnienie to nie odwrotność">
+- Dopełnienie $P'$ zmienia **cyfry**: każde 0 na 1, każde 1 na 0. Kratki zostają na swoich miejscach.
+- Odwrotność $P^{-1}$ zmienia **miejsca**: wiersze stają się kolumnami. Cyfry się nie zmieniają.
+
+Przykład na relacji $Q$ z zadania z zajęć:
 
 <div class="k-macierze">
 <Macierz w={B} k={C} m={Q} t="Q" />
 <Macierz w={B} k={C} m={dopelnienie(Q)} t="Q'" />
 <Macierz w={C} k={B} m={odwrotna(Q)} t="Q^{-1}" />
 </div>
+
+W $Q'$ każda cyfra jest zamieniona: kolumna 0 to same 1, a kolumna 1 — same 0. W $Q^{-1}$ cyfry są te same, ale stoją w wierszach zamiast w kolumnach. Jeśli Twoja $Q'$ wygląda tak samo jak $Q$, to nic nie zostało zamienione.
+</Ramka>
 
 <Pytania pytania={[
   { q: '$P \\subset A \\times B$ ma macierz 4 × 3 (4 wiersze, 3 kolumny). Jaki rozmiar ma macierz $P^{-1}$?', opcje: ['4 × 3', '3 × 4', '4 × 4'], dobra: 1, dlaczego: 'Odwrotność zamienia wiersze z kolumnami: $P^{-1} \\subset B \\times A$, więc 3 wiersze (elementy $B$) i 4 kolumny (elementy $A$). Rozmiar 4 × 3 ma dopełnienie $P\'$.' },
@@ -285,14 +384,14 @@ Relacja odwrotna do $P$ ma odwrócone pary, więc jej macierz jest „obrócona�
 
 <a id="polecenie-zlozenie" class="k-anchor"></a>
 
-Najlepiej wyobrazić sobie loty z przesiadką. Relacja $P$ to bezpośrednie loty z polskich miast do dużych lotnisk przesiadkowych, a relacja $Q$ — loty z tych lotnisk do miast docelowych. **Złożenie** $Q \circ P$ odpowiada na pytanie: „czy z miasta $x$ dolecę do miasta $z$ z jedną przesiadką?”.
+Złożenie to przejście **w dwóch krokach**: najpierw relacją $P$ z $x$ do $y$, potem relacją $Q$ z $y$ do $z$. Skojarzenie na start: lot z przesiadką — liczy się tylko, czy z $x$ da się dolecieć do $z$.
 
 <Rozbior
   t="x\,(Q \circ P)\,z \;\Leftrightarrow\; \exists_{y}\ \ xPy \land yQz"
   czytamy="$x$ jest w relacji $Q$ po $P$ z $z$ wtedy i tylko wtedy, gdy istnieje takie $y$, że $xPy$ i $yQz$"
   czesci={[
     { t: 'Q \\circ P', o: '<b>złożenie</b>: najpierw relacja $P$, potem $Q$; czytamy „$Q$ po $P$”' },
-    { t: '\\exists_{y}', o: 'istnieje „przesiadka” $y$ — wystarczy jedna' },
+    { t: '\\exists_{y}', o: 'istnieje element pośredni $y$ — wystarczy jeden' },
     { t: 'xPy \\land yQz', o: 'z $x$ do $y$ prowadzi $P$, a z $y$ do $z$ prowadzi $Q$' },
   ]}
 />
@@ -301,170 +400,272 @@ Najlepiej wyobrazić sobie loty z przesiadką. Relacja $P$ to bezpośrednie loty
 W zapisie $Q \circ P$ **najpierw działa relacja po prawej** ($P$), a potem ta po lewej ($Q$). Tak samo jak przy funkcji złożonej z liceum: w $g(f(x))$ najpierw liczysz $f$. To umowa — trzeba ją zapamiętać.
 </Ramka>
 
-<Zlozenie A={miasta} B={huby} C={cele} mP={loty1} mQ={loty2}>
-lewa macierz to loty $P$ (z POZ i WRO do lotnisk przesiadkowych), środkowa to loty $Q$ (z lotnisk przesiadkowych do JFK i NRT), prawa to złożenie $Q \circ P$. Kliknij komórkę prawej macierzy: na złoto podświetlą się wiersz w $P$ i kolumna w $Q$, a na zielono — wspólne „przesiadki”. Z WRO lecimy tylko do AMS, a z AMS w tym przykładzie nie ma dalszych lotów — dlatego cały wiersz WRO w wyniku to zera.
+**Kiedy złożenie da się wykonać?** Drugi krok musi startować tam, gdzie skończył się pierwszy. Jeśli $P \subset A \times B$ i $Q \subset B \times C$, to $P$ kończy się w $B$ i $Q$ zaczyna w $B$ — złożenie $Q \circ P$ jest wykonalne. Wynik prowadzi od pierwszego zbioru do ostatniego: $Q \circ P \subset A \times C$.
+
+$$
+\begin{gathered}
+A \xrightarrow{\ P\ } B \xrightarrow{\ Q\ } C \\
+Q \circ P \subset A \times C
+\end{gathered}
+$$
+
+### Jak policzyć macierz złożenia
+
+Przykład na liczbach: $A = \{1, 2\}$, $B = \{1, 2, 3\}$, $C = \{1, 2, 3\}$. Relacja $P \subset A \times B$: $x < y$. Relacja $Q \subset B \times C$: $y + z = 4$.
+
+<div class="k-macierze">
+<Macierz w={zzA} k={zzB} m={zzP} t="P" oznacz={wiersz(zzP, 0, 'zloto')} />
+<Macierz w={zzB} k={zzC} m={zzQ} t="Q" oznacz={kolumna(zzQ, 0, 'zloto')} />
+</div>
+
+Macierz $Q \circ P$ ma wiersze z $A$ (start) i kolumny z $C$ (koniec). Każdą kratkę $(x, z)$ liczysz tak samo:
+
+1. Z macierzy $P$ weź **wiersz $x$** (złoty w przykładzie: wiersz 1).
+2. Z macierzy $Q$ weź **kolumnę $z$** (złota: kolumna 1).
+3. Zapisz je jeden pod drugim — pozycja po pozycji. Pozycje to elementy $B$.
+4. Jeśli na **którejś pozycji obie mają 1** → wpisz **1**. Jeśli nigdzie → wpisz **0**.
+
+Przykład — kratka $(1, 1)$:
+
+<PrzylozWiersz A={zzA} B={zzB} C={zzC} mP={zzP} mQ={zzQ} i={0} k={0} />
+
+<Ramka kind="skad" tytul="Dlaczego wiersz z P i kolumna z Q?">
+- Wiersz $x$ w $P$ mówi, do których $y$ da się dojść z $x$.
+- Kolumna $z$ w $Q$ mówi, z których $y$ da się dojść do $z$.
+- Wspólna jedynka to takie $y$, przez które przejdziesz z $x$ do $z$. Słowami: $1 < 3$ (to $P$) i $3 + 1 = 4$ (to $Q$).
+</Ramka>
+
+Całe złożenie — kliknij dowolną kratkę wyniku, a zobaczysz jej rachunek:
+
+<Zlozenie A={zzA} B={zzB} C={zzC} mP={zzP} mQ={zzQ}>
+lewa macierz to $P$, środkowa to $Q$, prawa to złożenie $Q \circ P$ (na start ukryte). Po kliknięciu kratki wyniku na złoto podświetlą się wiersz w $P$ i kolumna w $Q$, a na zielono — pozycje, na których obie mają 1.
 </Zlozenie>
-
-**Kiedy złożenie da się wykonać?** Przesiadka musi być na lotnisku, z którego naprawdę odlatują samoloty $Q$. Formalnie: jeśli $P \subset A \times B$ i $Q \subset B \times C$, to $Q \circ P$ jest wykonalne, bo **przeciwdziedzina $P$ = dziedzina $Q$** (oba „środkowe” zbiory to $B$). Wynik łączy zbiory „zewnętrzne”: $Q \circ P \subset A \times C$.
-
-$$
-A \xrightarrow{\ P\ } B \xrightarrow{\ Q\ } C \qquad\Rightarrow\qquad Q \circ P \subset A \times C
-$$
 
 <Ramka kind="polecenie">
 „Sprawdź, które złożenia ($P \circ Q$, $Q \circ P$, $P \circ P$, $Q \circ Q$) są wykonalne, i wyznacz je.”
 
 1. Zapisz przy każdej relacji, skąd dokąd prowadzi, np. $P \subset A \times B$, $Q \subset B \times C$.
-2. Dla złożenia $X \circ Y$ (najpierw $Y$, potem $X$) porównaj **drugi zbiór $Y$** z **pierwszym zbiorem $X$**. Różne → złożenie niewykonalne. Takie same → wynik $\subset$ (pierwszy zbiór $Y$) × (drugi zbiór $X$).
-3. Macierz wyniku: komórka $(x, z)$ — weź **wiersz $x$ macierzy $Y$** i **kolumnę $z$ macierzy $X$**. Jeśli na tej samej pozycji $y$ obie mają 1 → **1**, w przeciwnym razie **0**.
-4. Uważaj na kolejność: zapisujesz $Q \circ P$, ale liczysz zaczynając od macierzy $P$ (jej wiersze) i dopiero potem $Q$ (jej kolumny).
+2. Dla złożenia $X \circ Y$ (najpierw $Y$, potem $X$) porównaj **drugi zbiór $Y$** z **pierwszym zbiorem $X$**. Różne → złożenie niewykonalne. Takie same → wynik leży w (pierwszy zbiór $Y$) × (drugi zbiór $X$).
+3. Macierz wyniku: kratka $(x, z)$ — wiersz $x$ macierzy $Y$ pod kolumną $z$ macierzy $X$. Wspólna jedynka → 1, brak → 0.
 </Ramka>
 
 <Rozwiazanie tytul="Które złożenia są wykonalne? Wyznacz je" zrodlo="Zad. 3, str. 49–50, c) — część 2">
 <div slot="tresc">
 
-$P \subset A \times B$ i $Q \subset B \times C$ z poprzedniego zadania: $A = \{-1, 0, 1, 2\}$, $B = \{1, 2, 3\}$, $C = \{0, 1\}$.
+$P \subset A \times B$ ($xy \leq 2$) i $Q \subset B \times C$ ($xy \geq 1$) z poprzedniego zadania: $A = \{-1, 0, 1, 2\}$, $B = \{1, 2, 3\}$, $C = \{0, 1\}$.
+
+</div>
+
+<div slot="plan">
+
+1. Przy każdym z czterech złożeń sprawdzamy, czy „środkowe” zbiory się zgadzają. Liczyć macierz ma sens tylko dla złożeń wykonalnych.
+2. Dla jedynego wykonalnego złożenia liczymy macierz kratka po kratce: wiersz z pierwszej relacji pod kolumną z drugiej.
+
+Polecenie każe sprawdzić wszystkie cztery złożenia — także te, które nie wyjdą. Za stwierdzenie „niewykonalne” z uzasadnieniem też dostajesz punkty.
 
 </div>
 
 <Krok tytul="P ∘ Q — najpierw Q, potem P">
-$Q \subset B \times C$ kończy się na $C$, a $P \subset A \times B$ zaczyna od $A$. $C \neq A$, więc złożenie $P \circ Q$ jest **niewykonalne**.
+$Q \subset B \times C$ kończy się w $C$, a $P \subset A \times B$ zaczyna w $A$. $C \neq A$, więc złożenie $P \circ Q$ jest **niewykonalne**.
 
 <Dlaczego>
-Po relacji $Q$ jesteśmy w zbiorze $C$, a relacja $P$ startuje ze zbioru $A$. Nie ma wspólnego „lotniska przesiadkowego”.
+Po relacji $Q$ jesteśmy w zbiorze $C$, a relacja $P$ startuje ze zbioru $A$. Nie ma elementu, przez który dałoby się przejść.
 </Dlaczego>
 </Krok>
 
 <Krok tytul="Q ∘ P — najpierw P, potem Q">
-$P$ kończy się na $B$, $Q$ zaczyna od $B$ — zbiory się zgadzają, więc $Q \circ P$ **jest wykonalne**, a $Q \circ P \subset A \times C$.
+$P$ kończy się w $B$, $Q$ zaczyna w $B$ — zbiory się zgadzają. $Q \circ P$ **jest wykonalne**, a wynik leży w $A \times C$: 4 wiersze ($A$) i 2 kolumny ($C$).
 </Krok>
 
 <Krok tytul="Policz macierz Q ∘ P">
-Komórka $(x, z)$: wiersz $x$ macierzy $P$ i kolumna $z$ macierzy $Q$ — szukamy jedynki na tej samej pozycji.
+Dla każdej kratki $(x, z)$: wiersz $x$ macierzy $P$ pod kolumną $z$ macierzy $Q$. Przykład — kratka $(-1, 0)$:
+
+<PrzylozWiersz A={A} B={B} C={C} mP={P} mQ={Q} i={0} k={0} />
+
+Tak samo liczysz pozostałe kratki:
 
 <Zlozenie A={A} B={B} C={C} mP={P} mQ={Q}>
-kliknij komórki prawej macierzy po kolei. Kolumna 0 w $Q$ to same zera, więc w wyniku kolumna 0 to same zera. Kolumna 1 w $Q$ to same jedynki, a w każdym wierszu $P$ jest jakaś jedynka — więc kolumna 1 wyniku to same jedynki.
+kliknij kratki prawej macierzy po kolei. Kolumna 0 w $Q$ to same zera, więc w wyniku kolumna 0 to same zera. Kolumna 1 w $Q$ to same jedynki, a w każdym wierszu $P$ jest jakaś jedynka — więc kolumna 1 wyniku to same jedynki.
 </Zlozenie>
 
 <Dlaczego>
-Żeby $x (Q \circ P) z$, potrzebna jest przesiadka $y$, dla której $xPy$ i $yQz$. Dla $z = 0$ żadne $y$ nie spełnia $yQ0$ (iloczyn $y \cdot 0 = 0 < 1$), więc przesiadki nie ma.
+Do jedynki w kratce $(x, z)$ potrzebny jest element $y$, dla którego $xPy$ i $yQz$. Dla $z = 0$ takiego $y$ nie ma: $y \cdot 0 = 0 < 1$, więc żaden $y$ nie jest w relacji $Q$ z zerem.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Można liczyć na parach: dla każdego $x$ wypisz, do których $y$ prowadzi $P$, a potem, do których $z$ prowadzi z nich $Q$. Wynik jest ten sam. Macierze są wygodniejsze, gdy par jest dużo.
 </Dlaczego>
 </Krok>
 
 <Krok tytul="P ∘ P i Q ∘ Q">
-- $P \circ P$: $P$ kończy się na $B$, a zaczyna od $A$. $B \neq A$ — **niewykonalne**.
-- $Q \circ Q$: $Q$ kończy się na $C$, a zaczyna od $B$. $C \neq B$ — **niewykonalne**.
+- $P \circ P$: $P$ kończy się w $B$, a zaczyna w $A$. $B \neq A$ — **niewykonalne**.
+- $Q \circ Q$: $Q$ kończy się w $C$, a zaczyna w $B$. $C \neq B$ — **niewykonalne**.
 
 <Dlaczego>
-Złożenie relacji z samą sobą ($P \circ P$, zapisywane też $P^2$) działa tylko wtedy, gdy relacja prowadzi z jakiegoś zbioru **do tego samego zbioru** — czyli dla relacji w jednym zbiorze.
+Złożenie relacji z samą sobą ($P \circ P$, zapisywane też $P^2$) działa tylko wtedy, gdy relacja kończy się w tym samym zbiorze, w którym się zaczyna — czyli dla relacji w jednym zbiorze.
 </Dlaczego>
 </Krok>
 </Rozwiazanie>
 
 <Ramka kind="pulapka">
-To, że $Q \circ P$ jest wykonalne, **nie oznacza**, że $P \circ Q$ też jest. Kolejność w złożeniu ma znaczenie — w zadaniu z zajęć wykonalne było tylko jedno z czterech złożeń.
+To, że $Q \circ P$ jest wykonalne, **nie oznacza**, że $P \circ Q$ też jest. Kolejność ma znaczenie. W zadaniu z zajęć wykonalne było tylko jedno z czterech złożeń.
 </Ramka>
 
 <Ramka kind="kiedy">
-Złożenie przyda się dalej przy **przechodniości**: relacja jest przechodnia, gdy $P \circ P \subset P$. Liczysz wtedy złożenie relacji z samą sobą dokładnie tą metodą.
+Złożenie przyda się zaraz przy **przechodniości**: relacja jest przechodnia, gdy $R \circ R \subset R$. Liczysz wtedy złożenie relacji z samą sobą dokładnie tą metodą.
 </Ramka>
 
 ## Własności relacji
 
 <a id="polecenie-wlasnosci" class="k-anchor"></a>
 
-Własności badamy dla relacji **w jednym zbiorze** ($R \subset A \times A$) — jej macierz jest kwadratowa, a wiersze i kolumny mają te same etykiety. Najważniejsza linia to **przekątna**: komórki od lewego górnego do prawego dolnego rogu, czyli pary $(x, x)$.
+Własności badamy dla relacji **w jednym zbiorze** ($R \subset A \times A$). Jej macierz jest kwadratowa, a wiersze i kolumny mają te same etykiety, w tej samej kolejności.
 
-Na zajęciach jest siedem własności. Każdą odczytasz z macierzy:
+Przy każdej własności patrzysz na jedno z dwóch miejsc:
 
-| Własność | Co znaczy | Jak wygląda macierz |
-|---|---|---|
-| **zwrotna** | każdy element jest w relacji z samym sobą | na przekątnej **same 1** |
-| **antyzwrotna** | żaden element nie jest w relacji z samym sobą | na przekątnej **same 0** |
-| **symetryczna** | jeśli $xRy$, to $yRx$ | „lustro”: komórki symetryczne względem przekątnej są równe |
-| **asymetryczna** | jeśli $xRy$, to na pewno nie $yRx$ | na przekątnej same 0 **i** nie ma symetrycznych jedynek |
-| **quasi-asymetryczna** | dla różnych $x$, $y$ nie ma obu kierunków naraz | nie ma symetrycznych jedynek (przekątna dowolna) |
-| **spójna** | każde dwa różne elementy są w relacji przynajmniej w jedną stronę | nie ma symetrycznych zer |
-| **przechodnia** | jeśli $xRy$ i $yRz$, to $xRz$ | $R \circ R \subset R$ — każda jedynka złożenia jest też w $R$ |
+- **przekątna** — kratki od lewego górnego do prawego dolnego rogu, czyli pary $(x, x)$: element sam ze sobą;
+- **lustrzane kratki** — $(x, y)$ i $(y, x)$. Leżą po dwóch stronach przekątnej, jakby przekątna była lustrem.
 
-„Symetryczne” komórki to pary $(x, y)$ i $(y, x)$ — leżą w lustrzanych miejscach po obu stronach przekątnej.
+<div class="k-macierze">
+<Macierz w={['a', 'b', 'c']} k={['a', 'b', 'c']} m={[[1, 0, 1], [1, 0, 0], [0, 1, 1]]} przekatna oznacz={[{ i: 0, j: 2, styl: 'zloto' }, { i: 2, j: 0, styl: 'zloto' }, { i: 0, j: 1, styl: 'kolko' }, { i: 1, j: 0, styl: 'kolko' }]} />
+</div>
 
-Przykłady z życia, które pasują 1:1:
+Fioletowe tło to przekątna. Złote kratki $(a, c)$ i $(c, a)$ to jedna para lustrzanych kratek, zakreślone $(a, b)$ i $(b, a)$ — druga.
 
-- **zwrotna:** „jest w tym samym wieku co” — każdy jest w swoim wieku;
-- **antyzwrotna i asymetryczna:** „jest starszy niż” — nikt nie jest starszy od siebie, a jeśli Ola jest starsza od Kuby, to Kuba nie jest starszy od Oli;
-- **symetryczna:** „jest znajomym na Facebooku” — zawsze w obie strony;
-- **niesymetryczna:** „obserwuje na Instagramie” — może być w jedną stronę;
-- **spójna:** „$\leq$” na liczbach — każde dwie liczby da się porównać;
-- **przechodnia:** „jest starszy niż” — starszy od starszego jest starszy;
-- **nieprzechodnia:** „jest znajomym” — znajomy znajomego nie musi być Twoim znajomym.
+Na zajęciach jest siedem własności. Przy każdej masz dwie małe macierze: gdy własność zachodzi (TAK) i gdy nie zachodzi (NIE). Zielone kratki to te, na które patrzysz, a różowe — kontrprzykład.
+
+<GaleriaWlasnosci />
 
 <Ramka kind="botak">
-Spójność sprawdzamy tylko dla **par różnych elementów** — przekątna nie ma tu znaczenia (tak jest na zajęciach). Dzięki temu relacja może być naraz asymetryczna (zera na przekątnej) i spójna, np. „$<$” na liczbach.
+Spójność sprawdzamy tylko dla **par różnych elementów** — przekątna się nie liczy (tak jest na zajęciach). Dlatego relacja może być naraz asymetryczna i spójna, np. „$<$” na liczbach.
 </Ramka>
 
-<Ramka kind="pulapka">
-- **Antyzwrotna to nie to samo co „niezwrotna”.** Jeśli na przekątnej są i 0, i 1, relacja nie jest ani zwrotna, ani antyzwrotna.
-- **Asymetryczna = antyzwrotna + quasi-asymetryczna.** Jedna jedynka na przekątnej i już nie jest asymetryczna, choć quasi-asymetryczna może zostać.
-- „Niesymetryczna” (choć jedna para bez lustra) to nie „asymetryczna” (żadnej pary w obie strony).
+<Ramka kind="pulapka" tytul="Niezwrotna to nie antyzwrotna">
+Spójrz na przekątną tej macierzy: 1, 0, 1.
+
+<div class="k-macierze">
+<Macierz w={['a', 'b', 'c']} k={['a', 'b', 'c']} m={[[1, 1, 0], [0, 0, 0], [0, 1, 1]]} przekatna oznacz={[{ i: 1, j: 1, styl: 'roz' }, { i: 0, j: 0, styl: 'zloto' }, { i: 2, j: 2, styl: 'zloto' }]} />
+</div>
+
+- Nie jest zwrotna, bo na przekątnej jest 0 (różowe).
+- Nie jest antyzwrotna, bo na przekątnej są 1 (złote).
+- Taka relacja nie jest **ani** zwrotna, **ani** antyzwrotna. Słowo „niezwrotna” znaczy tylko „nie jest zwrotna”.
 </Ramka>
 
-### Przechodniość — dwa sposoby
-
-Przechodniość jest najtrudniejsza, bo nie widać jej od razu. Są dwa sposoby:
-
-1. **Złożenie (wzór z zajęć):** policz $R \circ R$ (tak jak złożenie w poprzedniej sekcji) i sprawdź, czy **każda jedynka** w $R \circ R$ jest też jedynką w $R$. Jeśli tak — przechodnia.
-2. **Szybki test w głowie:** jeśli $xRy$ (jedynka w wierszu $x$, kolumnie $y$), to **każda jedynka z wiersza $y$ musi być też w wierszu $x$**. Wiersz $y$ „mieści się” w wierszu $x$.
-
-<Ramka kind="kiedy">
-Szybkim testem sprawdzasz relację w kilkanaście sekund — każdą jedynkę po kolei. Złożenie $R \circ R$ to formalny dowód, który dobrze wygląda w rozwiązaniu na kartce. Wynik jest zawsze ten sam.
+<Ramka kind="pulapka" tytul="Asymetryczna to dwa warunki naraz">
+Asymetryczna = antyzwrotna (same 0 na przekątnej) **i** quasi-asymetryczna (żadnych jedynek w lustrze). Wystarczy jedna 1 na przekątnej i relacja przestaje być asymetryczna — nawet jeśli dalej jest quasi-asymetryczna.
 </Ramka>
+
+### Przechodniość krok po kroku
+
+Przechodniość znaczy: jeśli da się przejść z $x$ do $y$, a potem z $y$ do $z$, to musi się też dać przejść z $x$ do $z$ od razu. Każda droga „w dwóch krokach” musi mieć skrót „w jednym kroku”.
+
+Na zajęciach sprawdza się to wzorem $R \circ R \subset R$ — czytamy: „złożenie $R$ z $R$ zawiera się w $R$”. W praktyce to trzy kroki:
+
+1. **Zbuduj pustą macierz $R \circ R$** — z tymi samymi wierszami i kolumnami co $R$.
+2. **Wypełnij każdą kratkę $(x, z)$ tak jak przy złożeniu:** wiersz $x$ macierzy $R$ pod kolumną $z$ tej samej macierzy $R$. Wspólna jedynka → 1, brak → 0. Jedynka znaczy: z $x$ do $z$ da się dojść w dwóch krokach.
+3. **Porównaj $R \circ R$ z $R$ kratka po kratce.** Szukasz kratki, w której $R \circ R$ ma 1, a $R$ ma 0.
+   - Jest choć jedna taka kratka → relacja **nie jest przechodnia** (w dwóch krokach się da, w jednym — nie).
+   - Nie ma żadnej → relacja **jest przechodnia**.
+
+Cały ten proces zobaczysz w zadaniu niżej, w kroku 4.
 
 <Ramka kind="polecenie">
 „Zbadaj własności relacji $R$ określonej w zbiorze $A$.”
 
 1. Zbuduj macierz $R$ (wiersze i kolumny: elementy $A$ w tej samej kolejności).
-2. **Przekątna:** same 1 → zwrotna; same 0 → antyzwrotna; mieszanka → ani jedno, ani drugie.
-3. **Pary symetryczne** (komórki $(x, y)$ i $(y, x)$ dla $x \neq y$):
-   - wszystkie równe → symetryczna;
-   - nigdzie dwóch jedynek → quasi-asymetryczna (a jeśli dodatkowo przekątna to same 0 → asymetryczna);
+2. **Przekątna:** same 1 → zwrotna. Same 0 → antyzwrotna. Mieszanka → ani jedno, ani drugie.
+3. **Lustrzane kratki** $(x, y)$ i $(y, x)$ dla $x \neq y$:
+   - zawsze równe → symetryczna;
+   - nigdzie dwóch jedynek → quasi-asymetryczna; jeśli do tego przekątna to same 0 → asymetryczna;
    - nigdzie dwóch zer → spójna.
-4. **Przechodniość:** policz $R \circ R$ albo zrób szybki test wierszy.
-5. Przy każdej własności, która **nie** zachodzi, podaj kontrprzykład (konkretne komórki).
+4. **Przechodniość:** policz $R \circ R$ i porównaj z $R$ (trzy kroki wyżej).
+5. Przy każdej własności, która **nie** zachodzi, podaj kontrprzykład — konkretne kratki.
 </Ramka>
 
 <Rozwiazanie tytul="Zbadaj własności relacji xRy ⇔ |x − y| ≤ 1 w zbiorze {1, 2, 3, 4}">
+<div slot="plan">
+
+1. Budujemy macierz — bez niej własności nie widać.
+2. Patrzymy na przekątną → zwrotność i antyzwrotność.
+3. Patrzymy na lustrzane kratki → symetria, asymetria, quasi-asymetria, spójność.
+4. Liczymy $R \circ R$ i porównujemy z $R$ → przechodniość.
+5. Zbieramy wyniki. Przy każdej własności, która nie zachodzi, podajemy kontrprzykład.
+
+Kolejność kroków 2–4 jest dowolna. Ta jest najwygodniejsza, bo idzie od rzeczy widocznych od razu do tej, którą trzeba policzyć.
+
+</div>
+
 <Krok tytul="Zbuduj macierz">
-$xRy$, gdy liczby różnią się co najwyżej o 1 — to „sąsiedzi” (albo ta sama liczba).
+Dla każdej kratki: $x$ z lewej, $y$ z góry. Liczysz różnicę $x - y$, bierzesz jej wartość bezwzględną i sprawdzasz, czy wynik jest $\leq 1$.
+
+<ObliczeniaMacierzy w={S4} k={S4} warunek="|x - y| \leq 1" rachunek={(x, y) => [`|${x} - ${y}| = ${Math.abs(x - y)}`, `${Math.abs(x - y)} ${Math.abs(x - y) <= 1 ? '\\leq' : '>'} 1`]} spelnia={(x, y) => Math.abs(x - y) <= 1}>
+górna linijka to odległość między $x$ a $y$, dolna — porównanie z 1.
+</ObliczeniaMacierzy>
 
 <div class="k-macierze">
 <Macierz w={S4} k={S4} m={Rs} t="R" przekatna />
 </div>
-</Krok>
 
-<Krok tytul="Przekątna: zwrotna, nie antyzwrotna">
-Na przekątnej same 1 ($|x - x| = 0 \leq 1$) — relacja jest **zwrotna**. Nie jest antyzwrotna, bo na przekątnej są jedynki.
-</Krok>
-
-<Krok tytul="Pary symetryczne: symetryczna, nie (quasi-)asymetryczna, nie spójna">
-- $|x - y| = |y - x|$, więc każda komórka ma taką samą wartość jak jej lustrzane odbicie — **symetryczna**.
-- Są symetryczne jedynki, np. $(1, 2)$ i $(2, 1)$ — **nie jest quasi-asymetryczna**, więc tym bardziej **nie jest asymetryczna**.
-- Są symetryczne zera, np. $(1, 3)$ i $(3, 1)$ — **nie jest spójna**: 1 i 3 nie są w relacji w żadną stronę.
-
-<Dlaczego>
-Do obalenia własności wystarczy jeden kontrprzykład — jedna para komórek.
+<Dlaczego typ="umowa">
+$|x - y|$ to wartość bezwzględna: odległość między liczbami na osi. Zawsze wychodzi liczba nieujemna, np. $|1 - 3| = |-2| = 2$. Warunek $|x - y| \leq 1$ znaczy więc: „liczby leżą obok siebie albo są równe”.
 </Dlaczego>
 </Krok>
 
-<Krok tytul="Przechodniość: policz R ∘ R">
-<Zlozenie A={S4} B={S4} C={S4} mP={Rs} mQ={Rs} nP="R" nQ="R">
-złożenie relacji $R$ z samą sobą. Kliknij komórkę $(1, 3)$ wyniku: jest w niej 1, bo $1R2$ i $2R3$. A w samej macierzy $R$ w komórce $(1, 3)$ jest 0.
-</Zlozenie>
-
-$R \circ R$ ma jedynkę w $(1, 3)$, a $R$ — nie. Złożenie nie zawiera się w $R$, więc relacja **nie jest przechodnia**.
+<Krok tytul="Przekątna: zwrotna, nie antyzwrotna">
+Na przekątnej są same 1, więc relacja jest **zwrotna**. Nie jest antyzwrotna, bo antyzwrotna wymaga samych 0.
 
 <Dlaczego>
-Po ludzku: 1 jest sąsiadem 2, a 2 jest sąsiadem 3, ale 1 nie jest sąsiadem 3. Szybki test daje to samo: $1R2$, a w wierszu 2 jest jedynka w kolumnie 3, której nie ma w wierszu 1.
+Na przekątnej $x = y$, więc $|x - x| = 0 \leq 1$. Każda kratka przekątnej musi mieć 1.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Lustrzane kratki: symetryczna, nie quasi-asymetryczna, nie spójna">
+<div class="k-macierze">
+<Macierz w={S4} k={S4} m={Rs} t="R" oznacz={[{ i: 0, j: 1, styl: 'zloto' }, { i: 1, j: 0, styl: 'zloto' }, { i: 0, j: 2, styl: 'roz' }, { i: 2, j: 0, styl: 'roz' }]} />
+</div>
+
+- Każda kratka ma tę samą cyfrę co jej odbicie w lustrze, bo $|x - y| = |y - x|$. Relacja jest **symetryczna**.
+- Złote kratki $(1, 2)$ i $(2, 1)$ to dwie jedynki w lustrze. Dlatego relacja **nie jest quasi-asymetryczna**, a więc tym bardziej **nie jest asymetryczna**.
+- Różowe kratki $(1, 3)$ i $(3, 1)$ to dwa zera w lustrze: 1 i 3 nie są w relacji w żadną stronę. Relacja **nie jest spójna**.
+
+<Dlaczego>
+Do obalenia własności wystarczy jeden kontrprzykład — jedna para kratek. Do potwierdzenia trzeba sprawdzić wszystkie pary.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Przechodniość: policz R ∘ R i porównaj z R">
+**Krok A.** Liczymy $R \circ R$ kratka po kratce: wiersz $x$ macierzy $R$ pod kolumną $z$ tej samej macierzy. Przykład — kratka $(1, 3)$:
+
+<PrzylozWiersz A={S4} B={S4} C={S4} mP={Rs} mQ={Rs} i={0} k={2} nP="R" nQ="R" />
+
+Tak samo powstają pozostałe kratki — kliknij dowolną w prawej macierzy:
+
+<Zlozenie A={S4} B={S4} C={S4} mP={Rs} mQ={Rs} nP="R" nQ="R">
+złożenie relacji $R$ z samą sobą. Lewa i środkowa macierz to ta sama relacja $R$. Prawa to wynik — jedynka znaczy „da się dojść w dwóch krokach”.
+</Zlozenie>
+
+**Krok B.** Porównujemy $R \circ R$ z $R$. Różowe kratki mają 1 w $R \circ R$, a 0 w $R$:
+
+<div class="k-macierze">
+<Macierz w={S4} k={S4} m={RRs} t="R \circ R" oznacz={RRroz} />
+<Macierz w={S4} k={S4} m={Rs} t="R" oznacz={RRkolka} />
+</div>
+
+Takie kratki są (np. $(1, 3)$), więc relacja **nie jest przechodnia**.
+
+<Dlaczego>
+Jedynka w $R \circ R$ w kratce $(1, 3)$ znaczy: z 1 do 3 da się dojść w dwóch krokach (przez 2). W $R$ ta kratka ma 0 — w jednym kroku się nie da. Po ludzku: 1 sąsiaduje z 2, 2 sąsiaduje z 3, ale 1 nie sąsiaduje z 3.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Szybki test bez liczenia całego złożenia. Jeśli w wierszu $x$ jest 1 w kolumnie $y$ (czyli $xRy$), to każda jedynka z wiersza $y$ musi być też w wierszu $x$.
+
+<div class="k-macierze">
+<Macierz w={S4} k={S4} m={Rs} t="R" oznacz={[...wiersz(Rs, 0, 'zloto'), ...wiersz(Rs, 1, 'ok'), { i: 0, j: 1, styl: 'kolko' }]} />
+</div>
+
+W kratce $(1, 2)$ jest 1 (zakreślona), więc wiersz 2 (zielony) musi się „mieścić” w wierszu 1 (złotym). Wiersz 2 ma jedynkę w kolumnie 3, a wiersz 1 — nie. Test oblany: relacja nie jest przechodnia.
 </Dlaczego>
 </Krok>
 
@@ -472,7 +673,7 @@ Po ludzku: 1 jest sąsiadem 2, a 2 jest sąsiadem 3, ale 1 nie jest sąsiadem 3.
 Relacja jest **zwrotna i symetryczna**. Nie jest antyzwrotna, asymetryczna, quasi-asymetryczna, spójna ani przechodnia.
 
 <Wlasnosci et={S4} m={Rs}>
-kliknij własność: na zielono podświetlą się komórki, które ją potwierdzają, na różowo — kontrprzykład. Ostatni przycisk mówi, czy to relacja porządkująca.
+kliknij własność: na zielono podświetlą się kratki, które ją potwierdzają, na różowo — kontrprzykład. Ostatni przycisk mówi, czy to relacja porządkująca.
 </Wlasnosci>
 </Krok>
 </Rozwiazanie>
@@ -485,7 +686,7 @@ Relacje „$\leq$” i „$<$” w zbiorze $\{1, 2, 3\}$ różnią się tylko pr
 <Macierz w={N3} k={N3} m={Rlt} t="<" przekatna />
 </div>
 
-„$\leq$” ma same 1 na przekątnej — jest zwrotna, a quasi-asymetryczna, bo nie ma symetrycznych jedynek. „$<$” ma same 0 na przekątnej — jest antyzwrotna i asymetryczna. Obie są spójne i przechodnie.
+„$\leq$” ma same 1 na przekątnej, więc jest zwrotna. Nie ma jedynek w lustrze, więc jest quasi-asymetryczna. „$<$” ma same 0 na przekątnej, więc jest antyzwrotna i asymetryczna. Obie są spójne i przechodnie.
 </Ramka>
 
 ## Relacje porządkujące
@@ -493,44 +694,62 @@ Relacje „$\leq$” i „$<$” w zbiorze $\{1, 2, 3\}$ różnią się tylko pr
 <a id="polecenie-porzadek" class="k-anchor"></a>
 
 <Ramka kind="zapamietaj">
-**Relacja porządkująca** to — najkrócej — relacja **przechodnia**. Jej typ zależy od tego, jak bardzo jest asymetryczna i czy jest spójna.
+**Relacja porządkująca** to — najkrócej — relacja **przechodnia**. Jej typ zależy od dwóch rzeczy: jak bardzo jest asymetryczna i czy jest spójna.
 </Ramka>
 
 <SchematPorzadkow>
 w każdym polu jest nazwa typu i własności, które relacja musi mieć. Im wyżej, tym mocniejsza asymetria: na dole jej nie ma, w środku jest quasi-asymetria, na górze pełna asymetria (zamiast zwrotności). Prawa kolumna to te same typy z dodatkiem spójności — wtedy przed nazwą stoi „liniowy”. We wszystkich polach jest przechodniość.
 </SchematPorzadkow>
 
-Skąd słowo „liniowy”? Relacja spójna pozwala porównać **każde dwa** elementy, więc da się ustawić je wszystkie w jednej kolejce — na jednej linii. Gdy spójności brak, niektóre pary są nieporównywalne: liczby 2 i 3 w relacji „jest dzielnikiem” nie stoją ani jedna przed drugą.
+Skąd słowo „liniowy”? Relacja spójna pozwala porównać **każde dwa** elementy. Wtedy da się ustawić wszystkie w jednej kolejce — na jednej linii. Gdy spójności brak, niektórych par nie da się porównać: liczby 2 i 3 w relacji „jest dzielnikiem” nie stoją ani jedna przed drugą.
 
 <Ramka kind="polecenie">
 „Czy relacja $R$ jest relacją porządkującą? Jeśli tak, to jaką?”
 
 1. Sprawdź **przechodniość**. Nie jest przechodnia → to nie jest relacja porządkująca. Koniec.
-2. **Asymetryczna?** → górny wiersz: ostry porządek.
+2. **Asymetryczna?** → górny wiersz schematu: ostry porządek.
 3. Jeśli nie: **zwrotna i quasi-asymetryczna?** → środkowy wiersz: porządek.
 4. Jeśli nie: **zwrotna?** → dolny wiersz: preporządek. Jeśli nie jest ani zwrotna, ani asymetryczna — nie pasuje do żadnego pola.
 5. **Spójna?** → dopisz „liniowy”.
 </Ramka>
 
-| Relacja | Najważniejsze własności | Typ |
-|---|---|---|
-| $\leq$ w $\{1, 2, 3\}$ | zwrotna, quasi-asymetryczna, przechodnia, spójna | liniowy porządek |
-| $<$ w $\{1, 2, 3\}$ | asymetryczna, przechodnia, spójna | liniowy ostry porządek |
-| „jest dzielnikiem” w $\{1, 2, 3, 6\}$ | zwrotna, quasi-asymetryczna, przechodnia, **niespójna** (2 i 3) | porządek |
-| „zysk $X \geq$ zysk $Y$” dla zysków 20, 30, 30 | zwrotna, przechodnia, spójna, **nie** quasi-asymetryczna (remis) | liniowy preporządek |
-| „jest starszy niż” w grupie z bliźniakami | asymetryczna, przechodnia, **niespójna** (bliźniaki) | ostry porządek |
-| $\lvert x - y\rvert \leq 1$ w $\{1, 2, 3, 4\}$ | **nieprzechodnia** | nie jest porządkująca |
+| Relacja | Typ — i dlaczego |
+|---|---|
+| $\leq$ w $\{1, 2, 3\}$ | **liniowy porządek**: zwrotna, quasi-asymetryczna, przechodnia, spójna |
+| $<$ w $\{1, 2, 3\}$ | **liniowy ostry porządek**: asymetryczna, przechodnia, spójna |
+| „jest dzielnikiem” w $\{1, 2, 3, 6\}$ | **porządek**: zwrotna, quasi-asymetryczna, przechodnia, ale **niespójna** (2 i 3) |
+| „zysk $X \geq$ zysk $Y$” dla zysków 20, 30, 30 | **liniowy preporządek**: zwrotna, przechodnia, spójna, ale **nie** quasi-asymetryczna (remis) |
+| „jest starszy niż” w grupie z bliźniakami | **ostry porządek**: asymetryczna, przechodnia, ale **niespójna** (bliźniaki) |
+| $\lvert x - y\rvert \leq 1$ w $\{1, 2, 3, 4\}$ | **nie jest porządkująca**, bo nie jest przechodnia |
 
 <Wlasnosci et={Dz} m={Rdz}>
-relacja „$x$ jest dzielnikiem $y$” w zbiorze $\{1, 2, 3, 6\}$. Sprawdź „spójna?” — na różowo podświetlą się symetryczne zera $(2, 3)$ i $(3, 2)$. Potem „typ porządku?”.
+relacja „$x$ jest dzielnikiem $y$” w zbiorze $\{1, 2, 3, 6\}$. Kliknij „spójna?” — na różowo podświetlą się zera w lustrze, $(2, 3)$ i $(3, 2)$. Potem kliknij „typ porządku?”.
 </Wlasnosci>
 
-<Ramka kind="pulapka">
-Relacje preferencji z zadań o inwestycjach („zysk nie mniejszy niż”) mają często **remisy**: dwie inwestycje z tym samym zyskiem są w relacji w obie strony. To symetryczne jedynki, więc relacja nie jest quasi-asymetryczna — to **(liniowy) preporządek**, a nie porządek.
+<Ramka kind="pulapka" tytul="Remisy w relacji preferencji">
+Trzy inwestycje mają zyski: $A$ — 20, $B$ — 30, $C$ — 30. Relacja: „zysk $X \geq$ zysk $Y$”.
+
+<div class="k-macierze">
+<Macierz w={['A', 'B', 'C']} k={['A', 'B', 'C']} m={Rremis} t="P_E" oznacz={[{ i: 1, j: 2, styl: 'roz' }, { i: 2, j: 1, styl: 'roz' }]} />
+</div>
+
+- $B$ i $C$ mają ten sam zysk. Dlatego $B$ jest w relacji z $C$, a $C$ z $B$.
+- Na macierzy to dwie jedynki w lustrze (różowe).
+- Jedynki w lustrze oznaczają, że relacja **nie jest quasi-asymetryczna**.
+- Zostaje: zwrotna, przechodnia, spójna. To **liniowy preporządek**, a nie liniowy porządek.
 </Ramka>
 
-<Ramka kind="granica">
-Przechodniość to warunek konieczny, ale nie wystarczający, żeby trafić do schematu. Relacja $R = \{(1, 1)\}$ w zbiorze $\{1, 2\}$ jest przechodnia, ale nie jest zwrotna (brak $(2, 2)$) ani asymetryczna (jest $(1, 1)$) — nie pasuje do żadnego pola.
+<Ramka kind="granica" tytul="Przechodnia, ale bez miejsca w schemacie">
+Nie każda relacja przechodnia pasuje do schematu. Przykład: zbiór $\{1, 2\}$ i relacja $R = \{(1, 1)\}$.
+
+<div class="k-macierze">
+<Macierz w={[1, 2]} k={[1, 2]} m={[[1, 0], [0, 0]]} t="R" przekatna oznacz={[{ i: 0, j: 0, styl: 'zloto' }, { i: 1, j: 1, styl: 'roz' }]} />
+</div>
+
+- Jest przechodnia: jedyna droga w dwóch krokach to $1 \to 1 \to 1$, a skrót $1 \to 1$ istnieje.
+- Nie jest zwrotna: w kratce $(2, 2)$ jest 0 (różowa).
+- Nie jest asymetryczna: w kratce $(1, 1)$ jest 1 (złota).
+- Dolne i środkowe pole schematu wymagają zwrotności, a górne — asymetrii. Ta relacja nie ma żadnej z nich, więc nie pasuje do żadnego pola.
 </Ramka>
 
 ## Optimum Pareto
@@ -578,11 +797,16 @@ Na kolokwium dominację liczy się na macierzach. Dla każdego kryterium budujes
 </Ramka>
 
 <Ramka kind="skad" tytul="Dlaczego zaostrzenie robi właśnie to?">
-- $M^{-1}$ ma w komórce $(X, Y)$ wartość z komórki $(Y, X)$ macierzy $M$.
-- Dopełnienie $'$ zamienia ją: 1 tam, gdzie $M(Y, X) = 0$.
-- Część wspólna z $M$ zostawia 1 tylko tam, gdzie $M(X, Y) = 1$ **i** $M(Y, X) = 0$.
+Wzór $S = (M^{-1})' \cap M$ robi trzy rzeczy po kolei:
 
-Czyli: $X$ jest nie gorszy od $Y$ we wszystkim, a $Y$ **nie** jest nie gorszy od $X$ we wszystkim — więc $X$ jest w czymś lepszy. To dokładnie dominacja. Na przekątnej zawsze wychodzi 0 (wariant nie dominuje sam siebie), a symetryczne jedynki (dwa identyczne warianty) też znikają.
+- $M^{-1}$ (relacja odwrotna) ma w kratce $(X, Y)$ to, co $M$ ma w lustrzanej kratce $(Y, X)$.
+- Dopełnienie $'$ zamienia cyfry. Jedynka zostaje tam, gdzie lustrzana kratka w $M$ miała 0.
+- Część wspólna z $M$ zostawia 1 tylko tam, gdzie $M$ ma 1 w kratce $(X, Y)$ **i** 0 w kratce $(Y, X)$.
+
+Po ludzku: $X$ jest nie gorszy od $Y$ we wszystkim, a $Y$ od $X$ — nie. Czyli $X$ jest w czymś lepszy. To jest dominacja.
+
+- Na przekątnej zawsze wychodzi 0: wariant nie dominuje sam siebie.
+- Dwie jedynki w lustrze też znikają: dwa warianty równe we wszystkim się nie dominują.
 
 Kolumna $Y$ w $S$ mówi, **kto dominuje $Y$**. Same zera — nikt. Dlatego szukamy kolumn, a nie wierszy.
 </Ramka>
@@ -599,8 +823,21 @@ Inwestycje $A$, $B$, $C$, $D$. $E$ — oczekiwany zysk (im więcej, tym lepiej),
 
 </div>
 
+<div slot="plan">
+
+1. Dla każdego kryterium budujemy macierz preferencji. Pokazuje, kto jest „nie gorszy” od kogo w tym jednym kryterium.
+2. Liczymy część wspólną $M$. Zostają pary „nie gorszy we wszystkim naraz”.
+3. Liczymy zaostrzenie $S$. Zostają pary „lepszy”, czyli dominacja.
+4. Szukamy kolumn z samych zer. To warianty, których nikt nie dominuje — zbiór Pareto.
+
+To procedura z zajęć. Ten sam wynik da porównanie każdej pary wariantów w tabeli (przy 4 wariantach to 6 par). Macierze robią dokładnie to samo, ale po kolei, więc nic nie umyka.
+
+</div>
+
 <Krok tytul="Zbuduj macierze preferencji">
 $XP_EY \Leftrightarrow E(X) \geq E(Y)$ oraz $XP_SY \Leftrightarrow S(X) \leq S(Y)$. Obie relacje są w zbiorze $\{A, B, C, D\}$, więc macierze są 4 × 4.
+
+Jak wypełnić wiersz: bierzesz wartość wariantu z lewej strony i porównujesz ją po kolei z wartością każdego wariantu z góry. Znak porównania zależy od kryterium.
 
 <div class="k-macierze">
 <Macierz w={inw} k={inw} m={PE} t="P_E" />
@@ -608,22 +845,30 @@ $XP_EY \Leftrightarrow E(X) \geq E(Y)$ oraz $XP_SY \Leftrightarrow S(X) \leq S(Y
 </div>
 
 <Dlaczego>
-Wiersz $C$ w $P_E$: $E(C) = 35$, a $35 \geq 20$, $35 \geq 30$, $35 \geq 35$, $35 < 40$ — stąd 1, 1, 1, 0. Wiersz $B$ w $P_S$: $S(B) = 20$, a $20 > 10$, $20 \leq 20$, $20 \leq 20$, $20 \leq 25$ — stąd 0, 1, 1, 1.
+Wiersz $C$ w $P_E$: $E(C) = 35$. Porównujemy: $35 \geq 20$ (1), $35 \geq 30$ (1), $35 \geq 35$ (1), $35 < 40$ (0). Wiersz $B$ w $P_S$: $S(B) = 20$. Porównujemy: $20 > 10$ (0), $20 \leq 20$ (1), $20 \leq 20$ (1), $20 \leq 25$ (1).
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+„Im więcej, tym lepiej” (zysk) → znak $\geq$. „Im mniej, tym lepiej” (ryzyko, koszt) → znak $\leq$. Który kierunek jest lepszy, mówi treść zadania.
 </Dlaczego>
 </Krok>
 
 <Krok tytul="Część wspólna M">
-Jedynka zostaje tylko tam, gdzie jest w **obu** macierzach.
+Jedynka zostaje tylko tam, gdzie jest w **obu** macierzach — kratka po kratce, jak przy działaniach na relacjach.
 
 <div class="k-macierze">
 <Macierz w={inw} k={inw} m={M1} t="M" oznacz={oznaczZaostrzenie(M1)} />
 </div>
 
-Przekreślone jedynki zaraz znikną (przekątna i symetryczne jedynki), jedynka w kółku zostanie.
+Przekreślone jedynki znikną w następnym kroku (przekątna i jedynki w lustrze). Jedynka w kółku zostanie.
+
+<Dlaczego>
+Dominacja wymaga, żeby wariant był nie gorszy **we wszystkich** kryteriach naraz. „We wszystkich naraz” to część wspólna — tak jak „i” w logice.
+</Dlaczego>
 </Krok>
 
 <Krok tytul="Zaostrzenie S">
-Zerujemy przekątną. Symetrycznych jedynek tu nie ma. Zostaje jedna jedynka: $(C, B)$.
+Bierzemy $M$ i zamieniamy na 0: wszystkie jedynki z przekątnej oraz jedynki, które mają jedynkę w lustrze. Tu jedynek w lustrze nie ma, więc zerujemy tylko przekątną. Zostaje jedna jedynka: $(C, B)$.
 
 <div class="k-macierze">
 <Macierz w={inw} k={inw} m={S1} t="S" kolumny={zeroweKolumny(S1)} />
@@ -661,6 +906,12 @@ Pracownicy $A$, $B$, $C$, $D$. $L$ — liczba projektów (im więcej, tym lepiej
 | Projekty $L$ | 10 | 9 | 9 | 8 |
 | Nieobecności $N$ | 5 | 7 | 3 | 3 |
 | Wynagrodzenie $W$ | 3 | 4 | 4 | 3 |
+
+</div>
+
+<div slot="plan">
+
+Ta sama procedura co wyżej, tylko z trzema kryteriami: trzy macierze preferencji → część wspólna $M$ → zaostrzenie $S$ → kolumny zer. Na końcu odpowiadamy na pytanie z treści: czy zbiór Pareto wystarczy, żeby wskazać dwie osoby.
 
 </div>
 

@@ -1,0 +1,162 @@
+---
+// Działania na relacjach naraz na dwa sposoby: (1) koła z parami — relacja to zbiór par, więc działa jak zbiór,
+// (2) macierze tych samych par. Przycisk działania podświetla obszar na kołach i jedynki w macierzy wyniku.
+// Kliknięcie pary (na kołach albo w dowolnej macierzy) podświetla tę samą pozycję we wszystkich macierzach — jak w statkach —
+// i pokazuje, ile wynosi w każdym działaniu. venn={false}: same macierze (gdy par jest za dużo na rysunek).
+import { tex, texInline } from '../../../lib/tex.js';
+import { suma, iloczyn, roznica, dopelnienie } from '../../../lib/relacje.js';
+import Macierz from './Macierz.astro';
+type El = number | string;
+interface Props { A: El[]; B: El[]; mP: number[][]; mR: number[][]; nP?: string; nR?: string; venn?: boolean }
+const { A, B, mP, mR, nP = 'P', nR = 'R', venn = true } = Astro.props;
+const fmt = (v: El) => String(v).replace(/^-/, '−');
+const ops = [
+  { k: 'u', t: `${nP} \\cup ${nR}`, m: suma(mP, mR), f: (a: number, b: number) => a || b, reg: ['10', '11', '01'] },
+  { k: 'n', t: `${nP} \\cap ${nR}`, m: iloczyn(mP, mR), f: (a: number, b: number) => a && b, reg: ['11'] },
+  { k: 'pr', t: `${nP} \\setminus ${nR}`, m: roznica(mP, mR), f: (a: number, b: number) => a && !b, reg: ['10'] },
+  { k: 'rp', t: `${nR} \\setminus ${nP}`, m: roznica(mR, mP), f: (a: number, b: number) => b && !a, reg: ['01'] },
+  { k: 'dp', t: `${nP}'`, m: dopelnienie(mP), f: (a: number) => !a, reg: ['01', '00'] },
+];
+const paryAll = A.flatMap((x, i) => B.map((y, j) => ({ i, j, x, y, a: mP[i][j], b: mR[i][j], r: `${mP[i][j]}${mR[i][j]}`, lab: `(${fmt(x)}, ${fmt(y)})` })));
+const powod = {
+  u: (a: number, b: number) => (a && b ? 'jedynka w obu' : a || b ? 'wystarczy jedna jedynka' : 'w obu jest 0'),
+  n: (a: number, b: number) => (a && b ? 'jedynka w obu' : 'potrzebne są dwie jedynki'),
+  pr: (a: number, b: number) => (a && !b ? `jest w $${nP}$, nie ma w $${nR}$` : !a ? `nie ma jej w $${nP}$` : `jest też w $${nR}$`),
+  rp: (a: number, b: number) => (b && !a ? `jest w $${nR}$, nie ma w $${nP}$` : !b ? `nie ma jej w $${nR}$` : `jest też w $${nP}$`),
+  dp: (a: number) => (a ? `w $${nP}$ jest 1, więc w dopełnieniu 0` : `w $${nP}$ jest 0, więc w dopełnieniu 1`),
+};
+const opis = (p: (typeof paryAll)[number]) => texInline(
+  `<b>Para $(${p.x}, ${p.y})$</b> — wiersz $${p.x}$, kolumna $${p.y}$ (zakreślona w każdej macierzy). W $${nP}$ jest ${p.a}, w $${nR}$ jest ${p.b}.<br>` +
+  ops.map((o) => `$${o.t}$: <b>${o.f(p.a, p.b) ? 1 : 0}</b> — ${powod[o.k as keyof typeof powod](p.a, p.b)}`).join('<br>'),
+);
+
+// --- koła (jak diagram Venna dla zbiorów), elementami są pary ---
+const W = 440, H = 300, Rr = 100, cy = 150, ax = 168, bx = 272;
+const hh2 = Math.sqrt(Rr * Rr - ((bx - ax) / 2) ** 2), mx = (ax + bx) / 2, yT = +(cy - hh2).toFixed(1), yB = +(cy + hh2).toFixed(1);
+const P = {
+  '11': `M${mx},${yT} A${Rr} ${Rr} 0 0 1 ${mx},${yB} A${Rr} ${Rr} 0 0 1 ${mx},${yT}Z`,
+  '10': `M${mx},${yT} A${Rr} ${Rr} 0 1 0 ${mx},${yB} A${Rr} ${Rr} 0 0 1 ${mx},${yT}Z`,
+  '01': `M${mx},${yT} A${Rr} ${Rr} 0 1 1 ${mx},${yB} A${Rr} ${Rr} 0 0 0 ${mx},${yT}Z`,
+  '00': `M8,8 H${W - 8} V${H - 8} H8 Z M${mx},${yT} A${Rr} ${Rr} 0 1 0 ${mx},${yB} A${Rr} ${Rr} 0 1 0 ${mx},${yT}Z`,
+};
+const hw = 4.4 * Math.max(...paryAll.map((p) => p.lab.length)) + 4, hh = 10;
+const regPt = (x: number, y: number) => {
+  const dA = Math.hypot(x - ax, y - cy), dB = Math.hypot(x - bx, y - cy);
+  if (dA < Rr - 4 && dB < Rr - 4) return '11';
+  if (dA < Rr - 4 && dB > Rr + 4) return '10';
+  if (dA > Rr + 4 && dB < Rr - 4) return '01';
+  if (dA > Rr + 4 && dB > Rr + 4 && x > 16 && x < W - 16 && y > 16 && y < H - 16) return '00';
+  return null;
+};
+const regBox = (x: number, y: number) => {
+  const pts = [[x, y], [x - hw, y - hh], [x + hw, y - hh], [x - hw, y + hh], [x + hw, y + hh]].map(([a, b]) => regPt(a, b));
+  return pts.every((r) => r && r === pts[0]) ? pts[0] : null;
+};
+const kotw: Record<string, [number, number]> = { '10': [112, cy], '11': [mx, cy], '01': [W - 112, cy] };
+const poz = new Map<string, { x: number; y: number }>();
+const etykiety = [[34, 34], [100, 44], [340, 44]];
+if (venn) {
+  for (const r of ['10', '11', '01', '00']) {
+    const el = paryAll.filter((p) => p.r === r);
+    if (!el.length) continue;
+    const kand: { x: number; y: number; d: number }[] = [];
+    for (let x = 20; x <= W - 20; x += 3) for (let y = 20; y <= H - 16; y += 3) {
+      if (regBox(x, y) !== r) continue;
+      if (etykiety.some(([lx, ly]) => Math.abs(x - lx) < hw + 14 && Math.abs(y - ly) < 22)) continue;
+      const d = r === '00' ? -Math.min(Math.hypot(x - ax, y - cy), Math.hypot(x - bx, y - cy)) : Math.hypot(x - kotw[r][0], y - kotw[r][1]);
+      kand.push({ x, y, d });
+    }
+    const wyb: { x: number; y: number }[] = [];
+    for (const c of kand.sort((p, q) => p.d - q.d)) {
+      if (wyb.length === el.length) break;
+      if (wyb.every((w) => Math.abs(w.x - c.x) >= 2 * hw + 8 || Math.abs(w.y - c.y) >= 2 * hh + 8)) wyb.push(c);
+    }
+    if (wyb.length < el.length) throw new Error(`DzialaniaRelacji: za dużo par w obszarze ${r} — użyj venn={false}`);
+    wyb.sort((p, q) => (Math.abs(p.y - q.y) < 12 ? p.x - q.x : p.y - q.y));
+    el.forEach((p, n) => poz.set(`${p.i}-${p.j}`, wyb[n]));
+  }
+}
+---
+<figure class="k-fig k-dz" data-dz>
+  <div class="k-fig-box">
+    {venn && (
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Koła relacji ${nP} i ${nR} z parami z iloczynu kartezjańskiego`}>
+        {Object.entries(P).map(([r, d]) => <path class="k-dz-r" data-r={r} d={d} fill-rule="evenodd" />)}
+        <rect x="8" y="8" width={W - 16} height={H - 16} fill="none" stroke="#6f679a" stroke-width="1.5" />
+        <circle cx={ax} cy={cy} r={Rr} fill="none" stroke="#27e8ff" stroke-width="2.2" />
+        <circle cx={bx} cy={cy} r={Rr} fill="none" stroke="#ff2e97" stroke-width="2.2" />
+        <text x="34" y="38" text-anchor="middle" class="k-dz-lab" fill="#9b93c4">A×B</text>
+        <text x="100" y="50" text-anchor="middle" class="k-dz-lab" fill="#27e8ff">{nP}</text>
+        <text x="340" y="50" text-anchor="middle" class="k-dz-lab" fill="#ff2e97">{nR}</text>
+        {paryAll.map((p) => { const q = poz.get(`${p.i}-${p.j}`)!; return <text class="k-dz-p" data-r={p.r} data-i={p.i} data-j={p.j} x={q.x} y={q.y + 5} text-anchor="middle" tabindex="0" role="button">{p.lab}</text>; })}
+      </svg>
+    )}
+    <div class="k-dz-btns" data-js-only hidden>
+      {ops.map((o) => <button type="button" class="k-opt k-opt-sm" data-op={o.k} data-reg={o.reg.join(' ')} set:html={tex(o.t)} />)}
+    </div>
+    <div class="k-macierze k-dz-mx">
+      <div class="k-dz-blk"><Macierz w={A} k={B} m={mP} t={nP} /></div>
+      <div class="k-dz-blk"><Macierz w={A} k={B} m={mR} t={nR} /></div>
+      {ops.map((o) => <div class="k-dz-blk k-dz-res" data-op={o.k}><Macierz w={A} k={B} m={o.m} t={o.t} /></div>)}
+    </div>
+    <ul hidden data-expl>{paryAll.map((p) => <li data-cell={`${p.i}-${p.j}`} set:html={opis(p)} />)}</ul>
+  </div>
+    <div class="k-dz-out k-live" aria-live="polite" data-out>
+      <span data-js-only hidden>Stuknij parę na kołach albo dowolną komórkę macierzy. Przyciski nad macierzami podświetlają wynik działania.</span>
+    </div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-dz]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-dz]') === box) el.hidden = false; });
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const btns = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-dz-btns [data-op]'));
+    const pickOp = (b: HTMLButtonElement | null) => {
+      btns.forEach((x) => x.classList.toggle('is-on', x === b));
+      const reg = b ? b.dataset.reg!.split(' ') : [];
+      box.querySelectorAll<SVGElement>('.k-dz-r, .k-dz-p').forEach((el) => el.classList.toggle('is-on', reg.includes(el.dataset.r!)));
+      box.classList.toggle('is-pick', !!b);
+      box.querySelectorAll<HTMLElement>('.k-dz-res').forEach((blk) => {
+        const on = !!b && blk.dataset.op === b.dataset.op;
+        blk.classList.toggle('is-sel', on);
+        blk.querySelectorAll<HTMLElement>('.k-mx-c').forEach((c) => c.classList.toggle('is-zloto', on && c.textContent!.trim() === '1'));
+      });
+    };
+    btns.forEach((b) => b.addEventListener('click', () => pickOp(b.classList.contains('is-on') ? null : b)));
+    const pickCell = (i: string, j: string) => {
+      box.querySelectorAll('.k-mx-c.is-kolko').forEach((c) => c.classList.remove('is-kolko'));
+      box.querySelectorAll('.k-dz-p.is-sel').forEach((c) => c.classList.remove('is-sel'));
+      box.querySelectorAll<HTMLElement>(`.k-mx-c[data-i="${i}"][data-j="${j}"]`).forEach((c) => c.classList.add('is-kolko'));
+      box.querySelector(`.k-dz-p[data-i="${i}"][data-j="${j}"]`)?.classList.add('is-sel');
+      out.innerHTML = box.querySelector(`[data-expl] [data-cell="${i}-${j}"]`)!.innerHTML;
+      out.classList.add('is-live');
+    };
+    box.querySelectorAll<HTMLElement>('.k-mx-c, .k-dz-p').forEach((el) => {
+      el.style.cursor = 'pointer';
+      if (el.classList.contains('k-mx-c')) el.tabIndex = 0;
+      const go = () => pickCell(el.dataset.i!, el.dataset.j!);
+      el.addEventListener('click', go);
+      el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    });
+  });
+</script>
+
+<style>
+  .k-dz svg{max-width:520px;margin-bottom:6px;}
+  .k-dz-r{fill:transparent;transition:fill .25s;}
+  .k-dz-r.is-on{fill:rgba(255,216,74,.24);}
+  .k-dz-lab{font-family:var(--mono);font-size:18px;font-weight:800;font-style:italic;}
+  .k-dz-p{font-family:var(--mono);font-size:14px;font-weight:700;fill:#eef0ff;transition:fill .2s,opacity .2s;outline:none;}
+  .is-pick .k-dz-p{opacity:.4;}
+  .is-pick .k-dz-p.is-on{opacity:1;fill:#ffd84a;}
+  .k-dz-p.is-sel{opacity:1;fill:#27e8ff;text-decoration:underline;}
+  .k-dz-btns{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 2px;}
+  .k-dz-btns .k-opt{justify-content:center;min-width:64px;min-height:38px;}
+  .k-dz-btns .k-opt.is-on{border-color:var(--gold);background:rgba(255,216,74,.12);}
+  .k-dz-mx{margin-top:10px;}
+  .k-dz-blk{padding:4px 6px;border:1px solid transparent;transition:border-color .2s,background .2s;}
+  .k-dz-blk.is-sel{border-color:var(--gold);background:rgba(255,216,74,.06);}
+  @media(max-width:560px){ .k-dz-mx{gap:12px 8px;} .k-dz-blk{padding:2px;} }
+  .k-dz-out{margin-top:6px;padding:8px 12px;border-left:2px solid var(--cyan);background:rgba(39,232,255,.05);font-size:.92rem;line-height:1.7;min-height:1.7em;}
+</style>

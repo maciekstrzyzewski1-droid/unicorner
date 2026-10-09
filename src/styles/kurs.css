@@ -147,6 +147,24 @@
 .k-krok.k-ukryty{display:none;}
 .k-rozw-ctl{display:flex;flex-wrap:wrap;gap:10px;padding:4px 20px 18px;}
 .k-why{margin:.6em 0 .8em;padding:9px 12px;border-left:2px solid var(--accent);background:rgba(167,139,250,.07);font-size:.93rem;line-height:1.6;}
+.k-why-inaczej{border-left-color:var(--cyan);background:rgba(39,232,255,.06);}
+.k-why-inaczej .k-why-l{color:var(--cyan);}
+.k-why-umowa{border-left-color:var(--gold);background:rgba(255,216,74,.06);}
+.k-why-umowa .k-why-l{color:var(--gold);}
+.k-rozw-plan{margin:12px 20px 0;padding:10px 14px;border:1px solid rgba(39,232,255,.25);background:rgba(39,232,255,.04);font-size:.94rem;line-height:1.6;}
+.k-rozw-plan .k-lbl{display:block;margin-bottom:4px;}
+.k-rozw-plan ol{margin:.2em 0 .2em 1.2em!important;padding:0!important;list-style:decimal;}
+.k-rozw-plan li{margin:.15em 0!important;}
+.k-rozw-plan p{margin:.3em 0!important;}
+/* przyłożenie wiersza do kolumny (złożenie relacji) — wstawiane przez innerHTML, więc styl globalny */
+.k-zl-tab{border-collapse:collapse;margin:6px 0 8px;font-size:.88rem;}
+.k-zl-tab th,.k-zl-tab td{border:1px solid var(--line2);padding:3px 9px;text-align:center;font-family:var(--mono);}
+.k-zl-tab th{color:var(--muted);font-weight:500;text-align:left;font-family:inherit;}
+.k-zl-tab th.k-zl-y{text-align:center;color:var(--gold);}
+.k-zl-tab td.is-hit{background:rgba(90,209,160,.28);color:#fff;font-weight:800;}
+.k-zl-tab tr.k-zl-wyn td{color:var(--muted2);}
+.k-zl-tab tr.k-zl-wyn td.is-hit{color:#fff;}
+
 .k-why-l{display:block;font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:var(--accent);margin-bottom:3px;}
 .k-why-b>p{margin:0 0 .5em;} .k-why-b>p:last-child{margin:0;}
 
@@ -398,3 +416,16 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
 .k-mod-cw{display:inline-block;margin:6px 0 0 60px;font-family:var(--mono);font-size:.76rem;color:#9fe9ff;text-decoration:none;border-bottom:1px solid rgba(39,232,255,.35);}
 @media(max-width:560px){.k-mod-cw{margin-left:46px;}}
 .k-meta a{color:#9fe9ff;text-decoration:none;}
+
+/* --- małe telefony (≤ 380 px) --- */
+@media(max-width:380px){
+  .k-prose .katex-display>.katex{font-size:.96em;}
+  .k-prose .k-tab table{font-size:.84rem;}
+  .k-prose .k-tab th,.k-prose .k-tab td{padding:5px 5px;}
+}
+
+/* panel z wyjaśnieniem po kliknięciu (siatka obliczeń, złożenie, działania, odwrotność): na telefonie przykleja się
+   do dołu ekranu, dopóki rysunek jest widoczny — wyjaśnienie zawsze obok tego, co kliknięto */
+@media(max-width:560px){
+  .k-live.is-live{position:sticky;bottom:8px;z-index:4;max-height:42vh;overflow:auto;background:#15131d!important;box-shadow:0 -6px 18px rgba(0,0,0,.6);}
+}

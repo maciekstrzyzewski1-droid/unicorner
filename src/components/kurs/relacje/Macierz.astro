@@ -10,8 +10,9 @@ interface Props {
   w: El[]; k: El[]; m: number[][]; t?: string;
   przekatna?: boolean; oznacz?: Mark[]; kolumny?: number[];
   tryb?: 'pokaz' | 'ukryj' | 'cwicz'; mxid?: string;
+  kolory?: number[][];   // indeks koloru tła komórki (0–4) albo -1 — np. ten sam kolor dla wiersza P i kolumny P⁻¹
 }
-const { w, k, m, t, przekatna = false, oznacz = [], kolumny = [], tryb = 'pokaz', mxid } = Astro.props;
+const { w, k, m, t, przekatna = false, oznacz = [], kolumny = [], tryb = 'pokaz', mxid, kolory } = Astro.props;
 if (m.length !== w.length || m.some((r) => r.length !== k.length)) throw new Error(`Macierz ${t ?? ''}: rozmiar nie zgadza się z etykietami`);
 const styl = new Map(oznacz.map((o) => [`${o.i}-${o.j}`, o.styl]));
 const n = k.length;
@@ -27,7 +28,7 @@ const cw = Math.max(2.2, 0.62 * Math.max(...k.map(vis)) + 0.7).toFixed(2);
     <div class="k-mx-rh">{w.map((r) => <span set:html={tex(String(r))} />)}</div>
     <div class="k-mx-vals">
       {m.map((row, i) => row.map((v, j) => {
-        const cls = ['k-mx-c', przekatna && i === j ? 'is-diag' : '', kolumny.includes(j) ? 'is-col' : '', styl.get(`${i}-${j}`) ? `is-${styl.get(`${i}-${j}`)}` : ''].filter(Boolean).join(' ');
+        const cls = ['k-mx-c', przekatna && i === j ? 'is-diag' : '', kolumny.includes(j) ? 'is-col' : '', kolory && kolory[i][j] >= 0 ? `is-k${kolory[i][j]}` : '', styl.get(`${i}-${j}`) ? `is-${styl.get(`${i}-${j}`)}` : ''].filter(Boolean).join(' ');
         if (tryb === 'cwicz') return <span class={cls}><button type="button" class="k-ct-c k-mx-btn" data-ok={v} data-r={i} data-c={j} aria-label={`wiersz ${w[i]}, kolumna ${k[j]}`}>·</button></span>;
         return <span class={cls} data-i={i} data-j={j} data-v={tryb === 'ukryj' ? v : undefined}>{tryb === 'ukryj' ? '·' : v}</span>;
       }))}
@@ -54,6 +55,8 @@ const cw = Math.max(2.2, 0.62 * Math.max(...k.map(vis)) + 0.7).toFixed(2);
   .k-mx-c{display:grid;place-items:center;font-weight:800;font-size:1.02rem;color:var(--text);border-radius:3px;transition:background .15s,color .15s,box-shadow .15s;}
   .k-mx-c.is-diag{background:rgba(167,139,250,.14);}
   .k-mx-c.is-col{background:rgba(255,216,74,.1);}
+  .k-mx-c.is-k0{background:rgba(39,232,255,.22);} .k-mx-c.is-k1{background:rgba(255,46,151,.22);}
+  .k-mx-c.is-k2{background:rgba(255,216,74,.22);} .k-mx-c.is-k3{background:rgba(90,209,160,.24);} .k-mx-c.is-k4{background:rgba(167,139,250,.3);}
   .k-mx-c.is-kolko{box-shadow:inset 0 0 0 2px var(--cyan);border-radius:50%;}
   .k-mx-c.is-skresl{color:var(--magenta);text-decoration:line-through;}
   .k-mx-c.is-zloto{background:rgba(255,216,74,.28);color:#fff;}

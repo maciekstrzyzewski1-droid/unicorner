@@ -1,6 +1,10 @@
 ---
-// Krótkie „dlaczego tak?” wewnątrz kroku rozwiązania.
-interface Props { etykieta?: string }
-const { etykieta = 'Dlaczego?' } = Astro.props;
+// Krótka wstawka wewnątrz kroku rozwiązania:
+// typ 'dlaczego' (domyślny) — z czego to wynika; 'inaczej' — inny sposób na ten sam krok;
+// 'umowa' — „bo tak”: konwencja, której nie da się wywnioskować.
+interface Props { etykieta?: string; typ?: 'dlaczego' | 'inaczej' | 'umowa' }
+const { typ = 'dlaczego' } = Astro.props;
+const DOMYSLNE = { dlaczego: 'Dlaczego?', inaczej: 'Inny sposób', umowa: 'Bo tak — umowa' };
+const etykieta = Astro.props.etykieta ?? DOMYSLNE[typ];
 ---
-<div class="k-why"><span class="k-why-l">{etykieta}</span><div class="k-why-b"><slot /></div></div>
+<div class={`k-why k-why-${typ}`}><span class="k-why-l">{etykieta}</span><div class="k-why-b"><slot /></div></div>
