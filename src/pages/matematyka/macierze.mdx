@@ -1,0 +1,1471 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: matematyka
+slug: macierze
+title: Macierze
+podtytul: działania, wyznacznik, macierz odwrotna i rząd
+description: Macierze od zera dla studentów ekonomii — działania, wyznacznik (Sarrus, Laplace), macierz odwrotna dwiema metodami, równanie macierzowe i rząd. Przepisy, zadania krok po kroku i ćwiczenia.
+lede: Macierz to tabelka liczb — taka jak arkusz w Excelu. Tu nauczysz się mnożyć macierze, liczyć ich wyznacznik, odwracać je i wyznaczać ich rząd. Do każdego polecenia z kolokwium dostajesz przepis, zadanie z zajęć rozpisane krok po kroku i ćwiczenia z natychmiastową odpowiedzią.
+wymaga: Tabliczka mnożenia, ułamki i liczby ujemne. Resztę tłumaczymy od zera.
+umiesz:
+  - odczytać wymiar macierzy i wskazać jej element po numerze wiersza i kolumny
+  - sprawdzić, czy dwie macierze da się pomnożyć, i policzyć ich iloczyn
+  - transponować macierz i wykonywać operacje elementarne na wierszach
+  - policzyć wyznacznik wzorem dla 2×2, regułą Sarrusa i rozwinięciem Laplace'a
+  - wyznaczyć macierz odwrotną metodą wyznacznikową i metodą operacji elementarnych
+  - wyznaczyć rząd macierzy z postaci bazowej
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Mx from '../../components/kurs/macierze/Mx.astro';
+import Slupki from '../../components/kurs/macierze/Slupki.astro';
+import Operacja from '../../components/kurs/macierze/Operacja.astro';
+import Mnozenie from '../../components/kurs/macierze/Mnozenie.astro';
+import Transpozycja from '../../components/kurs/macierze/Transpozycja.astro';
+import Przekatne from '../../components/kurs/macierze/Przekatne.astro';
+import Dopelnienia from '../../components/kurs/macierze/Dopelnienia.astro';
+import Laplace from '../../components/kurs/macierze/Laplace.astro';
+import GaleriaWyznacznika from '../../components/kurs/macierze/GaleriaWyznacznika.astro';
+import CwiczenieLiczby from '../../components/kurs/macierze/CwiczenieLiczby.astro';
+import Indeksy from '../../components/kurs/macierze/Indeksy.astro';
+import Wymiary from '../../components/kurs/macierze/Wymiary.astro';
+import { Q, mat, dodaj, odejmij, razyLiczba, T, mnoz, det, kratka, kratkaHtml, krok, lancuch, odwrotna, macierzDop, podmacierz, minor, znak, bmatrix, kolumnyJednostkowe, jednostkowa } from '../../lib/macierze.js';
+
+export const A1 = [[2, -1, 0], [4, 3, 5]];
+export const dA = [[1, 2], [3, 4]];
+export const dB = [[5, 0], [-1, 2]];
+export const dSum = dodaj(dA, dB);
+export const dRoz = odejmij(dA, dB);
+export const d3x = [[1, -2], [0, 4]];
+export const d3 = razyLiczba(3, d3x);
+export const d2A = razyLiczba(2, dA);
+export const d2AB = odejmij(d2A, dB);
+export const kol = (j, styl) => [0, 1].map((i) => ({ i, j, styl }));
+export const tA = [[1, 2, 3], [4, 5, 6]];
+export const tS = [[1, 2], [3, 4]];
+export const diag3 = [[5, 0, 0], [0, 4, 0], [0, 0, 2]];
+export const nieDiag = [[5, 0, 0], [0, 4, 0], [1, 0, 2]];
+export const kw3 = [[2, 7, 1], [0, 3, 5], [4, 1, 6]];
+export const przek = [0, 1, 2].map((i) => ({ i, j: i, styl: 'fiolet' }));
+
+export const kQ = [[40, 25], [60, 10]];
+export const kP = [[12, 4], [8, 3]];
+export const lokal = ['przy Rynku', 'na kampusie'];
+export const kOpis = (i, j) => `${j === 0 ? 'Przychód' : 'Koszt'} lokalu ${lokal[i]}: ${kQ[i][0]} kaw po ${kP[0][j]} zł i ${kQ[i][1]} ciastek po ${kP[1][j]} zł — razem <b>${kratka(kQ, kP, i, j).suma.tex()} zł</b>.`;
+export const mA = [[1, 2, 0], [-1, 3, 2]];
+export const mB = [[2, 1], [0, -1], [4, 3]];
+export const mAB = mnoz(mA, mB);
+export const mBA = mnoz(mB, mA);
+export const sA = [[1, 2], [0, 1]];
+export const sB = [[1, 0], [3, 1]];
+export const sAB = mnoz(sA, sB);
+export const sBA = mnoz(sB, sA);
+export const zA = [[1, 7, 3, -2]];
+export const zB = [[3, -2, 1, -1]];
+export const zAT = T(zA);
+export const zBAT = mnoz(zB, zAT);
+export const zATB = mnoz(zAT, zB);
+export const zIl = zB[0].map((v, k) => v * zA[0][k]);
+
+export const op1 = krok([[0, 1, 2], [1, 3, 1]], [{ t: 'zam', a: 0, b: 1 }]);
+export const op2 = krok([[2, 4, 6], [1, 3, 1]], [{ t: 'razy', w: 0, c: '1/2' }]);
+export const op3 = krok([[1, 2, 3], [2, 5, 4]], [{ t: 'dod', w: 1, z: 0, c: -2 }]);
+export const opZle = [[1, 2], [3, 4]];
+export const opZlePo = [[4, 6], [4, 6]];
+
+export const Az = [[2, 1, 0], [-1, 3, 2], [0, 1, 1]];
+export const A123 = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+export const A4 = [[1, 2, 0, 1], [3, 1, 2, 0], [0, 2, 0, 1], [2, 0, 1, 3]];
+export const A4b = [[1, 2, 0, 1], [2, 5, 1, 3], [-1, 0, 3, 1], [3, 6, 1, 5]];
+export const k4b = krok(A4b, [{ t: 'dod', w: 1, z: 0, c: -2 }, { t: 'dod', w: 2, z: 0, c: 1 }, { t: 'dod', w: 3, z: 0, c: -3 }]);
+export const A87 = [[3, 3, 3], [2, 2, 2], [1, 1, 1]];
+export const k87 = krok(A87, [{ t: 'dod', w: 0, z: 2, c: -3 }, { t: 'dod', w: 1, z: 2, c: -2 }]);
+
+export const r2 = [[2, 1], [5, 3]];
+export const r2i = odwrotna(r2);
+export const f2 = [[3, 2], [1, 4]];
+export const f2d = [[4, -2], [-1, 3]];
+export const f2i = odwrotna(f2);
+export const Dz = macierzDop(Az);
+export const DzT = T(Dz);
+export const Azi = odwrotna(Az);
+export const zlyAz = mnoz(Az, razyLiczba('1/3', Dz));
+export const A92 = [[2, 5, 7], [-2, 1, -3], [1, 1, 3]];
+export const aug92 = A92.map((r, i) => [...r, ...[0, 1, 2].map((j) => (i === j ? 1 : 0))]);
+export const k92 = lancuch(aug92, [
+  [{ t: 'zam', a: 0, b: 2 }],
+  [{ t: 'dod', w: 1, z: 0, c: 2 }, { t: 'dod', w: 2, z: 0, c: -2 }],
+  [{ t: 'dod', w: 0, z: 1, c: '-1/3' }, { t: 'razy', w: 1, c: '1/3' }, { t: 'dod', w: 2, z: 1, c: -1 }],
+  [{ t: 'dod', w: 0, z: 2, c: 1 }, { t: 'dod', w: 1, z: 2, c: '1/2' }, { t: 'razy', w: 2, c: '-1/2' }],
+]);
+export const inv92 = k92[3].po.map((r) => r.slice(3));
+export const ok92 = (() => { if (!mnoz(A92, inv92).every((r, i) => r.every((v, j) => v.eq(i === j ? 1 : 0)))) throw new Error('Zad 92: zła odwrotna'); return true; })();
+export const rB = [[1, 0], [2, 1]];
+export const rX = mnoz(r2i, rB);
+export const rXzly = mnoz(rB, r2i);
+
+export const A83 = [[1, 2, 2, 1], [1, 1, 3, 3], [6, 12, 14, 16]];
+export const k83 = lancuch(A83, [
+  [{ t: 'dod', w: 1, z: 0, c: -1 }, { t: 'dod', w: 2, z: 0, c: -6 }],
+  [{ t: 'dod', w: 0, z: 1, c: 2 }, { t: 'razy', w: 1, c: -1 }],
+  [{ t: 'dod', w: 0, z: 2, c: -2 }, { t: 'dod', w: 1, z: 2, c: '1/2' }, { t: 'razy', w: 2, c: '1/2' }],
+]);
+export const jedn83 = kolumnyJednostkowe(k83[2].po).map(({ i, j }) => [0, 1, 2].map((r) => ({ i: r, j, styl: 'ok' }))).flat();
+export const E3 = [[1, 2, 1], [2, 4, 3], [3, 6, 4]];
+export const kE = lancuch(E3, [
+  [{ t: 'dod', w: 1, z: 0, c: -2 }, { t: 'dod', w: 2, z: 0, c: -3 }],
+  [{ t: 'dod', w: 0, z: 1, c: -1 }, { t: 'dod', w: 2, z: 1, c: -1 }],
+]);
+export const jednE = kolumnyJednostkowe(kE[1].po).map(({ j }) => [0, 1, 2].map((r) => ({ i: r, j, styl: 'ok' }))).flat();
+
+export const cwA = [[2, -1, 3], [0, 4, 1]];
+export const cwB = [[1, 2], [3, 0], [-1, 1]];
+export const cwAB = mnoz(cwA, cwB);
+export const cw2A = [[1, 0], [-2, 3]];
+export const cw2B = [[4, 1], [2, -1]];
+export const cw2BT = T(cw2B);
+export const cw2 = odejmij(razyLiczba(2, cw2A), cw2BT);
+export const cw2opis = (i, j) => { const a = Q.of(cw2A[i][j]), b = cw2BT[i][j]; return `Kratka (${i + 1}, ${j + 1}): $2 \\cdot ${a.tex(true)} - ${b.tex(true)} = ${a.mul(2).tex()} - ${b.tex(true)} = ${a.mul(2).sub(b).tex()}$. Liczba z $B^T$ na tym miejscu to $b_{${j + 1}${i + 1}}$ z macierzy $B$ — transpozycja zamienia numer wiersza z numerem kolumny.`; };
+export const cwI1 = [[4, 3], [1, 1]];
+export const cwI2 = [[2, 3], [1, 4]];
+export const inv2opis = (A) => (i, j) => {
+  const M = mat(A), d = det(M);
+  const src = i === j ? M[1 - i][1 - j] : M[i][j];
+  const wart = i === j ? src : src.neg();
+  const co = i === j ? `na głównej przekątnej liczby zamieniają się miejscami, więc bierzesz $${src.tex()}$ z przeciwnego rogu` : `poza przekątną zostaje ta sama liczba, ale ze zmienionym znakiem: $${src.tex()} \\to ${wart.tex()}$`;
+  return `Kratka (${i + 1}, ${j + 1}): ${co}. Potem dzielisz przez $\\det = ${d.tex()}$: $${wart.tex(true)} : ${d.tex()} = ${wart.div(d).tex()}$.`;
+};
+export const cwD = [[1, 2, 0], [0, 1, 1], [1, 0, 2]];
+export const cwDm = macierzDop(cwD);
+export const cwDopis = (i, j) => { const s = podmacierz(cwD, i, j), m = minor(cwD, i, j), z = znak(i, j); return `$D_{${i + 1}${j + 1}}$: skreślasz wiersz ${i + 1} i kolumnę ${j + 1}. Zostaje $${bmatrix(s)}$, więc $M_{${i + 1}${j + 1}} = ${s[0][0].tex(true)} \\cdot ${s[1][1].tex(true)} - ${s[0][1].tex(true)} \\cdot ${s[1][0].tex(true)} = ${m.tex()}$. Znak $(-1)^{${i + 1}+${j + 1}} = ${z > 0 ? '+1' : '-1'}$, więc $D_{${i + 1}${j + 1}} = ${m.mul(z).tex()}$.`; };
+export const cwOpM = [[1, 2, -1], [2, 3, 0], [-1, 1, 4]];
+export const cwOp = krok(cwOpM, [{ t: 'dod', w: 1, z: 0, c: -2 }, { t: 'dod', w: 2, z: 0, c: 1 }]);
+export const cwOpOpis = (i, j) => {
+  const a = Q.of(cwOpM[i][j]), b = Q.of(cwOpM[0][j]);
+  if (i === 0) return `Wiersz 1 tylko pomaga — przepisujesz go bez zmian: $${a.tex()}$.`;
+  if (i === 1) return `$w_2' = w_2 - 2w_1$: $${a.tex(true)} - 2 \\cdot ${b.tex(true)} = ${a.sub(b.mul(2)).tex()}$.`;
+  return `$w_3' = w_3 + w_1$: $${a.tex(true)} + ${b.tex(true)} = ${a.add(b).tex()}$.`;
+};
+
+## Po co ekonomiście macierze?
+
+Kawiarnia ma dwa lokale: przy Rynku i na kampusie. W poniedziałek przy Rynku sprzedano 40 kaw i 25 ciastek, a na kampusie — 60 kaw i 10 ciastek. Kawa kosztuje 12 zł, ciastko 8 zł. Jaki przychód miał lokal przy Rynku?
+
+$$
+40 \cdot 12 + 25 \cdot 8 = 480 + 200 = 680 \text{ zł}
+$$
+
+Bierzesz listę ilości (40, 25) i listę cen (12, 8), mnożysz je parami i dodajesz. Właśnie tak mnoży się **macierze** — tabelki liczb. Przy dwóch produktach liczysz w pamięci. Przy 30 lokalach i 50 produktach dane trzyma się w macierzach, a komputer mnoży je jednym poleceniem.
+
+Na macierzach opiera się też rozwiązywanie układów równań (następny moduł), szukanie ekstremów funkcji wielu zmiennych i wiele modeli ekonomicznych, np. tablice przepływów między gałęziami gospodarki.
+
+<Ramka kind="excel">
+Excel ma funkcje do większości rachunków z tego modułu: `MACIERZ.ILOCZYN` mnoży macierze, `WYZNACZNIK.MACIERZY` liczy wyznacznik, `MACIERZ.ODW` daje macierz odwrotną, a `TRANSPONUJ` — transponowaną. Rzędu macierzy nie policzysz w nim jedną funkcją. Na kolokwium liczysz ręcznie, ale Excelem łatwo sprawdzisz swój wynik.
+</Ramka>
+
+## Co będzie na kolokwium
+
+Z macierzy na kolokwium wraca sześć typów poleceń. Każde ma tu przepis, rozwiązane przykłady i ćwiczenia z natychmiastową odpowiedzią.
+
+<Polecenia items={[
+  { polecenie: 'Wykonaj działania (o ile są wykonalne): $A + B$, $3A$, $A^T$, $A \\cdot B$, $B \\cdot A^T$', jak: 'Najpierw sprawdzasz wymiary. Dodajesz liczby z tych samych miejsc, a mnożysz wiersz pierwszej macierzy przez kolumnę drugiej.', przepis: 'polecenie-dzialania', cwiczenia: 'cw-dzialania', zrodlo: 'jak w Zad. 1, str. 73, d)' },
+  { polecenie: 'Oblicz wyznacznik macierzy', jak: '2×2 — iloczyn na głównej przekątnej minus iloczyn na drugiej. 3×3 — reguła Sarrusa. Większe — rozwinięcie Laplace’a, najlepiej po zerowaniu operacjami elementarnymi.', przepis: 'polecenie-wyznacznik', cwiczenia: 'cw-wyznacznik', zrodlo: 'jak w Zad. 1, str. 87–88, f)' },
+  { polecenie: 'Dla jakich wartości parametru macierz jest osobliwa?', jak: 'Liczysz wyznacznik z literą, przyrównujesz go do zera i rozwiązujesz równanie.', przepis: 'polecenie-parametr', cwiczenia: 'cw-wyznacznik', zrodlo: 'częsty wariant polecenia o wyznacznik' },
+  { polecenie: 'Wyznacz macierz odwrotną (metodą wyznacznikową lub operacji elementarnych)', jak: 'Sprawdzasz, czy $\\det(A) \\neq 0$. Potem albo wzór z macierzą dopełnień, albo przekształcenie $[A \\mid I]$ w $[I \\mid A^{-1}]$.', przepis: 'polecenie-odwrotna', cwiczenia: 'cw-odwrotna', zrodlo: 'jak w Zad. 1, str. 92–93, e) i w przykładzie z zajęć' },
+  { polecenie: 'Rozwiąż równanie macierzowe $A \\cdot X = B$', jak: 'Mnożysz obie strony przez $A^{-1}$ z tej strony, po której stoi $A$: $X = A^{-1} \\cdot B$.', przepis: 'polecenie-rownanie', cwiczenia: 'cw-odwrotna', zrodlo: 'wariant spoza slajdów' },
+  { polecenie: 'Wyznacz rząd macierzy', jak: 'Operacjami elementarnymi robisz jak najwięcej kolumn macierzy jednostkowej. Rząd to stopień tej macierzy jednostkowej.', przepis: 'polecenie-rzad', cwiczenia: 'cw-rzad', zrodlo: 'jak w Zad. 1, str. 83, e)' },
+]} />
+
+Polecenia mogą brzmieć trochę inaczej („oblicz”, „wyznacz”, „sprawdź, czy istnieje”). Liczy się to, o co pyta zadanie: o działanie, o wyznacznik, o macierz odwrotną czy o rząd.
+
+## Macierz — pojęcia od podstaw
+
+<Ramka kind="zapamietaj">
+**Macierz** o wymiarach $m \times n$ to prostokątna tablica liczb, która ma $m$ wierszy i $n$ kolumn. Oznaczamy ją wielką literą: $A$, $B$, …
+</Ramka>
+
+Oto macierz $A$. Ma 2 wiersze i 3 kolumny, więc ma wymiar $2 \times 3$ (czytamy: „dwa na trzy”).
+
+<Indeksy A={A1} start={[1, 2]}>
+po lewej numery wierszy (w1, w2), na górze numery kolumn (k1, k2, k3). Zakreślona liczba 5 stoi w wierszu 2 i kolumnie 3, więc to $a_{23}$. Stuknij inną liczbę, a zobaczysz jej „adres”.
+</Indeksy>
+
+Każda liczba w macierzy to **element**. Jego adres podajesz jak w grze w statki: najpierw wiersz, potem kolumna. Element z wiersza 2 i kolumny 3 zapisujesz $a_{23}$ i czytasz „a dwa trzy”. W tej macierzy $a_{23} = 5$, $a_{12} = -1$, a $a_{21} = 4$.
+
+<div class="k-symbole">
+  <Znak t="m \times n" nazwa="Wymiar macierzy" czytamy="m na n" znaczy="$m$ — liczba wierszy, $n$ — liczba kolumn. Macierz $2 \times 3$ ma 2 wiersze i 3 kolumny." pamiec="najpierw wiersze, potem kolumny — jak w adresie elementu." />
+  <Znak t="a_{ij}" nazwa="Element macierzy" czytamy="a i j" znaczy="Liczba z wiersza $i$ i kolumny $j$ macierzy $A$. Mała litera — elementy, wielka — cała macierz." pamiec="$i$ jak „idę w dół” do wiersza, $j$ — w bok do kolumny." />
+</div>
+
+<Ramka kind="botak">
+Najpierw wiersz, potem kolumna. Tak jest w wymiarze: $2 \times 3$ to 2 wiersze i 3 kolumny. Tak samo w adresie elementu: $a_{23}$ to wiersz 2 i kolumna 3. To umowa. Dzięki niej każdy czyta macierz tak samo.
+</Ramka>
+
+<Ramka kind="pulapka">
+$a_{23}$ to nie „a dwadzieścia trzy”. To dwa osobne numery: wiersz 2 i kolumna 3.
+</Ramka>
+
+### Macierz kwadratowa, diagonalna i jednostkowa
+
+Macierz, która ma tyle samo wierszy co kolumn ($m = n$), to **macierz kwadratowa stopnia $n$**. W macierzy kwadratowej wyróżniamy **główną przekątną**: elementy $a_{11}, a_{22}, a_{33}, \dots$ — od lewego górnego do prawego dolnego rogu.
+
+<div class="k-rown">
+<Mx m={kw3} t="A =" oznacz={przek} wym />
+</div>
+
+Macierz kwadratowa stopnia 3. Fioletowe tło to główna przekątna: $a_{11} = 2$, $a_{22} = 3$, $a_{33} = 6$.
+
+Dwa szczególne rodzaje macierzy kwadratowych:
+
+- **Macierz diagonalna** — poza główną przekątną same zera.
+- **Macierz jednostkowa** $I$ — macierz diagonalna, która na głównej przekątnej ma same jedynki.
+
+<div class="k-rown">
+<Mx m={diag3} t="\text{diagonalna:}" oznacz={przek} />
+<Mx m={jednostkowa(3)} t="I =" oznacz={przek} />
+</div>
+
+<div class="k-symbole">
+  <Znak t="I" nazwa="Macierz jednostkowa" czytamy="macierz jednostkowa, I" znaczy="Jedynki na głównej przekątnej, poza nią zera. Gdy poznasz mnożenie macierzy, zobaczysz, że $I$ działa w nim jak liczba 1: $A \cdot I = A$." pamiec="I jak „identyczność” — nic nie zmienia." />
+</div>
+
+<Ramka kind="podobny" tytul="Prawie diagonalna — ale nie">
+<div class="k-rown">
+<Mx m={nieDiag} oznacz={[...przek, { i: 2, j: 0, styl: 'roz' }]} />
+</div>
+
+Ta macierz **nie jest** diagonalna. Poza przekątną, w wierszu 3 i kolumnie 1, stoi 1 — a poza przekątną mają być same zera. Z kolei $\begin{bmatrix} 1 & 0 \\ 0 & 2 \end{bmatrix}$ jest diagonalna, ale nie jest jednostkowa, bo na przekątnej stoi 2.
+</Ramka>
+
+Macierz z jednym wierszem (wymiar $1 \times n$) to **wektor wierszowy**, a z jedną kolumną ($n \times 1$) — **wektor kolumnowy**. Spotkasz je w zadaniu z zajęć o mnożeniu.
+
+<Pytania pytania={[
+  { q: 'Macierz ma 4 wiersze i 2 kolumny. Jaki ma wymiar?', opcje: ['$2 \\times 4$', '$4 \\times 2$', '$8$'], dobra: 1, dlaczego: 'Najpierw liczba wierszy, potem kolumn: $4 \\times 2$. Zapis $2 \\times 4$ to macierz z 2 wierszami i 4 kolumnami — inny kształt.' },
+]} />
+
+## Działania na macierzach
+
+<a id="polecenie-dzialania" class="k-anchor"></a>
+
+### Dodawanie i odejmowanie
+
+Dodajesz liczby, które stoją **w tym samym miejscu**: element z wiersza 1 i kolumny 2 jednej macierzy z elementem z wiersza 1 i kolumny 2 drugiej. Tak samo z każdym innym miejscem.
+
+<div class="k-rown">
+<Mx m={dA} t="A + B =" oznacz={[{ i: 0, j: 1, styl: 'kolko' }]} />
+<span class="k-zn">+</span>
+<Mx m={dB} oznacz={[{ i: 0, j: 1, styl: 'kolko' }]} />
+<span class="k-zn">=</span>
+<Mx m={dSum} oznacz={[{ i: 0, j: 1, styl: 'kolko' }]} />
+</div>
+
+Zakreślone kratki to wiersz 1, kolumna 2: $2 + 0 = 2$. W wierszu 2, kolumnie 1: $3 + (-1) = 2$. Odejmowanie działa tak samo — odejmujesz liczby z tych samych miejsc:
+
+$$
+A - B = \begin{bmatrix} 1 - 5 & 2 - 0 \\ 3 - (-1) & 4 - 2 \end{bmatrix} = \begin{bmatrix} -4 & 2 \\ 4 & 2 \end{bmatrix}
+$$
+
+<Ramka kind="granica">
+Dodawać i odejmować można tylko macierze **o tych samych wymiarach**. $\begin{bmatrix} 1 & 2 & 3 \end{bmatrix} + \begin{bmatrix} 1 \\ 2 \\ 3 \end{bmatrix}$ nie istnieje: pierwsza macierz ma wymiar $1 \times 3$, druga $3 \times 1$. Liczby nie mają par na tych samych miejscach.
+</Ramka>
+
+### Mnożenie przez liczbę
+
+Każdy element macierzy mnożysz przez tę liczbę. Działa dla macierzy o dowolnym wymiarze.
+
+$$
+3 \cdot \begin{bmatrix} 1 & -2 \\ 0 & 4 \end{bmatrix} = \begin{bmatrix} 3 \cdot 1 & 3 \cdot (-2) \\ 3 \cdot 0 & 3 \cdot 4 \end{bmatrix} = \begin{bmatrix} 3 & -6 \\ 0 & 12 \end{bmatrix}
+$$
+
+W poleceniach działania często się łączą, np. $2A - B$ (macierze $A$ i $B$ z przykładu o dodawaniu). Kolejność jak w liceum: najpierw mnożenie przez liczbę, potem odejmowanie.
+
+<div class="k-rown">
+<Mx m={d2A} t="2A - B =" />
+<span class="k-zn">−</span>
+<Mx m={dB} />
+<span class="k-zn">=</span>
+<Mx m={d2AB} />
+</div>
+
+### Transpozycja
+
+**Transpozycja** zamienia wiersze na kolumny, z zachowaniem kolejności. Pierwszy wiersz staje się pierwszą kolumną, drugi wiersz — drugą kolumną.
+
+<Transpozycja A={tA}>
+każdy wiersz macierzy $A$ ma swój kolor. Kolumna $A^T$ w tym samym kolorze ma te same liczby, w tej samej kolejności, tylko ustawione pionowo. Wymiar $2 \times 3$ zmienia się na $3 \times 2$. Stuknij liczbę w $A$, żeby zobaczyć, dokąd trafia.
+</Transpozycja>
+
+<div class="k-symbole">
+  <Znak t="A^T" nazwa="Macierz transponowana" czytamy="A transponowana" znaczy="Wiersze $A$ zapisane jako kolumny. Element $a_{ij}$ trafia na miejsce $(j, i)$, a wymiar $m \times n$ zmienia się na $n \times m$." pamiec="T jak „transpozycja”, a nie potęga." />
+</div>
+
+<Ramka kind="podobny" tytul="Transpozycja macierzy kwadratowej">
+$$
+\begin{bmatrix} 1 & 2 \\ 3 & 4 \end{bmatrix}^T = \begin{bmatrix} 1 & 3 \\ 2 & 4 \end{bmatrix}
+$$
+
+Główna przekątna (1 i 4) zostaje na miejscu. Pozostałe liczby (2 i 3) zamieniają się miejscami — jakby macierz odbiła się w lustrze ustawionym wzdłuż przekątnej.
+</Ramka>
+
+### Mnożenie macierzy
+
+Wróćmy do kawiarni. Ilości to macierz $A$: wiersz to lokal, kolumna to produkt. Macierz $B$ ma w kolumnach cenę i koszt przygotowania każdego produktu. Kawa: cena 12 zł, koszt 4 zł. Ciastko: cena 8 zł, koszt 3 zł.
+
+<Mnozenie A={kQ} B={kP} etA={{ w: ['Rynek', 'Kampus'], k: ['kawa', 'ciastko'] }} etB={{ w: ['kawa', 'ciastko'], k: ['cena', 'koszt'] }} etC={{ w: ['Rynek', 'Kampus'], k: ['przychód', 'koszt'] }} opis={kOpis}>
+wiersz macierzy $A$ (turkusowy) to jeden lokal. Kolumna macierzy $B$ (złota) to cena albo koszt. Każda kratka wyniku to ilości razy ceny albo ilości razy koszty: przychód albo koszt jednego lokalu. Zwróć uwagę na podpisy: kolumny $A$ (kawa, ciastko) to te same rzeczy co wiersze $B$ — dlatego da się je połączyć w pary.
+</Mnozenie>
+
+<Ramka kind="zapamietaj">
+Element wyniku $C = A \cdot B$ z wiersza $i$ i kolumny $j$ to **wiersz $i$ macierzy $A$ razy kolumna $j$ macierzy $B$**: mnożysz liczby parami (pierwszą z pierwszą, drugą z drugą…) i dodajesz iloczyny.
+</Ramka>
+
+<Dlaczego etykieta="Dlaczego wymiary muszą pasować?">
+Liczby łączysz w pary: pierwszą z wiersza z pierwszą z kolumny, drugą z drugą i tak dalej. Wiersz $A$ ma tyle liczb, ile $A$ ma kolumn. Kolumna $B$ ma tyle liczb, ile $B$ ma wierszy. Te długości muszą być równe, inaczej któraś liczba zostanie bez pary. W kawiarni: każda ilość (kawy, ciastek) potrzebuje swojej ceny.
+</Dlaczego>
+
+Stąd zasada: **liczba kolumn pierwszej macierzy = liczba wierszy drugiej**. Wynik ma tyle wierszy co pierwsza macierz i tyle kolumn co druga. Najprościej sprawdzić to, pisząc wymiary obok siebie:
+
+<Wymiary a={[2, 3]} b={[3, 2]} />
+
+<Wymiary a={[1, 4]} b={[1, 4]} />
+
+<Ramka kind="polecenie">
+„Oblicz $A \cdot B$ (o ile to możliwe)”.
+
+1. Zapisz wymiary obu macierzy: $A$ ma $m \times k$, a $B$ ma $p \times n$.
+2. Porównaj liczby środkowe ($k$ i $p$). Różne → napisz „mnożenie niewykonalne” i koniec. Równe → wynik ma wymiar $m \times n$ (liczby zewnętrzne).
+3. Narysuj pustą macierz wyniku: $m$ wierszy, $n$ kolumn.
+4. Każdą kratkę licz osobno. Kratka $c_{ij}$ = wiersz $i$ macierzy $A$ razy kolumna $j$ macierzy $B$: iloczyny parami, potem suma.
+5. Sprawdź jeszcze raz znaki — najczęstszy błąd to minus zgubiony przy liczbie ujemnej.
+</Ramka>
+
+Ten sam przepis na macierzach bez historii: $A$ ma wymiar $2 \times 3$, $B$ ma wymiar $3 \times 2$, więc wynik ma wymiar $2 \times 2$.
+
+<Mnozenie A={mA} B={mB}>
+żeby policzyć kratkę ze znakiem zapytania, weź jej wiersz w $A$ (turkusowy) i jej kolumnę w $B$ (złotą). W panelu pod rysunkiem zobaczysz liczby ustawione w słupkach: wiersz nad kolumną, a pod spodem ich iloczyny. Wynik kratki to suma iloczynów.
+</Mnozenie>
+
+<Ramka kind="pulapka" tytul="A · B to nie B · A">
+Kolejność ma znaczenie. Dla macierzy z przykładu wyżej $B \cdot A$ ma nawet inny wymiar niż $A \cdot B$:
+
+<Wymiary a={[3, 2]} b={[2, 3]} nA="B" nB="A" />
+
+<div class="k-rown">
+<Mx m={mBA} t="B \cdot A =" />
+</div>
+
+Nawet dla macierzy kwadratowych wyniki zwykle się różnią:
+
+<div class="k-rown">
+<Mx m={sA} t="A =" />
+<Mx m={sB} t="B =" />
+<Mx m={sAB} t="A \cdot B =" />
+<Mx m={sBA} t="B \cdot A =" />
+</div>
+
+Mówimy, że mnożenie macierzy **nie jest przemienne**.
+</Ramka>
+
+<Rozwiazanie tytul="Pomnóż macierz B przez A transponowaną" zrodlo="Zad. 1, str. 73, d)">
+<div slot="tresc">
+
+Dane są macierze $A = \begin{bmatrix} 1 & 7 & 3 & -2 \end{bmatrix}$ i $B = \begin{bmatrix} 3 & -2 & 1 & -1 \end{bmatrix}$. Oblicz $B \cdot A^T$.
+
+</div>
+
+<div slot="plan">
+
+1. Transponujemy $A$, bo w działaniu stoi $A^T$, a nie $A$.
+2. Sprawdzamy wymiary $B$ i $A^T$, bo mnożenie ma sens tylko przy zgodnych wymiarach. Przy okazji poznamy wymiar wyniku.
+3. Mnożymy wiersz $B$ przez kolumnę $A^T$.
+
+Tak się to po prostu robi: transpozycję wykonujesz przed mnożeniem, bo $A^T$ to osobna macierz, którą trzeba najpierw zapisać.
+
+</div>
+
+<Krok tytul="Transponuj A">
+$A$ ma jeden wiersz: $(1, 7, 3, -2)$. Po transpozycji te same liczby stoją w jednej kolumnie, z góry na dół.
+
+<div class="k-rown">
+<Mx m={zA} t="A =" wym />
+<span class="k-zn">→</span>
+<Mx m={zAT} t="A^T =" wym />
+</div>
+
+<Dlaczego>
+Transpozycja zamienia wiersze na kolumny. Wiersz 1 macierzy $A$ staje się kolumną 1 macierzy $A^T$, a wymiar $1 \times 4$ zmienia się na $4 \times 1$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdź wymiary">
+<Wymiary a={[1, 4]} b={[4, 1]} nA="B" nB="A^T" />
+
+<Dlaczego>
+Liczba kolumn $B$ (4) to długość wiersza, a liczba wierszy $A^T$ (4) to długość kolumny. Są równe, więc każda z czterech liczb wiersza ma swoją parę w kolumnie. Wynik ma 1 wiersz (jak $B$) i 1 kolumnę (jak $A^T$) — to jedna kratka.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Na zajęciach wymiary podpisuje się pod macierzami (np. $1 \times 4$ i $4 \times 1$) i zaznacza kolorem liczby środkowe. To ten sam test, tylko zapisany w zeszycie.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pomnóż wiersz przez kolumnę">
+Ustaw liczby w słupkach: wiersz $B$ nad kolumną $A^T$. Pomnóż każdą parę, potem dodaj iloczyny.
+
+<Slupki nr wiersze={[{ lab: '\\text{wiersz } B', v: zB[0] }, { lab: '\\text{kolumna } A^T', v: zA[0] }, { lab: '\\text{iloczyn}', v: zIl, wynik: true }]} />
+
+$$
+\begin{aligned}
+B \cdot A^T &= 3 \cdot 1 + (-2) \cdot 7 \\
+&\quad + 1 \cdot 3 + (-1) \cdot (-2) \\
+&= 3 - 14 + 3 + 2 = -6
+\end{aligned}
+$$
+
+Wynik to macierz $1 \times 1$: $B \cdot A^T = \begin{bmatrix} -6 \end{bmatrix}$.
+
+<Dlaczego>
+Iloczyn $(-1) \cdot (-2)$ daje $+2$ — minus razy minus to plus. To najczęstsze miejsce pomyłki w tym zadaniu.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="podobny" tytul="Te same macierze, odwrotna kolejność">
+$A \cdot B$ (bez transpozycji) nie istnieje: $1 \times 4$ razy $1 \times 4$, liczby środkowe 4 i 1 są różne. Za to $A^T \cdot B$ to już macierz $4 \times 4$:
+
+<Wymiary a={[4, 1]} b={[1, 4]} nA="A^T" nB="B" />
+
+<div class="k-rown">
+<Mx m={zATB} t="A^T \cdot B =" />
+</div>
+
+Każda kratka to jeden iloczyn, bo wiersz $A^T$ ma tylko jedną liczbę. Na przykład kratka w wierszu 2 i kolumnie 1 to $7 \cdot 3 = 21$.
+</Ramka>
+
+<Ramka kind="kiedy">
+Gdy dwie macierze mają ten sam wymiar, ale nie są kwadratowe, $A \cdot B$ nie istnieje. Tak jest np. dla dwóch macierzy $1 \times 4$ albo dwóch $2 \times 3$. Za to $A \cdot B^T$ i $A^T \cdot B$ istnieją zawsze. Dlatego w poleceniach z takimi macierzami prawie zawsze pojawia się transpozycja.
+</Ramka>
+
+## Operacje elementarne
+
+Operacje elementarne to trzy „dozwolone ruchy” na wierszach macierzy. Upraszczają macierz — robią w niej zera i jedynki. Rzędu nie zmieniają, a wyznacznik zmieniają w przewidywalny sposób. Bez nich nie wyznaczysz rzędu, nie odwrócisz macierzy metodą operacji elementarnych i nie policzysz szybko dużego wyznacznika.
+
+<div class="k-symbole">
+  <Znak t="w_2'" nazwa="Nowy wiersz (prim)" czytamy="w dwa prim" znaczy="$w_1, w_2, \dots$ to wiersze macierzy. Prim (’) oznacza wiersz po zmianie: $w_2' = w_2 - 3w_1$ czytamy „nowy wiersz 2 to wiersz 2 minus trzy razy wiersz 1”." pamiec="prim = „nowy”. Zmienia się tylko wiersz z primem." />
+  <Znak t="\leftrightarrow" nazwa="Zamiana wierszy" czytamy="zamieniamy z" znaczy="$w_1 \leftrightarrow w_3$: wiersze 1 i 3 zamieniają się miejscami. Liczby w nich się nie zmieniają." pamiec="strzałka w obie strony = zamiana." />
+</div>
+
+**1. Zamiana dwóch wierszy.** Po co: żeby w lewym górnym rogu stała liczba różna od zera, najlepiej 1.
+
+<Operacja k={op1} rachunek="brak" />
+
+**2. Pomnożenie wiersza przez liczbę różną od zera.** Po co: żeby zrobić jedynkę. Tu wiersz 1 zaczyna się od 2, więc mnożysz go przez $\frac{1}{2}$ (czyli dzielisz przez 2).
+
+<Operacja k={op2} />
+
+**3. Dodanie do wiersza wielokrotności innego wiersza.** Po co: żeby zrobić zero.
+
+<Operacja k={op3} legenda />
+
+Jak dobrać liczbę $-2$? Chcesz zera w wierszu 2, kolumnie 1 — stoi tam 2. W tej samej kolumnie w wierszu 1 stoi 1. Odejmujesz więc dwa razy wiersz 1: $2 - 2 \cdot 1 = 0$. Reszta wiersza zmienia się „przy okazji”: $5 - 2 \cdot 2 = 1$ i $4 - 2 \cdot 3 = -2$.
+
+<Ramka kind="kiedy" tytul="Jak dobrać mnożnik">
+Wiersz pomocniczy to wiersz, którego używasz do zerowania. Mnożnik = liczba, którą chcesz wyzerować, podzielona przez liczbę w wierszu pomocniczym w tej samej kolumnie — **z przeciwnym znakiem**. Gdy w wierszu pomocniczym stoi 1, mnożnik to po prostu zerowana liczba z przeciwnym znakiem: żeby wyzerować 6, dodajesz $-6$ razy ten wiersz.
+</Ramka>
+
+<Ramka kind="botak">
+- Zmienia się tylko wiersz z primem. Wiersz, którego używasz do zmiany, przepisujesz bez zmian.
+- Kilka operacji w jednym kroku liczysz na wierszach sprzed tego kroku — tak zapisuje się to na zajęciach.
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Dwa wiersze nie mogą zmieniać się nawzajem">
+Nie rób w jednym kroku $w_1' = w_1 + w_2$ i $w_2' = w_2 + w_1$. Zobacz, co się dzieje:
+
+<div class="k-rown">
+<Mx m={opZle} />
+<span class="k-zn">→</span>
+<Mx m={opZlePo} wiersze={[{ i: 0, styl: 'roz' }, { i: 1, styl: 'roz' }]} />
+</div>
+
+Z dwóch różnych wierszy zrobiły się dwa identyczne. Tej zmiany nie da się cofnąć, więc to nie jest operacja elementarna. Z tego samego powodu nie wolno mnożyć wiersza przez 0.
+</Ramka>
+
+<Ramka kind="granica">
+Przy macierzy odwrotnej wolno używać **tylko operacji na wierszach**. Przy rzędzie — na wierszach i na kolumnach. Przy wyznaczniku — na wierszach i kolumnach, ale zamiana i mnożenie zmieniają jego wartość (zobaczysz to w sekcji o wyznaczniku).
+</Ramka>
+
+## Wyznacznik
+
+<a id="polecenie-wyznacznik" class="k-anchor"></a>
+
+**Wyznacznik** to jedna liczba, którą liczy się z macierzy kwadratowej. Zapisujemy go $\det(A)$. Najważniejsze, co mówi: czy macierz da się odwrócić. Macierz odwrotna to odpowiednik odwrotności liczby, np. $\frac{1}{5}$ dla 5 — dokładnie poznasz ją niżej. Gdy $\det(A) = 0$, macierz odwrotna nie istnieje. Taką macierz nazywamy **osobliwą**.
+
+<Ramka kind="zapamietaj">
+- Wyznacznik liczysz **tylko z macierzy kwadratowej**.
+- $\det(A) = 0$ — macierz **osobliwa** (nie ma odwrotnej).
+- $\det(A) \neq 0$ — macierz **nieosobliwa** (ma odwrotną).
+</Ramka>
+
+<div class="k-symbole">
+  <Znak t="\det(A)" nazwa="Wyznacznik macierzy A" czytamy="wyznacznik A (det od angielskiego determinant)" znaczy="Liczba przypisana macierzy kwadratowej. Może być dowolna: dodatnia, ujemna albo 0." pamiec="det = „decyduje”, czy da się odwrócić." />
+</div>
+
+<Ramka kind="polecenie">
+„Oblicz wyznacznik macierzy $A$”.
+
+1. Sprawdź, czy macierz jest kwadratowa. Jeśli nie — wyznacznik nie istnieje.
+2. Przyjrzyj się wierszom i kolumnom. Wiersz zer albo dwa proporcjonalne wiersze → wyznacznik to 0 od razu.
+3. Wybierz metodę według wymiaru: $2 \times 2$ — wzór z przekątnymi, $3 \times 3$ — reguła Sarrusa, większe — rozwinięcie Laplace’a według wiersza (kolumny) z największą liczbą zer.
+4. Przy dużej macierzy najpierw zrób zera w jednej kolumnie operacją „dodaj wielokrotność innego wiersza” — wyznacznik się nie zmienia.
+5. Sprawdź znaki: iloczyny z liczbami ujemnymi bierz w nawias.
+
+Każdy z tych kroków jest rozpisany poniżej.
+</Ramka>
+
+<Ramka kind="botak">
+Wzorów na wyznacznik nie wyprowadzamy — przyjmij je tak, jak są. Na kolokwium liczy się, żeby umieć je zastosować i nie pomylić znaków.
+</Ramka>
+
+### Macierz 1×1 i 2×2
+
+Macierz $1 \times 1$ to jedna liczba i jej wyznacznik to ta sama liczba: $\det\begin{bmatrix} -5 \end{bmatrix} = -5$.
+
+Dla macierzy $2 \times 2$ liczysz dwa iloczyny po przekątnych i odejmujesz:
+
+<Rozbior t="\det\begin{bmatrix} a_{11} & a_{12} \\ a_{21} & a_{22} \end{bmatrix} = a_{11}a_{22} - a_{12}a_{21}" czytamy="iloczyn na głównej przekątnej minus iloczyn na drugiej przekątnej" czesci={[
+  { t: 'a_{11}a_{22}', o: 'liczby z <b>głównej przekątnej</b> (lewy górny i prawy dolny róg) — ten iloczyn <b>dodajesz</b>' },
+  { t: 'a_{12}a_{21}', o: 'liczby z <b>drugiej przekątnej</b> (prawy górny i lewy dolny róg) — ten iloczyn <b>odejmujesz</b>' },
+]} />
+
+<Przekatne A={[[3, 2], [1, 4]]}>
+zielona przekątna daje iloczyn, który dodajesz: $3 \cdot 4 = 12$. Różowa daje iloczyn, który odejmujesz: $2 \cdot 1 = 2$. Kliknij składnik, żeby podświetlić jego liczby. Wynik: $\det(A) = 12 - 2 = 10$.
+</Przekatne>
+
+<Ramka kind="pulapka" tytul="Minus razy minus">
+$$
+\begin{aligned}
+\det\begin{bmatrix} 2 & -3 \\ 1 & 4 \end{bmatrix} &= 2 \cdot 4 - (-3) \cdot 1 \\
+&= 8 - (-3) = 8 + 3 = 11
+\end{aligned}
+$$
+
+Drugi iloczyn bierz w nawias. Gdy jest ujemny, odjęcie zmienia się w dodawanie.
+</Ramka>
+
+### Macierz 3×3 — reguła Sarrusa
+
+Dla macierzy $3 \times 3$ dopisz z prawej strony jej dwie pierwsze kolumny. Potem:
+
+- trzy przekątne **w dół** (od lewej góry w prawo w dół) — iloczyny **dodajesz**;
+- trzy przekątne **w górę** (od lewego dołu w prawo w górę) — iloczyny **odejmujesz**.
+
+<Przekatne A={Az}>
+pięć kolumn: trzy kolumny macierzy i dwie dopisane (wyblakłe). Zielone składniki to przekątne w dół, różowe — w górę. Kliknij składnik, a w macierzy podświetlą się jego trzy liczby. Na dole suma wszystkich sześciu składników z ich znakami. Tę samą macierz odwrócisz niżej, w przykładzie z zajęć o macierzy odwrotnej.
+</Przekatne>
+
+Ten sam rachunek zapisany wzorem (tak jak na slajdzie). Nie musisz go pamiętać — wystarczy obrazek z przekątnymi:
+
+$$
+\begin{aligned}
+\det(A) = {} & a_{11}a_{22}a_{33} + a_{12}a_{23}a_{31} + a_{13}a_{21}a_{32} \\
+& - a_{13}a_{22}a_{31} - a_{11}a_{23}a_{32} - a_{12}a_{21}a_{33}
+\end{aligned}
+$$
+
+<Ramka kind="granica">
+Reguła Sarrusa działa **tylko dla macierzy 3×3**. Dla macierzy $4 \times 4$ te same przekątne z dopisanymi kolumnami dają zły wynik. Dla tej macierzy „Sarrus” dałby 0, a prawdziwy wyznacznik to $-13$ (policzymy go niżej rozwinięciem Laplace’a):
+
+<div class="k-rown">
+<Mx m={A4} t="A =" maly />
+</div>
+</Ramka>
+
+### Większe macierze — rozwinięcie Laplace’a
+
+Rozwinięcie Laplace’a sprowadza duży wyznacznik do kilku mniejszych. Potrzebne są dwa pojęcia.
+
+**Minor** $M_{ij}$ to wyznacznik macierzy, która zostaje po skreśleniu wiersza $i$ i kolumny $j$. Przykład ze slajdu — skreślasz wiersz 1 i kolumnę 1:
+
+<div class="k-rown">
+<Mx m={A123} t="A =" skresl={{ w: [0], k: [0] }} oznacz={[{ i: 0, j: 0, styl: 'kolko' }]} />
+<span class="k-zn">→</span>
+<Mx m={[[5, 6], [8, 9]]} t="M_{11} = \det" />
+</div>
+
+$$
+\begin{aligned}
+M_{11} &= \det\begin{bmatrix} 5 & 6 \\ 8 & 9 \end{bmatrix} = 5 \cdot 9 - 6 \cdot 8 \\
+&= 45 - 48 = -3
+\end{aligned}
+$$
+
+**Dopełnienie algebraiczne** $D_{ij}$ to minor z odpowiednim znakiem:
+
+<Rozbior t="D_{ij} = (-1)^{i+j} \cdot M_{ij}" czytamy="de i jot równa się minus jeden do potęgi i plus jot, razy minor" czesci={[
+  { t: '(-1)^{i+j}', o: 'znak: $+1$, gdy suma numeru wiersza i kolumny jest <b>parzysta</b>, $-1$, gdy <b>nieparzysta</b>' },
+  { t: 'M_{ij}', o: 'minor — wyznacznik po skreśleniu wiersza $i$ i kolumny $j$' },
+]} />
+
+W przykładzie: $D_{11} = (-1)^{1+1} \cdot M_{11} = (+1) \cdot (-3) = -3$.
+
+Znaki układają się w szachownicę. Zaczyna się od plusa w lewym górnym rogu, a dalej plus i minus na zmianę:
+
+$$
+\begin{bmatrix} + & - & + \\ - & + & - \\ + & - & + \end{bmatrix}
+$$
+
+<Ramka kind="zapamietaj">
+**Rozwinięcie Laplace’a.** Wybierz dowolny wiersz (albo kolumnę). Wyznacznik to suma: każdy element tego wiersza razy jego dopełnienie algebraiczne.
+
+$$
+\det(A) = a_{i1}D_{i1} + a_{i2}D_{i2} + \dots + a_{in}D_{in}
+$$
+</Ramka>
+
+Wybór wiersza nie zmienia wyniku, ale zmienia ilość pracy. Każde zero w wybranym wierszu kasuje cały składnik — nie liczysz jego minora. Dlatego wybieraj wiersz albo kolumnę **z największą liczbą zer**.
+
+<Laplace A={Az} start={{ typ: 'w', idx: 0 }}>
+złote kratki to wybrany wiersz (albo kolumna). Pod macierzą każdy składnik: element, znak z szachownicy i minor. Kliknij składnik, a w macierzy zobaczysz skreślony wiersz i kolumnę — zielone kratki to minor. Zmień wiersz przyciskami: wynik zawsze ten sam, ale przy wierszu z zerem liczysz mniej. To ta sama macierz co przy regule Sarrusa i wynik też jest ten sam: 3.
+</Laplace>
+
+Dla macierzy $4 \times 4$ Laplace to jedyna droga z tych slajdów. Każdy minor to wtedy wyznacznik $3 \times 3$ — liczysz go regułą Sarrusa.
+
+<Laplace A={A4} start={{ typ: 'w', idx: 2 }}>
+wiersz 3 ma dwa zera, więc z czterech minorów $3 \times 3$ liczysz tylko dwa. Spróbuj kolumny 3 — też ma dwa zera. Przy wierszu z jednym zerem liczysz trzy minory, a przy wierszu bez zer byłyby cztery.
+</Laplace>
+
+<Ramka kind="kiedy" tytul="Wzór, Sarrus czy Laplace?">
+- $2 \times 2$ — wzór z przekątnymi.
+- $3 \times 3$ — reguła Sarrusa. Laplace, gdy w jakimś wierszu albo kolumnie są dwa zera.
+- $4 \times 4$ i większe — Laplace, najlepiej po zrobieniu zer operacjami elementarnymi (niżej).
+</Ramka>
+
+### Własności wyznacznika
+
+Pięć własności ze slajdów — każda pokazana na tej samej macierzy $2 \times 2$, przed i po zmianie:
+
+<GaleriaWyznacznika />
+
+Najczęściej przydaje się własność 1. Operacjami „dodaj wielokrotność innego wiersza” robisz zera w jednej kolumnie, a wyznacznik się nie zmienia. Potem rozwijasz Laplace’em według tej kolumny i zostaje jeden minor.
+
+<Operacja k={k4b} rachunek="zwiniety" />
+
+<Laplace A={k4b.po} start={{ typ: 'k', idx: 0 }} nA="A'">
+po operacjach w kolumnie 1 zostały same zera poza jedynką na górze. Rozwinięcie według kolumny 1 ma więc tylko jeden składnik do liczenia. Wyznacznik nowej macierzy $A'$ jest taki sam jak macierzy wyjściowej, bo używaliśmy tylko własności 1.
+</Laplace>
+
+<Rozwiazanie tytul="Oblicz wyznacznik macierzy" zrodlo="Zad. 1, str. 87–88, f)">
+<div slot="tresc">
+
+$$
+A = \begin{bmatrix} 3 & 3 & 3 \\ 2 & 2 & 2 \\ 1 & 1 & 1 \end{bmatrix}
+$$
+
+</div>
+
+<div slot="plan">
+
+1. Przyglądamy się wierszom — sprawdzamy, czy któryś nie jest wielokrotnością innego. Zawsze warto spojrzeć, zanim zaczniemy liczyć.
+2. Zerujemy wiersze 1 i 2 operacją z własności 1 — wyznacznik się przy tym nie zmienia.
+3. Odczytujemy wyznacznik z własności 2 (wiersz zer).
+
+Inna droga: reguła Sarrusa (macierz jest $3 \times 3$). Też daje 0, ale wymaga sześciu iloczynów.
+
+</div>
+
+<Krok tytul="Zauważ wielokrotności">
+<div class="k-rown">
+<Mx m={A87} wiersze={[{ i: 0, styl: 'zloto' }, { i: 1, styl: 'zloto' }, { i: 2, styl: 'cyan' }]} />
+</div>
+
+Wiersz 1 to $(3, 3, 3) = 3 \cdot (1, 1, 1)$, a wiersz 2 to $(2, 2, 2) = 2 \cdot (1, 1, 1)$. Oba są wielokrotnościami wiersza 3.
+
+<Dlaczego>
+Gdy jeden wiersz jest wielokrotnością drugiego, można go wyzerować jedną operacją. To skraca całe zadanie do jednej linijki.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wyzeruj wiersze 1 i 2">
+Od wiersza 1 odejmujesz 3 razy wiersz 3, a od wiersza 2 — 2 razy wiersz 3.
+
+<Operacja k={k87} legenda />
+
+<Dlaczego>
+To operacja „dodaj wielokrotność innego wiersza” (z liczbą ujemną). Według własności 1 nie zmienia wyznacznika, więc wyznacznik nowej macierzy jest równy wyznacznikowi $A$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odczytaj wyznacznik">
+W nowej macierzy wiersze 1 i 2 to same zera. Według własności 2 wyznacznik takiej macierzy to 0. Zatem $\det(A) = 0$ — macierz jest osobliwa.
+
+<Dlaczego typ="inaczej">
+Reguła Sarrusa: każdy z sześciu składników to $3 \cdot 2 \cdot 1 = 6$ (jedna liczba z każdego wiersza).
+
+$$
+\det(A) = 6 + 6 + 6 - 6 - 6 - 6 = 0
+$$
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="kiedy">
+Dwa wiersze (albo dwie kolumny) proporcjonalne — jeden jest wielokrotnością drugiego → wyznacznik to 0 od razu, bez liczenia. Wynika to z własności 1 i 2: jeden z nich da się wyzerować.
+</Ramka>
+
+### Wyznacznik z parametrem
+
+<a id="polecenie-parametr" class="k-anchor"></a>
+
+<Ramka kind="polecenie">
+„Dla jakich wartości parametru $a$ macierz $A$ jest osobliwa?”
+
+1. Policz $\det(A)$ — tak samo jak dla liczb, tylko z literą $a$.
+2. Przyrównaj wyznacznik do zera: $\det(A) = 0$.
+3. Rozwiąż równanie. Zwykle jest kwadratowe, więc liczysz $\Delta$.
+4. Odpowiedz: macierz jest osobliwa dla znalezionych $a$, a dla pozostałych ma odwrotną.
+</Ramka>
+
+<Rozwiazanie tytul="Kiedy macierz jest osobliwa?" zrodlo="wariant polecenia — przykład własny">
+<div slot="tresc">
+
+$$
+A = \begin{bmatrix} a & 2 \\ 3 & a + 1 \end{bmatrix}
+$$
+
+</div>
+
+<div slot="plan">
+
+1. Liczymy wyznacznik z literą $a$, bo „osobliwa” znaczy „wyznacznik równy 0”.
+2. Rozwiązujemy równanie $\det(A) = 0$.
+3. Zapisujemy odpowiedź dla obu pytań: kiedy osobliwa, a kiedy ma odwrotną.
+
+Inna droga to rząd: macierz $2 \times 2$ jest osobliwa, gdy jej rząd jest mniejszy niż 2. Z literą $a$ to jednak więcej pracy, dlatego liczymy wyznacznik.
+
+</div>
+
+<Krok tytul="Policz wyznacznik z parametrem">
+Wzór $2 \times 2$: główna przekątna minus druga przekątna.
+
+$$
+\begin{aligned}
+\det(A) &= a \cdot (a + 1) - 2 \cdot 3 \\
+&= a^2 + a - 6
+\end{aligned}
+$$
+
+<Dlaczego>
+Litera $a$ zachowuje się jak zwykła liczba. Mnożysz $a$ przez nawias $(a + 1)$ — każdy wyraz osobno: $a \cdot a + a \cdot 1 = a^2 + a$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Przyrównaj do zera i rozwiąż">
+$$
+\begin{gathered}
+a^2 + a - 6 = 0 \\
+\Delta = 1^2 - 4 \cdot 1 \cdot (-6) = 25, \quad \sqrt{\Delta} = 5 \\
+a_1 = \frac{-1 - 5}{2} = -3 \\
+a_2 = \frac{-1 + 5}{2} = 2
+\end{gathered}
+$$
+
+<Ramka kind="liceum">
+Równanie $ax^2 + bx + c = 0$: $\Delta = b^2 - 4ac$, a pierwiastki to $x_1 = \frac{-b - \sqrt{\Delta}}{2a}$ i $x_2 = \frac{-b + \sqrt{\Delta}}{2a}$. Tu niewiadomą jest parametr $a$. Współczynniki: przy $a^2$ stoi 1, przy $a$ stoi 1, a wyraz wolny to $-6$.
+</Ramka>
+</Krok>
+
+<Krok tytul="Zapisz odpowiedź">
+Macierz jest osobliwa dla $a = -3$ lub $a = 2$. Dla pozostałych $a$ wyznacznik jest różny od zera, więc macierz ma odwrotną: $a \in \mathbb{R} \setminus \{-3, 2\}$, czyli dla każdej liczby rzeczywistej oprócz $-3$ i $2$.
+
+<Dlaczego>
+Sprawdzenie dla $a = 2$: macierz to $\begin{bmatrix} 2 & 2 \\ 3 & 3 \end{bmatrix}$, a jej wyznacznik to $6 - 6 = 0$. Kolumny są równe — zgadza się z regułą o proporcjonalnych kolumnach.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka">
+Pytanie może brzmieć odwrotnie: „dla jakich $a$ macierz jest **nieosobliwa**” albo „kiedy istnieje $A^{-1}$”. Wtedy odpowiedzią są wszystkie liczby **oprócz** tych, które wyszły z równania.
+</Ramka>
+
+## Macierz odwrotna
+
+<a id="polecenie-odwrotna" class="k-anchor"></a>
+
+Odwrotnością liczby 5 jest $\frac{1}{5}$, bo $5 \cdot \frac{1}{5} = 1$. Macierz odwrotna działa tak samo, tylko zamiast liczby 1 wychodzi macierz jednostkowa $I$.
+
+<Ramka kind="zapamietaj">
+**Macierz odwrotna** do $A$ to macierz $A^{-1}$, dla której $A \cdot A^{-1} = A^{-1} \cdot A = I$ ($I$ — macierz jednostkowa tego samego wymiaru co $A$).
+
+Istnieje tylko wtedy, gdy $A$ jest **kwadratowa** i **nieosobliwa**: $\det(A) \neq 0$.
+</Ramka>
+
+<div class="k-symbole">
+  <Znak t="A^{-1}" nazwa="Macierz odwrotna" czytamy="A do minus pierwszej" znaczy="Macierz, która pomnożona przez $A$ daje $I$. To nie jest $\frac{1}{A}$ — macierzy się nie dzieli." pamiec="$A \cdot A^{-1} = I$, jak $5 \cdot \frac{1}{5} = 1$." />
+  <Znak t="D" nazwa="Macierz dopełnień algebraicznych" czytamy="macierz de" znaczy="Na miejscu $(i, j)$ stoi dopełnienie algebraiczne $D_{ij}$ elementu $a_{ij}$. Potrzebna w metodzie wyznacznikowej." pamiec="D jak „dopełnienia”." />
+</div>
+
+<Dlaczego etykieta="Dlaczego wyznacznik nie może być zerem?">
+We wzorach na macierz odwrotną dzielisz przez $\det(A)$. Przez zero dzielić nie wolno, więc dla $\det(A) = 0$ macierz odwrotna nie istnieje.
+</Dlaczego>
+
+### Macierz 2×2 — szybki wzór
+
+<Rozbior t="A^{-1} = \frac{1}{\det(A)} \begin{bmatrix} a_{22} & -a_{12} \\ -a_{21} & a_{11} \end{bmatrix}" czytamy="A do minus pierwszej to jeden przez wyznacznik A razy macierz…" czesci={[
+  { t: 'a_{11} \\leftrightarrow a_{22}', o: 'liczby z <b>głównej przekątnej</b> zamieniają się miejscami' },
+  { t: '-a_{12},\\ -a_{21}', o: 'dwie pozostałe liczby zostają na miejscu, ale <b>zmieniają znak</b>' },
+  { t: '\\frac{1}{\\det(A)}', o: 'na końcu każdą liczbę <b>dzielisz przez wyznacznik</b>' },
+]} />
+
+<div class="k-rown">
+<Mx m={r2} t="A =" oznacz={[{ i: 0, j: 0, styl: 'zloto' }, { i: 1, j: 1, styl: 'zloto' }, { i: 0, j: 1, styl: 'roz' }, { i: 1, j: 0, styl: 'roz' }]} />
+<span class="k-zn">→</span>
+<Mx m={r2i} t="A^{-1} = \frac{1}{1} \cdot" oznacz={[{ i: 0, j: 0, styl: 'zloto' }, { i: 1, j: 1, styl: 'zloto' }, { i: 0, j: 1, styl: 'roz' }, { i: 1, j: 0, styl: 'roz' }]} />
+</div>
+
+Tu $\det(A) = 2 \cdot 3 - 1 \cdot 5 = 1$, więc dzielenie niczego nie zmienia. Złote liczby (2 i 3) zamieniły się miejscami, różowe (1 i 5) zmieniły znak. Sprawdź, że wychodzi macierz jednostkowa — kliknij kratki wyniku:
+
+<Mnozenie A={r2} B={r2i} nB="A^{-1}">
+to sprawdzenie $A \cdot A^{-1}$. Każda kratka liczy się jak zwykle: wiersz razy kolumna. Na przekątnej wychodzą jedynki, poza nią zera — czyli $I$.
+</Mnozenie>
+
+Gdy wyznacznik nie jest jedynką, pojawiają się ułamki. Tu $\det = 3 \cdot 4 - 2 \cdot 1 = 10$:
+
+$$
+\begin{aligned}
+\begin{bmatrix} 3 & 2 \\ 1 & 4 \end{bmatrix}^{-1} &= \frac{1}{10} \begin{bmatrix} 4 & -2 \\ -1 & 3 \end{bmatrix} \\
+&= \begin{bmatrix} \frac{4}{10} & -\frac{2}{10} \\ -\frac{1}{10} & \frac{3}{10} \end{bmatrix} = \begin{bmatrix} \frac{2}{5} & -\frac{1}{5} \\ -\frac{1}{10} & \frac{3}{10} \end{bmatrix}
+\end{aligned}
+$$
+
+Ułamki skracasz na końcu.
+
+<Ramka kind="pulapka">
+Najczęstszy błąd: zamiana miejsc nie na tej przekątnej albo zmiana znaku liczb z głównej przekątnej. Zapamiętaj: główna przekątna — **zamiana**, druga przekątna — **minus**.
+</Ramka>
+
+### Metoda wyznacznikowa
+
+Dla macierzy $3 \times 3$ (i większych) używasz wzoru ze slajdu:
+
+<Rozbior t="A^{-1} = \frac{1}{\det(A)} \cdot D^T" czytamy="A do minus pierwszej to jeden przez wyznacznik A razy de transponowana" czesci={[
+  { t: '\\det(A)', o: 'wyznacznik $A$ — musi być różny od 0' },
+  { t: 'D', o: 'macierz dopełnień algebraicznych: na miejscu $(i, j)$ stoi $D_{ij} = (-1)^{i+j} M_{ij}$' },
+  { t: 'D^T', o: 'ta sama macierz po <b>transpozycji</b> — wiersze zamienione na kolumny' },
+]} />
+
+<Ramka kind="polecenie">
+„Wyznacz macierz odwrotną metodą wyznacznikową”.
+
+1. Policz $\det(A)$. Dla $3 \times 3$ użyj reguły Sarrusa. Wyszło 0 → koniec: macierz osobliwa, odwrotnej nie ma.
+2. Policz 9 dopełnień $D_{ij}$: skreśl wiersz $i$ i kolumnę $j$, policz wyznacznik $2 \times 2$ i pomnóż go przez znak z szachownicy ($+1$ albo $-1$). Ułóż je w macierz $D$.
+3. Transponuj $D$.
+4. Każdą liczbę $D^T$ podziel przez $\det(A)$.
+5. Sprawdź jedną albo dwie kratki $A \cdot A^{-1}$ — mają wyjść jedynki na przekątnej i zera poza nią.
+</Ramka>
+
+<Rozwiazanie tytul="Odwróć macierz metodą wyznacznikową" zrodlo="przykład z zajęć">
+<div slot="tresc">
+
+$$
+A = \begin{bmatrix} 2 & 1 & 0 \\ -1 & 3 & 2 \\ 0 & 1 & 1 \end{bmatrix}
+$$
+
+</div>
+
+<div slot="plan">
+
+1. Liczymy wyznacznik. Jeśli wyjdzie 0, macierzy nie da się odwrócić i dalej nie liczymy. Poza tym wyznacznik jest potrzebny we wzorze.
+2. Liczymy macierz dopełnień $D$ — dziewięć małych wyznaczników $2 \times 2$.
+3. Transponujemy $D$, bo tak każe wzór.
+4. Dzielimy wszystko przez wyznacznik.
+5. Sprawdzamy $A \cdot A^{-1} = I$, bo przy dziewięciu rachunkach łatwo o pomyłkę.
+
+Inna droga: metoda operacji elementarnych (niżej). Na zajęciach tę samą macierz odwróciliśmy obiema metodami i wyszło to samo.
+
+</div>
+
+<Krok tytul="Policz wyznacznik (Sarrus)">
+To ta sama macierz co w przykładzie z regułą Sarrusa:
+
+$$
+\begin{aligned}
+\det(A) &= 2 \cdot 3 \cdot 1 + 1 \cdot 2 \cdot 0 \\
+&\quad + 0 \cdot (-1) \cdot 1 - 0 \cdot 3 \cdot 0 \\
+&\quad - 2 \cdot 2 \cdot 1 - 1 \cdot (-1) \cdot 1 \\
+&= 6 - 4 + 1 = 3
+\end{aligned}
+$$
+
+<Dlaczego>
+$\det(A) = 3 \neq 0$, więc macierz odwrotna istnieje i możemy liczyć dalej.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz macierz dopełnień D">
+Dla każdej liczby w $A$: skreśl jej wiersz i kolumnę, policz wyznacznik czterech liczb, które zostały (minor), i pomnóż go przez znak z szachownicy ($+1$ albo $-1$).
+
+<Dopelnienia A={Az}>
+kliknij liczbę w $A$ (albo „Policz”). Jej wiersz i kolumna się przekreślą, a cztery zielone kratki to minor. Złoty znak w szachownicy to $(-1)^{i+j}$. Gotowe dopełnienie pojawi się w macierzy $D$ na tym samym miejscu, na którym w $A$ stoi kliknięta liczba.
+</Dopelnienia>
+
+<Dlaczego>
+Wzór potrzebuje dopełnienia **każdego** elementu. Na miejscu $(i, j)$ w $D$ stoi dopełnienie elementu $a_{ij}$ — stąd kolejność.
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+Znak $(-1)^{i+j}$ to część definicji dopełnienia algebraicznego. Nie trzeba go liczyć — wystarczy szachownica z plusem w lewym górnym rogu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Transponuj D">
+<Transpozycja A={Dz} nA="D">
+wiersze $D$ stają się kolumnami $D^T$ — ten sam kolor, te same liczby, ta sama kolejność.
+</Transpozycja>
+
+<Dlaczego typ="umowa">
+Wzór ma $D^T$, a nie $D$ — tak wynika z rachunku, który stoi za wzorem. Zapamiętaj kolejność: najpierw liczysz $D$, potem transponujesz.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Podziel przez wyznacznik">
+$\frac{1}{\det(A)} = \frac{1}{3}$. Każdą liczbę $D^T$ mnożysz przez $\frac{1}{3}$ (czyli dzielisz przez 3).
+
+<div class="k-rown">
+<Mx m={DzT} t="A^{-1} = \frac{1}{3} \cdot" />
+<span class="k-zn">=</span>
+<Mx m={Azi} />
+</div>
+
+<Dlaczego typ="inaczej">
+Możesz zostawić ułamek przed macierzą: $A^{-1} = \frac{1}{3}\begin{bmatrix} 1 & -1 & 2 \\ 1 & 2 & -4 \\ -1 & -2 & 7 \end{bmatrix}$. Obie postacie oznaczają to samo.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdź: A · A⁻¹ = I">
+<Mnozenie A={Az} B={Azi} nB="A^{-1}">
+kliknij kilka kratek. Na przekątnej mają wyjść jedynki, poza nią zera. Jeśli gdzieś wyjdzie co innego, szukaj błędu w dopełnieniu z tego wiersza albo kolumny.
+</Mnozenie>
+
+<Dlaczego>
+Z definicji $A \cdot A^{-1} = I$. To najszybszy test, czy nigdzie nie ma pomyłki w znaku.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="Zapomniane transponowanie">
+Gdy zapomnisz o transpozycji, policzysz $\frac{1}{3} \cdot D$ zamiast $\frac{1}{3} \cdot D^T$. Sprawdzenie od razu pokazuje błąd — wychodzi zupełnie inna macierz niż $I$:
+
+<div class="k-rown">
+<Mx m={zlyAz} t="A \cdot \left(\tfrac{1}{3} D\right) =" />
+</div>
+</Ramka>
+
+### Metoda operacji elementarnych
+
+Obok macierzy $A$ ustawiasz macierz jednostkową tego samego wymiaru i oddzielasz je kreską: $[A \mid I]$. Potem operacjami **na wierszach** zamieniasz lewą połówkę w $I$. Gdy się uda, po prawej stronie stoi $A^{-1}$:
+
+$$
+[A \mid I] \xrightarrow{\text{operacje elementarne na wierszach}} [I \mid A^{-1}]
+$$
+
+<Ramka kind="polecenie">
+„Wyznacz macierz odwrotną metodą operacji elementarnych”.
+
+1. Zapisz $[A \mid I]$.
+2. Kolumna 1: zrób jedynkę w wierszu 1 (zamiana wierszy albo mnożenie wiersza), potem zera w pozostałych wierszach tej kolumny.
+3. Kolumna 2: jedynka w wierszu 2, zera w pozostałych.
+4. Kolumna 3: jedynka w wierszu 3, zera w pozostałych.
+5. Gdy z lewej stoi $I$, z prawej odczytaj $A^{-1}$.
+
+Każdą operację wykonujesz na **całym** wierszu — po obu stronach kreski.
+</Ramka>
+
+<Dlaczego typ="umowa" etykieta="Bo tak — tylko wiersze">
+W tej metodzie wolno używać wyłącznie operacji na wierszach — tak jest na slajdzie. Operacja na kolumnie zmienia tylko lewą połówkę. Prawa połówka jej nie „zapamięta”, więc na końcu nie stanie tam $A^{-1}$.
+</Dlaczego>
+
+<Rozwiazanie tytul="Odwróć macierz metodą operacji elementarnych" zrodlo="Zad. 1, str. 92–93, e)">
+<div slot="tresc">
+
+$$
+A = \begin{bmatrix} 2 & 5 & 7 \\ -2 & 1 & -3 \\ 1 & 1 & 3 \end{bmatrix}
+$$
+
+</div>
+
+<div slot="plan">
+
+1. Dopisujemy macierz jednostkową — po prawej stronie będzie powstawać $A^{-1}$.
+2. Zamieniamy wiersze 1 i 3, żeby w lewym górnym rogu stała jedynka. Unikamy w ten sposób ułamków na starcie.
+3. Zerujemy resztę kolumny 1.
+4. W kolumnie 2 robimy jedynkę na przekątnej i zera nad nią i pod nią.
+5. To samo w kolumnie 3.
+6. Odczytujemy $A^{-1}$ z prawej strony i sprawdzamy jedną kratkę.
+
+Inna droga: metoda wyznacznikowa (wyżej). Da ten sam wynik.
+
+</div>
+
+<Krok tytul="Ustaw [A | I]">
+<div class="k-rown">
+<Mx m={aug92} kreska={2} />
+</div>
+
+<Dlaczego>
+Każda operacja działa na obu połówkach naraz. Kiedy lewa połówka zamieni się w $I$, prawa „zapamięta” wszystkie wykonane operacje — i to jest właśnie $A^{-1}$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zamień wiersze 1 i 3">
+<Operacja k={k92[0]} kreska={2} legenda />
+
+<Dlaczego>
+W wierszu 3 na początku stoi 1. Gdy przeniesiesz go na górę, zera w kolumnie 1 zrobisz, dodając całkowite wielokrotności wiersza 1. Gdyby na górze zostało 2, trzeba by od razu dzielić przez 2 i pojawiłyby się ułamki.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Można zacząć od $w_1' = w_1 \cdot \frac{1}{2}$. Wynik będzie ten sam, tylko rachunki od początku idą na ułamkach.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wyzeruj kolumnę 1 pod jedynką">
+W wierszu 2 stoi $-2$. Żeby dostać 0, dodajesz 2 razy wiersz 1: $-2 + 2 \cdot 1 = 0$. W wierszu 3 stoi 2, więc odejmujesz 2 razy wiersz 1: $2 - 2 \cdot 1 = 0$.
+
+<Operacja k={k92[1]} kreska={2} />
+
+<Dlaczego>
+Mnożnik to zerowana liczba z przeciwnym znakiem, bo w wierszu 1 w tej kolumnie stoi 1. Wiersz 1 tylko pomaga — przepisujesz go bez zmian.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 2: jedynka i zera">
+Na przekątnej w kolumnie 2 (wiersz 2) stoi 3. Mnożysz wiersz 2 przez $\frac{1}{3}$ — powstanie 1. W wierszu 1 nad nią stoi 1, więc odejmujesz $\frac{1}{3}$ wiersza 2: $1 - \frac{1}{3} \cdot 3 = 0$. W wierszu 3 stoi 3, więc odejmujesz cały wiersz 2: $3 - 3 = 0$.
+
+<Operacja k={k92[2]} kreska={2} />
+
+<Dlaczego typ="umowa">
+Tak zapisano to na zajęciach: trzy operacje w jednym kroku, każda liczona na wierszach sprzed kroku. Dlatego od wiersza 1 odejmujemy $\frac{1}{3}$ „starego” wiersza 2 — tego, w którym stoi 3. Możesz też robić je po kolei: najpierw $w_2' = w_2 \cdot \frac{1}{3}$, a potem zerować nową jedynką. Wynik będzie ten sam.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 3: jedynka i zera">
+Na przekątnej w kolumnie 3 stoi $-2$. Mnożysz wiersz 3 przez $-\frac{1}{2}$ — powstanie 1. W wierszu 1 nad nią stoi 2, więc dodajesz cały wiersz 3: $2 + (-2) = 0$. W wierszu 2 stoi 1, więc dodajesz $\frac{1}{2}$ wiersza 3: $1 + \frac{1}{2} \cdot (-2) = 0$.
+
+<Operacja k={k92[3]} kreska={2} />
+
+<Dlaczego>
+Lewa połówka to już $I$. Każda kolumna ma jedynkę na przekątnej i zera poza nią, więc kończymy.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odczytaj A⁻¹ i sprawdź">
+<div class="k-rown">
+<Mx m={inv92} t="A^{-1} =" />
+</div>
+
+Sprawdzenie pierwszej kratki $A \cdot A^{-1}$ (ma wyjść 1):
+
+<div set:html={kratkaHtml(A92, inv92, 0, 0, 'A', 'A^{-1}', 'C')} />
+
+<Dlaczego>
+Jedna kratka sprawdza tylko pierwszą kolumnę $A^{-1}$. Jeśli masz czas, sprawdź też $c_{12}$ i $c_{13}$ — mają wyjść zera.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="granica">
+Gdy w trakcie po lewej stronie kreski pojawi się wiersz z samych zer, macierz jest osobliwa i odwrotnej nie ma. Możesz przerwać liczenie.
+</Ramka>
+
+<Ramka kind="kiedy" tytul="Którą metodę wybrać?">
+- **Wyznacznikowa:** mechaniczna, dziewięć małych wyznaczników, ułamki dopiero na końcu.
+- **Operacje elementarne:** mniej liczenia, ale ułamki w trakcie, a błąd w jednym kroku ciągnie się do końca.
+- Jeśli polecenie nie mówi, którą metodą liczyć — wybierz tę, w której rzadziej się mylisz.
+</Ramka>
+
+### Równanie macierzowe
+
+<a id="polecenie-rownanie" class="k-anchor"></a>
+
+Tego na slajdach nie ma, ale to częsty wariant polecenia z macierzą odwrotną: „wyznacz macierz $X$ z równania $A \cdot X = B$”. Macierzy nie dzielimy. Zamiast tego mnożymy przez $A^{-1}$.
+
+<Ramka kind="polecenie">
+„Rozwiąż równanie macierzowe”.
+
+1. Sprawdź, po której stronie $X$ stoi $A$.
+2. Policz $A^{-1}$ (najpierw upewnij się, że $\det(A) \neq 0$).
+3. $A$ z lewej ($A \cdot X = B$) → $X = A^{-1} \cdot B$. $A$ z prawej ($X \cdot A = B$) → $X = B \cdot A^{-1}$.
+4. Pomnóż macierze w tej kolejności i sprawdź jedną kratkę $A \cdot X$ (albo $X \cdot A$).
+</Ramka>
+
+<Rozwiazanie tytul="Rozwiąż równanie A · X = B" zrodlo="wariant spoza slajdów — przykład własny">
+<div slot="tresc">
+
+$$
+A = \begin{bmatrix} 2 & 1 \\ 5 & 3 \end{bmatrix}, \qquad B = \begin{bmatrix} 1 & 0 \\ 2 & 1 \end{bmatrix}
+$$
+
+</div>
+
+<div slot="plan">
+
+1. Przekształcamy równanie tak, żeby $X$ zostało samo: mnożymy obie strony przez $A^{-1}$ z lewej strony, bo tam stoi $A$.
+2. Liczymy $A^{-1}$ (wzór $2 \times 2$).
+3. Mnożymy $A^{-1} \cdot B$.
+
+Tak się to po prostu robi: dzielenie macierzy nie istnieje, a mnożenie przez $A^{-1}$ działa jak dzielenie.
+
+</div>
+
+<Krok tytul="Wyznacz X ze wzoru">
+Mnożysz obie strony równania przez $A^{-1}$ **z lewej strony**:
+
+$$
+\begin{gathered}
+A^{-1} \cdot A \cdot X = A^{-1} \cdot B \\
+\Downarrow \\
+I \cdot X = A^{-1} \cdot B \\
+\Downarrow \\
+X = A^{-1} \cdot B
+\end{gathered}
+$$
+
+<Dlaczego>
+$A^{-1} \cdot A = I$, a $I \cdot X = X$ — jak mnożenie liczby przez 1.
+</Dlaczego>
+
+<Dlaczego etykieta="Dlaczego z lewej?">
+Mnożenie macierzy nie jest przemienne, więc strona ma znaczenie. $A^{-1}$ dopisujesz z tej strony, po której stoi $A$ — tylko wtedy staną obok siebie i dadzą $I$. W $A \cdot X = B$ macierz $A$ stoi z lewej, więc $X = A^{-1} \cdot B$. W równaniu $X \cdot A = B$ byłoby odwrotnie: $X = B \cdot A^{-1}$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz A⁻¹">
+$\det(A) = 2 \cdot 3 - 1 \cdot 5 = 1$. Zamieniasz 2 i 3 miejscami, a 1 i 5 dostają minus:
+
+<div class="k-rown">
+<Mx m={r2i} t="A^{-1} =" />
+</div>
+</Krok>
+
+<Krok tytul="Pomnóż A⁻¹ · B">
+<Mnozenie A={r2i} B={rB} nA="A^{-1}" nC="X">
+każda kratka $X$ to wiersz $A^{-1}$ razy kolumna $B$.
+</Mnozenie>
+
+Wynik: $X = \begin{bmatrix} 1 & -1 \\ -1 & 2 \end{bmatrix}$.
+
+<Dlaczego>
+Sprawdzenie: $A \cdot X$ ma dać $B$. Na przykład pierwsza kratka: $2 \cdot 1 + 1 \cdot (-1) = 1$ — zgadza się z $b_{11} = 1$.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka">
+$B \cdot A^{-1}$ to inna macierz niż $A^{-1} \cdot B$. Przy mnożeniu w złej kolejności wychodzi:
+
+<div class="k-rown">
+<Mx m={rXzly} t="B \cdot A^{-1} =" />
+</div>
+
+Ta macierz nie spełnia równania $A \cdot X = B$.
+</Ramka>
+
+## Rząd macierzy
+
+<a id="polecenie-rzad" class="k-anchor"></a>
+
+### Liniowa niezależność
+
+Każdy wiersz macierzy — i każdą kolumnę — możesz traktować jak **wektor**, czyli listę liczb. Wektory są **liniowo zależne**, gdy któryś da się złożyć z pozostałych: pomnożyć je przez jakieś liczby i dodać. Przykład ze slajdu: $\vec{v}_1 = (1, 0, 1)$, $\vec{v}_2 = (0, 1, 1)$, $\vec{v}_3 = (1, 1, 2)$.
+
+<Slupki wiersze={[{ lab: '\\vec{v}_1', v: [1, 0, 1] }, { lab: '\\vec{v}_2', v: [0, 1, 1] }, { lab: '\\vec{v}_1 + \\vec{v}_2', v: [1, 1, 2], wynik: true }]} />
+
+Suma $\vec{v}_1 + \vec{v}_2$ to dokładnie $\vec{v}_3$. Trzeci wektor nie wnosi nic nowego, więc te trzy wektory są **liniowo zależne**.
+
+<Ramka kind="podobny" tytul="Wektory niezależne">
+$(1, 0, 0)$, $(0, 1, 0)$, $(0, 0, 1)$ — żadnego z nich nie złożysz z pozostałych. Każdy ma jedynkę tam, gdzie pozostałe mają zero, a mnożenie zera i dodawanie zer nigdy jej nie da. Te wektory są **liniowo niezależne**.
+</Ramka>
+
+<Ramka kind="zapamietaj">
+**Rząd macierzy** $r(A)$ to największa liczba liniowo niezależnych wierszy (albo kolumn) tej macierzy. Mówi, ile wierszy zostanie, gdy po kolei odrzucasz te, które da się złożyć z pozostałych.
+</Ramka>
+
+<div class="k-symbole">
+  <Znak t="r(A)" nazwa="Rząd macierzy" czytamy="rząd A" znaczy="Największa liczba liniowo niezależnych wierszy (kolumn). Nigdy nie przekracza liczby wierszy ani liczby kolumn." pamiec="r jak „rząd” — ile wierszy naprawdę się liczy." />
+</div>
+
+### Jak wyznaczyć rząd — postać bazowa
+
+Rząd liczysz operacjami elementarnymi. Sprowadzasz macierz do **postaci bazowej**: robisz w niej jak najwięcej kolumn macierzy jednostkowej — kolumn z jedną jedynką i samymi zerami. **Rząd to stopień macierzy jednostkowej, która powstała.** Liczysz takie kolumny, ale każda musi mieć jedynkę w innym wierszu.
+
+<Ramka kind="polecenie">
+„Wyznacz rząd macierzy $A$”.
+
+1. Kolumna 1: zrób jedynkę w wierszu 1 (zamiana wierszy albo mnożenie wiersza), potem zera w pozostałych wierszach tej kolumny.
+2. Następna kolumna: jedynka w następnym wolnym wierszu, zera w pozostałych. Wolny wiersz to taki, w którym nie ma jeszcze jedynki z kolumny jednostkowej. Gdy w wolnych wierszach tej kolumny są same zera, pomiń ją i weź następną.
+3. Wiersz z samych zer przenieś na koniec (na dół). Kolumnę z samych zer — na koniec (w prawo).
+4. Skończ, gdy nie da się zrobić kolejnej jedynki: w wolnych wierszach zostały same zera albo wiersze się skończyły.
+5. Policz kolumny jednostkowe z jedynkami w różnych wierszach — to rząd.
+</Ramka>
+
+<Rozwiazanie tytul="Wyznacz rząd macierzy" zrodlo="Zad. 1, str. 83, e)">
+<div slot="tresc">
+
+$$
+A = \begin{bmatrix} 1 & 2 & 2 & 1 \\ 1 & 1 & 3 & 3 \\ 6 & 12 & 14 & 16 \end{bmatrix}
+$$
+
+</div>
+
+<div slot="plan">
+
+1. Kolumna 1: w lewym górnym rogu już stoi 1, więc tylko zerujemy liczby pod nią.
+2. Kolumna 2: robimy jedynkę w wierszu 2 i zero nad nią.
+3. Kolumna 3: jedynka w wierszu 3 i zera nad nią.
+4. Liczymy kolumny jednostkowe — to rząd.
+
+Tak się to po prostu robi: rząd z postaci bazowej to metoda z zajęć. Kolejność operacji może być inna — rząd zawsze wyjdzie ten sam.
+
+</div>
+
+<Krok tytul="Kolumna 1: zera pod jedynką">
+W wierszu 2 stoi 1 — odejmujesz wiersz 1: $1 - 1 = 0$. W wierszu 3 stoi 6 — odejmujesz 6 razy wiersz 1: $6 - 6 \cdot 1 = 0$.
+
+<Operacja k={k83[0]} legenda />
+
+<Dlaczego>
+Jedynka na górze i zera pod nią to pierwsza kolumna macierzy jednostkowej: $(1, 0, 0)$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 2: jedynka i zero nad nią">
+W wierszu 2, kolumnie 2 stoi $-1$. Mnożysz wiersz 2 przez $-1$ — powstaje jedynka. W wierszu 1 nad nią stoi 2, więc dodajesz 2 razy wiersz 2: $2 + 2 \cdot (-1) = 0$. W wierszu 3 już jest 0.
+
+<Operacja k={k83[1]} />
+
+<Dlaczego typ="umowa">
+Obie operacje liczysz na wierszach sprzed kroku. Dlatego do wiersza 1 dodajesz 2 razy „stary” wiersz 2 — ten z $-1$ w kolumnie 2.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 3: jedynka i zera nad nią">
+W wierszu 3, kolumnie 3 stoi 2 — mnożysz wiersz 3 przez $\frac{1}{2}$. W wierszu 1 stoi 4 — odejmujesz 2 razy (stary) wiersz 3: $4 - 2 \cdot 2 = 0$. W wierszu 2 stoi $-1$ — dodajesz $\frac{1}{2}$ starego wiersza 3: $-1 + \frac{1}{2} \cdot 2 = 0$.
+
+<Operacja k={k83[2]} />
+</Krok>
+
+<Krok tytul="Policz kolumny jednostkowe">
+<div class="k-rown">
+<Mx m={k83[2].po} oznacz={jedn83} />
+</div>
+
+Zielone kolumny to macierz jednostkowa stopnia 3. Zatem $r(A) = 3$.
+
+<Dlaczego>
+Czwarta kolumna $(-15, 3, 5)$ nie jest jednostkowa i nie musi być. Nie da się w niej zrobić nowej jedynki, bo każdy wiersz ma już swoją jedynkę w innej kolumnie.
+</Dlaczego>
+
+<Dlaczego etykieta="Sprawdzenie">
+Rząd nie może przekroczyć liczby wierszy ani liczby kolumn. Macierz ma 3 wiersze, więc 3 to największy możliwy rząd — i właśnie tyle wyszło.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Rozwiazanie tytul="Rząd, gdy pojawia się wiersz zer" zrodlo="przykład własny">
+<div slot="tresc">
+
+$$
+A = \begin{bmatrix} 1 & 2 & 1 \\ 2 & 4 & 3 \\ 3 & 6 & 4 \end{bmatrix}
+$$
+
+</div>
+
+<div slot="plan">
+
+1. Zerujemy kolumnę 1 pod jedynką — jak w każdym zadaniu na rząd.
+2. Szukamy jedynki w kolumnie 2. Gdy w wolnych wierszach są tam zera, przechodzimy do kolumny 3.
+3. Liczymy kolumny jednostkowe.
+
+Tak się to po prostu robi — to ten sam przepis co w zadaniu wyżej.
+
+</div>
+
+<Krok tytul="Kolumna 1: zera pod jedynką">
+<Operacja k={kE[0]} rachunek="zwiniety" />
+
+<Dlaczego>
+Wiersz 2 minus 2 razy wiersz 1 i wiersz 3 minus 3 razy wiersz 1 — mnożnik to zerowana liczba (2 i 3) z przeciwnym znakiem.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 2 odpada — przejdź do kolumny 3">
+W kolumnie 2 w wierszach 2 i 3 stoją zera, więc nie zrobisz tam jedynki. Bierzesz kolumnę 3: w wierszu 2 stoi już 1. Zerujesz liczby nad nią i pod nią.
+
+<Operacja k={kE[1]} rachunek="zwiniety" />
+
+<Dlaczego>
+Wiersz 3 zamienił się w same zera, bo w wyjściowej macierzy był sumą wierszy 1 i 2: $(1, 2, 1) + (2, 4, 3) = (3, 6, 4)$. Nie wnosił nic nowego. Jest już na dole, więc nie trzeba go przenosić.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz kolumny jednostkowe">
+<div class="k-rown">
+<Mx m={kE[1].po} oznacz={jednE} />
+</div>
+
+Kolumny 1 i 3 tworzą macierz jednostkową stopnia 2: $r(A) = 2$.
+
+<Dlaczego>
+Kolumna 2 $(2, 0, 0)$ nie dostanie jedynki w nowym wierszu — w wierszach 2 i 3 ma zera, a wiersz 1 jest zajęty przez kolumnę 1.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="podobny" tytul="Rząd macierzy z zadania o wyznaczniku">
+$$
+\begin{bmatrix} 3 & 3 & 3 \\ 2 & 2 & 2 \\ 1 & 1 & 1 \end{bmatrix}
+$$
+
+Po $w_1' = w_1 - 3w_3$ i $w_2' = w_2 - 2w_3$ zostaje jeden niezerowy wiersz $(1, 1, 1)$. Przenosisz go na górę, a wiersze zer na dół. Jedynki są tylko w jednym wierszu, więc macierz jednostkowa ma stopień 1 — rząd to 1.
+</Ramka>
+
+<Ramka kind="kiedy" tytul="Szybki test dla macierzy kwadratowej">
+Macierz $n \times n$ z $\det(A) \neq 0$ ma pełny rząd: $r(A) = n$. Gdy $\det(A) = 0$, rząd jest mniejszy niż $n$ — ale ile dokładnie, musisz policzyć postacią bazową.
+</Ramka>
+
+<Ramka kind="granica">
+Przy rzędzie wolno używać operacji na wierszach i na kolumnach. Przy macierzy odwrotnej — tylko na wierszach.
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Wymiar i element</b>$m \times n$ — najpierw wiersze, potem kolumny. $a_{ij}$ — wiersz $i$, kolumna $j$.</div>
+  <div><b>Dodawanie</b>Tylko te same wymiary. Dodajesz liczby z tych samych miejsc. $k \cdot A$ — każdy element razy $k$.</div>
+  <div><b>Mnożenie</b>$(m \times k) \cdot (k \times n) \to m \times n$. $c_{ij}$ = wiersz $i$ z $A$ razy kolumna $j$ z $B$. $A \cdot B \neq B \cdot A$.</div>
+  <div><b>Transpozycja</b>Wiersze → kolumny. $a_{ij}$ trafia na miejsce $(j, i)$. Wymiar $m \times n \to n \times m$.</div>
+  <div><b>Operacje elementarne</b>Zamiana wierszy, wiersz razy $c \neq 0$, dodanie wielokrotności innego wiersza. Prim (’) = nowy wiersz.</div>
+  <div><b>Wyznacznik 2×2</b>$a_{11}a_{22} - a_{12}a_{21}$. Drugi iloczyn bierz w nawias.</div>
+  <div><b>Sarrus (tylko 3×3)</b>Dopisz dwie pierwsze kolumny. Przekątne w dół: plus. Przekątne w górę: minus.</div>
+  <div><b>Laplace</b>$\det(A) = a_{i1}D_{i1} + \dots + a_{in}D_{in}$ — po jednym wierszu (albo kolumnie). $D_{ij} = (-1)^{i+j}M_{ij}$, znaki jak szachownica. Wybieraj wiersz albo kolumnę z największą liczbą zer.</div>
+  <div><b>Własności</b>Dodanie wielokrotności — bez zmian. Wiersz zer → 0. Zamiana → zmiana znaku. Wiersz $\cdot\, c$ → wyznacznik $\cdot\, c$. $\det(A^T) = \det(A)$.</div>
+  <div><b>Odwrotna</b>Istnieje, gdy $A$ jest kwadratowa i $\det(A) \neq 0$. 2×2: zamień liczby na głównej przekątnej, zmień znak pozostałych, podziel przez $\det$.</div>
+  <div><b>Metoda wyznacznikowa</b>$A^{-1} = \frac{1}{\det(A)} D^T$. Nie zapomnij transponować $D$.</div>
+  <div><b>Odwrotna — operacje elementarne</b>$[A \mid I] \to [I \mid A^{-1}]$. Tylko wiersze. Kolumna po kolumnie: jedynka, potem zera.</div>
+  <div><b>Równanie</b>$A \cdot X = B \Rightarrow X = A^{-1} \cdot B$. $X \cdot A = B \Rightarrow X = B \cdot A^{-1}$.</div>
+  <div><b>Rząd</b>Postać bazowa: jak najwięcej kolumn jednostkowych. Rząd = liczba kolumn jednostkowych, każda z jedynką w innym wierszu. Wiersz i kolumna zer na koniec.</div>
+</div>
+
+<Ramka kind="gdzie">
+- **Układy równań (moduł 5):** macierz rozszerzoną układu sprowadzasz do postaci bazowej operacjami na wierszach — jak przy rzędzie, ale bez operacji na kolumnach. Rząd mówi, z ilu zmiennych składa się rozwiązanie bazowe.
+- **Funkcje wielu zmiennych (moduł 10):** o tym, czy jest ekstremum, rozstrzyga wyznacznik hesjanu — macierzy drugich pochodnych.
+- **Ekstrema warunkowe (moduł 11):** znak wyznacznika $3 \times 3$ (liczonego Sarrusem) mówi, czy jest maksimum, czy minimum.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania z natychmiastową odpowiedzią, ułożone według poleceń z kolokwium. Przy każdej odpowiedzi — dobrej i złej — zobaczysz, dlaczego tak jest.
+
+<a id="cw-dzialania" class="k-anchor"></a>
+
+### Działania na macierzach
+
+<CwiczenieLiczby tytul="Policz iloczyn A · B" m={cwAB} t="A \cdot B =" dlaczego={(i, j) => `Wiersz ${i + 1} macierzy $A$ razy kolumna ${j + 1} macierzy $B$: $${kratka(cwA, cwB, i, j).tex}$.`}>
+$A = \begin{bmatrix} 2 & -1 & 3 \\ 0 & 4 & 1 \end{bmatrix}$, $B = \begin{bmatrix} 1 & 2 \\ 3 & 0 \\ -1 & 1 \end{bmatrix}$. Wymiary: $2 \times 3$ razy $3 \times 2$, więc wynik ma wymiar $2 \times 2$.
+</CwiczenieLiczby>
+
+<CwiczenieLiczby tytul="Policz 2A − Bᵀ" m={cw2} t="2A - B^T =" dlaczego={cw2opis}>
+$A = \begin{bmatrix} 1 & 0 \\ -2 & 3 \end{bmatrix}$, $B = \begin{bmatrix} 4 & 1 \\ 2 & -1 \end{bmatrix}$. Najpierw transponuj $B$, potem pomnóż $A$ przez 2 i odejmij.
+</CwiczenieLiczby>
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: '$A$ ma wymiar $3 \\times 2$, a $B$ ma wymiar $2 \\times 4$. Jaki wymiar ma $A \\cdot B$?', opcje: ['$2 \\times 2$', '$3 \\times 4$', 'tego nie da się pomnożyć'], dobra: 1, dlaczego: 'Liczby środkowe: 2 i 2 — równe, więc da się pomnożyć. Wymiar wyniku to liczby zewnętrzne: $3 \\times 4$. Odpowiedź $2 \\times 2$ to liczby środkowe — częsta pomyłka.' },
+  { q: '$A$ i $B$ mają wymiar $2 \\times 3$. Które działanie jest wykonalne?', opcje: ['$A \\cdot B$', '$A + B^T$', '$A \\cdot B^T$'], dobra: 2, dlaczego: '$A \\cdot B^T$: $2 \\times 3$ razy $3 \\times 2$ — środkowe 3 i 3, wynik $2 \\times 2$. $A \\cdot B$: środkowe 3 i 2 — niewykonalne. $A + B^T$: wymiary $2 \\times 3$ i $3 \\times 2$ są różne.' },
+  { q: '$A$ ma wymiar $2 \\times 5$. Jaki wymiar ma $A^T$?', opcje: ['$5 \\times 2$', '$2 \\times 5$', '$5 \\times 5$'], dobra: 0, dlaczego: 'Transpozycja zamienia wiersze na kolumny: 2 wiersze stają się 2 kolumnami, a 5 kolumn — 5 wierszami.' },
+  { q: 'Kratka $c_{21}$ iloczynu $C = A \\cdot B$ to:', opcje: ['wiersz 1 macierzy $A$ razy kolumna 2 macierzy $B$', 'wiersz 2 macierzy $A$ razy kolumna 1 macierzy $B$', '$a_{21} \\cdot b_{21}$'], dobra: 1, dlaczego: 'Pierwszy indeks mówi, który wiersz $A$, drugi — która kolumna $B$. Mnożenia „kratka przez kratkę” w mnożeniu macierzy nie ma.' },
+  { q: 'Czy dla macierzy kwadratowych zawsze $A \\cdot B = B \\cdot A$?', opcje: ['tak', 'tak, jeśli mają ten sam wymiar', 'nie — kolejność zwykle zmienia wynik'], dobra: 2, dlaczego: 'Np. dla $A = \\begin{bmatrix} 1 & 2 \\\\ 0 & 1 \\end{bmatrix}$ i $B = \\begin{bmatrix} 1 & 0 \\\\ 3 & 1 \\end{bmatrix}$: $A \\cdot B = \\begin{bmatrix} 7 & 2 \\\\ 3 & 1 \\end{bmatrix}$, a $B \\cdot A = \\begin{bmatrix} 1 & 2 \\\\ 3 & 7 \\end{bmatrix}$. Mnożenie macierzy nie jest przemienne.' },
+  { q: 'Ile iloczynów dodajesz, licząc jedną kratkę wyniku $(2 \\times 3) \\cdot (3 \\times 4)$?', opcje: ['3', '2', '4'], dobra: 0, dlaczego: 'Wiersz pierwszej macierzy ma 3 liczby (tyle, ile ma kolumn), więc są 3 pary i 3 iloczyny. Wynik ma $2 \\cdot 4 = 8$ kratek.' },
+]} />
+
+<a id="cw-wyznacznik" class="k-anchor"></a>
+
+### Wyznacznik
+
+<Pytania licznik tag="Ćwiczenia · 9 zadań" tytul="" pytania={[
+  { q: '$\\det\\begin{bmatrix} 5 & 3 \\\\ 2 & 4 \\end{bmatrix} = ?$', opcje: ['14', '26', '−14'], dobra: 0, dlaczego: '$5 \\cdot 4 - 3 \\cdot 2 = 20 - 6 = 14$. 26 to dodanie iloczynów zamiast odjęcia, a $-14$ to odjęcie w złej kolejności (druga przekątna minus główna).' },
+  { q: '$\\det\\begin{bmatrix} -2 & 3 \\\\ 4 & -1 \\end{bmatrix} = ?$', opcje: ['14', '−10', '10'], dobra: 1, dlaczego: '$(-2) \\cdot (-1) - 3 \\cdot 4 = 2 - 12 = -10$. 14 to $2 + 12$ (zły znak przy odejmowaniu), a 10 to $12 - 2$ (odwrócona kolejność).' },
+  { q: 'Reguła Sarrusa: $\\det\\begin{bmatrix} 2 & 1 & 3 \\\\ 1 & 0 & 2 \\\\ 4 & 1 & 1 \\end{bmatrix} = ?$', opcje: ['11', '16', '6'], dobra: 2, dlaczego: 'Przekątne w dół: $2 \\cdot 0 \\cdot 1 + 1 \\cdot 2 \\cdot 4 + 3 \\cdot 1 \\cdot 1 = 0 + 8 + 3 = 11$. Przekątne w górę: $3 \\cdot 0 \\cdot 4 + 2 \\cdot 2 \\cdot 1 + 1 \\cdot 1 \\cdot 1 = 0 + 4 + 1 = 5$. Wynik: $11 - 5 = 6$. Odpowiedź 11 pomija przekątne w górę, a 16 je dodaje zamiast odejmować.' },
+  { q: 'Jak dopełnienie algebraiczne $D_{23}$ zależy od minora $M_{23}$?', opcje: ['$D_{23} = -M_{23}$', '$D_{23} = +M_{23}$', 'zależy od wartości $a_{23}$'], dobra: 0, dlaczego: '$(-1)^{2+3} = (-1)^5 = -1$, więc $D_{23} = -M_{23}$. Na szachownicy znaków wiersz 2 i kolumna 3 to minus. Ten znak zależy tylko od numerów wiersza i kolumny, a nie od liczby w kratce.' },
+  { q: '$\\det(A) = 4$. Zamieniasz miejscami dwa wiersze. Ile wynosi nowy wyznacznik?', opcje: ['4', '0', '−4'], dobra: 2, dlaczego: 'Zamiana dwóch wierszy zmienia znak wyznacznika (własność 3).' },
+  { q: '$A$ to macierz $3 \\times 3$ i $\\det(A) = 4$. Ile wynosi $\\det(2A)$?', opcje: ['8', '32', '16'], dobra: 1, dlaczego: '$2A$ to każdy z trzech wierszy razy 2. Każde pomnożenie wiersza przez 2 podwaja wyznacznik (własność 4): $4 \\cdot 2 \\cdot 2 \\cdot 2 = 32$. Odpowiedź 8 uwzględnia tylko jeden wiersz.' },
+  { q: 'W macierzy $3 \\times 3$ wiersz 3 jest taki sam jak wiersz 1. Wyznacznik:', opcje: ['jest równy 0', 'jest ujemny', 'nie da się nic powiedzieć bez liczenia'], dobra: 0, dlaczego: 'Operacja $w_3\' = w_3 - w_1$ nie zmienia wyznacznika i daje wiersz zer, a macierz z wierszem zer ma wyznacznik 0 (własności 1 i 2).' },
+  { q: 'Dla jakich $a$ macierz $\\begin{bmatrix} a & 4 \\\\ 1 & a \\end{bmatrix}$ jest osobliwa?', opcje: ['$a = 4$', '$a = 0$', '$a = -2$ lub $a = 2$'], dobra: 2, dlaczego: '$\\det = a \\cdot a - 4 \\cdot 1 = a^2 - 4 = 0$, więc $a^2 = 4$ i $a = -2$ lub $a = 2$. Dla $a = 0$ wyznacznik to $-4 \\neq 0$.' },
+  { q: 'Wyznacznik macierzy $2 \\times 3$:', opcje: ['nie istnieje — macierz nie jest kwadratowa', 'liczysz regułą Sarrusa', 'to iloczyn przekątnych'], dobra: 0, dlaczego: 'Wyznacznik liczymy tylko z macierzy kwadratowej.' },
+]} />
+
+<a id="cw-odwrotna" class="k-anchor"></a>
+
+### Macierz odwrotna i równanie macierzowe
+
+<CwiczenieLiczby tytul="Odwróć macierz 2×2" m={odwrotna(cwI1)} t="A^{-1} =" dlaczego={inv2opis(cwI1)}>
+$A = \begin{bmatrix} 4 & 3 \\ 1 & 1 \end{bmatrix}$. Najpierw policz wyznacznik.
+</CwiczenieLiczby>
+
+<CwiczenieLiczby tytul="Odwróć macierz 2×2 (z ułamkami)" m={odwrotna(cwI2)} t="A^{-1} =" dlaczego={inv2opis(cwI2)}>
+$A = \begin{bmatrix} 2 & 3 \\ 1 & 4 \end{bmatrix}$. Ułamek możesz wpisać jako ułamek zwykły albo dziesiętny (np. 1/2 albo 0,5).
+</CwiczenieLiczby>
+
+<CwiczenieLiczby tytul="Policz macierz dopełnień D" m={cwDm} t="D =" dlaczego={cwDopis}>
+$A = \begin{bmatrix} 1 & 2 & 0 \\ 0 & 1 & 1 \\ 1 & 0 & 2 \end{bmatrix}$. Wpisz macierz dopełnień algebraicznych $D$ — jeszcze bez transponowania. Na miejscu $(i, j)$ stoi $D_{ij} = (-1)^{i+j} M_{ij}$.
+</CwiczenieLiczby>
+
+<Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
+  { q: '$\\det(A) = 0$. Co z macierzą odwrotną?', opcje: ['to macierz zerowa', 'nie istnieje', 'to $A^T$'], dobra: 1, dlaczego: 'Macierz osobliwa nie ma odwrotnej — we wzorze trzeba by dzielić przez 0.' },
+  { q: 'Czy macierz $2 \\times 3$ ma macierz odwrotną?', opcje: ['nie — odwracamy tylko macierze kwadratowe', 'tak, jeśli jej wyznacznik jest różny od 0', 'tak, to jej transpozycja'], dobra: 0, dlaczego: 'Macierz odwrotna istnieje tylko dla macierzy kwadratowej (i tylko gdy jej wyznacznik nie jest zerem). Macierz $2 \\times 3$ nie ma nawet wyznacznika.' },
+  { q: 'W metodzie wyznacznikowej $A^{-1} = \\frac{1}{\\det(A)} \\cdot \\ldots$', opcje: ['$D$', '$D^T$', '$A^T$'], dobra: 1, dlaczego: 'Wzór ma transponowaną macierz dopełnień $D^T$. Pominięcie transpozycji to najczęstszy błąd w tej metodzie.' },
+  { q: 'W metodzie operacji elementarnych wolno używać:', opcje: ['operacji na wierszach i kolumnach', 'tylko operacji na kolumnach', 'tylko operacji na wierszach'], dobra: 2, dlaczego: 'Przekształcasz $[A \\mid I]$ w $[I \\mid A^{-1}]$ wyłącznie operacjami na wierszach. Na kolumnach — przy rzędzie, nie przy odwracaniu.' },
+  { q: '$\\begin{bmatrix} a & b \\\\ c & d \\end{bmatrix}^{-1} = \\frac{1}{ad - bc} \\cdot \\ldots$', opcje: ['$\\begin{bmatrix} d & -b \\\\ -c & a \\end{bmatrix}$', '$\\begin{bmatrix} -a & b \\\\ c & -d \\end{bmatrix}$', '$\\begin{bmatrix} d & b \\\\ c & a \\end{bmatrix}$'], dobra: 0, dlaczego: 'Liczby z głównej przekątnej ($a$, $d$) zamieniają się miejscami, a pozostałe ($b$, $c$) zmieniają znak.' },
+  { q: 'Równanie $X \\cdot A = B$. Ile wynosi $X$?', opcje: ['$A^{-1} \\cdot B$', '$B \\cdot A^{-1}$', '$\\frac{B}{A}$'], dobra: 1, dlaczego: '$A$ stoi z prawej strony $X$, więc mnożysz obie strony przez $A^{-1}$ z prawej: $X \\cdot A \\cdot A^{-1} = B \\cdot A^{-1}$, czyli $X = B \\cdot A^{-1}$. Macierzy nie dzielimy.' },
+  { q: 'Sprawdzasz wynik odwracania. Co ma wyjść z $A \\cdot A^{-1}$?', opcje: ['macierz zerowa', '$A$', 'macierz jednostkowa $I$'], dobra: 2, dlaczego: 'To definicja macierzy odwrotnej: $A \\cdot A^{-1} = I$ — jedynki na przekątnej, zera poza nią.' },
+]} />
+
+<a id="cw-rzad" class="k-anchor"></a>
+
+### Operacje elementarne i rząd
+
+<CwiczenieLiczby tytul="Wykonaj operacje elementarne" m={cwOp.po} dlaczego={cwOpOpis}>
+$A = \begin{bmatrix} 1 & 2 & -1 \\ 2 & 3 & 0 \\ -1 & 1 & 4 \end{bmatrix}$. Wykonaj w jednym kroku $w_2' = w_2 - 2w_1$ i $w_3' = w_3 + w_1$. Wpisz całą macierz po tym kroku.
+</CwiczenieLiczby>
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: '$r\\left(\\begin{bmatrix} 1 & 2 \\\\ 2 & 4 \\end{bmatrix}\\right) = ?$', opcje: ['2', '1', '0'], dobra: 1, dlaczego: 'Wiersz 2 to 2 razy wiersz 1. Po $w_2\' = w_2 - 2w_1$ zostaje wiersz zer i jedna kolumna jednostkowa, więc rząd to 1.' },
+  { q: 'Macierz ma wymiar $3 \\times 5$. Jaki może być jej największy rząd?', opcje: ['3', '5', '15'], dobra: 0, dlaczego: 'Rząd nie przekracza ani liczby wierszy, ani liczby kolumn: najwyżej $\\min(3, 5) = 3$.' },
+  { q: 'Postać bazowa to $\\begin{bmatrix} 1 & 0 & 2 \\\\ 0 & 1 & -1 \\\\ 0 & 0 & 0 \\end{bmatrix}$. Rząd to:', opcje: ['3', '1', '2'], dobra: 2, dlaczego: 'Kolumny 1 i 2 tworzą macierz jednostkową stopnia 2. Trzeci wiersz to same zera, więc trzeciej jedynki nie będzie.' },
+  { q: 'Macierz $3 \\times 3$ ma wyznacznik różny od zera. Jej rząd:', opcje: ['to 3', 'jest mniejszy niż 3', 'nie da się go określić'], dobra: 0, dlaczego: 'Macierz kwadratowa z $\\det \\neq 0$ ma pełny rząd — tu 3.' },
+  { q: '$r\\left(\\begin{bmatrix} 1 & 2 & 3 \\\\ 2 & 4 & 6 \\\\ 1 & 1 & 1 \\end{bmatrix}\\right) = ?$', opcje: ['1', '2', '3'], dobra: 1, dlaczego: 'Wiersz 2 to 2 razy wiersz 1, więc da się go wyzerować. Wiersze 1 i 3 nie są proporcjonalne. Zostają dwa niezależne wiersze: rząd 2.' },
+  { q: 'Który ruch <b>nie jest</b> operacją elementarną?', opcje: ['zamiana dwóch wierszy', 'pomnożenie wiersza przez 0', 'dodanie do wiersza 3 razy inny wiersz'], dobra: 1, dlaczego: 'Mnożyć wolno tylko przez liczbę różną od zera. Po pomnożeniu przez 0 wiersz zamienia się w zera i tego nie da się cofnąć.' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Macierze — 10 pytań" pytania={[
+  { q: 'Wymiar $2 \\times 3$ oznacza, że macierz ma:', opcje: ['2 kolumny i 3 wiersze', '2 wiersze i 3 kolumny', '6 wierszy'], dobra: 1, dlaczego: 'Najpierw liczba wierszy, potem kolumn.' },
+  { q: 'Element $a_{31}$ stoi w:', opcje: ['wierszu 3, kolumnie 1', 'wierszu 1, kolumnie 3', 'kratce numer 31'], dobra: 0, dlaczego: 'Pierwszy indeks to wiersz, drugi — kolumna.' },
+  { q: 'Macierz jednostkowa to macierz:', opcje: ['z samych jedynek', 'o wyznaczniku 0', 'kwadratowa z jedynkami na głównej przekątnej i zerami poza nią'], dobra: 2, dlaczego: 'Jedynki tylko na głównej przekątnej. W mnożeniu działa jak liczba 1: $A \\cdot I = A$.' },
+  { q: 'Dwie macierze można dodać, gdy:', opcje: ['mają ten sam wymiar', 'liczba kolumn pierwszej = liczba wierszy drugiej', 'są kwadratowe'], dobra: 0, dlaczego: 'Dodajesz liczby z tych samych miejsc, więc obie macierze muszą mieć ten sam kształt. Drugi warunek dotyczy mnożenia.' },
+  { q: 'Iloczyn $A \\cdot B$ istnieje, gdy:', opcje: ['$A$ i $B$ mają ten sam wymiar', 'liczba wierszy $A$ = liczba kolumn $B$', 'liczba kolumn $A$ = liczba wierszy $B$'], dobra: 2, dlaczego: 'Wiersz $A$ i kolumna $B$ muszą mieć tyle samo liczb, żeby połączyć je w pary.' },
+  { q: 'Wyznacznik liczymy dla macierzy:', opcje: ['dowolnej', 'tylko kwadratowej', 'tylko $2 \\times 2$ i $3 \\times 3$'], dobra: 1, dlaczego: 'Każda macierz kwadratowa ma wyznacznik. Dla $4 \\times 4$ i większych liczysz go rozwinięciem Laplace’a.' },
+  { q: 'Macierz osobliwa to macierz, której:', opcje: ['wyznacznik jest równy 0', 'wszystkie elementy są równe', 'rząd jest równy liczbie wierszy'], dobra: 0, dlaczego: 'Osobliwa = $\\det(A) = 0$. Taka macierz nie ma odwrotnej.' },
+  { q: 'Minor $M_{ij}$ to:', opcje: ['element $a_{ij}$ z przeciwnym znakiem', 'iloczyn elementów wiersza $i$', 'wyznacznik macierzy po skreśleniu wiersza $i$ i kolumny $j$'], dobra: 2, dlaczego: 'Skreślasz wiersz i kolumnę elementu i liczysz wyznacznik tego, co zostało. Ze znakiem $(-1)^{i+j}$ staje się dopełnieniem algebraicznym.' },
+  { q: 'Czy dodanie do wiersza wielokrotności innego wiersza zmienia wyznacznik?', opcje: ['nie', 'tak, zmienia znak', 'tak, mnoży go przez tę wielokrotność'], dobra: 0, dlaczego: 'To własność 1 — dzięki niej wolno robić zera przed liczeniem wyznacznika. Znak zmienia zamiana wierszy, a mnożenie wiersza przez $c$ mnoży wyznacznik przez $c$.' },
+  { q: 'Rząd macierzy to:', opcje: ['liczba jej wierszy', 'największa liczba liniowo niezależnych wierszy (kolumn)', 'jej wyznacznik'], dobra: 1, dlaczego: 'Rząd mówi, ile wierszy zostaje, gdy odrzucisz te, które da się złożyć z pozostałych. Może być mniejszy niż liczba wierszy.' },
+]} />

@@ -1,0 +1,80 @@
+---
+// Mnożenie macierzy krok po kroku: wynik startuje ukryty; kliknięcie kratki wyniku (albo „Policz następną kratkę”)
+// podświetla wiersz pierwszej macierzy i kolumnę drugiej, a w panelu pokazuje rachunek w słupkach.
+// et — etykiety wierszy/kolumn (np. lokale, produkty) dla przykładu „z życia”; opis(i, j) — dodatkowe zdanie do kratki.
+import { tex, texInline } from '../../../lib/tex.js';
+import { mnoz, kratkaHtml, mat } from '../../../lib/macierze.js';
+import Mx from './Mx.astro';
+import Wymiary from './Wymiary.astro';
+interface Props {
+  A: any[][]; B: any[][]; nA?: string; nB?: string; nC?: string;
+  etA?: { w?: string[]; k?: string[] }; etB?: { w?: string[]; k?: string[] }; etC?: { w?: string[]; k?: string[] };
+  opis?: (i: number, j: number) => string;
+}
+const { A, B, nA = 'A', nB = 'B', nC = 'C', etA, etB, etC, opis } = Astro.props;
+const C = mnoz(A, B);
+const [m, r] = [A.length, A[0].length], [r2, n] = [B.length, B[0].length];
+const kratki = C.flatMap((row, i) => row.map((_, j) => ({ i, j, h: kratkaHtml(A, B, i, j, nA, nB, nC) + (opis ? `<p>${texInline(opis(i, j))}</p>` : '') })));
+---
+<figure class="k-fig k-mn" data-mn>
+  <div class="k-fig-box">
+    <Wymiary a={[m, r]} b={[r2, n]} nA={nA} nB={nB} />
+    <div class="k-mn-row">
+      <div data-mx-wrap="A"><Mx m={A} t={`${nA} =`} et={etA} /></div>
+      <div data-mx-wrap="B"><Mx m={B} t={`${nB} =`} et={etB} /></div>
+      <div data-mx-wrap="C"><Mx m={C} t={`${nC} = ${nA} \\cdot ${nB} =`} et={etC} /></div>
+    </div>
+    <div class="k-mn-ctl" data-js-only hidden>
+      <button type="button" class="k-btn" data-next data-lit={nC.toLowerCase()}>Policz kratkę {nC.toLowerCase()}₁₁</button>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Pokaż cały wynik</button>
+    </div>
+    <ul hidden data-expl>{kratki.map((k) => <li data-cell={`${k.i}-${k.j}`} set:html={k.h} />)}</ul>
+  </div>
+  <div class="k-mn-out k-live" aria-live="polite" data-out><span data-js-only hidden>Stuknij dowolną kratkę ze znakiem zapytania albo kliknij „Policz kratkę”. Zobaczysz, który wiersz i którą kolumnę mnożymy.</span></div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-mn]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-mn]') === box) el.hidden = false; });
+    const wrap = (id: string) => box.querySelector<HTMLElement>(`[data-mx-wrap="${id}"]`)!;
+    const A = wrap('A'), B = wrap('B'), C = wrap('C');
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const next = box.querySelector<HTMLButtonElement>('[data-next]')!;
+    const cells = Array.from(C.querySelectorAll<HTMLElement>('.k-nm-c'));
+    const lit = next.dataset.lit ?? 'c';
+    const sub = (k: number) => String(k).split('').map((d) => '₀₁₂₃₄₅₆₇₈₉'[Number(d)]).join('');
+    cells.forEach((c) => { c.classList.add('is-ukryta', 'is-klik'); c.tabIndex = 0; c.setAttribute('role', 'button'); });
+    const clear = () => box.querySelectorAll('.k-nm-c').forEach((c) => c.classList.remove('is-cyan', 'is-zloto', 'is-kolko'));
+    const pick = (c: HTMLElement) => {
+      const i = c.dataset.i!, j = c.dataset.j!;
+      clear();
+      c.classList.remove('is-ukryta'); c.classList.add('is-kolko');
+      A.querySelectorAll(`.k-nm-c[data-i="${i}"]`).forEach((x) => x.classList.add('is-cyan'));
+      B.querySelectorAll(`.k-nm-c[data-j="${j}"]`).forEach((x) => x.classList.add('is-zloto'));
+      out.innerHTML = box.querySelector(`[data-expl] [data-cell="${i}-${j}"]`)!.innerHTML;
+      out.classList.add('is-live');
+      const n = cells.find((x) => x.classList.contains('is-ukryta'));
+      if (!n) next.hidden = true;
+      else next.textContent = `Policz kratkę ${lit}${sub(Number(n.dataset.i) + 1)}${sub(Number(n.dataset.j) + 1)}`;
+    };
+    cells.forEach((c) => {
+      c.addEventListener('click', () => pick(c));
+      c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(c); } });
+    });
+    next.addEventListener('click', () => { const c = cells.find((x) => x.classList.contains('is-ukryta')); if (c) pick(c); });
+    box.querySelector('[data-all]')!.addEventListener('click', () => {
+      cells.forEach((c) => c.classList.remove('is-ukryta')); clear(); next.hidden = true;
+      out.innerHTML = 'Cały wynik odkryty. Stuknij dowolną kratkę wyniku, żeby zobaczyć jej rachunek.';
+      out.classList.add('is-live');
+    });
+  });
+</script>
+
+<style>
+  .k-mn-wym{margin:0 0 12px;font-size:1rem;}
+  .k-mn-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px 22px;}
+  .k-mn-ctl{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+  .k-mn-out{margin-top:10px;padding:8px 12px;border-left:2px solid var(--gold);background:rgba(255,216,74,.05);font-size:.92rem;line-height:1.6;min-height:1.6em;}
+  .k-mn-out :global(p){margin:0 0 6px!important;}
+</style>

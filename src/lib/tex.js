@@ -17,7 +17,7 @@ export function texInline(text) {
     const part = parts[i];
     if (part.startsWith('$') && part.endsWith('$') && part.length > 2) {
       const m = (parts[i + 1] ?? '').match(/^[.,;:!?)\]”…]+/);
-      if (m) {
+      if (m && part.slice(1, -1).replace(/\s+/g, '').length <= 24) {
         out += `<span class="k-nw">${tex(part.slice(1, -1))}${escapeKeepTags(m[0])}</span>`;
         parts[i + 1] = parts[i + 1].slice(m[0].length);
       } else out += tex(part.slice(1, -1));

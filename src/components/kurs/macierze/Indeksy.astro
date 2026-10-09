@@ -1,0 +1,51 @@
+---
+// „Jak w statkach”: macierz z numerami wierszy (z lewej) i kolumn (z góry). Kliknięcie liczby podświetla jej wiersz
+// i kolumnę i podaje jej nazwę a_ij. Bez JS widać macierz z numerami i opis jednej przykładowej kratki w podpisie.
+import { texInline } from '../../../lib/tex.js';
+import { mat } from '../../../lib/macierze.js';
+import Mx from './Mx.astro';
+interface Props { A: any[][]; nA?: string; start?: [number, number] }
+const { A, nA = 'A', start } = Astro.props;
+const M = mat(A);
+const lit = nA.toLowerCase();
+const et = { w: M.map((_, i) => `w${i + 1}`), k: M[0].map((_, j) => `k${j + 1}`) };
+const opisy = M.flatMap((r, i) => r.map((v, j) => ({ id: `${i}-${j}`, h: texInline(`To $${lit}_{${i + 1}${j + 1}} = ${v.tex()}$: <b>wiersz ${i + 1}</b> (pierwszy indeks), <b>kolumna ${j + 1}</b> (drugi indeks). Czytamy: „$${lit}$ ${i + 1} ${j + 1}”.`) })));
+const oznacz = start ? [{ i: start[0], j: start[1], styl: 'kolko' }] : [];
+---
+<figure class="k-fig k-ix" data-ix>
+  <div class="k-fig-box">
+    <div data-mx-wrap><Mx m={M} t={`${nA} =`} et={et} oznacz={oznacz} wym /></div>
+    <ul hidden data-expl>{opisy.map((o) => <li data-cell={o.id} set:html={o.h} />)}</ul>
+  </div>
+  <div class="k-ix-out k-live" aria-live="polite" data-out><span data-js-only hidden>Stuknij dowolną liczbę — zobaczysz jej „adres”.</span></div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ix]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-ix]') === box) el.hidden = false; });
+    const mx = box.querySelector<HTMLElement>('[data-mx-wrap]')!;
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const cells = Array.from(mx.querySelectorAll<HTMLElement>('.k-nm-c'));
+    const heads = { w: Array.from(mx.querySelectorAll<HTMLElement>('.k-nm-rh span')), k: Array.from(mx.querySelectorAll<HTMLElement>('.k-nm-ch span')) };
+    cells.forEach((c) => {
+      c.classList.add('is-klik'); c.tabIndex = 0; c.setAttribute('role', 'button');
+      const go = () => {
+        const i = c.dataset.i!, j = c.dataset.j!;
+        cells.forEach((x) => { x.classList.remove('is-kolko', 'is-cyan', 'is-zloto'); if (x.dataset.i === i) x.classList.add('is-cyan'); if (x.dataset.j === j) x.classList.add('is-zloto'); });
+        c.classList.add('is-kolko');
+        heads.w.forEach((h, k) => h.classList.toggle('is-on', String(k) === i));
+        heads.k.forEach((h, k) => h.classList.toggle('is-on', String(k) === j));
+        out.innerHTML = box.querySelector(`[data-expl] [data-cell="${i}-${j}"]`)!.innerHTML; out.classList.add('is-live');
+      };
+      c.addEventListener('click', go);
+      c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    });
+  });
+</script>
+
+<style>
+  .k-ix-out{margin-top:10px;padding:8px 12px;border-left:2px solid var(--cyan);background:rgba(39,232,255,.05);font-size:.92rem;line-height:1.65;min-height:1.6em;}
+  .k-ix :global(.k-nm-rh span.is-on){color:var(--cyan);font-weight:700;}
+  .k-ix :global(.k-nm-ch span.is-on){color:var(--gold);font-weight:700;}
+</style>

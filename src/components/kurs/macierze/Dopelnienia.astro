@@ -1,0 +1,104 @@
+---
+// Macierz dopełnień algebraicznych D krok po kroku (3×3). Kliknięcie liczby w A (albo „Następne dopełnienie”):
+// skreśla jej wiersz i kolumnę, pokazuje minor 2×2, znak z szachownicy i gotowe D_ij w macierzy D.
+// Pod spodem: wszystkie 9 rachunków naraz (do porównania z własnym).
+import { tex } from '../../../lib/tex.js';
+import { mat, podmacierz, minor, znak, macierzDop, bmatrix } from '../../../lib/macierze.js';
+import Mx from './Mx.astro';
+interface Props { A: any[][]; nA?: string }
+const { A, nA = 'A' } = Astro.props;
+const M = mat(A);
+if (M.length !== 3 || M.some((r) => r.length !== 3)) throw new Error('Dopelnienia: komponent jest dla macierzy 3×3');
+const D = macierzDop(M);
+const szach = [[1, -1, 1], [-1, 1, -1], [1, -1, 1]];
+const karty = M.flatMap((r, i) => r.map((_, j) => {
+  const s = podmacierz(M, i, j);
+  const Mij = minor(M, i, j);
+  const zn = znak(i, j);
+  const id = `${i + 1}${j + 1}`;
+  const l1 = `D_{${id}} = (-1)^{${i + 1}+${j + 1}} \\cdot M_{${id}}`;
+  const l2 = `M_{${id}} = \\det${bmatrix(s)} = ${s[0][0].tex(true)} \\cdot ${s[1][1].tex(true)} - ${s[0][1].tex(true)} \\cdot ${s[1][0].tex(true)} = ${Mij.tex()}`;
+  const l3 = `D_{${id}} = ${zn > 0 ? '(+1)' : '(-1)'} \\cdot ${Mij.tex(true)} = ${D[i][j].tex()}`;
+  const slowa = `Skreślasz <b>wiersz ${i + 1}</b> i <b>kolumnę ${j + 1}</b>. Zostają cztery liczby — to macierz 2×2, a jej wyznacznik to minor ${tex(`M_{${id}}`)}. Znak bierzesz z szachownicy: ${tex(`(-1)^{${i + 1}+${j + 1}} = (-1)^{${i + j + 2}} = ${zn > 0 ? '+1' : '-1'}`)}${zn > 0 ? ' (suma numerów parzysta)' : ' (suma numerów nieparzysta)'}.`;
+  return { i, j, html: `<p>${slowa}</p>` + [l1, l2, l3].map((l) => `<div class="k-dp-l">${tex(l)}</div>`).join('') };
+}));
+---
+<figure class="k-fig k-dp" data-dp>
+  <div class="k-fig-box">
+    <div class="k-dp-row">
+      <div data-mx-wrap="A"><Mx m={M} t={`${nA} =`} /></div>
+      <div data-mx-wrap="S" class="k-dp-sz">
+        <span class="k-dp-sz-t">znaki</span>
+        <div class="k-dp-sz-g">{szach.flatMap((r, i) => r.map((v, j) => <span class="k-nm-c" data-i={i} data-j={j}>{v > 0 ? '+' : '−'}</span>))}</div>
+      </div>
+      <div data-mx-wrap="D"><Mx m={D} t="D =" /></div>
+    </div>
+    <div class="k-dp-ctl" data-js-only hidden>
+      <button type="button" class="k-btn" data-next>Policz D₁₁</button>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Pokaż całą macierz D</button>
+    </div>
+    <ul hidden data-expl>{karty.map((k) => <li data-cell={`${k.i}-${k.j}`} set:html={k.html} />)}</ul>
+  </div>
+  <div class="k-dp-out k-live" aria-live="polite" data-out><span data-js-only hidden>Stuknij dowolną liczbę w macierzy {nA} albo kliknij „Policz D₁₁”.</span></div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+  <details class="k-dp-all">
+    <summary>Wszystkie 9 dopełnień naraz</summary>
+    <div class="k-dp-grid">{karty.map((k) => <div class="k-dp-card" set:html={k.html.replace(/^<p>.*?<\/p>/, '')} />)}</div>
+  </details>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-dp]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-dp]') === box) el.hidden = false; });
+    const wrap = (id: string) => box.querySelector<HTMLElement>(`[data-mx-wrap="${id}"]`)!;
+    const A = wrap('A'), S = wrap('S'), D = wrap('D');
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const next = box.querySelector<HTMLButtonElement>('[data-next]')!;
+    const dCells = Array.from(D.querySelectorAll<HTMLElement>('.k-nm-c'));
+    const sub = (k: number) => '₀₁₂₃₄₅₆₇₈₉'[k];
+    dCells.forEach((c) => c.classList.add('is-ukryta'));
+    const clear = () => box.querySelectorAll('.k-nm-c').forEach((c) => c.classList.remove('is-skr-w', 'is-skr-k', 'is-kolko', 'is-ok', 'is-zloto'));
+    const pick = (i: string, j: string) => {
+      clear();
+      A.querySelectorAll<HTMLElement>('.k-nm-c').forEach((c) => {
+        if (c.dataset.i === i) c.classList.add('is-skr-w');
+        if (c.dataset.j === j) c.classList.add('is-skr-k');
+        if (c.dataset.i !== i && c.dataset.j !== j) c.classList.add('is-ok');
+        if (c.dataset.i === i && c.dataset.j === j) c.classList.add('is-kolko');
+      });
+      S.querySelector(`.k-nm-c[data-i="${i}"][data-j="${j}"]`)?.classList.add('is-zloto');
+      const d = D.querySelector<HTMLElement>(`.k-nm-c[data-i="${i}"][data-j="${j}"]`)!;
+      d.classList.remove('is-ukryta'); d.classList.add('is-kolko');
+      out.innerHTML = box.querySelector(`[data-expl] [data-cell="${i}-${j}"]`)!.innerHTML; out.classList.add('is-live');
+      const n = dCells.find((c) => c.classList.contains('is-ukryta'));
+      if (!n) next.hidden = true; else next.textContent = `Policz D${sub(Number(n.dataset.i) + 1)}${sub(Number(n.dataset.j) + 1)}`;
+    };
+    A.querySelectorAll<HTMLElement>('.k-nm-c').forEach((c) => {
+      c.classList.add('is-klik'); c.tabIndex = 0; c.setAttribute('role', 'button');
+      c.addEventListener('click', () => pick(c.dataset.i!, c.dataset.j!));
+      c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(c.dataset.i!, c.dataset.j!); } });
+    });
+    next.addEventListener('click', () => { const n = dCells.find((c) => c.classList.contains('is-ukryta')); if (n) pick(n.dataset.i!, n.dataset.j!); });
+    box.querySelector('[data-all]')!.addEventListener('click', () => {
+      dCells.forEach((c) => c.classList.remove('is-ukryta')); clear(); next.hidden = true;
+      out.innerHTML = 'Cała macierz D gotowa. Stuknij liczbę w macierzy A, żeby zobaczyć rachunek jej dopełnienia.'; out.classList.add('is-live');
+    });
+  });
+</script>
+
+<style>
+  .k-dp-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px;}
+  .k-dp-sz{display:flex;flex-direction:column;align-items:center;gap:4px;}
+  .k-dp-sz-t{font-family:var(--mono);font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+  .k-dp-sz-g{display:grid;grid-template-columns:repeat(3,1.7em);grid-auto-rows:1.7em;gap:2px;}
+  .k-dp-sz-g span{display:grid;place-items:center;font-family:var(--mono);font-weight:800;font-size:.95rem;border:1px solid var(--line2);border-radius:3px;color:#c9c3e6;}
+  .k-dp-sz-g span.is-zloto{background:rgba(255,216,74,.32);color:#fff;border-color:var(--gold);}
+  .k-dp-ctl{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+  .k-dp-out{margin-top:10px;padding:8px 12px;border-left:2px solid var(--ok);background:rgba(90,209,160,.05);font-size:.92rem;line-height:1.6;min-height:1.6em;overflow-x:auto;}
+  .k-dp-out :global(p){margin:0 0 6px!important;}
+  .k-dp :global(.k-dp-l){margin:2px 0;overflow-x:auto;overflow-y:hidden;}
+  .k-dp-all{margin-top:12px;}
+  .k-dp-all summary{cursor:pointer;font-family:var(--mono);font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);}
+  .k-dp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-top:8px;}
+  .k-dp-card{border:1px solid var(--line2);background:var(--ink2);padding:8px 10px;font-size:.88rem;}
+</style>

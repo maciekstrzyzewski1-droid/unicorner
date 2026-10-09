@@ -46,4 +46,16 @@ export const SLOWNICZEK = [
   { t: 'P_E,\\ P_S', nazwa: 'Relacje preferencji', czytamy: 'pe e, pe es', znaczy: 'Dla każdego kryterium osobno: $X$ w relacji z $Y$, gdy $X$ jest nie gorszy od $Y$.', modul: 'relacje' },
   { t: "S = (M^{-1})' \\cap M", nazwa: 'Zaostrzenie relacji', czytamy: 'S równa się dopełnienie M do minus pierwszej, część wspólna z M', znaczy: 'W $M$ zeruje przekątną i symetryczne jedynki. Jedynka w $(X, Y)$ znaczy: $X$ dominuje $Y$.', modul: 'relacje' },
   { nazwa: 'Zbiór Pareto', znaczy: 'Warianty niezdominowane przez żaden inny — kolumny z samych zer w macierzy $S$.', modul: 'relacje' },
+  // --- Macierze ---
+  { t: 'm \\times n', nazwa: 'Wymiar macierzy', czytamy: 'm na n', znaczy: '$m$ wierszy i $n$ kolumn. Najpierw wiersze, potem kolumny.', modul: 'macierze' },
+  { t: 'a_{ij}', nazwa: 'Element macierzy', czytamy: 'a i j', znaczy: 'Liczba z wiersza $i$ i kolumny $j$ macierzy $A$, np. $a_{23}$ — wiersz 2, kolumna 3.', modul: 'macierze' },
+  { t: 'I', nazwa: 'Macierz jednostkowa', czytamy: 'macierz jednostkowa', znaczy: 'Kwadratowa: jedynki na głównej przekątnej, poza nią zera. $A \\cdot I = A$.', modul: 'macierze' },
+  { t: 'A^T', nazwa: 'Macierz transponowana', czytamy: 'A transponowana', znaczy: 'Wiersze $A$ zapisane jako kolumny. Wymiar $m \\times n$ zmienia się na $n \\times m$.', modul: 'macierze' },
+  { t: 'A \\cdot B', nazwa: 'Iloczyn macierzy', czytamy: 'A razy B', znaczy: 'Kratka $c_{ij}$ to wiersz $i$ z $A$ razy kolumna $j$ z $B$. Wykonalne, gdy liczba kolumn $A$ = liczba wierszy $B$.', modul: 'macierze' },
+  { t: "w_2' = w_2 - 3w_1", nazwa: 'Operacja elementarna', czytamy: 'nowy wiersz 2 to wiersz 2 minus trzy razy wiersz 1', znaczy: 'Zamiana wierszy, mnożenie wiersza przez $c \\neq 0$ albo dodanie wielokrotności innego wiersza.', modul: 'macierze' },
+  { t: '\\det(A)', nazwa: 'Wyznacznik', czytamy: 'wyznacznik A', znaczy: 'Liczba przypisana macierzy kwadratowej. $\\det(A) = 0$ — macierz osobliwa.', modul: 'macierze' },
+  { t: 'M_{ij}', nazwa: 'Minor', czytamy: 'minor i j', znaczy: 'Wyznacznik macierzy po skreśleniu wiersza $i$ i kolumny $j$.', modul: 'macierze' },
+  { t: 'D_{ij} = (-1)^{i+j} M_{ij}', nazwa: 'Dopełnienie algebraiczne', czytamy: 'de i jot', znaczy: 'Minor ze znakiem z szachownicy: plus, gdy $i + j$ parzyste, minus, gdy nieparzyste.', modul: 'macierze' },
+  { t: 'A^{-1}', nazwa: 'Macierz odwrotna', czytamy: 'A do minus pierwszej', znaczy: '$A \\cdot A^{-1} = I$. Istnieje, gdy $A$ jest kwadratowa i $\\det(A) \\neq 0$.', modul: 'macierze' },
+  { t: 'r(A)', nazwa: 'Rząd macierzy', czytamy: 'rząd A', znaczy: 'Największa liczba liniowo niezależnych wierszy (kolumn) — liczba kolumn jednostkowych w postaci bazowej.', modul: 'macierze' },
 ];

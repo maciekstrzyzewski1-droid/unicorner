@@ -1,0 +1,123 @@
+---
+// Ćwiczenie „wpisz macierz”: uczeń wpisuje liczby (całkowite, ułamki 1/3 albo dziesiętne 0,5), „Sprawdź” koloruje pola
+// i dla złych pokazuje, jak je policzyć. Poprawne wartości `m` i opisy `dlaczego(i, j)` liczone przy buildzie.
+import { tex, texInline } from '../../../lib/tex.js';
+import { mat } from '../../../lib/macierze.js';
+interface Props { tytul: string; m: any[][]; t?: string; dlaczego: (i: number, j: number) => string; zrodlo?: string; kreska?: number }
+const { tytul, m, t, dlaczego, zrodlo, kreska } = Astro.props;
+const M = mat(m);
+const n = M[0].length;
+const html = (s: string) => (s.includes('class="katex"') ? s : texInline(s));
+const opisy = M.flatMap((row, i) => row.map((_, j) => ({ id: `${i}-${j}`, h: html(dlaczego(i, j)) })));
+const ulamki = M.some((r) => r.some((v) => !v.calk));
+---
+<section class="k-ct k-cl" data-cl>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Wpisz macierz</span>
+    <h3 class="k-pyt-h">{tytul}</h3>
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </div>
+  <div class="k-ct-tresc"><slot /></div>
+  <p class="k-ct-how">Wpisz liczby w pola{ulamki ? ' (ułamek wpisz jako 1/3 albo −2/3)' : ''}. Kiedy skończysz, kliknij „Sprawdź”.</p>
+  <div class="k-cl-mx">
+    {t && <span class="k-cl-t" set:html={tex(t)} />}
+    <div class="k-cl-vals" style={`--n:${n}`}>
+      {M.map((row, i) => row.map((v, j) => (
+        <span class:list={['k-cl-cell', { 'is-kr': kreska === j }]}>
+          <input class="k-cl-in" type="text" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false"
+            data-ok={`${v.n}/${v.d}`} data-pok={v.txt()} data-i={i} data-j={j} aria-label={`wiersz ${i + 1}, kolumna ${j + 1}`} />
+        </span>
+      )))}
+    </div>
+  </div>
+  <div class="k-ct-ctl" data-js-only hidden>
+    <button type="button" class="k-btn" data-check>Sprawdź</button>
+    <button type="button" class="k-btn k-btn-ghost" data-show>Pokaż odpowiedzi</button>
+    <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
+  </div>
+  <div class="k-ct-wynik" hidden aria-live="polite">
+    <p class="k-ct-sum" data-sum></p>
+    <ul class="k-ct-bledy" data-bledy></ul>
+  </div>
+  <ul hidden data-expl>{opisy.map((o) => <li data-cell={o.id} set:html={o.h} />)}</ul>
+</section>
+
+<script>
+  const gcd = (a: number, b: number): number => { a = Math.abs(a); b = Math.abs(b); while (b) [a, b] = [b, a % b]; return a || 1; };
+  // "−2/3", "-2/3", "0,5", "1.25", "4" → "n/d" (skrócony) albo null
+  const parse = (raw: string): string | null => {
+    const s = raw.trim().replace(/[−–—]/g, '-').replace(',', '.').replace(/\s+/g, '');
+    if (s === '') return null;
+    let n: number, d: number;
+    let m = s.match(/^(-?)(\d+)\/(\d+)$/);
+    if (m) { n = Number(m[2]) * (m[1] ? -1 : 1); d = Number(m[3]); if (d === 0) return 'x'; }
+    else if ((m = s.match(/^(-?)(\d*)\.(\d+)$/))) { d = 10 ** m[3].length; n = (Number(m[2] || '0') * d + Number(m[3])) * (m[1] ? -1 : 1); }
+    else if ((m = s.match(/^(-?\d+)$/))) { n = Number(m[1]); d = 1; }
+    else return 'x';
+    const g = gcd(n, d);
+    return `${n / g || 0}/${d / g}`;
+  };
+  document.querySelectorAll<HTMLElement>('[data-cl]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-cl]') === box) el.hidden = false; });
+    const ins = Array.from(box.querySelectorAll<HTMLInputElement>('.k-cl-in'));
+    const wynik = box.querySelector<HTMLElement>('.k-ct-wynik')!;
+    const sum = box.querySelector<HTMLElement>('[data-sum]')!;
+    const bledy = box.querySelector<HTMLElement>('[data-bledy]')!;
+    const reset = (x: HTMLInputElement) => x.classList.remove('is-good', 'is-bad', 'is-empty', 'is-shown');
+    ins.forEach((x, k) => {
+      x.addEventListener('input', () => reset(x));
+      x.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); (ins[k + 1] ?? box.querySelector<HTMLButtonElement>('[data-check]'))?.focus(); } });
+    });
+    box.querySelector('[data-check]')!.addEventListener('click', () => {
+      let good = 0, empty = 0; const wrong: HTMLInputElement[] = []; let zlyZapis = false;
+      ins.forEach((x) => {
+        reset(x);
+        const v = parse(x.value);
+        if (v === null) { empty++; x.classList.add('is-empty'); }
+        else if (v === x.dataset.ok) { good++; x.classList.add('is-good'); }
+        else { if (v === 'x') zlyZapis = true; wrong.push(x); x.classList.add('is-bad'); }
+      });
+      bledy.innerHTML = '';
+      if (!wrong.length && !empty) sum.innerHTML = '<b class="k-ct-ok">Wszystko dobrze!</b> Każda liczba się zgadza.';
+      else {
+        sum.innerHTML = `Dobrze: <b>${good}</b> · Źle: <b>${wrong.length}</b> · Puste: <b>${empty}</b>` +
+          (wrong.length ? ' — tak policzysz pola oznaczone na różowo:' : ' — uzupełnij puste pola i sprawdź jeszcze raz.') +
+          (zlyZapis ? ' (Nie rozpoznaję części zapisów — wpisuj liczby jak 3, −2, 1/3 albo 0,5.)' : '');
+        wrong.slice(0, 4).forEach((x) => {
+          const src = box.querySelector(`[data-expl] [data-cell="${x.dataset.i}-${x.dataset.j}"]`);
+          if (src) { const li = document.createElement('li'); li.innerHTML = src.innerHTML; bledy.appendChild(li); }
+        });
+        if (wrong.length > 4) { const li = document.createElement('li'); li.textContent = `…i jeszcze ${wrong.length - 4}. Popraw te powyżej i sprawdź ponownie.`; bledy.appendChild(li); }
+      }
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-show]')!.addEventListener('click', () => {
+      ins.forEach((x) => { x.value = x.dataset.pok!; reset(x); x.classList.add('is-shown'); });
+      sum.innerHTML = 'Tak wygląda poprawna macierz. Spróbuj jeszcze raz sam — „Wyczyść” opróżnia pola.';
+      bledy.innerHTML = ''; wynik.hidden = false;
+    });
+    box.querySelector('[data-clear]')!.addEventListener('click', () => { ins.forEach((x) => { x.value = ''; reset(x); }); wynik.hidden = true; });
+  });
+</script>
+
+<style>
+  .k-cl-mx{display:flex;align-items:center;gap:8px;margin:4px 0 12px;overflow-x:auto;padding-bottom:4px;}
+  .k-cl-t{white-space:nowrap;color:#fff;}
+  .k-cl-vals{display:grid;grid-template-columns:repeat(var(--n),auto);gap:5px;padding:5px 8px;
+    border-left:2px solid var(--muted);border-right:2px solid var(--muted);
+    background:
+      linear-gradient(var(--muted),var(--muted)) left top/7px 2px no-repeat,
+      linear-gradient(var(--muted),var(--muted)) right top/7px 2px no-repeat,
+      linear-gradient(var(--muted),var(--muted)) left bottom/7px 2px no-repeat,
+      linear-gradient(var(--muted),var(--muted)) right bottom/7px 2px no-repeat;}
+  .k-cl-cell{display:block;}
+  .k-cl-cell.is-kr{border-right:1.5px solid var(--muted);padding-right:6px;}
+  .k-cl-in{width:3.6em;height:40px;font-family:var(--mono);font-weight:700;font-size:1rem;text-align:center;color:var(--text);
+    background:rgba(255,255,255,.04);border:1px dashed var(--line2);border-radius:0;padding:0 2px;}
+  .k-cl-in:focus{outline:2px solid var(--cyan);outline-offset:1px;border-style:solid;}
+  .k-cl-in.is-good{background:rgba(90,209,160,.16);border:1px solid var(--ok);}
+  .k-cl-in.is-bad{background:rgba(255,46,151,.2);border:1px solid var(--magenta);color:#ffd0e6;}
+  .k-cl-in.is-empty{background:rgba(255,216,74,.08);border-color:rgba(255,216,74,.5);}
+  .k-cl-in.is-shown{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.5);}
+  @media(max-width:380px){.k-cl-in{width:3.1em;}}
+</style>

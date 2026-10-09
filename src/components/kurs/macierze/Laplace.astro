@@ -1,0 +1,134 @@
+---
+// Rozwinięcie Laplace'a: wybierasz wiersz albo kolumnę (przyciski mówią, ile jest w nich zer), a pod spodem
+// widać każdy składnik a_ij · (-1)^{i+j} · M_ij z jego minorem. Zero w wybranej linii = składnik, którego nie liczysz.
+import { tex, texInline } from '../../../lib/tex.js';
+import { mat, laplace, bmatrix, przekatne, przekatneSumaTex, sumaTex } from '../../../lib/macierze.js';
+import Mx from './Mx.astro';
+interface Props { A: any[][]; nA?: string; start?: { typ: 'w' | 'k'; idx: number } }
+const { A, nA = 'A', start = { typ: 'w', idx: 0 } } = Astro.props;
+const M = mat(A);
+const n = M.length;
+const linie = (['w', 'k'] as const).flatMap((typ) => [...Array(n).keys()].map((idx) => laplace(M, typ, idx)));
+const nazwa = (l: any) => `${l.typ === 'w' ? 'wiersz' : 'kolumna'} ${l.idx + 1}`;
+const minorRach = (sub: any[][], Mv: any) => {
+  if (sub.length === 2) return `${sub[0][0].tex(true)} \\cdot ${sub[1][1].tex(true)} - ${sub[0][1].tex(true)} \\cdot ${sub[1][0].tex(true)} = ${Mv.tex()}`;
+  if (sub.length === 3) { const p = przekatne(sub); return `${przekatneSumaTex(p)} = ${Mv.tex()}`; }
+  return Mv.tex();
+};
+const bloki = linie.map((l: any) => {
+  const id = `${l.typ}${l.idx}`;
+  const wzor = `\\det(${nA}) = ` + l.skladniki.map((t: any) => `a_{${t.i + 1}${t.j + 1}} D_{${t.i + 1}${t.j + 1}}`).join(' + ');
+  const sk = l.skladniki.map((t: any) => {
+    const ij = `${t.i + 1}${t.j + 1}`;
+    if (t.a.zero) return { t, zero: true, html: texInline(`$a_{${ij}} = 0$, więc cały składnik to $0$ — <b>minora nie liczysz</b>.`) };
+    return {
+      t, zero: false,
+      head: tex(`a_{${ij}} \\cdot (-1)^{${t.i + 1}+${t.j + 1}} \\cdot M_{${ij}} = ${t.a.tex(true)} \\cdot (${t.znak > 0 ? '+1' : '-1'}) \\cdot ${t.M.tex(true)} = ${t.wartosc.tex()}`),
+      minor: tex(`M_{${ij}} = \\det${bmatrix(t.sub)}`),
+      rach: tex(`= ${minorRach(t.sub, t.M)}`),
+      sarrus: t.sub.length === 3,
+    };
+  });
+  const suma = tex(`\\det(${nA}) = ${sumaTex(l.skladniki.map((t: any) => t.wartosc))} = ${l.wynik.tex()}`);
+  return { id, l, wzor: tex(wzor), sk, suma };
+});
+const startId = `${start.typ}${start.idx}`;
+---
+<figure class="k-fig k-lp" data-lp>
+  <div class="k-fig-box">
+    <div class="k-lp-top">
+      <div data-mx-wrap><Mx m={M} t={`${nA} =`} /></div>
+      <div class="k-lp-wybor" data-js-only hidden>
+        <span class="k-lbl">Rozwiń według:</span>
+        <div class="k-lp-btns">
+          {bloki.map((b) => (
+            <button type="button" class:list={['k-lp-b', { 'is-on': b.id === startId }]} data-l={b.id} data-typ={b.l.typ} data-idx={b.l.idx}>
+              {nazwa(b.l)} <small>{b.l.zera === 0 ? 'bez zer' : b.l.zera === 1 ? '1 zero' : `${b.l.zera} zera`}</small>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+    {bloki.map((b) => (
+      <div class="k-lp-blok" data-blok={b.id} hidden={b.id !== startId}>
+        <p class="k-lp-h">Rozwinięcie według: <b>{nazwa(b.l)}</b></p>
+        <div class="k-lp-wzor" set:html={b.wzor} />
+        <ol class="k-lp-sk">
+          {b.sk.map((s: any) => (
+            <li class:list={['k-lp-s', { 'is-zero': s.zero }]} data-i={s.t.i} data-j={s.t.j} tabindex="0">
+              {s.zero ? <span set:html={s.html} /> : (
+                <>
+                  <div class="k-lp-l" set:html={s.head} />
+                  <div class="k-lp-l k-lp-m"><span set:html={s.minor} /> <span set:html={s.rach} /></div>
+                  {s.sarrus && <div class="k-lp-note">minor 3×3 liczymy regułą Sarrusa</div>}
+                </>
+              )}
+            </li>
+          ))}
+        </ol>
+        <div class="k-lp-suma" set:html={b.suma} />
+      </div>
+    ))}
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-lp]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-lp]') === box) el.hidden = false; });
+    const mx = box.querySelector<HTMLElement>('[data-mx-wrap]')!;
+    const cells = Array.from(mx.querySelectorAll<HTMLElement>('.k-nm-c'));
+    const btns = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-lp-b'));
+    const bloki = Array.from(box.querySelectorAll<HTMLElement>('[data-blok]'));
+    const clearCells = () => cells.forEach((c) => c.classList.remove('is-zloto', 'is-skr-w', 'is-skr-k', 'is-kolko', 'is-ok'));
+    const linia = (b: HTMLButtonElement) => {
+      clearCells();
+      const typ = b.dataset.typ, idx = b.dataset.idx;
+      cells.forEach((c) => { if ((typ === 'w' ? c.dataset.i : c.dataset.j) === idx) c.classList.add('is-zloto'); });
+    };
+    const show = (b: HTMLButtonElement) => {
+      btns.forEach((x) => x.classList.toggle('is-on', x === b));
+      bloki.forEach((x) => (x.hidden = x.dataset.blok !== b.dataset.l));
+      linia(b);
+    };
+    btns.forEach((b) => b.addEventListener('click', () => show(b)));
+    const on = btns.find((b) => b.classList.contains('is-on'));
+    if (on) linia(on);
+    box.querySelectorAll<HTMLElement>('.k-lp-s').forEach((s) => {
+      const go = () => {
+        const i = s.dataset.i, j = s.dataset.j;
+        clearCells();
+        cells.forEach((c) => {
+          if (c.dataset.i === i) c.classList.add('is-skr-w');
+          if (c.dataset.j === j) c.classList.add('is-skr-k');
+          if (c.dataset.i !== i && c.dataset.j !== j) c.classList.add('is-ok');
+          if (c.dataset.i === i && c.dataset.j === j) c.classList.add('is-kolko');
+        });
+        box.querySelectorAll('.k-lp-s.is-on').forEach((x) => x.classList.remove('is-on'));
+        s.classList.add('is-on');
+      };
+      s.addEventListener('click', go);
+      s.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    });
+  });
+</script>
+
+<style>
+  .k-lp-top{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px;}
+  .k-lp-wybor{display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .k-lp-btns{display:flex;flex-wrap:wrap;gap:6px;}
+  .k-lp-b{font:inherit;font-size:.82rem;color:var(--text);background:var(--surface);border:1px solid var(--line2);padding:5px 9px;cursor:pointer;}
+  .k-lp-b small{color:var(--muted);font-family:var(--mono);font-size:.7rem;margin-left:4px;}
+  .k-lp-b.is-on{border-color:var(--gold);background:rgba(255,216,74,.1);}
+  .k-lp-b:focus-visible,.k-lp-s:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-lp-h{margin:14px 0 4px!important;font-size:.92rem;}
+  .k-lp-wzor,.k-lp-suma{overflow-x:auto;overflow-y:hidden;padding:4px 0;}
+  .k-lp-suma{margin-top:8px;padding:8px 10px;border:1px solid var(--line2);background:rgba(255,255,255,.02);}
+  .k-lp-sk{list-style:none!important;margin:8px 0 0!important;padding:0!important;display:grid;gap:8px;}
+  .k-lp-s{margin:0!important;max-width:none!important;padding:8px 10px!important;border:1px solid var(--line2);background:var(--ink2);cursor:pointer;font-size:.92rem;}
+  .k-lp-s.is-zero{color:var(--muted);border-style:dashed;}
+  .k-lp-s.is-on{border-color:var(--cyan);}
+  .k-lp-l{overflow-x:auto;overflow-y:hidden;padding:2px 0;}
+  .k-lp-m{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px;}
+  .k-lp-note{font-size:.78rem;color:var(--muted);font-family:var(--mono);}
+</style>

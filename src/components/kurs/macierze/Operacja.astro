@@ -1,0 +1,55 @@
+---
+// Jeden krok operacji elementarnych: macierz przed → operacje → macierz po, a pod spodem rachunek w słupkach.
+// k — obiekt z lib/macierze.js: krok(A, ops) albo element lancuch(...).
+// Kolory: złoty — wiersz, który zmieniamy; turkusowy — wiersz, którego używamy (zostaje bez zmian).
+// rachunek: 'otwarty' | 'zwiniety' | 'brak'; legenda — pokaż objaśnienie kolorów (przy pierwszym użyciu).
+import { tex } from '../../../lib/tex.js';
+import Mx from './Mx.astro';
+import Slupki from './Slupki.astro';
+interface Props { k: any; kreska?: number; rachunek?: 'otwarty' | 'zwiniety' | 'brak'; legenda?: boolean; t?: string }
+const { k, kreska, rachunek = 'otwarty', legenda = false } = Astro.props;
+const zam = k.ops.some((o: any) => o.t === 'zam');
+const przedW = [
+  ...k.zrodla.filter((i: number) => !k.zmienione.includes(i)).map((i: number) => ({ i, styl: 'cyan' })),
+  ...k.zmienione.map((i: number) => ({ i, styl: 'zloto' })),
+];
+const poW = k.zmienione.map((i: number) => ({ i, styl: 'zloto' }));
+---
+<div class="k-op">
+  <div class="k-op-row">
+    <Mx m={k.przed} kreska={kreska} wiersze={przedW} />
+    <div class="k-op-ops">
+      {k.ops.map((o: any, n: number) => <span class="k-op-op" set:html={tex(k.tabele[n].tex)} />)}
+      <span class="k-op-arr" aria-hidden="true">⟶</span>
+    </div>
+    <Mx m={k.po} kreska={kreska} wiersze={poW} />
+  </div>
+  {legenda && <p class="k-op-leg"><span class="k-op-sw is-zloto"></span> wiersz, który zmieniamy · <span class="k-op-sw is-cyan"></span> wiersz, którego używamy (przepisujemy go bez zmian)</p>}
+  {rachunek !== 'brak' && (
+    <details class="k-op-rach" open={rachunek === 'otwarty'}>
+      <summary>Rachunek w słupkach</summary>
+      {zam
+        ? <p class="k-op-zam">Zamiana wierszy: liczby zostają te same, zmienia się tylko kolejność wierszy.</p>
+        : k.tabele.map((t: any) => <Slupki podpis={t.tex} wiersze={t.wiersze} kreska={kreska} />)}
+    </details>
+  )}
+</div>
+
+<style>
+  .k-op{margin:10px 0 12px;}
+  .k-op-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;max-width:100%;overflow-x:auto;padding-bottom:2px;}
+  .k-op-ops{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.9rem;}
+  .k-op-op{white-space:nowrap;color:#fff;}
+  .k-op-arr{color:var(--muted);font-size:1.2rem;line-height:1;}
+  .k-op-leg{font-size:.82rem;color:var(--muted);margin:6px 0 0!important;}
+  .k-op-sw{display:inline-block;width:12px;height:12px;vertical-align:-1px;border-radius:2px;}
+  .k-op-sw.is-zloto{background:rgba(255,216,74,.5);} .k-op-sw.is-cyan{background:rgba(39,232,255,.45);}
+  .k-op-rach{margin-top:8px;}
+  .k-op-rach summary{cursor:pointer;font-family:var(--mono);font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);}
+  .k-op-zam{font-size:.9rem;margin:6px 0 0!important;}
+  @media(max-width:560px){
+    .k-op-row{gap:6px 10px;}
+    .k-op-ops{flex-direction:row;flex-wrap:wrap;gap:4px 12px;width:100%;justify-content:flex-start;}
+    .k-op-arr{transform:rotate(90deg);}
+  }
+</style>

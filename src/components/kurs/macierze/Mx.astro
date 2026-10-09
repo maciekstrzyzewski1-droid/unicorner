@@ -1,0 +1,120 @@
+---
+// Macierz liczbowa w nawiasach kwadratowych (wartości przez KaTeX, ułamki jako \frac).
+// t — etykieta po lewej (LaTeX, np. "A =" albo "A^{-1} ="); wym — podpis „2 × 3” pod macierzą.
+// kreska — numer kolumny (od 0), po której stoi pionowa kreska (macierz rozszerzona [A | I]).
+// oznacz: [{ i, j, styl }], wiersze: [{ i, styl }], kolumny: [{ j, styl }] — style: zloto, cyan, ok, roz, kolko, fiolet, plus, minus.
+// kolory — macierz indeksów koloru tła (0–4, -1 = brak); wyblakle — kolumny dopisane (np. przy regule Sarrusa).
+// skresl: { w: [i], k: [j] } — wiersze/kolumny przekreślone (minor). et: { w: [...], k: [...] } — etykiety wierszy/kolumn (tekst).
+import { tex } from '../../../lib/tex.js';
+import { Q } from '../../../lib/macierze.js';
+type V = number | string | Q;
+interface Mark { i: number; j: number; styl: string }
+interface Props {
+  m: V[][]; t?: string; wym?: boolean; kreska?: number;
+  oznacz?: Mark[]; wiersze?: { i: number; styl: string }[]; kolumny?: { j: number; styl: string }[];
+  kolory?: number[][]; wyblakle?: number[]; skresl?: { w?: number[]; k?: number[] };
+  et?: { w?: string[]; k?: string[] }; mxid?: string; maly?: boolean;
+}
+const { m, t, wym = false, kreska, oznacz = [], wiersze = [], kolumny = [], kolory, wyblakle = [], skresl = {}, et, mxid, maly = false } = Astro.props;
+const M = m.map((r) => r.map((v) => Q.of(v)));
+const rows = M.length, n = M[0].length;
+if (M.some((r) => r.length !== n)) throw new Error('Mx: wiersze mają różne długości');
+if (et?.w && et.w.length !== rows) throw new Error('Mx: liczba etykiet wierszy ≠ liczba wierszy');
+if (et?.k && et.k.length !== n) throw new Error('Mx: liczba etykiet kolumn ≠ liczba kolumn');
+const ulamki = M.some((r) => r.some((v) => !v.calk));
+const cls = (i: number, j: number) => {
+  const c = ['k-nm-c'];
+  wiersze.filter((x) => x.i === i).forEach((x) => c.push(`is-${x.styl}`));
+  kolumny.filter((x) => x.j === j).forEach((x) => c.push(`is-${x.styl}`));
+  oznacz.filter((x) => x.i === i && x.j === j).forEach((x) => c.push(`is-${x.styl}`));
+  if (kolory && kolory[i][j] >= 0) c.push(`is-k${kolory[i][j]}`);
+  if (wyblakle.includes(j)) c.push('is-wyblakla');
+  if (skresl.w?.includes(i)) c.push('is-skr-w');
+  if (skresl.k?.includes(j)) c.push('is-skr-k');
+  if (kreska === j) c.push('is-kr');
+  return c.join(' ');
+};
+// szerokość kolumny przy etykietach: ułamek ~1.7em, liczba ~0.62em na znak
+const szer = (v: Q) => (v.calk ? 0.62 * v.txt().length + 0.9 : 1.9);
+const cw = et ? Math.max(...M.flat().map(szer), ...(et.k ?? []).map((s) => 0.45 * s.length + 0.5)).toFixed(2) : null;
+const rhw = et?.w ? (0.45 * Math.max(...et.w.map((s) => s.length)) + 0.5).toFixed(2) : '0';
+---
+<div class:list={['k-nm', { 'k-nm-maly': maly, 'k-nm-ul': ulamki, 'k-nm-et': !!et }]} data-mx={mxid}>
+  {t && <div class="k-nm-t" set:html={tex(t)} />}
+  <div class="k-nm-col">
+    <div class="k-nm-wrap" style={`--n:${n};${cw ? `--cw:${cw}rem;--rhw:${rhw}rem;` : ''}`}>
+      {et?.k && <div class="k-nm-ch">{et.k.map((s) => <span>{s}</span>)}</div>}
+      <div class="k-nm-body">
+        {et?.w && <div class="k-nm-rh">{et.w.map((s) => <span>{s}</span>)}</div>}
+        <div class="k-nm-vals">
+          {M.map((row, i) => row.map((v, j) => <span class={cls(i, j)} data-i={i} data-j={j}><span class="k-nm-v" set:html={tex(v.tex().replace('\\frac', '\\dfrac'))} /></span>))}
+        </div>
+      </div>
+    </div>
+    {wym && <div class="k-nm-wym" set:html={tex(`${rows} \\times ${n}`)} />}
+  </div>
+</div>
+
+<style>
+  .k-nm{display:inline-flex;align-items:center;gap:8px;vertical-align:middle;}
+  .k-nm-t{color:#fff;white-space:nowrap;}
+  .k-nm-col{display:flex;flex-direction:column;align-items:center;gap:2px;}
+  .k-nm-wym{font-size:.8rem;color:var(--muted);}
+  .k-nm-wym :global(.katex){font-size:1em!important;color:var(--muted)!important;}
+  .k-nm-body{display:flex;align-items:stretch;}
+  .k-nm-vals{display:grid;grid-template-columns:repeat(var(--n),auto);column-gap:4px;row-gap:0;padding:3px 7px;
+    border-left:2px solid var(--muted);border-right:2px solid var(--muted);
+    background:
+      linear-gradient(var(--muted),var(--muted)) left top/7px 2px no-repeat,
+      linear-gradient(var(--muted),var(--muted)) right top/7px 2px no-repeat,
+      linear-gradient(var(--muted),var(--muted)) left bottom/7px 2px no-repeat,
+      linear-gradient(var(--muted),var(--muted)) right bottom/7px 2px no-repeat;}
+  .k-nm-c{position:relative;display:grid;place-items:center;min-width:1.9em;min-height:2.05em;padding:1px 4px;border-radius:3px;
+    font-size:1rem;transition:background .15s,box-shadow .15s,opacity .15s;}
+  .k-nm-ul .k-nm-c{min-height:2.9em;}
+  .k-nm-c :global(.katex){font-size:1.04em!important;}
+  /* etykiety wierszy i kolumn: stałe szerokości, żeby nagłówki stały nad liczbami */
+  .k-nm-et .k-nm-vals{grid-template-columns:repeat(var(--n),var(--cw));}
+  .k-nm-ch{display:grid;grid-template-columns:repeat(var(--n),var(--cw));column-gap:4px;margin-left:calc(var(--rhw) + 9px);}
+  .k-nm-ch span{text-align:center;font-size:.72rem;line-height:1.2;color:var(--muted);font-family:var(--mono);padding-bottom:3px;}
+  .k-nm-rh{display:grid;grid-auto-rows:2.05rem;width:var(--rhw);padding:3px 6px 3px 0;box-sizing:border-box;align-items:center;}
+  .k-nm-ul .k-nm-rh{grid-auto-rows:2.9rem;}
+  .k-nm-et .k-nm-c{min-height:2.05rem;height:2.05rem;}
+  .k-nm-et.k-nm-ul .k-nm-c{min-height:2.9rem;height:2.9rem;}
+  .k-nm-rh span{text-align:right;font-size:.72rem;color:var(--muted);font-family:var(--mono);white-space:nowrap;}
+  /* kreska w macierzy rozszerzonej */
+  .k-nm-c.is-kr{border-right:1.5px solid var(--muted);border-radius:0;margin-right:4px;padding-right:7px;}
+  /* wyróżnienia */
+  .k-nm-c.is-zloto{background:rgba(255,216,74,.32);color:#fff;}
+  .k-nm-c.is-cyan{background:rgba(39,232,255,.2);color:#fff;}
+  .k-nm-c.is-ok{background:rgba(90,209,160,.26);color:#fff;}
+  .k-nm-c.is-roz{background:rgba(255,46,151,.28);color:#fff;}
+  .k-nm-c.is-fiolet{background:rgba(167,139,250,.22);}
+  .k-nm-c.is-plus{background:rgba(90,209,160,.3);box-shadow:inset 0 0 0 1.5px var(--ok);}
+  .k-nm-c.is-minus{background:rgba(255,46,151,.28);box-shadow:inset 0 0 0 1.5px var(--magenta);}
+  .k-nm-c.is-kolko{box-shadow:inset 0 0 0 2px var(--cyan);border-radius:50%;}
+  .k-nm-c.is-k0{background:rgba(39,232,255,.2);} .k-nm-c.is-k1{background:rgba(255,46,151,.2);}
+  .k-nm-c.is-k2{background:rgba(255,216,74,.2);} .k-nm-c.is-k3{background:rgba(90,209,160,.22);} .k-nm-c.is-k4{background:rgba(167,139,250,.28);}
+  .k-nm-c.is-wyblakla{opacity:.45;}
+  .k-nm-c.is-wyblakla.is-plus,.k-nm-c.is-wyblakla.is-minus{opacity:.85;}
+  /* skreślony wiersz / kolumna (minor) — kreska przez środek kratki */
+  .k-nm-c.is-skr-w,.k-nm-c.is-skr-k{opacity:.4;}
+  .k-nm-c.is-skr-w{background-image:linear-gradient(transparent calc(50% - 1px),var(--magenta) calc(50% - 1px),var(--magenta) calc(50% + 1px),transparent calc(50% + 1px));}
+  .k-nm-c.is-skr-k{background-image:linear-gradient(90deg,transparent calc(50% - 1px),var(--magenta) calc(50% - 1px),var(--magenta) calc(50% + 1px),transparent calc(50% + 1px));}
+  .k-nm-c.is-skr-w.is-skr-k{background-image:
+    linear-gradient(transparent calc(50% - 1px),var(--magenta) calc(50% - 1px),var(--magenta) calc(50% + 1px),transparent calc(50% + 1px)),
+    linear-gradient(90deg,transparent calc(50% - 1px),var(--magenta) calc(50% - 1px),var(--magenta) calc(50% + 1px),transparent calc(50% + 1px));}
+  /* wartość ukryta przez skrypt komponentu-rodzica */
+  .k-nm-c.is-ukryta > .k-nm-v{visibility:hidden;}
+  .k-nm-c.is-ukryta::after{content:"?";position:absolute;inset:0;display:grid;place-items:center;color:var(--muted2);font-family:var(--mono);}
+  .k-nm-c.is-klik{cursor:pointer;}
+  .k-nm-c.is-klik:hover{box-shadow:inset 0 0 0 1px var(--accent);}
+  .k-nm-c:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-nm-maly .k-nm-c{min-width:1.6em;min-height:1.75em;font-size:.9rem;}
+  .k-nm-maly.k-nm-ul .k-nm-c{min-height:2.3em;}
+  @media(max-width:560px){
+    .k-nm-vals{column-gap:2px;padding:3px 5px;}
+    .k-nm-c{min-width:1.7em;padding:1px 3px;}
+    .k-nm-et .k-nm-vals{column-gap:4px;padding:3px 7px;}
+  }
+</style>

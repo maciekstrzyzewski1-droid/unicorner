@@ -429,3 +429,13 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
 @media(max-width:560px){
   .k-live.is-live{position:sticky;bottom:8px;z-index:4;max-height:42vh;overflow:auto;background:#15131d!important;box-shadow:0 -6px 18px rgba(0,0,0,.6);}
 }
+/* rząd macierzy ze znakami działań między nimi (moduł Macierze): A + B = C */
+.k-rown{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:1em 0 1.3em;max-width:100%;overflow-x:auto;padding-bottom:4px;}
+.k-rown .k-zn{font-size:1.25rem;color:var(--muted);line-height:1;}
+.k-rown .k-zn .katex{color:var(--muted);}
+/* krok rozwiązania: na telefonie mniejsze wcięcie — więcej miejsca na macierze */
+@media(max-width:560px){
+  .k-krok{padding-left:36px!important;}
+  .k-krok::before{width:26px;height:26px;font-size:.8rem;}
+  .k-kroki{padding:8px 14px 6px!important;}
+}
