@@ -81,6 +81,78 @@ export function ogolne(R, litery = ['a', 'c', 'd', 'e']) {
   return { ...a, par, wzory, parametry, dla };
 }
 
+// ---------- odczyt rozwiązania ogólnego krok po kroku ----------
+// Dla każdego wiersza z jedynką: (1) wiersz jako pełne równanie z każdą liczbą, (2) bez zer i jedynek,
+// (3) z parametrami w miejsce niewiadomych, (4) po przeniesieniu parametrów na prawo (przeniesione składniki na złoto).
+const ZLOTO = '#FFD84A';
+const zl = (t) => `\\textcolor{${ZLOTO}}{${t}}`;
+const zlSkladnik = (pierwszy, ujemny, t) => (pierwszy ? zl(`${ujemny ? '-' : ''}${t}`) : `\\mathbin{${zl(ujemny ? '-' : '+')}} ${zl(t)}`);
+export function odczyt(R, litery = ['a', 'c', 'd', 'e']) {
+  const o = ogolne(R, litery);
+  const n = o.n;
+  const wiersze = [...o.pivot.entries()].sort((x, y) => x[0] - y[0]).map(([i, jp]) => {
+    const row = o.M[i], b = row[n];
+    const linie = [];
+    // (1) pełne równanie
+    let pelne = '';
+    for (let j = 0; j < n; j++) {
+      const a = row[j], t = `${a.abs().tex()} \\cdot ${zm(j)}`;
+      pelne = j === 0 ? `${a.ujemna ? '-' : ''}${t}` : `${pelne} ${a.ujemna ? '-' : '+'} ${t}`;
+    }
+    linie.push({ tex: `${pelne} = ${b.tex()}`, opis: `Wiersz ${i + 1} zamieniasz z powrotem na równanie: liczba z kolumny razy niewiadoma tej kolumny.` });
+    // (2) bez zer i jedynek
+    const zera = [...Array(n).keys()].filter((j) => row[j].zero);
+    const jedynki = [...Array(n).keys()].filter((j) => row[j].abs().jeden);
+    const op2 = [];
+    const lista = (a) => (a.length <= 2 ? a.join(' i ') : `${a.slice(0, -1).join(', ')} i ${a[a.length - 1]}`);
+    if (zera.length) op2.push(`${lista(zera.map((j) => `$0 \\cdot ${zm(j)}$`))} ${zera.length > 1 ? 'to zera — znikają' : 'to zero — znika'}`);
+    if (jedynki.length) op2.push(`${lista(jedynki.map((j) => `$${row[j].ujemna ? '-' : ''}1 \\cdot ${zm(j)}$`))} zapisujesz krócej: ${lista(jedynki.map((j) => `$${row[j].ujemna ? '-' : ''}${zm(j)}$`))}`);
+    linie.push({ tex: `${lewaTex(row, n)} = ${b.tex()}`, opis: op2.length ? `${op2.join('; ')}.` : 'Zapisujesz krócej.' });
+    const par = o.wolne.filter((k) => !row[k].zero);
+    if (!par.length) return { i, j: jp, linie, gotowe: true };
+    // (3) parametry w miejsce niewiadomych
+    let lewa3 = zm(jp);
+    par.forEach((k) => { lewa3 = `${lewa3} ${zlSkladnik(false, row[k].ujemna, `${row[k].abs().jeden ? '' : row[k].abs().tex()}${o.par.get(k)}`)}`; });
+    linie.push({ tex: `${lewa3} = ${b.tex()}`, opis: `Za ${par.map((k) => `$${zm(k)}$`).join(' i ')} wstawiasz ${par.map((k) => `$${o.par.get(k)}$`).join(' i ')}.` });
+    // (4) przeniesienie na prawą stronę ze zmianą znaku
+    let prawa = b.zero ? '' : b.tex();
+    par.forEach((k) => {
+      const c = row[k].neg();
+      const t = `${c.abs().jeden ? '' : c.abs().tex()}${o.par.get(k)}`;
+      prawa = prawa ? `${prawa} ${zlSkladnik(false, c.ujemna, t)}` : zlSkladnik(true, c.ujemna, t);
+    });
+    const przed = par.map((k) => `$${row[k].ujemna ? '-' : '+'}${row[k].abs().jeden ? '' : row[k].abs().tex()}${o.par.get(k)}$`);
+    const po = par.map((k) => `$${row[k].ujemna ? '+' : '-'}${row[k].abs().jeden ? '' : row[k].abs().tex()}${o.par.get(k)}$`);
+    linie.push({ tex: `${zm(jp)} = ${prawa}`,
+      opis: par.length === 1
+        ? `Składnik ${przed[0]} przenosisz na prawą stronę — zmienia znak na ${po[0]}.`
+        : `Składniki ${przed.join(' i ')} przenosisz na prawą stronę — zmieniają znaki: ${po.join(' i ')}.` });
+    return { i, j: jp, linie, gotowe: false };
+  });
+  return { ...o, wiersze };
+}
+
+// Wstawienie konkretnych liczb za parametry: linijki „x_1 = 8 - 7 \cdot 0 = 8” dla każdej niewiadomej.
+export function wstawParametry(R, vals, litery = ['a', 'c', 'd', 'e']) {
+  const o = ogolne(R, litery);
+  const wierszZm = new Map([...o.pivot.entries()].map(([i, j]) => [j, i]));
+  const wynik = o.dla(vals);
+  const linie = [...Array(o.n).keys()].map((j) => {
+    if (o.par.has(j)) return `${zm(j)} = ${o.par.get(j)} = ${wynik[j].tex()}`;
+    const row = o.M[wierszZm.get(j)];
+    let s = row[o.n].zero ? '' : row[o.n].tex(), ile = 0;
+    o.wolne.forEach((k) => {
+      const c = row[k].neg();
+      if (c.zero) return;
+      const t = `${c.abs().jeden ? '' : `${c.abs().tex()} \\cdot `}${Q.of(vals[o.par.get(k)]).tex(true)}`;
+      s = doklej(s, c.ujemna, t);
+      ile++;
+    });
+    return ile ? `${zm(j)} = ${s || '0'} = ${wynik[j].tex()}` : `${zm(j)} = ${wynik[j].tex()}`;
+  });
+  return { linie, wynik, wektorTex: `(${wynik.map((v) => v.tex()).join(',\\ ')})` };
+}
+
 // ---------- sprawdzenie: podstawienie wektora do równań ----------
 // Zwraca linijki LaTeX „1 + 2 \cdot 2 = 5” dla każdego równania; rzuca błąd, gdy coś się nie zgadza.
 export function sprawdz(A, b, x) {

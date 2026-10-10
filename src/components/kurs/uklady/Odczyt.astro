@@ -1,0 +1,60 @@
+---
+// Odczyt rozwiązania ogólnego z postaci bazowej — bez skrótów. Każdy wiersz z jedynką:
+// pełne równanie → bez zer i jedynek → parametr w miejsce niewiadomej → przeniesienie na prawo (złoty składnik zmienia znak).
+// Na końcu całe rozwiązanie ogólne w klamrze.
+import { tex, texInline } from '../../../lib/tex.js';
+import { odczyt, zm } from '../../../lib/uklady.js';
+interface Props { R: any[][]; wynik?: boolean }
+const { R, wynik = true } = Astro.props;
+const o = odczyt(R);
+const parametry = o.wolne.map((k: number) => `$${zm(k)} = ${o.par.get(k)}$`).join(' i ');
+const litery = o.wolne.map((k: number) => `$${o.par.get(k)}$`);
+const jeden = o.wolne.length === 1;
+const wstep = jeden
+  ? `Parametr: ${parametry} — kolumna tej niewiadomej nie wchodzi do macierzy jednostkowej. Zapis $${o.parametry}$ znaczy: za ${litery[0]} wolno wstawić dowolną liczbę.`
+  : `Parametry: ${parametry} — kolumny tych niewiadomych nie wchodzą do macierzy jednostkowej. Zapis $${o.parametry}$ znaczy: za ${litery.join(' i za ')} wolno wstawić dowolne liczby.`;
+---
+<div class="k-odc">
+  <p class="k-odc-par" set:html={texInline(wstep)} />
+  {o.wiersze.map((w: any) => (
+    <div class="k-odc-w">
+      <p class="k-odc-h">Wiersz {w.i + 1}</p>
+      <ol class="k-odc-l">
+        {w.linie.map((l: any) => (
+          <li>
+            <span class="k-odc-t" set:html={tex(l.tex)} />
+            <span class="k-odc-o" set:html={texInline(l.opis)} />
+          </li>
+        ))}
+        {w.gotowe && <li class="k-odc-got"><span class="k-odc-o">W tym wierszu nie ma parametru — to już gotowy wynik.</span></li>}
+      </ol>
+    </div>
+  ))}
+  {wynik && (
+    <div class="k-odc-wyn">
+      <span class="k-lbl">Rozwiązanie ogólne:</span>
+      <div class="k-rown">
+        <span set:html={tex(`\\begin{cases} ${o.wzory.map((x: any) => x.tex).join(' \\\\ ')} \\end{cases}`)} />
+        <span set:html={tex(o.parametry)} />
+      </div>
+    </div>
+  )}
+</div>
+
+<style>
+  .k-odc{margin:10px 0 14px;}
+  .k-odc-par{font-size:.92rem;margin:0 0 10px!important;}
+  .k-odc-w{margin:0 0 12px;padding:8px 12px;border-left:2px solid var(--line2);background:rgba(255,255,255,.02);}
+  .k-odc-h{font-family:var(--mono);font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:0 0 6px!important;}
+  .k-odc-l{list-style:none!important;margin:0!important;padding:0!important;display:grid;gap:8px;counter-reset:odc;}
+  .k-odc-l li{margin:0!important;max-width:none!important;display:grid;grid-template-columns:minmax(0,auto) minmax(0,1fr);gap:4px 18px;align-items:baseline;counter-increment:odc;}
+  .k-odc-l li::before{content:none;}
+  .k-odc-t{white-space:nowrap;overflow-x:auto;overflow-y:hidden;padding:2px 0;}
+  .k-odc-t :global(.katex){font-size:1.05em;}
+  .k-odc-o{font-size:.86rem;color:var(--muted);line-height:1.55;}
+  .k-odc-got{display:block!important;}
+  .k-odc-wyn{margin-top:4px;}
+  @media(max-width:700px){
+    .k-odc-l li{grid-template-columns:minmax(0,1fr);gap:2px;}
+  }
+</style>

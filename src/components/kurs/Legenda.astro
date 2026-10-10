@@ -1,0 +1,24 @@
+---
+// Legenda kolorów tuż pod rysunkiem — żeby nie trzeba było przewijać w górę, co znaczy który kolor.
+// items: [['ok', 'kolumny macierzy jednostkowej'], ['zloto', 'parametr']] — style jak w Mx (zloto, cyan, ok, roz, fiolet, wyblakla).
+import { texInline } from '../../lib/tex.js';
+interface Props { items: [string, string][] }
+const { items } = Astro.props;
+---
+<p class="k-leg">
+  {items.map(([s, t], i) => (
+    <span class="k-leg-i"><span class={`k-leg-sw is-${s}`} aria-hidden="true"></span><span set:html={texInline(t)} /></span>
+  ))}
+</p>
+
+<style>
+  .k-leg{display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.84rem;color:var(--muted);margin:2px 0 12px!important;}
+  .k-leg-i{display:inline-flex;align-items:center;gap:6px;}
+  .k-leg-sw{display:inline-block;flex:none;width:13px;height:13px;border-radius:2px;}
+  .k-leg-sw.is-zloto{background:rgba(255,216,74,.55);}
+  .k-leg-sw.is-cyan{background:rgba(39,232,255,.45);}
+  .k-leg-sw.is-ok{background:rgba(90,209,160,.55);}
+  .k-leg-sw.is-roz{background:rgba(255,46,151,.5);}
+  .k-leg-sw.is-fiolet{background:rgba(167,139,250,.5);}
+  .k-leg-sw.is-wyblakla{background:transparent;box-shadow:inset 0 0 0 1px var(--muted);opacity:.7;}
+</style>
