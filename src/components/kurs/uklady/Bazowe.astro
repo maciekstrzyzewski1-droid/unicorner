@@ -6,6 +6,7 @@ import { tex, texInline } from '../../../lib/tex.js';
 import { bazowe, zm, zmTxt } from '../../../lib/uklady.js';
 import Mx from '../macierze/Mx.astro';
 import Tx from '../macierze/Tx.astro';
+import Legenda from '../Legenda.astro';
 interface Props { R: any[][]; A0?: any[][]; b0?: any[]; start?: number }
 const { R, A0, b0, start = 0 } = Astro.props;
 const bz = bazowe(R, A0, b0);
@@ -31,6 +32,7 @@ const zeraTex = (nb: number[]) => `${nb.map(zm).join(' = ')} = 0`;
         </div>
       </div>
     </div>
+    <div data-js-only hidden><Legenda items={[['fiolet', 'niewiadome z wybranego zestawu'], ['wyblakla', 'niewiadome spoza zestawu — dostają 0']]} /></div>
     {bz.odrzucone.length > 0 && (
       <p class="k-bz-odrz" set:html={texInline(`${bz.odrzucone.length > 1 ? 'Zestawów' : 'Zestawu'} ${bz.odrzucone.map((B) => `$\\{${B.map(zm).join(', ')}\\}$`).join(', ')} nie sprawdzasz: brakuje w ${bz.odrzucone.length > 1 ? 'nich' : 'nim'} ${bz.samotne.map((j) => `$${zm(j)}$`).join(', ')}, a ${bz.samotne.length > 1 ? 'te niewiadome stoją' : 'ta niewiadoma stoi'} w równaniu ${bz.samotne.length > 1 ? 'same' : 'sama'} — ${bz.samotne.length > 1 ? 'ich wartości są ustalone, więc muszą być' : 'jej wartość jest ustalona, więc musi być'} w każdej bazie.`)} />
     )}

@@ -1,55 +1,298 @@
 ---
-// Jeden krok operacji elementarnych: macierz przed → operacje → macierz po, a pod spodem rachunek w słupkach.
+// Jeden krok operacji elementarnych: macierz przed → operacje → macierz po, legenda kolorów i rachunek na kartce.
 // k — obiekt z lib/macierze.js: krok(A, ops) albo element lancuch(...).
 // Kolory: złoty — wiersz, który zmieniamy; turkusowy — wiersz, którego używamy (zostaje bez zmian).
-// rachunek: 'otwarty' | 'zwiniety' | 'brak'; legenda — pokaż objaśnienie kolorów (przy pierwszym użyciu).
-import { tex } from '../../../lib/tex.js';
+// Kartka = odejmowanie (dodawanie) pisemne: na górze wiersz, który zmieniasz, pod nim pomnożony wiersz pomocniczy
+// ze znakiem operacji, pod linią wynik. Przycisk „▶ Zobacz krok po kroku” odtwarza to w ruchu:
+// liczby przelatują z macierzy na kartkę, kolumny liczą się po kolei, wynik wraca do macierzy po prawej.
+// rachunek: 'otwarty' | 'zwiniety' | 'brak'. Legenda jest zawsze (prop legenda zostaje dla zgodności).
+import { tex, texInline } from '../../../lib/tex.js';
+import { planRuchu } from '../../../lib/ruch.js';
 import Mx from './Mx.astro';
-import Slupki from './Slupki.astro';
 interface Props { k: any; kreska?: number; rachunek?: 'otwarty' | 'zwiniety' | 'brak'; legenda?: boolean; t?: string }
-const { k, kreska, rachunek = 'otwarty', legenda = false } = Astro.props;
+const { k, kreska, rachunek = 'otwarty' } = Astro.props;
 const zam = k.ops.some((o: any) => o.t === 'zam');
 const przedW = [
   ...k.zrodla.filter((i: number) => !k.zmienione.includes(i)).map((i: number) => ({ i, styl: 'cyan' })),
   ...k.zmienione.map((i: number) => ({ i, styl: 'zloto' })),
 ];
 const poW = k.zmienione.map((i: number) => ({ i, styl: 'zloto' }));
+const maCyan = przedW.some((x: any) => x.styl === 'cyan');
+const legenda: [string, string][] = zam
+  ? [['zloto', 'wiersze, które zamieniasz miejscami']]
+  : [['zloto', 'wiersz, który zmieniasz'], ...(maCyan ? [['cyan', 'wiersz, którego używasz (przepisujesz go bez zmian)'] as [string, string]] : [])];
+const plan = rachunek === 'brak' ? null : planRuchu(k, kreska);
+const maDod = k.ops.some((o: any) => o.t === 'dod');
+// przybliżona długość wzoru w znakach: ułamek liczy się jak szerszy z licznika/mianownika
+const dl = (t: string) => t.replace(/\\left|\\right/g, '').replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, (_m, a, b) => 'x'.repeat(Math.max(a.length, b.length) + 1)).replace(/\\[a-z]+/g, 'x').replace(/[{}\s]/g, '').length;
+const szer = (ka: any, j: number) => Math.max(...ka.linie.map((l: any) => Math.max(dl(l.cells[j].v) * 0.62 + 1.3, l.cells[j].e ? dl(l.cells[j].e) * 0.6 + 1.4 : 0))).toFixed(2);
+const maRazy = k.ops.some((o: any) => o.t === 'razy');
 ---
-<div class="k-op">
+<div class="k-op" data-op data-wstaw={plan ? JSON.stringify(plan.wstaw) : undefined}>
   <div class="k-op-row">
-    <Mx m={k.przed} kreska={kreska} wiersze={przedW} />
+    <div class="k-op-mx" data-op-przed><Mx m={k.przed} kreska={kreska} wiersze={przedW} /></div>
     <div class="k-op-ops">
       {k.ops.map((o: any, n: number) => <span class="k-op-op" set:html={tex(k.tabele[n].tex)} />)}
       <span class="k-op-arr" aria-hidden="true">⟶</span>
     </div>
-    <Mx m={k.po} kreska={kreska} wiersze={poW} />
+    <div class="k-op-mx" data-op-po><Mx m={k.po} kreska={kreska} wiersze={poW} /></div>
   </div>
-  {legenda && <p class="k-op-leg"><span class="k-op-sw is-zloto"></span> wiersz, który zmieniamy · <span class="k-op-sw is-cyan"></span> wiersz, którego używamy (przepisujemy go bez zmian)</p>}
-  {rachunek !== 'brak' && (
+  <p class="k-op-leg">{legenda.map(([s, t], i) => <>{i > 0 && ' · '}<span class={`k-op-sw is-${s}`} aria-hidden="true"></span> {t}</>)}</p>
+  {plan && (
     <details class="k-op-rach" open={rachunek === 'otwarty'}>
-      <summary>Rachunek w słupkach</summary>
-      {zam
-        ? <p class="k-op-zam">Zamiana wierszy: liczby zostają te same, zmienia się tylko kolejność wierszy.</p>
-        : k.tabele.map((t: any) => <Slupki podpis={t.tex} wiersze={t.wiersze} kreska={kreska} />)}
+      <summary>Rachunek na kartce</summary>
+      <div class="k-op-go" data-op-go hidden>
+        <button type="button" class="k-btn" data-op-start>▶ Zobacz krok po kroku</button>
+        <span class="k-op-go-t">liczby same przejdą z macierzy na kartkę i z powrotem</span>
+      </div>
+      {zam && <p class="k-op-zam">Zamiana wierszy: liczby zostają te same, zmienia się tylko kolejność wierszy.</p>}
+      {plan.kartki.map((ka: any, nr: number) => ka && (
+        <div class="k-ka" data-ka={nr}>
+          <div class="k-ka-p" set:html={tex(ka.tex)} />
+          <div class="k-ka-scroll">
+            <table class="k-ka-t">
+              {ka.linie.map((l: any, li: number) => (
+                <tr class={l.cls} data-l={li}>
+                  <td class="k-ka-op" set:html={l.op ? tex(l.op) : ''} />
+                  <th set:html={tex(l.lab)} />
+                  {l.cells.map((c: any, j: number) => (
+                    <td class:list={['k-ka-c', { 'is-kr': kreska === j }]} data-j={j} data-od={c.od} style={`min-width:${szer(ka, j)}em`}>
+                      <span class="k-ka-v" set:html={tex(c.v.replace(/\\frac/g, '\\dfrac'))} />
+                      {c.e && <span class="k-ka-e" set:html={tex(c.e)} />}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </table>
+          </div>
+        </div>
+      ))}
+      {maDod && <p class="k-ka-jak">Jak czytać kartkę: na górze wiersz, który zmieniasz (złoty), pod nim wiersz pomocniczy już pomnożony (turkusowy), z lewej znak operacji. Pod złotą linią liczysz kolumnami: liczba z góry minus (albo plus) liczba spod spodu. Ostatni wiersz to nowy wiersz macierzy.</p>}
+      {!maDod && maRazy && <p class="k-ka-jak">Jak czytać kartkę: na górze wiersz, który zmieniasz, pod złotą linią ten sam wiersz po pomnożeniu — każdą liczbę mnożysz osobno.</p>}
+      <div class="k-op-ctl" data-op-ctl hidden>
+        <p class="k-op-cap" data-op-cap aria-live="polite"></p>
+        <div class="k-op-btns">
+          <button type="button" class="k-btn k-btn-ghost" data-op-prev>‹ Wstecz</button>
+          <button type="button" class="k-btn" data-op-next>Dalej ›</button>
+          <button type="button" class="k-btn k-btn-ghost" data-op-auto>▶ Odtwórz</button>
+          <button type="button" class="k-btn k-btn-ghost" data-op-stop>Zamknij</button>
+          <span class="k-op-licz" data-op-licz></span>
+        </div>
+      </div>
+      <ol hidden data-kroki>
+        {plan.kroki.map((s: any) => (
+          <li data-a={s.a} data-nr={s.op} data-j={s.j} data-w={s.w} data-z={s.z} data-wa={s.wa} data-wb={s.wb} data-rows={s.rows ? s.rows.join(',') : undefined} set:html={texInline(s.html)} />
+        ))}
+      </ol>
     </details>
   )}
 </div>
 
+<script>
+  const DUR = 650, STAG = 80, EXPR = 1000, PAUZA = 1400;
+  const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+  document.querySelectorAll<HTMLElement>('[data-op]').forEach((box) => {
+    const own = <T extends Element>(sel: string) => Array.from(box.querySelectorAll<T>(sel)).filter((el) => el.closest('[data-op]') === box);
+    const kroki = own<HTMLLIElement>('[data-kroki] > li');
+    const go = own<HTMLElement>('[data-op-go]')[0];
+    if (!kroki.length || !go) return;
+    go.hidden = false;
+    const ctl = own<HTMLElement>('[data-op-ctl]')[0];
+    const cap = own<HTMLElement>('[data-op-cap]')[0];
+    const licz = own<HTMLElement>('[data-op-licz]')[0];
+    const [bStart] = own<HTMLButtonElement>('[data-op-start]');
+    const [bPrev] = own<HTMLButtonElement>('[data-op-prev]');
+    const [bNext] = own<HTMLButtonElement>('[data-op-next]');
+    const [bAuto] = own<HTMLButtonElement>('[data-op-auto]');
+    const [bStop] = own<HTMLButtonElement>('[data-op-stop]');
+    const przed = own<HTMLElement>('[data-op-przed] .k-nm-c');
+    const po = own<HTMLElement>('[data-op-po] .k-nm-c');
+    const kartki = own<HTMLElement>('[data-ka]');
+    const tds = own<HTMLElement>('[data-ka] td[data-od]');
+    const wstaw: Record<string, number> = JSON.parse(box.dataset.wstaw || '{}');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let s = -1, busy = false, auto = false;
+
+    const kartka = (op: string) => kartki.find((x) => x.dataset.ka === op);
+    const linia = (op: string, l: number) => Array.from(kartka(op)?.querySelectorAll<HTMLElement>(`tr[data-l="${l}"] td[data-j]`) ?? []);
+    const wynikowa = (op: string) => Array.from(kartka(op)?.querySelectorAll<HTMLElement>('tr.is-w td[data-j]') ?? []);
+    const kom = (list: HTMLElement[], i: string, j: string) => list.find((c) => c.dataset.i === i && c.dataset.j === j);
+    const flash = (el: HTMLElement) => { el.classList.add('is-flash'); setTimeout(() => el.classList.remove('is-flash'), 750); };
+
+    const render = (st: number) => {
+      s = st;
+      tds.forEach((td) => { td.classList.toggle('is-pusta', Number(td.dataset.od) > st); td.classList.remove('is-expr', 'is-kol'); });
+      po.forEach((c) => { const w = wstaw[c.dataset.i!]; c.classList.toggle('is-ukryta', w !== undefined && w > st); });
+      const li = kroki[st];
+      const a = li.dataset.a, op = li.dataset.nr ?? '';
+      kartki.forEach((x) => x.classList.toggle('is-bok', op !== '' && x.dataset.ka !== op));
+      if (a === 'kol') kartka(op)?.querySelectorAll<HTMLElement>(`td[data-j="${li.dataset.j}"]`).forEach((td) => td.classList.add('is-kol'));
+      const rows = li.dataset.rows ? li.dataset.rows.split(',') : null;
+      przed.forEach((c) => c.classList.toggle('is-wyblakla', !!rows && !rows.includes(c.dataset.i!)));
+      cap.innerHTML = li.innerHTML;
+      licz.textContent = `krok ${st + 1} z ${kroki.length}`;
+      bPrev.disabled = st <= 0;
+      bNext.disabled = st >= kroki.length - 1;
+    };
+    // kopia liczby przelatuje ze źródła do celu (pozycje liczone względem pudełka)
+    const fly = (src: HTMLElement | undefined, dst: HTMLElement | undefined, delay: number, kolor: string) => new Promise<void>((res) => {
+      if (reduce || !src || !dst) return res();
+      const b = box.getBoundingClientRect(), r1 = src.getBoundingClientRect(), r2 = dst.getBoundingClientRect();
+      const g = document.createElement('div');
+      g.className = `k-op-ghost is-${kolor}`;
+      const v = src.querySelector('.k-nm-v, .k-ka-v');
+      g.innerHTML = v ? v.innerHTML : '';
+      Object.assign(g.style, { left: `${r1.left - b.left}px`, top: `${r1.top - b.top}px`, width: `${r1.width}px`, height: `${r1.height}px` });
+      box.appendChild(g);
+      const dx = r2.left + r2.width / 2 - (r1.left + r1.width / 2), dy = r2.top + r2.height / 2 - (r1.top + r1.height / 2);
+      setTimeout(() => { g.style.transform = `translate(${dx}px, ${dy}px)`; }, 30 + delay);
+      setTimeout(() => { g.remove(); res(); }, 30 + delay + DUR);
+    });
+    const animuj = async (st: number) => {
+      const li = kroki[st];
+      const a = li.dataset.a, op = li.dataset.nr ?? '';
+      if (a === 'przepisz' || a === 'mnoz') {
+        const l = a === 'przepisz' ? 0 : 1;
+        const row = (a === 'przepisz' ? li.dataset.w : li.dataset.z)!;
+        const dst = linia(op, l);
+        dst.forEach((td) => td.classList.add('is-pusta'));
+        await Promise.all(dst.map((td, n) => fly(kom(przed, row, td.dataset.j!), td, n * STAG, l === 0 ? 'zloto' : 'cyan').then(() => {
+          td.classList.remove('is-pusta');
+          if (td.querySelector('.k-ka-e')) td.classList.add('is-expr');
+          flash(td);
+        })));
+        if (dst.some((td) => td.classList.contains('is-expr'))) {
+          await sleep(EXPR);
+          dst.forEach((td) => { if (td.classList.contains('is-expr')) { td.classList.remove('is-expr'); flash(td); } });
+        }
+      } else if (a === 'kol') {
+        const td = wynikowa(op).find((x) => x.dataset.j === li.dataset.j);
+        if (!td) return;
+        td.classList.add('is-expr');
+        flash(td);
+        await sleep(EXPR);
+        td.classList.remove('is-expr');
+        flash(td);
+      } else if (a === 'wstaw') {
+        const w = li.dataset.w!;
+        const dst = po.filter((c) => c.dataset.i === w);
+        const src = wynikowa(op);
+        dst.forEach((c) => c.classList.add('is-ukryta'));
+        await Promise.all(dst.map((c, n) => fly(src.find((td) => td.dataset.j === c.dataset.j), c, n * STAG, 'zloto').then(() => { c.classList.remove('is-ukryta'); flash(c); })));
+      } else if (a === 'zamien') {
+        const wa = li.dataset.wa!, wb = li.dataset.wb!;
+        const dst = po.filter((c) => c.dataset.i === wa || c.dataset.i === wb);
+        dst.forEach((c) => c.classList.add('is-ukryta'));
+        await Promise.all(dst.map((c) => fly(kom(przed, c.dataset.i === wa ? wb : wa, c.dataset.j!), c, Number(c.dataset.j) * STAG, 'zloto').then(() => { c.classList.remove('is-ukryta'); flash(c); })));
+      }
+    };
+    const idz = async (st: number, anim: boolean) => {
+      if (busy) return;
+      busy = true;
+      render(st);
+      if (anim) await animuj(st);
+      busy = false;
+    };
+    const zamknij = () => {
+      auto = false;
+      s = -1;
+      tds.forEach((td) => td.classList.remove('is-pusta', 'is-expr', 'is-kol'));
+      po.forEach((c) => c.classList.remove('is-ukryta'));
+      przed.forEach((c) => c.classList.remove('is-wyblakla'));
+      kartki.forEach((x) => x.classList.remove('is-bok'));
+      ctl.hidden = true;
+      go.hidden = false;
+      box.classList.remove('is-ruch');
+      bAuto.textContent = '▶ Odtwórz';
+    };
+    bStart.addEventListener('click', () => {
+      go.hidden = true;
+      ctl.hidden = false;
+      box.classList.add('is-ruch');
+      idz(0, false);
+      const r = box.getBoundingClientRect();
+      if (r.top < 60 || r.top > window.innerHeight * 0.5) box.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+    });
+    bNext.addEventListener('click', () => { auto = false; bAuto.textContent = '▶ Odtwórz'; if (s < kroki.length - 1) idz(s + 1, true); });
+    bPrev.addEventListener('click', () => { auto = false; bAuto.textContent = '▶ Odtwórz'; if (s > 0) idz(s - 1, false); });
+    bStop.addEventListener('click', zamknij);
+    bAuto.addEventListener('click', async () => {
+      if (auto) { auto = false; bAuto.textContent = '▶ Odtwórz'; return; }
+      auto = true;
+      bAuto.textContent = '⏸ Zatrzymaj';
+      if (s >= kroki.length - 1) await idz(0, false);
+      while (auto && s < kroki.length - 1) {
+        await idz(s + 1, true);
+        if (!auto) break;
+        await sleep(PAUZA);
+      }
+      auto = false;
+      bAuto.textContent = '▶ Odtwórz';
+    });
+  });
+</script>
+
 <style>
-  .k-op{margin:10px 0 12px;}
+  .k-op{position:relative;margin:10px 0 12px;scroll-margin-top:84px;}
   .k-op-row{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;max-width:100%;overflow-x:auto;padding-bottom:2px;}
+  .k-op-mx{display:inline-flex;}
   .k-op-ops{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.9rem;}
   .k-op-op{white-space:nowrap;color:#fff;}
   .k-op-arr{color:var(--muted);font-size:1.2rem;line-height:1;}
   .k-op-leg{font-size:.82rem;color:var(--muted);margin:6px 0 0!important;}
   .k-op-sw{display:inline-block;width:12px;height:12px;vertical-align:-1px;border-radius:2px;}
-  .k-op-sw.is-zloto{background:rgba(255,216,74,.5);} .k-op-sw.is-cyan{background:rgba(39,232,255,.45);}
+  .k-op-sw.is-zloto{background:rgba(255,216,74,.55);} .k-op-sw.is-cyan{background:rgba(39,232,255,.45);}
   .k-op-rach{margin-top:8px;}
   .k-op-rach summary{cursor:pointer;font-family:var(--mono);font-size:.74rem;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);}
   .k-op-zam{font-size:.9rem;margin:6px 0 0!important;}
+  .k-op-go{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:10px 0 4px;}
+  .k-op-go[hidden]{display:none;}
+  .k-op-go-t{font-size:.82rem;color:var(--muted);}
+  /* kartka: odejmowanie pisemne */
+  .k-ka{margin:10px 0 4px;transition:opacity .2s;}
+  .k-ka.is-bok{opacity:.4;}
+  .k-ka-p{font-size:.9rem;color:#fff;margin:0 0 4px;}
+  .k-ka-scroll{overflow-x:auto;padding:2px 0;}
+  .k-ka-t{border-collapse:separate;border-spacing:3px 3px;font-size:1.05rem;}
+  .k-ka-t th{color:var(--muted);font-weight:500;text-align:right;padding:2px 6px 2px 2px;white-space:nowrap;}
+  .k-ka-t .k-ka-op{min-width:1.1em;padding:0 2px;text-align:center;color:var(--gold);font-weight:700;font-size:1.15rem;white-space:nowrap;}
+  .k-ka-c{position:relative;min-width:2.3em;height:2.4em;padding:2px 7px;text-align:center;white-space:nowrap;border-radius:3px;transition:background .2s,box-shadow .2s;}
+  .k-ka-t tr.is-t .k-ka-c{background:rgba(255,216,74,.17);}
+  .k-ka-t tr.is-z .k-ka-c{background:rgba(39,232,255,.14);}
+  .k-ka-t tr.is-w .k-ka-c{background:rgba(255,216,74,.07);color:#fff;font-weight:700;box-shadow:inset 0 2px 0 var(--gold);}
+  .k-ka-t tr.is-w th{color:var(--gold);}
+  .k-ka-c.is-kr{box-shadow:inset -2px 0 0 var(--muted);}
+  .k-ka-t tr.is-w .k-ka-c.is-kr{box-shadow:inset 0 2px 0 var(--gold),inset -2px 0 0 var(--muted);}
+  .k-ka-e{display:none;font-size:.9em;color:var(--gold);}
+  .k-ka-c.is-expr .k-ka-e{display:inline;}
+  .k-ka-c.is-expr .k-ka-v{display:none;}
+  .k-ka-c.is-pusta{background:transparent!important;outline:1px dashed var(--line2);outline-offset:-2px;}
+  .k-ka-c.is-pusta .k-ka-v,.k-ka-c.is-pusta .k-ka-e{visibility:hidden;}
+  .k-ka-c.is-kol{outline:2px solid var(--cyan);outline-offset:-1px;}
+  .k-ka-c.is-flash{animation:k-op-flash .75s ease-out;}
+  .k-ka-t :global(.katex){font-size:1em!important;}
+  .k-ka-jak{font-size:.84rem;color:var(--muted);margin:6px 0 0!important;max-width:62ch;}
+  /* sterowanie */
+  .k-op-ctl{margin:10px 0 2px;padding:10px 12px;border-left:2px solid var(--cyan);background:rgba(0,229,255,.05);}
+  .k-op-ctl[hidden]{display:none;}
+  .k-op-cap{margin:0 0 10px!important;font-size:.95rem;line-height:1.65;min-height:3.3em;}
+  .k-op-btns{display:flex;flex-wrap:wrap;align-items:center;gap:8px;}
+  .k-op-btns button:disabled{opacity:.4;cursor:default;transform:none;filter:none;}
+  .k-op-licz{font-family:var(--mono);font-size:.74rem;color:var(--muted);margin-left:auto;}
+  /* przelatująca liczba i błysk — elementy dodawane przez skrypt */
+  .k-op :global(.k-op-ghost){position:absolute;z-index:6;display:grid;place-items:center;pointer-events:none;border-radius:4px;color:#fff;
+    transition:transform .65s cubic-bezier(.45,0,.2,1);box-shadow:0 6px 18px rgba(0,0,0,.45);}
+  .k-op :global(.k-op-ghost.is-zloto){background:rgba(255,216,74,.42);}
+  .k-op :global(.k-op-ghost.is-cyan){background:rgba(39,232,255,.34);}
+  .k-op :global(.k-nm-c.is-flash){animation:k-op-flash .75s ease-out;}
+  @keyframes k-op-flash{0%{box-shadow:0 0 0 3px rgba(255,216,74,.85);}100%{box-shadow:0 0 0 0 rgba(255,216,74,0);}}
   @media(max-width:560px){
     .k-op-row{gap:6px 10px;}
     .k-op-ops{flex-direction:row;flex-wrap:wrap;gap:4px 12px;width:100%;justify-content:flex-start;}
     .k-op-arr{transform:rotate(90deg);}
+    .k-ka-t{font-size:.86rem;border-spacing:2px 2px;}
+    .k-ka-c{padding:2px 4px;}
+    .k-op-licz{width:100%;margin-left:0;}
   }
+  @media (prefers-reduced-motion: reduce){ .k-ka-c.is-flash,.k-op :global(.k-nm-c.is-flash){animation:none;} }
 </style>
