@@ -1,0 +1,81 @@
+---
+// Trzy rodzaje układów na rysunku: dwa równania z dwiema niewiadomymi to dwie proste.
+// Przecinają się w jednym punkcie (oznaczony), są równoległe (sprzeczny) albo leżą jedna na drugiej (nieoznaczony).
+import { tex } from '../../../lib/tex.js';
+import { ukladTex } from '../../../lib/uklady.js';
+type Uk = { A: number[][]; b: number[] };
+const PANELE: { id: string; tytul: string; ile: string; uk: Uk; opis: string }[] = [
+  { id: 'o', tytul: 'oznaczony', ile: 'jedno rozwiązanie', uk: { A: [[1, 2], [3, -1]], b: [5, 1] }, opis: 'Proste przecinają się w jednym punkcie (1, 2). Tylko ta para liczb spełnia oba równania.' },
+  { id: 's', tytul: 'sprzeczny', ile: 'brak rozwiązań', uk: { A: [[1, 2], [2, 4]], b: [3, 12] }, opis: 'Proste są równoległe i nigdy się nie spotykają. Żaden punkt nie leży na obu naraz.' },
+  { id: 'n', tytul: 'nieoznaczony', ile: 'nieskończenie wiele', uk: { A: [[1, 2], [2, 4]], b: [3, 6] }, opis: 'Drugie równanie to pierwsze razy 2 — to ta sama prosta. Każdy jej punkt spełnia oba równania.' },
+];
+// układ współrzędnych: x1 od −1 do 6, x2 od −1 do 5, 28 px na jednostkę
+const X = (x: number) => 30 + (x + 1) * 28;
+const Y = (y: number) => 176 - (y + 1) * 28;
+const prosta = (a: number, b: number, c: number) => {
+  if (b === 0) { const x = c / a; return [X(x), Y(-1), X(x), Y(5)]; }
+  const y = (x: number) => (c - a * x) / b;
+  return [X(-1), Y(y(-1)), X(6), Y(y(6))];
+};
+// punkt przecięcia (dla oznaczonego) — liczony, nie wpisany
+const przeciecie = ({ A, b }: Uk) => {
+  const d = A[0][0] * A[1][1] - A[0][1] * A[1][0];
+  if (d === 0) return null;
+  return [(b[0] * A[1][1] - A[0][1] * b[1]) / d, (A[0][0] * b[1] - b[0] * A[1][0]) / d];
+};
+const ticksX = [0, 1, 2, 3, 4, 5], ticksY = [1, 2, 3, 4];
+---
+<figure class="k-fig k-pr">
+  <div class="k-fig-box">
+    <div class="k-pr-grid">
+      {PANELE.map((p) => {
+        const [l1, l2] = [prosta(p.uk.A[0][0], p.uk.A[0][1], p.uk.b[0]), prosta(p.uk.A[1][0], p.uk.A[1][1], p.uk.b[1])];
+        const pt = przeciecie(p.uk);
+        const ta = p.id === 'n';
+        return (
+          <div class="k-pr-p">
+            <p class="k-pr-h"><b>{p.tytul}</b> — {p.ile}</p>
+            <div class="k-pr-uk" set:html={tex(ukladTex(p.uk.A, p.uk.b))} />
+            <svg viewBox="0 0 240 196" role="img" aria-label={`układ ${p.tytul}: ${p.opis}`}>
+              <defs><clipPath id={`k-pr-clip-${p.id}`}><rect x="30" y="8" width="196" height="168" /></clipPath></defs>
+              {ticksX.map((t) => <line x1={X(t)} y1={Y(-1)} x2={X(t)} y2={Y(5)} class="k-pr-grid-l" />)}
+              {ticksY.map((t) => <line x1={X(-1)} y1={Y(t)} x2={X(6)} y2={Y(t)} class="k-pr-grid-l" />)}
+              <line x1={X(-1)} y1={Y(0)} x2={X(6)} y2={Y(0)} class="k-pr-ax" />
+              <line x1={X(0)} y1={Y(-1)} x2={X(0)} y2={Y(5)} class="k-pr-ax" />
+              {ticksX.filter((t) => t > 0).map((t) => <text x={X(t)} y={Y(0) + 15} class="k-pr-t" text-anchor="middle">{t}</text>)}
+              {ticksY.map((t) => <text x={X(0) - 6} y={Y(t) + 4} class="k-pr-t" text-anchor="end">{t}</text>)}
+              <text x={X(6) - 2} y={Y(0) + 15} class="k-pr-t" text-anchor="end">x₁</text>
+              <text x={X(0) + 6} y={Y(5) + 12} class="k-pr-t">x₂</text>
+              <g clip-path={`url(#k-pr-clip-${p.id})`}>
+                <line x1={l1[0]} y1={l1[1]} x2={l1[2]} y2={l1[3]} class:list={['k-pr-l1', { 'is-gruba': ta }]} />
+                <line x1={l2[0]} y1={l2[1]} x2={l2[2]} y2={l2[3]} class:list={['k-pr-l2', { 'is-kresk': ta }]} />
+              </g>
+              {pt && <circle cx={X(pt[0])} cy={Y(pt[1])} r="5" class="k-pr-pt" />}
+              {pt && <text x={X(pt[0]) + 8} y={Y(pt[1]) - 8} class="k-pr-t k-pr-tb">({pt[0]}, {pt[1]})</text>}
+            </svg>
+            <p class="k-pr-o">{p.opis}</p>
+          </div>
+        );
+      })}
+    </div>
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<style>
+  .k-pr-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;}
+  .k-pr-p{min-width:0;}
+  .k-pr-h{margin:0 0 4px!important;font-size:.92rem;}
+  .k-pr-uk{overflow-x:auto;overflow-y:hidden;padding:2px 0;}
+  .k-pr-p svg{display:block;width:100%;max-width:300px;height:auto;margin:4px 0;}
+  .k-pr-o{margin:0!important;font-size:.85rem;color:var(--muted);line-height:1.5;}
+  .k-pr-grid-l{stroke:rgba(255,255,255,.06);stroke-width:1;}
+  .k-pr-ax{stroke:var(--muted);stroke-width:1.2;}
+  .k-pr-t{fill:var(--muted);font-size:12px;font-family:var(--mono);}
+  .k-pr-tb{fill:#fff;font-weight:700;}
+  .k-pr-l1{stroke:var(--cyan);stroke-width:2.5;}
+  .k-pr-l1.is-gruba{stroke-width:6;opacity:.75;}
+  .k-pr-l2{stroke:var(--gold);stroke-width:2.5;}
+  .k-pr-l2.is-kresk{stroke-dasharray:7 6;}
+  .k-pr-pt{fill:#fff;stroke:var(--ink,#0b0b10);stroke-width:2;}
+</style>

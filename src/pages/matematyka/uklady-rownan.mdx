@@ -1,0 +1,1112 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: matematyka
+slug: uklady-rownan
+title: Układy równań liniowych
+podtytul: macierz rozszerzona, postać bazowa, rozwiązanie ogólne i rozwiązania bazowe
+description: Układy równań liniowych od zera — macierz układu i macierz rozszerzona, postać bazowa, układy oznaczone, nieoznaczone i sprzeczne, rozwiązanie ogólne z parametrem i rozwiązania bazowe. Przepisy, zadania krok po kroku i ćwiczenia.
+lede: Układ równań to kilka warunków, które muszą być spełnione naraz — tyle a tyle godzin pracy, tyle a tyle materiału. Tu nauczysz się rozwiązywać układy jednym przepisem na macierzy, rozpoznawać, czy układ ma jedno rozwiązanie, żadnego, czy nieskończenie wiele, i wypisywać rozwiązania bazowe.
+wymaga: Macierze (moduł 4) — operacje elementarne i rząd. To, czego potrzebujesz, przypominamy na miejscu.
+umiesz:
+  - zapisać układ równań jako macierz układu, wektor wyrazów wolnych i macierz rozszerzoną
+  - sprowadzić macierz rozszerzoną do postaci bazowej operacjami na wierszach
+  - rozpoznać układ oznaczony, nieoznaczony i sprzeczny
+  - zapisać rozwiązanie ogólne układu nieoznaczonego z parametrem
+  - wyznaczyć wszystkie rozwiązania bazowe
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Mx from '../../components/kurs/macierze/Mx.astro';
+import Tx from '../../components/kurs/macierze/Tx.astro';
+import Operacja from '../../components/kurs/macierze/Operacja.astro';
+import CwiczenieLiczby from '../../components/kurs/macierze/CwiczenieLiczby.astro';
+import UkladMacierz from '../../components/kurs/uklady/UkladMacierz.astro';
+import Proste from '../../components/kurs/uklady/Proste.astro';
+import Bazowe from '../../components/kurs/uklady/Bazowe.astro';
+import { lancuch } from '../../lib/macierze.js';
+import { rozszerzona, ukladTex, ukladR, ogolne, bazowe, sprawdz, opisKratki, kolJedn, kolWolne } from '../../lib/uklady.js';
+
+export const et2 = { k: ['x₁', 'x₂', 'b'] };
+export const et3 = { k: ['x₁', 'x₂', 'x₃', 'b'] };
+export const et4 = { k: ['x₁', 'x₂', 'x₃', 'x₄', 'b'] };
+
+export const Ab = [[1, 2], [2, 3]];
+export const bb = [40, 70];
+export const kb = lancuch(rozszerzona(Ab, bb), [
+  [{ t: 'dod', w: 1, z: 0, c: -2 }],
+  [{ t: 'razy', w: 1, c: -1 }],
+  [{ t: 'dod', w: 0, z: 1, c: -2 }],
+]);
+export const sprB = sprawdz(Ab, bb, [20, 10]);
+
+export const As = [[2, 3, -1], [1, 1, 2]];
+export const bs = [7, 5];
+export const ks = lancuch(rozszerzona(As, bs), [
+  [{ t: 'zam', a: 0, b: 1 }],
+  [{ t: 'dod', w: 1, z: 0, c: -2 }],
+  [{ t: 'dod', w: 0, z: 1, c: -1 }],
+]);
+export const os = ogolne(ks[2].po);
+export const sprS0 = sprawdz(As, bs, os.dla({ a: 0 }));
+export const sprS1 = sprawdz(As, bs, os.dla({ a: 1 }));
+
+export const Ap = [[1, 0, 2], [-1, 3, 0], [0, 1, 1]];
+export const bp = [5, 1, 4];
+
+export const A3 = [[1, 1, 1], [2, 3, 1], [1, 2, 3]];
+export const b3 = [6, 11, 14];
+export const k3 = lancuch(rozszerzona(A3, b3), [
+  [{ t: 'dod', w: 1, z: 0, c: -2 }, { t: 'dod', w: 2, z: 0, c: -1 }],
+  [{ t: 'dod', w: 0, z: 1, c: -1 }, { t: 'dod', w: 2, z: 1, c: -1 }],
+  [{ t: 'razy', w: 2, c: '1/3' }],
+  [{ t: 'dod', w: 0, z: 2, c: -2 }, { t: 'dod', w: 1, z: 2, c: 1 }],
+]);
+export const spr3 = sprawdz(A3, b3, [1, 2, 3]);
+
+export const Asp = [[1, 2], [2, 4]];
+export const ksp = lancuch(rozszerzona(Asp, [3, 12]), [[{ t: 'dod', w: 1, z: 0, c: -2 }]]);
+export const kzr = lancuch(rozszerzona(Asp, [3, 6]), [[{ t: 'dod', w: 1, z: 0, c: -2 }]]);
+export const ozr = ogolne(kzr[0].po);
+
+export const Ag = [[1, 1, 1], [0, 1, 0]];
+export const bg = [5, 2];
+export const kg = lancuch(rozszerzona(Ag, bg), [[{ t: 'dod', w: 0, z: 1, c: -1 }]]);
+export const Rg = kg[0].po;
+export const og = ogolne(Rg);
+
+export const Az = [[1, 2, -7], [3, 8, 5]];
+export const bz = [10, 6];
+export const kz = lancuch(rozszerzona(Az, bz), [
+  [{ t: 'dod', w: 1, z: 0, c: -3 }],
+  [{ t: 'dod', w: 0, z: 1, c: -1 }, { t: 'razy', w: 1, c: '1/2' }],
+]);
+export const Rz = kz[1].po;
+export const oz = ogolne(Rz);
+export const sprZ = sprawdz(Az, bz, oz.dla({ a: 1 }));
+export const sprZ0 = sprawdz(Az, bz, oz.dla({ a: 0 }));
+export const bzZ = bazowe(Rz, Az, bz);
+
+export const A4 = [[1, -1, 2, -1], [2, -2, 5, 1]];
+export const b4 = [1, 4];
+export const k4 = lancuch(rozszerzona(A4, b4), [[{ t: 'dod', w: 1, z: 0, c: -2 }], [{ t: 'dod', w: 0, z: 1, c: -2 }]]);
+export const R4 = k4[1].po;
+export const o4 = ogolne(R4);
+
+export const Ax = [[1, 1, 3], [2, 1, 3]];
+export const bx = [3, 5];
+export const kx = lancuch(rozszerzona(Ax, bx), [[{ t: 'dod', w: 1, z: 0, c: -1 }], [{ t: 'dod', w: 0, z: 1, c: -1 }], [{ t: 'zam', a: 0, b: 1 }]]);
+export const Rx = kx[2].po;
+
+export const cwA1 = [[2, -1, 4], [1, 0, 5], [0, -1, 1]];
+export const cwb1 = [3, -2, 0];
+export const cwR2 = [[-2, 0, 1, 4], [-1, 1, 0, -3]];
+export const cwOpis2 = [
+  ['Najpierw uporządkuj równanie: $x_3 - 2x_1 = 4$ to $-2x_1 + x_3 = 4$. Przy $x_1$ stoi $-2$.', 'W równaniu 1 nie ma $x_2$ — wpisujesz 0.', 'Samo $x_3$ to $1 \\cdot x_3$ — wpisujesz 1.', 'Prawa strona równania 1 to 4.'],
+  ['Przenieś $x_1$ na lewą stronę, a 3 na prawą: $x_2 + 3 = x_1$ to $-x_1 + x_2 = -3$. Przy $x_1$ stoi $-1$.', 'Samo $x_2$ to $1 \\cdot x_2$ — wpisujesz 1.', 'W równaniu 2 nie ma $x_3$ — wpisujesz 0.', 'Trójka przechodzi na prawą stronę ze zmianą znaku, więc prawa strona to $-3$.'],
+];
+export const cwA3 = [[1, 1], [2, -1]];
+export const cwb3 = [5, 1];
+export const cwk3 = lancuch(rozszerzona(cwA3, cwb3), [[{ t: 'dod', w: 1, z: 0, c: -2 }], [{ t: 'razy', w: 1, c: '-1/3' }], [{ t: 'dod', w: 0, z: 1, c: -1 }]]);
+export const cwA4 = [[1, 1, 1], [1, -1, 0], [0, 1, 2]];
+export const cwb4 = [4, 3, 5];
+export const cwk4 = lancuch(rozszerzona(cwA4, cwb4), [
+  [{ t: 'dod', w: 1, z: 0, c: -1 }],
+  [{ t: 'zam', a: 1, b: 2 }],
+  [{ t: 'dod', w: 0, z: 1, c: -1 }, { t: 'dod', w: 2, z: 1, c: 2 }],
+  [{ t: 'razy', w: 2, c: '1/3' }],
+  [{ t: 'dod', w: 0, z: 2, c: 1 }, { t: 'dod', w: 1, z: 2, c: -2 }],
+]);
+export const cwX3 = [2, 3];
+export const cwX4 = [2, -1, 3];
+export const cwSpr3 = sprawdz(cwA3, cwb3, cwX3);
+export const cwSpr4 = sprawdz(cwA4, cwb4, cwX4);
+// lista operacji z łańcucha: kroki po kolei (→), operacje w jednym kroku połączone „i”
+export const opsLista = (k) => k.map((s) => s.tabele.map((t) => `$${t.tex}$`).join(' i ')).join(' → ');
+export const sprLista = (spr) => spr.map((s) => `$${s}$`).join(', ');
+export const cwRb = [[1, 0, -2, 3], [0, 1, 4, -1]];
+export const cwBz = bazowe(cwRb);
+export const opisBazy = (w) => (i, j) => {
+  if (!w.B.includes(j)) return `$x_{${j + 1}}$ nie należy do bazy, więc $x_{${j + 1}} = 0$.`;
+  const k = w.kroki.find((x) => x.u === j);
+  return `Z równania ${k.i + 1}: $${k.linie.join(' \\;\\Rightarrow\\; ')}$.`;
+};
+export const wektor = (w) => [w.wektor];
+
+## Po co ekonomiście układy równań?
+
+Szwalnia szyje bluzy i kurtki. Bluza wymaga 1 godziny szycia i 2 metrów materiału, kurtka — 2 godzin i 3 metrów. W tym tygodniu jest 40 godzin pracy i 70 metrów materiału. Ile bluz i ile kurtek uszyć, żeby zużyć wszystko?
+
+Oznacz liczbę bluz przez $x_1$, a kurtek przez $x_2$. Godziny i metry dają dwa warunki, które muszą zachodzić **naraz**:
+
+$$
+\begin{cases} x_1 + 2x_2 = 40 \\ 2x_1 + 3x_2 = 70 \end{cases}
+$$
+
+To jest **układ równań**. Jego rozwiązanie to 20 bluz i 10 kurtek: $20 + 2 \cdot 10 = 40$ godzin i $2 \cdot 20 + 3 \cdot 10 = 70$ metrów. W tym module policzysz to samodzielnie — jednym przepisem, który działa tak samo dla dwóch i dla dziesięciu niewiadomych.
+
+Gdy szwalnia doda trzeci produkt, a godzin i materiału będzie tyle samo, rozwiązań układu zrobi się nieskończenie wiele. Wtedy szczególnie ciekawe są **rozwiązania bazowe** — rozwiązania, w których jeden z produktów ma zero. Te bez liczb ujemnych to plany, w których szyje się najwyżej dwa rodzaje produktów. Wrócą w programowaniu liniowym.
+
+## Co będzie na kolokwium
+
+Z układów równań na kolokwium wraca pięć typów poleceń. Zwykle pojawiają się w jednym zadaniu, po kolei: zapisz, rozwiąż, rozpoznaj rodzaj, a dla układu nieoznaczonego wyznacz rozwiązanie ogólne i rozwiązania bazowe.
+
+<Polecenia items={[
+  { polecenie: 'Zapisz układ w postaci macierzowej', jak: 'Liczby przy niewiadomych to macierz $A$, prawe strony to wektor $b$. Razem, rozdzielone kreską, dają macierz rozszerzoną $[A \\mid b]$.', przepis: 'polecenie-zapis', cwiczenia: 'cw-zapis', zrodlo: 'jak na slajdach z tematu 5' },
+  { polecenie: 'Rozwiąż układ równań', jak: 'Macierz rozszerzoną sprowadzasz operacjami na wierszach do postaci bazowej i odczytujesz z niej wynik.', przepis: 'polecenie-rozwiaz', cwiczenia: 'cw-rozwiaz', zrodlo: 'jak w Zad. 1, str. 100' },
+  { polecenie: 'Określ, czy układ jest oznaczony, nieoznaczony czy sprzeczny', jak: 'Patrzysz na postać bazową: wiersz zer przed kreską i liczba różna od zera za kreską — sprzeczny; każda niewiadoma stoi w swoim równaniu sama (ma konkretną wartość) — oznaczony; inaczej — nieoznaczony.', przepis: 'polecenie-rodzaj', cwiczenia: 'cw-rodzaj', zrodlo: 'jak na slajdach z tematu 5' },
+  { polecenie: 'Wyznacz rozwiązanie ogólne', jak: 'Niewiadome, których kolumny nie wchodzą do macierzy jednostkowej, zamieniasz na parametry i wyrażasz przez nie pozostałe.', przepis: 'polecenie-ogolne', cwiczenia: 'cw-ogolne', zrodlo: 'jak w Zad. 1, str. 100, f)' },
+  { polecenie: 'Wyznacz rozwiązania bazowe', jak: 'Wypisujesz zestawy po $r(A)$ niewiadomych ($r(A)$ to rząd macierzy $A$), resztę niewiadomych zerujesz i liczysz te z zestawu.', przepis: 'polecenie-bazowe', cwiczenia: 'cw-bazowe', zrodlo: 'jak w Zad. 1, str. 100, f)' },
+]} />
+
+## Układ równań — pojęcia od podstaw
+
+### Równanie liniowe
+
+<Ramka kind="zapamietaj">
+**Równanie liniowe** to równanie, w którym każda niewiadoma stoi w pierwszej potędze i nie jest mnożona przez inną niewiadomą. Po uporządkowaniu po lewej stronie są składniki „liczba razy niewiadoma”, a po prawej — sama liczba.
+</Ramka>
+
+<div class="k-dwa">
+<div>
+
+**Liniowe**
+
+- $2x_1 + 3x_2 - x_3 = 7$
+- $x_1 - 4x_2 = 0$
+- $x_2 = 5$ — też liniowe, z jedną niewiadomą
+
+</div>
+<div>
+
+**Nieliniowe**
+
+- $x_1^2 + x_2 = 3$ — kwadrat
+- $x_1 \cdot x_2 = 5$ — niewiadoma razy niewiadoma
+- $\frac{1}{x_1} = 2$ — niewiadoma w mianowniku
+
+</div>
+</div>
+
+<div class="k-symbole">
+  <Znak t="x_1,\ x_2,\ x_3" nazwa="Niewiadome z numerami" czytamy="iks jeden, iks dwa, iks trzy" znaczy="Zamiast $x, y, z$ piszemy jedną literę z numerem. Numer na dole to tylko nazwa — nie potęga i nie mnożenie. Na slajdach niewiadome nazywają się też <b>zmiennymi</b>." pamiec="numer na dole mówi „która z kolei”. Przy stu niewiadomych liter by zabrakło, numerów nie." />
+  <Znak t="\begin{cases} \ldots \\ \ldots \end{cases}" nazwa="Klamra układu" czytamy="układ równań" znaczy="Wszystkie równania w klamrze muszą być spełnione <b>naraz</b>, przez te same liczby." pamiec="klamra spina równania jak spinacz kartki — działają tylko razem." />
+</div>
+
+### Rozwiązanie układu
+
+<Ramka kind="zapamietaj">
+**Rozwiązanie układu** to zestaw liczb $(x_1, x_2, \ldots)$, który spełnia **wszystkie** równania naraz. Sprawdzasz je podstawieniem: wstawiasz liczby do każdego równania i liczysz lewą stronę.
+</Ramka>
+
+Para $(20, 10)$ ze szwalni spełnia oba równania: $20 + 2 \cdot 10 = 40$ i $2 \cdot 20 + 3 \cdot 10 = 70$. To rozwiązanie.
+
+Para $(40, 0)$ spełnia pierwsze równanie ($40 + 0 = 40$), ale drugiego już nie: $2 \cdot 40 + 3 \cdot 0 = 80$, a nie 70. To **nie jest** rozwiązanie układu — jedno równanie to za mało.
+
+### Trzy rodzaje układów
+
+<Ramka kind="zapamietaj">
+Układ może mieć jedno rozwiązanie, nieskończenie wiele albo żadnego. Od tego zależy jego nazwa:
+
+- **oznaczony** — ma **jedno** rozwiązanie,
+- **nieoznaczony** — ma **nieskończenie wiele** rozwiązań,
+- **sprzeczny** — nie ma **żadnego** rozwiązania.
+</Ramka>
+
+Najłatwiej to zobaczyć przy dwóch niewiadomych. Równanie z dwiema niewiadomymi, np. $x_1 + 2x_2 = 3$, to prosta na płaszczyźnie (o ile przy $x_1$ albo $x_2$ stoi liczba różna od zera). Rozwiązanie układu to punkt, który leży na obu prostych naraz.
+
+<Proste>
+w każdym okienku są dwa równania i ich proste: turkusowa to pierwsze równanie, złota — drugie. Rozwiązania to punkty wspólne obu prostych. Na pierwszym rysunku jest jeden taki punkt, na drugim żadnego, a na trzecim proste leżą jedna na drugiej i każdy punkt tej prostej jest wspólny.
+</Proste>
+
+<Ramka kind="pulapka" tytul="„Nieoznaczony” to nie „nie da się rozwiązać”">
+- Nieoznaczony = rozwiązań jest **nieskończenie wiele**. Zapisujesz je wszystkie naraz jednym wzorem z literą, za którą wstawia się dowolną liczbę (to parametr — o nim niżej).
+- Brak rozwiązań to układ **sprzeczny**.
+- Odpowiedź „układ nieoznaczony, więc koniec” to za mało — polecenie zwykle prosi wtedy o rozwiązanie ogólne (ten wzór na wszystkie rozwiązania — o nim też niżej).
+</Ramka>
+
+## Zapis macierzowy
+
+<a id="polecenie-zapis" class="k-anchor"></a>
+
+Liczyć na samych równaniach jest niewygodnie: ciągle przepisujesz te same $x_1$, $x_2$, $x_3$. Dlatego układ zapisuje się w tabelce liczb — macierzy. Niewiadome znikają, a ich rolę przejmuje miejsce: **kolumna = niewiadoma, wiersz = równanie**.
+
+<div class="k-symbole">
+  <Znak t="A" nazwa="Macierz układu" czytamy="macierz A" znaczy="Liczby stojące przy niewiadomych. Wiersz $i$ to równanie $i$, kolumna $j$ to niewiadoma $x_j$." pamiec="A jak „ile czego” — współczynniki." />
+  <Znak t="b" nazwa="Wektor wyrazów wolnych" czytamy="wektor b" znaczy="Liczby z prawych stron równań, w kolejności równań. Zapisuje się je jako kolumnę." pamiec="b stoi tam, gdzie kończy się równanie — po znaku =." />
+  <Znak t="[A \mid b]" nazwa="Macierz rozszerzona" czytamy="macierz rozszerzona układu" znaczy="Macierz $A$ z dopisaną kolumną $b$. Pionowa kreska stoi w miejscu znaku równości." pamiec="kreska = znak „=”. Przed nią lewe strony, za nią prawe." />
+</div>
+
+Przykład ze slajdów. Kliknij dowolny składnik równania albo kratkę macierzy:
+
+<UkladMacierz A={As} b={bs}>
+układ równań i jego macierz rozszerzona. Nad kolumnami macierzy są nazwy niewiadomych, ostatnia kolumna ($b$) to prawe strony. Kliknięcie podświetla na złoto parę „składnik — kratka” i mówi, skąd wzięła się liczba. Samo $x_1$ w drugim równaniu daje 1, a $-x_3$ w pierwszym daje $-1$.
+</UkladMacierz>
+
+Macierz układu i wektor wyrazów wolnych osobno:
+
+<div class="k-rown">
+<Mx m={As} t="A =" />
+<Mx m={bs.map((v) => [v])} t="b =" />
+</div>
+
+<Ramka kind="polecenie">
+„Zapisz układ w postaci macierzowej” (albo: „zapisz macierz rozszerzoną układu”).
+
+1. Uporządkuj każde równanie: niewiadome po lewej, zawsze w kolejności $x_1, x_2, x_3, \ldots$, a liczba bez niewiadomej — po prawej.
+2. Każde równanie to jeden wiersz, każda niewiadoma — jedna kolumna.
+3. W kratkę wpisz liczbę stojącą przy niewiadomej, **razem ze znakiem**. Samo $x_2$ to 1, $-x_3$ to $-1$, brak niewiadomej to 0.
+4. Prawe strony wpisz w ostatniej kolumnie, za pionową kreską.
+</Ramka>
+
+<Rozwiazanie tytul="Zapisz macierz rozszerzoną nieuporządkowanego układu">
+<div slot="tresc">
+
+$$
+\begin{cases} x_1 + 2x_3 = 5 \\ 3x_2 - x_1 = 1 \\ x_2 + x_3 - 4 = 0 \end{cases}
+$$
+
+</div>
+<div slot="plan">
+
+1. Porządkujemy równania. W macierzy każda kolumna należy do jednej niewiadomej, więc niewiadome muszą stać w tej samej kolejności w każdym równaniu.
+2. Przepisujemy liczby do macierzy, razem z „niewidzialnymi” zerami.
+
+Inaczej się nie da: macierz nie ma pustych kratek, więc za brakujące niewiadome trzeba jawnie wpisać zera.
+
+</div>
+
+<Krok tytul="Uporządkuj równania">
+- Równanie 1 nie ma $x_2$: $x_1 + 0x_2 + 2x_3 = 5$.
+- W równaniu 2 przestawiasz składniki: $-x_1 + 3x_2 + 0x_3 = 1$.
+- W równaniu 3 przenosisz $-4$ na prawą stronę (ze zmianą znaku): $0x_1 + x_2 + x_3 = 4$.
+
+<Dlaczego>
+$3x_2 - x_1$ to suma $3x_2 + (-x_1)$. Składniki sumy wolno przestawiać, a minus jedzie razem z $x_1$: wychodzi $-x_1 + 3x_2$. Liczba przeniesiona na drugą stronę równania zmienia znak — tak jak w każdym równaniu z liceum.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Przepisz liczby do macierzy">
+Każde równanie to jeden wiersz. Liczbę przy $x_1$ wpisujesz w kolumnie 1, przy $x_2$ — w kolumnie 2, przy $x_3$ — w kolumnie 3, a prawą stronę za kreską.
+
+<UkladMacierz A={Ap} b={bp}>
+wyblakłe składniki $0x_1$, $0x_2$, $0x_3$ to niewiadome, których w równaniu nie było — w macierzy stoją za nie zera. Kliknij je, a zobaczysz, do której kratki trafiają.
+</UkladMacierz>
+
+<Dlaczego>
+Kolumna mówi, przy której niewiadomej stała liczba. Dlatego zera za brakujące niewiadome muszą zostać — bez nich liczby przesunęłyby się do cudzych kolumn.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="Trzy typowe błędy">
+- **Kolumna to niewiadoma, nie miejsce w równaniu.** W $3x_2 - x_1 = 1$ pierwszą liczbą jest 3, ale ona stoi przy $x_2$ — trafia do kolumny 2. Do kolumny 1 wpisujesz $-1$.
+- **Zgubione zero.** Brak niewiadomej to 0 w macierzy, a nie pusta kratka i nie przesunięcie liczb w lewo.
+- **Zgubiony znak.** Liczba przeniesiona na drugą stronę równania zmienia znak: $x_2 + x_3 - 4 = 0$ daje za kreską $4$, a nie $-4$.
+</Ramka>
+
+## Postać bazowa — rozwiązujemy układ na macierzy
+
+<a id="polecenie-rozwiaz" class="k-anchor"></a>
+
+Rozwiązujemy układ na macierzy rozszerzonej. Upraszczamy ją **operacjami elementarnymi na wierszach**, aż wynik będzie widać od razu.
+
+### Dlaczego wolno zmieniać wiersze?
+
+Wiersz macierzy to całe równanie. Każda z trzech operacji elementarnych to coś, co wolno zrobić z równaniami i co nie zmienia rozwiązań:
+
+| Na macierzy | Na równaniach |
+|---|---|
+| zamiana dwóch wierszy | zapisanie równań w innej kolejności |
+| pomnożenie wiersza przez liczbę $\neq 0$ | pomnożenie obu stron równania przez tę liczbę |
+| dodanie do wiersza wielokrotności innego wiersza | dodanie równań stronami (jak w metodzie przeciwnych współczynników) |
+
+<div class="k-symbole">
+  <Znak t="w_2' = w_2 - 2w_1" nazwa="Operacja na wierszu" czytamy="nowy wiersz 2 to wiersz 2 minus dwa razy wiersz 1" znaczy="$w_1, w_2$ to wiersze macierzy. Prim (’) oznacza wiersz po zmianie. Zmienia się tylko wiersz z primem." pamiec="prim = „nowy”." />
+  <Znak t="w_1 \leftrightarrow w_2" nazwa="Zamiana wierszy" czytamy="zamieniamy wiersz 1 z wierszem 2" znaczy="Wiersze zamieniają się miejscami. Liczby w nich zostają te same." pamiec="strzałka w obie strony = zamiana." />
+</div>
+
+<Ramka kind="liceum" tytul="Metoda przeciwnych współczynników">
+W liceum układ $x_1 + 2x_2 = 40$, $2x_1 + 3x_2 = 70$ rozwiązywało się tak: mnożysz pierwsze równanie przez $-2$ i dodajesz do drugiego, żeby zniknęło $x_1$. Wychodzi $-x_2 = -10$. Na macierzy to dokładnie operacja $w_2' = w_2 - 2w_1$. Zmienia się tylko zapis.
+</Ramka>
+
+<Ramka kind="botak">
+- **Tylko wiersze.** Operacji na kolumnach w układzie nie robimy: kolumna to niewiadoma, więc ruszanie kolumn pomieszałoby niewiadome.
+- **Cały wiersz.** Operacja zmienia cały wiersz — także liczbę za kreską. To przecież prawa strona tego samego równania.
+- **Kilka operacji w jednym kroku** liczysz na wierszach sprzed kroku — tak zapisuje się to na zajęciach.
+</Ramka>
+
+### Dokąd zmierzamy: postać bazowa
+
+<Ramka kind="zapamietaj">
+**Postać bazowa** macierzy rozszerzonej: przed kreską jest **jak najwięcej kolumn macierzy jednostkowej** — kolumn z jedną jedynką i samymi zerami, każda z jedynką w innym wierszu. Razem tworzą macierz jednostkową. Za kreską stoi to, co wyjdzie z rachunku.
+</Ramka>
+
+Takie kolumny nazywamy krótko **kolumnami jednostkowymi**. W każdym wierszu liczy się tylko jedna — dwie jedynki w jednym wierszu nie dają dwóch kolumn macierzy jednostkowej.
+
+Tak wygląda postać bazowa układu ze szwalni. Zielone kolumny tworzą macierz jednostkową:
+
+<div class="k-rown">
+<Mx m={kb[2].po} kreska={1} et={et2} kolumny={kolJedn(kb[2].po)} />
+<span class="k-zn">→</span>
+<Tx t="\begin{cases} x_1 = 20 \\ x_2 = 10 \end{cases}" />
+</div>
+
+Zero w kolumnie znaczy, że tej niewiadomej w danym równaniu nie ma. Kolumna jednostkowa zostawia więc swoją niewiadomą tylko w jednym równaniu. Gdy do macierzy jednostkowej wchodzą kolumny wszystkich niewiadomych, każda niewiadoma stoi w swoim równaniu sama — i wynik czytasz wprost.
+
+<Ramka kind="polecenie">
+„Rozwiąż układ równań”.
+
+1. Zapisz macierz rozszerzoną $[A \mid b]$.
+2. **Kolumna 1:** zrób jedynkę w wierszu 1 (zamiana wierszy albo pomnożenie wiersza), potem zera w pozostałych wierszach tej kolumny.
+3. **Następna kolumna:** jedynka w następnym wolnym wierszu, zera w pozostałych wierszach. Wolny wiersz to taki, który nie ma jeszcze jedynki z kolumny jednostkowej. Gdy w wolnych wierszach tej kolumny są same zera, przejdź do kolejnej kolumny.
+4. W kolumnie za kreską nie robisz jedynek ani zer — zmienia się tylko „przy okazji”.
+5. Skończ, gdy nie da się zrobić kolejnej jedynki: w wolnych wierszach zostały same zera albo wolnych wierszy już nie ma. Odczytaj wynik: każdy wiersz zamień z powrotem na równanie.
+6. Sprawdź wynik: podstaw go do równań **wyjściowych**.
+</Ramka>
+
+<Ramka kind="kiedy" tytul="Jak dobrać mnożnik">
+Wiersz pomocniczy to wiersz, którego używasz do zerowania. Mnożnik = liczba, którą chcesz wyzerować, podzielona przez liczbę w wierszu pomocniczym w tej samej kolumnie — **z przeciwnym znakiem**. Zwykle w wierszu pomocniczym stoi jedynka i mnożnik to po prostu zerowana liczba z przeciwnym znakiem: żeby wyzerować 2, dodajesz $-2$ razy wiersz 1, czyli robisz $w_2' = w_2 - 2w_1$.
+</Ramka>
+
+<Rozwiazanie tytul="Rozwiąż układ ze szwalni">
+<div slot="tresc">
+
+$$
+\begin{cases} x_1 + 2x_2 = 40 \\ 2x_1 + 3x_2 = 70 \end{cases}
+$$
+
+</div>
+<div slot="plan">
+
+1. Zapisujemy macierz rozszerzoną — na niej liczy się szybciej.
+2. Kolumna 1: w lewym górnym rogu już stoi 1, więc tylko zerujemy liczbę pod nią.
+3. Kolumna 2: robimy jedynkę w wierszu 2, potem zero nad nią.
+4. Odczytujemy wynik i sprawdzamy go w równaniach wyjściowych.
+
+Przy każdym kroku zobaczysz, co ta sama operacja robi z równaniami.
+
+</div>
+
+<Krok tytul="Zapisz macierz rozszerzoną">
+Liczby przy $x_1$ idą do kolumny 1, przy $x_2$ — do kolumny 2, a prawe strony — za kreskę.
+
+<div class="k-rown">
+<Mx m={rozszerzona(Ab, bb)} kreska={1} et={et2} t="[A \mid b] =" />
+</div>
+
+<Dlaczego>
+Na samych liczbach liczy się szybciej, a kolumna dalej mówi, której niewiadomej dotyczy liczba.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 1: zero pod jedynką">
+W wierszu 2 pod jedynką stoi 2. Odejmujesz dwa razy wiersz 1: $2 - 2 \cdot 1 = 0$.
+
+<Operacja k={kb[0]} kreska={1} legenda />
+
+Na równaniach: od drugiego równania odejmujesz dwa razy pierwsze. Zostaje równanie bez $x_1$:
+
+<div class="k-rown">
+<Tx t={ukladR(kb[0].po)} />
+</div>
+
+<Dlaczego>
+Zero pod jedynką to niewiadoma $x_1$ usunięta z równania 2. W liczbie za kreską też odejmujesz: $70 - 2 \cdot 40 = -10$ — prawa strona należy do tego samego równania.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 2: jedynka w wierszu 2">
+W wierszu 2 stoi $-1$. Mnożysz wiersz przez $-1$ — zmieniasz znaki w całym wierszu.
+
+<Operacja k={kb[1]} kreska={1} />
+
+<div class="k-rown">
+<Tx t={ukladR(kb[1].po)} />
+</div>
+
+<Dlaczego>
+Równanie $-x_2 = -10$ to to samo co $x_2 = 10$. Mnożenie obu stron przez $-1$ nie zmienia rozwiązania.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 2: zero nad jedynką">
+Nad jedynką stoi 2. Odejmujesz dwa razy wiersz 2.
+
+<Operacja k={kb[2]} kreska={1} />
+
+<div class="k-rown">
+<Tx t={ukladR(kb[2].po)} />
+</div>
+
+<Dlaczego>
+Zero nad jedynką usuwa $x_2$ z równania 1. Kolumny obu niewiadomych tworzą teraz macierz jednostkową — to postać bazowa.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odczytaj wynik i sprawdź">
+$x_1 = 20$, $x_2 = 10$: 20 bluz i 10 kurtek. Sprawdzenie w równaniach wyjściowych:
+
+<div class="k-rown">
+<Tx t={sprB[0]} />
+<Tx t={sprB[1]} />
+</div>
+
+Oba wyniki zgadzają się z prawymi stronami (40 i 70).
+
+<Dlaczego>
+Sprawdzasz w równaniach **wyjściowych**, a nie w postaci bazowej. Błąd w rachunku przechodzi do postaci bazowej i tam go nie zauważysz.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+Ten sam przepis przy trzech niewiadomych — tylko więcej kolumn:
+
+<Rozwiazanie tytul="Rozwiąż układ trzech równań">
+<div slot="tresc">
+
+$$
+\begin{cases} x_1 + x_2 + x_3 = 6 \\ 2x_1 + 3x_2 + x_3 = 11 \\ x_1 + 2x_2 + 3x_3 = 14 \end{cases}
+$$
+
+</div>
+<div slot="plan">
+
+1. Kolumna 1: jedynka już stoi w wierszu 1, zerujemy liczby pod nią.
+2. Kolumna 2: jedynka w wierszu 2 już jest po kroku 1, zerujemy liczby nad nią i pod nią.
+3. Kolumna 3: robimy jedynkę w wierszu 3, a potem zera nad nią.
+4. Odczytujemy wynik i sprawdzamy go.
+
+Kolejność kolumn od lewej do prawej to po prostu najwygodniejsza droga. Inna kolejność też da ten sam wynik, ale łatwiej wtedy zepsuć zrobione już zera.
+
+</div>
+
+<Krok tytul="Kolumna 1: zera pod jedynką">
+W wierszu 2 stoi 2 — odejmujesz dwa razy wiersz 1. W wierszu 3 stoi 1 — odejmujesz wiersz 1.
+
+<Operacja k={k3[0]} kreska={2} legenda />
+
+<Dlaczego>
+Zera pod jedynką usuwają $x_1$ z równań 2 i 3. Obie operacje używają wiersza 1, którego nie zmieniasz, więc można je zrobić w jednym kroku.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 2: zera nad i pod jedynką">
+W wierszu 2 jest już jedynka. Nad nią stoi 1, pod nią też 1 — w obu wierszach odejmujesz wiersz 2.
+
+<Operacja k={k3[1]} kreska={2} />
+
+<Dlaczego>
+Jedynka w wierszu 2 pojawiła się po kroku 1 sama — nie trzeba jej robić. Zera nad nią i pod nią usuwają $x_2$ z równań 1 i 3.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 3: jedynka w wierszu 3">
+W wierszu 3 stoi 3. Mnożysz wiersz przez $\frac{1}{3}$, czyli dzielisz go przez 3.
+
+<Operacja k={k3[2]} kreska={2} />
+
+<Dlaczego>
+Wiersz 3 to równanie $3x_3 = 9$. Po podzieleniu obu stron przez 3 wychodzi $x_3 = 3$ — rozwiązanie się nie zmienia.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kolumna 3: zera nad jedynką">
+Nad jedynką stoją 2 i $-1$. Od wiersza 1 odejmujesz dwa razy wiersz 3, do wiersza 2 dodajesz wiersz 3.
+
+<Operacja k={k3[3]} kreska={2} />
+
+<Dlaczego>
+Obie operacje używają tej samej gotowej jedynki z wiersza 3, więc można je zrobić w jednym kroku. Wiersz 3 przepisujesz bez zmian.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odczytaj wynik i sprawdź">
+$x_1 = 1$, $x_2 = 2$, $x_3 = 3$ — układ ma jedno rozwiązanie. Sprawdzenie:
+
+<div class="k-rown">
+<Tx t={spr3[0]} />
+<Tx t={spr3[1]} />
+<Tx t={spr3[2]} />
+</div>
+
+<Dlaczego>
+Przed kreską stoi cała macierz jednostkowa, więc każdy wiersz to równanie z jedną niewiadomą: $x_1 = 1$, $x_2 = 2$, $x_3 = 3$.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka">
+- Zmieniasz cały wiersz, **razem z liczbą za kreską**. Zapomniana prawa strona to najczęstszy błąd w tym temacie.
+- W jednym kroku nie zmieniaj dwóch wierszy „nawzajem” ($w_1' = w_1 + w_2$ i $w_2' = w_2 + w_1$). Wiersze zrobią się takie same i zgubisz równanie.
+- Nie mnóż wiersza przez 0 — to kasuje równanie.
+</Ramka>
+
+<Ramka kind="granica">
+Nie zawsze uda się zrobić jedynkę w każdej kolumnie. Jeśli w wolnych wierszach kolumny zostały same zera, przechodzisz do następnej kolumny. Jeśli wolnych wierszy już nie ma (niewiadomych jest więcej niż równań), kończysz. W obu przypadkach któraś niewiadoma nie wejdzie do macierzy jednostkowej, a układ nie będzie oznaczony. Jak to odczytać — w następnej sekcji.
+</Ramka>
+
+## Oznaczony, nieoznaczony czy sprzeczny?
+
+<a id="polecenie-rodzaj" class="k-anchor"></a>
+
+Rodzaj układu odczytujesz z postaci bazowej. Każdy wiersz zamień w myślach z powrotem na równanie. Te równania to **zredukowana postać układu** (tak nazywają ją slajdy).
+
+**Sprzeczny.** Wiersz z samymi zerami przed kreską i liczbą różną od zera za kreską. Układ $x_1 + 2x_2 = 3$, $2x_1 + 4x_2 = 12$ po jednej operacji:
+
+<div class="k-rown">
+<Mx m={ksp[0].po} kreska={1} et={et2} wiersze={[{ i: 1, styl: 'roz' }]} />
+<span class="k-zn">→</span>
+<Tx t="0x_1 + 0x_2 = 6" />
+<Tx t="\Rightarrow\ 0 = 6" />
+</div>
+
+Lewa strona to zawsze 0, cokolwiek wstawisz za $x_1$ i $x_2$. Równość $0 = 6$ jest fałszywa, więc **żadna** para liczb nie spełnia układu. Na rysunku z prostymi to dwie proste równoległe.
+
+**Oznaczony.** Każda niewiadoma ma konkretną wartość: stoi w swoim równaniu sama, jak w obu zadaniach wyżej. Na macierzy widać to tak: kolumny wszystkich niewiadomych tworzą macierz jednostkową.
+
+<div class="k-rown">
+<Mx m={k3[3].po} kreska={2} et={et3} kolumny={kolJedn(k3[3].po)} />
+<span class="k-zn">→</span>
+<Tx t="x_1 = 1,\ x_2 = 2,\ x_3 = 3" />
+</div>
+
+**Nieoznaczony.** Sprzecznego wiersza nie ma, ale któraś niewiadoma nie ma konkretnej wartości: w którymś równaniu stoją co najmniej dwie niewiadome. Na macierzy: kolumna tej niewiadomej nie wchodzi do macierzy jednostkowej. Na przykład układ ze slajdów po operacjach (cały rachunek — w następnej sekcji):
+
+<div class="k-rown">
+<Mx m={ks[2].po} kreska={2} et={et3} kolumny={[...kolJedn(ks[2].po), ...kolWolne(ks[2].po)]} />
+<span class="k-zn">→</span>
+<Tx t={ukladR(ks[2].po)} />
+</div>
+
+Zielone kolumny tworzą macierz jednostkową, złota do niej nie wchodzi. Za $x_3$ możesz wstawić dowolną liczbę i z każdą wyjdzie inne rozwiązanie.
+
+<Ramka kind="polecenie">
+„Określ, czy układ jest oznaczony, nieoznaczony czy sprzeczny”.
+
+1. Sprowadź macierz rozszerzoną do postaci bazowej.
+2. Szukaj wiersza: przed kreską same zera, za kreską liczba różna od zera. Jest choć jeden → układ **sprzeczny**. Koniec.
+3. Wiersz z samych zer (także za kreską) skreśl. To równanie $0 = 0$ — zawsze prawdziwe, niczego nie zmienia.
+4. Każda niewiadoma stoi w swoim równaniu sama (kolumny wszystkich niewiadomych tworzą macierz jednostkową) → **oznaczony**. Odczytaj wartości.
+5. W przeciwnym razie → **nieoznaczony**: któraś niewiadoma nie ma konkretnej wartości (jej kolumna nie wchodzi do macierzy jednostkowej). Wyznacz rozwiązanie ogólne (następna sekcja).
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Wiersz zer to nie zawsze sprzeczność">
+Układ $x_1 + 2x_2 = 3$, $2x_1 + 4x_2 = 6$ po tej samej operacji co wyżej:
+
+<div class="k-rown">
+<Mx m={kzr[0].po} kreska={1} et={et2} wiersze={[{ i: 1, styl: 'ok' }]} />
+<span class="k-zn">→</span>
+<Tx t="0 = 0" />
+</div>
+
+- Za kreską też jest 0, więc to równanie $0 = 0$ — prawdziwe. Skreślasz je.
+- Zostaje jedno równanie $x_1 + 2x_2 = 3$ z dwiema niewiadomymi. Układ jest **nieoznaczony**: za $x_2$ wolno wstawić dowolną liczbę, a $x_1$ wyliczysz z $x_1 = 3 - 2x_2$. Jak zapisać to parametrem — w następnej sekcji.
+- Sprzeczność daje dopiero liczba **różna od zera** za kreską.
+</Ramka>
+
+<Ramka kind="granica" tytul="Jedynka w kolumnie to jeszcze nie układ oznaczony">
+Układ $x_1 + x_2 + x_3 = 5$, $x_2 = 2$ po jednej operacji ($w_1' = w_1 - w_2$):
+
+<div class="k-rown">
+<Mx m={Rg} kreska={2} et={et3} kolumny={[...kolJedn(Rg), ...kolWolne(Rg)]} />
+<span class="k-zn">→</span>
+<Tx t={ukladR(Rg)} />
+</div>
+
+- Kolumna $x_3$ to $(1, 0)$ — wygląda jak kolumna jednostkowa. Ale jej jedynka stoi w wierszu 1, który ma już jedynkę z kolumny $x_1$.
+- W każdym wierszu do macierzy jednostkowej liczysz tylko jedną kolumnę. Macierz jednostkową tworzą $x_1$ i $x_2$ (zielone), a $x_3$ (złota) zostaje poza nią.
+- W równaniu 1 stoją dwie niewiadome: $x_1 + x_3 = 3$. Układ jest **nieoznaczony** — za $x_3$ wolno wstawić dowolną liczbę, a $x_1 = 3 - x_3$.
+</Ramka>
+
+<Ramka kind="skad" tytul="To samo z rzędów (tego nie ma na slajdach)">
+Rodzaj układu da się też odczytać z rzędów. $r(A)$ to rząd macierzy układu, $r([A \mid b])$ — rząd macierzy rozszerzonej, $n$ — liczba niewiadomych:
+
+- $r(A) < r([A \mid b])$ → **sprzeczny**. Przy liczeniu rzędu $[A \mid b]$ kolumna $b$ jest zwykłą kolumną. Wiersz z zerami przed kreską i liczbą różną od zera za kreską daje w niej jeszcze jedną jedynkę, więc $r([A \mid b]) = r(A) + 1$.
+- $r(A) = r([A \mid b]) = n$ → **oznaczony**.
+- $r(A) = r([A \mid b]) < n$ → **nieoznaczony**, a parametrów jest $n - r(A)$.
+
+To twierdzenie Kroneckera–Capellego. Na kolokwium wystarczy odczyt z postaci bazowej. Rzędy pozwalają szybko sprawdzić liczbę parametrów: w układzie ze slajdów $r(A) = 2$, a niewiadome są 3, więc parametr jest jeden.
+</Ramka>
+
+## Rozwiązanie ogólne układu nieoznaczonego
+
+<a id="polecenie-ogolne" class="k-anchor"></a>
+
+Układ nieoznaczony ma nieskończenie wiele rozwiązań. Nie wypiszesz ich po kolei — zapisujesz je **wszystkie naraz** jednym wzorem. Pomaga w tym parametr.
+
+<div class="k-symbole">
+  <Znak t="a \in \mathbb{R}" nazwa="Parametr" czytamy="a należy do zbioru liczb rzeczywistych" znaczy="$a$ to dowolna liczba. Wstawiasz różne $a$ i dostajesz różne rozwiązania układu." pamiec="parametr to „pokrętło”: kręcisz nim i przesuwasz się po wszystkich rozwiązaniach." />
+</div>
+
+<Ramka kind="polecenie">
+„Wyznacz rozwiązanie ogólne układu”.
+
+1. W postaci bazowej znajdź niewiadome, których kolumny **nie wchodzą** do macierzy jednostkowej. Zamieniasz je na parametry: $x_3 = a$, $a \in \mathbb{R}$. Gdy dwie kolumny mają jedynkę w tym samym wierszu, do macierzy jednostkowej bierzesz tylko jedną (tę bardziej na lewo), a drugą niewiadomą zamieniasz na parametr.
+2. W każdym równaniu zostaw po lewej niewiadomą z macierzy jednostkowej. Składniki z parametrem przenieś na prawą stronę — **ze zmianą znaku**.
+3. Zapisz wszystkie niewiadome: te z macierzy jednostkowej — wyrażone przez parametr, pozostałe — jako parametry $a$ (przy dwóch: $a$ i $c$).
+4. Sprawdź: policz niewiadome dla $a = 0$ i dla $a = 1$, a potem wstaw je do równań wyjściowych. Przy dwóch parametrach sprawdź np. $(a, c) = (0, 0)$, $(1, 0)$ i $(0, 1)$.
+</Ramka>
+
+<Rozwiazanie tytul="Rozwiąż układ ze slajdów" zrodlo="układ z przykładu na slajdach">
+<div slot="tresc">
+
+$$
+\begin{cases} 2x_1 + 3x_2 - x_3 = 7 \\ x_1 + x_2 + 2x_3 = 5 \end{cases}
+$$
+
+</div>
+<div slot="plan">
+
+1. Zamieniamy wiersze, żeby w lewym górnym rogu stała jedynka.
+2. Zerujemy liczbę pod tą jedynką.
+3. W kolumnie 2 jedynka już stoi, więc zerujemy liczbę nad nią.
+4. Kolumna 3 zostaje bez jedynki — wolnych wierszy już nie ma. $x_3$ staje się parametrem i zapisujemy rozwiązanie ogólne.
+5. Sprawdzamy dla dwóch wartości parametru.
+
+Dwa równania i trzy niewiadome: macierz jednostkowa ma najwyżej dwie kolumny (po jednej na wiersz), więc ten układ na pewno nie jest oznaczony.
+
+</div>
+
+<Krok tytul="Jedynka w lewym górnym rogu">
+W wierszu 2 na początku stoi 1. Zamieniasz wiersze miejscami.
+
+<Operacja k={ks[0]} kreska={2} />
+
+<Dlaczego typ="inaczej">
+Można też pomnożyć wiersz 1 przez $\frac{1}{2}$. Jedynka też by wyszła, ale razem z ułamkami: $\frac{3}{2}$, $-\frac{1}{2}$, $\frac{7}{2}$. Zamiana jest wygodniejsza, bo w wierszu 2 jedynka już stoi.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zero pod jedynką">
+Pod jedynką stoi 2 — odejmujesz dwa razy wiersz 1: $2 - 2 \cdot 1 = 0$.
+
+<Operacja k={ks[1]} kreska={2} legenda />
+
+<Dlaczego>
+Zero pod jedynką usuwa $x_1$ z równania 2. Przy okazji w wierszu 2, w kolumnie 2, wyszła jedynka — w następnym kroku nie trzeba jej robić.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zero nad jedynką w kolumnie 2">
+Nad jedynką w kolumnie 2 stoi 1 — odejmujesz wiersz 2.
+
+<Operacja k={ks[2]} kreska={2} />
+
+<Dlaczego>
+Zero nad jedynką usuwa $x_2$ z równania 1. Teraz $x_1$ jest tylko w równaniu 1, a $x_2$ — tylko w równaniu 2.
+</Dlaczego>
+
+Postać bazowa jest gotowa. Kolumny $x_1$ i $x_2$ tworzą macierz jednostkową, kolumna $x_3$ do niej nie wchodzi:
+
+<div class="k-rown">
+<Mx m={ks[2].po} kreska={2} et={et3} kolumny={[...kolJedn(ks[2].po), ...kolWolne(ks[2].po)]} />
+<span class="k-zn">→</span>
+<Tx t={ukladR(ks[2].po)} />
+</div>
+</Krok>
+
+<Krok tytul="Zamień x₃ na parametr i przenieś go na prawo">
+Kolumna $x_3$ nie wchodzi do macierzy jednostkowej, więc $x_3 = a$, gdzie $a \in \mathbb{R}$. Wstawiasz $a$ do obu równań i przenosisz składniki z $a$ na prawą stronę:
+
+<div class="k-rown">
+<Tx t="x_1 + 7a = 8" />
+<span class="k-zn">⟹</span>
+<Tx t="x_1 = 8 - 7a" />
+</div>
+
+<div class="k-rown">
+<Tx t="x_2 - 5a = -3" />
+<span class="k-zn">⟹</span>
+<Tx t="x_2 = -3 + 5a" />
+</div>
+
+Rozwiązanie ogólne:
+
+$$
+\begin{cases} x_1 = 8 - 7a \\ x_2 = -3 + 5a \\ x_3 = a \end{cases} \qquad a \in \mathbb{R}
+$$
+
+<Dlaczego typ="umowa">
+Parametrem robisz niewiadomą, której kolumna **nie wchodzi** do macierzy jednostkowej. Tak się to robi na zajęciach. Wtedy w każdym równaniu zostaje jedna niewiadoma z macierzy jednostkowej, a reszta składników zawiera tylko parametr — wystarczy przenieść je na prawą stronę.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdź dla dwóch wartości a">
+Dla $a = 0$: $(x_1, x_2, x_3) = (8, -3, 0)$. Dla $a = 1$: $(1, 2, 1)$. Oba zestawy wstawiasz do równań wyjściowych:
+
+<div class="k-rown">
+<Tx t={sprS0[0]} />
+<Tx t={sprS0[1]} />
+</div>
+
+<div class="k-rown">
+<Tx t={sprS1[0]} />
+<Tx t={sprS1[1]} />
+</div>
+
+Obie trójki spełniają układ. Każde inne $a$ też da rozwiązanie — stąd „nieskończenie wiele”.
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="Znak przy przenoszeniu">
+- $x_1 + 7a = 8$ daje $x_1 = 8 - 7a$, a **nie** $8 + 7a$.
+- $x_2 - 5a = -3$ daje $x_2 = -3 + 5a$.
+- Szybki test: policz niewiadome dla $a = 1$ i wstaw je do równań wyjściowych. Zły znak od razu wyjdzie na jaw.
+</Ramka>
+
+<Ramka kind="podobny" tytul="Dwa parametry">
+Układ $x_1 - x_2 + 2x_3 - x_4 = 1$, $2x_1 - 2x_2 + 5x_3 + x_4 = 4$ po dwóch operacjach ($w_2' = w_2 - 2w_1$, potem $w_1' = w_1 - 2w_2$):
+
+<div class="k-rown">
+<Mx m={R4} kreska={3} et={et4} kolumny={[...kolJedn(R4), ...kolWolne(R4)]} />
+</div>
+
+- Macierz jednostkową tworzą kolumny $x_1$ i $x_3$ (zielone). Te kolumny nie muszą stać obok siebie.
+- Poza nią zostają $x_2$ i $x_4$ (złote) — to dwa parametry: $x_2 = a$, $x_4 = c$.
+- Z wierszy: $x_1 - a - 7c = -3$ i $x_3 + 3c = 2$.
+
+<div class="k-rown">
+<Tx t={`\\begin{cases} ${o4.wzory.map((w) => w.tex).join(' \\\\ ')} \\end{cases}`} />
+<Tx t={o4.parametry} />
+</div>
+
+Parametry oznaczamy $a$ i $c$, bo litera $b$ jest już zajęta przez wektor wyrazów wolnych.
+</Ramka>
+
+## Rozwiązania bazowe
+
+<a id="polecenie-bazowe" class="k-anchor"></a>
+
+Rozwiązanie ogólne zawiera nieskończenie wiele rozwiązań. Spośród nich wybiera się kilka szczególnych — takie, w których niewiadome spoza wybranego zestawu są zerami. Zerujesz tyle niewiadomych, ile jest parametrów.
+
+<Ramka kind="zapamietaj">
+**Rozwiązanie bazowe** układu nieoznaczonego: wybierasz zestaw $r(A)$ niewiadomych, a wszystkie pozostałe ustawiasz na 0. Jeśli wtedy niewiadome z zestawu wychodzą **jednoznacznie**, dostajesz rozwiązanie bazowe. Wybrany zestaw to **baza**, jego niewiadome to **zmienne bazowe**, a pozostałe — **zmienne niebazowe** (równe 0).
+</Ramka>
+
+<div class="k-symbole">
+  <Znak t="r(A)" nazwa="Rząd macierzy układu" czytamy="rząd A" znaczy="Stopień macierzy jednostkowej w postaci bazowej, czyli liczba kolumn jednostkowych (każda z jedynką w innym wierszu). Tyle niewiadomych liczy każda baza." pamiec="ile kolumn ma macierz jednostkowa, tyle niewiadomych w bazie." />
+  <Znak t="B^{(1)} = \{x_1, x_2\}" nazwa="Baza" czytamy="be jeden" znaczy="Zestaw niewiadomych bazowych. Numer w nawiasie u góry to numer bazy, nie potęga." pamiec="B jak „baza”, nawias u góry = „która z kolei”." />
+  <Znak t="X^{(1)} = (34, -12, 0)" nazwa="Rozwiązanie bazowe" czytamy="duże iks jeden" znaczy="Cały wektor wartości niewiadomych dla bazy $B^{(1)}$ — razem z zerami." pamiec="X z tym samym numerem co baza." />
+</div>
+
+W szwalni z trzema produktami rozwiązanie bazowe to rozwiązanie, w którym jeden z produktów ma zero. Jeśli nie ma w nim liczb ujemnych, jest to plan, w którym szyjesz najwyżej dwa rodzaje produktów — tyle, ile masz zasobów (godziny i materiał).
+
+<Ramka kind="polecenie">
+„Wyznacz rozwiązania bazowe układu”.
+
+1. Sprowadź macierz rozszerzoną do postaci bazowej i policz $r(A)$ — liczbę kolumn jednostkowych.
+2. Sprawdź, czy któraś niewiadoma stoi w równaniu **sama** (przed kreską w wierszu jest tylko jej jedynka). Jej wartość jest ustalona, więc musi być w każdej bazie.
+3. Wypisz zestawy po $r(A)$ niewiadomych (na zajęciach: kombinacje). Jeśli w kroku 2 znalazła się niewiadoma, która stoi sama, bierz tylko zestawy z nią. Jeśli takiej nie ma — bierz wszystkie, np. przy 3 niewiadomych i $r(A) = 2$: $\{x_1, x_2\}$, $\{x_1, x_3\}$, $\{x_2, x_3\}$.
+4. Dla każdego zestawu: niewiadome spoza zestawu $= 0$. Z równań postaci bazowej policz niewiadome z zestawu.
+5. Zapisz wynik jako cały wektor: $X^{(1)} = (x_1, x_2, x_3)$.
+6. Jeśli po wstawieniu zer wychodzi sprzeczność (np. $0 = 2$) albo niewiadomych z zestawu nie da się policzyć jednoznacznie (zostaje np. jedno równanie $x_3 + x_4 = 1$), to ten zestaw nie jest bazą — pomiń go.
+</Ramka>
+
+<Ramka kind="kiedy" tytul="Ile jest zestawów">
+Z 3 niewiadomych wybierasz po 2: $\{x_1, x_2\}$, $\{x_1, x_3\}$, $\{x_2, x_3\}$ — 3 zestawy. Z 4 niewiadomych po 2: $\{x_1, x_2\}$, $\{x_1, x_3\}$, $\{x_1, x_4\}$, $\{x_2, x_3\}$, $\{x_2, x_4\}$, $\{x_3, x_4\}$ — 6 zestawów. Wypisuj jak w słowniku: najpierw wszystkie zestawy z $x_1$, potem te, które zaczynają się od $x_2$, i tak dalej. Kolejność w zestawie nie ma znaczenia: $\{x_1, x_2\}$ i $\{x_2, x_1\}$ to ten sam zestaw.
+</Ramka>
+
+<Rozwiazanie tytul="Rozwiązanie ogólne i rozwiązania bazowe" zrodlo="Zad. 1, str. 100, f)">
+<div slot="tresc">
+
+Rozwiąż układ. Jeśli jest nieoznaczony, wyznacz rozwiązanie ogólne i wszystkie rozwiązania bazowe.
+
+$$
+\begin{cases} x_1 + 2x_2 - 7x_3 = 10 \\ 3x_1 + 8x_2 + 5x_3 = 6 \end{cases}
+$$
+
+</div>
+<div slot="plan">
+
+1. Sprowadzamy macierz rozszerzoną do postaci bazowej — dopiero z niej widać rodzaj układu.
+2. Odczytujemy rodzaj: dwa równania i trzy niewiadome, więc oznaczony nie będzie.
+3. Zapisujemy rozwiązanie ogólne z parametrem.
+4. Liczymy $r(A)$ i wypisujemy zestawy zmiennych bazowych.
+5. Dla każdego zestawu liczymy rozwiązanie bazowe.
+
+Rozwiązania bazowe liczymy z postaci bazowej, a nie z układu wyjściowego. Z wyjściowego też wyjdą, ale rachunek jest dłuższy.
+
+</div>
+
+<Krok tytul="Postać bazowa">
+Kolumna 1: w wierszu 2 pod jedynką stoi 3 — odejmujesz trzy razy wiersz 1: $3 - 3 \cdot 1 = 0$.
+
+<Operacja k={kz[0]} kreska={2} legenda />
+
+Kolumna 2: w wierszu 1 stoi 2 i w wierszu 2 też 2. Od wiersza 1 odejmujesz wiersz 2, a wiersz 2 dzielisz przez 2 — oba ruchy w jednym kroku.
+
+<Operacja k={kz[1]} kreska={2} />
+
+<Dlaczego>
+Mnożnik przy zerowaniu to $-\frac{2}{2} = -1$: zerowana liczba (2) podzielona przez liczbę w wierszu pomocniczym (też 2), z przeciwnym znakiem. Dlatego $w_1' = w_1 - w_2$ — zero powstaje od razu, bez czekania na jedynkę. Obie operacje liczysz z wierszy sprzed kroku: $w_1' = w_1 - w_2$ używa starego wiersza 2 $(0, 2, 26 \mid -24)$, a $w_2' = w_2 \cdot \frac{1}{2}$ dzieli ten sam stary wiersz przez 2. Wolno tak, bo wiersz 1 nie jest używany do zmiany wiersza 2.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Rodzaj układu">
+<div class="k-rown">
+<Mx m={Rz} kreska={2} et={et3} kolumny={[...kolJedn(Rz), ...kolWolne(Rz)]} />
+<span class="k-zn">→</span>
+<Tx t={ukladR(Rz)} />
+</div>
+
+Sprzecznego wiersza nie ma. Macierz jednostkową tworzą kolumny $x_1$ i $x_2$, a kolumna $x_3$ do niej nie wchodzi. Układ jest **nieoznaczony**.
+
+<Dlaczego>
+W obu równaniach stoją po dwie niewiadome, bo w każdym jest też $x_3$. Za $x_3$ możesz wstawić dowolną liczbę, a $x_1$ i $x_2$ dopasują się do niej — dlatego rozwiązań jest nieskończenie wiele.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Rozwiązanie ogólne">
+Podstawiasz $x_3 = a$, $a \in \mathbb{R}$, i przenosisz składniki z $a$ na prawą stronę:
+
+<div class="k-rown">
+<Tx t="x_1 - 33a = 34" />
+<span class="k-zn">⟹</span>
+<Tx t={oz.wzory[0].tex} />
+</div>
+
+<div class="k-rown">
+<Tx t="x_2 + 13a = -12" />
+<span class="k-zn">⟹</span>
+<Tx t={oz.wzory[1].tex} />
+</div>
+
+<div class="k-rown">
+<Tx t={`\\begin{cases} ${oz.wzory.map((w) => w.tex).join(' \\\\ ')} \\end{cases}`} />
+<Tx t={oz.parametry} />
+</div>
+
+<Dlaczego etykieta="Sprawdzenie">
+
+Dla $a = 0$: $(x_1, x_2, x_3) = (34, -12, 0)$ — to będzie też pierwsze rozwiązanie bazowe. W równaniach wyjściowych:
+
+<div class="k-rown">
+<Tx t={sprZ0[0]} />
+<Tx t={sprZ0[1]} />
+</div>
+
+Dla $a = 1$: $(x_1, x_2, x_3) = (67, -25, 1)$:
+
+<div class="k-rown">
+<Tx t={sprZ[0]} />
+<Tx t={sprZ[1]} />
+</div>
+
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Rząd i zestawy zmiennych bazowych">
+Kolumny jednostkowe są dwie, więc $r(A) = 2$ i każda baza liczy 2 niewiadome. Żadna niewiadoma nie stoi w równaniu sama (w obu wierszach są po dwie liczby różne od zera przed kreską), więc sprawdzasz wszystkie pary (kombinacje):
+
+$$
+\{x_1, x_2\},\quad \{x_1, x_3\},\quad \{x_2, x_3\}
+$$
+</Krok>
+
+<Krok tytul="Policz każde rozwiązanie bazowe">
+<Bazowe R={Rz} A0={Az} b0={bz}>
+fioletowe kolumny to niewiadome z wybranego zestawu, wyblakłe — niewiadome, które dostają 0. Pod macierzą jest rachunek: najpierw równanie, w którym została jedna niewiadoma, potem drugie. Przełączaj zestawy przyciskami.
+</Bazowe>
+
+<Dlaczego>
+Zero z niebazowej zmiennej „gasi” jej składnik w równaniu. W $B^{(1)}$ znika $x_3$, więc oba równania od razu dają wynik. W $B^{(2)}$ znika $x_2$ i równanie 2 ma już tylko $x_3$ — od niego zaczynasz.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wynik">
+Układ jest nieoznaczony. Rozwiązanie ogólne:
+
+<div class="k-rown">
+<Tx t={`\\begin{cases} ${oz.wzory.map((w) => w.tex).join(' \\\\ ')} \\end{cases}`} />
+<Tx t={oz.parametry} />
+</div>
+
+Rozwiązania bazowe:
+
+<div class="k-rown">
+<Tx t={`X^{(1)} = ${bzZ.wyniki[0].wektorTex}`} />
+<Tx t={`X^{(2)} = ${bzZ.wyniki[1].wektorTex}`} />
+<Tx t={`X^{(3)} = ${bzZ.wyniki[2].wektorTex}`} />
+</div>
+
+<Dlaczego>
+Polecenie pyta o trzy rzeczy: rodzaj układu, rozwiązanie ogólne i rozwiązania bazowe. W odpowiedzi podajesz wszystkie trzy — samo „nieoznaczony” to za mało.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka">
+- Rozwiązanie bazowe to **cały wektor**, razem z zerami: $(34, -12, 0)$, a nie $(34, -12)$.
+- Baza to zestaw niewiadomych $\{x_1, x_2\}$, a rozwiązanie bazowe — wektor liczb. Nie myl tych dwóch rzeczy.
+- Liczby mogą wyjść ujemne albo ułamkowe — to nie błąd. Na przykład $X^{(2)}$ ma $x_3 = -\frac{12}{13}$. Tutaj wypisujesz je wszystkie. W programowaniu liniowym (moduł 6) rozwiązanie z liczbą ujemną odrzucisz jako niedopuszczalne.
+</Ramka>
+
+<Ramka kind="podobny" tytul="Gdy niewiadoma stoi sama">
+Układ $x_1 + x_2 + 3x_3 = 3$, $2x_1 + x_2 + 3x_3 = 5$. Po $w_2' = w_2 - w_1$ drugi wiersz to od razu $(1, 0, 0 \mid 2)$, czyli $x_1 = 2$. Po $w_1' = w_1 - w_2$ i zamianie wierszy postać bazowa wygląda tak:
+
+<Bazowe R={Rx} A0={Ax} b0={bx}>
+$x_1$ stoi w równaniu sama, więc jest w każdej bazie. Zostają dwa zestawy zamiast trzech: zestaw $\{x_2, x_3\}$ dałby $x_1 = 0$, a równanie 1 mówi, że $x_1 = 2$.
+</Bazowe>
+</Ramka>
+
+<Ramka kind="granica" tytul="Nie każdy zestaw jest bazą">
+Czasem zestaw spełnia regułę z przepisu, a mimo to nie daje rozwiązania. W układzie z dwoma parametrami (wyżej) zestaw $\{x_1, x_2\}$ prowadzi do równania $0 = 2$:
+
+<Bazowe R={R4} A0={A4} b0={b4}>
+zestaw z krzyżykiem nie jest bazą — po wstawieniu zer jedno z równań jest fałszywe. Pozostałe pięć zestawów daje rozwiązania bazowe.
+</Bazowe>
+
+Taki zestaw po prostu pomijasz. Rozwiązań bazowych jest wtedy mniej niż zestawów.
+
+To samo robisz, gdy niewiadomych z zestawu nie da się policzyć jednoznacznie. W układzie $x_1 + x_3 + x_4 = 1$, $x_2 + x_3 + x_4 = 1$ zestaw $\{x_3, x_4\}$ zostawia dwa razy to samo równanie $x_3 + x_4 = 1$. Pasuje do niego nieskończenie wiele par liczb, więc ten zestaw też nie jest bazą.
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Zapis</b>$A$ — liczby przy niewiadomych, $b$ — prawe strony, $[A \mid b]$ — razem, z kreską w miejscu „=”. Brak niewiadomej = 0, samo $x$ = 1, $-x$ = $-1$.</div>
+  <div><b>Operacje</b>Tylko na wierszach. Zmieniasz cały wiersz, także liczbę za kreską. Kilka operacji w kroku liczysz na wierszach sprzed kroku.</div>
+  <div><b>Postać bazowa</b>Przed kreską jak największa macierz jednostkowa: kolumny z jedną jedynką i zerami, jedynki w różnych wierszach. Kolumna po kolumnie: jedynka, potem zera.</div>
+  <div><b>Sprzeczny</b>Wiersz z samymi zerami przed kreską i liczbą $\neq 0$ za kreską, np. $0 = 6$. Wiersz z samych zer (także za kreską) skreślasz.</div>
+  <div><b>Oznaczony</b>Każda niewiadoma stoi w swoim równaniu sama: kolumny wszystkich niewiadomych tworzą macierz jednostkową. Wynik czytasz wprost.</div>
+  <div><b>Nieoznaczony</b>Niewiadome spoza macierzy jednostkowej → parametry $a$, $c$ ($a \in \mathbb{R}$). Przenosząc na prawo, zmieniasz znak.</div>
+  <div><b>Rozwiązania bazowe</b>Zestawy (kombinacje) po $r(A)$ niewiadomych, z niewiadomymi, które stoją same. Reszta = 0. Wynik jako cały wektor $X^{(k)}$. Sprzeczność albo brak jednoznacznego wyniku = to nie baza.</div>
+  <div><b>Sprawdzenie</b>Wynik podstawiasz do równań wyjściowych. Przy rozwiązaniu ogólnym — liczby dla $a = 0$ i $a = 1$, a przy dwóch parametrach np. dla $(a, c) = (0, 0)$, $(1, 0)$, $(0, 1)$.</div>
+</div>
+
+<Ramka kind="gdzie">
+- **Programowanie liniowe (moduł 6):** szuka się tam najlepszego planu produkcji. Dopuszczalne rozwiązania bazowe (bez liczb ujemnych) to plany, w których produkuje się tylko kilka rodzajów towarów. Jeśli najlepszy plan istnieje, to co najmniej jeden z najlepszych jest wśród nich. Na tym opiera się metoda przeglądu zupełnego rozwiązań bazowych.
+- **Ekonomia:** równowaga rynkowa to układ równań „popyt = podaż”. Model z kilkoma rynkami to układ z wieloma niewiadomymi.
+- **Excel:** dodatek Solver rozwiązuje układy i zadania programowania liniowego. Na kolokwium liczysz ręcznie, ale wynik możesz tak sprawdzić.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania z natychmiastową odpowiedzią, ułożone według poleceń z kolokwium. Przy każdej odpowiedzi — dobrej i złej — zobaczysz, dlaczego tak jest.
+
+<a id="cw-zapis" class="k-anchor"></a>
+
+### Zapis macierzowy
+
+<CwiczenieLiczby tytul="Wpisz macierz rozszerzoną" m={rozszerzona(cwA1, cwb1)} kreska={2} t="[A \mid b] =" dlaczego={(i, j) => opisKratki(cwA1, cwb1, i, j)}>
+<div class="k-rown">
+<Tx t={ukladTex(cwA1, cwb1)} />
+</div>
+
+Uważaj na brakujące niewiadome i na same $x$ bez liczby.
+</CwiczenieLiczby>
+
+<CwiczenieLiczby tytul="Najpierw uporządkuj, potem wpisz" m={cwR2} kreska={2} t="[A \mid b] =" dlaczego={(i, j) => cwOpis2[i][j]}>
+<div class="k-rown">
+<Tx t="\begin{cases} x_3 - 2x_1 = 4 \\ x_2 + 3 = x_1 \end{cases}" />
+</div>
+
+Niewiadome mają stać po lewej, w kolejności $x_1, x_2, x_3$.
+</CwiczenieLiczby>
+
+<Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
+  { q: 'W równaniu $3x_2 - x_1 = 1$ do kolumny $x_1$ wpisujesz:', opcje: ['3', '1', '$-1$'], dobra: 2, dlaczego: 'Kolumna to niewiadoma, a nie miejsce w równaniu. Przy $x_1$ stoi minus: $-x_1 = (-1) \\cdot x_1$. Trójka stoi przy $x_2$ i trafia do kolumny 2.' },
+  { q: 'Ile kolumn ma macierz rozszerzona układu 3 równań z 4 niewiadomymi?', opcje: ['5', '4', '7'], dobra: 0, dlaczego: 'Po jednej kolumnie na niewiadomą (4) i jedna za kreską na prawe strony — razem 5. Wierszy jest 3 — tyle, ile równań. 4 to sama macierz $A$, bez kolumny $b$. 7 wychodzi, gdy dodasz liczbę równań do liczby niewiadomych.' },
+  { q: 'W równaniu brakuje $x_2$. Co wpisujesz w kolumnie $x_2$?', opcje: ['nic — kratka zostaje pusta', '0', '1'], dobra: 1, dlaczego: 'Brak niewiadomej to $0 \\cdot x_2$. Macierz nie ma pustych kratek, a przesunięcie liczb w lewo pomieszałoby niewiadome. Jedynkę wpisujesz, gdy $x_2$ stoi bez liczby, bo wtedy to $1 \\cdot x_2$. Tu $x_2$ w ogóle nie ma.' },
+]} />
+
+<a id="cw-rozwiaz" class="k-anchor"></a>
+
+### Rozwiąż układ
+
+<CwiczenieLiczby tytul="Rozwiąż układ dwóch równań" m={[cwX3]} rozwiazanie et={['x₁', 'x₂']} wspolne={`Kolejne kroki: ${opsLista(cwk3)}. Sprawdzenie w równaniach wyjściowych: ${sprLista(cwSpr3)}.`} dlaczego={(i, j) => `Wiersz ${j + 1} postaci bazowej to $x_${j + 1} = ${cwX3[j]}$.`}>
+<div class="k-rown">
+<Tx t={ukladTex(cwA3, cwb3)} />
+</div>
+
+Policz na kartce, a potem wpisz wartości niewiadomych.
+</CwiczenieLiczby>
+
+<CwiczenieLiczby tytul="Rozwiąż układ trzech równań" m={[cwX4]} rozwiazanie et={['x₁', 'x₂', 'x₃']} wspolne={`Kolejne kroki: ${opsLista(cwk4)}. Sprawdzenie w równaniach wyjściowych: ${sprLista(cwSpr4)}.`} dlaczego={(i, j) => `Wiersz ${j + 1} postaci bazowej to $x_${j + 1} = ${cwX4[j]}$.`}>
+<div class="k-rown">
+<Tx t={ukladTex(cwA4, cwb4)} />
+</div>
+
+Wskazówka: po wyzerowaniu kolumny 1 w wierszu 3, w kolumnie 2, stoi gotowa jedynka — zamień wiersze 2 i 3.
+</CwiczenieLiczby>
+
+<Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
+  { q: 'Który ruch wolno zrobić na macierzy rozszerzonej układu?', opcje: ['zamienić miejscami dwie kolumny', 'dodać do wiersza 2 trzykrotność wiersza 1', 'pomnożyć wiersz przez 0'], dobra: 1, dlaczego: 'To dodawanie równań stronami — rozwiązania się nie zmieniają. Zamiana kolumn pomieszałaby niewiadome, a mnożenie przez 0 kasuje równanie.' },
+  { q: 'Po operacji $w_2\' = w_2 - 3w_1$ zmienia się:', opcje: ['cały wiersz 2, razem z liczbą za kreską', 'tylko część wiersza 2 przed kreską', 'wiersze 1 i 2'], dobra: 0, dlaczego: 'Wiersz to całe równanie, więc zmienia się też prawa strona. Wiersz 1 tylko pomaga i przepisujesz go bez zmian.' },
+  { q: 'Wyszło $x_1 = 1$, $x_2 = 4$ dla układu $x_1 + x_2 = 5$, $3x_1 - x_2 = -1$. Jak sprawdzić wynik?', opcje: ['podstawić do jednego równania', 'policzyć wyznacznik macierzy $A$', 'podstawić do obu równań'], dobra: 2, dlaczego: 'Rozwiązanie musi spełniać wszystkie równania: $1 + 4 = 5$ i $3 \\cdot 1 - 4 = -1$. Jedno równanie to za mało — np. $(5, 0)$ spełnia pierwsze, a drugiego nie. Wyznacznik liczysz z samej macierzy $A$: nie ma w nim ani prawych stron, ani Twojego wyniku, więc nie powie, czy wynik jest dobry.' },
+]} />
+
+<a id="cw-rodzaj" class="k-anchor"></a>
+
+### Oznaczony, nieoznaczony czy sprzeczny?
+
+<Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
+  { q: 'To postać bazowa macierzy rozszerzonej. Jaki to układ?', mx: [{ m: [[1, 0, 4], [0, 1, -1]], kreska: 1 }], opcje: ['oznaczony', 'nieoznaczony', 'sprzeczny'], dobra: 0, dlaczego: 'Kolumny obu niewiadomych tworzą macierz jednostkową i nie ma sprzecznego wiersza: $x_1 = 4$, $x_2 = -1$. Każda niewiadoma ma konkretną wartość, więc rozwiązanie jest jedno.' },
+  { q: 'Jaki to układ?', mx: [{ m: [[1, 3, 2], [0, 0, 5]], kreska: 1 }], opcje: ['oznaczony', 'nieoznaczony', 'sprzeczny'], dobra: 2, dlaczego: 'Drugi wiersz to $0x_1 + 0x_2 = 5$, czyli $0 = 5$ — fałsz, cokolwiek wstawisz. Układ jest sprzeczny.' },
+  { q: 'Jaki to układ?', mx: [{ m: [[1, 0, 2, 1], [0, 1, -1, 3]], kreska: 2 }], opcje: ['oznaczony', 'nieoznaczony', 'sprzeczny'], dobra: 1, dlaczego: 'Macierz jednostkową tworzą kolumny $x_1$ i $x_2$, a kolumna $x_3$ do niej nie wchodzi — w obu równaniach stoją po dwie niewiadome. Sprzecznego wiersza nie ma, więc $x_3$ będzie parametrem.' },
+  { q: 'Jaki to układ?', mx: [{ m: [[1, 0, 0, 2], [0, 1, 0, 0], [0, 0, 1, -3]], kreska: 2 }], opcje: ['oznaczony', 'nieoznaczony', 'sprzeczny'], dobra: 0, dlaczego: 'Zero za kreską w wierszu 2 to po prostu $x_2 = 0$. Sprzeczny byłby wiersz z zerami <b>przed</b> kreską i liczbą różną od zera za nią.' },
+  { q: 'Jaki to układ?', mx: [{ m: [[1, 2, 3], [0, 0, 0]], kreska: 1 }], opcje: ['oznaczony', 'nieoznaczony', 'sprzeczny'], dobra: 1, dlaczego: 'Wiersz z samych zer to $0 = 0$ — prawda, skreślasz go. Zostaje $x_1 + 2x_2 = 3$ z dwiema niewiadomymi. Częsty błąd: uznać każdy wiersz zer za sprzeczność.' },
+  { q: 'Jaki to układ?', mx: [{ m: [[1, 0, 0, 2], [0, 1, 0, 1], [0, 0, 0, 4]], kreska: 2 }], opcje: ['oznaczony', 'nieoznaczony', 'sprzeczny'], dobra: 2, dlaczego: 'Wiersz 3 to $0 = 4$. Wystarczy jeden taki wiersz, żeby cały układ był sprzeczny — nawet jeśli reszta wygląda dobrze.' },
+  { q: 'Kolumna $x_3$ ma jedną jedynkę i zero. Jaki to układ?', mx: [{ m: [[1, 0, 1, 3], [0, 1, 0, 2]], kreska: 2 }], opcje: ['oznaczony', 'nieoznaczony', 'sprzeczny'], dobra: 1, dlaczego: 'Jedynka z kolumny $x_3$ stoi w wierszu 1, który ma już jedynkę z kolumny $x_1$. W każdym wierszu do macierzy jednostkowej liczy się tylko jedna kolumna, więc $x_3$ zostaje poza nią. Równanie 1 to $x_1 + x_3 = 3$ — dwie niewiadome, nieskończenie wiele rozwiązań. Odpowiedź „oznaczony” to częsty błąd: liczenie każdej kolumny z jedną jedynką.' },
+]} />
+
+<a id="cw-ogolne" class="k-anchor"></a>
+
+### Rozwiązanie ogólne
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'To postać bazowa. Rozwiązanie ogólne to:', mx: [{ m: [[1, 0, -2, 3], [0, 1, 4, -1]], kreska: 2 }], opcje: ['$x_1 = 3 - 2a$, $x_2 = -1 + 4a$, $x_3 = a$', '$x_1 = a$, $x_2 = -1 - 4a$, $x_3 = 3 + 2a$', '$x_1 = 3 + 2a$, $x_2 = -1 - 4a$, $x_3 = a$'], dobra: 2, dlaczego: 'Kolumna $x_3$ nie wchodzi do macierzy jednostkowej, więc $x_3 = a$. Wiersz 1: $x_1 - 2a = 3$, więc $x_1 = 3 + 2a$ — przenosząc $-2a$ na prawo, zmieniasz znak. Wiersz 2: $x_2 = -1 - 4a$. W odpowiedzi A przepisano liczby bez zmiany znaku. W B parametrem zrobiono $x_1$, choć jej kolumna wchodzi do macierzy jednostkowej.' },
+  { q: 'Która niewiadoma będzie parametrem?', mx: [{ m: [[1, 2, 0, 5], [0, 0, 1, -2]], kreska: 2 }], opcje: ['$x_2$', '$x_1$', '$x_3$'], dobra: 0, dlaczego: 'Macierz jednostkową tworzą kolumny $x_1$ i $x_3$. Kolumna $x_2$ ma liczby 2 i 0 — nie wchodzi do niej, więc $x_2 = a$. Wtedy $x_1 = 5 - 2a$.' },
+  { q: 'Ile wynosi $x_3$ w rozwiązaniu ogólnym tego układu?', mx: [{ m: [[1, 2, 0, 5], [0, 0, 1, -2]], kreska: 2 }], opcje: ['$x_3 = a$', '$x_3 = -2$', '$x_3 = -2 - a$'], dobra: 1, dlaczego: 'W wierszu 2 niewiadoma $x_3$ stoi sama: $x_3 = -2$. Nie zależy od parametru — jest taka sama w każdym rozwiązaniu. Parametrem jest $x_2$, bo to jej kolumna nie wchodzi do macierzy jednostkowej, a w wierszu 2 parametru nie ma.' },
+  { q: 'Macierz jednostkowa w postaci bazowej ma 2 kolumny, układ ma 5 niewiadomych i nie ma sprzecznego wiersza. Ile parametrów ma rozwiązanie ogólne?', opcje: ['2', '5', '3'], dobra: 2, dlaczego: 'Parametrem staje się każda niewiadoma spoza macierzy jednostkowej: $5 - 2 = 3$. 2 to liczba niewiadomych <b>w</b> macierzy jednostkowej — te wyrażasz przez parametry. 5 to wszystkie niewiadome.' },
+  { q: 'Rozwiązanie ogólne z parametrami $a$ i $c$ to:', mx: [{ m: [[1, -1, 0, 3, 2], [0, 0, 1, 1, 4]], kreska: 3 }], opcje: ['$x_1 = 2 + a - 3c$, $x_2 = a$, $x_3 = 4 - c$, $x_4 = c$', '$x_1 = 2 - a + 3c$, $x_2 = a$, $x_3 = 4 + c$, $x_4 = c$', '$x_1 = 2$, $x_2 = a$, $x_3 = 4$, $x_4 = c$'], dobra: 0, dlaczego: 'Poza macierzą jednostkową są $x_2$ i $x_4$ — to parametry $a$ i $c$ (po kolei). Wiersz 1: $x_1 - a + 3c = 2$, więc $x_1 = 2 + a - 3c$. Wiersz 2: $x_3 + c = 4$, więc $x_3 = 4 - c$. W B przepisano liczby bez zmiany znaku. W C wzięto same liczby za kreską — a w wierszach stoją też parametry, więc $x_1$ i $x_3$ od nich zależą.' },
+]} />
+
+<a id="cw-bazowe" class="k-anchor"></a>
+
+### Rozwiązania bazowe
+
+Postać bazowa do dwóch kolejnych zadań:
+
+<div class="k-rown">
+<Mx m={cwRb} kreska={2} et={et3} />
+</div>
+
+<CwiczenieLiczby tytul="Rozwiązanie bazowe dla bazy {x₁, x₃}" m={wektor(cwBz.wyniki[1])} rozwiazanie et={['x₁', 'x₂', 'x₃']} dlaczego={opisBazy(cwBz.wyniki[1])}>
+Baza $\{x_1, x_3\}$: najpierw przyjmij $x_2 = 0$ (niewiadoma spoza bazy), potem policz pozostałe z równań powyżej.
+</CwiczenieLiczby>
+
+<CwiczenieLiczby tytul="Rozwiązanie bazowe dla bazy {x₂, x₃}" m={wektor(cwBz.wyniki[2])} rozwiazanie et={['x₁', 'x₂', 'x₃']} dlaczego={opisBazy(cwBz.wyniki[2])}>
+Baza $\{x_2, x_3\}$ — ten sam układ, inna baza.
+</CwiczenieLiczby>
+
+<Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
+  { q: 'Układ ma 3 niewiadome, $r(A) = 2$, a żadna niewiadoma nie stoi w równaniu sama. Ile zestawów sprawdzasz?', opcje: ['2', '3', '6'], dobra: 1, dlaczego: 'Wszystkie pary z trzech niewiadomych: $\\{x_1, x_2\\}$, $\\{x_1, x_3\\}$, $\\{x_2, x_3\\}$ — trzy zestawy. 6 wychodzi, gdy $\\{x_1, x_2\\}$ i $\\{x_2, x_1\\}$ liczysz osobno, a to ten sam zestaw. 2 to $r(A)$ — tyle niewiadomych liczy jeden zestaw.' },
+  { q: 'Układ ma 4 niewiadome, $r(A) = 2$, żadna nie stoi sama. Ile zestawów sprawdzasz?', opcje: ['4', '12', '6'], dobra: 2, dlaczego: 'Pary z czterech: $\\{x_1, x_2\\}$, $\\{x_1, x_3\\}$, $\\{x_1, x_4\\}$, $\\{x_2, x_3\\}$, $\\{x_2, x_4\\}$, $\\{x_3, x_4\\}$ — sześć zestawów. 12 wychodzi, gdy każdą parę liczysz dwa razy, np. $\\{x_1, x_2\\}$ i $\\{x_2, x_1\\}$. 4 to liczba niewiadomych, a nie zestawów.' },
+  { q: 'W tej postaci bazowej $x_1$ stoi w równaniu sama. Które zestawy sprawdzasz?', mx: [{ m: [[1, 0, 0, 2], [0, 1, 3, 1]], kreska: 2 }], opcje: ['$\\{x_1, x_2\\}$ i $\\{x_1, x_3\\}$', '$\\{x_1, x_2\\}$, $\\{x_1, x_3\\}$ i $\\{x_2, x_3\\}$', 'tylko $\\{x_2, x_3\\}$'], dobra: 0, dlaczego: 'Wartość $x_1 = 2$ jest ustalona, więc $x_1$ musi być w każdej bazie. Zestaw $\\{x_2, x_3\\}$ dałby $x_1 = 0$, a to przeczy równaniu $x_1 = 2$.' },
+  { q: 'Baza $\\{x_1, x_2\\}$ dała $x_1 = 34$, $x_2 = -12$ (układ ma 3 niewiadome). Jak zapisać rozwiązanie bazowe?', opcje: ['$X^{(1)} = (34, -12)$', '$X^{(1)} = (34, -12, 0)$', '$X^{(1)} = (0, 34, -12)$'], dobra: 1, dlaczego: 'Rozwiązanie bazowe to cały wektor, razem z zerami. $x_3$ jest poza bazą, więc na trzecim miejscu stoi 0.' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Układy równań — 10 pytań" pytania={[
+  { q: 'Układ oznaczony to układ, który ma:', opcje: ['nieskończenie wiele rozwiązań', 'dokładnie jedno rozwiązanie', 'żadnego rozwiązania'], dobra: 1, dlaczego: 'Oznaczony — jedno rozwiązanie. Nieskończenie wiele ma nieoznaczony, a żadnego — sprzeczny.' },
+  { q: 'Macierz rozszerzona układu to:', opcje: ['macierz $A$ z dopisaną za kreską kolumną $b$', 'macierz $A$ pomnożona przez $b$', 'macierz $A$ z dopisanym wierszem zer'], dobra: 0, dlaczego: 'Do liczb przy niewiadomych dopisujesz kolumnę prawych stron. Kreska stoi w miejscu znaku równości.' },
+  { q: 'W postaci bazowej jest wiersz $[0\\ \\ 0\\ \\ 0 \\mid 5]$. Układ jest:', opcje: ['nieoznaczony', 'oznaczony', 'sprzeczny'], dobra: 2, dlaczego: 'Ten wiersz to równanie $0 = 5$. Żadne liczby go nie spełnią, więc układ nie ma rozwiązań.' },
+  { q: 'Wiersz $[0\\ \\ 0\\ \\ 0 \\mid 0]$ w postaci bazowej:', opcje: ['oznacza układ sprzeczny', 'to równanie $0 = 0$ — skreślasz go', 'oznacza, że wszystkie niewiadome są równe 0'], dobra: 1, dlaczego: 'Równanie $0 = 0$ jest zawsze prawdziwe i niczego nie zmienia. O rodzaju układu decyduje reszta macierzy.' },
+  { q: 'Dlaczego operacje na wierszach nie zmieniają rozwiązań układu?', opcje: ['bo każda z nich to dozwolony ruch na równaniach', 'bo nie zmieniają wyznacznika macierzy', 'bo zmieniają tylko kolumnę wyrazów wolnych'], dobra: 0, dlaczego: 'Wiersz to równanie. Zamiana wierszy to zmiana kolejności równań, mnożenie wiersza — mnożenie obu stron równania przez liczbę różną od zera, a dodawanie wierszy — dodawanie równań stronami. Żaden z tych ruchów nie zmienia rozwiązań. Wyznacznik nie ma tu nic do rzeczy (mnożenie wiersza przez 2 go podwaja), a operacje zmieniają cały wiersz, nie tylko kolumnę $b$.' },
+  { q: 'Zapis $x_3 = a$, $a \\in \\mathbb{R}$ znaczy, że:', opcje: ['$x_3$ jest równe 0', '$x_3$ może być dowolną liczbą rzeczywistą', '$x_3$ trzeba jeszcze wyznaczyć'], dobra: 1, dlaczego: 'Parametr $a$ to dowolna liczba. Każda wartość $a$ daje inne rozwiązanie układu.' },
+  { q: 'Układ 2 równań z 3 niewiadomymi:', opcje: ['zawsze jest oznaczony', 'może być oznaczony', 'nigdy nie jest oznaczony'], dobra: 2, dlaczego: 'Macierz jednostkowa ma najwyżej tyle kolumn, ile jest wierszy, czyli 2 (po jednej jedynce na wiersz). Jedna z niewiadomych zostaje poza nią — układ jest nieoznaczony albo sprzeczny.' },
+  { q: 'Ile niewiadomych liczy baza?', opcje: ['tyle, ile wynosi $r(A)$', 'tyle, ile jest niewiadomych', 'zawsze 2'], dobra: 0, dlaczego: 'Baza ma tyle niewiadomych, ile kolumn ma macierz jednostkowa w postaci bazowej, czyli $r(A)$. Gdyby w bazie były wszystkie niewiadome, nie byłoby czego zerować. 2 wychodzi tylko w przykładach, w których $r(A) = 2$.' },
+  { q: 'W rozwiązaniu bazowym niewiadome spoza bazy:', opcje: ['są parametrami', 'są równe 0', 'są równe 1'], dobra: 1, dlaczego: 'To jest definicja: niebazowe niewiadome dostają wartość 0, a bazowe liczysz z postaci bazowej.' },
+  { q: 'Zestaw niewiadomych dał po wstawieniu zer równanie $0 = 2$. Co to znaczy?', opcje: ['że rozwiązanie bazowe to wektor zer', 'że cały układ jest sprzeczny', 'że ten zestaw nie jest bazą — pomijasz go'], dobra: 2, dlaczego: 'Układ ma rozwiązania — inne zestawy działają. Tylko ten jeden zestaw nie daje rozwiązania, więc nie jest bazą.' },
+]} />

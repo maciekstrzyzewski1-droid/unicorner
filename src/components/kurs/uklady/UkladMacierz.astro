@@ -1,0 +1,99 @@
+---
+// Układ równań obok macierzy rozszerzonej [A | b]. Każdy składnik równania ma swoją kratkę w macierzy:
+// kliknięcie składnika (albo kratki) podświetla parę i mówi słowami, skąd wzięła się liczba.
+// Brakujące zmienne pokazujemy wyblakłe jako 0·x — to „niewidzialne zera”, które trafiają do macierzy.
+import { tex, texInline } from '../../../lib/tex.js';
+import { Q, mat } from '../../../lib/macierze.js';
+import { zm, zmTxt } from '../../../lib/uklady.js';
+import Mx from '../macierze/Mx.astro';
+interface Props { A: any[][]; b: any[]; zera?: boolean }
+const { A, b, zera = true } = Astro.props;
+const M = mat(A);
+const B = b.map((v: any) => Q.of(v));
+const m = M.length, n = M[0].length;
+if (B.length !== m) throw new Error('UkladMacierz: b ma inną liczbę wierszy niż A');
+const wsp = (a: Q) => (a.jeden ? '' : a.tex());
+// składnik równania w kolumnie j (pierwszy niezerowy bez plusa)
+const skladniki = M.map((row) => {
+  let pierwszy = true;
+  return row.map((a, j) => {
+    if (a.zero) {
+      if (!zera) return { tex: '', zero: true };
+      const t = `${pierwszy ? '' : '{} + '}0${zm(j)}`;
+      pierwszy = false; // wyblakłe zero też jest składnikiem — następny dostaje znak
+      return { tex: t, zero: true };
+    }
+    const t = `${pierwszy ? (a.ujemna ? '-' : '') : a.ujemna ? '{} - ' : '{} + '}${wsp(a.abs())}${zm(j)}`;
+    pierwszy = false;
+    return { tex: t, zero: false };
+  });
+});
+const opis = (i: number, j: number) => {
+  const nr = i + 1;
+  if (j === n) return texInline(`Po prawej stronie równania ${nr} stoi $${B[i].tex()}$. To <b>wyraz wolny</b> — trafia za kreskę, do wiersza ${nr} w ostatniej kolumnie.`);
+  const a = M[i][j], x = zm(j);
+  const gdzie = `wiersz ${nr}, kolumna ${j + 1}`;
+  if (a.zero) return texInline(`W równaniu ${nr} nie ma $${x}$. To tak, jakby stało $0 \\cdot ${x}$ , więc w kratce (${gdzie}) wpisujesz <b>0</b>.`);
+  if (a.jeden) return texInline(`W równaniu ${nr} stoi samo $${x}$, czyli $1 \\cdot ${x}$. Wpisujesz <b>1</b> (${gdzie}).`);
+  if (a.eq(-1)) return texInline(`W równaniu ${nr} stoi $-${x}$, czyli $(-1) \\cdot ${x}$. Wpisujesz <b>−1</b> (${gdzie}).`);
+  return texInline(`W równaniu ${nr} przy $${x}$ stoi $${a.tex()}$${a.ujemna ? ' — razem z minusem' : ''}. Wpisujesz <b>$${a.tex()}$</b> (${gdzie}).`);
+};
+const R = M.map((row, i) => [...row, B[i]]);
+const et = { k: [...[...Array(n).keys()].map(zmTxt), 'b'] };
+---
+<figure class="k-fig k-um" data-um>
+  <div class="k-fig-box">
+    <div class="k-um-row">
+      <div class="k-um-uklad" style={`--n:${n}`} role="group" aria-label="układ równań">
+        {skladniki.map((row, i) => (
+          <>
+            {row.map((s, j) => (
+              <button type="button" class:list={['k-um-s', { 'is-zero': s.zero }]} data-i={i} data-j={j} disabled={!s.tex} set:html={s.tex ? tex(s.tex) : ''} />
+            ))}
+            <span class="k-um-eq" set:html={tex('=')} />
+            <button type="button" class="k-um-s k-um-rhs" data-i={i} data-j={n} set:html={tex(B[i].tex())} />
+          </>
+        ))}
+      </div>
+      <span class="k-um-arr" aria-hidden="true">⟶</span>
+      <div class="k-um-mx" data-mx-wrap><Mx m={R} kreska={n - 1} et={et} /></div>
+    </div>
+    <ul hidden data-expl>{M.flatMap((row, i) => [...row.map((_, j) => <li data-cell={`${i}-${j}`} set:html={opis(i, j)} />), <li data-cell={`${i}-${n}`} set:html={opis(i, n)} />])}</ul>
+  </div>
+  <p class="k-um-out k-live" aria-live="polite" data-out><span data-js-only hidden>Stuknij dowolny składnik równania albo kratkę macierzy.</span></p>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-um]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-um]') === box) el.hidden = false; });
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const terms = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-um-s'));
+    const cells = Array.from(box.querySelectorAll<HTMLElement>('[data-mx-wrap] .k-nm-c'));
+    const pick = (i: string, j: string) => {
+      terms.forEach((t) => t.classList.toggle('is-on', t.dataset.i === i && t.dataset.j === j));
+      cells.forEach((c) => c.classList.toggle('is-zloto', c.dataset.i === i && c.dataset.j === j));
+      const src = box.querySelector(`[data-expl] [data-cell="${i}-${j}"]`);
+      if (src) { out.innerHTML = src.innerHTML; out.classList.add('is-live'); }
+    };
+    terms.forEach((t) => t.addEventListener('click', () => pick(t.dataset.i!, t.dataset.j!)));
+    cells.forEach((c) => { c.style.cursor = 'pointer'; c.addEventListener('click', () => pick(c.dataset.i!, c.dataset.j!)); });
+  });
+</script>
+
+<style>
+  .k-um-row{display:flex;flex-wrap:wrap;align-items:center;gap:12px 18px;}
+  .k-um-uklad{display:grid;grid-template-columns:repeat(var(--n),auto) auto auto;align-items:center;column-gap:2px;row-gap:4px;
+    padding:4px 0 4px 12px;border-left:2px solid var(--muted);border-radius:10px 0 0 10px;}
+  .k-um-s{font:inherit;color:var(--text);background:transparent;border:1px solid transparent;padding:3px 5px;min-height:34px;cursor:pointer;text-align:right;white-space:nowrap;}
+  .k-um-s:disabled{cursor:default;}
+  .k-um-s.is-zero{opacity:.38;}
+  .k-um-s:hover:not(:disabled){border-color:var(--line2);}
+  .k-um-s.is-on{border-color:var(--gold);background:rgba(255,216,74,.12);opacity:1;}
+  .k-um-s:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-um-rhs{text-align:left;}
+  .k-um-eq{padding:0 4px;color:var(--muted);}
+  .k-um-arr{color:var(--muted);font-size:1.3rem;}
+  .k-um-out{margin:10px 0 0!important;padding:8px 12px;border-left:2px solid var(--gold);background:rgba(255,216,74,.06);font-size:.92rem;line-height:1.6;min-height:1.6em;}
+  @media(max-width:560px){.k-um-arr{display:none;}}
+</style>

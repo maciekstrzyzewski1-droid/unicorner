@@ -58,4 +58,17 @@ export const SLOWNICZEK = [
   { t: 'D_{ij} = (-1)^{i+j} M_{ij}', nazwa: 'Dopełnienie algebraiczne', czytamy: 'de i jot', znaczy: 'Minor ze znakiem z szachownicy: plus, gdy $i + j$ parzyste, minus, gdy nieparzyste.', modul: 'macierze' },
   { t: 'A^{-1}', nazwa: 'Macierz odwrotna', czytamy: 'A do minus pierwszej', znaczy: '$A \\cdot A^{-1} = I$. Istnieje, gdy $A$ jest kwadratowa i $\\det(A) \\neq 0$.', modul: 'macierze' },
   { t: 'r(A)', nazwa: 'Rząd macierzy', czytamy: 'rząd A', znaczy: 'Największa liczba liniowo niezależnych wierszy (kolumn) — liczba kolumn jednostkowych w postaci bazowej.', modul: 'macierze' },
+  // --- Układy równań liniowych ---
+  { t: 'x_1,\\ x_2,\\ x_3', nazwa: 'Niewiadome z numerami', czytamy: 'iks jeden, iks dwa, iks trzy', znaczy: 'Nazwy niewiadomych (na slajdach: zmienne). Numer na dole to tylko nazwa — nie potęga i nie mnożenie.', modul: 'uklady-rownan' },
+  { t: 'A', nazwa: 'Macierz układu', czytamy: 'macierz A', znaczy: 'Liczby stojące przy niewiadomych: wiersz = równanie, kolumna = niewiadoma. Brak niewiadomej to 0.', modul: 'uklady-rownan' },
+  { t: 'b', nazwa: 'Wektor wyrazów wolnych', czytamy: 'wektor b', znaczy: 'Liczby z prawych stron równań, w kolejności równań.', modul: 'uklady-rownan' },
+  { t: '[A \\mid b]', nazwa: 'Macierz rozszerzona', czytamy: 'macierz rozszerzona układu', znaczy: 'Macierz $A$ z dopisaną za pionową kreską kolumną $b$. Na niej rozwiązujesz układ.', modul: 'uklady-rownan' },
+  { nazwa: 'Postać bazowa', znaczy: 'Macierz po operacjach na wierszach, w której przed kreską jest jak największa macierz jednostkowa: kolumny z jedną jedynką i zerami, jedynki w różnych wierszach.', modul: 'uklady-rownan' },
+  { nazwa: 'Układ oznaczony', znaczy: 'Ma dokładnie jedno rozwiązanie. W postaci bazowej każda niewiadoma stoi w swoim równaniu sama — kolumny wszystkich niewiadomych tworzą macierz jednostkową.', modul: 'uklady-rownan' },
+  { nazwa: 'Układ nieoznaczony', znaczy: 'Ma nieskończenie wiele rozwiązań. Niewiadome, których kolumny nie wchodzą do macierzy jednostkowej, stają się parametrami.', modul: 'uklady-rownan' },
+  { nazwa: 'Układ sprzeczny', znaczy: 'Nie ma żadnego rozwiązania. W postaci bazowej pojawia się wiersz $0 \\ldots 0$ z liczbą różną od zera za kreską.', modul: 'uklady-rownan' },
+  { t: 'a \\in \\mathbb{R}', nazwa: 'Parametr', czytamy: 'a należy do zbioru liczb rzeczywistych', znaczy: 'Dowolna liczba. W rozwiązaniu ogólnym każda wartość parametru daje inne rozwiązanie układu.', modul: 'uklady-rownan' },
+  { nazwa: 'Rozwiązanie ogólne', znaczy: 'Wszystkie rozwiązania układu nieoznaczonego naraz, zapisane przez parametry, np. $x_1 = 34 + 33a$, $x_3 = a$.', modul: 'uklady-rownan' },
+  { t: 'B^{(1)}', nazwa: 'Baza', czytamy: 'be jeden', znaczy: 'Zestaw $r(A)$ niewiadomych (zmiennych bazowych). Pozostałe niewiadome — niebazowe — dostają wartość 0, a bazowe muszą wtedy wyjść jednoznacznie.', modul: 'uklady-rownan' },
+  { t: 'X^{(1)}', nazwa: 'Rozwiązanie bazowe', czytamy: 'duże iks jeden', znaczy: 'Rozwiązanie dla bazy $B^{(1)}$: niebazowe niewiadome są równe 0. Zapisujesz je jako cały wektor, razem z zerami.', modul: 'uklady-rownan' },
 ];
