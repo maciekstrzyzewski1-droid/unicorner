@@ -75,6 +75,14 @@ export const Rdz = macierz(Dz, Dz, (x, y) => y % x === 0);
 export const N3 = [1, 2, 3];
 export const Rle = macierz(N3, N3, (x, y) => x <= y);
 export const Rlt = macierz(N3, N3, (x, y) => x < y);
+export const S6 = [1, 2, 3, 4, 5, 6];
+export const kw3 = (x, y) => (x * x + y * y) % 3 === 0;
+export const P58 = macierz(S6, S6, kw3);
+export const PP58 = zlozenie(P58, P58);
+export const rach58 = (x, y) => {
+  const s = x * x + y * y;
+  return [`${x}^2 + ${y}^2 = ${s}`, `\\text{reszta } ${s % 3}`];
+};
 
 export const inw = ['A', 'B', 'C', 'D'];
 export const PE = preferencja([20, 30, 35, 40], 'max');
@@ -122,7 +130,7 @@ Z relacji na kolokwium wraca sześć typów poleceń. Każde ma tu przepis, rozw
   { polecenie: 'Wypisz pary relacji i zapisz ją w postaci macierzy (grafu)', jak: 'Sprawdzasz warunek dla każdej pary $(x, y)$: spełniony → 1, niespełniony → 0. Wiersze to pierwszy zbiór, kolumny — drugi.', przepis: 'polecenie-macierz', cwiczenia: 'cw-macierz', zrodlo: 'jak w Zad. 3, str. 49–50' },
   { polecenie: "Wyznacz $P \\cup R$, $P \\cap R$, $P \\setminus R$, $P'$, $P^{-1}$", jak: 'Działania jak na zbiorach, komórka po komórce. Przy odwrotności wiersze zamieniasz z kolumnami.', przepis: 'polecenie-dzialania', cwiczenia: 'cw-dzialania' },
   { polecenie: 'Czy złożenie relacji jest wykonalne? Wyznacz złożenie', jak: 'Sprawdzasz, czy „środkowe” zbiory się zgadzają. Komórka $(x, z)$ to 1, gdy wiersz $x$ i kolumna $z$ mają jedynkę na tej samej pozycji.', przepis: 'polecenie-zlozenie', cwiczenia: 'cw-zlozenie', zrodlo: 'jak w Zad. 3, str. 49–50' },
-  { polecenie: 'Zbadaj własności relacji (zwrotność, symetryczność, …, przechodniość)', jak: 'Patrzysz na przekątną, na pary komórek symetrycznych względem przekątnej i na złożenie $R \\circ R$.', przepis: 'polecenie-wlasnosci', cwiczenia: 'cw-wlasnosci' },
+  { polecenie: 'Zbadaj własności relacji (zwrotność, symetryczność, …, przechodniość)', jak: 'Patrzysz na przekątną, na pary komórek symetrycznych względem przekątnej i na złożenie $R \\circ R$.', przepis: 'polecenie-wlasnosci', cwiczenia: 'cw-wlasnosci', zrodlo: 'jak w Zad. 1, str. 58, i)' },
   { polecenie: 'Czy relacja jest relacją porządkującą? Jaką?', jak: 'Najpierw przechodniość, potem stopień asymetrii, na końcu spójność — i odczytujesz pole ze schematu.', przepis: 'polecenie-porzadek', cwiczenia: 'cw-porzadek' },
   { polecenie: 'Wyznacz zbiór rozwiązań Pareto', jak: 'Macierze preferencji → część wspólna $M$ → zaostrzenie $S$ → kolumny z samych zer.', przepis: 'polecenie-pareto', cwiczenia: 'cw-pareto', zrodlo: 'jak w Zad. 2 i 3, str. 68' },
 ]} />
@@ -678,6 +686,151 @@ kliknij własność: na zielono podświetlą się kratki, które ją potwierdzaj
 </Krok>
 </Rozwiazanie>
 
+Teraz zadanie z zajęć. Przepis jest ten sam. Nowe jest tylko to, że warunek zapisano symbolami, więc najpierw trzeba go przetłumaczyć na zwykłe słowa.
+
+<Rozwiazanie tytul="Zbadaj własności relacji: suma kwadratów dzieli się przez 3" zrodlo="Zad. 1, str. 58, i)">
+<div slot="tresc">
+
+Relacja $P \subset \{1, 2, 3, 4, 5, 6\}^2$ jest określona warunkiem:
+
+$$
+xPy \Leftrightarrow \exists k \in \mathbb{Z}: x^2 + y^2 = 3k
+$$
+
+Zbadaj jej własności.
+
+</div>
+<div slot="plan">
+
+1. Tłumaczymy warunek na zwykłe słowa — bez tego nie wiadomo, co liczyć w kratkach.
+2. Budujemy macierz $6 \times 6$, bo własności czytamy z macierzy.
+3. Patrzymy na przekątną → zwrotność i antyzwrotność.
+4. Patrzymy na lustrzane kratki → symetria, quasi-asymetria, asymetria, spójność.
+5. Liczymy $P \circ P$ i porównujemy z $P$ → przechodniość.
+6. Zbieramy wyniki. Przy każdej własności, która nie zachodzi, podajemy kontrprzykład.
+
+Kroki 3–6 to ten sam przepis co w zadaniu wyżej.
+
+</div>
+
+<Krok tytul="Przetłumacz warunek na zwykłe słowa">
+<Rozbior t="xPy \Leftrightarrow \exists k \in \mathbb{Z}: x^2 + y^2 = 3k" czytamy="$x$ jest w relacji $P$ z $y$ wtedy i tylko wtedy, gdy istnieje liczba całkowita $k$ taka, że $x^2 + y^2 = 3k$" czesci={[
+  { t: '\\exists k \\in \\mathbb{Z}', o: '„istnieje liczba całkowita $k$”. $\\mathbb{Z}$ to zbiór liczb całkowitych: …, $-2$, $-1$, $0$, $1$, $2$, …' },
+  { t: 'x^2 + y^2', o: '<b>suma kwadratów</b>: $x \\cdot x + y \\cdot y$' },
+  { t: '3k', o: 'trzy razy liczba całkowita, czyli jedna z liczb …, $-3$, $0$, $3$, $6$, $9$, … Suma kwadratów ma być jedną z nich. Po ludzku: <b>$x^2 + y^2$ dzieli się przez 3 bez reszty</b>.' },
+]} />
+
+Dwa przykłady:
+
+- Para $(1, 2)$: $1^2 + 2^2 = 1 + 4 = 5$. Wśród liczb $3k$ są $3$ i $6$, ale nie ma $5$. Para **nie należy** do $P$.
+- Para $(3, 6)$: $3^2 + 6^2 = 9 + 36 = 45 = 3 \cdot 15$. Takie $k$ istnieje — to $15$. Para **należy** do $P$.
+
+<Dlaczego typ="umowa">
+$\{1, 2, 3, 4, 5, 6\}^2$ to skrót od $\{1, 2, 3, 4, 5, 6\} \times \{1, 2, 3, 4, 5, 6\}$ — tak jak $5^2$ to skrót od $5 \cdot 5$. Relacja jest więc w jednym zbiorze, a jej macierz ma 6 wierszy i 6 kolumn z tymi samymi liczbami.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zbuduj macierz">
+Dla każdej kratki: $x$ z lewej, $y$ z góry. Liczysz $x^2 + y^2$ i dzielisz wynik przez 3. Dzieli się bez reszty → 1. Zostaje reszta → 0.
+
+<ObliczeniaMacierzy w={S6} k={S6} warunek="x^2 + y^2 = 3k" rachunek={rach58} spelnia={kw3}>
+górna linijka to suma kwadratów, dolna — reszta z dzielenia tej sumy przez 3. Reszta 0 → 1 (suma dzieli się przez 3), inna reszta → 0.
+</ObliczeniaMacierzy>
+
+<div class="k-macierze">
+<Macierz w={S6} k={S6} m={P58} t="P" przekatna />
+</div>
+
+Jedynki są tylko w czterech kratkach: $(3, 3)$, $(3, 6)$, $(6, 3)$ i $(6, 6)$. To pary, w których obie liczby dzielą się przez 3.
+
+<Dlaczego typ="inaczej">
+
+Na kolokwium da się szybciej: zamiast 36 sum policz tylko 6 kwadratów i ich reszty z dzielenia przez 3.
+
+| $x$ | 1 | 2 | 3 | 4 | 5 | 6 |
+|---|---|---|---|---|---|---|
+| $x^2$ | 1 | 4 | 9 | 16 | 25 | 36 |
+| reszta | 1 | 1 | 0 | 1 | 1 | 0 |
+
+Dodaj reszty $x^2$ i $y^2$ — wyjdzie reszta całej sumy (działa, bo w tabeli są tylko reszty 0 i 1). Sprawdźmy na parze $(2, 5)$: reszty $1 + 1 = 2$, a $4 + 25 = 29$ i $29 = 3 \cdot 9 + 2$ — reszta też $2$. Zgadza się.
+
+- $0 + 0 = 0$ → suma dzieli się przez 3.
+- $0 + 1 = 1$ i $1 + 1 = 2$ → zostaje reszta.
+
+Jedynka wychodzi więc tylko wtedy, gdy obie liczby mają resztę 0. To liczby 3 i 6.
+
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Przekątna: ani zwrotna, ani antyzwrotna">
+<div class="k-macierze">
+<Macierz w={S6} k={S6} m={P58} t="P" przekatna oznacz={[{ i: 0, j: 0, styl: 'roz' }, { i: 2, j: 2, styl: 'zloto' }]} />
+</div>
+
+Na przekątnej są i zera, i jedynki: 0, 0, 1, 0, 0, 1.
+
+- Różowa kratka $(1, 1)$ ma 0, więc relacja **nie jest zwrotna**.
+- Złota kratka $(3, 3)$ ma 1, więc relacja **nie jest antyzwrotna**.
+
+To pułapka z ramki „Niezwrotna to nie antyzwrotna”: relacja nie jest ani zwrotna, ani antyzwrotna.
+
+<Dlaczego>
+$1^2 + 1^2 = 2$ nie dzieli się przez 3, więc w kratce $(1, 1)$ jest 0. $3^2 + 3^2 = 18 = 3 \cdot 6$ dzieli się przez 3, więc w kratce $(3, 3)$ jest 1.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Lustrzane kratki: symetryczna, nie quasi-asymetryczna, nie spójna">
+<div class="k-macierze">
+<Macierz w={S6} k={S6} m={P58} t="P" oznacz={[{ i: 2, j: 5, styl: 'zloto' }, { i: 5, j: 2, styl: 'zloto' }, { i: 0, j: 1, styl: 'roz' }, { i: 1, j: 0, styl: 'roz' }]} />
+</div>
+
+- Każda kratka ma tę samą cyfrę co jej odbicie w lustrze. Relacja jest **symetryczna**.
+- Złote kratki $(3, 6)$ i $(6, 3)$ to dwie jedynki w lustrze. Relacja **nie jest quasi-asymetryczna**, a więc **nie jest też asymetryczna**.
+- Różowe kratki $(1, 2)$ i $(2, 1)$ to dwa zera w lustrze: 1 i 2 nie są w relacji w żadną stronę. Relacja **nie jest spójna**.
+
+<Dlaczego>
+Para $(x, y)$ i para $(y, x)$ dają tę samą sumę, bo $x^2 + y^2 = y^2 + x^2$ — kolejność dodawania nie zmienia wyniku. Dlatego kratka i jej odbicie zawsze mają tę samą cyfrę.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Przechodniość: policz P ∘ P i porównaj z P">
+**Krok A.** Liczymy $P \circ P$ kratka po kratce: wiersz $x$ macierzy $P$ pod kolumną $z$ tej samej macierzy. Przykład — kratka $(3, 6)$:
+
+<PrzylozWiersz A={S6} B={S6} C={S6} mP={P58} mQ={P58} i={2} k={5} nP="P" nQ="P" />
+
+Tak samo powstają pozostałe kratki — kliknij dowolną kratkę macierzy wyniku $P \circ P$:
+
+<Zlozenie A={S6} B={S6} C={S6} mP={P58} mQ={P58} nP="P" nQ="P">
+złożenie relacji $P$ z samą sobą. Pierwsze dwie macierze to ta sama relacja $P$. Trzecia to wynik — jedynka znaczy „da się dojść w dwóch krokach”.
+</Zlozenie>
+
+**Krok B.** Porównujemy $P \circ P$ z $P$. Szukamy kratki, w której $P \circ P$ ma 1, a $P$ ma 0.
+
+<div class="k-macierze">
+<Macierz w={S6} k={S6} m={PP58} t="P \circ P" oznacz={jedynki(PP58, 'ok')} />
+<Macierz w={S6} k={S6} m={P58} t="P" oznacz={jedynki(P58, 'ok')} />
+</div>
+
+Takiej kratki nie ma. Jedynki stoją w tych samych miejscach (zielone) — $P \circ P$ wyszło takie samo jak $P$. Warunek $P \circ P \subset P$ jest spełniony, więc relacja **jest przechodnia**.
+
+<Dlaczego>
+Przechodniość psuje tylko kratka, w której $P \circ P$ ma 1, a $P$ ma 0: droga w dwóch krokach bez skrótu w jednym. Tu wszystkie jedynki łączą tylko liczby 3 i 6. Każda droga w dwóch krokach zaczyna się i kończy na 3 albo 6, a każde dwie z tych liczb są w relacji bezpośrednio — skrót zawsze istnieje.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Szybki test z zadania wyżej: jeśli w wierszu $x$ jest 1 w kolumnie $y$, to wiersz $y$ musi się „mieścić” w wierszu $x$. Jedynki są tylko w wierszach 3 i 6, a te dwa wiersze są identyczne. Test zdany.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zbierz wynik">
+Relacja jest **symetryczna i przechodnia**. Nie jest zwrotna, antyzwrotna, asymetryczna, quasi-asymetryczna ani spójna.
+
+<Wlasnosci et={S6} m={P58} t="P">
+kliknij własność: na zielono podświetlą się kratki, które ją potwierdzają, na różowo — kontrprzykład. Ostatni przycisk mówi, czy to relacja porządkująca.
+</Wlasnosci>
+</Krok>
+</Rozwiazanie>
+
 <Ramka kind="podobny">
 Relacje „$\leq$” i „$<$” w zbiorze $\{1, 2, 3\}$ różnią się tylko przekątną:
 
@@ -721,6 +874,7 @@ Skąd słowo „liniowy”? Relacja spójna pozwala porównać **każde dwa** el
 | „zysk $X \geq$ zysk $Y$” dla zysków 20, 30, 30 | **liniowy preporządek**: zwrotna, przechodnia, spójna, ale **nie** quasi-asymetryczna (remis) |
 | „jest starszy niż” w grupie z bliźniakami | **ostry porządek**: asymetryczna, przechodnia, ale **niespójna** (bliźniaki) |
 | $\lvert x - y\rvert \leq 1$ w $\{1, 2, 3, 4\}$ | **nie jest porządkująca**, bo nie jest przechodnia |
+| $x^2 + y^2$ dzieli się przez 3 w $\{1, \dots, 6\}$ | **nie pasuje do żadnego pola**: przechodnia, ale ani zwrotna, ani asymetryczna |
 
 <Wlasnosci et={Dz} m={Rdz}>
 relacja „$x$ jest dzielnikiem $y$” w zbiorze $\{1, 2, 3, 6\}$. Kliknij „spójna?” — na różowo podświetlą się zera w lustrze, $(2, 3)$ i $(3, 2)$. Potem kliknij „typ porządku?”.
@@ -750,6 +904,8 @@ Nie każda relacja przechodnia pasuje do schematu. Przykład: zbiór $\{1, 2\}$ 
 - Nie jest zwrotna: w kratce $(2, 2)$ jest 0 (różowa).
 - Nie jest asymetryczna: w kratce $(1, 1)$ jest 1 (złota).
 - Dolne i środkowe pole schematu wymagają zwrotności, a górne — asymetrii. Ta relacja nie ma żadnej z nich, więc nie pasuje do żadnego pola.
+
+Tak samo jest z relacją z zadania z sumą kwadratów (Zad. 1, str. 58, i)): jest przechodnia, ale na przekątnej ma i zera, i jedynki.
 </Ramka>
 
 ## Optimum Pareto

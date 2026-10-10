@@ -2,6 +2,7 @@
 // Siatka obliczeń: w każdej komórce widać cały rachunek dla pary (x, y) — co wstawiamy, co wychodzi i jaka cyfra trafia do macierzy.
 // rachunek(x, y) → [linia 1, linia 2] w LaTeX-u, np. ['2 \\cdot 3 = 6', '6 > 2'].  spelnia(x, y) → czy para należy do relacji.
 // Kliknięcie komórki podświetla jej wiersz i kolumnę (jak w statkach) i pokazuje pełne zdanie pod siatką.
+// Przy więcej niż 4 kolumnach kratki są węższe (klasa is-gesta).
 import { tex, texInline } from '../../../lib/tex.js';
 type El = number | string;
 interface Props { w: El[]; k: El[]; rachunek: (x: El, y: El) => [string, string]; spelnia: (x: El, y: El) => boolean; warunek: string }
@@ -15,7 +16,7 @@ const komorki = w.map((x, i) => k.map((y, j) => {
 <figure class="k-fig k-obl" data-obl>
   <div class="k-fig-box">
     <div class="k-obl-scroll">
-      <table class="k-obl-t">
+      <table class:list={['k-obl-t', { 'is-gesta': k.length > 4 }]}>
         <thead>
           <tr>
             <th class="k-obl-corner"><span set:html={tex('x \\backslash y')} /></th>
@@ -74,6 +75,7 @@ const komorki = w.map((x, i) => k.map((y, j) => {
   .k-obl-t tbody th{text-align:right;}
   .k-obl-t th.is-row,.k-obl-t th.is-col{color:var(--gold);background:rgba(255,216,74,.1);}
   .k-obl-t td{min-width:92px;padding:6px 8px;border:1px solid var(--line2);background:rgba(255,255,255,.02);text-align:center;cursor:pointer;vertical-align:middle;transition:border-color .15s,background .15s;}
+  .k-obl-t.is-gesta td{min-width:0;padding:6px 6px;} /* więcej niż 4 kolumny: kratka tak szeroka jak rachunek, żeby siatka zmieściła się na komputerze */
   .k-obl-t td.is-1{border-color:rgba(90,209,160,.45);}
   .k-obl-t td.is-on{border-color:var(--gold);background:rgba(255,216,74,.1);}
   .k-obl-t td:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}

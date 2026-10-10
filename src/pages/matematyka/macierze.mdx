@@ -178,9 +178,9 @@ Z macierzy na kolokwium wraca sześć typów poleceń. Każde ma tu przepis, roz
 <Polecenia items={[
   { polecenie: 'Wykonaj działania (o ile są wykonalne): $A + B$, $3A$, $A^T$, $A \\cdot B$, $B \\cdot A^T$', jak: 'Najpierw sprawdzasz wymiary. Dodajesz liczby z tych samych miejsc, a mnożysz wiersz pierwszej macierzy przez kolumnę drugiej.', przepis: 'polecenie-dzialania', cwiczenia: 'cw-dzialania', zrodlo: 'jak w Zad. 1, str. 73, d)' },
   { polecenie: 'Oblicz wyznacznik macierzy', jak: '2×2 — iloczyn na głównej przekątnej minus iloczyn na drugiej. 3×3 — reguła Sarrusa. Większe — rozwinięcie Laplace’a, najlepiej po zerowaniu operacjami elementarnymi.', przepis: 'polecenie-wyznacznik', cwiczenia: 'cw-wyznacznik', zrodlo: 'jak w Zad. 1, str. 87–88, f)' },
-  { polecenie: 'Dla jakich wartości parametru macierz jest osobliwa?', jak: 'Liczysz wyznacznik z literą, przyrównujesz go do zera i rozwiązujesz równanie.', przepis: 'polecenie-parametr', cwiczenia: 'cw-wyznacznik', zrodlo: 'częsty wariant polecenia o wyznacznik' },
+  { polecenie: 'Dla jakich wartości parametru macierz jest osobliwa?', jak: 'Liczysz wyznacznik z literą, przyrównujesz go do zera i rozwiązujesz równanie.', przepis: 'polecenie-parametr', cwiczenia: 'cw-wyznacznik', zrodlo: 'sprawdza definicję macierzy osobliwej ze slajdów' },
   { polecenie: 'Wyznacz macierz odwrotną (metodą wyznacznikową lub operacji elementarnych)', jak: 'Sprawdzasz, czy $\\det(A) \\neq 0$. Potem albo wzór z macierzą dopełnień, albo przekształcenie $[A \\mid I]$ w $[I \\mid A^{-1}]$.', przepis: 'polecenie-odwrotna', cwiczenia: 'cw-odwrotna', zrodlo: 'jak w Zad. 1, str. 92–93, e) i w przykładzie z zajęć' },
-  { polecenie: 'Rozwiąż równanie macierzowe $A \\cdot X = B$', jak: 'Mnożysz obie strony przez $A^{-1}$ z tej strony, po której stoi $A$: $X = A^{-1} \\cdot B$.', przepis: 'polecenie-rownanie', cwiczenia: 'cw-odwrotna', zrodlo: 'wariant spoza slajdów' },
+  { polecenie: 'Rozwiąż równanie macierzowe $A \\cdot X = B$', jak: 'Mnożysz obie strony przez $A^{-1}$ z tej strony, po której stoi $A$: $X = A^{-1} \\cdot B$.', przepis: 'polecenie-rownanie', cwiczenia: 'cw-odwrotna', zrodlo: 'dodatkowo — tego nie ma na slajdach' },
   { polecenie: 'Wyznacz rząd macierzy', jak: 'Operacjami elementarnymi robisz jak najwięcej kolumn macierzy jednostkowej. Rząd to stopień tej macierzy jednostkowej.', przepis: 'polecenie-rzad', cwiczenia: 'cw-rzad', zrodlo: 'jak w Zad. 1, str. 83, e)' },
 ]} />
 
@@ -752,6 +752,8 @@ Dwa wiersze (albo dwie kolumny) proporcjonalne — jeden jest wielokrotnością 
 
 <a id="polecenie-parametr" class="k-anchor"></a>
 
+Przypomnienie ze slajdów: macierz, której wyznacznik jest równy 0, to **macierz osobliwa**. Polecenie z parametrem sprawdza właśnie tę definicję. Różnica jest jedna: w macierzy stoi litera, więc wyznacznik wychodzi wyrażeniem z literą, a nie liczbą.
+
 <Ramka kind="polecenie">
 „Dla jakich wartości parametru $a$ macierz $A$ jest osobliwa?”
 
@@ -1139,11 +1141,13 @@ Gdy w trakcie po lewej stronie kreski pojawi się wiersz z samych zer, macierz j
 - Jeśli polecenie nie mówi, którą metodą liczyć — wybierz tę, w której rzadziej się mylisz.
 </Ramka>
 
-### Równanie macierzowe
+### Równanie macierzowe (dodatkowo)
 
 <a id="polecenie-rownanie" class="k-anchor"></a>
 
-Tego na slajdach nie ma, ale to częsty wariant polecenia z macierzą odwrotną: „wyznacz macierz $X$ z równania $A \cdot X = B$”. Macierzy nie dzielimy. Zamiast tego mnożymy przez $A^{-1}$.
+Tego na slajdach nie ma — to dodatek. Polecenie „wyznacz macierz $X$ z równania $A \cdot X = B$” często pojawia się w zbiorach zadań. Jeśli prowadzący go nie robi, a czasu przed kolokwium jest mało, tę część możesz pominąć.
+
+Macierzy nie dzielimy. Zamiast tego mnożymy przez $A^{-1}$.
 
 <Ramka kind="polecenie">
 „Rozwiąż równanie macierzowe”.
@@ -1413,7 +1417,7 @@ Przy rzędzie wolno używać operacji na wierszach i na kolumnach. Przy macierzy
   <div><b>Odwrotna</b>Istnieje, gdy $A$ jest kwadratowa i $\det(A) \neq 0$. 2×2: zamień liczby na głównej przekątnej, zmień znak pozostałych, podziel przez $\det$.</div>
   <div><b>Metoda wyznacznikowa</b>$A^{-1} = \frac{1}{\det(A)} D^T$. Nie zapomnij transponować $D$.</div>
   <div><b>Odwrotna — operacje elementarne</b>$[A \mid I] \to [I \mid A^{-1}]$. Tylko wiersze. Kolumna po kolumnie: jedynka, potem zera.</div>
-  <div><b>Równanie</b>$A \cdot X = B \Rightarrow X = A^{-1} \cdot B$. $X \cdot A = B \Rightarrow X = B \cdot A^{-1}$.</div>
+  <div><b>Równanie (dodatkowo)</b>$A \cdot X = B \Rightarrow X = A^{-1} \cdot B$. $X \cdot A = B \Rightarrow X = B \cdot A^{-1}$.</div>
   <div><b>Rząd</b>Postać bazowa: jak najwięcej kolumn jednostkowych. Rząd = liczba kolumn jednostkowych, każda z jedynką w innym wierszu. Wiersz i kolumna zer na koniec.</div>
 </div>
 
@@ -1510,7 +1514,7 @@ Wpisz macierz dopełnień algebraicznych $D$ — jeszcze bez transponowania. Na 
   { q: 'W metodzie wyznacznikowej $A^{-1} = \\frac{1}{\\det(A)} \\cdot \\ldots$', opcje: ['$D$', '$D^T$', '$A^T$'], dobra: 1, dlaczego: 'Wzór ma transponowaną macierz dopełnień $D^T$. Pominięcie transpozycji to najczęstszy błąd w tej metodzie.' },
   { q: 'W metodzie operacji elementarnych wolno używać:', opcje: ['operacji na wierszach i kolumnach', 'tylko operacji na kolumnach', 'tylko operacji na wierszach'], dobra: 2, dlaczego: 'Przekształcasz $[A \\mid I]$ w $[I \\mid A^{-1}]$ wyłącznie operacjami na wierszach. Na kolumnach — przy rzędzie, nie przy odwracaniu.' },
   { q: 'Jak powstaje $A^{-1}$ dla takiej macierzy $2 \\times 2$?', mx: [{ m: [['a', 'b'], ['c', 'd']], t: 'A =' }], opcje: ['zamieniasz miejscami $a$ i $d$, zmieniasz znak $b$ i $c$, dzielisz przez $ad - bc$', 'zmieniasz znak $a$ i $d$, zamieniasz miejscami $b$ i $c$, dzielisz przez $ad - bc$', 'zamieniasz miejscami $a$ i $d$ oraz $b$ i $c$, bez dzielenia'], dobra: 0, dlaczego: 'Liczby z głównej przekątnej ($a$, $d$) zamieniają się miejscami, a pozostałe ($b$, $c$) zmieniają znak. Na końcu wszystko dzielisz przez wyznacznik $ad - bc$.' },
-  { q: 'Równanie $X \\cdot A = B$. Ile wynosi $X$?', opcje: ['$A^{-1} \\cdot B$', '$B \\cdot A^{-1}$', '$\\frac{B}{A}$'], dobra: 1, dlaczego: '$A$ stoi z prawej strony $X$, więc mnożysz obie strony przez $A^{-1}$ z prawej: $X \\cdot A \\cdot A^{-1} = B \\cdot A^{-1}$, czyli $X = B \\cdot A^{-1}$. Macierzy nie dzielimy.' },
+  { q: 'Dodatkowo (spoza slajdów): równanie $X \\cdot A = B$. Ile wynosi $X$?', opcje: ['$A^{-1} \\cdot B$', '$B \\cdot A^{-1}$', '$\\frac{B}{A}$'], dobra: 1, dlaczego: '$A$ stoi z prawej strony $X$, więc mnożysz obie strony przez $A^{-1}$ z prawej: $X \\cdot A \\cdot A^{-1} = B \\cdot A^{-1}$, czyli $X = B \\cdot A^{-1}$. Macierzy nie dzielimy.' },
   { q: 'Sprawdzasz wynik odwracania. Co ma wyjść z $A \\cdot A^{-1}$?', opcje: ['macierz zerowa', '$A$', 'macierz jednostkowa $I$'], dobra: 2, dlaczego: 'To definicja macierzy odwrotnej: $A \\cdot A^{-1} = I$ — jedynki na przekątnej, zera poza nią.' },
 ]} />
 
