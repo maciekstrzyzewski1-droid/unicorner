@@ -263,8 +263,8 @@ Na zajęciach końce przedziału oddziela się przecinkiem: $(2, 4)$. W liceum c
 
 1. Każdą pojedynczą nierówność zamień na przedział i narysuj na osobnej osi (jedna pod drugą, ta sama skala).
 2. Jeśli są nawiasy, zacznij od nich — tak jak w logice.
-3. $\land$ („i”) → **część wspólna**: zostaje tylko to, co zamalowane na **obu** osiach.
-4. $\lor$ („lub”) → **suma**: bierzesz wszystko, co zamalowane na **którejkolwiek** osi.
+3. $\land$ („i”) w warunku → **część wspólna** przedziałów: zostaje tylko to, co zamalowane na **obu** osiach.
+4. $\lor$ („lub”) w warunku → **suma** przedziałów: bierzesz wszystko, co zamalowane na **którejkolwiek** osi.
 5. Odczytaj wynik z ostatniej osi. Kawałki, które się nie stykają, łączysz znakiem $\cup$.
 </Ramka>
 
@@ -288,12 +288,25 @@ Przykład z „lub”: $\{x \in \mathbb{R} : x < 0 \lor x \geq 2\}$.
 „lub” bierze wszystko, co zamalowane na którejkolwiek osi. Kawałki się nie stykają, więc wynik to suma dwóch przedziałów — znak $\cup$ między nimi.
 </Os>
 
+<Ramka kind="pulapka" tytul="„Lub” w warunku, a w wyniku oba kawałki naraz?">
+To nie sprzeczność. „Lub” i suma działają na dwóch różnych poziomach:
+
+- **$\lor$ dotyczy jednej liczby.** Liczba należy do zbioru, gdy spełnia co najmniej jeden warunek. $-1$ spełnia tylko $x < 0$ — należy. $3$ spełnia tylko $x \geq 2$ — należy. $1$ nie spełnia żadnego — nie należy.
+- **$\cup$ dotyczy całego zbioru.** Zbiera wszystkie liczby, które przeszły ten test. Dlatego w wyniku są oba kawałki naraz.
+
+Oba poziomy łączy definicja sumy: $x \in A \cup B \Leftrightarrow x \in A \lor x \in B$.
+
+Z życia: „zniżkę mają studenci i emeryci”. Jedna osoba musi być studentem **lub** emerytem. A cała grupa osób ze zniżką to studenci $\cup$ emeryci — obie grupy naraz.
+
+Gdyby w warunku stało „i” ($x < 0 \land x \geq 2$), jedna liczba musiałaby spełnić oba warunki naraz. Żadna tego nie potrafi, więc wynik byłby pusty: $\emptyset$.
+</Ramka>
+
 <Rozwiazanie tytul="Zapisz zbiór {x ∈ ℝ : x ≤ 1 ∨ (x ≥ 7 ∧ x < 8)} jako przedział" zrodlo="Zad. 2, str. 31, g)">
 <div slot="plan">
 
 1. Zaczynamy od nawiasu. „Lub” łączy cały nawias z $x \leq 1$, więc najpierw trzeba wiedzieć, co jest w nawiasie.
 2. Zamieniamy $x \leq 1$ na przedział.
-3. Łączymy oba kawałki sumą, bo między nimi stoi „lub”.
+3. Łączymy oba kawałki sumą $\cup$, bo w warunku między nimi stoi „lub”.
 
 Kroki 1 i 2 możesz zrobić w dowolnej kolejności. Ważne, żeby połączyć je dopiero na końcu.
 
@@ -319,7 +332,7 @@ Nawiasy liczymy najpierw — jak w logice. Bez tego nie wiadomo, do czego odnosi
 $x \leq 1$ to wszystkie liczby od $-\infty$ do 1 włącznie: $(-\infty, 1]$.
 </Krok>
 
-<Krok tytul="Połącz „lubem”, czyli sumą">
+<Krok tytul="Połącz kawałki znakiem ∪">
 $$
 (-\infty, 1] \cup [7, 8)
 $$
@@ -333,7 +346,7 @@ na dole oba kawałki naraz. Między 1 a 7 jest przerwa, więc zostają dwa przed
 </Os>
 
 <Dlaczego>
-„Lub” wystarczy jeden spełniony warunek, więc bierzemy wszystko, co należy do któregokolwiek kawałka. Kawałków nie da się skleić w jeden przedział, bo liczby między 1 a 7 (np. 4) nie spełniają żadnego warunku.
+Każda liczba musi spełnić tylko jeden z warunków — tak działa „lub”. Dlatego do zbioru trafiają liczby z obu kawałków, a cały zbiór zapisujemy jako ich sumę $\cup$. Kawałków nie da się skleić w jeden przedział, bo liczby między 1 a 7 (np. 4) nie spełniają żadnego warunku.
 </Dlaczego>
 
 <Dlaczego typ="inaczej">
@@ -996,7 +1009,7 @@ Wzór potrzebuje wszystkich części wspólnych. Jeśli zadanie podaje liczby �
   <div><b>Moc ciągu</b>$\frac{\text{ostatni} - \text{pierwszy}}{\text{krok}} + 1$ — tylko przy stałym kroku.</div>
   <div><b>Przedziały</b>$( )$ — koniec nie należy, puste kółko. $[ ]$ — należy, pełne kółko. Przy $\infty$ zawsze $( )$.</div>
   <div><b>∧ i ∨ na osi</b>$\land$ — część wspólna (zamalowane na obu osiach). $\lor$ — suma (na którejkolwiek).</div>
-  <div><b>Działania</b>$\cup$ — lub. $\cap$ — i. $A \setminus B$ — w A i nie w B. $A'$ — w U i nie w A.</div>
+  <div><b>Działania</b>$A \cup B$ — w A lub w B. $A \cap B$ — w A i w B. $A \setminus B$ — w A i nie w B. $A'$ — w U i nie w A.</div>
   <div><b>Uwaga</b>$A \setminus B \neq B \setminus A$. $A'$ zależy od $U$. Pusty wynik to $\emptyset$.</div>
   <div><b>De Morgan</b>$(A \cup B)' = A' \cap B'$; $(A \cap B)' = A' \cup B'$.</div>
   <div><b>Zawieranie</b>$A \subset B$: każdy element A jest w B. Jeden wyrzutek obala. Równość = zawieranie w obie strony.</div>
