@@ -54,5 +54,6 @@ export const ARTICLES = [
   // --- Świat i technika ---
   { slug: 'anatomia-litra', topic: 'Skąd się wzięły rekordowe ceny paliw w 2026 roku',  category: 'swiat', seoTitle: 'Anatomia litra — kryzys paliwowy 2026 i ceny paliw w Polsce' },
   { slug: 'anatomia-predkosci', topic: 'Jak działa szybki samochód: turbo, oznaczenia, marki i hipersamochody',  category: 'swiat', seoTitle: 'Anatomia prędkości — jak działa samochód i kultura motoryzacji' },
+  { slug: 'anatomia-pragnienia', topic: 'Czy w Meksyku cola jest tańsza od wody i co naprawdę robią z wodą Coca-Cola i Nestlé', category: 'swiat', seoTitle: 'Anatomia pragnienia — Coca-Cola, Nestlé i woda: fakty kontra mity' },
   { slug: 'anatomia-bariery', topic: 'Concorde: kto nim latał, dlaczego spadł i czemu dziś nikt nie lata szybciej niż dźwięk', category: 'swiat', seoTitle: 'Anatomia bariery — historia Concorde’a, katastrofa z 2000 roku i przyszłość lotów naddźwiękowych' },
 ];
