@@ -175,6 +175,16 @@ Trzy przykłady, od najprostszego:
 ]} />
 
 <Rozwiazanie tytul="Wyznacz moc zbioru D = {12, 14, 16, …, 26}" zrodlo="Zad. 1, str. 31, d)">
+<div slot="plan">
+
+1. Ustalamy, co znaczy wielokropek. Z pierwszych elementów odczytujemy krok.
+2. Wypisujemy wszystkie elementy i liczymy je. Moc to po prostu liczba elementów.
+3. Sprawdzamy wynik skrótem. Dwie drogi do tej samej liczby chronią przed pomyłką.
+
+Przy długim ciągu (np. do 500) krok 2 pomijasz i od razu liczysz skrótem z kroku 3.
+
+</div>
+
 <Krok tytul="Zrozum, co znaczy wielokropek">
 Pierwsze elementy to $12, 14, 16$ — każdy kolejny jest o 2 większy. Wielokropek $\ldots$ znaczy „dalej w ten sam sposób” aż do 26.
 </Krok>
@@ -279,6 +289,16 @@ Przykład z „lub”: $\{x \in \mathbb{R} : x < 0 \lor x \geq 2\}$.
 </Os>
 
 <Rozwiazanie tytul="Zapisz zbiór {x ∈ ℝ : x ≤ 1 ∨ (x ≥ 7 ∧ x < 8)} jako przedział" zrodlo="Zad. 2, str. 31, g)">
+<div slot="plan">
+
+1. Zaczynamy od nawiasu. „Lub” łączy cały nawias z $x \leq 1$, więc najpierw trzeba wiedzieć, co jest w nawiasie.
+2. Zamieniamy $x \leq 1$ na przedział.
+3. Łączymy oba kawałki sumą, bo między nimi stoi „lub”.
+
+Kroki 1 i 2 możesz zrobić w dowolnej kolejności. Ważne, żeby połączyć je dopiero na końcu.
+
+</div>
+
 <Krok tytul="Zacznij od nawiasu">
 W nawiasie jest $x \geq 7 \land x < 8$: liczby co najmniej 7 **i** mniejsze od 8. Część wspólna to $[7, 8)$.
 
@@ -314,6 +334,19 @@ na dole oba kawałki naraz. Między 1 a 7 jest przerwa, więc zostają dwa przed
 
 <Dlaczego>
 „Lub” wystarczy jeden spełniony warunek, więc bierzemy wszystko, co należy do któregokolwiek kawałka. Kawałków nie da się skleić w jeden przedział, bo liczby między 1 a 7 (np. 4) nie spełniają żadnego warunku.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+
+Wynik sprawdzisz bez rysunku — wstaw kilka liczb do warunku:
+
+- $1$: $1 \leq 1$ — należy;
+- $4$: ani $4 \leq 1$, ani $4 \geq 7$ — nie należy;
+- $7$: $7 \geq 7$ i $7 < 8$ — należy;
+- $8$: $8 < 8$ to fałsz — nie należy.
+
+Każda odpowiedź zgadza się z $(-\infty, 1] \cup [7, 8)$.
+
 </Dlaczego>
 </Krok>
 </Rozwiazanie>
@@ -380,6 +413,16 @@ $A = \{x \in \mathbb{N} : x < 5\}$, $B = \{x \in \mathbb{N} : 2 < x < 8\}$, $U =
 
 </div>
 
+<div slot="plan">
+
+1. Wypisujemy elementy $A$, $B$ i $U$. Z samych warunków trudno cokolwiek odczytać.
+2. Rozmieszczamy elementy w czterech miejscach diagramu Venna. Potem każde działanie to tylko wskazanie właściwych miejsc.
+3. Odczytujemy działania: dopełnienia, sumę i część wspólną, różnice.
+
+Kolejność działań w kroku 3 jest dowolna. Inna droga — tabela przynależności z zerami i jedynkami — jest pod zadaniem.
+
+</div>
+
 <Krok tytul="Wypisz elementy zbiorów">
 $$
 \begin{gathered}
@@ -389,8 +432,12 @@ U = \{0, 1, 2, \ldots, 8\}
 \end{gathered}
 $$
 
+<Dlaczego typ="umowa">
+Na zajęciach $\mathbb{N}$ zaczyna się od 0. W części książek zaczyna się od 1 — to kwestia umowy. Dlatego 0 należy do $A$ i do $U$.
+</Dlaczego>
+
 <Dlaczego>
-Zero jest liczbą naturalną, więc należy do $A$ i do $U$. W $B$ obie nierówności są ostre ($2 < x < 8$), więc ani 2, ani 8 nie należą do $B$.
+W $B$ obie nierówności są ostre ($2 < x < 8$), więc ani 2, ani 8 nie należą do $B$.
 </Dlaczego>
 </Krok>
 
@@ -417,6 +464,10 @@ $$
 
 <Dlaczego>
 $A'$ to wszystko z $U$ poza kołem $A$: część „tylko $B$” (5, 6, 7) i to, co poza kołami (8). Łatwo zapomnieć o ósemce — ona nie jest w żadnym kole, ale jest w $U$.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Bez diagramu: $A' = U \setminus A$. Z listy $0, 1, \ldots, 8$ wykreślasz elementy $A$, czyli 0, 1, 2, 3, 4. Zostaje $\{5, 6, 7, 8\}$.
 </Dlaczego>
 </Krok>
 
@@ -530,6 +581,17 @@ $A = \{-2, -1, 2, 4, 8\}$, $B = \{x \in \mathbb{Z} : x \geq -3 \land x \leq 8\}$
 
 </div>
 
+<div slot="plan">
+
+1. Wypisujemy elementy zbiorów liczb całkowitych. Wtedy widać, które końce należą.
+2. Rysujemy wszystkie zbiory jeden pod drugim, na tej samej skali. Pary porównujemy potem z rysunku.
+3. Dla każdej pary szukamy wyrzutka. Jeden wyrzutek obala zawieranie.
+4. Zapisujemy zawierania i sprawdzamy, czy któreś działa w obie strony — to byłaby równość.
+
+Par do sprawdzenia jest 20: każdy zbiór z każdym innym, w obie strony. Dlatego przydają się szybkie wyrzutki z ramki „Kiedy tego użyć” — część par skreślasz bez liczenia.
+
+</div>
+
 <Krok tytul="Wypisz elementy tam, gdzie się da">
 $$
 \begin{gathered}
@@ -570,6 +632,10 @@ W wierszu jest zbiór $X$, w kolumnie $Y$. „✓” znaczy $X \subset Y$, a prz
 
 <Dlaczego>
 Do obalenia zawierania wystarczy **jeden** wyrzutek — tak jak jeden kontrprzykład obala „dla każdego” w logice. Żeby potwierdzić zawieranie, trzeba sprawdzić wszystkie elementy (tu pomaga rysunek).
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Zbiory da się też ułożyć w łańcuchy, jak pudełka w pudełkach: $E \subset C \subset D$, $E \subset B \subset D$ i $A \subset B \subset D$. Jeśli $X \subset Y$ i $Y \subset Z$, to $X \subset Z$. Dlatego $E \subset D$ i $A \subset D$ wynikają z łańcuchów bez osobnego sprawdzania.
 </Dlaczego>
 </Krok>
 
@@ -637,6 +703,17 @@ Restauracja ma zestaw obiadowy: zupa do wyboru $Z = \{\text{pomidorowa}, \text{r
 </Ramka>
 
 <Rozwiazanie tytul="Wyznacz A × B i B × A dla A = {3, 4, 5}, B = {−2, −1, 0}" zrodlo="Zad. 1, str. 36, c)">
+<div slot="plan">
+
+1. Budujemy tabelkę: wiersze z $A$, kolumny z $B$. Dzięki temu żadna para nie zginie.
+2. Przepisujemy pary wiersz po wierszu i sprawdzamy ich liczbę: $|A| \cdot |B|$.
+3. Zapisujemy $B \times A$. To te same liczby, ale z odwróconą kolejnością w parach.
+4. Rysujemy oba zbiory w układzie współrzędnych. Rysunek pokazuje, że to dwa różne zbiory.
+
+Krok 4 jest potrzebny, gdy polecenie mówi „przedstaw w układzie współrzędnych”.
+
+</div>
+
 <Krok tytul="Zbuduj tabelkę par">
 Wiersze to elementy $A$, kolumny to elementy $B$:
 
@@ -677,6 +754,10 @@ $$
 <Dlaczego>
 To te same liczby, ale w odwrotnej kolejności w parze. Ponieważ $(3, -2) \neq (-2, 3)$, zbiory $A \times B$ i $B \times A$ są różne — choć oba mają po 9 par.
 </Dlaczego>
+
+<Dlaczego typ="inaczej">
+Nie trzeba budować drugiej tabelki. Weź każdą parę z $A \times B$ i zamień w niej liczby miejscami: $(3, -2) \to (-2, 3)$, $(3, -1) \to (-1, 3)$ i tak dalej.
+</Dlaczego>
 </Krok>
 
 <Krok tytul="Narysuj oba zbiory w układzie współrzędnych">
@@ -714,6 +795,17 @@ zamalowany prostokąt to $A \times B$: każdy jego punkt ma $x$ od 1 do 3 i $y$ 
 </Obszar>
 
 <Rozwiazanie tytul="Przedstaw A × B i B × A dla A = (−∞, 5), B = [2, ∞)" zrodlo="Zad. 2, str. 36, b)">
+<div slot="plan">
+
+1. Tłumaczymy przedziały na nierówności: warunek dla $x$ i warunek dla $y$. Z nierówności łatwiej rysować.
+2. Rysujemy brzegi: ciągłe tam, gdzie koniec należy, przerywane tam, gdzie nie.
+3. Zamalowujemy obszar, w którym oba warunki są spełnione naraz.
+4. Rysujemy $B \times A$ tym samym przepisem, z zamienionymi rolami $x$ i $y$.
+
+Krok 4 da się zrobić szybciej: obszar $B \times A$ to odbicie obszaru $A \times B$ względem prostej $y = x$.
+
+</div>
+
 <Krok tytul="Przetłumacz przedziały na nierówności">
 $A = (-\infty, 5)$ to $x < 5$ (5 nie należy). $B = [2, \infty)$ to $y \geq 2$ (2 należy).
 
@@ -733,6 +825,10 @@ $A \times B$ to punkty na lewo od $x = 5$ i nad $y = 2$ (razem z tą prostą). O
 <Obszar A={{ od: null, do: 5 }} B={{ od: 2, do: null, lewy: 'z' }} lo={-2} hi={8}>
 niebieski obszar to $A \times B$, strzałki pokazują, w którą stronę biegnie bez końca. Brzeg przerywany = te punkty nie należą do zbioru, ciągły = należą. Róg $(5, 2)$ jest pustym kółkiem, bo $5 \notin A$. Przełącz na $B \times A$, żeby zobaczyć drugą część zadania.
 </Obszar>
+
+<Dlaczego typ="inaczej">
+Rysunek sprawdzisz jednym punktem. Weź np. $(0, 3)$: $0 < 5$ i $3 \geq 2$, więc punkt należy do $A \times B$ — musi leżeć w zamalowanym obszarze. Punkt $(6, 3)$ nie należy, bo $6 < 5$ to fałsz — musi leżeć poza nim.
+</Dlaczego>
 </Krok>
 
 <Krok tytul="Narysuj B × A">
@@ -801,6 +897,18 @@ Bez ostatniego składnika element z trzech zbiorów zostałby dodany 3 razy i od
 <div slot="tresc">
 
 Firma ma 85 ciężarówek. Przegląd wykazał, że 20 nie spełnia norm emisji spalin, 30 ma uszkodzone amortyzatory, a 10 niesprawne hamulce. 10 ciężarówek ma problem ze spalinami i amortyzatorami, 7 — z amortyzatorami i hamulcami, 7 — ze spalinami i hamulcami, a 5 ma wszystkie trzy usterki. W trasę mogą jechać tylko ciężarówki bez usterek. Czy przedsiębiorca może wysłać w trasę co najmniej połowę z nich?
+
+</div>
+
+<div slot="plan">
+
+1. Nazywamy zbiory literami. Każda usterka to jeden zbiór.
+2. Wypisujemy dane jako moce zbiorów, żeby wstawić je do wzoru bez szukania w treści.
+3. Liczymy ciężarówki z co najmniej jedną usterką — wzorem włączeń i wyłączeń.
+4. Liczymy sprawne ciężarówki i porównujemy je z połową floty. O to pyta zadanie.
+5. Sprawdzamy wynik na diagramie Venna.
+
+Inna droga: od razu wypełnić diagram od środka na zewnątrz i dodać kawałki (krok 5). Wzór jest szybszy, a diagram łatwiej sprawdzić.
 
 </div>
 

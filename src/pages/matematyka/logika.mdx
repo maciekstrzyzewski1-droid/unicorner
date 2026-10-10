@@ -356,6 +356,17 @@ Według tej kolejności $\land$ i $\lor$ są **na tym samym poziomie** — tak s
 </Ramka>
 
 <Rozwiazanie tytul="Oblicz (p ⇒ q) ∨ ¬r dla p = 1, q = 0, r = 0">
+<div slot="plan">
+
+1. Wstawiamy zera i jedynki w miejsce literek. Od tej chwili liczymy na samych cyfrach.
+2. Liczymy nawias, bo nawias zawsze idzie pierwszy.
+3. Liczymy negację $\neg r$. Dotyczy tylko jednej literki, więc da się ją policzyć od razu.
+4. Na końcu liczymy spójnik główny $\lor$. Jego wynik to wartość całego zdania.
+
+Kroki 2 i 3 możesz zamienić miejscami — nawias i negacja nie zależą od siebie. Spójnik główny zawsze zostaje na koniec.
+
+</div>
+
 <Krok tytul="Wstaw wartości w miejsce literek">
 $$
 (1 \Rightarrow 0) \lor \neg 0
@@ -379,6 +390,10 @@ Zostało $0 \lor 1 = 1$. Zdanie jest **prawdziwe**.
 
 <Dlaczego>
 Alternatywie wystarczy jedna jedynka. Spójnik główny to $\lor$, bo nawias i negację policzyliśmy wcześniej.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Szybciej: spójnik główny to $\lor$, a alternatywie wystarczy jedna jedynka. Skoro $\neg 0 = 1$, całe zdanie jest prawdziwe — nawiasu nie trzeba nawet liczyć. Ten skrót działa tylko wtedy, gdy po jednej stronie $\lor$ wyjdzie 1. Przy $\land$ działa odwrotnie: wystarczy jedno 0 po jednej stronie, żeby całość była fałszywa.
 </Dlaczego>
 </Krok>
 </Rozwiazanie>
@@ -450,8 +465,23 @@ Przykład z życia: „Jutro będzie padać lub jutro nie będzie padać”. Nie
 </Ramka>
 
 <Rozwiazanie tytul="Przykład 1 (dwie literki): czy (p ∧ q) ⇒ p jest tautologią?">
+<div slot="plan">
+
+1. Liczymy literki, bo od nich zależy liczba wierszy. Tabela musi mieć wszystkie układy zer i jedynek.
+2. Szukamy spójnika głównego. Mówi, którą kolumnę liczymy na samym końcu, a kawałki po jego obu stronach to kolumny pomocnicze.
+3. Wypełniamy tabelę kolumna po kolumnie, od kawałków najbardziej w środku.
+4. Patrzymy na ostatnią kolumnę: same 1 — tautologia, choć jedno 0 — nie.
+
+Tak się to robi, gdy polecenie mówi „metodą zero-jedynkową”. Szybszą drogę bez całej tabeli znajdziesz pod następnym przykładem.
+
+</div>
+
 <Krok tytul="Policz literki i wiersze">
 Literki: $p$ i $q$, czyli $n = 2$. Tabela ma $2^2 = 4$ wiersze. Kolumna $p$: 0, 0, 1, 1. Kolumna $q$: 0, 1, 0, 1.
+
+<Dlaczego typ="umowa">
+Kolejność wierszy to umowa: w pierwszej kolumnie najpierw zera, potem jedynki, w ostatniej 0 i 1 na zmianę. Dzięki temu każdy układ pojawia się dokładnie raz.
+</Dlaczego>
 </Krok>
 
 <Krok tytul="Znajdź spójnik główny i kolumny pomocnicze">
@@ -488,6 +518,18 @@ $$
 $$
 
 jest tautologią.
+
+</div>
+
+<div slot="plan">
+
+1. Liczymy literki: trzy literki to 8 wierszy.
+2. Szukamy spójnika głównego. Dzieli zdanie na lewą i prawą stronę.
+3. Planujemy kolumny pomocnicze od środka na zewnątrz. Każda nowa kolumna korzysta tylko z kolumn, które już są w tabeli.
+4. Wypełniamy tabelę.
+5. Szukamy zera w ostatniej kolumnie. Jedno zero wystarczy, żeby zdanie nie było tautologią.
+
+Polecenie mówi „metodą zero-jedynkową”, więc pełna tabela jest obowiązkowa. Bez tego wymogu można szybciej: od razu szukać wiersza, w którym implikacja daje 0 (ramka pod zadaniem).
 
 </div>
 
@@ -567,12 +609,27 @@ Pięć kolejnych zdań do sprawdzenia — z tabelą, którą wypełniasz sam i o
 </Ramka>
 
 <Rozwiazanie tytul="Dla jakich wartości p, q, r prawdziwe są jednocześnie zdania p ⇒ q ∨ r oraz q ⇒ r?" zrodlo="Zad. 2, str. 15, przykład e)">
+<div slot="plan">
+
+1. Ustalamy, gdzie stoją niewidoczne nawiasy w $p \Rightarrow q \lor r$. Od tego zależy, co liczymy.
+2. Budujemy jedną tabelę dla obu zdań. „Jednocześnie” znaczy: w tym samym wierszu, czyli przy tych samych $p$, $q$, $r$.
+3. Wypisujemy wiersze, w których oba zdania mają 1. To jest odpowiedź.
+4. Opisujemy wynik słowami. Nie jest to obowiązkowe, ale pomaga sprawdzić, czy wynik ma sens.
+
+Da się też rozumować bez tabeli (ramka „Dlaczego?” w kroku 4), ale na kolokwium tabela jest pewniejsza.
+
+</div>
+
 <Krok tytul="Ustal, jak czytać pierwsze zdanie">
 W zapisie $p \Rightarrow q \lor r$ nie ma nawiasów. Z kolejności działań wiemy, że $\lor$ liczymy przed $\Rightarrow$, więc to zdanie znaczy:
 
 $$
 p \Rightarrow (q \lor r)
 $$
+
+<Dlaczego typ="umowa">
+Kolejność spójników to umowa, tak jak „mnożenie przed dodawaniem” w arytmetyce: najpierw $\neg$, potem $\land$ i $\lor$, na końcu $\Rightarrow$ i $\Leftrightarrow$. Gdy nawiasów brak, liczysz właśnie w tej kolejności.
+</Dlaczego>
 </Krok>
 
 <Krok tytul="Zbuduj tabelę dla obu zdań">
@@ -817,6 +874,18 @@ Cała różnica w jednym zdaniu: przy $\forall_x \exists_y$ liczba $y$ może si�
 </Ramka>
 
 <Rozwiazanie tytul="Przykład 1: czy ∀x∈ℝ ∃y∈ℝ  y > x jest prawdziwe?">
+<div slot="plan">
+
+1. Czytamy zdanie na głos. Dopiero słowami widać, o co pyta.
+2. Rozpoznajemy typ: najpierw $\forall$, potem $\exists$. Od typu zależy przepis.
+3. Szukamy przepisu na $y$, który zależy od $x$. Przy $\forall \exists$ wolno dobrać $y$ osobno do każdego $x$.
+4. Sprawdzamy przepis na literze $x$, a nie na kilku liczbach. $\forall$ wymaga, żeby działał dla każdego $x$.
+5. Zapisujemy wniosek.
+
+Tak się to robi przy każdym zdaniu, które zaczyna się od $\forall \exists$.
+
+</div>
+
 <Krok tytul="Przeczytaj zdanie">
 „Dla każdej liczby rzeczywistej $x$ istnieje liczba rzeczywista $y$ taka, że $y > x$.” Czyli: do każdej liczby da się znaleźć większą.
 </Krok>
@@ -827,6 +896,10 @@ Najpierw $\forall$, potem $\exists$. Do każdego $x$ szukamy pasującego $y$ —
 
 <Krok tytul="Znajdź przepis na y">
 Weźmy $y = x + 1$. Na przykład: $x = 5 \to y = 6$, $x = -3 \to y = -2$.
+
+<Dlaczego typ="inaczej">
+Przepis nie musi być jeden. $y = x + 2$ albo $y = x + 0{,}5$ też działają. Uważaj tylko na przepisy, które działają nie zawsze: $y = 2x$ dla $x = -1$ daje $y = -2$, a $-2 > -1$ jest fałszem.
+</Dlaczego>
 </Krok>
 
 <Krok tytul="Sprawdź przepis dla każdego x">
@@ -843,6 +916,18 @@ Zdanie jest **prawdziwe**.
 </Rozwiazanie>
 
 <Rozwiazanie tytul="Przykład 2: czy ∃y∈ℝ ∀x∈ℝ  y > x jest prawdziwe?">
+<div slot="plan">
+
+1. Czytamy zdanie na głos.
+2. Rozpoznajemy typ: najpierw $\exists$, potem $\forall$. Potrzebne jest jedno $y$, które działa dla wszystkich $x$ naraz.
+3. Próbujemy kilku kandydatów na $y$. To rozgrzewka: widać, jak każdy kandydat się psuje.
+4. Pokazujemy, że da się zepsuć każde $y$. Kilka nieudanych prób to za mało — trzeba pokazać, że nie zadziała żadne $y$.
+5. Zapisujemy wniosek.
+
+Kroku 3 nie musisz pisać na kolokwium. Dowodem jest krok 4.
+
+</div>
+
 <Krok tytul="Przeczytaj zdanie">
 „Istnieje liczba rzeczywista $y$ taka, że dla każdej liczby rzeczywistej $x$: $y > x$.” Czyli: istnieje liczba większa od wszystkich liczb.
 </Krok>
@@ -857,6 +942,10 @@ $y = 1000$? Nie działa, bo $x = 1001$ jest większe. $y = 1\,000\,000$? Psuje j
 
 <Krok tytul="Pokaż, że każde y da się zepsuć">
 Jakie $y$ nie wybierzesz, weź $x = y + 1$. Wtedy $y > y + 1$ jest fałszem. Żadne $y$ nie działa dla wszystkich $x$.
+
+<Dlaczego typ="inaczej">
+Wystarczy nawet $x = y$. Wtedy warunek brzmi $y > y$, a żadna liczba nie jest większa od samej siebie.
+</Dlaczego>
 </Krok>
 
 <Krok tytul="Wniosek">
@@ -895,6 +984,19 @@ $$
 
 </div>
 
+<div slot="plan">
+
+1. Czytamy zdanie i dzielimy warunek na lewą i prawą stronę równania.
+2. Rozpoznajemy typ: $\exists$ przed $\forall$. Szukamy konkretnych $m$ i $n$, które działają dla każdego $x$.
+3. Sprawdzamy, która strona zmienia się razem z $x$. Tę stronę trzeba „unieruchomić”.
+4. Dobieramy $m$ tak, żeby $x$ przestał mieć znaczenie.
+5. Sprawdzamy równanie dla dowolnego $x$: lewa strona, prawa strona, porównanie.
+6. Zapisujemy wniosek.
+
+To ten sam przepis co w przykładzie 2 wyżej. Tam żadne $y$ nie działało, a tu udaje się znaleźć $m$ i $n$.
+
+</div>
+
 <Krok tytul="Przeczytaj zdanie i nazwij jego części">
 „Istnieją liczby naturalne $m$ i $n$ takie, że dla każdej liczby rzeczywistej $x$ iloczyn $mn$ jest równy iloczynowi $mx$.”
 
@@ -918,6 +1020,10 @@ W prawej stronie $x$ jest mnożone przez $m$. Przy mnożeniu zmienna przestaje m
 
 <Dlaczego>
 $n$ występuje tylko po lewej stronie, a ta przy $m = 0$ i tak wyjdzie 0. Dlatego wartość $n$ nie ma tu znaczenia.
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+Wolno wziąć $m = 0$, bo w tym kursie — tak jak w rozwiązaniach z zajęć — $\mathbb{N} = \{0, 1, 2, \ldots\}$. To umowa. Co by było bez niej, pokazuje ramka pod zadaniem.
 </Dlaczego>
 </Krok>
 
@@ -1017,6 +1123,17 @@ $$
 
 </div>
 
+<div slot="plan">
+
+1. Czytamy zdanie na głos. Wtedy łatwiej zauważyć, ile jest kwantyfikatorów: $\exists_{m, n}$ to dwa.
+2. Zamieniamy każdy kwantyfikator na przeciwny. Kolejność i zbiory zostają.
+3. Zaprzeczamy warunek: $=$ zamienia się w $\neq$.
+4. Jeśli polecenie pyta też o wartość, podajemy ją: zaprzeczenie ma wartość przeciwną do zdania wyjściowego.
+
+Dopisanie $\neg$ przed całym zdaniem to jeszcze nie odpowiedź. Chodzi o postać, w której $\neg$ przeniesiono do środka — tu zostało tylko w znaku $\neq$.
+
+</div>
+
 <Krok tytul="Przeczytaj zdanie na głos">
 „Istnieją liczby naturalne $m$ i $n$ takie, że dla każdej liczby rzeczywistej $x$: $m \cdot n = m \cdot x$.”
 
@@ -1040,6 +1157,23 @@ $$
 $$
 
 Czytamy: „dla każdych liczb naturalnych $m$, $n$ istnieje liczba rzeczywista $x$, dla której $mn \neq mx$”.
+
+<Dlaczego typ="inaczej">
+
+Można też przesuwać $\neg$ do środka po jednym kroku. Każde przejście przez kwantyfikator zmienia jego rodzaj (prawa de Morgana):
+
+$$
+\begin{aligned}
+&\neg \exists_{m, n \in \mathbb{N}}\ \forall_{x \in \mathbb{R}}\ mn = mx \\
+&\Leftrightarrow \forall_{m, n \in \mathbb{N}}\ \neg \forall_{x \in \mathbb{R}}\ mn = mx \\
+&\Leftrightarrow \forall_{m, n \in \mathbb{N}}\ \exists_{x \in \mathbb{R}}\ \neg(mn = mx) \\
+&\Leftrightarrow \forall_{m, n \in \mathbb{N}}\ \exists_{x \in \mathbb{R}}\ mn \neq mx
+\end{aligned}
+$$
+
+Wynik jest ten sam. Ten zapis pokazuje, skąd się bierze przepis „zamień kwantyfikatory i zaprzecz warunek”.
+
+</Dlaczego>
 </Krok>
 
 <Krok tytul="Jeśli trzeba: wartość zaprzeczenia">
