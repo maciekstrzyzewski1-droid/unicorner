@@ -77,7 +77,7 @@ const opisy = m.flatMap((row, i) => row.map((_, j) => ({ id: `${i}-${j}`, h: htm
     });
     box.querySelector('[data-show]')!.addEventListener('click', () => {
       cells.forEach((b) => { set(b, b.dataset.ok!); b.classList.add('is-shown'); });
-      sum.innerHTML = 'Tak wygląda wypełniona macierz. Spróbuj jeszcze raz sam — „Wyczyść” zeruje pola.';
+      sum.innerHTML = 'Tak wygląda wypełniona macierz. Spróbuj jeszcze raz samodzielnie — „Wyczyść” zeruje pola.';
       bledy.innerHTML = '';
       wynik.hidden = false;
     });

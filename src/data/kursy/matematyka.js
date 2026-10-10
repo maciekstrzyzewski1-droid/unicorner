@@ -22,7 +22,7 @@ export const MODULES = [
   { nr: 2, slug: 'zbiory', title: 'Zbiory', short: 'Działania na zbiorach, przedziały, iloczyn kartezjański, zasada włączeń i wyłączeń.', status: 'live', minutes: 60, cwiczenia: 'cwiczenia' },
   { nr: 3, slug: 'relacje', title: 'Relacje', short: 'Macierz i graf relacji, własności, złożenie, relacje porządkujące i optimum Pareto.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
   { nr: 4, slug: 'macierze', title: 'Macierze', short: 'Mnożenie, wyznacznik, macierz odwrotna i rząd — kiedy działa, a kiedy nie.', status: 'live', minutes: 90, cwiczenia: 'cwiczenia' },
-  { nr: 5, slug: 'uklady-rownan', title: 'Układy równań liniowych', short: 'Metoda eliminacji, układy oznaczone, nieoznaczone i sprzeczne, rozwiązania bazowe.', status: 'soon' },
+  { nr: 5, slug: 'uklady-rownan', title: 'Układy równań liniowych', short: 'Macierz rozszerzona, postać bazowa, układy oznaczone, nieoznaczone i sprzeczne, rozwiązania bazowe.', status: 'live', minutes: 75, cwiczenia: 'cwiczenia' },
   { nr: 6, slug: 'programowanie-liniowe', title: 'Programowanie liniowe', short: 'Model decyzyjny, zbiór rozwiązań dopuszczalnych i metoda geometryczna.', status: 'soon' },
   { nr: 7, slug: 'matematyka-finansowa', title: 'Matematyka finansowa', short: 'Procent prosty i składany, wartość bieżąca i przyszła, stopa zwrotu.', status: 'soon' },
   { nr: 8, slug: 'pochodne', title: 'Pochodna funkcji jednej zmiennej', short: 'Co mierzy pochodna, wzory i reguły różniczkowania krok po kroku.', status: 'soon' },

@@ -136,7 +136,7 @@ const numery = kolumny.length >= 3;
     });
     box.querySelector('[data-show]')!.addEventListener('click', () => {
       cells.forEach((b) => { set(b, b.dataset.ok!); b.classList.add('is-shown'); });
-      sum.innerHTML = 'Tak wygląda wypełniona tabela. Spróbuj policzyć ją jeszcze raz sam — „Wyczyść” zeruje pola.';
+      sum.innerHTML = 'Tak wygląda wypełniona tabela. Spróbuj policzyć ją jeszcze raz samodzielnie — „Wyczyść” zeruje pola.';
       bledy.innerHTML = '';
       wynik.hidden = false;
     });

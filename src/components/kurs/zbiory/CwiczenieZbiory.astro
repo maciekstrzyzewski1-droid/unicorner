@@ -100,7 +100,7 @@ const wiersze = dzialania.map((k) => ({ k, t: DZIALANIA[k].t, w: wynik(U, A, B, 
       clearMarks();
       chips.forEach((c) => c.setAttribute('aria-pressed', c.dataset.ok === '1' ? 'true' : 'false'));
       rows.forEach((r) => (r.querySelector<HTMLElement>('.k-cz-ans')!.hidden = false));
-      sum.innerHTML = 'Tak wyglądają poprawne odpowiedzi. Spróbuj jeszcze raz sam — „Wyczyść” odznacza wszystko.';
+      sum.innerHTML = 'Tak wyglądają poprawne odpowiedzi. Spróbuj jeszcze raz samodzielnie — „Wyczyść” odznacza wszystko.';
       bledy.innerHTML = '';
       wynik.hidden = false;
     });

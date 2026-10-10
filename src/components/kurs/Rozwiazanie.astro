@@ -12,7 +12,7 @@ const { tytul, zrodlo, odslaniaj = true } = Astro.props;
   </header>
   {Astro.slots.has('tresc') && <div class="k-rozw-tresc"><slot name="tresc" /></div>}
   {Astro.slots.has('plan') && <div class="k-rozw-plan"><span class="k-lbl">Plan — co zrobimy i po co</span><slot name="plan" /></div>}
-  {odslaniaj && <p class="k-rozw-tip" data-js-only hidden>Spróbuj najpierw sam. Potem odkrywaj kroki po jednym — w każdym jest „co robimy” i „dlaczego”.</p>}
+  {odslaniaj && <p class="k-rozw-tip" data-js-only hidden>Spróbuj najpierw samodzielnie. Potem odkrywaj kroki po jednym — w każdym jest „co robimy” i „dlaczego”.</p>}
   <ol class="k-kroki"><slot /></ol>
   {odslaniaj && (
     <div class="k-rozw-ctl" data-js-only hidden>

@@ -1,0 +1,115 @@
+---
+// Rozwiązania bazowe krok po kroku: wybierasz zestaw zmiennych bazowych, a rysunek pokazuje,
+// które kolumny zostają (fioletowe), które zmienne dostają 0 (wyblakłe) i jak policzyć resztę z postaci bazowej.
+// Zestaw, który nie daje jednego rozwiązania (np. 0 = 2), jest oznaczony jako „nie jest bazą”.
+import { tex, texInline } from '../../../lib/tex.js';
+import { bazowe, zm, zmTxt } from '../../../lib/uklady.js';
+import Mx from '../macierze/Mx.astro';
+import Tx from '../macierze/Tx.astro';
+interface Props { R: any[][]; A0?: any[][]; b0?: any[]; start?: number }
+const { R, A0, b0, start = 0 } = Astro.props;
+const bz = bazowe(R, A0, b0);
+const n = bz.n;
+const et = { k: [...[...Array(n).keys()].map(zmTxt), 'b'] };
+const SUP: Record<string, string> = { '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+const sup = (k: number) => String(k).split('').map((d) => SUP[d]).join('');
+const zbior = (B: number[]) => `{${B.map(zmTxt).join(', ')}}`;
+const zeraTex = (nb: number[]) => `${nb.map(zm).join(' = ')} = 0`;
+---
+<figure class="k-fig k-bz" data-bz data-start={start}>
+  <div class="k-fig-box">
+    <div class="k-bz-top">
+      <div data-mx-wrap><Mx m={bz.M} kreska={n - 1} et={et} /></div>
+      <div class="k-bz-wybor" data-js-only hidden>
+        <span class="k-lbl">Wybierz zestaw niewiadomych:</span>
+        <div class="k-bz-btns">
+          {bz.wyniki.map((w, idx) => (
+            <button type="button" class:list={['k-bz-b', { 'is-nie': !w.ok }]} data-k={idx} data-b={w.B.join(',')}>
+              {w.ok ? `B${'⁽'}${sup(w.k)}${'⁾'} = ${zbior(w.B)}` : `${zbior(w.B)} ✗`}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+    {bz.odrzucone.length > 0 && (
+      <p class="k-bz-odrz" set:html={texInline(`${bz.odrzucone.length > 1 ? 'Zestawów' : 'Zestawu'} ${bz.odrzucone.map((B) => `$\\{${B.map(zm).join(', ')}\\}$`).join(', ')} nie sprawdzasz: brakuje w ${bz.odrzucone.length > 1 ? 'nich' : 'nim'} ${bz.samotne.map((j) => `$${zm(j)}$`).join(', ')}, a ${bz.samotne.length > 1 ? 'te niewiadome stoją' : 'ta niewiadoma stoi'} w równaniu ${bz.samotne.length > 1 ? 'same' : 'sama'} — ${bz.samotne.length > 1 ? 'ich wartości są ustalone, więc muszą być' : 'jej wartość jest ustalona, więc musi być'} w każdej bazie.`)} />
+    )}
+    {bz.wyniki.map((w, idx) => (
+      <div class:list={['k-bz-blok', { 'is-nie': !w.ok }]} data-blok={idx}>
+        <p class="k-bz-h">
+          {w.ok
+            ? <span set:html={texInline(`<b>Baza $B^{(${w.k})} = ${w.nazwa}$</b>`)} />
+            : <span set:html={texInline(`<b>$${w.nazwa}$ — to nie jest baza</b>`)} />}
+        </p>
+        <p class="k-bz-l0" set:html={texInline(`Niewiadome spoza zestawu dostają zero: $${zeraTex(w.niebazowe)}$.`)} />
+        {w.ok ? (
+          <ol class="k-bz-kroki">
+            {w.kroki.map((k) => (
+              <li>
+                <span class="k-bz-z">z równania {k.i + 1}:</span>
+                <div class="k-rown k-bz-r">
+                  {k.linie.map((l, m) => (<>{m > 0 && <span class="k-zn">⟹</span>}<Tx t={l} /></>))}
+                </div>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <div class="k-bz-zle">
+            <p set:html={texInline('Po podstawieniu zer równania wyglądają tak:')} />
+            {w.zera.map((z) => <div class="k-rown k-bz-r"><Tx t={z.tex} /></div>)}
+            <p set:html={texInline(w.powod.typ === 'sprzecznosc'
+              ? `W równaniu ${w.powod.i + 1} zostało $${w.powod.tex}$ — to fałsz. Ten zestaw nie daje żadnego rozwiązania, więc <b>nie jest bazą</b>. Pomijasz go.`
+              : 'Niewiadomych z zestawu nie da się policzyć jednoznacznie — zostaje za mało równań. Ten zestaw <b>nie jest bazą</b> — pomijasz go.')} />
+          </div>
+        )}
+        {w.ok && <p class="k-bz-wynik" set:html={tex(`X^{(${w.k})} = ${w.wektorTex}`)} />}
+      </div>
+    ))}
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-bz]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-bz]') === box) el.hidden = false; });
+    const cells = Array.from(box.querySelectorAll<HTMLElement>('[data-mx-wrap] .k-nm-c'));
+    const btns = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-bz-b'));
+    const bloki = Array.from(box.querySelectorAll<HTMLElement>('[data-blok]'));
+    const n = Math.max(...cells.map((c) => Number(c.dataset.j)));
+    const show = (b: HTMLButtonElement) => {
+      btns.forEach((x) => x.classList.toggle('is-on', x === b));
+      bloki.forEach((x) => (x.hidden = x.dataset.blok !== b.dataset.k));
+      const B = b.dataset.b!.split(',').map(Number);
+      cells.forEach((c) => {
+        const j = Number(c.dataset.j);
+        c.classList.toggle('is-fiolet', B.includes(j));
+        c.classList.toggle('is-wyblakla', j < n && !B.includes(j));
+      });
+    };
+    btns.forEach((b) => b.addEventListener('click', () => show(b)));
+    const first = btns[Number(box.dataset.start) || 0];
+    if (first) show(first);
+  });
+</script>
+
+<style>
+  .k-bz-top{display:flex;flex-wrap:wrap;align-items:center;gap:14px 26px;}
+  .k-bz-wybor{display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .k-bz-btns{display:flex;flex-wrap:wrap;gap:6px;}
+  .k-bz-b{font:inherit;font-size:.85rem;color:var(--text);background:var(--surface);border:1px solid var(--line2);padding:5px 9px;cursor:pointer;}
+  .k-bz-b.is-on{border-color:var(--gold);background:rgba(255,216,74,.1);}
+  .k-bz-b.is-nie{color:var(--muted);border-style:dashed;}
+  .k-bz-b.is-nie.is-on{border-color:var(--magenta);background:rgba(255,46,151,.08);}
+  .k-bz-b:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-bz-odrz{margin:10px 0 0!important;font-size:.88rem;color:var(--muted);}
+  .k-bz-blok{margin-top:14px;padding:10px 12px;border:1px solid var(--line2);background:var(--ink2);}
+  .k-bz-blok.is-nie{border-style:dashed;border-color:rgba(255,46,151,.45);}
+  .k-bz-h{margin:0 0 6px!important;}
+  .k-bz-l0{margin:0 0 6px!important;font-size:.92rem;}
+  .k-bz-kroki{list-style:none!important;margin:0!important;padding:0!important;display:grid;gap:8px;}
+  .k-bz-kroki li{margin:0!important;max-width:none!important;}
+  .k-bz-z{display:block;font-family:var(--mono);font-size:.75rem;color:var(--muted);}
+  .k-bz-r{margin:2px 0!important;}
+  .k-bz-zle p{margin:6px 0!important;font-size:.92rem;}
+  .k-bz-wynik{margin:10px 0 0!important;padding-top:8px;border-top:1px solid var(--line2);overflow-x:auto;overflow-y:hidden;}
+</style>
