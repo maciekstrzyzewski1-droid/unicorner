@@ -1,0 +1,1213 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: matematyka
+slug: matematyka-finansowa
+title: Matematyka finansowa
+podtytul: wartość przyszła i bieżąca, strumienie, renta, IRR i plan spłaty kredytu
+description: Matematyka finansowa od zera — wartość przyszła i bieżąca, kapitalizacja, strumień wpłat, renta, IRR i plan spłaty kredytu w ratach malejących. Przepisy, zadania i ćwiczenia.
+lede: 1000 zł dziś i 1000 zł za trzy lata to nie ta sama kwota — dzisiejsze pieniądze możesz wpłacić na lokatę i zarobić odsetki. Tu nauczysz się przenosić kwoty w czasie (w przód i w tył), liczyć wartość wpłat i rent, wewnętrzną stopę zwrotu i układać plan spłaty kredytu.
+wymaga: Procenty i potęgi z liceum — przypominamy je na miejscu.
+umiesz:
+  - policzyć, ile będzie warta kwota po kilku latach (FV) i ile jest dziś warta kwota z przyszłości (PV)
+  - porównać dwie oferty z różnych momentów
+  - policzyć wartość kilku wpłat (strumienia) na koniec ostatniego okresu
+  - policzyć dzisiejszą wartość renty — na kilka lat i dożywotniej
+  - wyznaczyć wewnętrzną stopę zwrotu (IRR) inwestycji
+  - ułożyć plan spłaty kredytu w ratach malejących
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import OsCzasu from '../../components/kurs/finanse/OsCzasu.astro';
+import PlanSplaty from '../../components/kurs/finanse/PlanSplaty.astro';
+import CwiczenieKwoty from '../../components/kurs/finanse/CwiczenieKwoty.astro';
+import SymulatorIRR from '../../components/kurs/finanse/SymulatorIRR.astro';
+import { cwSkladany, cwPlan } from '../../lib/finanse.js';
+
+export const skl = cwSkladany(5000, '0.04', 3);
+export const pl1 = cwPlan(9000, 3, '0.1');
+export const pl2 = cwPlan(10000, 4, '0.08');
+
+## Po co to jest
+
+Wygrywasz konkurs. Organizator pyta: wolisz **1000 zł dziś** czy **1100 zł za dwa lata**?
+
+Na oko 1100 zł to więcej. Ale 1000 zł dziś możesz od razu wpłacić na lokatę. Za dwa lata będzie tam więcej niż 1000 zł — pytanie, czy więcej niż 1100 zł. To zależy od oprocentowania i za chwilę nauczysz się to liczyć.
+
+<Ramka kind="zapamietaj">
+**Ta sama kwota w różnych momentach ma różną wartość.** Złotówka dziś jest warta więcej niż złotówka za rok, bo dzisiejszą złotówkę możesz wpłacić na lokatę i za rok mieć złotówkę z odsetkami.
+</Ramka>
+
+Cała matematyka finansowa z zajęć to jedna umiejętność w kilku wersjach: **przenosisz kwoty w czasie**.
+
+- **W przód** (w przyszłość): za każdy okres doliczasz odsetki — mnożysz przez $1 + i$.
+- **W tył** (do dziś): za każdy okres dzielisz przez $1 + i$ — szukasz kwoty, która razem z odsetkami da kwotę z przyszłości.
+
+Strumienie i renty to już tylko dodawanie przeniesionych kwot. Stopa zwrotu to szukanie takiej stopy, przy której przeniesione kwoty się równoważą. A plan spłaty kredytu to tabelka, którą wypełniasz według stałego przepisu.
+
+## Co będzie na kolokwium
+
+Na slajdach z zajęć są wzory i szablon tabeli. Wynika z nich sześć typów poleceń:
+
+<Polecenia items={[
+  { polecenie: 'Ile pieniędzy będzie na lokacie po $n$ latach?', jak: 'Liczysz wartość przyszłą: $FV = (1+i)^n \\cdot PV$. Przy kapitalizacji kwartalnej najpierw dzielisz stopę przez 4 i mnożysz liczbę lat przez 4.', przepis: 'polecenie-fv', cwiczenia: 'cw-fv', zrodlo: 'slajd „Podstawowe wzory”' },
+  { polecenie: 'Ile trzeba wpłacić dziś, żeby za $n$ lat mieć daną kwotę? Która oferta jest korzystniejsza?', jak: 'Liczysz wartość bieżącą: $PV = \\dfrac{FV}{(1+i)^n}$. Oferty porównujesz dopiero po przeniesieniu do tego samego momentu.', przepis: 'polecenie-pv', cwiczenia: 'cw-pv', zrodlo: 'slajd „Podstawowe wzory”' },
+  { polecenie: 'Na początku każdego roku wpłacasz kwotę. Ile zgromadzisz na koniec ostatniego roku?', jak: 'Wartość przyszła strumienia: każdą wpłatę przenosisz osobno na koniec ostatniego roku i dodajesz wyniki.', przepis: 'polecenie-strumien', cwiczenia: 'cw-strumien', zrodlo: 'slajd „Strumienie pieniężne”' },
+  { polecenie: 'Ile jest dziś warta renta wypłacana na koniec każdego roku (przez $n$ lat albo dożywotnio)?', jak: 'Każdą wypłatę sprowadzasz do dziś (dzielisz przez $(1+i)^k$) i dodajesz. Renta dożywotnia z równymi wypłatami (pierwsza za rok): wypłata podzielona przez $i$ — to wniosek ze wzoru ze slajdu.', przepis: 'polecenie-renta', cwiczenia: 'cw-renta', zrodlo: 'slajdy „Renta”' },
+  { polecenie: 'Oblicz wewnętrzną stopę zwrotu (IRR) inwestycji', jak: 'Szukasz stopy $i$, przy której dzisiejsza wartość wpływów równa się wydatkowi. Przy dwóch latach to równanie kwadratowe.', przepis: 'polecenie-irr', cwiczenia: 'cw-irr', zrodlo: 'slajd „Wewnętrzna stopa zwrotu”' },
+  { polecenie: 'Sporządź plan spłaty (amortyzacji) kredytu w ratach malejących', jak: 'Rata kapitałowa = kredyt : liczba rat. Potem wiersz po wierszu: odsetki, rata łączna, kapitał końcowy.', przepis: 'polecenie-plan', cwiczenia: 'cw-plan', zrodlo: 'slajdy „Amortyzacja kredytu”' },
+]} />
+
+<Ramka kind="kiedy" tytul="Kalkulator">
+Potęgi typu $1{,}05^3$ i dzielenie przez $1{,}06$ liczy się na kalkulatorze — na kartce trwa to bardzo długo. Zapytaj prowadzącego, jaki kalkulator wolno mieć na kolokwium. Rachunki, które da się zrobić na kartce (procent z kwoty, dodawanie, odejmowanie), rozpisujemy tu krok po kroku.
+</Ramka>
+
+## Pojęcia od podstaw
+
+### Procent jako ułamek
+
+<Ramka kind="liceum" tytul="Procent to setne części">
+$5\% = \dfrac{5}{100} = 0{,}05$ — dzielenie przez 100 przesuwa przecinek o dwa miejsca w lewo.
+
+**5% z kwoty** to kwota razy 5, podzielone przez 100. Na przykład 5% z 1050 zł: $1050 \cdot 5 = 5250$, potem $5250 : 100 = 52{,}50$ zł.
+</Ramka>
+
+We wzorach z zajęć stopa procentowa $i$ zawsze jest **ułamkiem**, nie liczbą procentów. Obok niej często stoi $1 + i$ — to **mnożnik**: z każdej złotówki po jednym okresie masz $1 + i$ zł. Przy stopie 5% to $1{,}05$ zł, czyli 105% kwoty.
+
+| stopa w treści | $i$ we wzorze | $1 + i$ | co znaczy $1+i$ |
+|---|---|---|---|
+| 5% | $0{,}05$ | $1{,}05$ | po roku masz 105% kwoty |
+| 8% | $0{,}08$ | $1{,}08$ | po roku masz 108% kwoty |
+| 10% | $0{,}1$ | $1{,}1$ | po roku masz 110% kwoty |
+| 2,5% | $0{,}025$ | $1{,}025$ | po roku masz 102,5% kwoty |
+| 12% | $0{,}12$ | $1{,}12$ | po roku masz 112% kwoty |
+
+Jak czytać tabelę: w każdym wierszu ta sama stopa zapisana na trzy sposoby — w procentach (jak w treści zadania), jako ułamek $i$ (do wzorów) i jako mnożnik $1 + i$ (przez niego mnożysz kwotę za każdy okres).
+
+<Ramka kind="pulapka" tytul="1 + 4% to nie 5 i nie 1,4">
+$4\% = 0{,}04$, więc $1 + i = 1{,}04$. Wpisanie $i = 4$ daje $1 + i = 5$ — kwota rośnie pięć razy w rok. Wpisanie $0{,}4$ to stopa 40%. Zawsze dziel liczbę procentów przez 100.
+</Ramka>
+
+### Oznaczenia z zajęć
+
+<div class="k-symbole">
+  <Znak t="PV" nazwa="Wartość bieżąca (ang. present value)" czytamy="pe-fał albo po prostu „wartość bieżąca”" znaczy="Ile kwota jest warta <b>dziś</b>: kwota, którą wpłacasz na start, albo dzisiejsza wartość pieniędzy, które dostaniesz później." pamiec="P jak <i>present</i> — teraz." />
+  <Znak t="FV" nazwa="Wartość przyszła (ang. future value)" czytamy="ef-fał albo „wartość przyszła”" znaczy="Ile kwota będzie warta <b>po $n$ okresach</b> — razem z odsetkami." pamiec="F jak <i>future</i> — przyszłość." />
+  <Znak t="n" nazwa="Liczba okresów" czytamy="en" znaczy="Ile okresów (lat, kwartałów, miesięcy) mija. To też liczba kapitalizacji — ile razy odsetki zostały doliczone do kwoty." pamiec="n jak „na ile” — na ile okresów zostawiasz pieniądze." />
+  <Znak t="i" nazwa="Stopa procentowa na jeden okres" czytamy="i" znaczy="Jaka część kwoty dochodzi przez jeden okres. We wzorach jako ułamek: 5% to $i = 0{,}05$." pamiec="i jak <i>interest</i> — po angielsku odsetki." />
+</div>
+
+### Odsetki i kapitalizacja
+
+<Ramka kind="zapamietaj">
+**Odsetki** to pieniądze za pożyczenie pieniędzy. Na lokacie bank płaci je tobie, przy kredycie ty płacisz je bankowi.
+
+**Kapitalizacja** to powiększenie kapitału o odsetki: odsetki zostają dopisane do kwoty na koncie. Od następnego okresu odsetki liczą się już od większej kwoty — dostajesz odsetki od odsetek. To jest **procent składany**.
+</Ramka>
+
+Zobacz to na liczbach: 1000 zł na lokacie oprocentowanej 5% rocznie, odsetki dopisywane raz w roku. Obok — co by było, gdyby odsetki liczyć zawsze od samego 1000 zł. To tak zwany procent prosty. Na zajęciach z niego nie korzystamy, ale to typowy błąd.
+
+| rok | procent prosty: odsetki zawsze od 1000 zł | procent składany: odsetki od kwoty z odsetkami |
+|---|---|---|
+| 1 | $1000 + 50 = 1050$ | $1000 + 50 = 1050$ |
+| 2 | $1050 + 50 = 1100$ | $1050 + 52{,}50 = 1102{,}50$ |
+| 3 | $1100 + 50 = 1150$ | $1102{,}50 + 55{,}125 = 1157{,}625 \approx 1157{,}63$ |
+
+Jak czytać tabelę: w każdym wierszu kwota na koniec roku = kwota z poprzedniego wiersza + odsetki za rok. W prawej kolumnie odsetki rosną (50; 52,50; 55,125), bo co roku liczysz 5% od większej kwoty. W 2. roku odsetki od zeszłorocznych 50 zł dały dodatkowe 2,50 zł. Znak $\approx$ czytamy „w przybliżeniu równa się” — tu: wynik zaokrąglony do groszy.
+
+<Ramka kind="pulapka" tytul="Procent prosty zamiast składanego">
+„5% przez 3 lata, czyli $3 \cdot 50 = 150$ zł odsetek” — to błąd. Na zajęciach odsetki zawsze dopisujesz do kwoty (kapitalizacja), więc w każdym roku liczysz 5% od kwoty **z odsetkami** z poprzednich lat.
+</Ramka>
+
+### Oś czasu — najważniejsze narzędzie
+
+W zadaniach z finansów kwoty pojawiają się w różnych momentach: dziś, za rok, za dwa lata. Zanim cokolwiek policzysz, ustaw je na osi czasu. W tym kursie oś czasu rysujemy jako tabelę czytaną z góry na dół:
+
+- każdy wiersz to jeden moment: dziś, koniec 1. roku, koniec 2. roku…,
+- każda kolumna to jedna kwota,
+- wiersz w dół = rok później: kwota rośnie o odsetki, czyli mnożysz przez $1 + i$,
+- wiersz w górę = rok wcześniej: dzielisz przez $1 + i$ (to nie to samo co odjęcie 5% — więcej przy wartości bieżącej).
+
+Tak wygląda nasze 1000 zł na 5% przeniesione o 3 lata w przód:
+
+<OsCzasu wplaty={[{ t: 0, kwota: 1000 }]} i="0.05" cel={3} wynik="FV">
+złota kratka to kwota 1000 zł wpłacona dziś. Każda kratka niżej to ta sama kwota rok później — mała liczba nad kwotą ($\cdot 1{,}05$) mówi, przez co pomnożono kwotę z kratki wyżej. Zielony wiersz to moment, o który pyta zadanie. Przycisk „▶ Zobacz krok po kroku” rozpisuje każdy rok jak na kartce: najpierw odsetki, potem nowa kwota.
+</OsCzasu>
+
+<Ramka kind="botak" tytul="Koniec roku = początek następnego">
+Koniec 1. roku i początek 2. roku to **ten sam moment** — na osi czasu to jeden wiersz. „Dziś” to początek 1. roku. Wpłaty **z góry** stoją na początku okresów (dziś, koniec 1. roku, …), a **z dołu** — na końcu okresów (koniec 1. roku, koniec 2. roku, …).
+</Ramka>
+
+### Potęga — skrót na wielokrotne mnożenie
+
+<Ramka kind="liceum" tytul="Potęga">
+$1{,}05^3 = 1{,}05 \cdot 1{,}05 \cdot 1{,}05$ — wykładnik (mała liczba u góry) mówi, ile razy liczba stoi w iloczynie: tu trzy jednakowe czynniki (czynnik to liczba, którą mnożysz).
+
+Na kartce: $1{,}05 \cdot 1{,}05 = 1{,}1025$, potem $1{,}1025 \cdot 1{,}05 = 1{,}157625$. Na kalkulatorze w telefonie wpisujesz po prostu $1{,}05 \times 1{,}05 \times 1{,}05$.
+
+Kolejność działań: najpierw potęga, potem mnożenie przez kwotę.
+</Ramka>
+
+Trzy lata na osi czasu to trzy razy „$\cdot 1{,}05$”, czyli $\cdot 1{,}05^3$. Stąd wzór na wartość przyszłą.
+
+## Wartość przyszła (FV)
+
+<a id="polecenie-fv" class="k-anchor"></a>
+
+<Ramka kind="polecenie" tytul="Ile będzie na lokacie po n latach?">
+> Wpłacasz $PV$ zł na lokatę oprocentowaną $i$ w skali roku. Ile będzie na lokacie po $n$ latach?
+
+1. Wypisz dane: $PV$ (kwota dziś), $i$ jako ułamek, $n$ (liczba okresów).
+2. Sprawdź, jak często dopisywane są odsetki. Częściej niż raz w roku (np. co kwartał) — przelicz $i$ oraz $n$ na kwartały (sekcja niżej).
+3. Policz czynnik $(1+i)^n$ — liczbę, przez którą pomnożysz kwotę. Nie zaokrąglaj go.
+4. Pomnóż: $FV = (1+i)^n \cdot PV$.
+5. Wynik zaokrąglij do groszy dopiero na końcu.
+</Ramka>
+
+<Rozbior t="FV = (1+i)^n \cdot PV" czytamy="ef-fał równa się: jeden plus i do potęgi en, razy pe-fał" czesci={[
+  { t: 'PV', o: '<b>kwota dziś</b> — tyle wpłacasz na start' },
+  { t: '1+i', o: '<b>mnożnik jednego okresu</b> — z każdej złotówki po okresie masz $1{,}04$ zł (przy 4%), czyli 104% kwoty' },
+  { t: '(1+i)^n', o: '<b>$n$ razy</b> mnożysz przez $1+i$ — raz za każdy okres, czyli za każdą kapitalizację' },
+  { t: 'FV', o: '<b>wynik</b> — kwota po $n$ okresach, razem z odsetkami' },
+]} />
+
+<Ramka kind="skad" tytul="Skąd ten wzór">
+Z osi czasu: każdy rok to „razy $1+i$”. Po 1 roku masz $(1+i) \cdot PV$, po 2 latach $(1+i)(1+i) \cdot PV$, po 3 latach $(1+i)(1+i)(1+i) \cdot PV$. Mnożenie tej samej liczby $n$ razy zapisujesz krócej jako potęgę: $(1+i)^n$.
+</Ramka>
+
+Przykład z tabeli wyżej, jednym działaniem: $FV = 1{,}05^3 \cdot 1000 = 1{,}157625 \cdot 1000 = 1157{,}625 \approx 1157{,}63$ zł — tyle samo, co rok po roku.
+
+<Rozwiazanie tytul="Lokata: 5000 zł na 3 lata, 4% rocznie">
+<div slot="tresc">
+
+Wpłacasz 5000 zł na lokatę oprocentowaną 4% w skali roku, z kapitalizacją roczną (odsetki dopisywane raz w roku). Ile będzie na lokacie po 3 latach?
+
+</div>
+<div slot="plan">
+
+Cel: jedna kwota — wartość lokaty na koniec 3. roku ($FV$).
+
+1. Wypisujemy dane i zamieniamy procent na ułamek — bo we wzorze $i$ musi być ułamkiem.
+2. Przesuwamy 5000 zł po osi czasu rok po roku — żeby zobaczyć, skąd bierze się wynik.
+3. Liczymy to samo wzorem, jednym działaniem — na kolokwium to szybsza droga, a tabela służy do sprawdzenia.
+
+</div>
+
+<Krok tytul="Wypisz dane">
+$PV = 5000$ zł, $i = 4\% = 0{,}04$, $n = 3$ (3 lata, odsetki raz w roku, więc 3 kapitalizacje).
+
+<Dlaczego>
+Okres to rok, bo odsetki są dopisywane raz w roku. Gdyby były dopisywane co kwartał, okresem byłby kwartał — wtedy zmieniają się $i$ oraz $n$ (zobacz niżej).
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Przesuń kwotę po osi czasu">
+<OsCzasu wplaty={[{ t: 0, kwota: 5000 }]} i="0.04" cel={3} wynik="FV">
+złota kratka to kwota 5000 zł wpłacona dziś, zielony wiersz to koniec 3. roku. W każdej kratce poniżej jest kwota po kolejnym roku: poprzednia kwota plus 4% odsetek.
+</OsCzasu>
+
+<Dlaczego>
+Każdy rok dokłada 4% do kwoty, która **już ma** odsetki z poprzednich lat. Dlatego odsetki rosną: 200 zł, potem 208 zł, potem 216,32 zł.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz wzorem">
+Czynnik: $1{,}04^3 = 1{,}04 \cdot 1{,}04 \cdot 1{,}04 = 1{,}0816 \cdot 1{,}04 = 1{,}124864$.
+
+$$
+FV = 1{,}124864 \cdot 5000 = 5624{,}32 \text{ zł}
+$$
+
+<Dlaczego>
+Trzy kroki w dół po osi czasu to trzy razy $\cdot 1{,}04$ — wzór robi to jednym mnożeniem. Wynik musi się zgadzać z tabelą.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odpowiedź">
+Po 3 latach na lokacie będzie **5624,32 zł**. Z tego 624,32 zł to odsetki.
+
+<Dlaczego>
+Odpowiedź piszesz zdaniem, z jednostką. Różnica $5624{,}32 - 5000 = 624{,}32$ to zarobek — przydaje się, gdy zadanie pyta „ile zarobisz”.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+### Kapitalizacja częstsza niż raz w roku
+
+W treści zwykle stoi stopa **roczna** („8% w skali roku”), ale odsetki mogą być dopisywane częściej — co kwartał albo co miesiąc. Wtedy okresem we wzorze jest kwartał (miesiąc). Na slajdzie nie ma na to osobnego wzoru — wystarczą definicje: $i$ to stopa na jeden okres, a $n$ to liczba kapitalizacji.
+
+<Ramka kind="zapamietaj" tytul="Przeliczenie na kwartały i miesiące">
+- **kwartalnie** (4 razy w roku): $i = \dfrac{\text{stopa roczna}}{4}$, $n = \text{lata} \cdot 4$,
+- **miesięcznie** (12 razy w roku): $i = \dfrac{\text{stopa roczna}}{12}$, $n = \text{lata} \cdot 12$.
+
+$n$ to zawsze liczba kapitalizacji — ile razy odsetki zostały dopisane.
+</Ramka>
+
+| stopa roczna | kwartalnie: stopa : 4 | miesięcznie: stopa : 12 |
+|---|---|---|
+| 12% | $3\% = 0{,}03$ | $1\% = 0{,}01$ |
+| 8% | $2\% = 0{,}02$ | $0{,}666\ldots\% = 0{,}00666\ldots$ |
+| 6% | $1{,}5\% = 0{,}015$ | $0{,}5\% = 0{,}005$ |
+
+Jak czytać tabelę: w każdym wierszu jedna stopa roczna przeliczona na kwartał i na miesiąc. Przy 8% miesięcznie wychodzi ułamek bez końca (trzy kropki znaczą, że cyfry się powtarzają) — nie zaokrąglaj go, tylko licz na kalkulatorze: $0{,}08 : 12$.
+
+<Rozwiazanie tytul="2000 zł na 2 lata, 8% rocznie, kapitalizacja kwartalna">
+<div slot="tresc">
+
+Wpłacasz 2000 zł na 2 lata. Oprocentowanie wynosi 8% w skali roku, odsetki są dopisywane co kwartał. Ile będzie na lokacie po 2 latach?
+
+</div>
+<div slot="plan">
+
+Cel: $FV$ po 2 latach.
+
+1. Ustalamy okres (kwartał) i przeliczamy stopę na kwartał — bo we wzorze $i$ to stopa na jeden okres.
+2. Liczymy, ile kwartałów mija — bo $n$ to liczba kapitalizacji, a nie liczba lat.
+3. Liczymy $FV$ wzorem i porównujemy z kapitalizacją roczną — żeby zobaczyć, ile daje częstsze dopisywanie odsetek.
+
+</div>
+
+<Krok tytul="Stopa na jeden kwartał">
+Okres = kwartał. Rok ma 4 kwartały, więc $i = 8\% : 4 = 2\% = 0{,}02$.
+
+<Dlaczego typ="umowa">
+„8% w skali roku” przy kapitalizacji kwartalnej znaczy: bank dzieli roczną stopę równo na 4 kwartały i co kwartał dopisuje 2% kwoty. Tak się umawia bank z klientem — tego nie wyprowadzasz, tylko stosujesz.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Liczba kapitalizacji">
+2 lata po 4 kwartały: $n = 2 \cdot 4 = 8$. Na osi czasu to 8 kroków w dół — każdy kwartał dokłada 2%:
+
+<OsCzasu wplaty={[{ t: 0, kwota: 2000 }]} i="0.02" cel={8} okres="kwartał" wynik="FV">
+złota kratka to 2000 zł wpłacone dziś, każdy wiersz niżej to koniec kolejnego kwartału ($\cdot 1{,}02$), zielony wiersz to koniec 8. kwartału, czyli koniec 2. roku.
+</OsCzasu>
+
+<Dlaczego>
+Odsetki zostaną dopisane 8 razy — tyle jest wierszy w dół od „dziś” do zielonego wiersza.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz FV">
+Czynnik (kalkulator): $1{,}02^8 = 1{,}171659\ldots$ — trzy kropki znaczą, że liczba ma dalsze cyfry. Liczysz dalej z pełnym wynikiem z kalkulatora.
+
+$$
+\begin{aligned}
+FV &= 1{,}171659\ldots \cdot 2000 \\
+&= 2343{,}318\ldots \approx 2343{,}32 \text{ zł}
+\end{aligned}
+$$
+
+<Dlaczego>
+Czynnika nie zaokrąglasz: każda obcięta cyfra po pomnożeniu przez 2000 zmienia wynik o grosze, a przy większych kwotach nawet o złotówki.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Porównaj z kapitalizacją roczną">
+Przy odsetkach dopisywanych raz w roku: $1{,}08^2 \cdot 2000 = 1{,}1664 \cdot 2000 = 2332{,}80$ zł. Kapitalizacja kwartalna daje $2343{,}32 - 2332{,}80 = 10{,}52$ zł więcej.
+
+<Dlaczego>
+Im częściej bank dopisuje odsetki, tym wcześniej zaczynają one same zarabiać (odsetki od odsetek). Przy tej samej (dodatniej) stopie rocznej częstsza kapitalizacja zawsze daje trochę więcej.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="kiedy">
+Przeliczasz $i$ oraz $n$, gdy w treści jest „kapitalizacja kwartalna (miesięczna)” albo „odsetki dopisywane co kwartał (co miesiąc)”. Gdy nic o tym nie ma, przyjmij kapitalizację roczną (okres = rok) — to umowa.
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy FV">
+- **Mnożenie przez $n$ zamiast potęgi:** $1{,}04 \cdot 3 \cdot 5000 = 15\,600$ zł — absurd: lokata nie potraja pieniędzy w 3 lata. Potęga to mnożenie przez $1{,}04$ **trzy razy**.
+- **Procent prosty:** $5000 + 3 \cdot 200 = 5600$ zł — brakuje odsetek od odsetek.
+- **Stopa roczna przy kapitalizacji kwartalnej:** $1{,}08^8 \cdot 2000 \approx 3701{,}86$ zł — tak, jakby co kwartał dochodziło 8%. Wynik prawie dwa razy za duży.
+- **Zaokrąglony czynnik:** $1{,}17 \cdot 2000 = 2340$ zł zamiast 2343,32 zł.
+</Ramka>
+
+<Ramka kind="granica" tytul="Kiedy wzór nie wystarcza">
+Wzór $FV = (1+i)^n \cdot PV$ działa, gdy stopa jest **taka sama** przez cały czas, a odsetki zostają na koncie. Gdy stopa się zmienia, mnożysz przez każdy czynnik osobno — oś czasu dalej działa, tylko w każdym wierszu mnożysz przez inną liczbę.
+</Ramka>
+
+<Ramka kind="podobny" tytul="Stopa zmienia się co rok">
+1000 zł, w 1. roku 5%, w 2. roku 6%: $FV = 1000 \cdot 1{,}05 \cdot 1{,}06 = 1050 \cdot 1{,}06 = 1113$ zł. Nie licz „średnio 5,5%”: $1000 \cdot 1{,}055^2 = 1113{,}025 \approx 1113{,}03$ zł — wychodzi trochę inaczej.
+</Ramka>
+
+<Pytania pytania={[
+  { q: '1000 zł na 2 lata, 10% rocznie, kapitalizacja roczna. Ile będzie na lokacie?', opcje: ['1200 zł', '1210 zł', '2200 zł'], dobra: 1, dlaczego: '$FV = 1{,}1^2 \\cdot 1000 = 1{,}21 \\cdot 1000 = 1210$ zł. Rok po roku: $1000 + 100 = 1100$, potem $1100 + 110 = 1210$. 1200 zł to procent prosty (bez odsetek od odsetek), a 2200 zł to $1{,}1 \\cdot 2 \\cdot 1000$ — mnożenie przez $n$ zamiast potęgi.' },
+]} />
+
+## Wartość bieżąca (PV)
+
+<a id="polecenie-pv" class="k-anchor"></a>
+
+Teraz odwrotnie: znasz kwotę w przyszłości i pytasz, ile jest warta dziś. Na osi czasu idziesz w górę — za każdy rok **dzielisz** przez $1 + i$, bo szukasz kwoty, która razem z odsetkami da tę z przyszłości.
+
+<Ramka kind="polecenie" tytul="Ile wpłacić dziś? Ile to jest warte dziś?">
+> Ile trzeba wpłacić dziś, żeby po $n$ latach mieć $FV$ zł? (Albo: ile jest dziś warta kwota $FV$, którą dostaniesz za $n$ lat?)
+
+1. Wypisz dane: $FV$, $i$ jako ułamek, $n$.
+2. Policz czynnik $(1+i)^n$ — tak samo jak przy $FV$.
+3. Podziel: $PV = \dfrac{FV}{(1+i)^n}$.
+4. Zaokrąglij do groszy na końcu.
+5. Sprawdź: $PV$ musi wyjść **mniejsze** od $FV$ (przy dodatniej stopie).
+</Ramka>
+
+<Rozbior t="PV = \dfrac{FV}{(1+i)^n}" czytamy="pe-fał równa się ef-fał przez jeden plus i do potęgi en" czesci={[
+  { t: 'FV', o: '<b>kwota w przyszłości</b> — tę znasz z treści' },
+  { t: '(1+i)^n', o: '<b>ten sam czynnik co we wzorze na $FV$</b> — tylko teraz przez niego dzielisz' },
+  { t: 'PV', o: '<b>wynik</b> — ile ta przyszła kwota jest warta dziś' },
+]} />
+
+<Ramka kind="skad" tytul="Skąd ten wzór">
+To ten sam wzór co $FV = (1+i)^n \cdot PV$, przekształcony: dzielisz obie strony przez $(1+i)^n$. Liczenie wartości bieżącej nazywa się też **dyskontowaniem** — „sprowadzaniem kwoty do dziś”.
+</Ramka>
+
+<Rozwiazanie tytul="Ile wpłacić dziś, żeby za 3 lata mieć 10 000 zł?">
+<div slot="tresc">
+
+Za 3 lata chcesz mieć 10 000 zł. Lokata daje 5% w skali roku (kapitalizacja roczna). Ile musisz wpłacić dziś?
+
+</div>
+<div slot="plan">
+
+Cel: kwota dziś ($PV$), która po 3 latach urośnie do 10 000 zł.
+
+1. Wypisujemy dane — żeby było jasne, czego szukamy: kwoty na początku, a nie na końcu.
+2. Cofamy 10 000 zł po osi czasu rok po roku — żeby zobaczyć, dlaczego tym razem dzielimy.
+3. Liczymy to samo wzorem i sprawdzamy wynik w drugą stronę — sprawdzenie mnożeniem wyłapie pomylenie mnożenia z dzieleniem.
+
+</div>
+
+<Krok tytul="Wypisz dane">
+$FV = 10\,000$ zł, $i = 5\% = 0{,}05$, $n = 3$. Szukasz $PV$.
+
+<Dlaczego>
+Znasz kwotę na końcu (cel), a szukasz kwoty na początku — to pytanie o wartość bieżącą.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Cofnij kwotę po osi czasu">
+<OsCzasu wplaty={[{ t: 3, kwota: 10000 }]} i="0.05" cel={0} wynik="PV">
+złota kratka to 10 000 zł na koniec 3. roku, zielony wiersz to dziś. Kwota idzie w górę: każda kratka wyżej to kwota rok wcześniej, czyli podzielona przez $1{,}05$ (mała liczba nad kwotą). Kwoty w kratkach są zaokrąglone do groszy — na kalkulatorze dzielisz dalej pełny wynik, a nie zaokrąglony.
+</OsCzasu>
+
+<Dlaczego>
+Szukasz kwoty, która po doliczeniu odsetek (razy $1{,}05$) da kwotę z wiersza niżej. Odwrotnością mnożenia jest dzielenie.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz wzorem">
+Czynnik: $1{,}05^3 = 1{,}157625$.
+
+$$
+\begin{aligned}
+PV &= \frac{10\,000}{1{,}157625} \\
+&= 8638{,}3759\ldots \approx 8638{,}38 \text{ zł}
+\end{aligned}
+$$
+
+<Dlaczego>
+Trzy kroki w górę po osi czasu to trzy razy „$: 1{,}05$”, czyli dzielenie przez $1{,}05^3$ — jednym działaniem.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdź i odpowiedz">
+Sprawdzenie: $8638{,}38 \cdot 1{,}157625 = 10\,000{,}0046\ldots \approx 10\,000$ zł ✓. Musisz wpłacić dziś **8638,38 zł**.
+
+<Dlaczego>
+Sprawdzasz wzorem na $FV$ — w drugą stronę. Różnica 0,0046 zł (mniej niż pół grosza) to skutek zaokrąglenia $PV$ do groszy, nie błąd.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+### Porównywanie ofert
+
+Wracamy do konkursu: 1000 zł dziś czy 1100 zł za 2 lata? Przyjmijmy, że lokata daje 6% rocznie.
+
+<Ramka kind="zapamietaj" tytul="Porównujesz w jednym momencie">
+Kwot z różnych momentów **nie porównujesz bezpośrednio**. Najpierw przenosisz je do jednego momentu — najczęściej do dziś (liczysz $PV$) — i dopiero wtedy sprawdzasz, która jest większa.
+</Ramka>
+
+<div class="k-dwa">
+<div>
+
+**Sposób 1: wszystko na dziś**
+
+$1{,}06^2 = 1{,}1236$
+
+$PV = 1100 : 1{,}1236 = 978{,}996\ldots \approx 979{,}00$ zł
+
+$979{,}00 < 1000$ — więcej warte jest **1000 zł dziś**.
+
+</div>
+<div>
+
+**Sposób 2: wszystko na koniec 2. roku**
+
+$FV = 1{,}1236 \cdot 1000 = 1123{,}60$ zł
+
+$1123{,}60 > 1100$ — kwota 1000 zł wpłacona dziś urośnie do kwoty większej niż 1100 zł. Wniosek ten sam: **1000 zł dziś**.
+
+</div>
+</div>
+
+<Ramka kind="podobny" tytul="Ta sama oferta przy 4%">
+Przy 4% rocznie: $1{,}04^2 = 1{,}0816$, a $PV = 1100 : 1{,}0816 = 1017{,}011\ldots \approx 1017{,}01$ zł. To **więcej** niż 1000 zł — teraz lepsze jest 1100 zł za 2 lata. Odpowiedź zależy od stopy: im wyższa stopa, tym mniej warte są dziś pieniądze z przyszłości.
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy PV">
+- **Mnożenie zamiast dzielenia:** $10\,000 \cdot 1{,}157625 = 11\,576{,}25$ zł. Wynik większy od 10 000 zł to sygnał błędu — przy dodatniej stopie kwota dziś jest zawsze mniejsza od kwoty w przyszłości.
+- **Dzielenie przez $1{,}05 \cdot 3$:** $10\,000 : 3{,}15 \approx 3174{,}60$ zł — trzeba dzielić przez $1{,}05^3$, nie przez $3 \cdot 1{,}05$.
+- **Odejmowanie 5% zamiast dzielenia:** $10\,000 \cdot 0{,}95^3 = 8573{,}75$ zł zamiast 8638,38 zł. Odjęcie 5% to nie to samo co podzielenie przez $1{,}05$: $1050 - 5\% = 1050 - 52{,}50 = 997{,}50$, a $1050 : 1{,}05 = 1000$.
+- **Zaokrąglony czynnik:** $10\,000 : 1{,}16 \approx 8620{,}69$ zł — o 17,69 zł za mało.
+</Ramka>
+
+<Ramka kind="granica">
+Wzór $PV = \dfrac{FV}{(1+i)^n}$ jest dla **jednej** kwoty. Kilka kwot w różnych momentach sprowadzasz do dziś każdą osobno i dodajesz — tak liczy się rentę (niżej).
+</Ramka>
+
+<Pytania pytania={[
+  { q: 'Ile jest dziś warte 1210 zł, które dostaniesz za 2 lata, przy 10% rocznie?', opcje: ['1008,33 zł', '1464,10 zł', '1000,00 zł'], dobra: 2, dlaczego: '$1{,}1^2 = 1{,}21$, a $1210 : 1{,}21 = 1000$ zł. 1008,33 zł to $1210 : 1{,}2$ — procent prosty ($1 + 2 \cdot 0{,}1$) zamiast potęgi. 1464,10 zł to $1210 \cdot 1{,}21$ — mnożenie zamiast dzielenia; wynik większy od 1210 zł to sygnał błędu.' },
+]} />
+
+## Strumień pieniężny — kilka wpłat
+
+<a id="polecenie-strumien" class="k-anchor"></a>
+
+Strumień pieniężny to kilka wpłat w różnych momentach, np. co roku 1000 zł. Na zajęciach wpłaty są **z góry** — na początku każdego okresu — a wartość strumienia liczysz **na koniec ostatniego okresu**.
+
+<Rozbior t="\begin{aligned} FV = {} & (1+i)^n PV_1 + (1+i)^{n-1} PV_2 \\ & + \ldots + (1+i) PV_n \end{aligned}" czytamy="ef-fał równa się: jeden plus i do potęgi en razy pe-fał jeden, plus jeden plus i do potęgi en minus jeden razy pe-fał dwa, i tak dalej, aż do: jeden plus i razy pe-fał en" czesci={[
+  { t: 'PV_1, PV_2, \\ldots, PV_n', o: '<b>kolejne wpłaty</b> — numer na dole to numer wpłaty, a nie potęga. $PV_1$ wpłacasz dziś, $PV_2$ na początku 2. okresu, …' },
+  { t: '(1+i)^n PV_1', o: '<b>pierwsza wpłata</b> leży na koncie wszystkie $n$ okresów, więc rośnie $n$ razy' },
+  { t: '(1+i)^{n-1} PV_2', o: '<b>druga wpłata</b> przychodzi okres później — leży o jeden okres krócej' },
+  { t: '(1+i) PV_n', o: '<b>ostatnia wpłata</b> (początek ostatniego okresu) leży jeszcze jeden okres — jedno $\\cdot (1+i)$' },
+]} />
+
+<Ramka kind="polecenie" tytul="Ile zgromadzisz z kilku wpłat?">
+> Na początku każdego roku przez $n$ lat wpłacasz kwotę na rachunek oprocentowany $i$. Ile zgromadzisz na koniec $n$-tego roku?
+
+1. Ustaw oś czasu: wiersze od dziś do końca ostatniego roku. Wpłaty z góry stoją w wierszach: dziś, koniec 1. roku, …, koniec $(n-1)$. roku.
+2. Dla każdej wpłaty policz, ile lat zostaje do końca: pierwsza — $n$, druga — $n-1$, …, ostatnia — 1.
+3. Każdą wpłatę pomnóż przez $(1+i)$ do potęgi „ile lat zostało”.
+4. Dodaj wyniki.
+</Ramka>
+
+<Rozwiazanie tytul="Trzy wpłaty po 1000 zł, 5% rocznie">
+<div slot="tresc">
+
+Na początku każdego z trzech kolejnych lat wpłacasz 1000 zł na rachunek oprocentowany 5% w skali roku (kapitalizacja roczna). Ile będzie na rachunku na koniec 3. roku?
+
+</div>
+<div slot="plan">
+
+Cel: jedna kwota — wartość wszystkich wpłat na koniec 3. roku ($FV$ strumienia).
+
+1. Ustawiamy wpłaty na osi czasu — bo każda wpłata leży na rachunku inną liczbę lat.
+2. Każdą wpłatę przenosimy osobno na koniec 3. roku — dodawać wolno tylko kwoty z jednego momentu.
+3. Dodajemy trzy kwoty z zielonego wiersza.
+
+</div>
+
+<Krok tytul="Ustaw wpłaty na osi czasu">
+Wpłaty z góry: 1. wpłata dziś, 2. — na początku 2. roku (czyli na koniec 1. roku), 3. — na początku 3. roku (na koniec 2. roku). Cel: koniec 3. roku.
+
+<Dlaczego>
+Początek roku i koniec poprzedniego roku to ten sam moment. Ostatnia wpłata nie leży w zielonym wierszu — wpłacasz ją rok przed końcem, więc też zarobi odsetki za jeden rok.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Przenieś każdą wpłatę na koniec 3. roku">
+<OsCzasu wplaty={[{ t: 0, kwota: 1000 }, { t: 1, kwota: 1000 }, { t: 2, kwota: 1000 }]} i="0.05" cel={3} wynik="FV">
+każda kolumna to jedna wpłata. Złota kratka — chwila wpłaty, turkusowe — ta sama wpłata po kolejnych latach, zielony wiersz — koniec 3. roku. Pierwsza wpłata schodzi o 3 wiersze, druga o 2, trzecia o 1. Pod tabelą trzy kwoty z zielonego wiersza są dodane pisemnie.
+</OsCzasu>
+
+<Dlaczego>
+Każda wpłata leży na rachunku inną liczbę lat, więc każdą przenosisz osobno. Dodawać możesz dopiero kwoty z tego samego momentu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="To samo wzorem ze slajdu">
+Wzór ze slajdu, składnik po składniku. Potrzebne potęgi: $1{,}05^2 = 1{,}1025$ i $1{,}05^3 = 1{,}157625$, więc pierwszy składnik to dokładnie $1{,}157625 \cdot 1000 = 1157{,}625 \approx 1157{,}63$.
+
+$$
+\begin{array}{rcl}
+1{,}05^3 \cdot 1000 &\approx& 1157{,}63 \\
+1{,}05^2 \cdot 1000 &=& 1102{,}50 \\
+1{,}05 \cdot 1000 &=& 1050{,}00 \\ \hline
+FV &\approx& 3310{,}13 \text{ zł}
+\end{array}
+$$
+
+<Dlaczego>
+Wykładniki 3, 2, 1 to liczba wierszy, o które schodzi każda wpłata. Wzór ze slajdu to dokładnie ta tabela zapisana w jednej linii.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odpowiedź">
+Na koniec 3. roku na rachunku będzie **3310,13 zł** (wpłaty to razem 3000 zł, odsetki — 310,13 zł).
+
+<Dlaczego>
+Dokładna suma to $3310{,}125$ zł — zaokrąglasz ją do groszy dopiero na końcu i też wychodzi 3310,13 zł.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="podobny" tytul="Różne kwoty wpłat">
+Wpłaty z góry: 2000 zł, 1500 zł i 1000 zł (w tej kolejności), 10% rocznie, wartość na koniec 3. roku:
+
+$$
+\begin{array}{rcl}
+1{,}1^3 \cdot 2000 = 1{,}331 \cdot 2000 &=& 2662 \\
+1{,}1^2 \cdot 1500 = 1{,}21 \cdot 1500 &=& 1815 \\
+1{,}1 \cdot 1000 &=& 1100 \\ \hline
+FV &=& 5577 \text{ zł}
+\end{array}
+$$
+
+Wykładnik zależy od **momentu** wpłaty, a nie od jej wielkości: pierwsza wpłata zawsze dostaje najwyższy.
+</Ramka>
+
+### Z góry czy z dołu?
+
+Na slajdzie wpłaty są **z góry**. W treści zadania może się jednak pojawić wariant **z dołu** — wpłaty na koniec każdego roku. Porównaj obie osie czasu dla trzech wpłat po 1000 zł przy 5%:
+
+<OsCzasu wplaty={[{ t: 0, kwota: 1000 }, { t: 1, kwota: 1000 }, { t: 2, kwota: 1000 }]} i="0.05" cel={3} wynik="FV">
+**z góry**: wpłaty dziś, na koniec 1. roku i na koniec 2. roku. Każda wpłata zarabia co najmniej rok — nawet ostatnia schodzi o jeden wiersz.
+</OsCzasu>
+
+<OsCzasu wplaty={[{ t: 1, kwota: 1000 }, { t: 2, kwota: 1000 }, { t: 3, kwota: 1000 }]} i="0.05" cel={3} wynik="FV" od={0}>
+**z dołu**: wpłaty na koniec 1., 2. i 3. roku. Ostatnia wpłata stoi już w zielonym wierszu — nie zarabia nic. Każda wpłata leży o rok krócej niż „z góry”, więc wynik jest mniejszy: 3152,50 zł zamiast 3310,13 zł.
+</OsCzasu>
+
+<Ramka kind="kiedy">
+„Na początku każdego roku”, „z góry” → wpłata stoi na początku okresu, a ostatnia wpłata też zarabia odsetki za jeden okres (wykładniki $n, n-1, \ldots, 1$). „Na koniec każdego roku”, „z dołu” → wszystkie wykładniki są o 1 mniejsze, a ostatnia wpłata nie zarabia nic (wykładnik 0).
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy strumieniu">
+- **Wykładniki o 1 za małe** (2, 1, 0 zamiast 3, 2, 1): $1102{,}50 + 1050 + 1000 = 3152{,}50$ zł — to wynik dla wpłat **z dołu**, nie z góry.
+- **Odwrócone wykładniki:** najwyższy wykładnik dostaje pierwsza wpłata (najdłużej leży na koncie), a nie ostatnia. Przy równych wpłatach tego błędu nie widać, ale przy wpłatach 2000, 1500 i 1000 zł wychodzi $1{,}1 \cdot 2000 + 1{,}21 \cdot 1500 + 1{,}331 \cdot 1000 = 5346$ zł zamiast 5577 zł.
+- **Suma wpłat razy czynnik:** $3000 \cdot 1{,}05^3 = 3472{,}875 \approx 3472{,}88$ zł — tak jakby wszystkie 3000 zł leżały od dziś.
+</Ramka>
+
+<Ramka kind="granica">
+Wzór ze slajdu działa dla wpłat **z góry** i wartości liczonej **na koniec ostatniego okresu**. Wpłaty z dołu albo wartość na inny moment (np. na dziś) — ustaw oś czasu i przenieś każdą wpłatę osobno.
+</Ramka>
+
+<Pytania pytania={[
+  { q: 'Dwie wpłaty z góry po 500 zł, 10% rocznie. Ile będzie na rachunku na koniec 2. roku?', opcje: ['1155,00 zł', '1050,00 zł', '1000,00 zł'], dobra: 0, dlaczego: 'Pierwsza wpłata leży 2 lata, druga rok: $1{,}21 \cdot 500 + 1{,}1 \cdot 500 = 605 + 550 = 1155$ zł. 1050 zł to wpłaty z dołu ($550 + 500$) — druga wpłata z góry też zarabia rok. 1000 zł to same wpłaty, bez odsetek.' },
+]} />
+
+## Renta — dzisiejsza wartość przyszłych wypłat
+
+<a id="polecenie-renta" class="k-anchor"></a>
+
+Renta to seria **wypłat**, które dostaniesz w przyszłości — np. 2000 zł na koniec każdego roku przez 3 lata. Pytanie brzmi: ile ta seria jest warta dziś? Inaczej: ile trzeba dziś wpłacić do banku, żeby bank mógł ci wypłacać po 2000 zł przez 3 lata. Na slajdzie te kwoty nazywają się „przyszłymi wpłatami” — to pieniądze, które będą wpływać na twoje konto. Tutaj nazywamy je wypłatami, bo wypłaca je bank.
+
+<Rozbior t="PV = \dfrac{FV_1}{1+i} + \dfrac{FV_2}{(1+i)^2} + \ldots + \dfrac{FV_n}{(1+i)^n}" czytamy="pe-fał równa się: ef-fał jeden przez jeden plus i, plus ef-fał dwa przez jeden plus i do kwadratu, i tak dalej, aż do: ef-fał en przez jeden plus i do potęgi en" czesci={[
+  { t: 'FV_1, FV_2, \\ldots, FV_n', o: '<b>kolejne wypłaty</b> — $FV_1$ dostajesz na koniec 1. okresu, $FV_2$ na koniec 2., …' },
+  { t: '\\dfrac{FV_k}{(1+i)^k}', o: '<b>wypłata sprowadzona do dziś</b> — wypłatę z końca $k$-tego okresu dzielisz $k$ razy przez $1+i$' },
+  { t: 'PV', o: '<b>wynik</b> — wartość całej renty dziś: suma wszystkich wypłat sprowadzonych do dziś' },
+]} />
+
+To wzór dla renty **z dołu** — wypłaty na koniec każdego okresu, tak jak na slajdzie.
+
+<Ramka kind="polecenie" tytul="Ile jest dziś warta renta?">
+> Renta wypłaca $FV_1, FV_2, \ldots, FV_n$ na koniec kolejnych lat. Ile jest dziś warta przy stopie $i$? (Albo: ile trzeba dziś wpłacić, żeby bank mógł ją wypłacać?)
+
+1. Ustaw oś czasu: wypłaty w wierszach „koniec 1. roku”, „koniec 2. roku”, …; cel — dziś.
+2. Każdą wypłatę podziel przez $(1+i)^k$, gdzie $k$ to numer roku, w którym ją dostajesz.
+3. Dodaj wyniki.
+4. Sprawdź: suma musi być mniejsza od sumy wypłat.
+</Ramka>
+
+<Rozwiazanie tytul="Renta: trzy wypłaty po 2000 zł, 6% rocznie">
+<div slot="tresc">
+
+Bank ma ci wypłacać 2000 zł na koniec każdego z trzech kolejnych lat. Pieniądze w banku są oprocentowane 6% w skali roku. Ile musisz wpłacić dziś?
+
+</div>
+<div slot="plan">
+
+Cel: jedna kwota dziś ($PV$ renty), która wystarczy na trzy wypłaty po 2000 zł.
+
+1. Ustawiamy wypłaty na osi czasu — każda jest w innym momencie, więc każdą cofamy o inną liczbę lat.
+2. Każdą wypłatę cofamy do dziś.
+3. Dodajemy trzy kwoty z wiersza „dziś” — teraz wszystkie są z jednego momentu, więc wolno je dodać.
+4. Sprawdzamy, czy ta kwota rzeczywiście wystarczy na trzy wypłaty — to pokazuje, co znaczy wynik.
+
+</div>
+
+<Krok tytul="Ustaw wypłaty na osi czasu">
+Wypłaty z dołu: na koniec 1., 2. i 3. roku. Cel: dziś.
+
+<Dlaczego>
+Pierwsza wypłata jest za rok, a nie dziś — dlatego ją też dzielisz przez $1{,}06$ (jeden krok w górę).
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Cofnij każdą wypłatę do dziś">
+<OsCzasu wplaty={[{ t: 1, kwota: 2000 }, { t: 2, kwota: 2000 }, { t: 3, kwota: 2000 }]} i="0.06" cel={0} wynik="PV">
+każda kolumna to jedna wypłata. Złota kratka — chwila wypłaty, turkusowe — ta sama kwota cofnięta o kolejne lata (podzielona przez $1{,}06$), zielony wiersz — dziś. Pierwsza wypłata idzie w górę o 1 wiersz, druga o 2, trzecia o 3. Pod tabelą kwoty z wiersza „dziś” są dodane pisemnie. Kwoty w kratkach są zaokrąglone do groszy — na kalkulatorze dzielisz dalej pełny wynik.
+</OsCzasu>
+
+<Dlaczego>
+Im później dostajesz pieniądze, tym mniej są warte dziś — dlatego trzecia wypłata jest dziś warta najmniej (1679,24 zł).
+</Dlaczego>
+</Krok>
+
+<Krok tytul="To samo wzorem ze slajdu">
+Wzór ze slajdu, składnik po składniku:
+
+$$
+\begin{array}{rcl}
+\dfrac{2000}{1{,}06} &\approx& 1886{,}79 \\[6pt]
+\dfrac{2000}{1{,}06^2} &\approx& 1779{,}99 \\[6pt]
+\dfrac{2000}{1{,}06^3} &\approx& 1679{,}24 \\[4pt] \hline
+PV &\approx& 5346{,}02 \text{ zł}
+\end{array}
+$$
+
+<Dlaczego>
+Wykładnik w mianowniku to numer roku wypłaty, czyli liczba wierszy w górę. $1{,}06^2 = 1{,}1236$, $1{,}06^3 = 1{,}191016$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdź: czy 5346,02 zł wystarczy?">
+Wpłacasz 5346,02 zł i co roku: bank dolicza 6% odsetek, potem wypłacasz 2000 zł.
+
+| koniec roku | przed wypłatą (z odsetkami) | po wypłacie 2000 zł |
+|---|---|---|
+| 1. | $5346{,}02 \cdot 1{,}06$<br />$\approx 5666{,}78$ | $3666{,}78$ |
+| 2. | $3666{,}78 \cdot 1{,}06$<br />$\approx 3886{,}79$ | $1886{,}79$ |
+| 3. | $1886{,}79 \cdot 1{,}06$<br />$\approx 2000{,}00$ | $0{,}00$ |
+
+Jak czytać tabelę: wiersz to koniec kolejnego roku. Najpierw bank dolicza 6% (środkowa kolumna), potem wypłacasz 2000 zł, a reszta (prawa kolumna) zostaje na następny rok. Stan konta bank zaokrągla do groszy.
+
+Po trzeciej wypłacie na koncie zostaje 0 zł — kwota wystarcza co do grosza. Odpowiedź: musisz wpłacić **5346,02 zł**.
+
+<Dlaczego>
+To jest sens wartości bieżącej renty: najmniejsza kwota, która razem z odsetkami pokrywa wszystkie wypłaty. Przy mniejszej wpłacie na ostatnią wypłatę by zabrakło.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy rencie">
+- **Suma wypłat bez dzielenia:** $3 \cdot 2000 = 6000$ zł — tyle dostaniesz łącznie, ale dziś to jest warte mniej.
+- **Pierwsza wypłata niepodzielona:** $2000 + 1886{,}79 + 1779{,}99 = 5666{,}78$ zł. Przy rencie z dołu pierwsza wypłata jest za rok, więc też ją dzielisz przez $1+i$.
+- **Mnożenie zamiast dzielenia:** $2000 \cdot 1{,}06 + 2000 \cdot 1{,}06^2 + 2000 \cdot 1{,}06^3 \approx 6749{,}23$ zł — więcej niż suma wypłat (6000 zł), a wartość dziś musi być od niej mniejsza.
+</Ramka>
+
+<Ramka kind="granica">
+Wzór ze slajdu jest dla renty **z dołu** — wypłaty na koniec okresów. Gdy pierwsza wypłata jest dziś (renta z góry), pierwszej wypłaty nie dzielisz, drugą dzielisz raz, trzecią dwa razy, i tak dalej.
+</Ramka>
+
+### Renta dożywotnia
+
+Renta dożywotnia wypłaca pieniądze co roku „do końca życia”. Na slajdzie liczy się ją tak, jakby wypłaty trwały **bez końca**: to ta sama suma, tylko nie kończy się na $n$-tym składniku:
+
+$$
+PV = \frac{FV_1}{1+i} + \frac{FV_2}{(1+i)^2} + \ldots + \frac{FV_n}{(1+i)^n} + \ldots
+$$
+
+„$+ \ldots$” na końcu znaczy, że po $n$-tym składniku są dalsze — bez końca.
+
+<Ramka kind="botak" tytul="„Dożywotnio” = bez końca">
+Prawdziwa renta dożywotnia kończy się wraz z życiem, a ubezpieczyciele liczą ją z tablic trwania życia. Na zajęciach liczymy ją prościej — jak rentę, która płaci bez końca (w finansach to tak zwana renta wieczysta). Tak też liczymy w tym module.
+</Ramka>
+
+Gdy wszystkie wypłaty są takie same, a pierwsza jest za rok, suma ma bardzo prosty wynik:
+
+<Ramka kind="zapamietaj" tytul="Renta dożywotnia z równymi wypłatami">
+$$
+PV = \frac{FV_1}{i}
+$$
+
+Wartość renty dożywotniej = jedna wypłata podzielona przez stopę (jako ułamek). Warunki: wszystkie wypłaty równe, pierwsza na koniec 1. roku (z dołu). Tego wzoru nie ma na slajdzie — wynika z sumy ze slajdu.
+</Ramka>
+
+<Ramka kind="liceum" tytul="Dzielenie przez ułamek dziesiętny">
+Pomnóż obie liczby przez 100 — wynik dzielenia się nie zmieni, a dzielisz już przez liczbę całkowitą: $1200 : 0{,}04 = 120\,000 : 4 = 30\,000$. Przy $0{,}05$ tak samo: $600 : 0{,}05 = 60\,000 : 5 = 12\,000$.
+</Ramka>
+
+Przykład: 1200 zł na koniec każdego roku, dożywotnio, stopa 4%: $PV = 1200 : 0{,}04 = 120\,000 : 4 = 30\,000$ zł.
+
+<Ramka kind="intuicja" tytul="Dlaczego to działa">
+Wpłać 30 000 zł na 4%. Po roku bank dolicza 4% odsetek, czyli 1200 zł. Wypłacasz dokładnie te odsetki — na koncie znowu jest 30 000 zł:
+
+| rok | na początku roku | odsetki 4% = wypłata | na koniec roku |
+|---|---|---|---|
+| 1 | 30 000 | 1200 | 30 000 |
+| 2 | 30 000 | 1200 | 30 000 |
+| 3 | 30 000 | 1200 | 30 000 |
+
+Jak czytać: w każdym roku bank dolicza 1200 zł odsetek, a ty wypłacasz dokładnie tyle samo. Kapitał 30 000 zł nigdy nie maleje — i wypłaty mogą trwać bez końca.
+</Ramka>
+
+Nieskończenie wiele wypłat, a skończona wartość? Tak, bo dalekie wypłaty są dziś warte bardzo mało (dzielisz je przez coraz większą potęgę). Zobacz, jak rośnie suma dla 1200 zł i 4%, gdy bierzesz coraz więcej lat:
+
+| ile lat wypłat | wartość dziś |
+|---|---|
+| 10 | 9733,07 zł |
+| 25 | 18 746,50 zł |
+| 50 | 25 778,62 zł |
+| 100 | 29 406,00 zł |
+| bez końca | 30 000,00 zł |
+
+Jak czytać: każdy wiersz to suma wypłat z tylu lat, sprowadzonych do dziś. Suma rośnie coraz wolniej i zbliża się do 30 000 zł, ale tej kwoty nie przekracza.
+
+<Ramka kind="pulapka" tytul="Dzielenie przez 1,04 zamiast przez 0,04">
+$1200 : 1{,}04 \approx 1153{,}85$ zł — to wartość dziś **jednej** wypłaty (za rok), a nie całej renty. W rencie dożywotniej dzielisz przez samą stopę $i = 0{,}04$, bez jedynki.
+</Ramka>
+
+<Ramka kind="granica" tytul="Pierwsza wypłata dziś">
+Wzór $FV_1 : i$ zakłada, że pierwsza wypłata jest za rok. Gdy pierwsza wypłata jest dziś, dodajesz ją osobno: $1200 : 0{,}04 + 1200 = 30\,000 + 1200 = 31\,200$ zł.
+</Ramka>
+
+<Pytania pytania={[
+  { q: 'Renta dożywotnia wypłaca 500 zł na koniec każdego roku. Stopa wynosi 5%. Ile jest warta dziś?', opcje: ['476,19 zł', '10 000 zł', '25 zł'], dobra: 1, dlaczego: '$PV = 500 : 0{,}05 = 50\\,000 : 5 = 10\\,000$ zł. Sprawdzenie: 5% z 10 000 zł to 500 zł odsetek rocznie — dokładnie wypłata. 476,19 zł to $500 : 1{,}05 \\approx 476{,}19$ — wartość tylko pierwszej wypłaty, a 25 zł to $500 \\cdot 0{,}05$ — mnożenie zamiast dzielenia.' },
+]} />
+
+## Wewnętrzna stopa zwrotu (IRR)
+
+<a id="polecenie-irr" class="k-anchor"></a>
+
+Dotąd stopa $i$ była w treści. Teraz odwrotnie: znasz wydatek i przyszłe wpływy, a szukasz stopy.
+
+Przykład: kupujesz maszynę za 1000 zł. Po roku przynosi ci 600 zł, po dwóch latach jeszcze 550 zł. Ile procent rocznie zarabiasz na tej inwestycji? (Na slajdzie wydatek nazywa się „dzisiejszą wpłatą” — to kwota, którą dziś wykładasz.)
+
+<Ramka kind="zapamietaj" tytul="IRR">
+**Wewnętrzna stopa zwrotu** (IRR, ang. *internal rate of return*, czytamy: i-er-er) to taka stopa $i$, przy której **dzisiejsza wartość wszystkich wpływów równa się dzisiejszemu wydatkowi**. Mówi, ile procent rocznie zarabia inwestycja.
+</Ramka>
+
+To samo równanie co przy rencie — tylko tym razem szukasz $i$:
+
+<Rozbior t="PV = \dfrac{FV_1}{1+i} + \dfrac{FV_2}{(1+i)^2} + \ldots + \dfrac{FV_n}{(1+i)^n}" czytamy="pe-fał równa się: ef-fał jeden przez jeden plus i, plus ef-fał dwa przez jeden plus i do kwadratu, i tak dalej" czesci={[
+  { t: 'PV', o: '<b>wydatek dziś</b> (cena inwestycji) — znasz go' },
+  { t: 'FV_1, FV_2, \\ldots', o: '<b>wpływy</b> na koniec kolejnych lat — znasz je' },
+  { t: 'i', o: '<b>niewiadoma</b> — szukana stopa zwrotu' },
+]} />
+
+Pobaw się suwakiem: przy jakiej stopie wpływy 600 zł i 550 zł są dziś warte dokładnie 1000 zł?
+
+<SymulatorIRR wydatek={1000} wplywy={[600, 550]} />
+
+Jak czytać: przy niskiej stopie przyszłe wpływy są dziś warte dużo (więcej niż 1000 zł), przy wysokiej — mało. Gdzieś pomiędzy jest stopa, przy której wychodzi dokładnie 1000 zł. To jest IRR. Tabela pod suwakiem pokazuje to samo dla kilku stóp.
+
+### Jeden rok
+
+Wydajesz 1000 zł, po roku dostajesz 1080 zł. Równanie ze slajdu ma wtedy jeden składnik:
+
+$$
+1000 = \frac{1080}{1+i}
+$$
+
+1. Mnożysz obie strony przez $1+i$, żeby pozbyć się ułamka: $1000 \cdot (1+i) = 1080$.
+2. Dzielisz obie strony przez 1000: $1 + i = 1080 : 1000 = 1{,}08$.
+3. Odejmujesz 1: $i = 1{,}08 - 1 = 0{,}08 = 8\%$.
+
+Sprawdzenie: 8% z 1000 zł to 80 zł, a $1000 + 80 = 1080$ ✓. Dlaczego tak: po roku masz $1000 \cdot (1+i)$ — tyle samo co wpływ 1080 zł, więc $1+i$ mówi, ile razy urosły pieniądze.
+
+### Dwa lata — równanie kwadratowe
+
+<Ramka kind="polecenie" tytul="Oblicz IRR (dwa lata)">
+> Inwestycja kosztuje dziś $PV$, przynosi $FV_1$ po roku i $FV_2$ po dwóch latach. Oblicz IRR.
+
+1. Ułóż równanie: $PV = \dfrac{FV_1}{1+i} + \dfrac{FV_2}{(1+i)^2}$.
+2. Dla wygody oznacz $x = 1 + i$: $PV = \dfrac{FV_1}{x} + \dfrac{FV_2}{x^2}$.
+3. Pomnóż obie strony przez $x^2$: $PV \cdot x^2 = FV_1 \cdot x + FV_2$.
+4. Przenieś wszystko na lewą stronę: $PV \cdot x^2 - FV_1 \cdot x - FV_2 = 0$.
+5. Policz $\Delta$ i pierwiastki. Weź **dodatni** $x$.
+6. $i = x - 1$; zamień na procenty.
+7. Sprawdź: podstaw $i$ do równania z punktu 1.
+</Ramka>
+
+<Ramka kind="liceum" tytul="Równanie kwadratowe">
+Równanie $ax^2 + bx + c = 0$ rozwiązujesz tak:
+
+- $\Delta = b^2 - 4ac$ (czytamy: „delta”),
+- gdy $\Delta > 0$: $x_1 = \dfrac{-b - \sqrt{\Delta}}{2a}$, $x_2 = \dfrac{-b + \sqrt{\Delta}}{2a}$.
+
+$a$ to liczba przy $x^2$, $b$ — przy $x$, $c$ — liczba bez $x$. Każda z nich ze swoim znakiem. $x_1$ i $x_2$ to **pierwiastki równania**, czyli jego rozwiązania.
+
+Przy IRR delta zawsze wychodzi dodatnia (bo $c$ jest ujemne), więc zawsze są dwa pierwiastki: jeden dodatni i jeden ujemny.
+</Ramka>
+
+<Rozwiazanie tytul="IRR maszyny: 1000 zł dziś, 600 zł i 550 zł później">
+<div slot="tresc">
+
+Inwestycja kosztuje dziś 1000 zł. Po roku przynosi 600 zł, a po dwóch latach 550 zł. Oblicz wewnętrzną stopę zwrotu.
+
+</div>
+<div slot="plan">
+
+Cel: stopa $i$, przy której $600$ i $550$ zł sprowadzone do dziś dają razem $1000$ zł.
+
+1. Układamy równanie ze wzoru ze slajdu — IRR to stopa, przy której obie jego strony są równe.
+2. Zamieniamy $1+i$ na $x$ i sprowadzamy równanie do kwadratowego — bo takie równanie umiesz rozwiązać deltą.
+3. Rozwiązujemy deltą i odrzucamy ujemny pierwiastek — ujemne $x$ oznaczałoby stratę większą niż cały wkład.
+4. Zamieniamy $x$ z powrotem na $i$ i sprawdzamy — bo pytanie jest o $i$, nie o $x$.
+
+</div>
+
+<Krok tytul="Ułóż równanie">
+$$
+1000 = \frac{600}{1+i} + \frac{550}{(1+i)^2}
+$$
+
+<Dlaczego>
+Lewa strona to wydatek dziś. Prawa — dzisiejsza wartość wpływów: 600 zł jest za rok (dzielisz raz), 550 zł za dwa lata (dzielisz dwa razy). IRR to stopa, przy której obie strony są równe.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Podstaw x = 1 + i">
+$$
+1000 = \frac{600}{x} + \frac{550}{x^2}
+$$
+
+<Dlaczego>
+Zamiast pisać ciągle $1+i$, piszesz jedną literę. Na koniec wrócisz do $i$: $i = x - 1$.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pozbądź się ułamków">
+Mnożysz obie strony przez $x^2$:
+
+- lewa: $1000 \cdot x^2 = 1000x^2$,
+- $\dfrac{600}{x} \cdot x^2 = 600x$ (jedno $x$ się skraca),
+- $\dfrac{550}{x^2} \cdot x^2 = 550$.
+
+$$
+1000x^2 = 600x + 550
+$$
+
+Przenosisz składniki z prawej strony na lewą — odejmujesz je od obu stron (przeniesiony składnik jest złoty). Najpierw odejmujesz $600x$:
+
+$$
+1000x^2 \textcolor{#FFD84A}{- 600x} = 550
+$$
+
+Potem odejmujesz $550$:
+
+$$
+1000x^2 - 600x \textcolor{#FFD84A}{- 550} = 0
+$$
+
+Wszystkie liczby dzielą się przez 50: $1000 : 50 = 20$, $600 : 50 = 12$, $550 : 50 = 11$. Dzielisz więc całe równanie przez 50:
+
+$$
+20x^2 - 12x - 11 = 0
+$$
+
+<Dlaczego>
+Mnożenie obu stron równania przez tę samą liczbę (tu $x^2$, a $x$ nie jest zerem) nie zmienia rozwiązań. Dzielenie przez 50 też nie — a na mniejszych liczbach łatwiej liczyć deltę.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz deltę">
+$a = 20$, $b = -12$, $c = -11$.
+
+- $b^2 = (-12)^2 = 144$ (minus razy minus daje plus),
+- $4ac = 4 \cdot 20 \cdot (-11)$: $4 \cdot 20 = 80$, $80 \cdot 11 = 880$, ze znakiem minus: $-880$,
+- $\Delta = 144 - (-880) = 144 + 880 = 1024$.
+
+$\sqrt{1024} = 32$, bo $32 \cdot 32 = 1024$. ($\sqrt{\ }$ to pierwiastek kwadratowy: liczba, która pomnożona przez siebie daje 1024. Nie myl go z pierwiastkami równania — tak nazywa się rozwiązania $x_1$, $x_2$.)
+
+<Dlaczego>
+Odjęcie liczby ujemnej to dodanie liczby przeciwnej: $144 - (-880) = 144 + 880$. Delta wyszła dodatnia, więc są dwa pierwiastki równania.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pierwiastki — weź dodatni">
+Do wzorów wstawiasz $-b = -(-12) = 12$ (minus przed minusem daje plus), $\sqrt{\Delta} = 32$ i $2a = 2 \cdot 20 = 40$:
+
+$$
+x_1 = \frac{12 - 32}{40} \qquad x_2 = \frac{12 + 32}{40}
+$$
+
+- Licznik $x_1$: $12 - 32$ — odejmujesz więcej, niż masz. Do zera schodzisz o 12, z 32 zostaje jeszcze 20 — o tyle schodzisz poniżej zera: $12 - 32 = -20$. Potem $-20 : 40 = -0{,}5$ (bo $40 \cdot 0{,}5 = 20$, a minus zostaje).
+- Licznik $x_2$: $12 + 32 = 44$, a $44 : 40 = 1{,}1$ (bo $40 \cdot 1{,}1 = 44$).
+
+$x_1 = -0{,}5$ odrzucasz, zostaje $x = 1{,}1$.
+
+<Dlaczego>
+$x = 1 + i$ to mnożnik roku: ile masz po roku z każdej złotówki. Nie może być ujemny — wyszłoby $i = -0{,}5 - 1 = -1{,}5 = -150\%$, czyli strata większa niż cały wkład. Dlatego ujemny pierwiastek nie ma sensu w zadaniu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wróć do i i sprawdź">
+$i = x - 1 = 1{,}1 - 1 = 0{,}1 = 10\%$.
+
+Sprawdzenie ($1{,}1^2 = 1{,}21$): $\dfrac{600}{1{,}1} + \dfrac{550}{1{,}21} \approx 545{,}45 + 454{,}55 = 1000{,}00$ zł ✓.
+
+Odpowiedź: IRR = **10%** rocznie.
+
+<Dlaczego>
+Sprawdzenie potwierdza, że przy 10% wpływy są dziś warte dokładnie tyle, ile kosztowała inwestycja. Lokata na mniej niż 10% byłaby gorsza od tej maszyny, a na więcej niż 10% — lepsza.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy IRR">
+- **Zysk bez czasu:** $\dfrac{600 + 550 - 1000}{1000} = 15\%$ — to nie jest IRR. Pomija, że pieniądze przychodzą później (a później = mniej warte dziś).
+- **Odpowiedź $x$ zamiast $i$:** „IRR = 1,1”, czyli 110% — zapomniane $i = x - 1$.
+- **Zostawiony ujemny pierwiastek** jako drugie rozwiązanie.
+</Ramka>
+
+<Pytania pytania={[
+  { q: 'Wydajesz dziś 500 zł, po roku dostajesz 550 zł. Ile wynosi IRR?', opcje: ['50 zł', '110%', '10%'], dobra: 2, dlaczego: '$500 = \\dfrac{550}{1+i}$, więc $1 + i = 550 : 500 = 1{,}1$, a $i = 1{,}1 - 1 = 0{,}1 = 10\\%$. 110% to $1 + i$ zamiast $i$ (zapomniane odjęcie jedynki). 50 zł to zysk w złotych — a IRR to stopa, czyli procent.' },
+]} />
+
+<Ramka kind="excel" tytul="Trzy lata i więcej">
+Przy trzech latach i więcej równanie ma wyższy stopień i ręcznie rozwiązuje się je tylko w szczególnych przypadkach. W praktyce IRR liczy Excel (albo Arkusze Google): w kolumnie wpisujesz przepływy w kolejności — najpierw wydatek **z minusem** — i używasz funkcji IRR. Dla naszej maszyny: A1 = −1000, A2 = 600, A3 = 550, a w innej komórce `=IRR(A1:A3)` → 10%.
+</Ramka>
+
+## Plan spłaty kredytu — raty malejące
+
+<a id="polecenie-plan" class="k-anchor"></a>
+
+Bierzesz kredyt i oddajesz go w ratach. **Amortyzacja** to po prostu plan spłaty: tabela, która pokazuje, ile płacisz w każdym okresie i ile długu zostaje.
+
+Każda rata składa się z dwóch części:
+
+- **rata kapitałowa** — oddajesz część pożyczonych pieniędzy; tylko ona zmniejsza dług,
+- **rata odsetkowa** — płacisz odsetki, czyli opłatę za pożyczanie; długu nie zmniejsza.
+
+<Ramka kind="zapamietaj" tytul="Raty malejące">
+W ratach malejących **rata kapitałowa jest stała**: kredyt dzielisz na równe części (kredyt : liczba rat). Odsetki liczysz od długu, który jeszcze został — a ten z każdą ratą maleje. Dlatego odsetki maleją i cała rata (rata łączna) też maleje.
+</Ramka>
+
+<Rozbior t="\begin{aligned} \text{rata łączna} = {} & \text{rata odsetkowa} \\ & + \text{rata kapitałowa} \end{aligned}" czytamy="rata łączna równa się rata odsetkowa plus rata kapitałowa" czesci={[
+  { t: '\\text{rata odsetkowa}', o: '<b>opłata za pożyczanie</b> w tym okresie — nie zmniejsza długu' },
+  { t: '\\text{rata kapitałowa}', o: '<b>oddawana część kredytu</b> — tylko ona zmniejsza dług' },
+  { t: '\\text{rata łączna}', o: '<b>cała kwota</b>, którą w tym okresie przelewasz bankowi' },
+]} />
+
+Szablon planu z zajęć ma siedem kolumn. Każda wynika z poprzednich:
+
+| kolumna | co to jest | jak ją liczysz |
+|---|---|---|
+| Okres | numer raty | 1, 2, 3, … |
+| Kapitał początkowy | dług na początku okresu | w 1. okresie cały kredyt, potem kapitał końcowy z wiersza wyżej |
+| Odsetki | opłata za pożyczanie przez ten okres | kapitał początkowy · $i$ |
+| Rata odsetkowa | ile odsetek płacisz w tym okresie | w planach w tym module tyle samo co odsetki |
+| Rata kapitałowa | ile długu oddajesz | kredyt : liczba rat (w każdym wierszu tyle samo) |
+| Rata łączna | ile przelewasz bankowi | rata odsetkowa + rata kapitałowa |
+| Kapitał końcowy | dług po zapłaceniu raty | kapitał początkowy − rata kapitałowa |
+
+Jak czytać tabelę: wiersze idą w kolejności kolumn szablonu (od lewej do prawej); ostatnia kolumna mówi, skąd wziąć liczbę.
+
+<Ramka kind="polecenie" tytul="Plan spłaty w ratach malejących">
+> Sporządź plan spłaty kredytu $K$ zł w $n$ ratach malejących, oprocentowanie $i$.
+
+1. Rata kapitałowa = $K : n$ — wpisz ją w każdy wiersz.
+2. Wiersz 1: kapitał początkowy = $K$.
+3. Odsetki = kapitał początkowy · $i$.
+4. Rata odsetkowa = odsetki.
+5. Rata łączna = rata odsetkowa + rata kapitałowa.
+6. Kapitał końcowy = kapitał początkowy − rata kapitałowa.
+7. Kapitał końcowy przepisz jako kapitał początkowy następnego wiersza i powtórz punkty 3–6.
+8. Sprawdź: w ostatnim wierszu kapitał końcowy = 0, a raty kapitałowe razem = $K$.
+</Ramka>
+
+<Rozwiazanie tytul="Kredyt 12 000 zł w 3 ratach rocznych, 10%">
+<div slot="tresc">
+
+Kredyt 12 000 zł spłacasz w 3 ratach malejących, płatnych na koniec każdego roku. Oprocentowanie wynosi 10% rocznie. Sporządź plan spłaty.
+
+</div>
+<div slot="plan">
+
+Cel: wypełniony szablon z zajęć — 3 wiersze, w ostatnim kapitał końcowy równy 0.
+
+1. Liczymy ratę kapitałową — jest w każdym wierszu taka sama, więc liczysz ją raz, na początku.
+2. Wypełniamy tabelę wiersz po wierszu, od lewej do prawej — bo każda kolumna korzysta z kolumn na lewo od niej, a każdy wiersz z wiersza wyżej.
+3. Sprawdzamy: kapitał końcowy na końcu = 0, raty kapitałowe razem = kredyt — to wyłapuje błędy w odejmowaniu.
+
+</div>
+
+<Krok tytul="Rata kapitałowa">
+$12\,000 : 3 = 4000$ zł w każdym roku.
+
+<Dlaczego>
+W ratach malejących kredyt dzielisz na równe części — co roku oddajesz tyle samo pożyczonych pieniędzy.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wypełnij tabelę wiersz po wierszu">
+<PlanSplaty kredyt={12000} n={3} i="0.1">
+każdy wiersz (na telefonie: każdy kafelek) to jeden rok. Idziesz od lewej: kapitał początkowy → odsetki (10% kapitału początkowego) → rata odsetkowa (tyle samo) → rata kapitałowa (zawsze 4000) → rata łączna (suma dwóch rat) → kapitał końcowy (kapitał początkowy minus rata kapitałowa). Kapitał końcowy przechodzi do następnego wiersza jako kapitał początkowy. Zielone kratki (rata łączna) to kwoty, które co rok przelewasz bankowi.
+</PlanSplaty>
+
+<Dlaczego>
+Odsetki liczysz od długu, który został na początku roku — w 1. roku od 12 000 zł, w 2. już tylko od 8000 zł. Dlatego odsetki maleją: 1200, 800, 400 zł.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdź">
+Kapitał końcowy w 3. roku: $4000 - 4000 = 0$ ✓ — kredyt spłacony. Raty kapitałowe razem: $3 \cdot 4000 = 12\,000$ = kredyt ✓. Odsetki razem: $1200 + 800 + 400 = 2400$ zł — tyle kosztuje ten kredyt.
+
+<Dlaczego>
+Zero na końcu to najprostszy test całej tabeli. Jeśli wychodzi coś innego, błąd jest zwykle w odejmowaniu (odjęta rata łączna zamiast kapitałowej).
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Pytania pytania={[
+  { q: 'Kredyt 6000 zł, 3 raty malejące, 10% rocznie. Ile wynosi rata łączna w 1. roku?', opcje: ['2200 zł', '2600 zł', '2000 zł'], dobra: 1, dlaczego: 'Rata kapitałowa: $6000 : 3 = 2000$ zł. Odsetki w 1. roku: 10% z 6000 zł, czyli $6000 \\cdot 10 = 60\\,000$, potem $60\\,000 : 100 = 600$ zł. Rata łączna: $600 + 2000 = 2600$ zł. 2200 zł to odsetki policzone od raty kapitałowej ($2000 + 200$), a 2000 zł to sama rata kapitałowa — bez odsetek.' },
+]} />
+
+<Ramka kind="pulapka" tytul="Typowe błędy w planie spłaty">
+- **Odejmowanie raty łącznej od kapitału:** $12\,000 - 5200 = 6800$ — odsetki nie spłacają długu. Odejmujesz tylko ratę kapitałową.
+- **Odsetki zawsze od całego kredytu:** 1200 zł w każdym roku — odsetki liczysz od kapitału **początkowego danego wiersza**.
+- **Rata kapitałowa = kredyt · $i$:** $12\,000 \cdot 0{,}1 = 1200$ to odsetki w 1. roku, nie rata kapitałowa.
+</Ramka>
+
+<Ramka kind="botak" tytul="Po co osobno „Odsetki” i „Rata odsetkowa”?">
+W szablonie z zajęć są dwie kolumny o prawie tej samej nazwie. **Odsetki** to ile należy się bankowi za okres, **rata odsetkowa** — ile z tego płacisz teraz. W planach w tym module płacisz od razu całość, więc liczby są równe. Przy niektórych kredytach (np. gdy bank pozwala na początku nie płacić) te kolumny mogą się różnić — tego na zajęciach nie liczymy.
+</Ramka>
+
+<Ramka kind="podobny" tytul="Raty miesięczne">
+Kredyt 6000 zł w 6 ratach **miesięcznych**, oprocentowanie 12% w skali roku. Okresem jest miesiąc, więc stopa na okres to $12\% : 12 = 1\%$, czyli $i = 0{,}01$. Rata kapitałowa: $6000 : 6 = 1000$ zł.
+
+<PlanSplaty kredyt={6000} n={6} i="0.01" okres="miesiąc">
+ten sam szablon, tylko wiersz to miesiąc. Odsetki to 1% kapitału początkowego, więc maleją o 10 zł co miesiąc: 60, 50, 40, 30, 20, 10 zł.
+</PlanSplaty>
+</Ramka>
+
+<Ramka kind="granica" tytul="Raty stałe">
+Na zajęciach liczymy **raty malejące**. Istnieją też **raty stałe** — co okres płacisz tyle samo, a zmienia się tylko podział na część kapitałową i odsetkową. Liczy się je innym wzorem; w tym module ich nie ma, bo na zajęciach skupiamy się na ratach malejących.
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+<div><b>Procent → ułamek</b>$5\% = 0{,}05$, a $1 + i = 1{,}05$. We wzorach zawsze ułamek.</div>
+<div><b>W przyszłość</b>$FV = (1+i)^n \cdot PV$ — mnożysz. Wynik większy od $PV$.</div>
+<div><b>Do dziś</b>$PV = \dfrac{FV}{(1+i)^n}$ — dzielisz. Wynik mniejszy od $FV$.</div>
+<div><b>Kapitalizacja częstsza</b>Kwartalnie: $i$ = stopa roczna : 4, $n$ = lata · 4. Miesięcznie: $i$ = stopa roczna : 12, $n$ = lata · 12.</div>
+<div><b>Porównanie ofert</b>Najpierw obie kwoty do jednego momentu (np. dziś), potem porównanie.</div>
+<div><b>Strumień z góry</b>Wykładniki $n, n-1, \ldots, 1$ — pierwsza wpłata ma najwyższy. Potem dodajesz.</div>
+<div><b>Renta z dołu</b>Wypłatę z końca $k$-tego roku dzielisz przez $(1+i)^k$. Potem dodajesz.</div>
+<div><b>Renta dożywotnia</b>Równe wypłaty, pierwsza za rok: $PV = FV_1 : i$ — jedna wypłata przez stopę (bez jedynki!).</div>
+<div><b>IRR</b>Wydatek = wpływy sprowadzone do dziś. $x = 1 + i$, równanie kwadratowe, dodatni $x$, na koniec $i = x - 1$.</div>
+<div><b>Plan spłaty</b>Rata kapitałowa $= K : n$. Odsetki = kapitał początkowy · $i$. Rata łączna = odsetkowa + kapitałowa. Kapitał końcowy = początkowy − kapitałowa.</div>
+<div><b>Zaokrąglanie</b>Czynnika $(1+i)^n$ nie zaokrąglaj. Do groszy zaokrąglasz dopiero wynik.</div>
+<div><b>Oś czasu</b>Koniec roku = początek następnego. Z góry — początek okresu, z dołu — koniec.</div>
+</div>
+
+<Ramka kind="gdzie">
+- **Zarządzanie finansami i ocena inwestycji:** wartość bieżąca netto (NPV) to wpływy sprowadzone do dziś minus wydatek. IRR to stopa, przy której NPV wychodzi zero.
+- **Kredyty i leasing:** harmonogram spłat z banku to podobny szablon — z tymi samymi częściami raty.
+- **Excel:** potęgi liczysz wprost w komórce (np. `=1000*(1+5%)^3`), a IRR — funkcją IRR.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania na każde polecenie. Po każdej odpowiedzi zobaczysz, dlaczego jest dobra albo zła — złe odpowiedzi to typowe błędy.
+
+### Wartość przyszła (FV)
+
+<a id="cw-fv" class="k-anchor"></a>
+
+<CwiczenieKwoty tytul="Lokata rok po roku" kolumny={skl.kolumny} wiersze={skl.wiersze}>
+5000 zł na lokacie oprocentowanej 4% w skali roku, kapitalizacja roczna. Wypełnij tabelę dla trzech lat: w każdym roku odsetki to 4% kapitału z początku roku.
+</CwiczenieKwoty>
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: '2000 zł na 3 lata, 5% rocznie, kapitalizacja roczna. Ile będzie na lokacie?', opcje: ['2300,00 zł', '2315,25 zł', '6300,00 zł'], dobra: 1, dlaczego: '$FV = 1{,}05^3 \\cdot 2000 = 1{,}157625 \\cdot 2000 = 2315{,}25$ zł. 2300 zł to procent prosty ($2000 + 3 \\cdot 100$) — bez odsetek od odsetek. 6300 zł to $1{,}05 \\cdot 3 \\cdot 2000$ — mnożenie przez $n$ zamiast potęgi.' },
+  { q: '1500 zł na 2 lata, 10% rocznie. Ile będzie na lokacie?', opcje: ['1815,00 zł', '1800,00 zł', '1650,00 zł'], dobra: 0, dlaczego: '$1{,}1^2 = 1{,}21$, a $1{,}21 \\cdot 1500 = 1815$ zł. Rok po roku: $1500 + 150 = 1650$, potem $1650 + 165 = 1815$. 1800 zł to procent prosty, a 1650 zł to wynik po jednym roku.' },
+  { q: 'Stopa wynosi 4% w skali roku. Jaki czynnik $1 + i$ wstawiasz do wzoru?', opcje: ['$1{,}4$', '$1{,}04$', '$5$'], dobra: 1, dlaczego: '$4\\% = 4 : 100 = 0{,}04$, więc $1 + i = 1{,}04$. $1{,}4$ to stopa 40%, a $5$ to $1 + 4$ — procentów nie zamieniono na ułamek.' },
+  { q: '1000 zł na rok, 8% w skali roku, kapitalizacja kwartalna. Ile będzie na lokacie?', opcje: ['1082,43 zł', '1080,00 zł', '1020,00 zł'], dobra: 0, dlaczego: 'Kwartalnie: $i = 8\\% : 4 = 0{,}02$, $n = 1 \\cdot 4 = 4$. $1{,}02^4 = 1{,}08243216$, więc $FV = 1000 \\cdot 1{,}08243216 \\approx 1082{,}43$ zł. 1080 zł to kapitalizacja roczna, a 1020 zł to tylko jeden kwartał.' },
+  { q: '3000 zł na 3 lata, 2% rocznie. Ile będzie na lokacie?', opcje: ['3180,00 zł', '9180,00 zł', '3183,62 zł'], dobra: 2, dlaczego: '$1{,}02^3 = 1{,}061208$, a $1{,}061208 \\cdot 3000 = 3183{,}624 \\approx 3183{,}62$ zł. 3180 zł to procent prosty ($3000 + 3 \\cdot 60$). 9180 zł to $1{,}02 \\cdot 3 \\cdot 3000$ — mnożenie przez $n$ zamiast potęgi.' },
+  { q: '2000 zł na 2 lata: w 1. roku 3%, w 2. roku 5%. Ile będzie na lokacie?', opcje: ['2160,00 zł', '2163,00 zł', '2163,20 zł'], dobra: 1, dlaczego: 'Każdy rok ma swój czynnik: $2000 \\cdot 1{,}03 = 2060$, potem $2060 \\cdot 1{,}05 = 2163$ zł. 2160 zł to procent prosty ($2000 + 60 + 100$). 2163,20 zł to $2000 \\cdot 1{,}04^2$ — „średnia stopa” 4% daje inny wynik.' },
+]} />
+
+### Wartość bieżąca (PV)
+
+<a id="cw-pv" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: 'Ile wpłacić dziś, żeby za 2 lata mieć 5000 zł przy 5% rocznie?', opcje: ['4500,00 zł', '4535,15 zł', '5512,50 zł'], dobra: 1, dlaczego: '$1{,}05^2 = 1{,}1025$, a $5000 : 1{,}1025 = 4535{,}147\\ldots \\approx 4535{,}15$ zł. 4500 zł to odjęcie $2 \\cdot 250$ zł (procent prosty), a 5512,50 zł to mnożenie zamiast dzielenia — wynik większy od 5000 zł to sygnał błędu.' },
+  { q: 'Ile jest dziś warte 20 000 zł, które dostaniesz za 3 lata, przy 10% rocznie?', opcje: ['15 026,30 zł', '26 620,00 zł', '14 000,00 zł'], dobra: 0, dlaczego: '$1{,}1^3 = 1{,}331$, a $20\\,000 : 1{,}331 = 15\\,026{,}296\\ldots \\approx 15\\,026{,}30$ zł. 26 620 zł to mnożenie (wartość przyszła, nie bieżąca), a 14 000 zł to odjęcie $3 \\cdot 2000$ zł (procent prosty).' },
+  { q: '2000 zł dziś czy 2300 zł za 2 lata? Stopa: 8% rocznie.', opcje: ['2300 zł za 2 lata — to więcej', '2000 zł dziś, bo 2300 zł jest dziś warte 1971,88 zł', 'Obojętne — różnica to tylko odsetki'], dobra: 1, dlaczego: '$1{,}08^2 = 1{,}1664$, a $2300 : 1{,}1664 \\approx 1971{,}88$ zł — mniej niż 2000 zł. Kwot z różnych momentów nie porównujesz „na oko” (2300 zł tylko wygląda na więcej): najpierw sprowadzasz je do jednego momentu. „Obojętne” byłoby tylko wtedy, gdyby po sprowadzeniu do dziś wyszły równe kwoty.' },
+  { q: 'Ta sama oferta (2000 zł dziś czy 2300 zł za 2 lata), ale stopa 5%. Co wybierasz?', opcje: ['2300 zł za 2 lata, bo jest dziś warte 2086,17 zł', '2000 zł dziś, bo pieniądze dziś są zawsze lepsze', 'Obojętne'], dobra: 0, dlaczego: '$1{,}05^2 = 1{,}1025$, a $2300 : 1{,}1025 \\approx 2086{,}17$ zł — więcej niż 2000 zł. Przy niższej stopie przyszłe pieniądze tracą mniej na wartości, więc tym razem opłaca się poczekać. „Pieniądze dziś są zawsze lepsze” — nie zawsze: to zależy od stopy. „Obojętne” — nie, bo po sprowadzeniu do dziś kwoty się różnią.' },
+  { q: 'Kasia liczyła $PV$ dla 10 000 zł za 3 lata przy 5%. Zaokrągliła $1{,}05^3$ do $1{,}16$ i dostała 8620,69 zł. Co jest nie tak?', opcje: ['Nic, to dobry wynik', 'Powinna mnożyć, a nie dzielić', 'Zaokrągliła czynnik — z $1{,}157625$ wychodzi 8638,38 zł'], dobra: 2, dlaczego: '$10\\,000 : 1{,}157625 \\approx 8638{,}38$ zł. Zaokrąglenie czynnika do $1{,}16$ zmieniło wynik o 17,69 zł — to nie jest „dobry wynik”. Dzielenie jest właściwe (szukasz kwoty dziś), błąd jest tylko w zaokrągleniu. Czynnika nie zaokrąglasz — zaokrąglasz tylko wynik, do groszy.' },
+  { q: 'Wartość bieżąca 10 000 zł za 3 lata przy 5% wyszła komuś 11 576,25 zł. Co to znaczy?', opcje: ['Dobrze — tyle trzeba wpłacić', 'Błąd: mnożenie zamiast dzielenia, bo PV musi być mniejsze od 10 000 zł', 'Stopa jest za niska'], dobra: 1, dlaczego: 'Przy dodatniej stopie kwota dziś jest zawsze mniejsza od kwoty w przyszłości (pieniądze na lokacie rosną), więc „dobrze” odpada. $11\\,576{,}25 = 10\\,000 \\cdot 1{,}157625$ — to mnożenie. Stopa nie ma tu nic do rzeczy: przy każdej dodatniej stopie mnożenie da za dużo. Poprawnie: $10\\,000 : 1{,}157625 \\approx 8638{,}38$ zł.' },
+]} />
+
+### Strumień pieniężny
+
+<a id="cw-strumien" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'Na początku każdego z 2 lat wpłacasz 1000 zł, 10% rocznie. Ile będzie na koniec 2. roku?', opcje: ['2310,00 zł', '2100,00 zł', '2000,00 zł'], dobra: 0, dlaczego: 'Wpłaty z góry ($1{,}1^2 = 1{,}21$): $1{,}21 \\cdot 1000 + 1{,}1 \\cdot 1000 = 1210 + 1100 = 2310$ zł. 2100 zł to wpłaty z dołu ($1{,}1 \\cdot 1000 + 1000 = 1100 + 1000$) — a druga wpłata z góry też leży rok. 2000 zł to same wpłaty, bez odsetek.' },
+  { q: 'Cztery wpłaty z góry, wartość na koniec 4. roku. Jakie wykładniki mają kolejne wpłaty (od pierwszej)?', opcje: ['3, 2, 1, 0', '4, 3, 2, 1', '1, 2, 3, 4'], dobra: 1, dlaczego: 'Pierwsza wpłata (dziś) leży 4 lata, druga 3, trzecia 2, czwarta (początek 4. roku) 1 rok. 3, 2, 1, 0 to wpłaty z dołu. 1, 2, 3, 4 to odwrócona kolejność — najdłużej leży pierwsza wpłata, więc ona ma najwyższy wykładnik.' },
+  { q: 'Wpłaty z góry: 500 zł, 1000 zł i 1500 zł (w tej kolejności), 10% rocznie. Ile będzie na koniec 3. roku?', opcje: ['3756,50 zł', '3000,00 zł', '3525,50 zł'], dobra: 2, dlaczego: '$1{,}331 \\cdot 500 + 1{,}21 \\cdot 1000 + 1{,}1 \\cdot 1500 = 665{,}50 + 1210 + 1650 = 3525{,}50$ zł. 3756,50 zł to odwrócone wykładniki (najwyższy przy ostatniej wpłacie), a 3000 zł to suma wpłat bez odsetek.' },
+  { q: 'Wpłaty na koniec każdego roku (z dołu): 3 × 1000 zł, 5% rocznie. Ile będzie na koniec 3. roku?', opcje: ['3310,13 zł', '3152,50 zł', '3000,00 zł'], dobra: 1, dlaczego: 'Z dołu wykładniki to 2, 1, 0: $1102{,}50 + 1050 + 1000 = 3152{,}50$ zł. Ostatnia wpłata przychodzi dokładnie na koniec 3. roku, więc nie zarabia nic. 3310,13 zł to wynik dla wpłat z góry, a 3000 zł to same wpłaty, bez odsetek.' },
+  { q: 'Trzy wpłaty z góry po 2000 zł, 10% rocznie. Ile będzie na koniec 3. roku?', opcje: ['6620,00 zł', '7986,00 zł', '7282,00 zł'], dobra: 2, dlaczego: 'Potęgi: $1{,}1^3 = 1{,}331$, $1{,}1^2 = 1{,}21$. $1{,}331 \\cdot 2000 + 1{,}21 \\cdot 2000 + 1{,}1 \\cdot 2000 = 2662 + 2420 + 2200 = 7282$ zł. 6620 zł to wpłaty z dołu (wykładniki 2, 1, 0: $2420 + 2200 + 2000$). 7986 zł to $6000 \\cdot 1{,}331$ — tak, jakby wszystkie wpłaty leżały od dziś.' },
+]} />
+
+### Renta
+
+<a id="cw-renta" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'Renta wypłaca 1000 zł na koniec każdego z 2 lat, stopa 10%. Ile jest warta dziś?', opcje: ['2000,00 zł', '1735,54 zł', '2310,00 zł'], dobra: 1, dlaczego: '$\\dfrac{1000}{1{,}1} + \\dfrac{1000}{1{,}21} \\approx 909{,}09 + 826{,}45 = 1735{,}54$ zł. 2000 zł to suma wypłat bez sprowadzania do dziś, a 2310 zł to mnożenie zamiast dzielenia.' },
+  { q: 'Renta dożywotnia wypłaca 600 zł na koniec każdego roku, stopa 5%. Ile jest warta dziś?', opcje: ['12 000 zł', '571,43 zł', '30 zł'], dobra: 0, dlaczego: '$PV = 600 : 0{,}05 = 60\\,000 : 5 = 12\\,000$ zł (sprawdzenie: 5% z 12 000 zł to 600 zł rocznie). 571,43 zł to $600 : 1{,}05 \\approx 571{,}43$ — wartość tylko pierwszej wypłaty. 30 zł to $600 \\cdot 0{,}05$ — mnożenie zamiast dzielenia.' },
+  { q: 'Ile trzeba mieć, żeby dożywotnio wypłacać 2400 zł na koniec każdego roku przy stopie 3%?', opcje: ['2330,10 zł', '80 000 zł', '72 zł'], dobra: 1, dlaczego: '$2400 : 0{,}03 = 240\\,000 : 3 = 80\\,000$ zł: 3% z 80 000 zł to 2400 zł odsetek rocznie. 2330,10 zł to $2400 : 1{,}03 \\approx 2330{,}10$ — dzielenie przez $1 + i$ zamiast przez $i$. 72 zł to $2400 \\cdot 0{,}03$ — mnożenie zamiast dzielenia.' },
+  { q: 'Renta z dołu wypłaca: 1100 zł za rok, 1210 zł za 2 lata, 1331 zł za 3 lata. Stopa 10%. Ile jest warta dziś?', opcje: ['3641,00 zł', '3310,00 zł', '3000,00 zł'], dobra: 2, dlaczego: '$\\dfrac{1100}{1{,}1} + \\dfrac{1210}{1{,}21} + \\dfrac{1331}{1{,}331} = 1000 + 1000 + 1000 = 3000$ zł. 3641 zł to suma bez dzielenia, a 3310 zł to każda wypłata podzielona tylko raz przez $1{,}1$ — późniejsze wypłaty dzielisz więcej razy.' },
+  { q: 'Renta 3 × 2000 zł z dołu przy 6% jest dziś warta 5346,02 zł. Co to znaczy?', opcje: ['Wpłacone dziś 5346,02 zł na 6% wystarczy dokładnie na trzy wypłaty po 2000 zł', 'Bank zarobi na rencie 5346,02 zł', 'Po 3 latach będziesz mieć 5346,02 zł'], dobra: 0, dlaczego: 'Wartość bieżąca renty to kwota, która razem z odsetkami pokrywa wszystkie wypłaty — po ostatniej konto jest puste. To nie jest zysk banku: to kwota, którą wpłacasz, a odsetki w tej rencie to $6000 - 5346{,}02 = 653{,}98$ zł. I nie jest to kwota na koniec: po 3 latach na koncie zostaje 0 zł.' },
+]} />
+
+### Wewnętrzna stopa zwrotu (IRR)
+
+<a id="cw-irr" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'Wydajesz dziś 2000 zł, po roku dostajesz 2200 zł. Ile wynosi IRR?', opcje: ['10%', '110%', '9,09%'], dobra: 0, dlaczego: '$2000 = \\dfrac{2200}{1+i}$, więc $1 + i = 2200 : 2000 = 1{,}1$ i $i = 1{,}1 - 1 = 0{,}1 = 10\\%$. 110% to $1 + i = 1{,}1$ zamiast $i$ (zapomniane odjęcie jedynki). 9,09% to $200 : 2200$ — zysk podzielony przez kwotę po roku zamiast przez wydatek.' },
+  { q: 'Wydatek 1000 zł, wpływy: 500 zł po roku i 660 zł po 2 latach. Jakie równanie dostajesz po podstawieniu $x = 1 + i$ i pomnożeniu przez $x^2$?', opcje: ['$1000x^2 + 500x + 660 = 0$', '$1000 = 500x + 660x^2$', '$1000x^2 - 500x - 660 = 0$'], dobra: 2, dlaczego: '$1000 = \\dfrac{500}{x} + \\dfrac{660}{x^2}$, razy $x^2$: $1000x^2 = 500x + 660$, po przeniesieniu: $1000x^2 - 500x - 660 = 0$. Pierwsza opcja ma złe znaki (przenosząc na drugą stronę, zmieniasz znak). Druga to mnożenie wpływów zamiast dzielenia.' },
+  { q: 'Równanie z poprzedniego zadania ma pierwiastki $x_1 = -0{,}6$ i $x_2 = 1{,}1$. Ile wynosi IRR?', opcje: ['$-160\\%$ albo $10\\%$', '$10\\%$', '$110\\%$'], dobra: 1, dlaczego: '$x = 1 + i$ nie może być ujemne, więc zostaje $x = 1{,}1$, a $i = 1{,}1 - 1 = 0{,}1 = 10\\%$. −160% to ujemny pierwiastek zamieniony na $i$ ($-0{,}6 - 1 = -1{,}6$) — strata większa niż cały wkład, bez sensu w zadaniu. 110% to $x$ zamiast $i = x - 1$. Sprawdzenie: $500 : 1{,}1 + 660 : 1{,}21 \\approx 454{,}55 + 545{,}45 = 1000$ zł.' },
+  { q: 'Ktoś liczy IRR maszyny (wydatek 1000 zł, wpływy 600 zł i 550 zł) tak: $(600 + 550 - 1000) : 1000 = 15\\%$. Co jest nie tak?', opcje: ['Pomija czas — wpływy przychodzą później, więc są dziś warte mniej. Prawdziwe IRR to 10%', 'Nic, to dobry wynik', 'Trzeba jeszcze podzielić przez 2 lata — wyjdzie 7,5%'], dobra: 0, dlaczego: 'IRR to stopa, przy której wpływy <b>sprowadzone do dziś</b> równają się wydatkowi: $600 : 1{,}1 + 550 : 1{,}21 \\approx 1000$, czyli 10%. „Nic, to dobry wynik” — nie: 15% to zysk bez uwzględnienia czasu. Dzielenie zysku przez liczbę lat (7,5%) też ignoruje to, kiedy przychodzą pieniądze.' },
+  { q: 'Liczysz IRR w Excelu: =IRR(A1:A3). Co wpisujesz w komórki dla maszyny z modułu?', opcje: ['A1 = 1000, A2 = 600, A3 = 550', 'A1 = −1000, A2 = 600, A3 = 550', 'A1 = 600, A2 = 550, A3 = 1000'], dobra: 1, dlaczego: 'Przepływy wpisujesz w kolejności czasu, a wydatek <b>z minusem</b> (pieniądze wychodzą z kieszeni). Bez minusa wszystkie przepływy są dodatnie i nie ma stopy, przy której by się zrównały — Excel pokaże błąd. Kolejność też się liczy: wydatek jest dziś, więc stoi pierwszy (A1), a nie na końcu.' },
+]} />
+
+### Plan spłaty kredytu
+
+<a id="cw-plan" class="k-anchor"></a>
+
+<CwiczenieKwoty tytul="Plan spłaty: 9000 zł, 3 raty, 10%" kolumny={pl1.kolumny} wiersze={pl1.wiersze}>
+Kredyt 9000 zł spłacasz w 3 ratach malejących, płatnych na koniec każdego roku, oprocentowanie 10% rocznie. Wypełnij plan spłaty.
+</CwiczenieKwoty>
+
+<CwiczenieKwoty tytul="Plan spłaty: 10 000 zł, 4 raty, 8%" kolumny={pl2.kolumny} wiersze={pl2.wiersze}>
+Kredyt 10 000 zł spłacasz w 4 ratach malejących, płatnych na koniec każdego roku, oprocentowanie 8% rocznie. Wypełnij plan spłaty.
+</CwiczenieKwoty>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'Kredyt 20 000 zł, 5 rat malejących, 6% rocznie. Ile wynosi rata kapitałowa?', opcje: ['1200 zł', '4000 zł', '5200 zł'], dobra: 1, dlaczego: 'Rata kapitałowa $= 20\\,000 : 5 = 4000$ zł — w każdym roku tyle samo. 1200 zł to odsetki w 1. roku ($20\\,000 \\cdot 6\\%$), a 5200 zł to rata łączna w 1. roku ($1200 + 4000$).' },
+  { q: 'W 2. roku tego kredytu kapitał początkowy wynosi 16 000 zł. Ile wynoszą odsetki?', opcje: ['1200 zł', '240 zł', '960 zł'], dobra: 2, dlaczego: '6% z 16 000 zł: $16\\,000 \\cdot 6 = 96\\,000$, potem $96\\,000 : 100 = 960$ zł. 1200 zł to odsetki od całego kredytu — a w 2. roku dług jest już mniejszy. 240 zł to 6% z raty kapitałowej.' },
+  { q: 'Kapitał początkowy 16 000 zł, odsetki 960 zł, rata kapitałowa 4000 zł. Ile wynosi kapitał końcowy?', opcje: ['12 000 zł', '11 040 zł', '15 040 zł'], dobra: 0, dlaczego: 'Dług zmniejsza tylko rata kapitałowa: $16\\,000 - 4000 = 12\\,000$ zł. 11 040 zł to odjęta rata łączna ($4960$ zł), a 15 040 zł to odjęte same odsetki.' },
+  { q: 'Dlaczego w ratach malejących rata łączna co roku jest mniejsza?', opcje: ['Bo rata kapitałowa maleje', 'Bo odsetki liczysz od coraz mniejszego długu, a rata kapitałowa jest stała', 'Bo bank daje zniżkę stałym klientom'], dobra: 1, dlaczego: 'Rata kapitałowa jest taka sama w każdym roku. Maleją odsetki, bo dług po każdej racie jest mniejszy — a rata łączna to odsetki + rata kapitałowa.' },
+  { q: 'Po wypełnieniu planu kapitał końcowy w ostatnim wierszu wyszedł 500 zł. Co to znaczy?', opcje: ['W tabeli jest błąd — po ostatniej racie dług musi wynosić 0', 'Na koniec trzeba dopłacić 500 zł', 'Wszystko w porządku'], dobra: 0, dlaczego: 'Raty kapitałowe razem dają cały kredyt, więc po ostatniej racie długu nie ma. Inny wynik niż 0 to znak błędu w tabeli — najczęściej w odejmowaniu albo w racie kapitałowej. Niczego się nie dopłaca: trzeba znaleźć i poprawić pomyłkę.' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tag="Quiz · 10 pytań" tytul="" pytania={[
+  { q: 'Co oznacza $PV$?', opcje: ['Wartość bieżąca — ile kwota jest warta dziś', 'Wartość przyszła — ile kwota będzie warta za $n$ lat', 'Stopa procentowa na okres'], dobra: 0, dlaczego: '$PV$ (present value) to wartość dziś. Wartość przyszła to $FV$ (future value), a stopa to $i$.' },
+  { q: 'Co to jest kapitalizacja?', opcje: ['Wypłata odsetek z konta', 'Dopisanie odsetek do kapitału', 'Stopa procentowa w skali roku'], dobra: 1, dlaczego: 'Kapitalizacja to powiększenie kapitału o odsetki. Od następnego okresu odsetki liczą się od większej kwoty — stąd procent składany.' },
+  { q: 'Dlaczego 1000 zł dziś jest warte więcej niż 1000 zł za rok?', opcje: ['To ta sama kwota — są warte tyle samo', 'Bo za rok banknoty się zużyją', 'Bo dzisiejsze 1000 zł można wpłacić na lokatę i za rok mieć więcej'], dobra: 2, dlaczego: 'Pieniądz dziś może zarabiać odsetki. Dlatego kwoty z różnych momentów porównujesz dopiero po przeniesieniu do jednego momentu.' },
+  { q: 'Co mówi $n$ we wzorze $FV = (1+i)^n \\cdot PV$?', opcje: ['Ile razy doliczono odsetki (liczbę kapitalizacji)', 'Zawsze liczbę lat', 'Stopę procentową'], dobra: 0, dlaczego: '$n$ to liczba okresów, czyli liczba kapitalizacji. Przy kapitalizacji kwartalnej przez 2 lata $n = 8$, a nie 2.' },
+  { q: 'Wpłaty „z góry” to wpłaty:', opcje: ['na koniec każdego okresu', 'na początku każdego okresu', 'jednorazowe, na samym początku'], dobra: 1, dlaczego: 'Z góry = na początku okresu (tak jak w strumieniu ze slajdu). Z dołu = na koniec okresu (tak jak w rencie).' },
+  { q: 'Renta dożywotnia ma nieskończenie wiele wypłat. Dlaczego jej wartość dziś jest skończona?', opcje: ['Bo każda kolejna wypłata jest mniejsza', 'Bo dalekie wypłaty są dziś warte bardzo mało — dzielisz je przez coraz większe potęgi', 'Nie jest — renta dożywotnia jest warta nieskończenie dużo'], dobra: 1, dlaczego: 'Wypłaty są równe — maleje tylko ich dzisiejsza wartość. Wypłata za 100 lat przy 4% jest dziś warta mniej niż 2% swojej wielkości. Suma rośnie coraz wolniej i zbliża się do $FV_1 : i$, więc nie jest nieskończona.' },
+  { q: 'IRR to:', opcje: ['stopa, przy której dzisiejsza wartość wpływów równa się wydatkowi', 'zysk z inwestycji w złotych', 'oprocentowanie lokaty w banku'], dobra: 0, dlaczego: 'Wewnętrzna stopa zwrotu to stopa $i$, przy której wpływy sprowadzone do dziś dają dokładnie wydatek. Mówi, ile procent rocznie zarabia inwestycja.' },
+  { q: 'Rata łączna w planie spłaty to:', opcje: ['kredyt : liczba rat', 'kapitał początkowy · $i$', 'rata odsetkowa + rata kapitałowa'], dobra: 2, dlaczego: 'Rata łączna to cała kwota, którą płacisz w okresie: część odsetkowa + część kapitałowa. Kredyt : liczba rat to rata kapitałowa, a kapitał początkowy · $i$ to odsetki.' },
+  { q: 'Stopa roczna jest ta sama. Kiedy kapitalizacja kwartalna daje więcej niż roczna?', opcje: ['Nigdy — daje tyle samo', 'Zawsze (przy dodatniej stopie), bo odsetki od odsetek dopisuje się częściej', 'Tylko przy stopach powyżej 10%'], dobra: 1, dlaczego: 'Przy kapitalizacji kwartalnej odsetki dopisane w 1. kwartale zarabiają już w 2. kwartale. Przykład: 2000 zł na 2 lata przy 8% — kwartalnie 2343,32 zł, rocznie 2332,80 zł.' },
+  { q: 'Kiedy zaokrąglasz do groszy?', opcje: ['Na końcu, sam wynik — czynnika $(1+i)^n$ nie zaokrąglasz', 'Czynnik do dwóch miejsc po przecinku, potem wynik', 'Każdy krok do pełnych złotych'], dobra: 0, dlaczego: 'Zaokrąglony czynnik przenosi błąd na cały wynik: $10\\,000 : 1{,}16$ zamiast $10\\,000 : 1{,}157625$ daje o 17,69 zł mniej.' },
+]} />

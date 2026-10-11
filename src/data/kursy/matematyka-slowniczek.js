@@ -71,4 +71,18 @@ export const SLOWNICZEK = [
   { nazwa: 'Rozwiązanie ogólne', znaczy: 'Wszystkie rozwiązania układu nieoznaczonego naraz, zapisane przez parametry, np. $x_1 = 34 + 33a$, $x_3 = a$.', modul: 'uklady-rownan' },
   { t: 'B^{(1)}', nazwa: 'Baza', czytamy: 'be jeden', znaczy: 'Zestaw $r(A)$ niewiadomych (zmiennych bazowych). Pozostałe niewiadome — niebazowe — dostają wartość 0, a bazowe muszą wtedy wyjść jednoznacznie.', modul: 'uklady-rownan' },
   { t: 'X^{(1)}', nazwa: 'Rozwiązanie bazowe', czytamy: 'duże iks jeden', znaczy: 'Rozwiązanie dla bazy $B^{(1)}$: niebazowe niewiadome są równe 0. Zapisujesz je jako cały wektor, razem z zerami.', modul: 'uklady-rownan' },
+  // --- Matematyka finansowa ---
+  { t: 'PV', nazwa: 'Wartość bieżąca (present value)', czytamy: 'pe-fał', znaczy: 'Ile kwota jest warta dziś: kwota wpłacana na start albo dzisiejsza wartość pieniędzy z przyszłości.', modul: 'matematyka-finansowa' },
+  { t: 'FV', nazwa: 'Wartość przyszła (future value)', czytamy: 'ef-fał', znaczy: 'Ile kwota będzie warta po $n$ okresach, razem z odsetkami.', modul: 'matematyka-finansowa' },
+  { t: 'n', nazwa: 'Liczba okresów', czytamy: 'en', znaczy: 'Ile okresów mija — tyle razy odsetki są dopisywane do kwoty (liczba kapitalizacji).', modul: 'matematyka-finansowa' },
+  { t: 'i', nazwa: 'Stopa procentowa na okres', czytamy: 'i', znaczy: 'Jaka część kwoty dochodzi przez jeden okres, jako ułamek: 5% to $i = 0{,}05$.', modul: 'matematyka-finansowa' },
+  { nazwa: 'Kapitalizacja', znaczy: 'Powiększenie kapitału o odsetki. Od następnego okresu odsetki liczą się od większej kwoty (procent składany).', modul: 'matematyka-finansowa' },
+  { t: 'FV = (1+i)^n \\cdot PV', nazwa: 'Wartość przyszła kwoty', czytamy: 'ef-fał równa się jeden plus i do potęgi en razy pe-fał', znaczy: 'Kwotę przenosisz w przyszłość: za każdy okres mnożysz przez $1+i$.', modul: 'matematyka-finansowa' },
+  { t: 'PV = \\dfrac{FV}{(1+i)^n}', nazwa: 'Wartość bieżąca kwoty (dyskontowanie)', czytamy: 'pe-fał równa się ef-fał przez jeden plus i do potęgi en', znaczy: 'Kwotę z przyszłości sprowadzasz do dziś: za każdy okres dzielisz przez $1+i$.', modul: 'matematyka-finansowa' },
+  { nazwa: 'Strumień pieniężny', znaczy: 'Kilka wpłat w różnych momentach. Na zajęciach wpłaty z góry (na początku okresów), wartość na koniec ostatniego okresu.', modul: 'matematyka-finansowa' },
+  { nazwa: 'Renta', znaczy: 'Seria przyszłych wypłat. Jej wartość dziś to suma wypłat sprowadzonych do dziś; renta z dołu — wypłaty na koniec okresów.', modul: 'matematyka-finansowa' },
+  { t: 'PV = \\dfrac{FV_1}{i}', nazwa: 'Renta dożywotnia', czytamy: 'pe-fał równa się ef-fał jeden przez i', znaczy: 'Wartość dziś renty wypłacającej bez końca tę samą kwotę $FV_1$ co okres.', modul: 'matematyka-finansowa' },
+  { t: 'IRR', nazwa: 'Wewnętrzna stopa zwrotu', czytamy: 'i-er-er', znaczy: 'Stopa, przy której dzisiejsza wartość wpływów równa się wydatkowi — ile procent rocznie zarabia inwestycja.', modul: 'matematyka-finansowa' },
+  { nazwa: 'Amortyzacja kredytu', znaczy: 'Plan spłaty kredytu: dla każdego okresu kapitał początkowy, odsetki, rata odsetkowa, rata kapitałowa, rata łączna i kapitał końcowy.', modul: 'matematyka-finansowa' },
+  { nazwa: 'Raty malejące', znaczy: 'Rata kapitałowa stała (kredyt : liczba rat), odsetki liczone od malejącego długu — więc rata łączna maleje.', modul: 'matematyka-finansowa' },
 ];

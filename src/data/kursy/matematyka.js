@@ -24,7 +24,7 @@ export const MODULES = [
   { nr: 4, slug: 'macierze', title: 'Macierze', short: 'Mnożenie, wyznacznik, macierz odwrotna i rząd — kiedy działa, a kiedy nie.', status: 'live', minutes: 90, cwiczenia: 'cwiczenia' },
   { nr: 5, slug: 'uklady-rownan', title: 'Układy równań liniowych', short: 'Macierz rozszerzona, postać bazowa, układy oznaczone, nieoznaczone i sprzeczne, rozwiązania bazowe.', status: 'live', minutes: 75, cwiczenia: 'cwiczenia' },
   { nr: 6, slug: 'programowanie-liniowe', title: 'Programowanie liniowe', short: 'Model decyzyjny, zbiór rozwiązań dopuszczalnych i metoda geometryczna.', status: 'soon' },
-  { nr: 7, slug: 'matematyka-finansowa', title: 'Matematyka finansowa', short: 'Procent prosty i składany, wartość bieżąca i przyszła, stopa zwrotu.', status: 'soon' },
+  { nr: 7, slug: 'matematyka-finansowa', title: 'Matematyka finansowa', short: 'Wartość przyszła i bieżąca, strumienie wpłat, renta, IRR i plan spłaty kredytu.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
   { nr: 8, slug: 'pochodne', title: 'Pochodna funkcji jednej zmiennej', short: 'Co mierzy pochodna, wzory i reguły różniczkowania krok po kroku.', status: 'soon' },
   { nr: 9, slug: 'badanie-funkcji', title: 'Badanie zmienności funkcji', short: 'Monotoniczność, ekstrema, wypukłość i punkty przegięcia — z tabelką.', status: 'soon' },
   { nr: 10, slug: 'funkcje-wielu-zmiennych', title: 'Funkcje wielu zmiennych', short: 'Pochodne cząstkowe i ekstrema bezwarunkowe.', status: 'soon' },

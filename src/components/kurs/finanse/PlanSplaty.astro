@@ -1,0 +1,208 @@
+---
+// Plan spłaty kredytu w ratach malejących — szablon z zajęć (Okres | Kapitał początkowy | Odsetki | Rata odsetkowa |
+// Rata kapitałowa | Rata łączna | Kapitał końcowy) + wiersz „Razem” do sprawdzenia. Liczby z lib/finanse.js.
+// Kliknięcie w liczbę pokazuje, skąd się wzięła. „▶ Zobacz krok po kroku” wypełnia tabelę kratka po kratce:
+// kapitał końcowy przelatuje do następnego wiersza jako kapitał początkowy, rachunki widać w kratkach i w podpisie.
+import { tex, texInline } from '../../../lib/tex.js';
+import { planMalejacy, KOLUMNY_PLANU, zlTex, procTex, dokladnie } from '../../../lib/finanse.js';
+import Legenda from '../Legenda.astro';
+import Sterowanie from '../Sterowanie.astro';
+interface Props { kredyt: any; n: number; i: any; okres?: string }
+const { kredyt, n, i, okres = 'rok' } = Astro.props;
+const p = planMalejacy(kredyt, n, i);
+const KOL = ['kp', 'ods', 'ro', 'rk', 'rl', 'kk'];
+const NAZWA: Record<string, string> = Object.fromEntries(KOLUMNY_PLANU.map((c: any) => [c.id, c.nazwa]));
+const od: Record<string, number> = {};
+const ex: Record<string, string> = {};
+p.kroki.forEach((s: any, idx: number) => {
+  if (s.w !== undefined) { od[`${s.w}-${s.c}`] = idx; if (s.ex) ex[`${s.w}-${s.c}`] = s.ex; }
+});
+const odSuma = p.kroki.findIndex((s: any) => s.a === 'suma');
+const odRk = p.kroki.findIndex((s: any) => s.a === 'rk0');
+const sumy: Record<string, any> = { ods: p.sumaOds, ro: p.sumaOds, rk: p.K, rl: p.sumaRl };
+const okresy = ({ rok: 'raz w roku', 'kwartał': 'raz na kwartał', 'miesiąc': 'raz w miesiącu' } as Record<string, string>)[okres] ?? 'raz na okres';
+---
+<figure class="k-fig k-ps" data-kbox data-ps>
+  <div class="k-fig-box">
+    <div class="k-ps-dane">
+      <span class="k-ps-d" data-d="dane-K"><span class="k-ps-dl">kredyt</span><span data-v set:html={tex(zlTex(p.K))} /> zł</span>
+      <span class="k-ps-d"><span class="k-ps-dl">liczba rat</span>{n} ({okresy})</span>
+      <span class="k-ps-d"><span class="k-ps-dl">oprocentowanie</span><span set:html={tex(`${procTex(p.I)} \\;\\; (i = ${dokladnie(p.I).tex})`)} /></span>
+      <span class="k-ps-d is-rk" data-d="dane-rk" data-od={odRk}><span class="k-ps-dl">rata kapitałowa</span><span set:html={tex(`${zlTex(p.K)} : ${n} =`)} /> <span data-v set:html={tex(zlTex(p.rk))} /></span>
+    </div>
+    <div class="k-ps-scroll k-tp-scroll" data-kk-scroll>
+      <table class="k-ps-t">
+        <thead>
+          <tr>{KOLUMNY_PLANU.map((c: any) => <th class={`is-${c.id}`} scope="col">{c.nazwa}</th>)}</tr>
+        </thead>
+        <tbody>
+          {p.wiersze.map((w: any, x: number) => (
+            <tr>
+              <th scope="row" data-et="Okres">{w.k}</th>
+              {KOL.map((c) => (
+                <td class={`k-ps-c is-${c}`} data-id={`${x}-${c}`} data-od={od[`${x}-${c}`]} data-et={NAZWA[c]} tabindex="0">
+                  <span class="k-ps-v" data-v set:html={tex(zlTex(w[c]))} />
+                  {ex[`${x}-${c}`] && <span class="k-ps-e" set:html={tex(ex[`${x}-${c}`])} />}
+                </td>
+              ))}
+            </tr>
+          ))}
+          <tr class="is-razem">
+            <th scope="row">Razem</th>
+            {KOL.map((c) => sumy[c] !== undefined
+              ? <td class={`k-ps-c is-${c}`} data-id={`suma-${c}`} data-od={odSuma} data-et={NAZWA[c]} tabindex="0"><span class="k-ps-v" data-v set:html={tex(zlTex(sumy[c]))} /></td>
+              : <td class="k-ps-nic" />)}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="k-ps-hint" data-js-only hidden>Kliknij dowolną liczbę w tabeli — zobaczysz, skąd się wzięła.</p>
+    <Legenda items={[['ok', 'rata łączna — tyle płacisz bankowi w danym okresie'], ['wyblakla', 'wiersz „Razem” — do sprawdzenia, nie jest częścią szablonu'], ['ramka-fiolet', 'kliknięta liczba — wyjaśnienie w ramce poniżej']]} />
+  </div>
+  <!-- poza .k-fig-box: na telefonie wyjaśnienie i sterowanie przyklejają się do dołu ekranu -->
+  <div class="k-ps-live k-live" data-ps-live aria-live="polite" hidden>
+    <button type="button" class="k-ps-x" data-ps-x aria-label="Zamknij wyjaśnienie">✕</button>
+    <div data-ps-tekst></div>
+  </div>
+  <Sterowanie opis="tabela wypełni się kratka po kratce, z rachunkiem przy każdej liczbie" legenda={[['ramka-zloto', 'liczysz teraz'], ['ramka-cyan', 'z tych liczysz'], ['pusta', 'jeszcze pusta']]} />
+  <ol hidden data-kroki>
+    {p.kroki.map((s: any) => <li data-a={s.a} data-w={s.w} data-c={s.c} data-z={s.z} set:html={texInline(s.html)} />)}
+  </ol>
+  <ul hidden data-opisy>
+    {Object.entries(p.opisy).map(([id, h]) => <li data-id={id} set:html={texInline(`${id.startsWith('suma') ? 'Razem' : `Okres ${Number(id.split('-')[0]) + 1}`} · ${h}`)} />)}
+  </ul>
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  import { krokowka, own, lot, blysk, sleep, odslon, widok, EXPR } from '../../../lib/krokowka';
+  document.querySelectorAll<HTMLElement>('[data-ps]').forEach((box) => {
+    own<HTMLElement>(box, '[data-js-only]').forEach((el) => (el.hidden = false));
+    const tds = own<HTMLElement>(box, 'td[data-id]');
+    const dane = own<HTMLElement>(box, '[data-d]');
+    const live = own<HTMLElement>(box, '[data-ps-live]')[0];
+    const liveTekst = live.querySelector<HTMLElement>('[data-ps-tekst]')!;
+    const opisy = own<HTMLElement>(box, '[data-opisy] > li');
+    const ukryjOpis = () => { live.hidden = true; live.classList.remove('is-live'); tds.forEach((t) => t.classList.remove('is-wybrana')); };
+    live.querySelector('[data-ps-x]')!.addEventListener('click', ukryjOpis);
+    const el = (id?: string) => tds.find((t) => t.dataset.id === id) ?? dane.find((d) => d.dataset.d === id);
+    const czysc = () => {
+      tds.forEach((t) => t.classList.remove('is-pusta', 'is-expr', 'is-teraz', 'is-zrodlo'));
+      dane.forEach((d) => d.classList.remove('is-pusta', 'is-zrodlo'));
+    };
+    // kliknięcie w liczbę → skąd się wzięła
+    const pokazOpis = (td: HTMLElement) => {
+      if (td.classList.contains('is-pusta')) return;
+      const o = opisy.find((li) => li.dataset.id === td.dataset.id);
+      if (!o) return;
+      tds.forEach((t) => t.classList.toggle('is-wybrana', t === td));
+      liveTekst.innerHTML = o.innerHTML;
+      live.hidden = false;
+      live.classList.add('is-live');
+    };
+    tds.forEach((td) => {
+      td.addEventListener('click', () => pokazOpis(td));
+      td.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pokazOpis(td); } });
+    });
+    krokowka(box, {
+      render: (st, li) => {
+        czysc();
+        tds.forEach((t) => t.classList.toggle('is-pusta', Number(t.dataset.od) > st));
+        dane.forEach((d) => d.dataset.od !== undefined && d.classList.toggle('is-pusta', Number(d.dataset.od) > st));
+        ukryjOpis();
+        const a = li.dataset.a;
+        if (li.dataset.w !== undefined) {
+          const cel = el(`${li.dataset.w}-${li.dataset.c}`);
+          cel?.classList.add('is-teraz');
+          (li.dataset.z ?? '').split(',').filter(Boolean).forEach((z) => el(z)?.classList.add('is-zrodlo'));
+          odslon(cel);
+          widok(box, cel);
+        }
+        if (a === 'rk0') { el('dane-rk')?.classList.add('is-zrodlo'); widok(box, el('dane-rk')); }
+        if (a === 'suma') {
+          const razem = tds.filter((t) => t.dataset.id?.startsWith('suma'));
+          razem.forEach((t) => t.classList.add('is-teraz'));
+          widok(box, razem[0]?.closest('tr'));
+        }
+      },
+      animuj: async (_st, li) => {
+        const a = li.dataset.a;
+        if (a === 'rk0') { blysk(el('dane-rk')); return; }
+        if (a === 'suma') { tds.filter((t) => t.dataset.id?.startsWith('suma')).forEach((t) => blysk(t)); return; }
+        const dst = el(`${li.dataset.w}-${li.dataset.c}`);
+        if (!dst) return;
+        if (a === 'lot') {
+          dst.classList.add('is-pusta');
+          await lot(box, el(li.dataset.z), dst, { kolor: 'cyan' });
+          dst.classList.remove('is-pusta');
+          blysk(dst);
+        } else if (a === 'licz') {
+          dst.classList.add('is-expr');
+          blysk(dst);
+          await sleep(EXPR);
+          dst.classList.remove('is-expr');
+          blysk(dst);
+        }
+      },
+      zamknij: czysc,
+    });
+  });
+</script>
+
+<style>
+  .k-ps{position:relative;scroll-margin-top:84px;}
+  .k-ps-dane{display:flex;flex-wrap:wrap;gap:6px 8px;margin:0 0 12px;}
+  .k-ps-d{display:inline-flex;align-items:baseline;gap:6px;padding:5px 9px;border:1px solid var(--line2);background:var(--surface);font-size:.92rem;border-radius:3px;}
+  .k-ps-dl{font-family:var(--mono);font-size:.66rem;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);}
+  .k-ps-d.is-pusta [data-v]{visibility:hidden;}
+  .k-ps-d.is-pusta{border-style:dashed;}
+  .k-ps-d.is-zrodlo{box-shadow:0 0 0 2px var(--cyan);}
+  .k-ps-scroll{overflow-x:auto;padding:2px 0 4px;}
+  .k-ps-t{border-collapse:collapse;font-size:.95rem;}
+  .k-ps-t th,.k-ps-t td{border:1px solid var(--line2);padding:6px 9px;text-align:center;vertical-align:middle;}
+  .k-ps-t thead th{font-family:var(--mono);font-size:.66rem;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:#fff;background:rgba(167,139,250,.1);
+    line-height:1.3;min-width:6.4em;max-width:8em;}
+  .k-ps-t thead th.is-okres{min-width:0;}
+  .k-ps-t tbody th{color:var(--muted);font-weight:500;}
+  .k-ps-c{position:relative;white-space:nowrap;cursor:pointer;transition:background .2s;}
+  .k-ps-c:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px;}
+  .k-ps-c.is-rl{background:rgba(90,209,160,.16);color:#fff;font-weight:700;}
+  .k-ps-t thead th.is-rl{background:rgba(90,209,160,.22);}
+  .k-ps-t tr.is-razem th,.k-ps-t tr.is-razem td{border-top:2px solid var(--muted);color:var(--muted);font-style:italic;}
+  .k-ps-t tr.is-razem .k-ps-c.is-rl{background:rgba(90,209,160,.07);}
+  .k-ps-e{display:none;color:var(--gold);font-size:.9em;}
+  .k-ps-c.is-expr .k-ps-e{display:inline;}
+  .k-ps-c.is-expr .k-ps-v{display:none;}
+  .k-ps-c.is-pusta{background:transparent!important;}
+  .k-ps-c.is-pusta > *{visibility:hidden;}
+  .k-ps-c.is-teraz{box-shadow:inset 0 0 0 2px var(--gold);background:rgba(255,216,74,.12);}
+  .k-ps-c.is-zrodlo{box-shadow:inset 0 0 0 2px var(--cyan);}
+  .k-ps-c.is-wybrana{box-shadow:inset 0 0 0 2px var(--iris-1, #a78bfa);}
+  .k-ps-t :global(.katex){font-size:1em!important;}
+  .k-ps-hint{margin:8px 0 0!important;font-size:.82rem;color:var(--muted);}
+  .k-ps-live{position:relative;margin:8px 0 4px!important;padding:8px 38px 8px 12px;border-left:2px solid #a78bfa;background:rgba(167,139,250,.07);font-size:.93rem;line-height:1.7;}
+  .k-ps-live[hidden]{display:none;}
+  /* telefon: wyjaśnienie przyklejone do dołu ekranu, dopóki tabela jest widoczna */
+  @media(max-width:560px){
+    .k-ps-live.is-live{position:sticky;bottom:8px;z-index:6;max-height:42vh;overflow:auto;background:#15131d;box-shadow:0 -6px 18px rgba(0,0,0,.6);}
+  }
+  .k-ps-x{position:absolute;top:4px;right:4px;width:30px;height:30px;display:grid;place-items:center;font:inherit;font-size:.9rem;color:var(--muted);
+    background:transparent;border:1px solid var(--line2);cursor:pointer;}
+  .k-ps-x:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-ps-scroll.k-tp-scroll{border:0;background:none;}
+  /* telefon: każdy okres to kafelek z trzema kratkami w rzędzie, nazwa kolumny nad liczbą */
+  @media(max-width:560px){
+    .k-ps .k-fig-box{padding:12px 8px;}
+    .k-ps-t,.k-ps-t tbody{display:block;}
+    .k-ps-t thead{display:none;}
+    .k-ps-t tr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;margin:0 0 8px;padding:6px;border:1px solid var(--line2);background:rgba(255,255,255,.015);}
+    .k-ps-t tbody th{grid-column:1/-1;text-align:left;border:0;padding:0 2px 2px;color:#fff;font-weight:600;font-size:.9rem;}
+    .k-ps-t tbody th[data-et]::before{content:attr(data-et) " ";}
+    .k-ps-t td{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:3px;padding:5px 3px;font-size:.92rem;}
+    .k-ps-t td::before{content:attr(data-et);font-family:var(--mono);font-size:.54rem;font-weight:400;font-style:normal;letter-spacing:.3px;text-transform:uppercase;
+      color:var(--muted);line-height:1.2;text-align:center;white-space:normal;min-height:2.4em;}
+    .k-ps-t .k-ps-nic{display:none;}
+    .k-ps-t tr.is-razem{border-style:dashed;}
+    .k-ps-t tr.is-razem th,.k-ps-t tr.is-razem td{border-top-width:1px;}
+  }
+</style>

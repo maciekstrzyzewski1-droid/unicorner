@@ -1,0 +1,123 @@
+---
+// Symulator IRR: suwak stopy i — liczy, ile są dziś warte przyszłe wpływy (każdy dzielony przez (1 + i)^k)
+// i porównuje to z dzisiejszym wydatkiem. IRR to stopa, przy której obie kwoty są równe.
+// Bez JS widać tabelkę dla kilku stóp (liczoną przy buildzie), z JS — suwak i dwa paski do porównania.
+import { tex } from '../../../lib/tex.js';
+import { R, zlTex, procTex, dokladnie } from '../../../lib/finanse.js';
+interface Props { wydatek: number; wplywy: number[]; stopy?: string[]; start?: number }
+const { wydatek, wplywy, stopy = ['0', '0.05', '0.1', '0.15', '0.2'], start = 5 } = Astro.props;
+const W = R.of(wydatek);
+const wiersze = stopy.map((s) => {
+  const i = R.of(s), f = i.add(1);
+  const czesci = wplywy.map((x, k) => R.of(x).div(f.pow(k + 1)));
+  // suma zaokrąglonych składników — tak jak dodajesz na kartce (żeby rachunek w tabeli się zgadzał)
+  const suma = czesci.reduce((a, x) => a.add(x.round(2)), new R(0n));
+  const c = suma.cmp(W.round(2));
+  return { i, czesci, suma, c };
+});
+const wzor = `${wplywy.map((x, k) => `\\dfrac{${zlTex(x)}}{(1+i)${k ? `^{${k + 1}}` : ''}}`).join(' + ')}`;
+---
+<section class="k-sym k-irr" data-irr data-wyd={wydatek} data-wpl={wplywy.join(',')} data-start={start}>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag">Symulator</span>
+    <h3 class="k-pyt-h">Przy jakiej stopie wpływy są dziś warte dokładnie tyle, ile wydajesz?</h3>
+  </div>
+  <p class="k-irr-wz">Wartość dziś wszystkich wpływów — porównujesz ją z wydatkiem {zlTex(W).replace('\\,', ' ')} zł:</p>
+  <div class="k-irr-f" set:html={tex(`${wzor} \\;\\overset{?}{=}\\; ${zlTex(W)}`, true)} />
+  <div class="k-irr-js" data-js-only hidden>
+    <label class="k-irr-l">Stopa <span class="k-irr-iv" data-iv></span>
+      <input type="range" min="0" max="30" step="0.5" value={start} data-in aria-label="stopa procentowa w procentach" />
+    </label>
+    <ol class="k-irr-rach" data-rach></ol>
+    <div class="k-irr-bars">
+      <div class="k-irr-bar"><span class="k-irr-bl">wpływy warte dziś</span><span class="k-irr-b is-wpl" data-b1></span><span class="k-irr-bv" data-v1></span></div>
+      <div class="k-irr-bar"><span class="k-irr-bl">wydatek dziś</span><span class="k-irr-b is-wyd" data-b2></span><span class="k-irr-bv" data-v2></span></div>
+    </div>
+    <p class="k-irr-wer" data-wer aria-live="polite"></p>
+  </div>
+  <div class="k-tab k-irr-tab">
+    <table>
+      <thead><tr><th>stopa i</th><th>wpływy warte dziś</th><th>a wydatek {zlTex(W).replace('\\,', ' ')} zł</th></tr></thead>
+      <tbody>
+        {wiersze.map((w) => (
+          <tr class:list={[{ 'is-rowne': w.c === 0 }]}>
+            <td set:html={tex(procTex(w.i))} />
+            <td set:html={tex(`${w.czesci.map((x) => zlTex(x.round(2), false)).join(' + ')} = ${zlTex(w.suma, false)}`)} />
+            <td>{w.c > 0 ? 'więcej niż wydatek' : w.c < 0 ? 'mniej niż wydatek' : 'równo — to jest IRR'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<script>
+  const zl = (x: number) => {
+    const [c, u] = Math.abs(x).toFixed(2).split('.');
+    const cg = c.length > 4 ? c.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : c;
+    return `${x < 0 ? '−' : ''}${cg},${u}`;
+  };
+  const pr = (p: number) => String(p).replace('.', ',');
+  document.querySelectorAll<HTMLElement>('[data-irr]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => (el.hidden = false));
+    const wyd = Number(box.dataset.wyd);
+    const wpl = box.dataset.wpl!.split(',').map(Number);
+    const inp = box.querySelector<HTMLInputElement>('[data-in]')!;
+    const iv = box.querySelector<HTMLElement>('[data-iv]')!;
+    const rach = box.querySelector<HTMLElement>('[data-rach]')!;
+    const b1 = box.querySelector<HTMLElement>('[data-b1]')!, b2 = box.querySelector<HTMLElement>('[data-b2]')!;
+    const v1 = box.querySelector<HTMLElement>('[data-v1]')!, v2 = box.querySelector<HTMLElement>('[data-v2]')!;
+    const wer = box.querySelector<HTMLElement>('[data-wer]')!;
+    const max = Math.max(wyd, wpl.reduce((a, x) => a + x, 0));
+    const licz = () => {
+      const p = Number(inp.value), f = 1 + p / 100;
+      const fs = f.toFixed(4).replace(/0+$/, '').replace(/\.$/, '').replace('.', ',');
+      iv.textContent = `${pr(p)}%`;
+      const cz = wpl.map((x, k) => Math.round((x / f ** (k + 1)) * 100) / 100);
+      const suma = Math.round(cz.reduce((a, x) => a + x, 0) * 100) / 100;
+      // „550,00 : 1,05² = 550,00 : 1,1025 ≈ 498,87” — znak ≈, gdy wynik jest zaokrąglony do groszy
+      rach.innerHTML = wpl.map((x, k) => {
+        const pot = f ** (k + 1);
+        const dok = x / pot;
+        const zn = Math.abs(dok - cz[k]) < 1e-9 ? '=' : '≈';
+        const ps = k === 0 ? fs : `${fs}<sup>${k + 1}</sup> = ${zl(x)} : ${pot.toFixed(6).replace(/0+$/, '').replace(/\.$/, '').replace('.', ',')}`;
+        return `<li>${k + 1}. wpływ: ${zl(x)} : ${ps} ${zn} <b>${zl(cz[k])}</b></li>`;
+      }).join('') + `<li class="is-suma">razem dziś: <b>${zl(suma)}</b></li>`;
+      b1.style.width = `${(suma / max) * 100}%`;
+      b2.style.width = `${(wyd / max) * 100}%`;
+      v1.textContent = zl(suma);
+      v2.textContent = zl(wyd);
+      const d = Math.round(suma * 100) - Math.round(wyd * 100);
+      wer.innerHTML = d > 0
+        ? `Przy ${pr(p)}% wpływy są warte <b>więcej</b> niż wydatek — inwestycja zarabia więcej niż ${pr(p)}%. Przesuń suwak w prawo.`
+        : d < 0
+          ? `Przy ${pr(p)}% wpływy są warte <b>mniej</b> niż wydatek — inwestycja nie zarabia aż ${pr(p)}%. Przesuń suwak w lewo.`
+          : `<b>Równo!</b> Przy ${pr(p)}% wpływy są dziś warte dokładnie tyle, ile wydajesz. To jest IRR: <b>${pr(p)}%</b>.`;
+      wer.classList.toggle('is-ok', d === 0);
+    };
+    inp.addEventListener('input', licz);
+    licz();
+  });
+</script>
+
+<style>
+  .k-irr-wz{font-size:.95rem;margin:0 0 4px!important;}
+  .k-irr-f{margin:0 0 12px;overflow-x:auto;overflow-y:hidden;}
+  .k-irr-l{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;font-family:var(--mono);font-size:.8rem;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;}
+  .k-irr-iv{color:var(--gold);font-size:1.05rem;font-weight:700;min-width:3.4em;}
+  .k-irr-l input{flex:1 1 220px;accent-color:#ffd84a;height:28px;}
+  .k-irr-rach{list-style:none!important;margin:10px 0 8px!important;padding:0!important;font-family:var(--mono);font-size:.86rem;line-height:1.8;}
+  .k-irr-rach :global(li){margin:0!important;max-width:none!important;}
+  .k-irr-rach :global(li.is-suma){border-top:1px solid var(--line2);margin-top:2px!important;}
+  .k-irr-bars{display:grid;gap:6px;margin:6px 0 8px;}
+  .k-irr-bar{display:grid;grid-template-columns:8.5em 1fr auto;align-items:center;gap:8px;font-size:.82rem;color:var(--muted);}
+  .k-irr-b{height:14px;border-radius:2px;transition:width .15s;}
+  .k-irr-b.is-wpl{background:rgba(39,232,255,.55);}
+  .k-irr-b.is-wyd{background:rgba(255,216,74,.6);}
+  .k-irr-bv{font-family:var(--mono);color:#fff;min-width:5.5em;text-align:right;}
+  .k-irr-wer{margin:4px 0 10px!important;font-size:.93rem;padding:8px 12px;border-left:2px solid var(--gold);background:rgba(255,216,74,.06);}
+  .k-irr-wer.is-ok{border-left-color:var(--ok);background:rgba(90,209,160,.1);}
+  .k-irr-tab{margin:8px 0 4px!important;}
+  .k-irr-tab tr.is-rowne td{background:rgba(90,209,160,.12);color:#fff;font-weight:600;}
+  @media(max-width:560px){ .k-irr-bar{grid-template-columns:6.4em 1fr auto;} .k-irr-rach{font-size:.8rem;} }
+</style>
