@@ -47,6 +47,7 @@ export const ARTICLES = [
 
   // --- Zdrowie i umysł ---
   { slug: 'anatomia-znikania', topic: 'Narkolepsja z bliska: objawy, badania i codzienne życie z chorobą',  category: 'zdrowie', seoTitle: 'Anatomia znikania — narkolepsja poza sennością' },
+  { slug: 'anatomia-odpornosci', topic: 'Jak działają szczepionki, skąd skutki uboczne i dlaczego tylu ludzi się ich boi', category: 'zdrowie', seoTitle: 'Anatomia odporności — jak działają szczepionki i skąd strach przed nimi' },
   { slug: 'anatomia-slodyczy', topic: 'Co cukier naprawdę robi z wątrobą i metabolizmem',  category: 'zdrowie', seoTitle: 'Anatomia słodyczy — cukier, wątroba i zdrowie metaboliczne' },
   { slug: 'trening-umyslu', topic: 'Co badania naprawdę mówią o medytacji',     category: 'zdrowie', seoTitle: 'Trening umysłu — co nauka naprawdę mówi o medytacji' },
   { slug: 'mieso-czy-rosliny', topic: 'Dieta mięsna czy roślinna: zdrowie, klimat i etyka w liczbach',  category: 'zdrowie', seoTitle: 'Mięso czy rośliny — zdrowie, klimat i etyka w liczbach' },
