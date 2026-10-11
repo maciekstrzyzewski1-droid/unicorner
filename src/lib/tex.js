@@ -1,10 +1,11 @@
 // KaTeX po stronie serwera: komponenty kursu dostają wzór jako tekst LaTeX i oddają gotowy HTML.
 // Przeglądarka nie liczy niczego — dostaje statyczny HTML + CSS KaTeX.
 import katex from 'katex';
+import { KATEX_OPCJE } from './katex-opcje.js';
 
 export function tex(src, display = false) {
   if (src == null || src === '') return '';
-  return katex.renderToString(String(src), { displayMode: display, throwOnError: true, strict: false, output: 'html' });
+  return katex.renderToString(String(src), { ...KATEX_OPCJE, displayMode: display, throwOnError: true, output: 'html' });
 }
 
 // Tekst z wstawkami $…$ (np. w treści pytań quizu podanych jako props) → HTML.

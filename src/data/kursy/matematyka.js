@@ -25,7 +25,7 @@ export const MODULES = [
   { nr: 5, slug: 'uklady-rownan', title: 'Układy równań liniowych', short: 'Macierz rozszerzona, postać bazowa, układy oznaczone, nieoznaczone i sprzeczne, rozwiązania bazowe.', status: 'live', minutes: 75, cwiczenia: 'cwiczenia' },
   { nr: 6, slug: 'programowanie-liniowe', title: 'Programowanie liniowe', short: 'Model decyzyjny, zbiór rozwiązań dopuszczalnych i metoda geometryczna.', status: 'soon' },
   { nr: 7, slug: 'matematyka-finansowa', title: 'Matematyka finansowa', short: 'Wartość przyszła i bieżąca, strumienie wpłat, renta, IRR i plan spłaty kredytu.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
-  { nr: 8, slug: 'pochodne', title: 'Pochodna funkcji jednej zmiennej', short: 'Co mierzy pochodna, wzory i reguły różniczkowania krok po kroku.', status: 'soon' },
+  { nr: 8, slug: 'pochodne', title: 'Pochodna funkcji jednej zmiennej', short: 'Co mierzy pochodna, tabela wzorów i reguły: iloczyn, iloraz, funkcja złożona — cała lista przykładów krok po kroku.', status: 'live', minutes: 80, cwiczenia: 'cwiczenia' },
   { nr: 9, slug: 'badanie-funkcji', title: 'Badanie zmienności funkcji', short: 'Monotoniczność, ekstrema, wypukłość i punkty przegięcia — z tabelką.', status: 'soon' },
   { nr: 10, slug: 'funkcje-wielu-zmiennych', title: 'Funkcje wielu zmiennych', short: 'Pochodne cząstkowe i ekstrema bezwarunkowe.', status: 'soon' },
   { nr: 11, slug: 'ekstrema-warunkowe', title: 'Ekstrema warunkowe', short: 'Funkcja Lagrange’a i wyznacznik obrzeżony.', status: 'soon' },

@@ -1,0 +1,156 @@
+---
+// Styczna i znak pochodnej: f(x) = x³/3 − x, f'(x) = x² − 1. Suwak przesuwa punkt x₀; widać styczną,
+// „schodek” nachylenia (1 w prawo → f'(x₀) w górę lub w dół, czyli tg α) i to, czy funkcja w tym miejscu rośnie, czy maleje.
+// Wszystkie liczby z lib/pochodne.js (styczna()); każdy stan rysunku jest gotowy z buildu — skrypt tylko przełącza widoczny.
+import { styczna } from '../../../lib/pochodne.js';
+import { tex, texInline } from '../../../lib/tex.js';
+import Legenda from '../Legenda.astro';
+const { punkty } = styczna();
+const START = punkty.findIndex((p: any) => p.x0 === 1.5);
+const W = 420, H = 380;
+const X0 = -2.6, X1 = 2.6, Y0 = -2.45, Y1 = 2.45;
+const L = 14, Rr = 14, T = 14, B = 14;
+const sx = (W - L - Rr) / (X1 - X0), sy = (H - T - B) / (Y1 - Y0);
+const px = (x: number) => Math.round((L + (x - X0) * sx) * 10) / 10;
+const py = (y: number) => Math.round((H - B - (y - Y0) * sy) * 10) / 10;
+const f = (x: number) => x ** 3 / 3 - x;
+const luk = (a: number, b: number) => {
+  let d = '';
+  for (let x = a; x <= b + 1e-9; x += 0.02) d += `${d ? 'L' : 'M'}${px(x)},${py(f(x))} `;
+  return d.trim();
+};
+const kawalki = [
+  { d: luk(X0, -1), cls: 'is-plus' },
+  { d: luk(-1, 1), cls: 'is-minus' },
+  { d: luk(1, X1), cls: 'is-plus' },
+];
+const prosta = (x0: number, y0: number, a: number) => ({ x1: px(X0), y1: py(y0 + a * (X0 - x0)), x2: px(X1), y2: py(y0 + a * (X1 - x0)) });
+const stany = punkty.map((p: any) => {
+  const wprzod = p.x0 + 1 <= X1 && p.y0 + p.k <= Y1 && p.y0 + p.k >= Y0;
+  // schodek: 1 w prawo, potem f'(x₀) w górę/dół; gdy nie mieści się w przód — rysujemy go „przed” punktem
+  const A = wprzod ? { x: p.x0, y: p.y0 } : { x: p.x0 - 1, y: p.y0 - p.k };
+  const Bp = { x: A.x + 1, y: A.y };
+  const C = { x: A.x + 1, y: A.y + p.k };
+  const tx = p.tx;
+  const kier = p.znak === 'plus' ? 'rośnie' : 'maleje';
+  const opis = p.znak === 'zero'
+    ? `$x_0 = ${tx.x0}$: $f'(${tx.x0}) = ${tx.x0.startsWith('-') ? `(${tx.x0})` : tx.x0}^2 - 1 = ${tx.kw} - 1 = 0$. Styczna jest pozioma ($\\operatorname{tg}\\alpha = 0$). ${p.x0 < 0 ? 'Tu funkcja przestaje rosnąć i zaczyna maleć — to szczyt wykresu.' : 'Tu funkcja przestaje maleć i zaczyna rosnąć — to dołek wykresu.'}`
+    : `$x_0 = ${tx.x0}$: $f'(${tx.x0}) = ${tx.x0.startsWith('-') ? `(${tx.x0})` : tx.x0}^2 - 1 = ${tx.kw} - 1 = ${tx.k}$. Pochodna ${p.znak === 'plus' ? 'dodatnia' : 'ujemna'} — styczna ${p.znak === 'plus' ? 'idzie w górę' : 'opada'}, funkcja w tym miejscu <b>${kier}</b>. $\\operatorname{tg}\\alpha = ${tx.k}$: na $1$ w prawo styczna ${p.znak === 'plus' ? 'wznosi się' : 'opada'} o $${tx.k.replace('-', '')}$.`;
+  return { ...p, l: prosta(p.x0, p.y0, p.k), A, Bp, C, opis };
+});
+const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia'], ['roz', 'funkcja maleje — pochodna ujemna'], ['zloto', '$1$ w prawo'], ['cyan', "$f'(x_0)$ w górę albo w dół, czyli $\\operatorname{tg}\\alpha$"]];
+---
+<figure class="k-fig k-sy" data-sy>
+  <div class="k-fig-box">
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Wykres f(x) = x³/3 − x ze styczną w wybranym punkcie">
+      <defs><clipPath id="k-sy-clip"><rect x={L} y={T} width={W - L - Rr} height={H - T - B} /></clipPath></defs>
+      <g class="k-sy-os">
+        {[-2, -1, 1, 2].map((t) => <g><line x1={px(t)} y1={py(0) - 4} x2={px(t)} y2={py(0) + 4} /><text x={px(t)} y={py(0) + 19} text-anchor="middle">{t < 0 ? `−${-t}` : t}</text></g>)}
+        {[-2, -1, 1, 2].map((t) => <g><line x1={px(0) - 4} y1={py(t)} x2={px(0) + 4} y2={py(t)} /><text x={px(0) - 8} y={py(t) + 5} text-anchor="end">{t < 0 ? `−${-t}` : t}</text></g>)}
+        <line x1={L} y1={py(0)} x2={W - Rr} y2={py(0)} />
+        <line x1={px(0)} y1={T} x2={px(0)} y2={H - B} />
+        <text x={W - Rr - 4} y={py(0) - 8} text-anchor="end">x</text>
+        <text x={px(0) + 8} y={T + 14}>y</text>
+      </g>
+      <g clip-path="url(#k-sy-clip)">
+        {kawalki.map((k) => <path d={k.d} class:list={['k-sy-f', k.cls]} />)}
+        {stany.map((s: any, i: number) => (
+          <g class="k-sy-s" data-i={i} data-stat={i === START ? '' : undefined}>
+            <line class:list={['k-sy-st', `is-${s.znak}`]} x1={s.l.x1} y1={s.l.y1} x2={s.l.x2} y2={s.l.y2} />
+            {s.znak !== 'zero' && (
+              <g>
+                <line class="k-sy-dx" x1={px(s.A.x)} y1={py(s.A.y)} x2={px(s.Bp.x)} y2={py(s.Bp.y)} />
+                <line class="k-sy-dy" x1={px(s.Bp.x)} y1={py(s.Bp.y)} x2={px(s.C.x)} y2={py(s.C.y)} />
+                <text class="k-sy-t1" x={(px(s.A.x) + px(s.Bp.x)) / 2} y={py(s.A.y) + (s.k > 0 ? 18 : -8)} text-anchor="middle">1</text>
+                <text class="k-sy-t2" x={px(s.Bp.x) + 7} y={(py(s.Bp.y) + py(s.C.y)) / 2 + 5}>{s.t.k}</text>
+              </g>
+            )}
+            <circle cx={px(s.x0)} cy={py(s.y0)} r="6" class="k-sy-p" />
+          </g>
+        ))}
+      </g>
+    </svg>
+    <div class="k-sy-ctl" data-js-only hidden>
+      <button type="button" class="k-btn k-btn-ghost" data-sy-prev aria-label="punkt w lewo">‹</button>
+      <input type="range" min="0" max={stany.length - 1} step="1" value={START} data-sy-r aria-label="położenie punktu x₀" />
+      <button type="button" class="k-btn k-btn-ghost" data-sy-next aria-label="punkt w prawo">›</button>
+    </div>
+    <p class="k-sy-opis k-live" aria-live="polite" data-sy-opis set:html={texInline(stany[START].opis)} />
+    <ol hidden data-sy-opisy>{stany.map((s: any) => <li set:html={texInline(s.opis)} />)}</ol>
+    <Legenda items={leg} />
+    <table class="k-sy-tab">
+      <thead><tr><th set:html={tex('x_0')} /><th set:html={tex("f'(x_0) = x_0^2 - 1")} /><th>funkcja w tym miejscu</th></tr></thead>
+      <tbody>
+        {stany.map((s: any, i: number) => (
+          <tr data-w={i} class:list={[{ 'is-on': i === START }]}>
+            <td set:html={tex(s.tx.x0)} />
+            <td set:html={tex(`${s.tx.kw} - 1 = ${s.tx.k}`)} />
+            <td class:list={[`is-${s.znak}`]}>{s.znak === 'plus' ? 'rośnie ↗' : s.znak === 'minus' ? 'maleje ↘' : s.x0 < 0 ? 'szczyt, styczna pozioma' : 'dołek, styczna pozioma'}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-sy]').forEach((box) => {
+    const own = <T extends Element>(sel: string) => Array.from(box.querySelectorAll<T>(sel)).filter((e) => e.closest('[data-sy]') === box);
+    own<HTMLElement>('[data-js-only]').forEach((e) => (e.hidden = false));
+    const stany = own<SVGGElement>('g[data-i]');
+    const wiersze = own<HTMLElement>('tr[data-w]');
+    const opisy = own<HTMLElement>('[data-sy-opisy] > li');
+    const opis = own<HTMLElement>('[data-sy-opis]')[0];
+    const r = own<HTMLInputElement>('[data-sy-r]')[0];
+    const ustaw = (i: number) => {
+      i = Math.max(0, Math.min(stany.length - 1, i));
+      r.value = String(i);
+      box.classList.add('is-js');
+      stany.forEach((g, j) => g.classList.toggle('is-on', j === i));
+      wiersze.forEach((w, j) => w.classList.toggle('is-on', j === i));
+      opis.innerHTML = opisy[i].innerHTML;
+      opis.classList.add('is-live');
+    };
+    r.addEventListener('input', () => ustaw(Number(r.value)));
+    own<HTMLButtonElement>('[data-sy-prev]')[0].addEventListener('click', () => ustaw(Number(r.value) - 1));
+    own<HTMLButtonElement>('[data-sy-next]')[0].addEventListener('click', () => ustaw(Number(r.value) + 1));
+    wiersze.forEach((w, j) => { w.style.cursor = 'pointer'; w.addEventListener('click', () => ustaw(j)); });
+  });
+</script>
+
+<style>
+  .k-sy svg{max-width:520px;}
+  .k-sy-os line{stroke:var(--muted2);stroke-width:1.2;}
+  .k-sy-os text{fill:var(--muted);font-size:14px;font-family:var(--mono);}
+  .k-sy-f{fill:none;stroke-width:3;}
+  .k-sy-f.is-plus{stroke:#5ad1a0;}
+  .k-sy-f.is-minus{stroke:#ff6fb5;}
+  .k-sy-st{stroke:#eef0ff;stroke-width:2;stroke-dasharray:7 5;}
+  .k-sy-dx{stroke:#ffd84a;stroke-width:3;}
+  .k-sy-dy{stroke:#27e8ff;stroke-width:3;}
+  .k-sy-t1{fill:#ffd84a;font-size:15px;font-family:var(--mono);font-weight:700;}
+  .k-sy-t2{fill:#27e8ff;font-size:15px;font-family:var(--mono);font-weight:700;}
+  .k-sy-p{fill:#fff;stroke:#0b0918;stroke-width:1.5;}
+  .k-sy-s{display:none;}
+  .k-sy-s[data-stat]{display:inline;}
+  :global(.k-sy.is-js) .k-sy-s{display:none;}
+  :global(.k-sy.is-js) .k-sy-s.is-on{display:inline;}
+  .k-sy-ctl{display:flex;align-items:center;gap:10px;margin:10px 0 4px;}
+  .k-sy-ctl[hidden]{display:none;}
+  .k-sy-ctl input{flex:1;accent-color:#27e8ff;min-width:0;height:32px;}
+  .k-sy-ctl .k-btn{padding:6px 14px;font-size:1rem;}
+  .k-sy-opis{margin:6px 0 10px!important;padding:9px 12px;border-left:2px solid var(--cyan);background:rgba(39,232,255,.05);font-size:.94rem;line-height:1.65;min-height:3.3em;}
+  .k-sy-tab{border-collapse:collapse;margin:8px 0 2px;font-size:.9rem;}
+  .k-sy-tab th,.k-sy-tab td{border:1px solid var(--line2);padding:4px 9px;text-align:center;white-space:nowrap;}
+  .k-sy-tab th{background:rgba(167,139,250,.1);font-weight:500;}
+  .k-sy-tab tr.is-on td{background:rgba(39,232,255,.1);}
+  .k-sy-tab td.is-plus{color:#5ad1a0;}
+  .k-sy-tab td.is-minus{color:#ff6fb5;}
+  .k-sy-tab td.is-zero{color:#ffd84a;}
+  .k-sy-tab :global(.katex){font-size:1em!important;}
+  @media(max-width:560px){
+    .k-sy-tab{font-size:.78rem;}
+    .k-sy-tab th,.k-sy-tab td{padding:3px 4px;}
+  }
+</style>

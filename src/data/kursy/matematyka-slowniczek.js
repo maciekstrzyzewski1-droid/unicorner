@@ -85,4 +85,16 @@ export const SLOWNICZEK = [
   { t: 'IRR', nazwa: 'Wewnętrzna stopa zwrotu', czytamy: 'i-er-er', znaczy: 'Stopa, przy której dzisiejsza wartość wpływów równa się wydatkowi — ile procent rocznie zarabia inwestycja.', modul: 'matematyka-finansowa' },
   { nazwa: 'Amortyzacja kredytu', znaczy: 'Plan spłaty kredytu: dla każdego okresu kapitał początkowy, odsetki, rata odsetkowa, rata kapitałowa, rata łączna i kapitał końcowy.', modul: 'matematyka-finansowa' },
   { nazwa: 'Raty malejące', znaczy: 'Rata kapitałowa stała (kredyt : liczba rat), odsetki liczone od malejącego długu — więc rata łączna maleje.', modul: 'matematyka-finansowa' },
+  // --- Pochodna funkcji jednej zmiennej ---
+  { t: '\\Delta x', nazwa: 'Przyrost argumentu', czytamy: 'delta iks', znaczy: 'O ile przesuwasz się w poziomie: z $x_0$ do $x_0 + \\Delta x$. Jedna liczba, nie „delta razy iks”.', modul: 'pochodne' },
+  { t: '\\Delta y', nazwa: 'Przyrost wartości', czytamy: 'delta igrek', znaczy: 'O ile zmieniła się wartość funkcji: $f(x_0 + \\Delta x) - f(x_0)$.', modul: 'pochodne' },
+  { t: '\\dfrac{\\Delta y}{\\Delta x}', nazwa: 'Iloraz różnicowy', czytamy: 'delta igrek przez delta iks', znaczy: 'Średnie tempo zmiany funkcji między dwoma punktami — nachylenie siecznej.', modul: 'pochodne' },
+  { t: "f'(x_0)", nazwa: 'Pochodna w punkcie', czytamy: 'ef prim od iks zero', znaczy: 'Granica ilorazu różnicowego, gdy $\\Delta x$ dąży do zera. Nachylenie stycznej w punkcie $x_0$: $f\'(x_0) = \\operatorname{tg}\\alpha$.', modul: 'pochodne' },
+  { t: '\\lim_{\\Delta x \\to 0}', nazwa: 'Granica', czytamy: 'granica, gdy delta iks dąży do zera', znaczy: 'Liczba, do której zbliżają się wyniki, gdy $\\Delta x$ jest coraz mniejsze (ale nigdy nie równe zero).', modul: 'pochodne' },
+  { t: "f'(x)", nazwa: 'Pochodna funkcji', czytamy: 'ef prim od iks', znaczy: 'Funkcja, która każdemu $x$ przypisuje nachylenie stycznej w tym punkcie. „Oblicz pochodną” = znajdź jej wzór.', modul: 'pochodne' },
+  { t: '\\operatorname{tg}\\alpha', nazwa: 'Tangens kąta nachylenia', czytamy: 'tangens alfa', znaczy: 'O ile prosta wznosi się (albo opada) na $1$ w prawo. Dla stycznej równy pochodnej w punkcie styczności.', modul: 'pochodne' },
+  { nazwa: 'Funkcja złożona', znaczy: 'Funkcja wstawiona do innej funkcji, np. $\\sqrt{5x-7}$: środek $5x - 7$, funkcja zewnętrzna — pierwiastek. Pochodna: pochodna zewnętrznej (środek bez zmian) razy pochodna środka.', modul: 'pochodne' },
+  { nazwa: 'Test ostatniego działania', znaczy: 'Wstaw za $x$ liczbę i licz: działanie wykonane na końcu wybiera regułę (suma, iloczyn, iloraz, funkcja złożona).', modul: 'pochodne' },
+  { t: '\\ln x', nazwa: 'Logarytm naturalny', czytamy: 'logarytm naturalny z iks', znaczy: 'Logarytm o podstawie $e \\approx 2{,}718$. Istnieje dla $x > 0$; $(\\ln x)\' = \\frac{1}{x}$.', modul: 'pochodne' },
+  { t: '\\ln^2 x', nazwa: 'Kwadrat logarytmu', czytamy: 'logarytm naturalny kwadrat z iks', znaczy: 'Umowa w zapisie: $\\ln^2 x = (\\ln x)^2$ — nie $\\ln(x^2)$.', modul: 'pochodne' },
 ];

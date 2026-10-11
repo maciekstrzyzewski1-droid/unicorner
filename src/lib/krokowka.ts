@@ -48,7 +48,7 @@ export function widok(box: HTMLElement, el?: Element | null) {
 
 // kopia liczby przelatuje z kratki src nad kratkę dst (pozycje liczone względem pudełka)
 export function lot(box: HTMLElement, src: Element | null | undefined, dst: Element | null | undefined,
-  o: { html?: string; kolor?: string; delay?: number } = {}): Promise<void> {
+  o: { html?: string; kolor?: string; delay?: number; skala?: number } = {}): Promise<void> {
   return new Promise((res) => {
     if (reduce() || !src || !dst) return res();
     const b = box.getBoundingClientRect(), r1 = src.getBoundingClientRect(), r2 = dst.getBoundingClientRect();
@@ -68,7 +68,9 @@ export function lot(box: HTMLElement, src: Element | null | undefined, dst: Elem
     box.appendChild(g);
     const dx = x2 + r2.width / 2 - (x1 + r1.width / 2);
     const dy = r2.top + r2.height / 2 - (r1.top + r1.height / 2);
-    setTimeout(() => { g.style.transform = `translate(${dx}px, ${dy}px)`; }, 30 + (o.delay ?? 0));
+    // skala: kawałek z wykładnika (mała czcionka) rośnie w locie do rozmiaru miejsca, na które spada
+    const sk = o.skala && Math.abs(o.skala - 1) > 0.05 ? ` scale(${o.skala})` : '';
+    setTimeout(() => { g.style.transform = `translate(${dx}px, ${dy}px)${sk}`; }, 30 + (o.delay ?? 0));
     setTimeout(() => { g.remove(); res(); }, 30 + (o.delay ?? 0) + DUR);
   });
 }
