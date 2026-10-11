@@ -36,7 +36,7 @@ const opis = [
   }),
   `Nachylenia siecznych: $3$; $2{,}5$; $2{,}1$; $2{,}01$ — coraz bliżej $2$. Sieczne przylegają coraz ciaśniej do jednej prostej: to <b>styczna</b> (biała, przerywana). Jej nachylenie, $2$, to pochodna $f'(1) = 2$. Blisko punktu $P$ styczna prawie pokrywa się z wykresem.`,
 ];
-const leg: [string, string][] = [['fiolet', 'krok w prawo $\\Delta x$'], ['cyan', 'o ile w górę $\\Delta y$'], ['roz', 'sieczna przez $P$ i $Q$'], ['bialy', 'styczna w punkcie $P$ (przerywana)']];
+const leg: [string, string][] = [['fiolet', 'krok w prawo $\\Delta x$'], ['cyan', 'o ile w górę $\\Delta y$'], ['roz', 'punkt $Q$ i sieczna przez $P$ i $Q$'], ['bialy', 'styczna w punkcie $P$ (przerywana — pojawi się na końcu)']];
 ---
 <figure class="k-fig k-sc" data-kbox data-sc>
   <div class="k-sc-uk">
@@ -115,8 +115,10 @@ const leg: [string, string][] = [['fiolet', 'krok w prawo $\\Delta x$'], ['cyan'
       wiersze.forEach((w, i) => w.classList.toggle('is-on', i === k - 1));
       if (rach && opisy[k]) rach.innerHTML = opisy[k].innerHTML;
     };
+    const svg = rys?.querySelector('svg');
     wiersze.forEach((w, i) => {
-      const wybierz = () => stan(i + 1);
+      // na telefonie rysunek stoi nad tabelą — po kliknięciu wiersza przewijamy tak, żeby było widać zmianę na rysunku
+      const wybierz = () => { stan(i + 1); widok(box, svg); };
       w.addEventListener('click', wybierz);
       w.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); wybierz(); } });
     });
@@ -172,6 +174,7 @@ const leg: [string, string][] = [['fiolet', 'krok w prawo $\\Delta x$'], ['cyan'
   /* kolory kolumn = kolory na rysunku (KaTeX w treści ma kolor biały — tu dziedziczy kolor kolumny) */
   .k-sc-tab :is(.k-ch,.k-cf,.k-cr) :global(.katex){color:inherit;}
   .k-sc-tab .k-ch{color:#c9bff2;} .k-sc-tab .k-cf{color:#9cc6ef;} .k-sc-tab .k-cr{color:#e9a2b7;}
+  .k-sc-tab td.k-sc-kq{color:#e9a2b7;} .k-sc-tab td.k-sc-kq :global(.katex){color:inherit;}
   .k-sc-gr{display:block;width:100%;margin:6px 0 0;padding:8px 10px;text-align:left;font:inherit;font-size:.88rem;color:var(--muted);background:none;border:none;border-bottom:1px solid var(--line2);cursor:pointer;}
   .k-sc-gr:hover{background:rgba(255,255,255,.035);color:var(--text);}
   .k-sc-gr.is-on{background:rgba(255,255,255,.06);color:var(--text);box-shadow:inset 2px 0 0 #f2f0fa;}

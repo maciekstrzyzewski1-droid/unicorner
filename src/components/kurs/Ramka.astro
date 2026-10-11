@@ -4,6 +4,8 @@
 interface Props {
   kind?: 'intuicja' | 'skad' | 'botak' | 'pulapka' | 'granica' | 'zapamietaj' | 'liceum' | 'excel' | 'podobny' | 'gdzie' | 'polecenie' | 'kiedy' | 'inaczej';
   tytul?: string;
+  // własna etykieta zamiast domyślnej dla rodzaju (np. gdy słowo „granica” znaczy w module coś innego)
+  etykieta?: string;
 }
 const LABELS = {
   intuicja: 'Po ludzku',
@@ -21,9 +23,9 @@ const LABELS = {
   inaczej: 'Inny sposób',
 };
 const ICONS = { intuicja: '◐', skad: '?', botak: '§', pulapka: '!', granica: '⊘', zapamietaj: '★', liceum: '↺', excel: 'fx', podobny: '≈', gdzie: '→', polecenie: '✎', kiedy: '⌖', inaczej: '⇄' };
-const { kind = 'intuicja', tytul } = Astro.props;
+const { kind = 'intuicja', tytul, etykieta } = Astro.props;
 ---
 <aside class={`k-ramka k-${kind}`}>
-  <div class="k-ramka-lbl"><span class="k-ramka-ic" aria-hidden="true">{ICONS[kind]}</span>{LABELS[kind]}{tytul && <span class="k-ramka-t">· {tytul}</span>}</div>
+  <div class="k-ramka-lbl"><span class="k-ramka-ic" aria-hidden="true">{ICONS[kind]}</span>{etykieta ?? LABELS[kind]}{tytul && <span class="k-ramka-t">· {tytul}</span>}</div>
   <div class="k-ramka-body"><slot /></div>
 </aside>

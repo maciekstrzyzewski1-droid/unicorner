@@ -96,6 +96,12 @@ body:has(.k-spokojnie)::before{opacity:.3;}
 .k-spokojnie .k-ct-c.is-empty{background:rgba(var(--kA),.06);border-color:rgba(var(--kA),.45);}
 .k-spokojnie .k-ct-c.is-shown{background:rgba(var(--kC),.1);border-color:rgba(var(--kC),.45);}
 .k-spokojnie .k-ct-wynik{border-left-color:rgba(var(--kC),.6);background:rgba(var(--kC),.05);}
+/* pola ćwiczenia „wpisz pochodną” (CwiczeniePotegi) — .k-cp w selektorze, żeby wygrać ze stylem komponentu */
+.k-spokojnie .k-cp .k-cp-in.is-good{background:rgba(var(--kB),.16);border-color:var(--ok);}
+.k-spokojnie .k-cp .k-cp-in.is-bad{background:rgba(var(--kR),.16);border-color:var(--magenta);color:#f6d3dd;}
+.k-spokojnie .k-cp .k-cp-in.is-empty{background:rgba(var(--kA),.06);border-color:rgba(var(--kA),.45);}
+.k-spokojnie .k-cp .k-cp-in.is-shown{background:rgba(var(--kC),.1);border-color:rgba(var(--kC),.45);}
+.k-spokojnie .k-cp .k-cp-in.is-wyk{border-color:rgba(var(--kC),.5);color:#c9bff2;}
 .k-spokojnie .katex-display.k-scrollable::before,.k-spokojnie .k-tab.k-scrollable::before{color:#a9cbef;}
 .k-spokojnie .k-tab.k-scrollable::before{background:rgba(var(--kA),.06);}
 
@@ -106,7 +112,8 @@ body:has(.k-spokojnie)::before{opacity:.3;}
 .k-spokojnie .k-leg .k-leg-sw.is-roz{background:rgba(var(--kR),.8);}
 .k-spokojnie .k-leg .k-leg-sw.is-bialy{background:#e9e6f5;}
 .k-spokojnie .k-leg .k-leg-sw.is-ramka{box-shadow:inset 0 0 0 2px #e9e6f5;}
-.k-spokojnie .k-kk-ctl{background:var(--tlo-panel);border-left-color:rgba(var(--kC),.7);box-shadow:0 -10px 24px rgba(0,0,0,.5);}
+/* [data-kk-ctl] w selektorze — styl komponentu Sterowanie ma tę samą wagę i bez tego wygrywa jego turkusowe tło */
+.k-spokojnie .k-kk-ctl[data-kk-ctl]{background:var(--tlo-panel);border-left-color:rgba(var(--kC),.7);box-shadow:0 -10px 24px rgba(0,0,0,.5);}
 .k-spokojnie [data-kbox] .k-lot.is-zloto,.k-spokojnie [data-kbox] .k-lot.is-ok{background:rgba(var(--kB),.35);}
 .k-spokojnie [data-kbox] .k-lot.is-cyan{background:rgba(var(--kA),.32);}
 .k-spokojnie [data-kbox] .k-lot.is-fiolet{background:rgba(var(--kC),.32);}

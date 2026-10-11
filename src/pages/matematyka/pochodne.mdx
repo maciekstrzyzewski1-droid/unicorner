@@ -5,7 +5,7 @@ slug: pochodne
 title: Pochodna funkcji jednej zmiennej
 podtytul: co mierzy pochodna, wzory i reguły krok po kroku
 description: Pochodna funkcji od zera — iloraz różnicowy, styczna, monotoniczność, tabela wzorów i reguły (iloczyn, iloraz, funkcja złożona). Wszystkie przykłady z listy rozwiązane krok po kroku.
-lede: Pochodna mówi, jak szybko coś się zmienia w danym miejscu — na wykresie to po prostu stromość. Najpierw zobaczysz to na rysunkach, potem poznasz wzory i reguły z zajęć, a na końcu przejdziesz z jednym przepisem wszystkie przykłady z listy zadań.
+lede: Pochodna mówi, jak szybko coś się zmienia w danym miejscu — na wykresie to stromość. Najpierw zobaczysz to na rysunkach, potem poznasz wzory i reguły z zajęć, a na końcu przejdziesz z jednym przepisem wszystkie przykłady z listy zadań.
 wyglad: spokojny
 wymaga: Potęgi, pierwiastki i logarytmy z liceum — przypominamy je na miejscu.
 umiesz:
@@ -36,6 +36,7 @@ import TabelaDwaX from '../../components/kurs/pochodne/TabelaDwaX.astro';
 import ZnakPochodnej from '../../components/kurs/pochodne/ZnakPochodnej.astro';
 import Klocki from '../../components/kurs/pochodne/Klocki.astro';
 import Przepis from '../../components/kurs/pochodne/Przepis.astro';
+import Eksp from '../../components/kurs/pochodne/Eksp.astro';
 import Odpowiedzi from '../../components/kurs/pochodne/Odpowiedzi.astro';
 import { LISTA as L, PRZYKLADY as P, LEG, cwPotegi, cwZapis } from '../../lib/pochodne.js';
 
@@ -76,7 +77,7 @@ Drugi rysunek to przykład z ekonomii. Zysk firmy najpierw rośnie razem z produ
 ### Do czego pochodna przyda się na zajęciach
 
 - **Temat 9 — badanie zmienności funkcji.** Szukasz, gdzie funkcja rośnie, gdzie maleje i gdzie ma szczyt albo dołek. Drugi krok procedury z zajęć brzmi: „wyznacz pochodną funkcji”.
-- **Tematy 10 i 11 — funkcje wielu zmiennych.** Pochodne cząstkowe liczysz tymi samymi wzorami i regułami co tutaj.
+- **Tematy 10 i 11 — funkcje wielu zmiennych.** Pochodne cząstkowe (pochodne względem jednej zmiennej, gdy pozostałe traktujesz jak stałe) liczysz tymi samymi wzorami i regułami co tutaj.
 - **Tematy 12 i 13 — całki.** Całkowanie to odwracanie pochodnej.
 
 Bez liczenia pochodnych nie ruszysz w żadnym z tych tematów.
@@ -91,6 +92,8 @@ Bez liczenia pochodnych nie ruszysz w żadnym z tych tematów.
 
 Na liście zadań z tego tematu jest jedno polecenie — „Oblicz pochodną funkcji” — i $25$ przykładów (od a do y). Różnią się tym, z jakich kawałków zbudowana jest funkcja. Poniżej typy, od najprostszego. Każdy ma w module swój przepis i ćwiczenia.
 
+To na razie tylko mapa — nie musisz jeszcze rozumieć tych wzorów. Wrócisz tu, gdy będziesz szukać przepisu na konkretny przykład.
+
 <Polecenia items={[
   { polecenie: R`Oblicz pochodną funkcji — potęgi i pierwiastki (np. $\frac{2}{x^5} - \frac{1}{\sqrt{x}}$)`, jak: R`Pierwiastki i ułamki zapisujesz jako potęgi. Potem każdy składnik liczysz jednym wzorem z tabeli.`, przepis: 'polecenie-potegi', cwiczenia: 'cw-potegi', zrodlo: 'Zad. 1 a), b)' },
   { polecenie: R`Oblicz pochodną funkcji — iloczyn (np. $x\ln x$)`, jak: R`Funkcja to dwa kawałki pomnożone przez siebie. Liczysz pochodną każdego kawałka i składasz je regułą iloczynu.`, przepis: 'polecenie-iloczyn', cwiczenia: 'cw-iloczyn', zrodlo: 'Zad. 1 n), q)' },
@@ -98,11 +101,11 @@ Na liście zadań z tego tematu jest jedno polecenie — „Oblicz pochodną fun
   { polecenie: R`Oblicz pochodną funkcji — funkcja w funkcji (np. $\sqrt{5x - 7}$)`, jak: R`Jedna funkcja siedzi w drugiej, np. pierwiastek z $5x - 7$. Liczysz warstwa po warstwie regułą funkcji złożonej.`, przepis: 'polecenie-zlozona', cwiczenia: 'cw-zlozona', zrodlo: 'Zad. 1 d)–f), i), k)–m), o), r), v); spoza listy: str. 171, e)' },
   { polecenie: R`Oblicz pochodną funkcji — kilka reguł naraz (np. $x^2e^{3x}$)`, jak: R`Reguły łączą się w jednym przykładzie. Przepis jest ten sam, tylko kawałki liczysz kolejnymi regułami.`, przepis: 'polecenie-mieszane', cwiczenia: 'cw-mieszane', zrodlo: 'Zad. 1 g), h), j), p), s)–u), x)' },
   { polecenie: R`Oblicz pochodną funkcji $x^x$`, jak: R`Nie pasuje ani wzór na potęgę, ani na funkcję wykładniczą. Jest na to jeden trik.`, przepis: 'polecenie-xx', cwiczenia: 'cw-xx', zrodlo: 'Zad. 1 y)' },
-  { polecenie: R`Oblicz pochodną w punkcie, np. $f'(2)$`, jak: R`Najpierw liczysz wzór na pochodną, dopiero potem wstawiasz liczbę.`, przepis: 'polecenie-punkt', cwiczenia: 'cw-punkt', zrodlo: 'slajd o stycznej (typowy wariant)' },
+  { polecenie: R`Oblicz pochodną w punkcie, np. $f'(2)$`, jak: R`$f'(2)$ czytamy „ef prim od dwóch”: to pochodna w punkcie $2$ (wyjaśniamy ją w sekcji 3). Najpierw liczysz wzór na pochodną, dopiero potem wstawiasz liczbę.`, przepis: 'polecenie-punkt', cwiczenia: 'cw-punkt', zrodlo: 'slajd o stycznej (typowy wariant)' },
 ]} />
 
 <Ramka kind="intuicja" tytul="Znaczki e i ln w przykładach">
-W przykładach zobaczysz $e$ i $\ln$. $e$ to liczba (około $2{,}718$), a $\ln$ to logarytm. Wyjaśniamy je w [sekcji 4](#e-ln), zanim będą potrzebne. Na razie traktuj je jak zwykłe nazwy funkcji.
+W przykładach zobaczysz $e$ i $\ln$. $e$ to liczba (około $2{,}718$), a $\ln$ to logarytm. Wyjaśniamy je w [sekcji 4](#e-ln), zanim będą potrzebne. Na razie wystarczy wiedzieć, że $e^x$ i $\ln x$ to dwie konkretne funkcje.
 </Ramka>
 
 <a id="co-mierzy" class="k-anchor"></a>
@@ -114,7 +117,7 @@ Zanim pojawi się pierwszy wzór, zobaczysz na rysunkach, co właściwie liczysz
 ### Funkcja i jej wykres
 
 <Ramka kind="liceum" tytul="Wstawianie liczby do funkcji">
-Funkcja to przepis: wstawiasz liczbę i dostajesz liczbę. Przepis $f(x) = x^2$ mówi: „weź liczbę i podnieś ją do kwadratu”.
+Funkcja działa jak maszynka: wstawiasz liczbę i dostajesz liczbę. Wzór $f(x) = x^2$ mówi: „weź liczbę i podnieś ją do kwadratu”.
 
 $f(3)$ czytamy „ef od trzech”: za $x$ wstawiasz $3$, więc $f(3) = 3^2 = 9$. Liczba, którą wstawiasz, to **argument** (oś pozioma). Wynik to **wartość** funkcji (oś pionowa). Na wykresie to punkt $(3,\ 9)$.
 </Ramka>
@@ -124,7 +127,7 @@ $f(3)$ czytamy „ef od trzech”: za $x$ wstawiasz $3$, więc $f(3) = 3^2 = 9$.
 Zacznijmy od najprostszego wykresu — prostej. Jej stromość to jedna liczba: **o ile prosta idzie w górę, gdy zrobisz krok o $1$ w prawo.** Tę liczbę nazywamy **nachyleniem**. Wybierz nachylenie i zobacz schodek:
 
 <Nachylenie>
-fioletowy odcinek to krok o $1$ w prawo. Niebieski — o ile prosta poszła w tym kroku w górę albo w dół. Długość niebieskiego odcinka to nachylenie. Schodek narysowano w dwóch miejscach. Na prostej wygląda wszędzie tak samo, bo prosta ma wszędzie tę samą stromość.
+fioletowy odcinek to krok o $1$ w prawo. Niebieski — o ile prosta poszła w tym kroku w górę albo w dół. Niebieski odcinek z liczbą to nachylenie. Gdy prosta idzie w górę, liczba jest dodatnia, a gdy w dół — ujemna. Schodek narysowano w dwóch miejscach. Na prostej wygląda wszędzie tak samo, bo prosta ma wszędzie tę samą stromość.
 </Nachylenie>
 
 Na wykresie drogi z pierwszego rysunku nachylenie to prędkość. Na odcinku „130 km/h” krok o $1$ godzinę w prawo to $130$ km w górę.
@@ -133,15 +136,15 @@ Na wykresie drogi z pierwszego rysunku nachylenie to prędkość. Na odcinku „
 W zapisie $y = ax + b$ liczba $a$ to właśnie nachylenie — w liceum nazywa się współczynnikiem kierunkowym. Na przykład $y = 2x + 1$: krok o $1$ w prawo, $2$ w górę.
 </Ramka>
 
-### Krzywa ma w każdym miejscu inną stromość
+### Krzywa w różnych miejscach ma różną stromość
 
 <Stromosc>
 krzywa to wykres $f(x) = x^2$. Białe kreski pokazują, w którą stronę i jak stromo biegnie wykres w czterech miejscach. Przy $x = -1$ wykres schodzi w dół, przy $x = 0$ jest płasko, a dalej idzie coraz bardziej stromo pod górę.
 </Stromosc>
 
-Krzywa nie ma jednej stromości — w każdym miejscu jest inna. **Pochodna w punkcie to stromość krzywej w tym jednym miejscu.** Kłopot w tym, że na krzywej nie da się zrobić schodka: po kroku o $1$ w prawo krzywa zdąży już skręcić.
+Krzywa nie ma jednej stromości — zmienia się ona od miejsca do miejsca. **Pochodna w punkcie to stromość krzywej w tym jednym miejscu.** Kłopot w tym, że na krzywej nie da się zrobić schodka: po kroku o $1$ w prawo krzywa zdąży już skręcić.
 
-Pomysł jest prosty. Weź drugi punkt wykresu trochę dalej i poprowadź przez oba punkty prostą. Stromość prostej już umiesz policzyć. Potem przysuwaj drugi punkt coraz bliżej pierwszego.
+Pomysł: weź drugi punkt wykresu trochę dalej i poprowadź przez oba punkty prostą. Stromość prostej już umiesz policzyć. Potem przysuwaj drugi punkt coraz bliżej pierwszego.
 
 ### Sieczna — prosta przez dwa punkty wykresu
 
@@ -154,10 +157,10 @@ Zobaczmy to na $f(x) = x^2$. Startujesz w punkcie $P = (1,\ 1)$. Drugi punkt $Q$
 </div>
 
 <Sieczna>
-krzywa to wykres $f(x) = x^2$. Biały punkt to $P$, różowy to $Q$. Fioletowy odcinek to krok w prawo $\Delta x$, niebieski — o ile wykres poszedł w górę, czyli $\Delta y$. Różowa prosta to sieczna. Jej nachylenie to $\Delta y : \Delta x$ — tak samo jak schodek przy prostej, tylko krok w prawo nie musi wynosić $1$. Kolory kolumn w tabeli są takie same jak na rysunku. Osie mają tę samą skalę, więc stromość na rysunku jest prawdziwa.
+krzywa to wykres $f(x) = x^2$. Biały punkt to $P$. Fioletowy odcinek to krok w prawo $\Delta x$, niebieski — o ile wykres poszedł w górę, czyli $\Delta y$. Różowe jest wszystko, co dotyczy siecznej: punkt $Q$, prosta przez $P$ i $Q$ i jej nachylenie w ostatniej kolumnie tabeli. Nachylenie siecznej to $\Delta y : \Delta x$ — tak samo jak schodek przy prostej, tylko krok w prawo nie musi wynosić $1$. Kolory kolumn w tabeli są takie same jak na rysunku. Osie mają tę samą skalę, więc stromość na rysunku jest prawdziwa. Gdy współrzędne mają przecinek dziesiętny, oddzielamy je średnikiem: $Q = (1{,}5;\ 2{,}25)$.
 </Sieczna>
 
-Nachylenie siecznej to ułamek $\frac{\Delta y}{\Delta x}$: o ile w górę, przez o ile w prawo. Na slajdzie ten ułamek ma nazwę **iloraz różnicowy** i taki zapis:
+Nachylenie siecznej to ułamek $\frac{\Delta y}{\Delta x}$: o ile w górę, przez o ile w prawo. Na slajdzie ten ułamek nazywa się **ilorazem różnicowym** i ma taki zapis:
 
 <Rozbior t="\frac{\Delta y}{\Delta x} = \frac{f(x_0 + \Delta x) - f(x_0)}{\Delta x}" czytamy="delta igrek przez delta iks równa się: ef od iks zero plus delta iks, minus ef od iks zero, a to wszystko przez delta iks" czesci={[
   { t: 'f(x_0 + \\Delta x)', o: '<b>wartość na końcu kroku</b> — wysokość punktu $Q$; w przykładzie $f(2) = 4$' },
@@ -200,7 +203,7 @@ Czytamy: „ef prim od iks zero równa się tangens alfa”. $\operatorname{tg}\
 Przesuń punkt suwakiem. Tym razem styczna jedzie po wykresie innej funkcji, a schodek pokazuje jej nachylenie:
 
 <Styczna>
-krzywa to wykres $f(x) = \frac{x^3}{3} - x$. Jej pochodna to $f'(x) = x^2 - 1$ — skąd się bierze, zobaczysz w sekcji „Pochodna w punkcie”. Zielone kawałki krzywej: funkcja rośnie. Różowy kawałek: maleje. Biała przerywana prosta to styczna. Fioletowy odcinek to krok o $1$ w prawo, niebieski — o ile w tym kroku styczna się wznosi albo opada. Gdy schodek nie mieści się na prawo od punktu, rysujemy ten sam schodek przed punktem. Styczna może przeciąć wykres — zobacz np. $x_0 = 0$. Kliknij wiersz tabeli, żeby przeskoczyć do punktu.
+krzywa to wykres $f(x) = \frac{x^3}{3} - x$. Jej pochodna to $f'(x) = x^2 - 1$ — skąd się bierze, zobaczysz w [sekcji „Pochodna w punkcie”](#polecenie-punkt). Zielone kawałki krzywej: funkcja rośnie. Różowy kawałek: maleje. Biała przerywana prosta to styczna. Fioletowy odcinek to krok o $1$ w prawo, niebieski — o ile w tym kroku styczna się wznosi albo opada. Gdy schodek nie mieści się na prawo od punktu, rysujemy ten sam schodek przed punktem. Styczna może przeciąć wykres — zobacz np. $x_0 = 0$. Kliknij wiersz tabeli, żeby przeskoczyć do punktu.
 </Styczna>
 
 <a id="skad-wzory" class="k-anchor"></a>
@@ -211,13 +214,15 @@ Liczenie granicy za każdym razem byłoby męczące. Na szczęście da się to z
 
 <TabelaDwaX />
 
-Jak czytać tabelę: w każdym wierszu startujesz w innym punkcie $x_0$ i robisz krok $0{,}01$ w prawo. Nachylenie siecznej jest już bardzo blisko liczby z ostatniej kolumny. Ta liczba to za każdym razem **$2$ razy punkt startowy**: $2$, $4$, $6$.
+Jak czytać tabelę: w każdym wierszu startujesz w innym punkcie $x_0$ i robisz krok $0{,}01$ w prawo. Nachylenie siecznej jest już bardzo blisko liczby z ostatniej kolumny. Gdyby krok dalej zmniejszać, jak w tabeli siecznych, wyniki zbliżałyby się do niej coraz bardziej. Te liczby to $2$, $4$ i $6$ — za każdym razem **$2$ razy punkt startowy**.
 
 Czy tak jest w każdym punkcie? Sprawdźmy literami zamiast liczbami:
 
 <Rachunek d={P.x2} tytul="Nachylenie stycznej do $y = x^2$ w dowolnym punkcie $x_0$" tag="Skąd wzór" />
 
 Wyszło $f'(x_0) = 2x_0$ dla każdego punktu. Za $x_0$ można wstawić dowolną liczbę, więc zapisujemy krócej: $f'(x) = 2x$. To **pochodna jako funkcja**: wstawiasz punkt i od razu dostajesz nachylenie stycznej, bez liczenia granicy.
+
+Krótko piszemy też $(x^2)' = 2x$. Kreska za nawiasem (czytamy ją „prim”) znaczy „pochodna tego, co w nawiasie”.
 
 | punkt $x$ | $f'(x) = 2x$ | co to znaczy |
 |---|---|---|
@@ -226,7 +231,7 @@ Wyszło $f'(x_0) = 2x_0$ dla każdego punktu. Za $x_0$ można wstawić dowolną 
 | $1$ | $2 \cdot 1 = 2$ | styczna wznosi się o $2$ na $1$ w prawo |
 | $2$ | $2 \cdot 2 = 4$ | wznosi się dużo szybciej: o $4$ |
 
-Jak czytać tabelę: w każdym wierszu wstawiasz punkt do wzoru $f'(x) = 2x$. Wynik to nachylenie stycznej w tym punkcie. Porównaj z białymi kreskami na rysunku „Krzywa ma w każdym miejscu inną stromość” — to te same cztery punkty.
+Jak czytać tabelę: w każdym wierszu wstawiasz punkt do wzoru $f'(x) = 2x$. Wynik to nachylenie stycznej w tym punkcie. Porównaj z białymi kreskami na rysunku „Krzywa w różnych miejscach ma różną stromość” — to te same cztery punkty.
 
 <Ramka kind="zapamietaj" tytul="Skąd się biorą wzory z tabeli">
 Dla innych prostych funkcji, np. $x^3$, $e^x$ czy $\ln x$, ktoś policzył tę samą granicę raz na zawsze. Wyniki są w tabeli wzorów z zajęć ([sekcja 4](#wzory-reguly)). Nie wyprowadzasz ich na kolokwium — bierzesz gotowe. Ale teraz wiesz, co znaczą: **każdy wzór podaje nachylenie wykresu w każdym punkcie.**
@@ -242,7 +247,7 @@ Wyobraź sobie, że idziesz po wykresie od lewej do prawej. Pochodna mówi, jak 
 wszystkie trzy obrazki pokazują tę samą funkcję co rysunek z suwakiem, $f(x) = \frac{x^3}{3} - x$. Zielony kawałek krzywej: funkcja rośnie. Różowy: maleje. Biała kreska to styczna w zaznaczonym punkcie.
 </ZnakPochodnej>
 
-Na slajdach z zajęć zapisano to tak:
+To, gdzie funkcja rośnie, a gdzie maleje, nazywa się jej **monotonicznością**. Na slajdach z zajęć związek monotoniczności ze znakiem pochodnej zapisano tak:
 
 <Ramka kind="zapamietaj" tytul="Pochodne a monotoniczność">
 - Jeżeli pochodna funkcji $f$ jest **dodatnia** w każdym punkcie przedziału $X$, to funkcja $f$ jest w tym przedziale **rosnąca**. Na slajdzie: $f \uparrow \Leftrightarrow f'(x) > 0, \ \forall x \in X$.
@@ -252,9 +257,9 @@ Na slajdach z zajęć zapisano to tak:
 Jak czytać zapis: $f \uparrow$ — „funkcja rośnie”, $f \downarrow$ — „funkcja maleje”, $\Leftrightarrow$ — „wtedy i tylko wtedy” (wynikanie w obie strony), $\forall x \in X$ — „dla każdego iks należącego do $X$”.
 </Ramka>
 
-<Ramka kind="granica" tytul="W drugą stronę nie zawsze">
+<Ramka kind="granica" etykieta="Uwaga — kiedy to nie działa" tytul="W drugą stronę nie zawsze">
 - Na slajdzie między warunkami stoi strzałka w obie strony ($\Leftrightarrow$). W zadaniach korzystasz z kierunku „znak pochodnej → monotoniczność”.
-- W drugą stronę bywa wyjątek: $f(x) = x^3$ rośnie wszędzie, a $f'(0) = 3 \cdot 0^2 = 0$.
+- W drugą stronę bywa wyjątek: $f(x) = x^3$ rośnie wszędzie, a jej pochodna to $f'(x) = 3x^2$ (wzór 3 z [sekcji 4](#wzory-reguly)), więc $f'(0) = 3 \cdot 0^2 = 0$.
 - Płaska styczna nie zawsze oznacza więc szczyt albo dołek. W $x = 0$ wykres $x^3$ na chwilę się wypłaszcza, ale dalej rośnie.
 </Ramka>
 
@@ -276,11 +281,15 @@ Wiesz już, że pochodna to nachylenie wykresu. Teraz narzędzia do liczenia: **
 
 W tabeli wzorów i w przykładach są dwa znaczki, których jeszcze nie było:
 
-- **$e$ to liczba**, tak jak $\pi$. Wynosi około $2{,}718$. Na kalkulatorze jest pod przyciskiem $e^x$.
+- **$e$ to liczba**, tak jak $\pi$. Wynosi około $2{,}718$ i nazywa się liczbą Eulera. Na kalkulatorze jest pod przyciskiem $e^x$.
 - **$e^x$** to funkcja: liczba $e$ podniesiona do potęgi $x$. Na przykład $e^0 = 1$, $e^1 = e \approx 2{,}72$, $e^2 \approx 7{,}39$.
 - **$\ln x$** (czytamy „logarytm naturalny z iks”) odpowiada na pytanie: do jakiej potęgi trzeba podnieść $e$, żeby dostać $x$? Na przykład $\ln 1 = 0$, bo $e^0 = 1$, oraz $\ln e = 1$, bo $e^1 = e$. Logarytm istnieje tylko dla $x > 0$.
 
-Dlaczego akurat $e$? Wykres $e^x$ ma wyjątkową własność: **w każdym punkcie jest tak samo stromy, jak wysoki.** Przy $x = 0$ wykres jest na wysokości $1$ i ma nachylenie $1$. Przy $x = 1$ jest na wysokości około $2{,}72$ i ma nachylenie też około $2{,}72$. Dlatego w tabeli stoi $(e^x)' = e^x$: pochodna to ta sama funkcja.
+Dlaczego akurat $e$? Wykres $e^x$ ma wyjątkową własność: **w każdym punkcie jest tak samo stromy jak wysoki.** Przy $x = 0$ wykres jest na wysokości $1$ i ma nachylenie $1$. Przy $x = 1$ jest na wysokości około $2{,}72$ i ma nachylenie też około $2{,}72$. Dlatego w tabeli stoi $(e^x)' = e^x$: pochodna to ta sama funkcja.
+
+<Eksp>
+krzywa to wykres $y = e^x$, a biała przerywana prosta — styczna w zaznaczonym punkcie. Styczna do $e^x$ trafia w oś $x$ zawsze dokładnie $1$ w lewo od punktu. Dlatego schodek „$1$ w prawo” (fioletowy) kończy się na wykresie, a niebieski odcinek to jednocześnie wysokość punktu i to, o ile styczna idzie w górę. Dla innej podstawy te dwie liczby się różnią: pochodna $2^x$ to $2^x \ln 2$ (wzór 4), czyli tylko około $0{,}69$ wysokości.
+</Eksp>
 
 <Ramka kind="liceum" tytul="Trzy zasady, które przydadzą się w rachunkach">
 - $\ln(a^k) = k \ln a$ dla $a > 0$ — wykładnik wychodzi przed logarytm. Na przykład $\ln(x^3) = 3\ln x$.
@@ -308,7 +317,13 @@ Każdy wiersz tabeli to jedna prosta funkcja — „klocek” — i jej pochodna
 | 10 ★ | $(\operatorname{tg} x)' = \frac{1}{\cos^2 x}$ | | |
 | 11 ★ | $(\operatorname{ctg} x)' = -\frac{1}{\sin^2 x}$ | | |
 
-Jak czytać tabelę: w kolumnie „wzór” po lewej stronie znaku równości stoi funkcja, po prawej — jej pochodna. $a$, $c$ i $n$ to stałe (konkretne liczby). Podstawa $a$ musi być dodatnia, a we wzorze 6 także różna od $1$. Kreskę $'$ czytamy „prim”: $(x^5)'$ to „pochodna z iks do piątej”. Wzór 3 dla $n = 2$ daje dokładnie to, co wyprowadziliśmy wyżej: $(x^2)' = 2x^{2-1} = 2x$.
+Jak czytać tabelę: w kolumnie „wzór” po lewej stronie znaku równości stoi funkcja, po prawej — jej pochodna. $a$, $c$ i $n$ to stałe (konkretne liczby). Podstawa $a$ musi być dodatnia, a we wzorze 6 także różna od $1$. $(x^5)'$ czytamy „iks do piątej prim”, czyli pochodna z iks do piątej. Wzór 3 dla $n = 2$ daje dokładnie to, co wyprowadziliśmy wyżej: $(x^2)' = 2x^{2-1} = 2x$.
+
+Każdy wzór podaje nachylenie wykresu w każdym punkcie. Trzy przykłady, co to znaczy na wykresie:
+
+- $(x^2)' = 2x$: przy $x = 1$ nachylenie wynosi $2$, przy $x = 3$ — już $6$. Im dalej w prawo, tym stromiej.
+- $(e^x)' = e^x$: nachylenie równe wysokości. Im wyżej wykres, tym bardziej stromy.
+- $(\ln x)' = \frac1x$: przy $x = 1$ nachylenie wynosi $1$, przy $x = 2$ — $\frac12$, przy $x = 10$ — $0{,}1$. Wykres $\ln x$ ciągle rośnie, ale coraz wolniej.
 
 Wzory 8–11 (funkcje trygonometryczne) są na slajdzie oznaczone gwiazdką, a na liście zadań nie ma ani jednej funkcji trygonometrycznej. Zapytaj prowadzącego, czy obowiązują na kolokwium. Dalej w module ich nie używamy.
 
@@ -318,7 +333,7 @@ Funkcje z kolokwium rzadko są pojedynczym klockiem z tabeli. Zwykle są z nich 
 
 <Klocki />
 
-Jak czytać karty: obwódki pokazują klocki z tabeli wzorów. Pod spodem jest numer reguły ze slajdu, co ona robi i mały przykład z wynikiem. Reguły 3–5 mają w tym module własne sekcje z przepisem krok po kroku.
+Jak czytać karty: na górze karty jest numer reguły ze slajdu, pod nim — jak połączone są kawałki, co robi reguła i mały przykład z wynikiem. Obwódki pokazują kawałki, z których zbudowana jest funkcja. Reguły 3–5 mają w tym module własne sekcje z przepisem krok po kroku.
 
 Na slajdzie te same reguły zapisano literami:
 
@@ -346,7 +361,7 @@ Pierwiastki i ułamki „jedynka przez…” najpierw zamień na potęgi — dop
 
 | ostatnie działanie | reguła | przykład z listy: jak liczysz przy $x = 2$ |
 |---|---|---|
-| dodawanie, odejmowanie | 2 — każdy składnik osobno | r) $e^{-x} + e^{2x}$: $e^{-2}$ i $e^{4}$, na końcu dodajesz |
+| dodawanie, odejmowanie | 2 — każdy składnik osobno | r) $e^{-x} + e^{2x}$: $e^{-2}$ i $e^{4}$, na końcu dodajesz (każdy składnik policzysz potem regułą 5) |
 | mnożenie dwóch funkcji z $x$ | 3 — iloczyn | q) $x \ln x$: $\ln 2$, na końcu $2 \cdot \ln 2$ |
 | dzielenie | 4 — iloraz | w) $\frac{\ln x}{e^x}$: $\ln 2$ i $e^2$, na końcu dzielisz |
 | potęga, pierwiastek, $\ln$, $e^{\ldots}$ albo $a^{\ldots}$ z czegoś, co nie jest samym $x$ | 5 — funkcja złożona | f) $\sqrt{5x - 7}$: $5 \cdot 2 - 7 = 3$, na końcu $\sqrt{3}$ |
@@ -359,7 +374,7 @@ Jak czytać tabelę: w trzeciej kolumnie rozpisano, w jakiej kolejności liczysz
   { tekst: R`$\frac{\ln x}{e^x}$`, kat: 2, dlaczego: R`Na końcu dzielisz $\ln x$ przez $e^x$ — iloraz.` },
   { tekst: R`$\sqrt{5x - 7}$`, kat: 3, dlaczego: R`Najpierw $5x - 7$, na końcu pierwiastek — funkcja złożona.` },
   { tekst: R`$e^{-x} + e^{2x}$`, kat: 0, dlaczego: R`Na końcu dodajesz dwa składniki — reguła 2. Każdy składnik to potem funkcja złożona.` },
-  { tekst: R`$\ln^2(2x)$`, kat: 3, dlaczego: R`$\ln^2(2x) = (\ln(2x))^2$: najpierw $2x$, potem $\ln$, na końcu kwadrat — funkcja złożona.` },
+  { tekst: R`$\ln^2(2x) = (\ln(2x))^2$`, kat: 3, dlaczego: R`$\ln^2(2x) = (\ln(2x))^2$: najpierw $2x$, potem $\ln$, na końcu kwadrat — funkcja złożona.` },
   { tekst: R`$x^7$`, kat: 4, dlaczego: R`Potęga samego $x$ — wystarczy wzór 3: $(x^7)' = 7x^6$.` },
   { tekst: R`$\left(\frac{x-1}{x+1}\right)^4$`, kat: 3, dlaczego: R`Ostatnie działanie to potęga $4$ — funkcja złożona. Dzielenie liczysz wcześniej, więc reguła ilorazu przyda się dopiero później — do kawałka pod potęgą.` },
   { tekst: R`$x\sqrt{\ln x}$`, kat: 1, dlaczego: R`Na końcu mnożysz $x$ przez $\sqrt{\ln x}$ — iloczyn.` },
@@ -410,9 +425,9 @@ Wpisz wykładnik, tak żeby po obu stronach była ta sama funkcja.
 
 1. **Przygotuj:** zamień pierwiastki na potęgi, a ułamki „jedynka przez potęgę” — na potęgi z minusem. Stałe zostaw przed potęgami.
 2. **Rozpoznaj:** suma albo różnica — każdy składnik osobno (reguła 2). Każdy składnik to liczba razy potęga — wzór 3 z regułą 1.
-3. **Wstaw:** w każdym składniku wykładnik schodzi przed $x$ i mnoży liczbę. Nowy wykładnik = stary − 1.
-4. **Uprość:** policz na kartce mnożenie i odejmowanie. Przy ułamku zapisz $1$ jako ułamek o tym samym mianowniku: $1 = \frac22 = \frac33$.
-5. Jeśli chcesz, wróć do zapisu z pierwiastkami i ułamkami — oba zapisy są poprawne.
+3. **Policz kawałki:** tu odpada — wzór 3 nie potrzebuje pochodnych liczonych z boku.
+4. **Wstaw:** w każdym składniku wykładnik schodzi przed $x$ i mnoży liczbę. Nowy wykładnik = stary − 1.
+5. **Uprość:** policz na kartce mnożenie i odejmowanie. Przy ułamku zapisz $1$ jako ułamek o tym samym mianowniku: $1 = \frac22 = \frac33$. Jeśli chcesz, wróć do zapisu z pierwiastkami i ułamkami — oba zapisy są poprawne.
 </Ramka>
 
 <Rozbior t="(x^n)' = n \cdot x^{n-1}" czytamy="pochodna z iks do potęgi en równa się en razy iks do potęgi en minus jeden" czesci={[
@@ -441,7 +456,9 @@ Cel: wzór na $f'(x)$.
 
 1. **Przygotuj:** zamieniamy oba składniki na potęgi — bo do potęg jest gotowy wzór 3.
 2. **Rozpoznaj:** różnica dwóch składników, więc każdy liczymy osobno (reguła 2) według szablonu wzoru 3.
-3. **Wstaw i uprość:** wykładniki wlatują do szablonu, a na kartce liczymy liczby przed $x$ i nowe wykładniki. Na koniec możemy wrócić do ułamków.
+3. **Policz kawałki:** odpada — wzór 3 nie potrzebuje pochodnych liczonych z boku.
+4. **Wstaw:** liczby przed $x$ i wykładniki wlatują do szablonu.
+5. **Uprość:** na kartce liczymy liczby przed $x$ i nowe wykładniki. Na koniec możemy wrócić do ułamków.
 
 </div>
 </Rachunek>
@@ -464,7 +481,7 @@ Cel: wzór na $f'(x)$. Ten sam przepis co w a): potęgi → wzór 3 dla każdego
 - $(\sqrt{x})' = \frac12 x^{\frac12}$ — wykładnik się nie zmienił. Dobrze: $\frac12 - 1 = -\frac12$, czyli $\frac12 x^{-\frac12}$.
 </Ramka>
 
-<Ramka kind="granica" tytul="Wzór 3 tylko dla stałego wykładnika">
+<Ramka kind="granica" etykieta="Uwaga — kiedy to nie działa" tytul="Wzór 3 tylko dla stałego wykładnika">
 - Wzór 3 działa, gdy w wykładniku stoi **liczba**: $x^5$, $x^{-2}$, $x^{\frac43}$.
 - $2^x$ ma $x$ w wykładniku — tu działa wzór 4: $(2^x)' = 2^x \ln 2$. Wynik $x \cdot 2^{x-1}$ jest błędny.
 - $x^x$ ma $x$ i w podstawie, i w wykładniku — nie pasuje żaden z tych wzorów. Ten przypadek ma własną sekcję niżej.
@@ -509,7 +526,7 @@ W każdym składniku wyniku pochodna „siedzi” na jednym czynniku: raz na pie
 2. **Rozpoznaj:** nazwij czynniki — pierwszy (przed znakiem mnożenia) i drugi (po nim). Zapisz szablon: $(\text{pierwszy})' \cdot \text{drugi} + \text{pierwszy} \cdot (\text{drugi})'$.
 3. **Policz kawałki:** pomocniczo policz pochodną każdego czynnika osobno — z tabeli albo inną regułą, gdy czynnik jest złożony.
 4. **Wstaw:** każdy kawałek w jego miejsce w szablonie.
-5. **Uprość:** skróć, co się da, i wyłącz wspólny czynnik przed nawias.
+5. **Uprość:** skróć, co się da. Jeśli chcesz, wyłącz wspólny czynnik przed nawias — to nieobowiązkowe, ale wynik wychodzi krótszy.
 </Ramka>
 
 <a id="zad-q" class="k-anchor"></a>
@@ -519,9 +536,11 @@ W każdym składniku wyniku pochodna „siedzi” na jednym czynniku: raz na pie
 
 Cel: wzór na $f'(x)$.
 
-1. **Rozpoznaj:** nazywamy czynniki i zapisujemy szablon reguły 3 — bo wzór na iloczyn potrzebuje osobno pierwszego i drugiego czynnika.
-2. **Policz kawałki:** pomocniczo liczymy pochodne czynników — obie są w tabeli.
-3. **Wstaw i uprość:** kawałki wlatują do szablonu, potem liczymy iloczyny. Kliknij „▶ Zobacz krok po kroku”, żeby zobaczyć, który kawałek trafia w które miejsce.
+1. **Przygotuj:** odpada — nie ma pierwiastków ani ułamków.
+2. **Rozpoznaj:** nazywamy czynniki i zapisujemy szablon reguły 3 — bo wzór na iloczyn potrzebuje osobno pierwszego i drugiego czynnika.
+3. **Policz kawałki:** pomocniczo liczymy pochodne czynników — obie są w tabeli.
+4. **Wstaw:** kawałki wlatują do szablonu. Kliknij „▶ Zobacz krok po kroku”, żeby zobaczyć, który kawałek trafia w które miejsce.
+5. **Uprość:** liczymy oba iloczyny.
 
 </div>
 </Rachunek>
@@ -564,10 +583,11 @@ Iloraz to wynik dzielenia. Regułę 4 stosujesz, gdy ostatnie działanie to dzie
 <Ramka kind="polecenie" tytul="Pochodna ilorazu">
 > Oblicz pochodną funkcji, np. $f(x) = \frac{\ln x}{e^x}$.
 
-1. **Rozpoznaj:** nazwij licznik (góra) i mianownik (dół). Zapisz szablon reguły 4 słowami — jest w rachunkach niżej.
-2. **Policz kawałki:** pomocniczo policz pochodną licznika i pochodną mianownika.
-3. **Wstaw:** każdy kawałek w jego miejsce w szablonie. W liczniku zaczynasz od pochodnej licznika.
-4. **Uprość** licznik. Mianownika do kwadratu zwykle nie wymnażasz.
+1. **Przygotuj:** zwykle odpada. Gdy w liczniku stoi sama liczba, ułamek można zapisać jako potęgę z minusem — tę drogę pokazujemy po sekcji o funkcji złożonej.
+2. **Rozpoznaj:** nazwij licznik (góra) i mianownik (dół). Zapisz szablon reguły 4 słowami — jest w rachunkach niżej.
+3. **Policz kawałki:** pomocniczo policz pochodną licznika i pochodną mianownika.
+4. **Wstaw:** każdy kawałek w jego miejsce w szablonie. W liczniku zaczynasz od pochodnej licznika.
+5. **Uprość** licznik. Mianownika do kwadratu zwykle nie wymnażasz.
 </Ramka>
 
 Najpierw prosty przykład, potem przykłady z listy:
@@ -581,10 +601,11 @@ Najpierw prosty przykład, potem przykłady z listy:
 
 Cel: wzór na $f'(x)$ w możliwie prostej postaci.
 
-1. **Rozpoznaj:** nazywamy licznik i mianownik i zapisujemy szablon reguły 4 — bo wzór potrzebuje ich osobno.
-2. **Policz kawałki:** pomocniczo liczymy pochodne obu — są w tabeli.
-3. **Wstaw:** kawałki wlatują do szablonu „góra–dół”, każdy na swoje miejsce.
-4. **Uprość:** $e^x$ występuje w liczniku i w mianowniku, więc da się je skrócić.
+1. **Przygotuj:** odpada — pod kreską stoi $e^x$, klocek z tabeli.
+2. **Rozpoznaj:** nazywamy licznik i mianownik i zapisujemy szablon reguły 4 — bo wzór potrzebuje ich osobno.
+3. **Policz kawałki:** pomocniczo liczymy pochodne obu — są w tabeli.
+4. **Wstaw:** kawałki wlatują do szablonu „góra–dół”, każdy na swoje miejsce.
+5. **Uprość:** $e^x$ występuje w liczniku i w mianowniku, więc da się je skrócić.
 
 </div>
 </Rachunek>
@@ -617,7 +638,7 @@ Gdy w liczniku stoi sama liczba, jak w c), jest też szybsza droga — przez pot
 
 Jak czytać tabelę: kratka $\square$ to miejsce, w którym w funkcji zewnętrznej stoi środek. Wstaw środek w kratkę — dostaniesz funkcję z pierwszej kolumny. Środek znajdziesz testem ostatniego działania: ostatnie działanie to funkcja zewnętrzna, a to, na czym je wykonujesz, to środek. Pierwiastki i ułamki „jedynka przez…” najpierw zamień na potęgi — dopiero wtedy ostatnim działaniem jest potęga.
 
-<Rozbior t="[f(\cG{g(x)})]' = f'(\cG{g(x)}) \cdot \cG{g'(x)}" czytamy="pochodna funkcji złożonej to pochodna funkcji zewnętrznej policzona w środku, razy pochodna środka" czesci={[
+<Rozbior t="[f(\cG{g(x)})]' = f'(\cG{g(x)}) \cdot \cG{g'(x)}" czytamy="pochodna funkcji złożonej to pochodna funkcji zewnętrznej, w której zamiast iks stoi cały środek, razy pochodna środka" czesci={[
   { t: '\\cG{g(x)}', o: '<b>środek</b> (funkcja wewnętrzna) — to, co siedzi w kratce' },
   { t: 'f', o: '<b>funkcja zewnętrzna</b> — to, co robisz ze środkiem na końcu' },
   { t: "f'(\\cG{g(x)})", o: '<b>pochodna zewnętrznej</b> z tabeli, a w miejscu $x$ — cały środek, bez zmian' },
@@ -648,9 +669,10 @@ Pochodną zewnętrznej liczysz tak, jakby środek był jednym pudełkiem — prz
 Cel: wzór na $f'(x)$.
 
 1. **Przygotuj:** zapisujemy pierwiastek jako potęgę — bo do potęgi jest wzór 3.
-2. **Rozpoznaj:** ostatnie działanie to potęga czegoś, co nie jest samym $x$ — reguła 5. Zapisujemy jej szablon.
+2. **Rozpoznaj:** ostatnie działanie to potęga czegoś, co nie jest samym $x$ — reguła 5. Nazywamy środek i wykładnik, zapisujemy szablon.
 3. **Policz kawałki:** pomocniczo liczymy pochodną środka.
-4. **Wstaw i uprość:** wykładnik, środek bez zmian i pochodna środka wlatują do szablonu, potem liczymy.
+4. **Wstaw:** wykładnik, środek bez zmian i pochodna środka wlatują do szablonu.
+5. **Uprość:** liczymy nowy wykładnik i zapisujemy wynik bez potęgi z minusem.
 
 Kliknij „▶ Zobacz krok po kroku”: zielony środek i fioletowy wykładnik przelecą tam, gdzie trafiają we wzorze.
 
@@ -688,17 +710,18 @@ $\ln^2(2x)$ to umowa w zapisie: kwadrat **całego logarytmu**, czyli $(\ln(2x))^
 
 <a id="zad-z171e" class="k-anchor"></a>
 
-Ostatni przykład w tej sekcji jest spoza listy: to zadanie 1 e) ze str. 171. Łączy pierwiastek z ilorazem.
+Jeszcze jeden przykład, spoza listy: zadanie 1 e) ze str. 171. Łączy pierwiastek z ilorazem.
 
 <Rachunek d={L.z171e} tytul="$f(x) = \sqrt{\frac{x^2+5}{x^2-5}}$" zrodlo="spoza listy: Zad. 1, str. 171, e)">
 <div slot="plan">
 
 Cel: wzór na $f'(x)$. To funkcja złożona z ilorazem w środku.
 
-1. **Przygotuj:** zapisujemy pierwiastek jako potęgę $\frac12$ — zewnętrzna to $\square^{\frac12}$, środek to ułamek.
-2. **Rozpoznaj:** reguła 5 — zapisujemy jej szablon.
+1. **Przygotuj:** zapisujemy pierwiastek jako potęgę $\frac12$.
+2. **Rozpoznaj:** zewnętrzna to $\square^{\frac12}$, środek to ułamek — reguła 5. Zapisujemy jej szablon.
 3. **Policz kawałki:** pochodną środka liczymy pomocniczo regułą ilorazu.
-4. **Wstaw i uprość:** potęga $-\frac12$ odwraca ułamek, a potęgi tej samej podstawy łączymy.
+4. **Wstaw:** kawałki wlatują do szablonu reguły 5.
+5. **Uprość:** potęga $-\frac12$ odwraca ułamek, a potęgi tej samej podstawy łączymy.
 
 </div>
 </Rachunek>
@@ -718,10 +741,11 @@ W większości przykładów z listy reguły się łączą: iloczyn, w którym je
 <Ramka kind="polecenie" tytul="Kilka reguł w jednym przykładzie">
 > Oblicz pochodną funkcji, np. $f(x) = x^2 e^{3x}$.
 
-1. Zrób test ostatniego działania na całej funkcji — to wybiera pierwszą regułę.
-2. Nazwij kawałki: dwa czynniki, licznik i mianownik albo środek.
-3. Pochodne kawałków licz pomocniczo. Każdy kawałek to nowe, mniejsze zadanie: znowu test ostatniego działania.
-4. Wstaw wyniki do wzoru reguły z punktu 1 i uprość.
+1. **Przygotuj:** pierwiastki i ułamki zamień na potęgi, rozpisz nietypowy zapis.
+2. **Rozpoznaj:** test ostatniego działania na całej funkcji wybiera pierwszą regułę. Nazwij kawałki — dwa czynniki, licznik i mianownik albo środek — i zapisz szablon.
+3. **Policz kawałki:** pochodne kawałków licz pomocniczo. Każdy kawałek to nowe, mniejsze zadanie: znowu test ostatniego działania i reguła.
+4. **Wstaw:** wyniki w szablon reguły z etapu 2.
+5. **Uprość.**
 </Ramka>
 
 <a id="zad-s" class="k-anchor"></a>
@@ -731,9 +755,11 @@ W większości przykładów z listy reguły się łączą: iloczyn, w którym je
 
 Cel: wzór na $f'(x)$.
 
-1. **Rozpoznaj:** test ostatniego działania daje mnożenie — więc reguła iloczynu i jej szablon.
-2. **Policz kawałki:** pochodna $x^2$ z tabeli, pochodna $e^{3x}$ regułą funkcji złożonej (w wykładniku stoi $3x$, a nie sam $x$).
-3. **Wstaw i uprość:** kawałki wlatują do szablonu, potem wyłączamy wspólny czynnik przed nawias.
+1. **Przygotuj:** odpada — nie ma pierwiastków ani ułamków.
+2. **Rozpoznaj:** test ostatniego działania daje mnożenie — więc reguła iloczynu i jej szablon.
+3. **Policz kawałki:** pochodna $x^2$ z tabeli, pochodna $e^{3x}$ regułą funkcji złożonej (w wykładniku stoi $3x$, a nie sam $x$).
+4. **Wstaw:** kawałki wlatują do szablonu.
+5. **Uprość:** porządkujemy iloczyny i wyłączamy wspólny czynnik przed nawias.
 
 </div>
 </Rachunek>
@@ -774,7 +800,8 @@ Cel: wzór na $f'(x)$.
 1. **Przygotuj:** zapisujemy $x^x$ jako $e^{x\ln x}$ — bo do $e^{\square}$ jest wzór 5, a do $x^x$ nie ma żadnego.
 2. **Rozpoznaj:** funkcja złożona — $e^{\square}$ bez zmian, razy pochodna wykładnika.
 3. **Policz kawałki:** pochodna wykładnika $x\ln x$ to iloczyn — ten sam co w przykładzie q).
-4. **Wstaw i uprość:** na końcu wracamy do zapisu $x^x$.
+4. **Wstaw:** wykładnik i jego pochodna wlatują do szablonu.
+5. **Uprość:** wracamy do zapisu $x^x$.
 
 </div>
 </Rachunek>
@@ -807,7 +834,7 @@ Pochodna w punkcie to liczba: nachylenie stycznej w tym punkcie, czyli $\operato
 
 Przykłady:
 
-- $f(x) = \frac{x^3}{3} - x$ (z rysunku ze styczną): $f'(x) = \frac{3x^2}{3} - 1 = x^2 - 1$, więc $f'(2) = 2^2 - 1 = 4 - 1 = 3$. Styczna wznosi się o 3 na 1 w prawo.
+- $f(x) = \frac{x^3}{3} - x$ (z rysunku ze styczną). Pierwszy składnik to stała $\frac13$ razy $x^3$: $\left(\frac{x^3}{3}\right)' = \frac13 \cdot (x^3)' = \frac13 \cdot 3x^2 = x^2$ (reguła 1, wzór 3). Drugi: $(x)' = 1$ (wzór 2). Między nimi stoi minus (reguła 2), więc $f'(x) = x^2 - 1$ i $f'(2) = 2^2 - 1 = 4 - 1 = 3$. Styczna wznosi się o $3$ na $1$ w prawo.
 - $f(x) = x\ln x$ w punkcie $x_0 = e$: z przykładu q) $f'(x) = \ln x + 1$, więc $f'(e) = \ln e + 1 = 1 + 1 = 2$.
 - $f(x) = \sqrt{5x - 7}$ w punkcie $x_0 = 1{,}6$: z przykładu f) $f'(x) = \frac{5}{2\sqrt{5x - 7}}$. Środek: $5 \cdot 1{,}6 - 7 = 8 - 7 = 1$, a $\sqrt{1} = 1$. Stąd $f'(1{,}6) = \frac{5}{2 \cdot 1} = 2{,}5$.
 
@@ -839,7 +866,7 @@ Wyniki wszystkich przykładów z listy w jednym miejscu — do sprawdzenia włas
 </div>
 
 <Ramka kind="gdzie">
-- **Badanie zmienności funkcji:** pochodną przyrównujesz do zera i badasz jej znak — tak znajdujesz, gdzie funkcja rośnie, gdzie maleje i gdzie ma ekstrema.
+- **Badanie zmienności funkcji:** pochodną przyrównujesz do zera i badasz jej znak — tak znajdujesz, gdzie funkcja rośnie, gdzie maleje i gdzie ma ekstrema (szczyty i dołki).
 - **Funkcje wielu zmiennych:** pochodne cząstkowe liczysz tymi samymi wzorami i regułami — pozostałe zmienne traktujesz jak stałe.
 - **Całki:** całkowanie to odwracanie pochodnej. Tabela całek to w dużej mierze tabela pochodnych czytana od prawej do lewej (z dopisanym $+C$).
 - **Ekonomia:** koszt krańcowy i przychód krańcowy to pochodne funkcji kosztu i przychodu.

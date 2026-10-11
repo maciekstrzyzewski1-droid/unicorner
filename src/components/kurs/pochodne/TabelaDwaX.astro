@@ -1,6 +1,6 @@
 ---
 // „Ten sam rachunek w innych punktach”: nachylenie siecznej dla Δx = 0,01 w x₀ = 1, 2, 3 (lib/pochodne.js: wzor2x)
-// i liczba, do której zmierza — za każdym razem 2 · x₀. Rachunki w komórkach w dwóch linijkach (mieszczą się na telefonie).
+// i liczba, do której zmierza przy coraz mniejszym kroku — za każdym razem 2 · x₀. Rachunki w komórkach w dwóch linijkach (mieszczą się na telefonie).
 import { wzor2x } from '../../../lib/pochodne.js';
 import { tex } from '../../../lib/tex.js';
 const W = wzor2x();
@@ -14,7 +14,7 @@ const dwie = (a: string, b: string) => `<span class="k-dwax-l">${tex(a)}</span><
         <th>wartość po kroku: <span set:html={tex('(x_0 + 0{,}01)^2')} /></th>
         <th>o ile w górę <span set:html={tex('\\Delta y')} /></th>
         <th>nachylenie siecznej</th>
-        <th>granica</th>
+        <th>zmierza do<span class="k-dwax-sub">gdy krok → 0</span></th>
       </tr>
     </thead>
     <tbody>
@@ -33,10 +33,12 @@ const dwie = (a: string, b: string) => `<span class="k-dwax-l">${tex(a)}</span><
 
 <style>
   .k-dwax :global(.k-dwax-l){display:block;white-space:nowrap;}
+  .k-dwax-sub{display:block;font-weight:400;font-size:.8em;color:var(--muted);}
   .k-dwax .k-dwax-gr{color:#fff;font-weight:600;background:rgba(95,176,127,.1);}
   .k-dwax :global(th){font-family:inherit!important;letter-spacing:0!important;font-weight:600;}
   @media(max-width:560px){
-    .k-dwax :global(th){font-size:.74rem!important;}
+    .k-dwax :global(th){font-size:.72rem!important;}
+    .k-dwax-sub{font-size:.9em;}
     .k-dwax :global(th),.k-dwax :global(td){padding:6px 5px!important;}
     .k-dwax :global(table){font-size:.84rem!important;}
   }

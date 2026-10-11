@@ -1,6 +1,7 @@
 // Wspólne opcje KaTeX: wzory w MDX ($…$, $$…$$ — rehype-katex) i w komponentach (lib/tex.js).
 // Kolorowe kawałki wzoru (moduł „Pochodne” i dalej):
-//   \cF{…} turkus, \cG{…} złoto, \cH{…} fiolet, \cK{…} zieleń, \cR{…} róż — sam kolor,
+//   \cF{…} turkus, \cG{…} złoto, \cH{…} fiolet, \cK{…} zieleń, \cR{…} róż — sam kolor
+//   (w spokojnym wyglądzie, styles/kurs-spokojny.css: niebieski, zielony, lawendowy, zielony, różowy),
 //   \mF{id}{…}, \mG{id}{…}, \mH{id}{…}, \mK{id}{…}, \mN{id}{…} — kolor + znacznik data-p="id",
 //   po którym animacja „krok po kroku” wie, skąd dokąd przelatuje kawałek (komponent pochodne/Rachunek).
 // Kolory klas k-cf / k-cg / k-ch / k-ck / k-cr są w styles/kurs.css.

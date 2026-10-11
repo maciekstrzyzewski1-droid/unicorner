@@ -32,13 +32,17 @@ const stany = punkty.map((p: any) => {
   const Bp = { x: A.x + 1, y: A.y };
   const C = { x: A.x + 1, y: A.y + p.k };
   const tx = p.tx;
+  // podpis „1” pod poziomym krokiem (nad nim, gdy nachylenie ujemne); gdy wyszedłby poza rysunek — po drugiej stronie
+  let t1y = py(A.y) + (p.k > 0 ? 18 : -8);
+  if (t1y > H - B - 2) t1y = py(A.y) - 8;
+  if (t1y < T + 14) t1y = py(A.y) + 18;
   const kier = p.znak === 'plus' ? 'rośnie' : 'maleje';
   const opis = p.znak === 'zero'
     ? `$x_0 = ${tx.x0}$: $f'(${tx.x0}) = ${tx.x0.startsWith('-') ? `(${tx.x0})` : tx.x0}^2 - 1 = ${tx.kw} - 1 = 0$. Styczna jest pozioma ($\\operatorname{tg}\\alpha = 0$). ${p.x0 < 0 ? 'Tu funkcja przestaje rosnąć i zaczyna maleć — to szczyt wykresu.' : 'Tu funkcja przestaje maleć i zaczyna rosnąć — to dołek wykresu.'}`
     : `$x_0 = ${tx.x0}$: $f'(${tx.x0}) = ${tx.x0.startsWith('-') ? `(${tx.x0})` : tx.x0}^2 - 1 = ${tx.kw} - 1 = ${tx.k}$. Pochodna ${p.znak === 'plus' ? 'dodatnia' : 'ujemna'} — styczna ${p.znak === 'plus' ? 'idzie w górę' : 'opada'}, funkcja w tym miejscu <b>${kier}</b>. $\\operatorname{tg}\\alpha = ${tx.k}$: na $1$ w prawo styczna ${p.znak === 'plus' ? 'wznosi się' : 'opada'} o $${tx.k.replace('-', '')}$.`;
-  return { ...p, l: prosta(p.x0, p.y0, p.k), A, Bp, C, opis };
+  return { ...p, l: prosta(p.x0, p.y0, p.k), A, Bp, C, opis, t1y };
 });
-const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia'], ['roz', 'funkcja maleje — pochodna ujemna'], ['fiolet', 'krok o $1$ w prawo'], ['cyan', "o ile styczna idzie w górę albo w dół: $f'(x_0) = \\operatorname{tg}\\alpha$"]];
+const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia'], ['roz', 'funkcja maleje — pochodna ujemna'], ['bialy', 'styczna (przerywana)'], ['fiolet', 'krok o $1$ w prawo'], ['cyan', "o ile styczna idzie w górę albo w dół: $f'(x_0) = \\operatorname{tg}\\alpha$"]];
 ---
 <figure class="k-fig k-sy" data-sy>
   <div class="k-sy-uk">
@@ -46,18 +50,13 @@ const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia']
     <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Wykres f(x) = x³/3 − x ze styczną w wybranym punkcie">
       <defs><clipPath id="k-sy-clip"><rect x={L} y={T} width={W - L - Rr} height={H - T - B} /></clipPath></defs>
       <g class="k-sy-os">
-        {[-2, -1, 1, 2].map((t) => <g><line x1={px(t)} y1={py(0) - 4} x2={px(t)} y2={py(0) + 4} /><text x={px(t)} y={py(0) + 19} text-anchor="middle">{t < 0 ? `−${-t}` : t}</text></g>)}
-        {[-2, -1, 1, 2].map((t) => <g><line x1={px(0) - 4} y1={py(t)} x2={px(0) + 4} y2={py(t)} /><text x={px(0) - 8} y={py(t) + 5} text-anchor="end">{t < 0 ? `−${-t}` : t}</text></g>)}
+        {[-2, -1, 1, 2].map((t) => <line x1={px(t)} y1={py(0) - 4} x2={px(t)} y2={py(0) + 4} />)}
+        {[-2, -1, 1, 2].map((t) => <line x1={px(0) - 4} y1={py(t)} x2={px(0) + 4} y2={py(t)} />)}
         <line x1={L} y1={py(0)} x2={W - Rr} y2={py(0)} />
         <line x1={px(0)} y1={T} x2={px(0)} y2={H - B} />
-        <text x={W - Rr - 4} y={py(0) - 8} text-anchor="end">x</text>
-        <text x={px(0) + 8} y={T + 14}>y</text>
       </g>
       <g clip-path="url(#k-sy-clip)">
         {kawalki.map((k) => <path d={k.d} class:list={['k-sy-f', k.cls]} />)}
-        <text class="k-sy-et is-plus" x={px(-1.85) + 9} y={py(f(-1.85)) + 5}>rośnie</text>
-        <text class="k-sy-et is-minus" x={px(0.18)} y={py(f(0.18)) - 12}>maleje</text>
-        <text class="k-sy-et is-plus" x={px(2.06)} y={py(f(2.06)) + 4} text-anchor="end">rośnie</text>
         {stany.map((s: any, i: number) => (
           <g class="k-sy-s" data-i={i} data-stat={i === START ? '' : undefined}>
             <line class:list={['k-sy-st', `is-${s.znak}`]} x1={s.l.x1} y1={s.l.y1} x2={s.l.x2} y2={s.l.y2} />
@@ -65,13 +64,19 @@ const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia']
               <g>
                 <line class="k-sy-dx" x1={px(s.A.x)} y1={py(s.A.y)} x2={px(s.Bp.x)} y2={py(s.Bp.y)} />
                 <line class="k-sy-dy" x1={px(s.Bp.x)} y1={py(s.Bp.y)} x2={px(s.C.x)} y2={py(s.C.y)} />
-                <text class="k-sy-t1" x={(px(s.A.x) + px(s.Bp.x)) / 2} y={py(s.A.y) + (s.k > 0 ? 18 : -8)} text-anchor="middle">1</text>
+                <text class="k-sy-t1" x={(px(s.A.x) + px(s.Bp.x)) / 2} y={s.t1y} text-anchor="middle">1</text>
                 <text class="k-sy-t2" x={s.Bp.x > 2 ? px(s.Bp.x) - 7 : px(s.Bp.x) + 7} y={(py(s.Bp.y) + py(s.C.y)) / 2 + 5} text-anchor={s.Bp.x > 2 ? 'end' : 'start'}>{s.t.k}</text>
               </g>
             )}
             <circle cx={px(s.x0)} cy={py(s.y0)} r="6" class="k-sy-p" />
           </g>
         ))}
+      </g>
+      <g class="k-sy-os k-sy-osp">
+        {[-2, -1, 1, 2].map((t) => <text x={px(t)} y={py(0) + 19} text-anchor="middle">{t < 0 ? `−${-t}` : t}</text>)}
+        {[-2, -1, 1, 2].map((t) => <text x={px(0) - 8} y={py(t) + 5} text-anchor="end">{t < 0 ? `−${-t}` : t}</text>)}
+        <text x={W - Rr - 4} y={py(0) - 8} text-anchor="end">x</text>
+        <text x={px(0) + 8} y={T + 14}>y</text>
       </g>
     </svg>
     <Legenda items={leg} />
@@ -137,9 +142,8 @@ const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia']
   .k-sy-f{fill:none;stroke-width:3;}
   .k-sy-f.is-plus{stroke:#5fb07f;}
   .k-sy-f.is-minus{stroke:#e0849f;}
-  .k-sy-et{font-size:13px;font-family:'Inter',system-ui,sans-serif;font-weight:600;}
-  .k-sy-et.is-plus{fill:#7fc69b;}
-  .k-sy-et.is-minus{fill:#e9a2b7;}
+  /* podpisy osi i schodka z obwódką w kolorze tła — czytelne, gdy przechodzi pod nimi linia */
+  .k-sy-osp text,.k-sy-t1,.k-sy-t2{paint-order:stroke;stroke:#0c0b11;stroke-width:4px;stroke-linejoin:round;}
   .k-sy-st{stroke:#f2f0fa;stroke-width:2;stroke-dasharray:8 6;}
   .k-sy-dx{stroke:#b4a7ec;stroke-width:3.4;}
   .k-sy-dy{stroke:#7db3e8;stroke-width:3.4;}

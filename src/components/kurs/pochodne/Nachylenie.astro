@@ -1,5 +1,5 @@
 ---
-// Stromość prostej: „schodek” — krok o 1 w prawo (zielony) i o ile prosta idzie w górę (niebieski) = nachylenie.
+// Stromość prostej: „schodek” — krok o 1 w prawo (lawendowy) i o ile prosta idzie w górę (niebieski) = nachylenie.
 // Pięć prostych przez punkt (1, 1): nachylenie 2, 1, ½, 0, −1. Schodek narysowany w dwóch miejscach — wszędzie taki sam.
 // Przyciski przełączają prostą; bez JS widać prostą o nachyleniu 2 i opis wszystkich pięciu.
 import { skala, osie, prosta } from '../../../lib/wykres.js';
@@ -10,7 +10,7 @@ const r1 = (v: number) => Math.round(v * 10) / 10;
 const WARIANTY = [
   { a: 2, et: '2', tex: '2', opis: 'Krok o $1$ w prawo — prosta idzie $2$ w górę. Nachylenie: $2$. Stromo pod górę.' },
   { a: 1, et: '1', tex: '1', opis: 'Krok o $1$ w prawo — prosta idzie $1$ w górę. Nachylenie: $1$.' },
-  { a: 0.5, et: '½', tex: '\\tfrac12', opis: 'Krok o $1$ w prawo — prosta idzie tylko pół w górę. Nachylenie: $\\tfrac12$. Łagodnie pod górę.' },
+  { a: 0.5, et: '½', tex: '\\tfrac12', opis: 'Krok o $1$ w prawo — prosta idzie tylko o $\\tfrac12$ w górę. Nachylenie: $\\tfrac12$. Łagodnie pod górę.' },
   { a: 0, et: '0', tex: '0', opis: 'Krok o $1$ w prawo — prosta nie idzie ani w górę, ani w dół. Nachylenie: $0$. Płasko.' },
   { a: -1, et: '−1', tex: '-1', opis: 'Krok o $1$ w prawo — prosta schodzi $1$ w dół. Nachylenie: $-1$. Minus znaczy „w dół”.' },
 ].map((v) => {
