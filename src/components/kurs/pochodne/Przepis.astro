@@ -1,0 +1,28 @@
+---
+// Przepis na każdą pochodną: pięć etapów (lib/pochodne.js: ETAPY) — co robisz i dlaczego właśnie w tym miejscu.
+// Te same etapy są przy liniach każdego rachunku w module.
+import { ETAPY } from '../../../lib/pochodne.js';
+import { texInline } from '../../../lib/tex.js';
+---
+<ol class="k-przepis">
+  {ETAPY.map((E) => (
+    <li class="k-przepis-i">
+      <span class="k-przepis-n">{E.nr}</span>
+      <div class="k-przepis-b">
+        <p class="k-przepis-h">{E.nazwa}</p>
+        <p class="k-przepis-co" set:html={texInline(`${E.co.charAt(0).toUpperCase()}${E.co.slice(1)}.`)} />
+        <p class="k-przepis-po" set:html={texInline(`<b>Dlaczego w tym miejscu:</b> ${E.po}`)} />
+      </div>
+    </li>
+  ))}
+</ol>
+
+<style>
+  .k-przepis{list-style:none!important;margin:1.2em 0 1.6em!important;padding:0!important;display:grid;gap:10px;container:przepis / inline-size;}
+  .k-przepis-i{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;max-width:none!important;margin:0!important;padding:12px 14px!important;background:rgba(255,255,255,.025);border-radius:6px;}
+  .k-przepis-n{width:28px;height:28px;display:grid;place-items:center;border-radius:50%;font-family:var(--mono);font-weight:800;font-size:.86rem;color:#121019;background:#b4a7ec;}
+  .k-przepis-h{margin:2px 0 4px!important;font-family:var(--mono);font-size:.8rem;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;color:#c9bff2;}
+  .k-przepis-co{margin:0 0 4px!important;font-weight:600;color:#fff;font-size:.97rem;line-height:1.5;}
+  .k-przepis-po{margin:0!important;font-size:.9rem;line-height:1.6;color:#cfcae4;}
+  .k-przepis-po :global(b){color:var(--muted);font-weight:600;}
+</style>

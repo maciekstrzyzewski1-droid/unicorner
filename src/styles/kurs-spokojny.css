@@ -1,0 +1,155 @@
+/* ===== Spokojny wygląd i szeroki układ — pilot (moduł z `wyglad: spokojny` we frontmatterze) =====
+   Wszystko poniżej (poza .k-ekran) działa tylko pod .k-spokojnie / .k-szeroki na .k-shell,
+   więc moduły bez flagi wyglądają tak jak wcześniej.
+   Paleta: przygaszone odcienie, zielony zamiast jaskrawego żółtego, mniej ramek i kolorów w „obudowie”.
+   Kolory kawałków wzorów (rola → kolor, nazwy klas jak w całym kursie):
+     cyan  (\cF, \mF) → niebieski  #7db3e8   pierwszy kawałek, licznik, przyrost wartości
+     zloto (\cG, \mG) → zielony    #5fb07f   drugi kawałek, mianownik, środek funkcji złożonej
+     fiolet(\cH, \mH) → lawendowy  #b4a7ec   wykładnik
+     ok    (\cK, \mK) → zielony    #5fb07f   (w pilocie nie łączymy „ok” i „zloto” na jednym rysunku)
+     roz   (\cR)      → różowy     #e0849f   błąd, sieczna, „maleje” */
+
+/* informacja o większym ekranie — we wszystkich modułach, tylko na wąskich ekranach */
+.k-ekran{display:none;margin:0 0 18px;padding:10px 14px;font-size:.88rem;line-height:1.55;color:#c9c3e6;border-left:2px solid var(--line2);background:rgba(255,255,255,.03);max-width:700px;}
+@media(max-width:760px){.k-ekran{display:block;}}
+
+/* --- paleta --- */
+body:has(.k-spokojnie){background:#0c0b11;}
+body:has(.k-spokojnie)::before{opacity:.3;}
+.k-spokojnie{
+  --cyan:#7db3e8; --gold:#5fb07f; --ok:#5fb07f; --magenta:#e0849f; --accent:#a99be0;
+  --iris:linear-gradient(115deg,#7db3e8 0%,#a99be0 55%,#c9bdf3 100%);
+  --text:#e3e0f0; --muted:#a39dc6; --muted2:#7d769e;
+  --line:rgba(255,255,255,.07); --line2:rgba(255,255,255,.12);
+  --surface:#16151d; --surface2:#1c1b25; --ink2:#111017;
+  /* trójki RGB do półprzezroczystych teł: rgba(var(--kB), .2) */
+  --kA:125,179,232; --kB:95,176,127; --kC:180,167,236; --kR:224,132,159;
+  --tlo-panel:#14131b;
+}
+.k-spokojnie .k-ekran{border-left-color:rgba(var(--kA),.5);}
+
+/* kawałki wzorów */
+.k-spokojnie .k-cf{color:#7db3e8;}
+.k-spokojnie .k-cg{color:#5fb07f;}
+.k-spokojnie .k-ch{color:#b4a7ec;}
+.k-spokojnie .k-ck{color:#5fb07f;}
+.k-spokojnie .k-cr{color:#e0849f;}
+
+/* nagłówek modułu */
+.k-spokojnie .k-hero h1 .grad{background:none;-webkit-background-clip:initial;background-clip:initial;color:#b9addf;}
+.k-spokojnie .k-cele{background:rgba(255,255,255,.025);border-color:var(--line2);}
+.k-spokojnie .wz-eyebrow{background:rgba(var(--kA),.05);}
+.k-spokojnie .wz-eyebrow .dot{box-shadow:none;}
+
+/* treść */
+.k-spokojnie .k-prose{color:#dedbec;}
+.k-spokojnie .k-prose a{color:#a9cbef;text-decoration-color:rgba(var(--kA),.4);}
+.k-spokojnie .k-prose h2::before{background:var(--accent);box-shadow:none;}
+.k-spokojnie .k-prose h4{color:#a9cbef;}
+.k-spokojnie .k-prose .katex-display{background:rgba(255,255,255,.02);border-color:transparent;}
+.k-spokojnie .k-prose .k-tab th{background:rgba(255,255,255,.04);}
+.k-spokojnie .k-prose .k-tab th,.k-spokojnie .k-prose .k-tab td{border-color:var(--line2);}
+.k-spokojnie .k-lbl{color:#a9cbef;}
+
+/* ramki: trzy grupy kolorów zamiast dwunastu — informacja, ostrzeżenie, do zapamiętania; rodzaj mówi ikonka i etykieta */
+.k-spokojnie .k-ramka{border-left-width:2px;padding:14px 20px 6px;}
+.k-spokojnie .k-ramka-ic{background:transparent;color:var(--c);box-shadow:inset 0 0 0 1px var(--c);}
+.k-spokojnie :is(.k-intuicja,.k-skad,.k-liceum,.k-podobny,.k-gdzie,.k-inaczej,.k-kiedy,.k-excel){--c:#93b4dc;--bg:rgba(255,255,255,.025);}
+.k-spokojnie :is(.k-pulapka,.k-granica){--c:#e0849f;--bg:rgba(var(--kR),.05);}
+.k-spokojnie :is(.k-zapamietaj,.k-polecenie){--c:#6dbb8c;--bg:rgba(var(--kB),.05);}
+.k-spokojnie .k-botak{--c:#b4a7ec;--bg:rgba(var(--kC),.05);}
+.k-spokojnie .k-zapamietaj{border-image:none;border-left-color:var(--c);}
+.k-spokojnie .k-zapamietaj .k-ramka-ic{background:transparent;}
+.k-spokojnie .k-ramka .katex-display{background:rgba(0,0,0,.18);}
+
+/* rozbiór wzoru, karty symboli, mapa poleceń, ściąga */
+.k-spokojnie .k-rozbior{background:rgba(255,255,255,.02);border-color:var(--line2);}
+.k-spokojnie .k-rozbior-row dt,.k-spokojnie .k-rozbior-row dt .katex{color:#a9cbef;}
+.k-spokojnie .k-symbol{background:rgba(255,255,255,.02);border-color:var(--line);}
+.k-spokojnie .k-symbol-znak{border-color:rgba(var(--kC),.35);background:rgba(var(--kC),.06);}
+.k-spokojnie .k-symbol-czyt b{color:#a9cbef;}
+.k-spokojnie .k-pol-i{background:rgba(255,255,255,.02);border-color:var(--line);}
+.k-spokojnie .k-pol-n{background:var(--accent);}
+.k-spokojnie .k-pol-l a{color:#a9cbef;border-bottom-color:rgba(var(--kA),.4);}
+.k-spokojnie .k-sciaga>div{background:rgba(255,255,255,.02);border-color:var(--line);}
+
+/* zadania krok po kroku */
+.k-spokojnie .k-rozw{background:#111017;border-color:var(--line2);}
+.k-spokojnie .k-rozw-tag{background:transparent;color:#a9cbef;box-shadow:inset 0 0 0 1px rgba(var(--kA),.45);}
+.k-spokojnie .k-rozw-plan{border-color:rgba(var(--kA),.22);background:rgba(var(--kA),.035);}
+.k-spokojnie .k-why{border-left-color:rgba(var(--kC),.6);background:rgba(var(--kC),.05);}
+
+/* przyciski, pytania, ćwiczenia */
+.k-spokojnie .k-btn{background:#b4a7ec;color:#121019;}
+.k-spokojnie .k-btn:hover{filter:brightness(1.07);}
+.k-spokojnie .k-btn-ghost{background:transparent;color:var(--text);}
+.k-spokojnie .k-btn:focus-visible,.k-spokojnie .k-opt:focus-visible{outline-color:#a9cbef;}
+.k-spokojnie :is(.k-pyt,.k-klas,.k-ct){background:#111017;border-color:var(--line2);}
+.k-spokojnie .k-pyt-tag{background:transparent;color:#7fc69b;box-shadow:inset 0 0 0 1px rgba(var(--kB),.5);}
+.k-spokojnie .k-ct-tag{background:transparent!important;color:#a9cbef;box-shadow:inset 0 0 0 1px rgba(var(--kA),.45);}
+.k-spokojnie .k-opt{background:var(--surface);}
+.k-spokojnie .k-opt.is-good{background:rgba(var(--kB),.12);}
+.k-spokojnie .k-opt.is-bad{background:rgba(var(--kR),.1);}
+.k-spokojnie .k-pyt-wynik b{color:#a9cbef;}
+.k-spokojnie .k-ct-c.is-good{background:rgba(var(--kB),.16);}
+.k-spokojnie .k-ct-c.is-bad{background:rgba(var(--kR),.16);color:#f6d3dd;}
+.k-spokojnie .k-ct-c.is-empty{background:rgba(var(--kA),.06);border-color:rgba(var(--kA),.45);}
+.k-spokojnie .k-ct-c.is-shown{background:rgba(var(--kC),.1);border-color:rgba(var(--kC),.45);}
+.k-spokojnie .k-ct-wynik{border-left-color:rgba(var(--kC),.6);background:rgba(var(--kC),.05);}
+.k-spokojnie .katex-display.k-scrollable::before,.k-spokojnie .k-tab.k-scrollable::before{color:#a9cbef;}
+.k-spokojnie .k-tab.k-scrollable::before{background:rgba(var(--kA),.06);}
+
+/* legenda kolorów i panel „krok po kroku” (komponenty Legenda i Sterowanie); .k-leg w selektorze — żeby wygrać ze stylem komponentu */
+.k-spokojnie .k-leg .k-leg-sw.is-zloto,.k-spokojnie .k-leg .k-leg-sw.is-ok{background:rgba(var(--kB),.8);}
+.k-spokojnie .k-leg .k-leg-sw.is-cyan{background:rgba(var(--kA),.8);}
+.k-spokojnie .k-leg .k-leg-sw.is-fiolet{background:rgba(var(--kC),.8);}
+.k-spokojnie .k-leg .k-leg-sw.is-roz{background:rgba(var(--kR),.8);}
+.k-spokojnie .k-leg .k-leg-sw.is-bialy{background:#e9e6f5;}
+.k-spokojnie .k-leg .k-leg-sw.is-ramka{box-shadow:inset 0 0 0 2px #e9e6f5;}
+.k-spokojnie .k-kk-ctl{background:var(--tlo-panel);border-left-color:rgba(var(--kC),.7);box-shadow:0 -10px 24px rgba(0,0,0,.5);}
+.k-spokojnie [data-kbox] .k-lot.is-zloto,.k-spokojnie [data-kbox] .k-lot.is-ok{background:rgba(var(--kB),.35);}
+.k-spokojnie [data-kbox] .k-lot.is-cyan{background:rgba(var(--kA),.32);}
+.k-spokojnie [data-kbox] .k-lot.is-fiolet{background:rgba(var(--kC),.32);}
+.k-spokojnie [data-kbox] .k-blysk{animation:k-blysk-spokojny .9s ease-out;}
+@keyframes k-blysk-spokojny{0%{box-shadow:0 0 0 3px rgba(180,167,236,.75);}100%{box-shadow:0 0 0 0 rgba(180,167,236,0);}}
+@media (prefers-reduced-motion: reduce){.k-spokojnie [data-kbox] .k-blysk{animation:none;}}
+
+/* spis treści */
+.k-spokojnie .k-toc details{background:rgba(17,16,23,.85);}
+.k-spokojnie .k-toc a.is-cur::before{color:#a9cbef;}
+
+/* --- szeroki układ na komputerze ---
+   Tekst zostaje w kolumnie do czytania (długie linijki męczą), a rysunki, tabele i rachunki dostają całą szerokość. */
+.k-szeroki.k-shell{max-width:1520px;}
+@media(min-width:1100px){
+  .k-szeroki .k-grid{grid-template-columns:220px minmax(0,1fr);gap:52px;}
+  .k-szeroki .k-prose>:is(p,ul,ol:not(.k-odp),h3,h4,blockquote,.k-ramka,.k-rozbior,.k-pyt,.k-klas,.k-pol,.k-symbole,.k-ct,.k-leg,.k-ekran,.k-anchor+p){max-width:840px;}
+  .k-szeroki .k-after{max-width:none;margin-left:272px;}
+}
+
+/* chmurka z podpowiedzią (lib/podpowiedzi.ts) — np. wzór reguły po najechaniu na etykietę „reguła 4” */
+.k-tip{position:fixed;z-index:60;width:max-content;max-width:min(420px,calc(100vw - 16px));padding:10px 14px 8px;background:#1b1a24;
+  border:1px solid rgba(255,255,255,.14);border-radius:6px;box-shadow:0 12px 32px rgba(0,0,0,.55);color:#e3e0f0;font-size:.86rem;line-height:1.5;pointer-events:auto;}
+.k-tip[hidden]{display:none!important;}
+.k-tip-i{display:block;}
+.k-tip-i+.k-tip-i{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);}
+.k-tip-h{display:block;font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#b4a7ec;margin-bottom:2px;}
+.k-tip-f{display:block;overflow-x:auto;}
+.k-tip-f .katex-display{margin:.2em 0!important;text-align:left;}
+.k-tip-f .katex-display>.katex{text-align:left;}
+.k-tip-p{display:block;color:#cfcae4;margin-top:2px;}
+
+/* małe wykresy SVG (lib/wykres.js) */
+.k-w{display:block;width:100%;height:auto;}
+.k-w-os{stroke:rgba(255,255,255,.32);stroke-width:1.2;}
+.k-w-siatka{stroke:rgba(255,255,255,.055);stroke-width:1;}
+.k-w-podz{fill:#a39dc6;font-size:13px;font-family:'Inter',system-ui,sans-serif;}
+.k-w-nazwa{fill:#cfcae4;font-size:15px;font-style:italic;font-family:'Times New Roman',serif;}
+.k-w-krzywa{fill:none;stroke:#c6c2d6;stroke-width:2.6;stroke-linejoin:round;}
+.k-w-et{fill:#c6c2d6;font-size:14px;font-family:'Inter',system-ui,sans-serif;}
+.k-w-a{stroke:#7db3e8;} .k-w-b{stroke:#5fb07f;} .k-w-c{stroke:#b4a7ec;} .k-w-r{stroke:#e0849f;}
+.k-w-ta{fill:#9cc6ef;} .k-w-tb{fill:#7fc69b;} .k-w-tc{fill:#c9bff2;} .k-w-tr{fill:#e9a2b7;} .k-w-tw{fill:#e9e6f5;} .k-w-tm{fill:#a39dc6;}
+.k-w-styczna{stroke:#f2f0fa;stroke-width:2.2;}
+.k-w-pkt{fill:#f2f0fa;stroke:#0c0b11;stroke-width:1.5;}
+.k-w-t{font-size:14px;font-family:'Inter',system-ui,sans-serif;}
+.k-w-tbig{font-size:15px;font-weight:600;font-family:'Inter',system-ui,sans-serif;}

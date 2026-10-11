@@ -38,10 +38,11 @@ const stany = punkty.map((p: any) => {
     : `$x_0 = ${tx.x0}$: $f'(${tx.x0}) = ${tx.x0.startsWith('-') ? `(${tx.x0})` : tx.x0}^2 - 1 = ${tx.kw} - 1 = ${tx.k}$. Pochodna ${p.znak === 'plus' ? 'dodatnia' : 'ujemna'} — styczna ${p.znak === 'plus' ? 'idzie w górę' : 'opada'}, funkcja w tym miejscu <b>${kier}</b>. $\\operatorname{tg}\\alpha = ${tx.k}$: na $1$ w prawo styczna ${p.znak === 'plus' ? 'wznosi się' : 'opada'} o $${tx.k.replace('-', '')}$.`;
   return { ...p, l: prosta(p.x0, p.y0, p.k), A, Bp, C, opis };
 });
-const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia'], ['roz', 'funkcja maleje — pochodna ujemna'], ['zloto', '$1$ w prawo'], ['cyan', "$f'(x_0)$ w górę albo w dół, czyli $\\operatorname{tg}\\alpha$"]];
+const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia'], ['roz', 'funkcja maleje — pochodna ujemna'], ['fiolet', 'krok o $1$ w prawo'], ['cyan', "o ile styczna idzie w górę albo w dół: $f'(x_0) = \\operatorname{tg}\\alpha$"]];
 ---
 <figure class="k-fig k-sy" data-sy>
-  <div class="k-fig-box">
+  <div class="k-sy-uk">
+   <div class="k-sy-rys">
     <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Wykres f(x) = x³/3 − x ze styczną w wybranym punkcie">
       <defs><clipPath id="k-sy-clip"><rect x={L} y={T} width={W - L - Rr} height={H - T - B} /></clipPath></defs>
       <g class="k-sy-os">
@@ -54,6 +55,9 @@ const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia']
       </g>
       <g clip-path="url(#k-sy-clip)">
         {kawalki.map((k) => <path d={k.d} class:list={['k-sy-f', k.cls]} />)}
+        <text class="k-sy-et is-plus" x={px(-1.85) + 9} y={py(f(-1.85)) + 5}>rośnie</text>
+        <text class="k-sy-et is-minus" x={px(0.18)} y={py(f(0.18)) - 12}>maleje</text>
+        <text class="k-sy-et is-plus" x={px(2.06)} y={py(f(2.06)) + 4} text-anchor="end">rośnie</text>
         {stany.map((s: any, i: number) => (
           <g class="k-sy-s" data-i={i} data-stat={i === START ? '' : undefined}>
             <line class:list={['k-sy-st', `is-${s.znak}`]} x1={s.l.x1} y1={s.l.y1} x2={s.l.x2} y2={s.l.y2} />
@@ -62,7 +66,7 @@ const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia']
                 <line class="k-sy-dx" x1={px(s.A.x)} y1={py(s.A.y)} x2={px(s.Bp.x)} y2={py(s.Bp.y)} />
                 <line class="k-sy-dy" x1={px(s.Bp.x)} y1={py(s.Bp.y)} x2={px(s.C.x)} y2={py(s.C.y)} />
                 <text class="k-sy-t1" x={(px(s.A.x) + px(s.Bp.x)) / 2} y={py(s.A.y) + (s.k > 0 ? 18 : -8)} text-anchor="middle">1</text>
-                <text class="k-sy-t2" x={px(s.Bp.x) + 7} y={(py(s.Bp.y) + py(s.C.y)) / 2 + 5}>{s.t.k}</text>
+                <text class="k-sy-t2" x={s.Bp.x > 2 ? px(s.Bp.x) - 7 : px(s.Bp.x) + 7} y={(py(s.Bp.y) + py(s.C.y)) / 2 + 5} text-anchor={s.Bp.x > 2 ? 'end' : 'start'}>{s.t.k}</text>
               </g>
             )}
             <circle cx={px(s.x0)} cy={py(s.y0)} r="6" class="k-sy-p" />
@@ -70,6 +74,9 @@ const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia']
         ))}
       </g>
     </svg>
+    <Legenda items={leg} />
+   </div>
+   <div class="k-sy-bok">
     <div class="k-sy-ctl" data-js-only hidden>
       <button type="button" class="k-btn k-btn-ghost" data-sy-prev aria-label="punkt w lewo">‹</button>
       <input type="range" min="0" max={stany.length - 1} step="1" value={START} data-sy-r aria-label="położenie punktu x₀" />
@@ -77,7 +84,6 @@ const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia']
     </div>
     <p class="k-sy-opis k-live" aria-live="polite" data-sy-opis set:html={texInline(stany[START].opis)} />
     <ol hidden data-sy-opisy>{stany.map((s: any) => <li set:html={texInline(s.opis)} />)}</ol>
-    <Legenda items={leg} />
     <table class="k-sy-tab">
       <thead><tr><th set:html={tex('x_0')} /><th set:html={tex("f'(x_0) = x_0^2 - 1")} /><th>funkcja w tym miejscu</th></tr></thead>
       <tbody>
@@ -90,6 +96,7 @@ const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia']
         ))}
       </tbody>
     </table>
+   </div>
   </div>
   <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
 </figure>
@@ -120,37 +127,46 @@ const leg: [string, string][] = [['ok', 'funkcja rośnie — pochodna dodatnia']
 </script>
 
 <style>
-  .k-sy svg{max-width:520px;}
-  .k-sy-os line{stroke:var(--muted2);stroke-width:1.2;}
-  .k-sy-os text{fill:var(--muted);font-size:14px;font-family:var(--mono);}
+  .k-sy{container:sy / inline-size;}
+  .k-sy-uk{display:grid;grid-template-columns:minmax(0,1fr);gap:12px 32px;align-items:start;}
+  @container sy (min-width: 820px){ .k-sy-uk{grid-template-columns:minmax(0,440px) minmax(0,1fr);} }
+  .k-sy svg{display:block;width:100%;height:auto;max-width:440px;}
+  .k-sy-rys :global(.k-leg){margin-top:6px!important;}
+  .k-sy-os line{stroke:rgba(255,255,255,.32);stroke-width:1.2;}
+  .k-sy-os text{fill:#a39dc6;font-size:13px;font-family:'Inter',system-ui,sans-serif;}
   .k-sy-f{fill:none;stroke-width:3;}
-  .k-sy-f.is-plus{stroke:#5ad1a0;}
-  .k-sy-f.is-minus{stroke:#ff6fb5;}
-  .k-sy-st{stroke:#eef0ff;stroke-width:2;stroke-dasharray:7 5;}
-  .k-sy-dx{stroke:#ffd84a;stroke-width:3;}
-  .k-sy-dy{stroke:#27e8ff;stroke-width:3;}
-  .k-sy-t1{fill:#ffd84a;font-size:15px;font-family:var(--mono);font-weight:700;}
-  .k-sy-t2{fill:#27e8ff;font-size:15px;font-family:var(--mono);font-weight:700;}
-  .k-sy-p{fill:#fff;stroke:#0b0918;stroke-width:1.5;}
+  .k-sy-f.is-plus{stroke:#5fb07f;}
+  .k-sy-f.is-minus{stroke:#e0849f;}
+  .k-sy-et{font-size:13px;font-family:'Inter',system-ui,sans-serif;font-weight:600;}
+  .k-sy-et.is-plus{fill:#7fc69b;}
+  .k-sy-et.is-minus{fill:#e9a2b7;}
+  .k-sy-st{stroke:#f2f0fa;stroke-width:2;stroke-dasharray:8 6;}
+  .k-sy-dx{stroke:#b4a7ec;stroke-width:3.4;}
+  .k-sy-dy{stroke:#7db3e8;stroke-width:3.4;}
+  .k-sy-t1{fill:#c9bff2;font-size:15px;font-family:'Inter',system-ui,sans-serif;font-weight:700;}
+  .k-sy-t2{fill:#9cc6ef;font-size:15px;font-family:'Inter',system-ui,sans-serif;font-weight:700;}
+  .k-sy-p{fill:#f2f0fa;stroke:#0c0b11;stroke-width:1.5;}
   .k-sy-s{display:none;}
   .k-sy-s[data-stat]{display:inline;}
   :global(.k-sy.is-js) .k-sy-s{display:none;}
   :global(.k-sy.is-js) .k-sy-s.is-on{display:inline;}
-  .k-sy-ctl{display:flex;align-items:center;gap:10px;margin:10px 0 4px;}
+  .k-sy-ctl{display:flex;align-items:center;gap:10px;margin:0 0 10px;}
   .k-sy-ctl[hidden]{display:none;}
-  .k-sy-ctl input{flex:1;accent-color:#27e8ff;min-width:0;height:32px;}
+  .k-sy-ctl input{flex:1;accent-color:#b4a7ec;min-width:0;height:32px;}
   .k-sy-ctl .k-btn{padding:6px 14px;font-size:1rem;}
-  .k-sy-opis{margin:6px 0 10px!important;padding:9px 12px;border-left:2px solid var(--cyan);background:rgba(39,232,255,.05);font-size:.94rem;line-height:1.65;min-height:3.3em;}
-  .k-sy-tab{border-collapse:collapse;margin:8px 0 2px;font-size:.9rem;}
-  .k-sy-tab th,.k-sy-tab td{border:1px solid var(--line2);padding:4px 9px;text-align:center;white-space:nowrap;}
-  .k-sy-tab th{background:rgba(167,139,250,.1);font-weight:500;}
-  .k-sy-tab tr.is-on td{background:rgba(39,232,255,.1);}
-  .k-sy-tab td.is-plus{color:#5ad1a0;}
-  .k-sy-tab td.is-minus{color:#ff6fb5;}
-  .k-sy-tab td.is-zero{color:#ffd84a;}
+  .k-sy-opis{margin:0 0 12px!important;padding:12px 14px;border-left:2px solid rgba(125,179,232,.6);background:rgba(255,255,255,.03);font-size:.95rem;line-height:1.7;min-height:4.4em;}
+  .k-sy-tab{border-collapse:collapse;width:100%;font-size:.9rem;}
+  .k-sy-tab th,.k-sy-tab td{border-bottom:1px solid var(--line2);padding:6px 10px;text-align:left;white-space:nowrap;}
+  .k-sy-tab th{font-weight:500;color:var(--text);}
+  .k-sy-tab tr{cursor:pointer;}
+  .k-sy-tab tr:hover td{background:rgba(255,255,255,.03);}
+  .k-sy-tab tr.is-on td{background:rgba(125,179,232,.1);}
+  .k-sy-tab td.is-plus{color:#7fc69b;}
+  .k-sy-tab td.is-minus{color:#e9a2b7;}
+  .k-sy-tab td.is-zero{color:#f2f0fa;font-weight:600;}
   .k-sy-tab :global(.katex){font-size:1em!important;}
   @media(max-width:560px){
     .k-sy-tab{font-size:.78rem;}
-    .k-sy-tab th,.k-sy-tab td{padding:3px 4px;}
+    .k-sy-tab th,.k-sy-tab td{padding:4px 4px;}
   }
 </style>

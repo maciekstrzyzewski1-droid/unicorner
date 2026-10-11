@@ -3,6 +3,7 @@
 // Wstecz / Dalej / Odtwórz / Zamknij i licznik. Wstaw do pudełka z atrybutem data-kbox (poza .k-fig-box — patrz niżej),
 // obok ukrytej listy <ol hidden data-kroki>. Bez JS nic z tego nie widać.
 // legenda — kolory używane tylko w trybie kroków (np. obwódka kratki liczonej teraz); jest w panelu, więc widać ją przy każdym kroku.
+// Slot (opcjonalny): dodatkowy pasek na górze panelu, np. etapy przepisu w rachunku pochodnej.
 // Tu są też style elementów dokładanych przez skrypt: przelatująca liczba (.k-lot) i błysk (.k-blysk).
 import Legenda from './Legenda.astro';
 interface Props { start?: string; opis?: string; legenda?: [string, string][] }
@@ -13,7 +14,8 @@ const { start = '▶ Zobacz krok po kroku', opis, legenda } = Astro.props;
   {opis && <span class="k-kk-go-t">{opis}</span>}
 </div>
 <div class="k-kk-ctl" data-kk-ctl hidden>
-  {legenda && <div class="k-kk-leg"><Legenda items={legenda} /></div>}
+  <slot />
+  {legenda && legenda.length > 0 && <div class="k-kk-leg"><Legenda items={legenda} /></div>}
   <p class="k-kk-cap" data-kk-cap aria-live="polite"></p>
   <div class="k-kk-btns">
     <button type="button" class="k-btn k-btn-ghost" data-kk-prev>‹ Wstecz</button>

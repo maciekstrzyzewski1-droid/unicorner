@@ -1,0 +1,46 @@
+---
+// Reguły jako sposoby łączenia „klocków” z tabeli wzorów: liczba razy klocek, suma, iloczyn, iloraz, klocek w klocku.
+// Każda karta: jak wyglądają klocki (obwódki), numer reguły, co robi reguła jednym zdaniem i mały przykład z wynikiem.
+import { tex, texInline } from '../../../lib/tex.js';
+const R = String.raw;
+const kA = (s: string) => R`\htmlClass{k-kl k-kl-a}{${s}}`;
+const kB = (s: string) => R`\htmlClass{k-kl k-kl-b}{${s}}`;
+const KARTY = [
+  { nr: 1, h: 'Liczba razy klocek', t: R`3 \cdot ${kA('x^2')}`, co: 'Liczba czeka z przodu. Pochodną liczysz z samego klocka.', p: R`(3x^2)' = 3 \cdot 2x = 6x` },
+  { nr: 2, h: 'Klocki dodane albo odjęte', t: R`${kA('x^3')} + ${kB('5x')}`, co: 'Każdy klocek osobno. Znak między nimi zostaje.', p: R`(x^3 + 5x)' = 3x^2 + 5` },
+  { nr: 3, h: 'Klocki pomnożone', t: R`${kA('x')} \cdot ${kB('\\ln x')}`, co: 'Pochodna raz na pierwszym, raz na drugim klocku. Wyniki dodajesz.', p: R`\begin{aligned} (x\ln x)' &= 1 \cdot \ln x + x \cdot \tfrac1x \\ &= \ln x + 1 \end{aligned}`, link: 'polecenie-iloczyn' },
+  { nr: 4, h: 'Klocek przez klocek', t: R`\dfrac{${kA('x')}}{${kB('x+1')}}`, co: 'Przepis „góra–dół”: jak przy mnożeniu, ale z minusem, a na dole mianownik do kwadratu.', p: R`\left(\tfrac{x}{x+1}\right)' = \tfrac{1}{(x+1)^2}`, link: 'polecenie-iloraz' },
+  { nr: 5, h: 'Klocek w klocku', t: R`\ln\left(${kB('x^2 + 1')}\right)`, co: 'Pochodna zewnętrznego klocka ze środkiem bez zmian, razy pochodna środka.', p: R`\begin{aligned} (\ln(x^2+1))' &= \tfrac{1}{x^2+1} \cdot 2x \end{aligned}`, link: 'polecenie-zlozona' },
+];
+---
+<div class="k-klocki">
+  {KARTY.map((k) => (
+    <div class="k-klocek">
+      <p class="k-klocek-n">Reguła {k.nr}</p>
+      <p class="k-klocek-h">{k.h}</p>
+      <div class="k-klocek-t" set:html={tex(k.t, true)} />
+      <p class="k-klocek-co" set:html={texInline(k.co)} />
+      <div class="k-klocek-p" set:html={tex(k.p, true)} />
+      {k.link && <a class="k-klocek-l" href={`#${k.link}`}>Przepis krok po kroku ↓</a>}
+    </div>
+  ))}
+</div>
+
+<style>
+  .k-klocki{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;margin:1.3em 0 1.6em;}
+  .k-klocek{display:flex;flex-direction:column;padding:14px 16px 12px;background:rgba(255,255,255,.025);border-radius:6px;min-width:0;}
+  .k-klocek-n{margin:0!important;font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#b4a7ec;}
+  .k-klocek-h{margin:2px 0 4px!important;font-weight:600;color:#fff;font-size:1rem;}
+  .k-klocek-t :global(.katex-display){margin:.4em 0!important;padding:6px 0!important;background:none!important;text-align:left;}
+  .k-klocek-t :global(.katex-display > .katex){font-size:1.2em;text-align:left;}
+  /* obwódka klocka: outline nie zmienia układu wzoru (ważne w ułamku) */
+  .k-klocek-t :global(.k-kl){border-radius:3px;outline-offset:3px;}
+  .k-klocek-t :global(.k-kl-a){outline:1.5px solid #7db3e8;}
+  .k-klocek-t :global(.k-kl-b){outline:1.5px solid #5fb07f;}
+  .k-klocek-t :global(.katex-display){padding:10px 4px!important;}
+  .k-klocek-co{margin:0 0 6px!important;font-size:.9rem;line-height:1.55;color:#d3cfe6;flex:1;}
+  .k-klocek-p{font-size:.86rem;color:var(--muted);}
+  .k-klocek-p :global(.katex-display){margin:.2em 0!important;padding:4px 0!important;background:none!important;text-align:left;overflow-x:auto;}
+  .k-klocek-p :global(.katex-display > .katex){text-align:left;font-size:1em;}
+  .k-klocek-l{margin-top:6px;font-family:var(--mono);font-size:.74rem;color:#a9cbef;text-decoration:none;border-bottom:1px solid rgba(125,179,232,.35);align-self:flex-start;}
+</style>

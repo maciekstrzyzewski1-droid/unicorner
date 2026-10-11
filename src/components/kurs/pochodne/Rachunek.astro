@@ -1,18 +1,27 @@
 ---
-// Rachunek pochodnej krok po kroku (dane z lib/pochodne.js). Każda linia: co robisz, reguła (etykieta),
-// wzór, rachunek „na kartce” i „dlaczego”. Linie „pomocniczo” to boczne rachunki (np. pochodna środka),
-// tak jak na kartce obok głównego rachunku. Bez JS widać wszystko.
+// Rachunek pochodnej krok po kroku (dane z lib/pochodne.js — opis pól linii jest tam).
+// Każda linia: etap przepisu, co robisz, etykieta reguły (po najechaniu/stuknięciu pokazuje wzór), wzór,
+// rachunek „na kartce” i „dlaczego”. Na szerokim ekranie wzór stoi po lewej, a objaśnienie po prawej.
+// Linia „szablon” (typ 'sz') to reguła zapisana słowami; w linii „wstaw” (wst: true) kawałki wlatują w szablon po kolei,
+// a ich miejsce w szablonie się podświetla. Bez JS widać wszystko.
 // „▶ Zobacz krok po kroku”: linie pojawiają się po jednej, poprzednie zostają jako sam wzór (jak zapisana kartka),
-// a kolorowe kawałki wzoru (makra \mF/\mG/\mH z lib/katex-opcje.js) przelatują z linii wyżej tam,
-// gdzie trafiają w nowej linii — widać, który kawałek idzie w które miejsce wzoru.
+// a kolorowe kawałki wzoru (makra \mF/\mG/\mH z lib/katex-opcje.js) przelatują z linii wyżej tam, gdzie trafiają.
 import { tex, texInline } from '../../../lib/tex.js';
+import { ETAPY, podpowiedz } from '../../../lib/pochodne.js';
 import Legenda from '../Legenda.astro';
 import Sterowanie from '../Sterowanie.astro';
-interface Linia { t: string; typ: string; o: string; r?: string; d?: string; k?: string[]; z?: Record<string, string> }
+interface Linia {
+  t: string; tm?: string; typ: string; e?: number; o: string; r?: string; d?: string; kiedy?: string; k?: string[];
+  z?: Record<string, string | string[]>; wst?: boolean; opisy?: Record<string, string>;
+}
 interface Props { d: { f: string; linie: Linia[]; leg?: [string, string][] }; tytul?: string; zrodlo?: string; tag?: string }
 const { d, tytul, zrodlo, tag = 'Zadanie · krok po kroku' } = Astro.props;
 const leg = d.leg ?? [];
-const legRuch: [string, string][] = [...leg, ['ramka', 'nowa linia']];
+// etap linii = ostatni podany etap (linie pomocnicze dziedziczą); znaczek etapu tylko przy pierwszej linii etapu
+const efekt: number[] = [];
+d.linie.forEach((L, i) => { efekt.push(L.e ?? (i ? efekt[i - 1] : 0)); });
+const znaczek = efekt.map((e, i) => (e && (i === 0 || efekt[i - 1] !== e) ? e : 0));
+const uzyte = new Set(efekt.filter(Boolean));
 ---
 <section class="k-rozw k-rach" data-kbox data-rach>
   {tytul && (
@@ -29,43 +38,105 @@ const legRuch: [string, string][] = [...leg, ['ramka', 'nowa linia']];
     <span>linie pojawią się po kolei, a kolorowe kawałki przelecą tam, gdzie trafiają we wzorze</span>
   </div>
   <ol class="k-rach-l">
-    {d.linie.map((L, i) => (
-      <li class:list={['k-rach-i', { 'is-pom': L.typ === 'p' }]} data-nr={i} data-z={L.z ? JSON.stringify(L.z) : undefined}>
-        <div class="k-rach-top">
-          {L.typ === 'p' && <span class="k-rach-pom">pomocniczo</span>}
-          <span class="k-rach-o" set:html={texInline(L.o)} />
-          {L.r && <span class="k-rach-r">{L.r}</span>}
-        </div>
-        <div class="k-rach-m" set:html={tex(L.t, true)} />
-        {L.k && (
-          <p class="k-rach-k"><span class="k-rach-kl">Na kartce:</span> {L.k.map((s) => <span class="k-rach-kk" set:html={tex(s)} />)}</p>
-        )}
-        {L.d && <div class="k-why k-rach-d"><span class="k-why-l">Dlaczego?</span><div class="k-why-b" set:html={texInline(L.d)} /></div>}
-      </li>
-    ))}
+    {d.linie.map((L, i) => {
+      const pop = L.r ? podpowiedz(L.r) : [];
+      const E = znaczek[i] ? ETAPY[znaczek[i] - 1] : null;
+      return (
+        <li class:list={['k-rach-i', { 'is-pom': L.typ === 'p', 'is-sz': L.typ === 'sz', 'is-wst': L.wst }]} data-nr={i} data-typ={L.typ}
+          data-e={efekt[i] || undefined} data-z={L.z ? JSON.stringify(L.z) : undefined} data-opisy={L.opisy ? JSON.stringify(L.opisy) : undefined}>
+          <div class="k-rach-top">
+            {E && (
+              <button type="button" class="k-rach-etap" data-pop>
+                <span class="k-rach-etap-n">{E.nr}</span>{E.nazwa}
+                <span class="k-pop-src" hidden>
+                  <span class="k-tip-i">
+                    <span class="k-tip-h">Etap {E.nr} z 5 · {E.nazwa}</span>
+                    <span class="k-tip-p" set:html={texInline(`<b>Co robisz:</b> ${E.co}.`)} />
+                    <span class="k-tip-p" set:html={texInline(`<b>Dlaczego w tym miejscu:</b> ${E.po}`)} />
+                  </span>
+                </span>
+              </button>
+            )}
+            {L.typ === 'p' && <span class="k-rach-pom">pomocniczo</span>}
+            {L.typ === 'sz' && <span class="k-rach-pom is-sz">szablon reguły</span>}
+            <span class="k-rach-o" set:html={texInline(L.o)} />
+            {L.r && pop.length > 0 && (
+              <button type="button" class="k-chip" data-pop>
+                {L.r}
+                <span class="k-pop-src" hidden>
+                  {pop.map((it) => (
+                    <span class="k-tip-i">
+                      <span class="k-tip-h">{it.tytul}</span>
+                      <span class="k-tip-f" set:html={tex(it.t, true)} />
+                      {it.po && <span class="k-tip-p" set:html={texInline(it.po)} />}
+                    </span>
+                  ))}
+                </span>
+              </button>
+            )}
+            {L.r && pop.length === 0 && <span class="k-chip is-bez">{L.r}</span>}
+          </div>
+          <div class="k-rach-m">
+            {L.tm
+              ? (<Fragment><div class="k-rach-szer" set:html={tex(L.t, true)} /><div class="k-rach-wask" set:html={tex(L.tm, true)} /></Fragment>)
+              : <Fragment set:html={tex(L.t, true)} />}
+          </div>
+          {L.wst && <p class="k-rach-live" aria-live="polite"></p>}
+          {L.k && (
+            <p class="k-rach-k"><span class="k-rach-kl">Na kartce:</span> {L.k.map((s) => <span class="k-rach-kk" set:html={tex(s)} />)}</p>
+          )}
+          {(L.d || L.kiedy) && (
+            <div class="k-why k-rach-d">
+              <span class="k-why-l">Dlaczego?</span>
+              <div class="k-why-b">
+                {L.kiedy && <p set:html={texInline(`<b>Dlaczego teraz:</b> ${L.kiedy}`)} />}
+                {L.d && <p set:html={texInline(L.d)} />}
+              </div>
+            </div>
+          )}
+        </li>
+      );
+    })}
   </ol>
   <div class="k-rach-leg">{leg.length > 0 && <Legenda items={leg} />}</div>
-  <Sterowanie opis="linie pojawią się po kolei, a kolorowe kawałki przelecą na swoje miejsca" legenda={legRuch} />
+  <Sterowanie opis="linie pojawią się po kolei, a kolorowe kawałki przelecą na swoje miejsca" legenda={leg}>
+    {uzyte.size > 0 && (
+      <div class="k-rach-etapy" data-rach-etapy>
+        <span class="k-rach-etapy-l">Przepis:</span>
+        {ETAPY.map((E) => <span class:list={['k-rach-etapy-i', { 'is-uz': uzyte.has(E.nr) }]} data-e={E.nr}><b>{E.nr}</b> {E.nazwa}</span>)}
+      </div>
+    )}
+  </Sterowanie>
   <ol hidden data-kroki>
     {d.linie.map((L) => <li set:html={texInline(L.o)} />)}
   </ol>
 </section>
 
 <script>
-  import { krokowka, own, lot, blysk, sleep, widok, STAG } from '../../../lib/krokowka';
+  import { krokowka, own, lot, blysk, sleep, widok, STAG, reduce } from '../../../lib/krokowka';
+  import { podepnijPodpowiedzi } from '../../../lib/podpowiedzi';
+  podepnijPodpowiedzi();
   const KOLOR: [string, string][] = [['k-cf', 'cyan'], ['k-cg', 'zloto'], ['k-ch', 'fiolet'], ['k-ck', 'ok']];
+  const KROK_WST = 950;
+  const widoczny = (els: Iterable<HTMLElement>) => Array.from(els).filter((e) => e.offsetParent !== null);
   document.querySelectorAll<HTMLElement>('[data-rach]').forEach((box) => {
     const linie = own<HTMLElement>(box, '.k-rach-i');
     const goTop = own<HTMLElement>(box, '[data-rach-go]')[0];
     const startTop = own<HTMLButtonElement>(box, '[data-rach-start]')[0];
+    const pasek = own<HTMLElement>(box, '[data-rach-etapy]')[0];
     const czysc = () => linie.forEach((l) => { l.hidden = false; l.classList.remove('is-stara', 'is-teraz'); });
-    // znaczniki kawałków wzoru w linii (KaTeX: <span class="enclosing" data-p="id">)
-    const znaczniki = (l: HTMLElement) => Array.from(l.querySelectorAll<HTMLElement>('.k-rach-m [data-p]'));
+    // kawałki wzoru w linii (KaTeX: <span class="enclosing" data-p="id">) — tylko z widocznego wariantu wzoru
+    const znaczniki = (l: HTMLElement) => widoczny(l.querySelectorAll<HTMLElement>('.k-rach-m [data-p]'));
+    // najbliższe wcześniejsze wystąpienie kawałka (szablony nie są źródłem lotów — mają data-s, nie data-p)
     const zrodlo = (nr: number, id: string) => {
       for (let i = nr - 1; i >= 0; i--) {
-        const z = linie[i].querySelector<HTMLElement>(`.k-rach-m [data-p="${id}"]`);
+        const z = widoczny(linie[i].querySelectorAll<HTMLElement>(`.k-rach-m [data-p="${id}"]`))[0];
         if (z) return z;
       }
+      return null;
+    };
+    const szablon = (nr: number) => {
+      for (let i = nr - 1; i >= 0; i--) if (linie[i].dataset.typ === 'sz') return linie[i];
       return null;
     };
     const k = krokowka(box, {
@@ -75,24 +146,53 @@ const legRuch: [string, string][] = [...leg, ['ramka', 'nowa linia']];
           l.classList.toggle('is-stara', i < st);
           l.classList.toggle('is-teraz', i === st);
         });
+        if (pasek) pasek.dataset.teraz = linie[st].dataset.e ?? '';
         widok(box, linie[st]);
       },
       animuj: async (st) => {
         const l = linie[st];
-        const mapa: Record<string, string> = l.dataset.z ? JSON.parse(l.dataset.z) : {};
-        const loty = znaczniki(l)
-          .map((dst) => ({ dst, src: zrodlo(st, mapa[dst.dataset.p!] ?? dst.dataset.p!) }))
-          .filter((p) => p.src);
+        const mapa: Record<string, string | string[]> = l.dataset.z ? JSON.parse(l.dataset.z) : {};
+        // jeden kawałek może przylecieć z kilku miejsc naraz (wyłączanie wspólnego czynnika przed nawias)
+        const loty = znaczniki(l).flatMap((dst) => {
+          const z = mapa[dst.dataset.p!] ?? dst.dataset.p!;
+          return (Array.isArray(z) ? z : [z]).map((id) => ({ dst, src: zrodlo(st, id) })).filter((p) => p.src);
+        });
         if (!loty.length) { blysk(l.querySelector('.k-rach-m')); return; }
+        const wst = l.classList.contains('is-wst') && !reduce();
+        const sz = wst ? szablon(st) : null;
+        const opisy: Record<string, string> = l.dataset.opisy ? JSON.parse(l.dataset.opisy) : {};
+        const live = l.querySelector<HTMLElement>('.k-rach-live');
+        // kolejność lotów w linii „wstaw”: jak klucze w opisach (np. pochodna licznika, mianownik, licznik…);
+        // kawałki o tym samym id (np. wykładnik w dwóch miejscach) lecą razem
+        const kolej = Object.keys(opisy);
+        const nr = (p: { dst: HTMLElement }) => { const i = kolej.indexOf(p.dst.dataset.p!); return i < 0 ? kolej.length : i; };
+        if (wst) loty.sort((a, b) => nr(a) - nr(b));
         loty.forEach((p) => { p.dst.style.visibility = 'hidden'; });
+        const pokazane = new Set<string>();
         await Promise.all(loty.map((p, n) => {
           const fs = getComputedStyle(p.src!).fontSize;
           const skala = parseFloat(getComputedStyle(p.dst).fontSize) / parseFloat(fs);
-          const kol = KOLOR.find(([c]) => p.src!.querySelector(`.${c}`) || p.src!.classList.contains(c))?.[1] ?? 'ok';
-          return lot(box, p.src, p.dst, { html: `<span class="katex" style="font-size:${fs}">${p.src!.outerHTML}</span>`, kolor: kol, delay: n * STAG * 2, skala })
-            .then(() => { p.dst.style.visibility = ''; });
+          const kol = KOLOR.find(([c]) => p.src!.querySelector(`.${c}`) || p.src!.classList.contains(c))?.[1] ?? 'szary';
+          const html = `<span class="katex" style="font-size:${fs}">${p.src!.outerHTML}</span>`;
+          const delay = wst ? nr(p) * KROK_WST : n * STAG * 2;
+          if (wst && !pokazane.has(p.dst.dataset.p!)) {
+            pokazane.add(p.dst.dataset.p!);
+            // w linii „wstaw” kawałki lecą po kolei; miejsce w szablonie się podświetla, a pod wzorem jest podpis
+            setTimeout(() => {
+              const id = p.dst.dataset.p!;
+              // miejsce w szablonie: to samo id albo id bez numeru (np. wykładnik n1 → miejsce n)
+              const baza = id.replace(/\d+$/, '');
+              const miejsca = sz ? widoczny(sz.querySelectorAll<HTMLElement>(`[data-s="${id}"], [data-s="${baza}"]`)) : [];
+              miejsca.forEach((m) => m.classList.add('is-cel'));
+              setTimeout(() => miejsca.forEach((m) => m.classList.remove('is-cel')), KROK_WST);
+              if (live) live.innerHTML = `${opisy[id] ? `<b>${opisy[id]}</b> → ` : ''}<span class="katex">${p.src!.outerHTML}</span>`;
+            }, delay);
+          }
+          // kopia kawałka powstaje dopiero w chwili startu lotu (inaczej czekające kopie zasłaniałyby źródła)
+          return sleep(delay).then(() => lot(box, p.src, p.dst, { html, kolor: kol, delay: 0, skala })).then(() => { p.dst.style.visibility = ''; });
         }));
         await sleep(120);
+        if (live) live.textContent = '';
         blysk(l.querySelector('.k-rach-m'));
       },
       zamknij: () => { czysc(); if (goTop) goTop.hidden = false; },
@@ -109,50 +209,91 @@ const legRuch: [string, string][] = [...leg, ['ramka', 'nowa linia']];
 </script>
 
 <style>
-  .k-rach{position:relative;scroll-margin-top:84px;}
-  .k-rach-go{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:12px 20px 0;font-size:.82rem;color:var(--muted);}
+  .k-rach{position:relative;scroll-margin-top:84px;container:rach / inline-size;}
+  .k-rach-go{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:14px 22px 0;font-size:.82rem;color:var(--muted);}
   .k-rach-go[hidden]{display:none;}
-  .k-rach-l{list-style:none!important;margin:0!important;padding:8px 20px 4px!important;counter-reset:rach;}
-  .k-rach-i{counter-increment:rach;position:relative;margin:0!important;padding:12px 0 10px 42px!important;border-bottom:1px dashed var(--line);max-width:none!important;}
-  .k-rach-i:last-child{border-bottom:none;}
-  .k-rach-i::before{content:counter(rach);position:absolute;left:0;top:12px;width:28px;height:28px;display:grid;place-items:center;font-family:var(--mono);font-weight:800;font-size:.86rem;color:#0b0918;background:var(--accent);}
-  .k-rach-i.is-pom{margin-left:22px!important;padding-left:38px!important;border-left:2px dashed rgba(255,216,74,.35);border-bottom-style:dashed;}
-  .k-rach-i.is-pom::before{left:8px;width:24px;height:24px;font-size:.78rem;background:rgba(255,216,74,.75);}
-  .k-rach-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;}
+  .k-rach-l{list-style:none!important;margin:0!important;padding:10px 22px 6px!important;counter-reset:rach;}
+  /* linia: na wąskim ekranie jedno pod drugim, na szerokim wzór po lewej, objaśnienie po prawej */
+  .k-rach-i{counter-increment:rach;position:relative;margin:0!important;padding:12px 0 12px 38px!important;max-width:none!important;
+    display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"top" "m" "live" "k" "d";align-items:start;border-top:1px solid rgba(255,255,255,.045);}
+  .k-rach-i:first-child{border-top:none;}
+  .k-rach-i::before{content:counter(rach);position:absolute;left:0;top:14px;width:24px;height:24px;display:grid;place-items:center;border-radius:50%;
+    font-family:var(--mono);font-weight:700;font-size:.74rem;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line2);}
+  .k-rach-top{grid-area:top;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;}
+  .k-rach-m{grid-area:m;overflow-x:auto;overflow-y:hidden;padding:2px 2px;margin:2px 0 0;min-width:0;}
+  .k-rach-live{grid-area:live;margin:0!important;min-height:0;font-size:.9rem;color:var(--muted);}
+  .k-rach-live:empty{display:none;}
+  .k-rach-k{grid-area:k;margin:2px 0 .3em!important;font-size:.88rem;color:var(--muted);line-height:2.1;}
+  .k-rach-d{grid-area:d;margin:.35em 0 .2em!important;}
+  @container rach (min-width: 860px){
+    .k-rach-i{grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);column-gap:30px;grid-template-areas:"m top" "m k" "m d" "live d";}
+    .k-rach-m{margin:0;}
+    .k-rach-top{padding-top:10px;}
+    .k-rach-m :global(.katex-display > .katex){font-size:1.26em;}
+    .k-rach-i.is-sz .k-rach-m :global(.katex-display > .katex){font-size:1.1em;}
+  }
   .k-rach-o{font-weight:600;color:#fff;font-size:.97rem;line-height:1.5;flex:1 1 16em;}
-  .k-rach-pom{font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);flex-basis:100%;}
-  .k-rach-r{font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:.6px;color:#c3b1ff;border:1px solid rgba(167,139,250,.45);padding:1px 7px;white-space:nowrap;}
-  .k-rach-m{overflow-x:auto;overflow-y:hidden;padding:2px 2px;margin:2px 0 0;}
-  .k-rach-m :global(.katex-display){margin:.5em 0!important;text-align:left;}
-  .k-rach-m :global(.katex-display > .katex){text-align:left;font-size:1.12em;}
-  .k-rach-k{margin:0 0 .4em!important;font-size:.88rem;color:var(--muted);line-height:2;}
-  .k-rach-kl{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--gold);margin-right:4px;}
-  .k-rach-kk{display:inline-block;max-width:100%;margin:0 14px 0 0;padding:0 6px;border-bottom:1px solid rgba(255,216,74,.3);color:var(--text);}
-  .k-rach-d{margin:.4em 0 .4em!important;}
-  .k-rach-leg{padding:0 20px;}
+  .k-rach-pom{font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);flex-basis:100%;}
+  .k-rach-pom.is-sz{color:#b4a7ec;}
+  /* etykieta reguły i etapu: zwykły tekst z kropkowanym podkreśleniem — po najechaniu/stuknięciu chmurka ze wzorem */
+  .k-chip,.k-rach-etap{font:inherit;font-family:var(--mono);font-size:.7rem;font-weight:600;letter-spacing:.4px;color:var(--muted);background:none;border:none;padding:1px 0;
+    cursor:help;white-space:nowrap;text-decoration:underline dotted rgba(255,255,255,.35);text-underline-offset:4px;}
+  .k-chip:hover,.k-chip[aria-expanded="true"],.k-rach-etap:hover,.k-rach-etap[aria-expanded="true"]{color:#fff;text-decoration-color:currentColor;}
+  .k-chip.is-bez{cursor:default;text-decoration:none;}
+  .k-rach-etap{flex-basis:100%;text-align:left;text-transform:uppercase;letter-spacing:1px;color:#b4a7ec;justify-self:start;}
+  .k-rach-etap-n{display:inline-grid;place-items:center;width:16px;height:16px;margin-right:6px;border-radius:50%;font-size:.62rem;color:#121019;background:#b4a7ec;}
+  .k-rach-m :global(.katex-display){margin:.35em 0!important;text-align:left;padding:4px 0!important;background:none!important;border:none!important;}
+  .k-rach-m :global(.katex-display > .katex){text-align:left;font-size:1.14em;}
+  .k-rach-wask{display:none;}
+  @container rach (max-width: 600px){ .k-rach-szer{display:none;} .k-rach-wask{display:block;} }
+  /* szablon reguły (słowami) — spokojniej niż zwykły wzór; miejsce podświetla się, gdy wlatuje do niego kawałek */
+  .k-rach-i.is-sz .k-rach-m :global(.katex-display > .katex){font-size:1.02em;}
+  .k-rach-i.is-sz .k-rach-m :global([data-s]){border-radius:3px;transition:background .25s,outline-color .25s;}
+  /* klasę is-cel dostaje element z data-s (zewnętrzny), więc styl idzie na niego i na środek */
+  .k-rach-m :global([data-s].is-cel){background:rgba(255,255,255,.18);border-radius:3px;outline:2px solid #e9e6f5;outline-offset:3px;}
+  .k-rach-kl{font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-right:4px;}
+  .k-rach-kk{display:inline-block;max-width:100%;margin:0 8px 4px 0;padding:0 8px;border-radius:4px;background:rgba(255,255,255,.045);color:var(--text);line-height:1.9;}
+  .k-rach-d :global(.k-why-b p){margin:0 0 .45em!important;}
+  .k-rach-d :global(.k-why-b p:last-child){margin:0!important;}
+  .k-rach-leg{padding:2px 22px 10px;}
+  /* linie pomocnicze — wcięte, jak rachunek z boku kartki */
+  .k-rach-i.is-pom{margin-left:26px!important;padding-left:34px!important;border-left:1px solid var(--line2);}
+  .k-rach-i.is-pom::before{left:6px;width:20px;height:20px;font-size:.68rem;}
   /* Sterowanie musi być bezpośrednim dzieckiem pudełka — inaczej panel nie przyklei się do dołu ekranu */
-  .k-rach > :global(.k-kk-go){margin:4px 20px 14px;}
+  /* start jest u góry (data-rach-start); dolny przycisk Sterowania zostaje ukryty — klikamy go skryptem */
+  .k-rach > :global(.k-kk-go){display:none!important;}
   .k-rach > :global(.k-kk-ctl){margin:8px 0 0;}
-  /* legenda w panelu kroków: jedna kolumna (opisy kolorów są dłuższe niż w innych rysunkach) */
+  .k-rach > :global(.k-kk-ctl .k-kk-cap){display:none;}
   .k-rach > :global(.k-kk-ctl .k-kk-leg .k-leg){display:flex;flex-direction:column;gap:2px;}
-  /* tryb krok po kroku: poprzednie linie zostają jako sam wzór, bieżąca w ramce */
-  .k-rach-i.is-stara .k-rach-top,.k-rach-i.is-stara .k-rach-k,.k-rach-i.is-stara .k-rach-d{display:none;}
-  .k-rach-i.is-stara{padding-top:4px!important;padding-bottom:2px!important;}
-  .k-rach-i.is-stara::before{top:8px;opacity:.55;}
-  .k-rach-i.is-teraz{box-shadow:inset 0 0 0 2px #fff;padding-right:8px!important;background:rgba(255,255,255,.03);}
+  @container rach (min-width: 860px){
+    /* panel z przyciskami pod kolumną objaśnień */
+    .k-rach > :global(.k-kk-ctl){margin-left:calc(53.5% + 8px);}
+  }
+  .k-rach-etapy{display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;margin:0 0 8px;font-family:var(--mono);font-size:.68rem;color:var(--muted2);}
+  .k-rach-etapy-l{text-transform:uppercase;letter-spacing:1.2px;margin-right:2px;}
+  .k-rach-etapy-i{padding:2px 7px;border-radius:999px;box-shadow:inset 0 0 0 1px rgba(255,255,255,.08);white-space:nowrap;}
+  .k-rach-etapy-i:not(.is-uz){opacity:.45;}
+  .k-rach-etapy-i b{color:var(--muted);}
+  .k-rach-etapy[data-teraz="1"] [data-e="1"],.k-rach-etapy[data-teraz="2"] [data-e="2"],.k-rach-etapy[data-teraz="3"] [data-e="3"],
+  .k-rach-etapy[data-teraz="4"] [data-e="4"],.k-rach-etapy[data-teraz="5"] [data-e="5"]{color:#121019;background:#b4a7ec;box-shadow:none;opacity:1;}
+  .k-rach-etapy[data-teraz] [data-e] b{color:inherit;}
+  /* tryb krok po kroku: poprzednie linie zostają jako sam wzór, bieżąca jest wyróżniona */
+  .k-rach-i.is-stara .k-rach-top,.k-rach-i.is-stara .k-rach-k,.k-rach-i.is-stara .k-rach-d,.k-rach-i.is-stara .k-rach-live{display:none;}
+  .k-rach-i.is-stara{padding-top:4px!important;padding-bottom:2px!important;opacity:.78;}
+  .k-rach-i.is-stara::before{top:8px;}
+  .k-rach-i.is-teraz{background:rgba(255,255,255,.035);box-shadow:inset 2px 0 0 #b4a7ec;padding-right:10px!important;}
+  :global([data-kbox] .k-lot.is-szary){background:rgba(255,255,255,.16);}
   @media(max-width:560px){
     .k-rach-go{margin:10px 14px 0;}
     .k-rach-l{padding:6px 12px 4px!important;}
-    .k-rach-i{padding-left:34px!important;}
-    .k-rach-i::before{width:24px;height:24px;font-size:.78rem;}
-    .k-rach-i.is-pom{margin-left:8px!important;padding-left:32px!important;}
-    .k-rach-i.is-pom::before{left:5px;width:22px;height:22px;}
+    .k-rach-i{padding-left:32px!important;}
+    .k-rach-i::before{width:22px;height:22px;font-size:.7rem;}
+    .k-rach-i.is-pom{margin-left:8px!important;padding-left:30px!important;}
+    .k-rach-i.is-pom::before{left:4px;}
     .k-rach-m :global(.katex-display > .katex){font-size:1em;}
     .k-rach-leg{padding:0 14px;}
-    .k-rach > :global(.k-kk-go){margin:4px 12px 12px;}
   }
   @media(max-width:380px){
     .k-rach-m :global(.katex-display > .katex){font-size:.92em;}
-    .k-rach-m :global(.katex-display){padding-left:6px!important;padding-right:6px!important;}
   }
 </style>

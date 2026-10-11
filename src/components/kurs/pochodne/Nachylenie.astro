@@ -1,0 +1,100 @@
+---
+// Stromość prostej: „schodek” — krok o 1 w prawo (zielony) i o ile prosta idzie w górę (niebieski) = nachylenie.
+// Pięć prostych przez punkt (1, 1): nachylenie 2, 1, ½, 0, −1. Schodek narysowany w dwóch miejscach — wszędzie taki sam.
+// Przyciski przełączają prostą; bez JS widać prostą o nachyleniu 2 i opis wszystkich pięciu.
+import { skala, osie, prosta } from '../../../lib/wykres.js';
+import { texInline } from '../../../lib/tex.js';
+const W = 380, H = 520;
+const S = skala({ x0: -0.6, x1: 4.2, y0: -1.6, y1: 5.6, w: W, h: H, pad: 24, rowne: true });
+const r1 = (v: number) => Math.round(v * 10) / 10;
+const WARIANTY = [
+  { a: 2, et: '2', tex: '2', opis: 'Krok o $1$ w prawo — prosta idzie $2$ w górę. Nachylenie: $2$. Stromo pod górę.' },
+  { a: 1, et: '1', tex: '1', opis: 'Krok o $1$ w prawo — prosta idzie $1$ w górę. Nachylenie: $1$.' },
+  { a: 0.5, et: '½', tex: '\\tfrac12', opis: 'Krok o $1$ w prawo — prosta idzie tylko pół w górę. Nachylenie: $\\tfrac12$. Łagodnie pod górę.' },
+  { a: 0, et: '0', tex: '0', opis: 'Krok o $1$ w prawo — prosta nie idzie ani w górę, ani w dół. Nachylenie: $0$. Płasko.' },
+  { a: -1, et: '−1', tex: '-1', opis: 'Krok o $1$ w prawo — prosta schodzi $1$ w dół. Nachylenie: $-1$. Minus znaczy „w dół”.' },
+].map((v) => {
+  const f = (x: number) => 1 + v.a * (x - 1);
+  const schodki = [0, 2].map((x) => ({
+    p: { x: r1(S.X(x)), y: r1(S.Y(f(x))) },
+    r: { x: r1(S.X(x + 1)), y: r1(S.Y(f(x))) },
+    q: { x: r1(S.X(x + 1)), y: r1(S.Y(f(x + 1))) },
+  }));
+  return { ...v, l: prosta(1, 1, v.a, S), schodki };
+});
+---
+<figure class="k-fig k-nach" data-nach>
+  <div class="k-nach-uk">
+    <svg viewBox={`0 0 ${W} ${H}`} class="k-w" role="img" aria-label="Prosta i schodek: krok o 1 w prawo i o ile prosta idzie w górę">
+      <Fragment set:html={osie(S, { siatka: true })} />
+      {WARIANTY.map((v, i) => (
+        <g class="k-nach-g" data-a={i} data-stat={i === 0 ? '' : undefined}>
+          <line class="k-w-krzywa" x1={v.l.x1} y1={v.l.y1} x2={v.l.x2} y2={v.l.y2} />
+          {v.schodki.map((s) => (
+            <g>
+              <line class="k-nach-x" x1={s.p.x} y1={s.p.y} x2={s.r.x} y2={s.r.y} />
+              <line class="k-nach-y" x1={s.r.x} y1={s.r.y} x2={s.q.x} y2={s.q.y} />
+              <circle class="k-w-pkt" cx={s.p.x} cy={s.p.y} r="4" />
+              <text class="k-w-t k-w-tc" x={(s.p.x + s.r.x) / 2} y={v.a >= 0 ? s.r.y + 19 : s.r.y - 9} text-anchor="middle">1</text>
+              <text class="k-w-tbig k-w-ta" x={s.r.x + 9} y={v.a === 0 ? s.r.y - 9 : (s.r.y + s.q.y) / 2 + 5}>{v.et}</text>
+            </g>
+          ))}
+        </g>
+      ))}
+    </svg>
+    <div class="k-nach-bok">
+      <div class="k-nach-btns" data-js-only hidden role="group" aria-label="Wybierz nachylenie">
+        <span class="k-nach-l">Nachylenie:</span>
+        {WARIANTY.map((v, i) => <button type="button" class="k-opt k-opt-sm" data-i={i} aria-pressed={i === 0 ? 'true' : 'false'}>{v.et}</button>)}
+      </div>
+      <p class="k-nach-op" data-op set:html={texInline(WARIANTY[0].opis)} />
+      <ol hidden data-opisy>{WARIANTY.map((v) => <li set:html={texInline(v.opis)} />)}</ol>
+      <div class="k-nach-leg">
+        <span><i class="is-x"></i>krok o 1 w prawo</span>
+        <span><i class="is-y"></i>o ile prosta idzie w górę (albo w dół) — to jest nachylenie</span>
+      </div>
+      <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+    </div>
+  </div>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-nach]').forEach((box) => {
+    const gs = Array.from(box.querySelectorAll<SVGGElement>('g[data-a]'));
+    const btns = Array.from(box.querySelectorAll<HTMLButtonElement>('button[data-i]'));
+    const op = box.querySelector<HTMLElement>('[data-op]')!;
+    const opisy = Array.from(box.querySelectorAll<HTMLElement>('[data-opisy] > li'));
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((e) => { e.hidden = false; });
+    box.classList.add('is-js');
+    const wybierz = (i: number) => {
+      gs.forEach((g, j) => g.classList.toggle('is-on', j === i));
+      btns.forEach((b, j) => b.setAttribute('aria-pressed', j === i ? 'true' : 'false'));
+      op.innerHTML = opisy[i].innerHTML;
+    };
+    btns.forEach((b, i) => b.addEventListener('click', () => wybierz(i)));
+    wybierz(0);
+  });
+</script>
+
+<style>
+  .k-nach{container:nach / inline-size;}
+  .k-nach-uk{display:grid;grid-template-columns:minmax(0,1fr);gap:12px 32px;align-items:start;}
+  @container nach (min-width: 700px){ .k-nach-uk{grid-template-columns:minmax(0,380px) minmax(0,1fr);} }
+  .k-nach svg{max-width:380px;}
+  .k-nach-x{stroke:#b4a7ec;stroke-width:3.4;}
+  .k-nach-y{stroke:#7db3e8;stroke-width:3.4;}
+  .k-nach-g{display:none;}
+  .k-nach-g[data-stat]{display:inline;}
+  :global(.k-nach.is-js) .k-nach-g{display:none;}
+  :global(.k-nach.is-js) .k-nach-g.is-on{display:inline;}
+  .k-nach-btns{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin:0 0 12px;}
+  .k-nach-l{font-family:var(--mono);font-size:.72rem;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-right:4px;}
+  .k-nach-btns .k-opt{width:auto;min-width:46px;justify-content:center;font-weight:600;}
+  .k-nach-btns .k-opt[aria-pressed="true"]{border-color:#7db3e8;background:rgba(125,179,232,.14);color:#fff;}
+  .k-nach-op{margin:0 0 12px!important;padding:12px 14px;border-left:2px solid rgba(125,179,232,.6);background:rgba(255,255,255,.03);font-size:.97rem;line-height:1.65;min-height:4.6em;}
+  .k-nach-leg{display:grid;gap:4px;margin:0 0 10px;font-size:.86rem;color:var(--muted);}
+  .k-nach-leg span{display:flex;align-items:center;gap:8px;}
+  .k-nach-leg i{flex:none;width:18px;height:4px;border-radius:2px;}
+  .k-nach-leg i.is-x{background:#b4a7ec;}
+  .k-nach-leg i.is-y{background:#7db3e8;}
+</style>

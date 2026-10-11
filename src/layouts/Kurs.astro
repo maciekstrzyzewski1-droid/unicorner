@@ -5,6 +5,7 @@ import Base from './Base.astro';
 import 'katex/dist/katex.min.css';
 import '../styles/wiedza.css';
 import '../styles/kurs.css';
+import '../styles/kurs-spokojny.css';
 import Bar from '../components/wiedza/Bar.astro';
 import { getKurs, moduleUrl as modUrl, courseUrl, neighbours as neigh } from '../data/kursy/index.js';
 
@@ -17,6 +18,8 @@ const mod = MODULES.find((m) => m.slug === fm.slug);
 if (!mod) throw new Error(`Kurs ${fm.kurs}: brak modułu „${fm.slug}” w src/data/kursy/${fm.kurs}.js`);
 const { prev, next } = neigh(C.slug, fm.slug);
 const toc = headings.filter((h) => h.depth === 2);
+// wyglad: spokojny — pilot nowego wyglądu (spokojniejsze kolory, mniej ramek, szeroki układ na komputerze); styles/kurs-spokojny.css
+const pilot = fm.wyglad === 'spokojny';
 const url = `https://unicorner.pl${moduleUrl(mod)}`;
 const title = `${fm.title} — ${fm.podtytul} · ${COURSE.name} · Unicorner`;
 const ld = {
@@ -39,7 +42,7 @@ const ld = {
 
   <Bar crumbs={[{ label: COURSE.name, href: COURSE.url }, { label: `${mod.nr}. ${fm.title}` }]} back={{ label: '← Wszystkie moduły', href: COURSE.url }} progress />
 
-  <div class="k-shell">
+  <div class:list={['k-shell', { 'k-spokojnie k-szeroki': pilot }]}>
     <header class="k-hero">
       <span class="wz-eyebrow"><span class="dot"></span>{COURSE.name} · moduł {mod.nr} z {MODULES.length}</span>
       <h1>{fm.title} <span class="grad">— {fm.podtytul}</span></h1>
@@ -49,6 +52,7 @@ const ld = {
         <div><span class="k-meta-k">Potrzebujesz</span><b>{fm.wymaga}</b></div>
         {mod.cwiczenia && <div><span class="k-meta-k">Szybka powtórka</span><b><a href={`#${mod.cwiczenia}`}>Same ćwiczenia ↓</a></b></div>}
       </div>
+      <p class="k-ekran">Kurs działa na telefonie, ale wygodniej uczyć się go na komputerze albo tablecie. Rysunki i rachunki krok po kroku mają tam więcej miejsca.</p>
       {fm.umiesz && (
         <div class="k-cele">
           <div class="k-cele-k">Po tym module umiesz:</div>

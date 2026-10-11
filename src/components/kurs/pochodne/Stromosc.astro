@@ -1,0 +1,32 @@
+---
+// Krzywa ma w każdym miejscu inną stromość: parabola y = x² i krótkie kreski pokazujące kierunek wykresu
+// w czterech miejscach (w dół, płasko, pod górę, stromo pod górę). Statyczny rysunek, bez liczenia.
+import { skala, sciezka, osie, odcinek } from '../../../lib/wykres.js';
+const W = 420, H = 380;
+const S = skala({ x0: -2.1, x1: 3.1, y0: -0.6, y1: 5.2, w: W, h: H, pad: 24, rowne: true });
+const f = (x: number) => x * x;
+const punkty = [
+  { x: -1, t: 'w dół', kl: 'k-w-tr', dx: -12, dy: 4, kotwica: 'end' },
+  { x: 0, t: 'płasko', kl: 'k-w-tw', dx: 0, dy: 26, kotwica: 'middle' },
+  { x: 1, t: 'pod górę', kl: 'k-w-tb', dx: 14, dy: 8, kotwica: 'start' },
+  { x: 2, t: 'stromo', t2: 'pod górę', kl: 'k-w-tb', dx: 14, dy: 0, kotwica: 'start' },
+].map((p) => ({ ...p, l: odcinek(p.x, f(p.x), 2 * p.x, p.x === 2 ? 0.28 : 0.42, S), cx: S.X(p.x), cy: S.Y(f(p.x)) }));
+---
+<figure class="k-fig k-strom">
+  <svg viewBox={`0 0 ${W} ${H}`} class="k-w" role="img" aria-label="Parabola y = x kwadrat i kierunek wykresu w czterech miejscach">
+    <Fragment set:html={osie(S, { siatka: true })} />
+    <path d={sciezka(f, -2.1, 3.1, S)} class="k-w-krzywa" />
+    {punkty.map((p) => (
+      <g>
+        <line class="k-w-styczna" x1={p.l.x1} y1={p.l.y1} x2={p.l.x2} y2={p.l.y2} />
+        <circle class="k-w-pkt" cx={p.cx} cy={p.cy} r="5" />
+        <text class={`k-w-tbig ${p.kl}`} x={p.cx + p.dx} y={p.cy + p.dy} text-anchor={p.kotwica}>{p.t}{p.t2 && <tspan x={p.cx + p.dx} dy="18">{p.t2}</tspan>}</text>
+      </g>
+    ))}
+  </svg>
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+</figure>
+
+<style>
+  .k-strom svg{max-width:420px;}
+</style>

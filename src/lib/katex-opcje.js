@@ -16,6 +16,13 @@ export const KATEX_MAKRA = {
   '\\mH': '\\htmlData{p=#1}{\\htmlClass{k-ch}{#2}}',
   '\\mK': '\\htmlData{p=#1}{\\htmlClass{k-ck}{#2}}',
   '\\mN': '\\htmlData{p=#1}{#2}',
+  // miejsca w szablonie reguły (linia „szablon” w rachunku): \sF{id}{…} — kolor + znacznik data-s="id";
+  // gdy kawałek o tym id wlatuje do wzoru linię niżej, jego miejsce w szablonie się podświetla
+  '\\sF': '\\htmlData{s=#1}{\\htmlClass{k-slot}{\\htmlClass{k-cf}{#2}}}',
+  '\\sG': '\\htmlData{s=#1}{\\htmlClass{k-slot}{\\htmlClass{k-cg}{#2}}}',
+  '\\sH': '\\htmlData{s=#1}{\\htmlClass{k-slot}{\\htmlClass{k-ch}{#2}}}',
+  '\\sK': '\\htmlData{s=#1}{\\htmlClass{k-slot}{\\htmlClass{k-ck}{#2}}}',
+  '\\sN': '\\htmlData{s=#1}{\\htmlClass{k-slot}{#2}}',
 };
 
 export const KATEX_OPCJE = {
