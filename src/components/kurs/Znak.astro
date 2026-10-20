@@ -1,0 +1,16 @@
+---
+// Karta symbolu: jak wygląda, jak się nazywa, jak go czytać, co znaczy i jak go zapamiętać.
+// Kilka kart obok siebie: owiń je w <div class="k-symbole">…</div>.
+import { tex, texInline } from '../../lib/tex.js';
+interface Props { t: string; nazwa: string; czytamy: string; znaczy: string; pamiec?: string }
+const { t, nazwa, czytamy, znaczy, pamiec } = Astro.props;
+---
+<div class="k-symbol">
+  <div class="k-symbol-znak" set:html={tex(t, true)} />
+  <div class="k-symbol-txt">
+    <div class="k-symbol-nazwa">{nazwa}</div>
+    <div class="k-symbol-czyt">czytamy: <b>„{czytamy}”</b></div>
+    <p set:html={texInline(znaczy)} />
+    {pamiec && <p class="k-symbol-pam"><span>Jak zapamiętać:</span> <span set:html={texInline(pamiec)} /></p>}
+  </div>
+</div>

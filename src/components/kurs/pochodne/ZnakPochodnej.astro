@@ -1,0 +1,57 @@
+---
+// Co mówi znak pochodnej — trzy obrazki tej samej funkcji f(x) = x³/3 − x (z rysunku ze styczną):
+// pochodna dodatnia (styczna w górę, funkcja rośnie), ujemna (w dół, maleje), zero (płasko: szczyt albo dołek).
+import { skala, sciezka, odcinek } from '../../../lib/wykres.js';
+import { tex } from '../../../lib/tex.js';
+const f = (x: number) => x ** 3 / 3 - x;
+const fp = (x: number) => x * x - 1;
+const W = 300, H = 210;
+const panel = (x0: number, x1: number, y0: number, y1: number, pkty: number[], dl: number) => {
+  const S = skala({ x0, x1, y0, y1, w: W, h: H, pad: 18 });
+  // krzywa w kawałkach: zielona tam, gdzie rośnie, różowa tam, gdzie maleje (granice w −1 i 1)
+  const kawalki = [[-9, -1, 'b'], [-1, 1, 'r'], [1, 9, 'b']]
+    .map(([a, b, k]) => [Math.max(a as number, x0), Math.min(b as number, x1), k] as [number, number, string])
+    .filter(([a, b]) => b > a)
+    .map(([a, b, k]) => ({ d: sciezka(f, a, b, S, 120), k }));
+  const st = pkty.map((x) => ({ x: S.X(x), y: S.Y(f(x)), l: odcinek(x, f(x), fp(x), dl, S) }));
+  return { S, kawalki, st };
+};
+const P = [
+  { ...panel(1.1, 2.1, -0.75, 1.05, [1.6], 0.3), h: 'Pochodna dodatnia', zapis: "f'(x) > 0", t: 'Styczna idzie w górę. Funkcja <b>rośnie</b> — idziesz pod górę.' },
+  { ...panel(-0.75, 0.75, -0.75, 0.75, [0], 0.3), h: 'Pochodna ujemna', zapis: "f'(x) < 0", t: 'Styczna idzie w dół. Funkcja <b>maleje</b> — schodzisz z górki.' },
+  { ...panel(-2.2, 2.2, -1.25, 1.25, [-1, 1], 0.55), h: 'Pochodna równa zero', zapis: "f'(x) = 0", t: 'Styczna leży płasko. Tu z lewej jest <b>szczyt</b>, a z prawej <b>dołek</b> — w tych miejscach funkcja przestaje rosnąć albo maleć.' },
+];
+---
+<figure class="k-fig k-znak">
+  <div class="k-znak-g">
+    {P.map((p) => (
+      <div class="k-znak-p">
+        <svg viewBox={`0 0 ${W} ${H}`} class="k-w" role="img" aria-label={p.h}>
+          {p.kawalki.map((k) => <path d={k.d} class={`k-w-krzywa k-znak-${k.k}`} />)}
+          {p.st.map((s) => (
+            <g>
+              <line class="k-w-styczna" x1={s.l.x1} y1={s.l.y1} x2={s.l.x2} y2={s.l.y2} />
+              <circle class="k-w-pkt" cx={s.x} cy={s.y} r="5" />
+            </g>
+          ))}
+        </svg>
+        <p class="k-znak-h">{p.h} <span set:html={tex(p.zapis)} /></p>
+        <p class="k-znak-t" set:html={p.t} />
+      </div>
+    ))}
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+</figure>
+
+<style>
+  .k-znak{container:znak / inline-size;}
+  .k-znak-g{display:grid;grid-template-columns:minmax(0,1fr);gap:16px 24px;}
+  @container znak (min-width: 720px){ .k-znak-g{grid-template-columns:repeat(3,minmax(0,1fr));} }
+  .k-znak-p{padding:10px 12px 8px;background:rgba(255,255,255,.025);border-radius:6px;}
+  .k-znak-p svg{max-width:300px;margin:0 auto;}
+  .k-znak-b{stroke:#5ad1a0;}
+  .k-znak-r{stroke:#ff2e97;}
+  .k-znak-h{margin:6px 0 2px!important;font-weight:600;color:#fff;font-size:.95rem;}
+  .k-znak-t{margin:0!important;font-size:.88rem;line-height:1.55;color:var(--muted);}
+  .k-znak-t :global(b){color:var(--text);}
+</style>

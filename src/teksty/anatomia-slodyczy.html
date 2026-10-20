@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia słodyczy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;}
+p{margin:0 0 1.1em;}
+strong{font-weight:600;color:#fff;}
+sup{font-size:.68em;color:var(--gold);}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;}
+.box p:last-child{margin-bottom:0;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.bars{margin:30px 0;} .bars .row{display:flex;align-items:center;gap:10px;margin-bottom:8px;font-size:.85rem;}
+.bars .lab{flex:0 0 140px;color:var(--muted);} .bars .track{flex:1;background:var(--card);height:14px;position:relative;}
+.bars .fill{height:100%;background:var(--gold);} .bars .val{flex:0 0 56px;text-align:right;font-variant-numeric:tabular-nums;}
+.bars .tick{position:absolute;top:-4px;bottom:-4px;width:1px;background:var(--muted);opacity:.6;}
+.bars .title{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:12px;}
+.caption{font-size:.8rem;color:var(--muted);margin-top:8px;line-height:1.5;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0 8px;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .h{font-family:'Fraunces',serif;font-size:1rem;margin-bottom:8px;}
+.twocol .side.ok .h{color:var(--green);} .twocol .side.no .h{color:var(--red);}
+.twocol ul{margin:0;padding-left:1.1em;} .twocol li{margin-bottom:6px;}
+table.t{width:100%;border-collapse:collapse;margin:30px 0 8px;font-size:.88rem;line-height:1.45;}
+table.t th{text-align:left;font-weight:600;color:var(--gold);font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;padding:10px 12px;border-bottom:1px solid var(--line);}
+table.t td{padding:12px;border-bottom:1px solid var(--line);vertical-align:top;}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+.sources{font-size:.85rem;color:var(--muted);line-height:1.6;} .sources li{margin-bottom:8px;}
+.sources a{color:var(--muted);}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;} .bars .lab{flex:0 0 96px;} .twocol{grid-template-columns:1fr;} table.t{font-size:.82rem;}}
+</style>
+</head>
+<body><div class="wrap">
+<header class="top">
+  <div class="kicker">Artykuł badawczy</div>
+  <h1>Anatomia słodyczy</h1>
+  <p class="lede">Otyłość i cukrzyca nie są dwiema nazwami tej samej choroby. Można być szczupłym z chorą wątrobą albo otyłym z dobrymi wynikami. Sprawdzamy, co naprawdę robi z nami cukier, dlaczego ten w płynie jest groźniejszy od tego w jedzeniu i kto przez pół wieku zawdzięczał swoje zyski temu, że winnym był tłuszcz.</p>
+  <div class="meta">Wrzesień 2026 · czas czytania ok. 25 minut</div>
+</header>
+
+<p>Wyobraźmy sobie dwie osoby. Pierwsza jest szczupła, ma prawidłowe BMI i nigdy nie myślała o odchudzaniu. Druga waży wyraźnie za dużo i słyszy o tym przy każdej wizycie u lekarza.</p>
+
+<p>Intuicja podpowiada, że zdrowsza jest ta pierwsza. Często tak jest. Ale nie zawsze. Duże amerykańskie badania pokazują, że wśród szczupłych dorosłych mniej więcej co czwarty ma zaburzenia metaboliczne: podwyższony cukier, ciśnienie albo złe wyniki tłuszczów we krwi. Wśród otyłych mniej więcej co trzeci ma te wyniki w normie.</p>
+
+<p>Ten tekst jest o tym, co dzieje się pod skórą. O tym, dlaczego waga łazienkowa mówi o zdrowiu mniej, niż myślimy, jaką rolę gra w tym cukier i gdzie jego krytycy mają rację, a gdzie przesadzają.</p>
+
+<div class="box"><div class="bt">Zastrzeżenie</div><p>To tekst popularnonaukowy, nie porada medyczna. Otyłość wyraźnie zwiększa ryzyko wielu chorób i nic w tym tekście tego nie zmienia. Chodzi o to, że sama waga nie wystarcza, żeby ocenić czyjeś zdrowie. Wyniki badań warto omawiać z lekarzem.</p></div>
+
+<h2><span class="num">Rozdział pierwszy</span>Szczupli chorzy, otyli zdrowi</h2>
+
+<p>W 2008 roku zespół Rachel Wildman przeanalizował dane z amerykańskiego badania zdrowia NHANES. Sprawdził, ile osób w każdej grupie wagowej ma skupisko zaburzeń metabolicznych, a ile nie.</p>
+
+<table class="t">
+  <tr><th></th><th>Metabolicznie zdrowi</th><th>Metabolicznie chorzy</th></tr>
+  <tr><td><strong>Prawidłowa waga</strong> (BMI &lt; 25)</td><td>ok. 76%</td><td>ok. 24%</td></tr>
+  <tr><td><strong>Otyłość</strong> (BMI ≥ 30)</td><td>ok. 32%</td><td>ok. 68%</td></tr>
+</table>
+<div class="caption">Dorośli w USA, NHANES 1999–2004. „Chorzy” to osoby z co najmniej dwiema nieprawidłowościami: ciśnienie, glukoza, trójglicerydy, cholesterol HDL, stan zapalny, insulinooporność. Wildman i in., 2008.</div>
+
+<p>Większość danych zgadza się z intuicją. Otyłość zdecydowanie częściej idzie w parze z chorobą. Ale te dwa „nieintuicyjne” pola to w samych Stanach kilkadziesiąt milionów ludzi.</p>
+
+<p>Czy szczupłość z chorym metabolizmem jest groźna? Analiza CDC z 2020 roku połączyła dane NHANES z rejestrem zgonów i śledziła ponad 12 tysięcy dorosłych przez maksymalnie 12,5 roku. Najwyższą śmiertelność miały osoby o prawidłowej wadze z <strong>zespołem metabolicznym</strong>, czyli zestawem kilku zaburzeń naraz: dużego obwodu talii, wysokiego ciśnienia, cukru i trójglicerydów oraz niskiego „dobrego” cholesterolu. Ich ryzyko zgonu było o 70 procent wyższe niż u osób bez zespołu. U otyłych z zespołem metabolicznym było wyższe o 30 procent. Różnica między tymi dwiema grupami nie była jednak statystycznie pewna.</p>
+
+<p>Wniosek jest prosty. „Normalna” waga nie chroni, jeśli wyniki krwi są złe.</p>
+
+<h3>Liczy się, gdzie leży tłuszcz</h3>
+
+<p>Co mówi więcej niż waga? Badania obrazowe, na przykład rezonans magnetyczny, który pokazuje, gdzie w ciele odkłada się tłuszcz. Okazuje się, że kluczowa jest nie sama jego ilość, tylko miejsce.</p>
+
+<p>Tłuszcz pod skórą organizm toleruje dość dobrze. Gorzej, gdy odkłada się w wątrobie, trzustce, wokół narządów w jamie brzusznej czy w mięśniach. Taki tłuszcz nazywamy <strong>trzewnym</strong> albo <strong>ektopowym</strong>, czyli „nie na swoim miejscu”. To on wiąże się z insulinoopornością, czyli stanem, w którym komórki słabiej reagują na insulinę i cukier zostaje we krwi.</p>
+
+<p>Zespół Roya Taylora z Uniwersytetu w Newcastle opisał to jako <strong>hipotezę osobistego progu tłuszczowego</strong>. Każdy z nas ma inną, w dużej mierze zapisaną w genach pojemność bezpiecznego magazynowania tłuszczu pod skórą. Kiedy ją przekroczymy, nadmiar zaczyna trafiać tam, gdzie szkodzi. U jednej osoby dzieje się to przy BMI 24, u innej dopiero przy 38.</p>
+
+<p>Dobrze widać to w populacjach z Azji Południowej. Przy tym samym BMI co Europejczycy ludzie ci mają średnio więcej tłuszczu trzewnego i w wątrobie, a mniej mięśni. Dlatego Światowa Organizacja Zdrowia zaleca, by w populacjach azjatyckich podwyższone ryzyko zdrowotne zaczynało się liczyć już od BMI 23, a nie od 25.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">6,8%</div><div class="d">dorosłych Amerykanów miało w latach 2017–2018 optymalne zdrowie sercowo-metaboliczne we wszystkich pięciu badanych obszarach naraz: masa ciała, cukier, tłuszcze we krwi, ciśnienie i brak choroby serca.</div></div>
+  <div class="nrow"><div class="n">55 tys.</div><div class="d">dorosłych objęła ta analiza danych NHANES z lat 1999–2018.</div></div>
+</div>
+
+<p>Mniej niż jeden na czternastu dorosłych jest metabolicznie w pełni zdrowy. A większości tych problemów nie widać gołym okiem.</p>
+
+<h2><span class="num">Rozdział drugi</span>Fabryka w wątrobie</h2>
+
+<p>Teraz cukier. „Cukier” to w rzeczywistości dwie różne cząsteczki. Zwykły cukier stołowy, czyli <strong>sacharoza</strong>, składa się z połowy <strong>glukozy</strong> i połowy <strong>fruktozy</strong>. Mają ten sam wzór chemiczny, ale organizm traktuje je zupełnie inaczej.</p>
+
+<p>Glukozę potrafi wykorzystać niemal każda komórka: mięśnie, mózg, serce. Fruktoza jest przerabiana przede wszystkim w wątrobie, a także w jelicie. Brakuje jej przy tym ważnego hamulca. Przemiany glukozy w komórce spowalnia enzym, który działa jak zawór i przykręca proces, gdy energii jest dość. Fruktoza ten zawór omija.</p>
+
+<p>Co dzieje się z nadmiarem? Wątroba zamienia go w tłuszcz. Ten proces nazywa się <strong>lipogenezą de novo</strong>, czyli dosłownie „wytwarzaniem tłuszczu od nowa”. Przy stałym nadmiarze tłuszcz zaczyna odkładać się w samej wątrobie. Tak powstaje <strong>stłuszczenie wątroby</strong>, dziś nazywane chorobą stłuszczeniową wątroby związaną z zaburzeniami metabolicznymi (MASLD).</p>
+
+<p>Stłuszczona wątroba gorzej reaguje na insulinę. Trzustka produkuje więc jej więcej, żeby utrzymać cukier w normie. To jeden z pierwszych kroków w stronę cukrzycy typu 2.</p>
+
+<h3>Hipoteza Lustiga</h3>
+
+<p>Robert Lustig, endokrynolog dziecięcy z Uniwersytetu Kalifornijskiego w San Francisco, od 2009 roku jest najgłośniejszym krytykiem cukru. Jego teza idzie o krok dalej. Wysoka insulina ma według niego blokować w mózgu działanie <strong>leptyny</strong>, czyli hormonu sytości, który mówi „mamy dość energii, przestań jeść”. Mózg odbiera wtedy sygnał głodu, choć w ciele jest nadmiar energii. Człowiek je więcej, i to nie tylko słodyczy.</p>
+
+<p>To trzeba oznaczyć wyraźnie: to hipoteza, a nie ustalony fakt. Zjawisko tak zwanej <strong>leptynooporności</strong> wywołanej fruktozą dobrze opisano w badaniach na zwierzętach. U ludzi dane są skromniejsze. W krótkich eksperymentach fruktoza wywoływała słabszą reakcję hormonów sytości niż glukoza. Pełny mechanizm u człowieka nie jest jednak rozstrzygnięty.</p>
+
+<h3>Dziewięć dni bez fruktozy</h3>
+
+<p>Zespół Lustiga przeprowadził eksperyment, który często przytacza się jako najmocniejszy dowód. Otyłe dzieci, które zwykle jadły dużo cukru, dostały przez dziewięć dni posiłki o tej samej kaloryczności co dotąd. Jedyna zmiana: cukier zastąpiono skrobią, a udział fruktozy w kaloriach spadł do około 4 procent.</p>
+
+<p>Po dziewięciu dniach zmniejszyła się ilość tłuszczu w wątrobie i tłuszczu trzewnego. Wątroba wytwarzała mniej tłuszczu, a organizm lepiej reagował na insulinę. Badacze starali się utrzymać wagę dzieci bez zmian. Spadła tylko nieznacznie.</p>
+
+<p>To ciekawy wynik, ale ma ważne ograniczenie. Badanie nie miało grupy kontrolnej, czyli dzieci, które przez te same dziewięć dni jadłyby po staremu. Nie da się więc wykluczyć, że część efektu dała sama zmiana otoczenia i kontrola diety. Wynik pasuje do hipotezy, ale jej nie dowodzi.</p>
+
+<h2><span class="num">Rozdział trzeci</span>Cukier w płynie i cukier w jedzeniu</h2>
+
+<p>Skoro mechanizm wygląda groźnie, dlaczego duże badania nie zawsze pokazują silny związek między cukrem a cukrzycą? Odpowiedź jest jednym z ciekawszych odkryć ostatnich lat. Liczy się forma, w jakiej cukier trafia do organizmu.</p>
+
+<p>W 2025 roku ukazała się metaanaliza, czyli zbiorcza analiza wielu badań, obejmująca 25 dużych badań i ponad 800 tysięcy osób.</p>
+
+<div class="bars">
+  <div class="title">Zmiana ryzyka cukrzycy typu 2</div>
+  <div class="row"><div class="lab">Napoje słodzone, +1 porcja dziennie</div><div class="track"><div class="fill" style="width:100%;background:var(--red)"></div></div><div class="val">+25%</div></div>
+  <div class="row"><div class="lab">Sok owocowy, +1 porcja dziennie</div><div class="track"><div class="fill" style="width:20%;background:var(--red)"></div></div><div class="val">+5%</div></div>
+  <div class="row"><div class="lab">Cukier dodany, +20 g dziennie</div><div class="track"><div class="fill" style="width:2%"></div></div><div class="val">bez zmian</div></div>
+  <div class="row"><div class="lab">Cukier ogółem, +20 g dziennie</div><div class="track"><div class="fill" style="width:16%;background:var(--green)"></div></div><div class="val">−4%</div></div>
+  <div class="caption">Metaanaliza badań kohortowych, <em>Advances in Nutrition</em>, 2025. „Cukier ogółem” obejmuje też cukry naturalnie obecne w owocach i nabiale.</div>
+</div>
+
+<p>Ten wykres łatwo źle odczytać. Nie znaczy on, że słodycze można jeść bez ograniczeń. Mówi dwie rzeczy naraz.</p>
+
+<p>Po pierwsze, cukier w płynie jest wyraźnie związany z ryzykiem cukrzycy. Dotyczy to słodzonych napojów, a w mniejszym stopniu soków. Pasuje to do mechanizmu z poprzedniego rozdziału. Napój dostarcza dużą dawkę fruktozy w kilka sekund, bez błonnika i bez żucia. Wątroba dostaje ją naraz.</p>
+
+<p>Po drugie, cukier w jedzeniu bardzo trudno wyodrębnić w badaniach obserwacyjnych. Rzadko jemy go osobno. Trafia do nas razem z białą mąką, tłuszczem, solą i owocami, które mają też błonnik. Dlatego „cukier ogółem” wypada w tej analizie neutralnie, a nawet lekko korzystnie: duża część to cukier z owoców i nabiału.</p>
+
+<p>Jest jeszcze trzecia warstwa. Cukier jest dziś w ogromnej części produktów z półki: w sosach, ketchupie, pieczywie, jogurtach „light”. Kto próbuje go ograniczać, kupując zwykłe gotowe produkty, szybko odkrywa, że to trudniejsze, niż się wydaje.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Dwa modele, wspólny mianownik</h2>
+
+<p>W nauce o otyłości od lat toczy się spór między dwoma wyjaśnieniami.</p>
+
+<div class="twocol">
+  <div class="side"><div class="h">Model bilansu energetycznego</div>Tyjemy, bo jemy więcej kalorii, niż spalamy. Do przejadania skłania nas gęste energetycznie, smaczne, mocno przetworzone jedzenie.</div>
+  <div class="side"><div class="h">Model węglowodanowo-insulinowy</div>Szybko trawione węglowodany podnoszą insulinę. Insulina każe komórkom tłuszczowym magazynować energię, a organizm, któremu „brakuje” paliwa we krwi, wysyła sygnał głodu.</div>
+</div>
+
+<p>Przegląd tego sporu w czasopiśmie <em>Cell Metabolism</em> z 2023 roku kończy się wnioskiem, że żaden z modeli nie ma jeszcze pełnego, potwierdzonego wyjaśnienia mechanizmu.</p>
+
+<p>Wiele wskazuje na to, że wspólnym mianownikiem jest <strong>żywność ultraprzetworzona</strong>. To produkty z przemysłowych składników, które w domowej kuchni rzadko występują: izolatów białek, syropów, utwardzonych tłuszczów, wzmacniaczy smaku. Sam Lustig w nowszych wypowiedziach mówi, że to ona, a nie cukier w pojedynkę, jest głównym problemem.</p>
+
+<p>Najczystszy eksperyment na ten temat przeprowadził Kevin Hall z amerykańskich Narodowych Instytutów Zdrowia w 2019 roku. Dwadzieścia osób spędziło miesiąc na oddziale klinicznym. Przez dwa tygodnie jadły dietę mocno przetworzoną, przez dwa tygodnie nieprzetworzoną, w losowej kolejności. Obie diety oferowały tyle samo kalorii, cukru, tłuszczu, soli i błonnika. Uczestnicy mogli jeść, ile chcieli.</p>
+
+<p>Na diecie przetworzonej zjadali średnio o 508 kcal dziennie więcej i przybierali na wadze. Coś w tych produktach, może tempo jedzenia, może tekstura, może połączenie składników, popycha nas do przejadania się, nawet przy tej samej ilości cukru. To nie unieważnia argumentu o cukrze. Poszerza go.</p>
+
+<h2><span class="num">Rozdział piąty</span>Dlaczego winny był tłuszcz</h2>
+
+<p>Żeby zrozumieć, czemu przekaz o cukrze tak mocno trafił do ludzi, trzeba cofnąć się o pół wieku.</p>
+
+<p>W 2016 roku badacze z Uniwersytetu Kalifornijskiego w San Francisco opublikowali analizę wewnętrznych dokumentów Sugar Research Foundation, amerykańskiej organizacji przemysłu cukrowniczego. Wynikało z nich, że w 1965 roku fundacja sfinansowała przegląd badań opublikowany w prestiżowym <em>New England Journal of Medicine</em>. Przegląd wskazywał tłuszcz i cholesterol jako główne dietetyczne przyczyny chorób serca i pomniejszał dowody przeciw cukrowi.</p>
+
+<p>Fundacja ustaliła cel przeglądu, podsuwała prace do cytowania i dostawała wersje robocze. Jej udziału nie ujawniono. Już w 1954 roku przedstawiciel branży zauważył, że gdyby Amerykanie przeszli na dietę niskotłuszczową, spożycie cukru mogłoby wzrosnąć o ponad jedną trzecią.</p>
+
+<p>To nie dowodzi, że cukier jest groźny, a tłuszcz bezpieczny. To osobne pytania. Ale wyjaśnia, dlaczego przez dekady w wytycznych i w głowach ludzi to tłuszcz był głównym winowajcą. Część tego konsensusu była produktem lobbingu, a nie czystej nauki.</p>
+
+<h2><span class="num">Rozdział szósty</span>Rachunek</h2>
+
+<p>Ile to kosztuje? Najlepiej policzone są dane amerykańskie.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">413 mld $</div><div class="d">łączny koszt cukrzycy w USA w 2022 roku, licząc leczenie i utraconą produktywność.</div></div>
+  <div class="nrow"><div class="n">1 z 4</div><div class="d">dolarów wydawanych w USA na opiekę zdrowotną idzie na leczenie osób z cukrzycą.</div></div>
+  <div class="nrow"><div class="n">~90%</div><div class="d">rocznych wydatków na zdrowie w USA dotyczy osób z chorobami przewlekłymi i zaburzeniami psychicznymi.</div></div>
+</div>
+
+<p>Nie da się dokładnie policzyć, ile z tego „należy się” cukrowi. Działa on przez wiele mechanizmów naraz i nigdy nie występuje sam. Kierunek jest jednak jasny.</p>
+
+<p>Z tego płynie jeden praktyczny wniosek. Kiedy zdrowe jedzenie sprowadzamy wyłącznie do indywidualnej odpowiedzialności, pomijamy, że po drugiej stronie stoi przemysł, który wydaje ogromne pieniądze, żeby konkretne produkty były tańsze, smaczniejsze i bardziej dostępne niż zdrowsze zamienniki. Rada „jedz mniej cukru” jest dobra dla jednej osoby. Jako jedyna strategia zdrowia publicznego jest naiwna.</p>
+
+<h2><span class="num">Rozdział siódmy</span>Cukier, trójglicerydy i serce</h2>
+
+<p>Ten sam mechanizm w wątrobie prowadzi też do serca. Część tłuszczu, który wątroba wytwarza z nadmiaru fruktozy, wypływa do krwi jako <strong>trójglicerydy</strong>. Wysokie trójglicerydy zmieniają z czasem cząsteczki „złego” cholesterolu LDL. Stają się mniejsze i gęstsze.</p>
+
+<p>Małe, gęste cząsteczki LDL łatwiej wnikają w ścianę tętnicy i łatwiej się utleniają. Przy tym samym poziomie cholesterolu LDL profil z przewagą małych cząsteczek wiąże się z wyższym ryzykiem chorób serca. Nadmiar cukru, zwłaszcza w napojach, może więc pogarszać wyniki krwi na długo przed tym, zanim ktokolwiek usłyszy diagnozę „stan przedcukrzycowy”.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Kiedy wyboru nie ma</h2>
+
+<p>Cała ta dyskusja zakłada, że mamy wybór między zdrową a niezdrową opcją. Dla ogromnej części ludzi go nie ma.</p>
+
+<p>Według raportu agend ONZ z 2026 roku zdrowa dieta, czyli taka, która spełnia zalecenia żywieniowe, a nie tylko daje kalorie, kosztowała w 2025 roku średnio 4,28 dolara dziennie na osobę, licząc według siły nabywczej. Nie stać na nią około 2,7 miliarda ludzi, mniej więcej co trzeciej osoby na świecie. W Afryce to dwie trzecie mieszkańców.</p>
+
+<p>Problem dotyczy też bogatych krajów. Według amerykańskiego Departamentu Rolnictwa około 39,5 miliona Amerykanów mieszka na obszarach o niskich dochodach i daleko od dużego sklepu spożywczego, tak zwanych <strong>pustyniach żywnościowych</strong>.</p>
+
+<div class="box"><div class="bt">Jak karmią dzieci szkoły</div><p>Dobrym przykładem roli państwa są szkolne obiady. Finlandia w 1948 roku jako pierwszy kraj na świecie wprowadziła darmowe posiłki dla wszystkich uczniów, gotowane w większości na miejscu. W USA reforma szkolnych posiłków z 2010 roku (Healthy, Hunger-Free Kids Act) podniosła standardy żywieniowe. Analiza w <em>Health Affairs</em> wykazała, że po jej wprowadzeniu ryzyko otyłości u dzieci z ubogich rodzin wyraźnie spadło, choć w całej populacji dzieci zmiana nie była istotna. Darmowe obiady dla najmłodszych uczniów w Anglii i Szkocji zmniejszyły udział żywności ultraprzetworzonej w ich lunchach, najbardziej u dzieci z najuboższych rodzin.</p></div>
+
+<p>Biochemia decyduje, co dzieje się w komórce, kiedy cukier już do niej trafi. Ale to, czy ktoś w ogóle ma wybór, rozstrzyga się dużo wcześniej: na poziomie ceny, odległości do sklepu i dochodu.</p>
+
+<h2><span class="num">Zakończenie</span>To, co pod skórą</h2>
+
+<p>Na koniec dobra wiadomość. Wiele z tego da się cofnąć. Brytyjskie badanie DiRECT objęło osoby, u których cukrzycę typu 2 rozpoznano w ciągu ostatnich sześciu lat. Uczestnicy przeszli program redukcji masy ciała prowadzony w zwykłych przychodniach. Po roku 46 procent z nich miało prawidłowy poziom cukru bez leków. Po dwóch latach 36 procent. Im więcej ktoś schudł, tym większa była szansa na takie cofnięcie się choroby.</p>
+
+<p>Wróćmy do dwóch osób z początku. Szczupłej i otyłej. Waga mówi o nich mniej, niż się wydaje.</p>
+
+<p>Fruktoza w nadmiarze, zwłaszcza w płynie, stłuszcza wątrobę i popycha metabolizm w stronę cukrzycy. To dobrze udokumentowane. Cukier nie jest jednak jedynym winowajcą. Szerszym problemem jest żywność ultraprzetworzona, a jeszcze szerszym to, że zdrowa dieta dla wielu ludzi po prostu nie jest dostępna.</p>
+
+<p>Plakat „cukier to trucizna” jest za prosty. Rzeczywistość jest bardziej złożona, ale też ciekawsza. I daje więcej możliwości działania.</p>
+
+<hr class="sep">
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+<ol class="sources">
+  <li>Wildman R.P., Muntner P., Reynolds K. i in., „The Obese Without Cardiometabolic Risk Factor Clustering and the Normal Weight With Cardiometabolic Risk Factor Clustering”, <em>Archives of Internal Medicine</em> 168(15): 1617–1624, 2008.</li>
+  <li>„The Influence of Metabolic Syndrome in Predicting Mortality Risk Among US Adults: Importance of Metabolic Syndrome Even in Adults With Normal Weight”, <em>Preventing Chronic Disease</em> (CDC) 17, 2020. <a href="https://www.cdc.gov/pcd/issues/2020/20_0020.htm">cdc.gov</a></li>
+  <li>Stefan N. i in., „Identification and characterization of metabolically benign obesity in humans”, <em>Archives of Internal Medicine</em> 168(15): 1609–1616, 2008.</li>
+  <li>Taylor R., Holman R.R., „Normal weight individuals who develop type 2 diabetes: the personal fat threshold”, <em>Clinical Science</em> 128(7): 405–410, 2015; Taylor R. i in., badanie ReTUNE, <em>Diabetic Medicine</em>, 2023.</li>
+  <li>Sattar N., Gill J.M.R., „Type 2 diabetes in migrant south Asians: mechanisms, mitigation, and management”, <em>The Lancet Diabetes &amp; Endocrinology</em> 3(12): 1004–1016, 2015.</li>
+  <li>WHO Expert Consultation, „Appropriate body-mass index for Asian populations and its implications for policy and intervention strategies”, <em>The Lancet</em> 363: 157–163, 2004.</li>
+  <li>O’Hearn M., Lauren B.N., Wong J.B., Kim D.D., Mozaffarian D., „Trends and Disparities in Cardiometabolic Health Among U.S. Adults, 1999–2018”, <em>Journal of the American College of Cardiology</em> 80(2): 138–151, 2022.</li>
+  <li>Jensen T. i in., „Fructose and sugar: A major mediator of non-alcoholic fatty liver disease”, <em>Journal of Hepatology</em> 68(5): 1063–1075, 2018.</li>
+  <li>Shapiro A. i in., „Fructose-induced leptin resistance exacerbates weight gain in response to subsequent high-fat feeding”, <em>American Journal of Physiology</em> 295(5): R1370–R1375, 2008.</li>
+  <li>Teff K.L. i in., „Dietary fructose reduces circulating insulin and leptin, attenuates postprandial suppression of ghrelin, and increases triglycerides in women”, <em>Journal of Clinical Endocrinology &amp; Metabolism</em> 89(6): 2963–2972, 2004.</li>
+  <li>Lustig R.H. i in., „Isocaloric fructose restriction and metabolic improvement in children with obesity and metabolic syndrome”, <em>Obesity</em> 24(2): 453–460, 2016; Schwarz J.M. i in., „Effects of Dietary Fructose Restriction on Liver Fat, De Novo Lipogenesis, and Insulin Kinetics in Children With Obesity”, <em>Gastroenterology</em> 153(3): 743–752, 2017.</li>
+  <li>„Dietary Sugar Intake and Incident Type 2 Diabetes Risk: A Systematic Review and Dose-Response Meta-Analysis of Prospective Cohort Studies”, <em>Advances in Nutrition</em>, 2025. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12145082/">ncbi.nlm.nih.gov</a></li>
+  <li>Hopkins M., Blundell J.E., „Moderating ‘the great debate’: The carbohydrate-insulin vs. the energy balance models of obesity”, <em>Cell Metabolism</em>, 2023.</li>
+  <li>Lustig R.H., wywiad w podcaście Huberman Lab, grudzień 2023 (stanowisko autora, nie dowód naukowy).</li>
+  <li>Hall K.D. i in., „Ultra-Processed Diets Cause Excess Calorie Intake and Weight Gain: An Inpatient Randomized Controlled Trial of Ad Libitum Food Intake”, <em>Cell Metabolism</em> 30(1): 67–77, 2019.</li>
+  <li>Kearns C.E., Schmidt L.A., Glantz S.A., „Sugar Industry and Coronary Heart Disease Research: A Historical Analysis of Internal Industry Documents”, <em>JAMA Internal Medicine</em> 176(11): 1680–1685, 2016.</li>
+  <li>Parker E.D. i in., „Economic Costs of Diabetes in the U.S. in 2022”, <em>Diabetes Care</em> 47(1): 26–43, 2024.</li>
+  <li>CDC, „Fast Facts: Health and Economic Costs of Chronic Conditions”. <a href="https://www.cdc.gov/chronic-disease/data-research/facts-stats/index.html">cdc.gov</a></li>
+  <li>Rizzo M., Berneis K., „Low-density lipoprotein size and cardiovascular risk assessment”, <em>QJM</em> 99(1): 1–14, 2006.</li>
+  <li>FAO, IFAD, UNICEF, WFP, WHO, <em>The State of Food Security and Nutrition in the World 2026</em>; omówienie: <a href="https://www.upi.com/Top_News/World-News/2026/07/21/Switzerland-UN-report-healthy-diet-cost-hike/4471784630485/">UPI, 21.07.2026</a>.</li>
+  <li>USDA Economic Research Service, Food Access Research Atlas (dane za 2015 rok).</li>
+  <li>Ministerstwo Edukacji i Kultury Finlandii / Finnish National Agency for Education, „School meals in Finland”.</li>
+  <li>Kenney E.L. i in., „Impact Of The Healthy, Hunger-Free Kids Act On Obesity Trends”, <em>Health Affairs</em> 39(7): 1122–1129, 2020.</li>
+  <li>„Evaluating the impact of the universal infant free school meal policy on the ultra-processed food content of children’s lunches in England and Scotland: a natural experiment”, <em>International Journal of Behavioral Nutrition and Physical Activity</em>, 2024.</li>
+  <li>Lean M.E.J. i in., „Primary care-led weight management for remission of type 2 diabetes (DiRECT)”, <em>The Lancet</em> 391: 541–551, 2018; Lean M.E.J. i in., wyniki po 24 miesiącach, <em>The Lancet Diabetes &amp; Endocrinology</em> 7(5): 344–355, 2019.</li>
+</ol>
+
+<footer class="end">Stan wiedzy: wrzesień 2026. Tekst ma charakter informacyjny i nie zastępuje porady lekarza ani dietetyka.</footer>
+
+</div></body></html>

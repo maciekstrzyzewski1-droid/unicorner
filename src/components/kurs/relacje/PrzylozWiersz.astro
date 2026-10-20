@@ -1,0 +1,12 @@
+---
+// Jedna komórka złożenia rozpisana: wiersz x z P pod kolumną z z Q, wspólne jedynki na zielono, zdanie z wnioskiem.
+import { dlaczegoZlozenie } from '../../../lib/relacje.js';
+type El = number | string;
+interface Props { A: El[]; B: El[]; C: El[]; mP: number[][]; mQ: number[][]; i: number; k: number; nP?: string; nQ?: string }
+const { A, B, C, mP, mQ, i, k, nP = 'P', nQ = 'Q' } = Astro.props;
+---
+<div class="k-plw" set:html={dlaczegoZlozenie(mP, mQ, A, B, C, i, k, nP, nQ)} />
+
+<style>
+  .k-plw{margin:.6em 0 .9em;padding:8px 12px;border-left:2px solid var(--ok);background:rgba(90,209,160,.06);font-size:.93rem;line-height:1.6;overflow-x:auto;}
+</style>

@@ -1,0 +1,530 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: matematyka
+slug: ekstrema-warunkowe
+title: Ekstrema warunkowe
+podtytul: metoda mnożników Lagrange’a
+description: Ekstrema warunkowe funkcji dwóch zmiennych od zera — warunek φ(x, y) = 0, funkcja Lagrange’a, układ trzech równań, wyznacznik macierzy 3 × 3 regułą Sarrusa i warunek dostateczny. Wszystkie zadania z listy krok po kroku.
+lede: Czasem nie wolno wybrać dowolnej pary liczb — budżet, czas albo przepis narzuca warunek. Nauczysz się szukać największej i najmniejszej wartości funkcji tylko wśród punktów, które ten warunek spełniają — procedurą z zajęć, metodą Lagrange’a.
+wyglad: szeroki
+wymaga: Pochodne cząstkowe (moduł 10), układy równań (moduł 5) i wyznacznik 3 × 3 regułą Sarrusa (moduł 4) — przypominamy je na miejscu.
+umiesz:
+  - zapisać warunek w postaci φ(x, y) = 0 i utworzyć funkcję Lagrange’a
+  - policzyć pochodne cząstkowe funkcji Lagrange’a, traktując λ jak liczbę
+  - rozwiązać układ trzech równań i znaleźć punkty stacjonarne razem z ich λ
+  - ułożyć macierz 3 × 3 ze slajdu i policzyć jej wyznacznik regułą Sarrusa
+  - rozstrzygnąć, czy w punkcie jest maksimum, czy minimum warunkowe, i policzyć jego wartość
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Legenda from '../../components/kurs/Legenda.astro';
+import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import Mx from '../../components/kurs/macierze/Mx.astro';
+import Tx from '../../components/kurs/macierze/Tx.astro';
+import Przekatne from '../../components/kurs/macierze/Przekatne.astro';
+import CwiczenieLiczby from '../../components/kurs/macierze/CwiczenieLiczby.astro';
+import Rachunek from '../../components/kurs/pochodne/Rachunek.astro';
+import Przyklad from '../../components/kurs/pochodne/Przyklad.astro';
+import Powierzchnia from '../../components/kurs/wielu/Powierzchnia.astro';
+import Odpowiedzi from '../../components/kurs/wielu/Odpowiedzi.astro';
+import { ZAD as Z } from '../../lib/warunkowe-zadania.js';
+import { ETAPY_W } from '../../lib/warunkowe.js';
+
+export const R = String.raw;
+export const tyt = (d) => `$${d.fsam}$, przy warunku $${d.warunek}$`;
+export const LX = R`\frac{\partial L}{\partial x}`;
+export const LY = R`\frac{\partial L}{\partial y}`;
+export const HB = R`\overline{H}`;
+export const KOL = [[1, 0, 0], [0, 4, 4], [0, 4, 4]];
+export const KAT_W = ['maksimum warunkowe', 'minimum warunkowe', 'nie wiadomo'];
+export const MCW = [[0, 2, 2], [2, -1, 0], [2, 0, -1]];
+export const mcwDlaczego = (i, j) => [
+  [R`Lewy górny róg macierzy to zawsze $0$ — tak jest na slajdzie.`, R`$\frac{\partial \phi}{\partial x} = 2x$, w punkcie: $2 \cdot 1 = 2$.`, R`$\frac{\partial \phi}{\partial y} = 2y$, w punkcie: $2 \cdot 1 = 2$.`],
+  [R`Pierwsza kolumna to ten sam brzeg co pierwszy wiersz: $\frac{\partial \phi}{\partial x} = 2$.`, R`$\frac{\partial^2 L}{\partial x^2} = 2\lambda$, a $\lambda = -\frac12$: $2 \cdot \left(-\frac12\right) = -1$.`, R`$\frac{\partial^2 L}{\partial x \partial y} = 0$ — w $\frac{\partial L}{\partial x} = 1 + 2\lambda x$ nie ma $y$.`],
+  [R`$\frac{\partial \phi}{\partial y} = 2$ — ten sam brzeg co w pierwszym wierszu.`, R`Pochodna mieszana: $0$ (jak nad przekątną).`, R`$\frac{\partial^2 L}{\partial y^2} = 2\lambda = 2 \cdot \left(-\frac12\right) = -1$.`],
+][i][j];
+
+## Po co to jest
+
+Masz $100$ zł i chcesz kupić dwie rzeczy: $x$ sztuk jednej i $y$ sztuk drugiej. Twoje zadowolenie zależy od obu liczb — to funkcja $f(x, y)$ z modułu 10. Ale nie wybierasz dowolnej pary: musisz zmieścić się w budżecie. To jest **warunek** — dodatkowe równanie, które $x$ i $y$ muszą spełniać.
+
+Na rysunku: funkcja $f(x, y) = 6 - 4x - 3y$ (Zad. 1 a)) to pochyła płaszczyzna — nie ma ani szczytu, ani dołka. Warunek $x^2 + y^2 = 1$ to okrąg. Wolno chodzić tylko po różowej ścieżce nad tym okręgiem. Na ścieżce **jest** najwyższy i najniższy punkt:
+
+<Powierzchnia fn={(x, y) => 6 - 4 * x - 3 * y} zakres={{ x0: -1.3, x1: 1.3, y0: -1.3, y1: 1.3 }} z={[-4, 16]} n={12} skalaZ={0.55} osie={false} sciezki={[{ xy: (t) => [Math.cos(t), Math.sin(t)], t0: 0, t1: 2 * Math.PI, kl: 'is-m', cien: true }]} punkty={[{ x: -0.8, y: -0.6, t: 'najwyżej: 11', pion: true, dy: -12 }, { x: 0.8, y: 0.6, t: 'najniżej: 1', pion: true, dy: 22 }]} leg={[['roz', 'ścieżka: punkty wykresu nad okręgiem $x^2 + y^2 = 1$ (linia przerywana na podłodze)'], ['bialy', 'najwyższy i najniższy punkt ścieżki']]}>
+siatka to wykres $f$ — pochyła płaszczyzna. Przerywany różowy okrąg na podłodze to warunek: tylko takie pary $(x, y)$ są dozwolone. Ciągła różowa linia to wysokości $f$ nad tymi punktami. Najwyżej ścieżka wznosi się do $11$, najniżej opada do $1$ — to **maksimum i minimum warunkowe**. Pod koniec modułu znajdziesz je z samych wzorów.
+</Powierzchnia>
+
+Bez warunku ta funkcja nie ma ekstremów (procedura z modułu 10 dałaby sprzeczny układ $-4 = 0$). Z warunkiem — ma. Dlatego potrzebna jest osobna metoda.
+
+### Jak przejdziemy przez ten moduł
+
+1. **Pojęcia** ([sekcja 3](#pojecia)): warunek $\phi(x, y) = 0$, ekstremum warunkowe, funkcja Lagrange’a z mnożnikiem $\lambda$ i macierz $3 \times 3$ ze slajdu.
+2. **Procedura z zajęć** w sześciu krokach — na wszystkich siedmiu przykładach z listy.
+
+## Co będzie na kolokwium
+
+Na liście jest jedno polecenie: Zad. 1, siedem przykładów a)–g). Poniżej to polecenie i trzy jego części, które mogą paść osobno — od najprostszej. Każda ma w module swój przepis i ćwiczenia.
+
+To na razie tylko mapa — nie musisz jeszcze rozumieć tych pojęć. Wrócisz tu, gdy będziesz szukać przepisu.
+
+<Polecenia items={[
+  { polecenie: R`Zapisz funkcję Lagrange’a dla funkcji $f(x, y)$ i warunku $\phi(x, y)$`, jak: R`Warunek przepisujesz tak, żeby po prawej stało $0$. Lewa strona to $\phi(x, y)$. Potem $L = f + \lambda \cdot \phi$.`, przepis: 'polecenie-lagrange', cwiczenia: 'cw-lagrange', zrodlo: 'krok 1 procedury' },
+  { polecenie: R`Wyznacz punkty stacjonarne (rozwiąż układ trzech równań)`, jak: R`$\frac{\partial L}{\partial x} = 0$, $\frac{\partial L}{\partial y} = 0$ i warunek $\phi = 0$. Zwykle: $x$ i $y$ wyrażasz przez $\lambda$ i wstawiasz do warunku.`, przepis: 'polecenie-uklad', cwiczenia: 'cw-uklad', zrodlo: 'kroki 2–3 procedury' },
+  { polecenie: R`Policz wyznacznik macierzy ze slajdu w punkcie stacjonarnym`, jak: R`Macierz $3 \times 3$: w rogu $0$, na brzegu pochodne $\phi$, w środku drugie pochodne $L$. Wstawiasz punkt i jego $\lambda$, liczysz regułą Sarrusa.`, przepis: 'polecenie-wyznacznik', cwiczenia: 'cw-wyznacznik', zrodlo: 'kroki 4–5 procedury' },
+  { polecenie: R`Znajdź ekstrema funkcji $f(x, y)$ przy warunku $\phi(x, y)$ metodą mnożników Lagrange’a`, jak: R`Cała procedura: funkcja Lagrange’a, układ trzech równań, wyznacznik w każdym punkcie. Wyznacznik $> 0$ — maksimum, $< 0$ — minimum.`, przepis: 'polecenie-ekstrema', cwiczenia: 'cw-ekstrema', zrodlo: 'Zad. 1 a)–g)' },
+]} />
+
+<a id="pojecia" class="k-anchor"></a>
+
+## Pojęcia od podstaw
+
+Pójdziemy tak: warunek → ekstremum warunkowe → funkcja Lagrange’a → macierz ze slajdu i jej wyznacznik.
+
+### Warunek ograniczający $\phi(x, y) = 0$
+
+Slajd z zajęć: przypuśćmy, że istnieje **warunek ograniczający** postaci $\phi(x, y) = 0$. To równanie, które muszą spełniać $x$ i $y$. Para, która go nie spełnia, odpada — nawet jeśli funkcja ma w niej dużą wartość.
+
+<div class="k-symbole">
+  <Znak t="\phi(x, y)" nazwa="Warunek (fi)" czytamy="fi od iks, igrek" znaczy="Lewa strona warunku zapisanego tak, że po prawej stoi zero. Dla warunku $x + y = 1$: przenosisz $1$ na lewo, wychodzi $x + y - 1 = 0$, więc $\phi(x, y) = x + y - 1$." pamiec="Grecka litera $\phi$ („fi”) to tylko nazwa — jak $f$, ale dla warunku." />
+</div>
+
+Na liście warunek jest zapisany np. jako „$\phi(x, y)\colon x^2 + y^2 = 1$” — to skrót od „warunek: $x^2 + y^2 = 1$”. Samo $\phi(x, y)$ to dalej lewa strona po przeniesieniu wszystkiego na lewo. Warunek z treści prawie nigdy nie ma od razu postaci „$\ldots = 0$”. Przepisujesz go tak samo za każdym razem:
+
+<Rozbior t="\begin{aligned} &x^2 + y^2 = 1 \\ &\iff x^2 + y^2 - 1 = 0 \\ &\Rightarrow \ \phi(x, y) = x^2 + y^2 - 1 \end{aligned}" czytamy="iks kwadrat plus igrek kwadrat równa się jeden, czyli iks kwadrat plus igrek kwadrat minus jeden równa się zero, więc fi od iks, igrek to iks kwadrat plus igrek kwadrat minus jeden" czesci={[
+  { t: 'x^2 + y^2 = 1', o: 'warunek z treści (Zad. 1 a))' },
+  { t: 'x^2 + y^2 - 1 = 0', o: 'liczbę $1$ przenosisz na lewą stronę ze zmianą znaku — po prawej zostaje $0$' },
+  { t: '\\phi(x, y) = x^2 + y^2 - 1', o: 'lewa strona to $\\phi$ — <b>bez</b> „$= 0$”' },
+]} />
+
+Które punkty spełniają warunek $x^2 + y^2 = 1$? Wstaw i sprawdź:
+
+| punkt | rachunek | spełnia? |
+|---|---|---|
+| $(1, 0)$ | $1^2 + 0^2 = 1 + 0 = 1$ | tak |
+| $\left(\frac45, \frac35\right)$ | $\frac{16}{25} + \frac{9}{25} = \frac{25}{25} = 1$ | tak |
+| $(1, 1)$ | $1^2 + 1^2 = 1 + 1 = 2 \neq 1$ | nie |
+
+Jak czytać tabelę: pierwsza liczba w nawiasie trafia w miejsce $x$, druga — w miejsce $y$. Punkt jest dozwolony tylko wtedy, gdy wychodzi dokładnie prawa strona warunku ($1$).
+
+<Ramka kind="liceum" tytul="Okrąg i prosta w równaniu">
+- $x^2 + y^2 = r^2$ to okrąg o środku $(0, 0)$ i promieniu $r$. W Zad. 1 a) i d) $r = 1$, w Zad. 1 e) $r = \sqrt5$.
+- $ax + by + c = 0$ to prosta. W Zad. 1 b), c), f) warunek to prosta.
+- W Zad. 1 g) warunek $(x + 7)(y - 8) = 0$ to dwie proste naraz: $x = -7$ i $y = 8$.
+</Ramka>
+
+### Ekstremum warunkowe
+
+Slajd z zajęć: **ekstremum warunkowe** to taki typ ekstremum, dla którego od punktów stacjonarnych wymaga się spełnienia dodatkowych warunków. Prościej: szukasz najwyższego i najniższego punktu wykresu, ale **tylko nad punktami warunku** — na ścieżce, nie na całej powierzchni.
+
+Ekstremum warunkowe to co innego niż bezwarunkowe. Zad. 1 b): $f(x, y) = x^2 + y^2$ to miska z dnem w $(0, 0)$. Ale $(0, 0)$ nie spełnia warunku $x + 4y - 2 = 0$ (wychodzi $0 + 0 - 2 = -2 \neq 0$). Na ścieżce najniżej jest gdzie indziej:
+
+<Powierzchnia fn={(x, y) => x * x + y * y} zakres={{ x0: -1.2, x1: 1.6, y0: -0.6, y1: 1.2 }} z={[0, 3.2]} n={12} osie={false} sciezki={[{ xy: (t) => [2 - 4 * t, t], t0: 0.1, t1: 0.8, kl: 'is-m', cien: true }]} punkty={[{ x: 0, y: 0, t: 'dno miski', kl: 'is-brak', dy: 22 }, { x: 2 / 17, y: 8 / 17, t: 'najniżej na ścieżce', pion: true, dx: 10, dy: -12, anchor: 'start' }]} leg={[['roz', 'ścieżka nad prostą $x + 4y - 2 = 0$'], ['pusta', 'dno miski — minimum bezwarunkowe (poza warunkiem)'], ['bialy', 'minimum warunkowe']]}>
+miska $f(x, y) = x^2 + y^2$ i ścieżka nad prostą $x + 4y = 2$ (przerywana na podłodze). Dno miski, $(0, 0)$, nie leży na prostej — tam nie wolno wejść. Najniższy punkt ścieżki to $\left(\frac{2}{17}, \frac{8}{17}\right)$ z wartością $\frac{4}{17}$ — wyżej niż dno, ale to najlepsze, na co pozwala warunek.
+</Powierzchnia>
+
+<Ramka kind="zapamietaj" tytul="Ekstremum warunkowe — co to znaczy">
+Maksimum (minimum) warunkowe to punkt, w którym $f$ ma największą (najmniejszą) wartość **wśród pobliskich punktów spełniających warunek** $\phi(x, y) = 0$. Punkty poza warunkiem w ogóle się nie liczą.
+</Ramka>
+
+### Funkcja Lagrange’a i mnożnik $\lambda$
+
+Slajd z zajęć: w celu znalezienia ekstremum warunkowego funkcji $f(x, y)$ dla warunku $\phi(x, y)$ należy utworzyć pomocniczo **funkcję Lagrange’a**:
+
+<Rozbior t="L(x, y) = f(x, y) + \lambda \cdot \phi(x, y)" czytamy="el od iks, igrek równa się ef od iks, igrek plus lambda razy fi od iks, igrek" czesci={[
+  { t: 'L(x, y)', o: '<b>funkcja Lagrange’a</b> — pomocnicza funkcja, na której liczysz pochodne zamiast na $f$' },
+  { t: 'f(x, y)', o: 'funkcja z zadania — przepisujesz ją bez zmian' },
+  { t: '\\lambda', o: '<b>mnożnik Lagrange’a</b> („lambda”) — nieznana liczba; wyjdzie z układu równań razem z $x$ i $y$' },
+  { t: '\\phi(x, y)', o: 'lewa strona warunku $\\phi(x, y) = 0$ — zawsze <b>w nawiasie</b>, bo $\\lambda$ mnoży całość' },
+]} />
+
+<div class="k-symbole">
+  <Znak t="\lambda" nazwa="Mnożnik Lagrange’a" czytamy="lambda" znaczy="Nieznana liczba — trzecia niewiadoma obok $x$ i $y$. Przy liczeniu pochodnych zachowuje się jak zwykła liczba (jak $5$). Jej wartość $\lambda_0$ poznasz dopiero z układu równań." pamiec="Grecka litera „l” — od nazwiska Lagrange (czytaj „lagranż”)." />
+</div>
+
+Przykład z Zad. 1 f): $f(x, y) = xy$, warunek $x + y = 1$, więc $\phi(x, y) = x + y - 1$ i
+
+$$
+L(x, y) = xy + \lambda(x + y - 1).
+$$
+
+Pochodne cząstkowe $L$ liczysz dokładnie jak w module 10 — druga litera zamrożona (na złoto), a $\lambda$ to liczba. Nawias przy $\lambda$ różniczkujesz w środku, $\lambda$ zostaje przed nim:
+
+$$
+\begin{aligned}
+\frac{\partial L}{\partial x} &= \cG{y} \cdot 1 + \lambda(1 + 0 - 0) = y + \lambda \\
+\frac{\partial L}{\partial y} &= \cG{x} \cdot 1 + \lambda(0 + 1 - 0) = x + \lambda
+\end{aligned}
+$$
+
+<Legenda items={[['zloto', 'zmienna „zamrożona” — w tej pochodnej traktujesz ją jak liczbę']]} />
+
+<Ramka kind="botak" tytul="Dlaczego dodaje się λ · φ">
+Tak działa metoda z zajęć i nie musisz tego wyprowadzać. Wystarczy jedna rzecz: punkty, w których pochodne $L$ są zerem i spełniony jest warunek, to jedyni kandydaci na ekstremum warunkowe — o ile w punkcie warunku $\frac{\partial \phi}{\partial x}$ i $\frac{\partial \phi}{\partial y}$ nie są naraz zerem (w zadaniach z listy to wystarcza, wyjątek omawiamy przy Zad. 1 g)). Plus przed $\lambda$ — jak na slajdzie.
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy funkcji Lagrange’a">
+- **Warunek bez przeniesienia.** Z $x + y = 1$ bierzesz $\phi = x + y - 1$, a nie $x + y$. Po prawej stronie ma zostać $0$.
+- **Brak nawiasu.** $\lambda(x + y - 1)$, a nie $\lambda x + y - 1$. $\lambda$ mnoży całe $\phi$.
+- **$\lambda$ jak zmienna.** Przy pochodnej po $x$ mnożnik $\lambda$ się nie różniczkuje: $(\lambda x)' = \lambda$, tak jak $(5x)' = 5$.
+</Ramka>
+
+### Warunek konieczny: układ trzech równań
+
+Slajd z zajęć: pierwsze pochodne cząstkowe funkcji Lagrange’a oraz warunek ograniczający przyrównaj do $0$. Wychodzi **układ trzech równań z trzema niewiadomymi** ($x$, $y$, $\lambda$):
+
+$$
+\begin{cases}
+\frac{\partial L}{\partial x} = 0 \\[2pt]
+\frac{\partial L}{\partial y} = 0 \\[2pt]
+\phi(x, y) = 0
+\end{cases}
+$$
+
+Każde jego rozwiązanie to **punkt stacjonarny** $P_0 = (x_0, y_0)$ razem ze swoją liczbą $\lambda_0$. Trzecie równanie pilnuje, żeby punkt leżał na warunku. Dla Zad. 1 f): $y + \lambda = 0$, $x + \lambda = 0$, $x + y - 1 = 0$ — wychodzi $P_0 = \left(\frac12, \frac12\right)$ dla $\lambda_0 = -\frac12$.
+
+<Ramka kind="pulapka" tytul="Punkt bez swojej λ">
+Do każdego punktu zapisuj jego $\lambda_0$. W kroku 5 wstawiasz do macierzy **parę**: punkt i jego $\lambda$. W Zad. 1 a) punkt $\left(\frac45, \frac35\right)$ ma $\lambda = \frac52$, a punkt $\left(-\frac45, -\frac35\right)$ ma $\lambda = -\frac52$ — zamiana daje zły wynik.
+</Ramka>
+
+### Macierz ze slajdu i jej wyznacznik
+
+Krok 5 procedury: dla każdego punktu stacjonarnego liczysz wyznacznik macierzy $3 \times 3$. Slajd nie nadaje jej nazwy — w kursie oznaczamy ją $\overline{H}$ (czytamy „ha z kreską”), bo w środku stoi hesjan funkcji $L$, a w pierwszym wierszu i pierwszej kolumnie — „obramowanie” z pochodnych warunku. W książkach nazywa się ją **hesjanem obrzeżonym**.
+
+<Rozbior czytamy="ha z kreską od iks, igrek" czesci={[
+  { t: '0', o: 'lewy górny róg — zawsze <b>zero</b>' },
+  { t: '\\frac{\\partial \\phi}{\\partial x}, \\ \\frac{\\partial \\phi}{\\partial y}', o: '<b>brzeg</b>: pochodne cząstkowe warunku — w pierwszym wierszu i (te same) w pierwszej kolumnie' },
+  { t: '\\frac{\\partial^2 L}{\\partial x^2}, \\ \\frac{\\partial^2 L}{\\partial x \\partial y}, \\ \\frac{\\partial^2 L}{\\partial y^2}', o: '<b>środek</b> (prawy dolny kwadrat $2 \\times 2$): drugie pochodne funkcji Lagrange’a — ułożone jak hesjan z modułu 10' },
+]}>
+<div slot="wzor" class="k-rown">
+<Mx t="\overline{H}(x, y) =" m={[['0', '\\frac{\\partial \\phi}{\\partial x}', '\\frac{\\partial \\phi}{\\partial y}'], ['\\frac{\\partial \\phi}{\\partial x}', '\\frac{\\partial^2 L}{\\partial x^2}', '\\frac{\\partial^2 L}{\\partial x \\partial y}'], ['\\frac{\\partial \\phi}{\\partial y}', '\\frac{\\partial^2 L}{\\partial x \\partial y}', '\\frac{\\partial^2 L}{\\partial y^2}']]} kolory={[[1, 0, 0], [0, 4, 4], [0, 4, 4]]} />
+</div>
+</Rozbior>
+
+<Legenda items={[['roz', 'zero w rogu'], ['cyan', 'brzeg: pochodne warunku $\\phi$'], ['fiolet', 'środek: drugie pochodne $L$ (jak hesjan)']]} />
+
+Na slajdzie przy każdym elemencie stoi dopisek $(P_0)$: każdą pochodną liczysz **w punkcie stacjonarnym** — wstawiasz $x_0$, $y_0$ i jego $\lambda_0$. Dla Zad. 1 f) wszystkie pochodne to stałe, więc od razu wychodzą liczby:
+
+<div class="k-rown">
+<Mx t="\overline{H}\left(\tfrac12, \tfrac12\right) =" m={[[0, 1, 1], [1, 0, 1], [1, 1, 0]]} kolory={KOL} />
+</div>
+
+<Legenda items={[['roz', 'zero w rogu'], ['cyan', '$\\frac{\\partial \\phi}{\\partial x} = 1$, $\\frac{\\partial \\phi}{\\partial y} = 1$'], ['fiolet', '$\\frac{\\partial^2 L}{\\partial x^2} = 0$, $\\frac{\\partial^2 L}{\\partial x \\partial y} = 1$, $\\frac{\\partial^2 L}{\\partial y^2} = 0$']]} />
+
+<Ramka kind="liceum" tytul="Wyznacznik 3 × 3 — reguła Sarrusa (moduł 4)">
+Dopisz z prawej dwie pierwsze kolumny. Trzy przekątne **w dół** (od lewej góry w prawo w dół) — iloczyny **dodajesz**. Trzy przekątne **w górę** (od lewego dołu w prawo w górę) — iloczyny **odejmujesz**.
+
+<Przekatne A={[[0, 1, 1], [1, 0, 1], [1, 1, 0]]} nA="\overline{H}">
+pięć kolumn: trzy kolumny macierzy i dwie dopisane (wyblakłe). Zielone składniki to przekątne w dół, różowe — w górę. Kliknij składnik, a w macierzy podświetlą się jego trzy liczby. Każdy iloczyn z zerem to $0$ — tu dwa składniki dają po $1$, reszta to zera. Wynik: $W = 1 + 1 = 2$.
+</Przekatne>
+</Ramka>
+
+### Warunek dostateczny
+
+Slajd z zajęć: funkcja $f$ posiada w punkcie $P_0$ **maksimum warunkowe**, gdy wyznacznik jest **dodatni**, oraz **minimum warunkowe**, gdy jest **ujemny**. Wyznacznik oznaczamy $W(P_0) = \det \overline{H}(P_0)$ ($\det$ — skrót od ang. *determinant*, czyli „wyznacznik”).
+
+<Ramka kind="zapamietaj" tytul="Warunek dostateczny (slajd, krok 6)">
+- $W(P_0) > 0$ — w $P_0$ jest **maksimum warunkowe**.
+- $W(P_0) < 0$ — w $P_0$ jest **minimum warunkowe**.
+- $W(P_0) = 0$ — ta metoda **nie rozstrzyga** (w zadaniach z listy się nie zdarza).
+
+Wartość: wstaw punkt do wzoru funkcji $f$ (nie $L$), np. $f_{\max}\left(\frac12, \frac12\right) = \frac12 \cdot \frac12 = \frac14$ w Zad. 1 f) (czytamy: „maksimum warunkowe funkcji w punkcie $\left(\frac12, \frac12\right)$ wynosi $\frac14$”).
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Odwrotnie niż w module 10">
+- Tutaj **plus to maksimum**, minus to minimum.
+- W module 10 było inaczej: $W < 0$ znaczyło „brak ekstremum”, a przy $W > 0$ o maksimum decydował ujemny $a_{11}$.
+- Tutaj $W < 0$ to **minimum warunkowe**, a nie brak ekstremum. Elementu $a_{11}$ w ogóle nie sprawdzasz (w rogu i tak stoi $0$).
+</Ramka>
+
+## Funkcja Lagrange’a
+
+<a id="polecenie-lagrange" class="k-anchor"></a>
+
+**Cel: jeden wzór $L(x, y)$, w którym jest i funkcja, i warunek.** To krok 1 procedury.
+
+<Ramka kind="polecenie" tytul="Zapisz funkcję Lagrange’a">
+> Zapisz funkcję Lagrange’a dla $f(x, y) = 6 - 4x - 3y$ i warunku $x^2 + y^2 = 1$.
+
+1. **Przenieś wszystko na lewą stronę warunku**, żeby po prawej zostało $0$ (liczba po przeniesieniu zmienia znak): $x^2 + y^2 - 1 = 0$.
+2. **Lewa strona to $\phi(x, y)$:** $\phi(x, y) = x^2 + y^2 - 1$.
+3. **Zapisz $L = f + \lambda \cdot \phi$**, z $\phi$ w nawiasie: $L(x, y) = 6 - 4x - 3y + \lambda(x^2 + y^2 - 1)$.
+</Ramka>
+
+Wszystkie przykłady z listy — ten sam przepis:
+
+- **a)** $x^2 + y^2 = 1$ → $\phi = x^2 + y^2 - 1$ → $L = 6 - 4x - 3y + \lambda(x^2 + y^2 - 1)$
+- **b)** $x + 4y - 2 = 0$ → $\phi = x + 4y - 2$ → $L = x^2 + y^2 + \lambda(x + 4y - 2)$
+- **c)** $x + 2y - 3 = 0$ → $\phi = x + 2y - 3$ → $L = xy + x + y + \lambda(x + 2y - 3)$
+- **d)** $x^2 + y^2 = 1$ → $\phi = x^2 + y^2 - 1$ → $L = x^2 - y^2 + \lambda(x^2 + y^2 - 1)$
+- **e)** $x^2 + y^2 = 5$ → $\phi = x^2 + y^2 - 5$ → $L = x + 2y + \lambda(x^2 + y^2 - 5)$
+- **f)** $x + y = 1$ → $\phi = x + y - 1$ → $L = xy + \lambda(x + y - 1)$
+- **g)** $(x + 7)(y - 8) = 0$ → $\phi = (x + 7)(y - 8)$ → $L = (x - 11)(y + 13) + \lambda(x + 7)(y - 8)$
+
+Jak czytać listę: warunek z treści → $\phi(x, y)$ → $L(x, y)$. W b), c) i g) warunek ma już po prawej $0$ — $\phi$ to po prostu lewa strona. W pozostałych liczbę z prawej strony przenosisz na lewo ze zmianą znaku.
+
+## Punkty stacjonarne: układ trzech równań
+
+<a id="polecenie-uklad" class="k-anchor"></a>
+
+**Cel: wszystkie trójki $(x, y, \lambda)$, w których obie pochodne $L$ są zerem i spełniony jest warunek.** To kroki 2–3 procedury i zwykle najtrudniejsza część zadania — reszta to rachunek według wzoru.
+
+<Ramka kind="polecenie" tytul="Wyznacz punkty stacjonarne">
+> Rozwiąż układ $\frac{\partial L}{\partial x} = 0$, $\frac{\partial L}{\partial y} = 0$, $\phi(x, y) = 0$, np. dla Zad. 1 a) (pełne rozwiązanie niżej, w sekcji o wyznaczniku).
+
+1. **Policz pochodne** $\frac{\partial L}{\partial x}$ i $\frac{\partial L}{\partial y}$ — druga litera zamrożona, $\lambda$ to liczba.
+2. **Ułóż układ** trzech równań: obie pochodne $= 0$ i warunek $\phi = 0$.
+3. **Najczęstsza droga:** z pierwszych dwóch równań wyznacz $x$ i $y$ — wyjdą wyrażenia z $\lambda$ (np. $x = \frac{2}{\lambda}$). Zanim podzielisz przez $\lambda$, sprawdź, że $\lambda = 0$ daje sprzeczność (np. $-4 = 0$).
+4. **Wstaw je do warunku.** Zostaje równanie z samą $\lambda$. Rozwiąż je — często wychodzą dwie wartości ($\lambda^2 = \ldots$ daje plus i minus).
+5. **Dla każdej $\lambda$ policz $x$ i $y$.** Zapisz punkt razem z jego $\lambda$.
+6. **Iloczyn równy zeru** (np. $2x(1 + \lambda) = 0$): każdy czynnik osobno — osobne przypadki. Nie dziel przez $x$.
+7. **Sprzeczność we wszystkich przypadkach** znaczy: brak punktów stacjonarnych, więc (w zadaniach z listy) brak ekstremów warunkowych.
+8. **Sprawdzenie:** wstaw punkt do warunku — musi wyjść prawda.
+</Ramka>
+
+Najpierw przypadek nietypowy — układ bez rozwiązań. Warunek to iloczyn, więc są dwa przypadki:
+
+<a id="zad-1g" class="k-anchor"></a>
+
+<Rachunek d={Z.g} etapy={ETAPY_W} etapyNazwa="Procedura" tytul={tyt(Z.g)} zrodlo="Zad. 1 g)">
+<div slot="plan">
+
+Cel: punkty stacjonarne — albo informacja, że ich nie ma.
+
+1. **Funkcja Lagrange’a:** warunek ma już po prawej $0$. Nawiasów nie wymnażamy.
+2. **Pierwsze pochodne $L$:** zamrożony nawias zachowuje się jak liczba.
+3. **Warunek konieczny:** zaczynamy od trzeciego równania, $\phi = 0$ — iloczyn jest zerem, gdy któryś nawias jest zerem. W obu przypadkach wychodzi sprzeczność, więc ekstremów nie ma i kroki 4–6 odpadają.
+
+</div>
+</Rachunek>
+
+<Ramka kind="pulapka" tytul="Typowe błędy w układzie">
+- **Dzielenie przez zmienną.** W $2x(1 + \lambda) = 0$ nie dziel przez $x$ — zgubisz przypadek $x = 0$ i dwa punkty (Zad. 1 d)).
+- **Jedna $\lambda$ zamiast dwóch.** Z $\lambda^2 = \frac{25}{4}$ wychodzi $\lambda = \frac52$ **i** $\lambda = -\frac52$. Każda daje inny punkt.
+- **Warunek pominięty.** Układ ma **trzy** równania. Bez $\phi = 0$ punkt może nie leżeć na warunku.
+- **Punkt bez $\lambda$.** Do macierzy w kroku 5 potrzebna jest $\lambda$ tego punktu.
+</Ramka>
+
+## Ekstrema warunkowe
+
+<a id="polecenie-ekstrema" class="k-anchor"></a>
+
+**Cel: przy każdym punkcie stacjonarnym jeden wniosek — maksimum albo minimum warunkowe — i jego wartość.**
+
+<Ramka kind="polecenie" tytul="Znajdź ekstrema funkcji przy warunku (metoda mnożników Lagrange’a)">
+> Znajdź ekstrema funkcji $f(x, y)$ przy warunku $\phi(x, y)$ metodą mnożników Lagrange’a, np. $f(x, y) = xy$, $\phi(x, y)\colon x + y = 1$.
+
+Procedura ze slajdów, sześć kroków:
+
+1. **Funkcja Lagrange’a:** $\phi(x, y)$ (warunek z zerem po prawej) i $L(x, y) = f(x, y) + \lambda \cdot \phi(x, y)$ ([przepis wyżej](#polecenie-lagrange)).
+2. **Pierwsze pochodne $L$:** $\frac{\partial L}{\partial x}$, $\frac{\partial L}{\partial y}$.
+3. **Warunek konieczny:** układ trzech równań ([przepis wyżej](#polecenie-uklad)) — punkty $P_0$ i ich $\lambda_0$. Gdy ich nie ma — koniec: brak ekstremów (w zadaniach z listy).
+4. **Drugie pochodne $L$** (wszystkie cztery) i **pierwsze pochodne warunku** $\frac{\partial \phi}{\partial x}$, $\frac{\partial \phi}{\partial y}$.
+5. **Macierz $\overline{H}$** w każdym punkcie (wstaw $x_0$, $y_0$, $\lambda_0$) i jej **wyznacznik** regułą Sarrusa.
+6. **Warunek dostateczny:** $W > 0$ — maksimum warunkowe, $W < 0$ — minimum warunkowe. Wartość: punkt wstaw do wzoru $f$.
+</Ramka>
+
+Zapis wyniku jak w modułach 9 i 10: $f_{\max}\left(\frac12, \frac12\right) = \frac14$ czytamy: „maksimum warunkowe funkcji w punkcie $\left(\frac12, \frac12\right)$ wynosi $\frac14$”.
+
+Najkrótszy przykład z listy — cała procedura na jednej stronie. Krok 5 (macierz i wyznacznik) rozpisujemy dokładnie w następnej sekcji:
+
+<a id="zad-1f" class="k-anchor"></a>
+
+<Rachunek d={Z.f} etapy={ETAPY_W} etapyNazwa="Procedura" tytul={tyt(Z.f)} zrodlo="Zad. 1 f)">
+<div slot="plan">
+
+Cel: ekstrema warunkowe — gdzie są i jakie mają wartości.
+
+1. **Funkcja Lagrange’a:** przenosimy $1$ na lewą stronę warunku.
+2. **Pierwsze pochodne $L$.**
+3. **Warunek konieczny:** $x$ i $y$ wyrażamy przez $\lambda$ i wstawiamy do warunku. Jeden punkt.
+4. **Drugie pochodne $L$ i pochodne $\phi$:** same liczby.
+5. **Macierz i wyznacznik:** macierz nie zależy od punktu; Sarrus.
+6. **Warunek dostateczny** i wartość ze wzoru $f$.
+
+</div>
+</Rachunek>
+
+<a id="polecenie-wyznacznik" class="k-anchor"></a>
+
+### Macierz w punkcie i jej wyznacznik
+
+**Cel: jedna liczba $W(P_0)$ dla każdego punktu stacjonarnego.** To kroki 4–5 procedury.
+
+<Ramka kind="polecenie" tytul="Policz wyznacznik macierzy ze slajdu w punkcie">
+> Policz $\det \overline{H}(P_0)$ dla punktu stacjonarnego $P_0$ i jego $\lambda_0$.
+
+1. **Policz pochodne:** $\frac{\partial \phi}{\partial x}$, $\frac{\partial \phi}{\partial y}$ (brzeg) i $\frac{\partial^2 L}{\partial x^2}$, $\frac{\partial^2 L}{\partial x \partial y}$, $\frac{\partial^2 L}{\partial y^2}$ (środek).
+2. **Ułóż macierz ogólną:** w rogu $0$, pierwszy wiersz i pierwsza kolumna — pochodne $\phi$, w środku — hesjan $L$.
+3. **Wstaw punkt i jego $\lambda$** do każdego elementu. Policz każdą kratkę osobno.
+4. **Reguła Sarrusa:** trzy przekątne w dół dodajesz, trzy w górę odejmujesz. Iloczyn z zerem to $0$ — w rogu zawsze jest $0$, więc dwa składniki znikają od razu.
+</Ramka>
+
+Ułamki i dwie wartości $\lambda$ — przykład z listy, w którym trzeba pilnować par:
+
+<a id="zad-1a" class="k-anchor"></a>
+
+<Rachunek d={Z.a} etapy={ETAPY_W} etapyNazwa="Procedura" tytul={tyt(Z.a)} zrodlo="Zad. 1 a)">
+<div slot="plan">
+
+Cel: ekstrema warunkowe — gdzie są i jakie mają wartości.
+
+1. **Funkcja Lagrange’a:** warunek to okrąg; przenosimy $1$.
+2. **Pierwsze pochodne $L$.**
+3. **Warunek konieczny:** $x = \frac{2}{\lambda}$ i $y = \frac{3}{2\lambda}$ wstawiamy do warunku. Wychodzi $\lambda^2 = \frac{25}{4}$ — dwie wartości $\lambda$, dwa punkty.
+4. **Drugie pochodne $L$ i pochodne $\phi$:** tym razem zależą od $x$, $y$ i $\lambda$.
+5. **Macierz w każdym punkcie osobno** — z jego własną $\lambda$ — i wyznacznik Sarrusem (ułamki).
+6. **Warunek dostateczny:** jeden punkt to minimum, drugi — maksimum. To te punkty z pierwszego rysunku.
+
+</div>
+</Rachunek>
+
+Wyznacznik w punkcie $P_1$ jeszcze raz — na przekątnych. Kliknij składnik, żeby zobaczyć jego trzy liczby:
+
+<Przekatne A={[[0, '8/5', '6/5'], ['8/5', 5, 0], ['6/5', 0, 5]]} nA="\overline{H}(P_1)">
+macierz $\overline{H}\left(\frac45, \frac35\right)$ z dwiema dopisanymi kolumnami. Zielone składniki to przekątne w dół, różowe — w górę. Każda przekątna w dół zawiera zero, więc daje $0$. Z przekątnych w górę tylko dwie omijają zera: $\frac65 \cdot 5 \cdot \frac65 = \frac{36}{5}$ i $\frac85 \cdot \frac85 \cdot 5 = \frac{64}{5}$. Obie odejmujesz: $-\frac{36}{5} - \frac{64}{5} = -\frac{100}{5} = -20$.
+</Przekatne>
+
+Cztery punkty stacjonarne i przypadki z iloczynu:
+
+<a id="zad-1d" class="k-anchor"></a>
+
+<Rachunek d={Z.d} etapy={ETAPY_W} etapyNazwa="Procedura" tytul={tyt(Z.d)} zrodlo="Zad. 1 d)">
+<div slot="plan">
+
+Cel: ekstrema warunkowe — gdzie są i jakie mają wartości.
+
+1. **Funkcja Lagrange’a.**
+2. **Pierwsze pochodne $L$** — w obu jest wspólny czynnik.
+3. **Warunek konieczny:** wyłączamy $2x$ i $2y$ przed nawias. Iloczyn równy zeru daje dwa przypadki: $x = 0$ albo $\lambda = -1$. Wychodzą cztery punkty — dwa z $\lambda = 1$, dwa z $\lambda = -1$.
+4. **Drugie pochodne $L$ i pochodne $\phi$.**
+5. **Macierz i wyznacznik** w każdym z czterech punktów.
+6. **Warunek dostateczny:** dwa minima i dwa maksima.
+
+</div>
+</Rachunek>
+
+<Pytania pytania={[
+  { q: R`W punkcie stacjonarnym wyszło $W(P_0) = -16$. Co tam jest?`, opcje: ['brak ekstremum, bo $W < 0$', 'minimum warunkowe', 'maksimum warunkowe'], dobra: 1, dlaczego: R`W ekstremach warunkowych ujemny wyznacznik to <b>minimum warunkowe</b> (slajd, krok 6). „Brak ekstremum przy $W < 0$” to reguła z modułu 10 — dla hesjanu $2 \times 2$, nie dla tej macierzy. Maksimum byłoby przy $W > 0$.` },
+]} />
+
+### Pozostałe przykłady z listy
+
+<Przyklad id="1b" nazwa="Zad. 1 b)" d={Z.b} etapy={ETAPY_W} etapyNazwa="Procedura" cel="Cel: ekstrema warunkowe — gdzie są i jakie mają wartości." plan="Jak w f): warunek to prosta, a macierz to same liczby. Tu: miska z rysunku w pojęciach i minimum warunkowe." />
+<Przyklad id="1c" nazwa="Zad. 1 c)" d={Z.c} etapy={ETAPY_W} etapyNazwa="Procedura" cel="Cel: ekstrema warunkowe — gdzie są i jakie mają wartości." plan="Jak w f) — macierz ze stałych. Nowe: w pochodnych pojawia się $+1$ ze składników $x$ i $y$ funkcji." />
+<Przyklad id="1e" nazwa="Zad. 1 e)" d={Z.e} etapy={ETAPY_W} etapyNazwa="Procedura" cel="Cel: ekstrema warunkowe — gdzie są i jakie mają wartości." plan="Jak w a): dwie wartości $\lambda = \pm\frac12$ i „minus minus” w regule Sarrusa — ale bez ułamków w macierzy. Okrąg o promieniu $\sqrt5$." />
+
+<Ramka kind="pulapka" tytul="Typowe błędy w Zad. 1">
+- **Zła $\lambda$ w macierzy.** Każdy punkt ma swoją $\lambda$ — wstaw tę, z którą wyszedł.
+- **Znak odwrotnie.** $W > 0$ to maksimum, $W < 0$ to minimum. Nie myl z modułem 10.
+- **Wartość z $L$ albo z $\phi$.** Wartość ekstremum to $f(x_0, y_0)$. $\phi$ w punkcie stacjonarnym zawsze daje $0$ — to tylko sprawdzenie.
+- **„Minus minus” w Sarrusie.** Gdy iloczyn przekątnej w górę jest ujemny, odejmujesz liczbę ujemną: $-(-16) = +16$.
+</Ramka>
+
+## Wszystkie odpowiedzi z listy
+
+Wyniki wszystkich przykładów w jednym miejscu — do sprawdzenia własnych rachunków. Link przy każdym przykładzie prowadzi do rozwiązania krok po kroku.
+
+<Odpowiedzi rodzaj="ekstrema" lista={['a', 'b', 'c', 'd', 'e', 'f', 'g'].map((id) => ({ id: `1${id}`, nazwa: `Zad. 1 ${id})`, d: Z[id] }))} />
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+<div><b>Warunek</b>Przenieś wszystko na lewo: $x + y = 1 \Rightarrow \phi(x, y) = x + y - 1$. Po prawej $0$.</div>
+<div><b>Funkcja Lagrange’a</b>$L(x, y) = f(x, y) + \lambda \cdot \phi(x, y)$ — $\phi$ w nawiasie.</div>
+<div><b>λ</b>Mnożnik Lagrange’a — nieznana liczba. Przy pochodnych zachowuje się jak liczba: $(\lambda x)' = \lambda$.</div>
+<div><b>Pochodne L</b>$\frac{\partial L}{\partial x}$: $y$ zamrożony, $\frac{\partial L}{\partial y}$: $x$ zamrożony — jak w module 10.</div>
+<div><b>Warunek konieczny</b>Układ trzech równań: $\frac{\partial L}{\partial x} = 0$, $\frac{\partial L}{\partial y} = 0$, $\phi = 0$. Niewiadome: $x$, $y$, $\lambda$.</div>
+<div><b>Układ</b>$x$ i $y$ przez $\lambda$ → wstaw do warunku. Iloczyn $= 0$ — przypadki. Każdy punkt ze swoją $\lambda$.</div>
+<div><b>Macierz $\overline{H}$</b>W rogu $0$, na brzegu $\frac{\partial \phi}{\partial x}$, $\frac{\partial \phi}{\partial y}$, w środku hesjan $L$.</div>
+<div><b>Sarrus</b>Dopisz dwie kolumny. Trzy przekątne w dół $+$, trzy w górę $-$.</div>
+<div><b>Warunek dostateczny</b>$W > 0$ — maksimum warunkowe. $W < 0$ — minimum warunkowe. Odwrotnie niż $a_{11}$ w module 10!</div>
+<div><b>Wartość</b>Punkt wstawiasz do $f$ (nie do $L$): $f_{\max}(x_0, y_0) = f(x_0, y_0)$.</div>
+<div><b>Brak punktów</b>Układ sprzeczny we wszystkich przypadkach — brak ekstremów warunkowych (Zad. 1 g)).</div>
+</div>
+
+<Ramka kind="gdzie">
+- **Programowanie liniowe (moduł 6):** też szukasz najlepszej wartości przy warunkach — tylko funkcja i warunki są liniowe, a warunki to zwykle nierówności.
+- **Ekonomia:** największa użyteczność przy ograniczonym budżecie, najmniejszy koszt przy zadanej produkcji. Liczba $\lambda$ ma tam znaczenie: mówi w przybliżeniu, o ile zmieniłby się najlepszy wynik, gdyby budżet wzrósł o $1$ (znak zależy od tego, jak zapiszesz warunek). To ciekawostka — na kolokwium jej nie potrzebujesz.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania na każde polecenie. Po każdej odpowiedzi zobaczysz, dlaczego jest dobra albo zła — złe odpowiedzi to typowe błędy.
+
+### Funkcja Lagrange’a
+
+<a id="cw-lagrange" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: R`Warunek: $x + y = 10$. Ile wynosi $\phi(x, y)$?`, opcje: [R`$x + y$`, R`$x + y - 10$`, R`$x + y + 10$`], dobra: 1, dlaczego: R`Przenosisz $10$ na lewo ze zmianą znaku: $x + y - 10 = 0$, więc $\phi = x + y - 10$. Samo $x + y$ to warunek bez przeniesienia — po prawej nie ma $0$. $+10$ to zły znak po przeniesieniu.` },
+  { q: R`$f(x, y) = x^2 + y^2$, warunek $x + y = 10$. Funkcja Lagrange’a to:`, opcje: [R`$x^2 + y^2 + \lambda(x + y - 10)$`, R`$x^2 + y^2 + \lambda x + y - 10$`, R`$\lambda(x^2 + y^2) + x + y - 10$`], dobra: 0, dlaczego: R`$L = f + \lambda \cdot \phi$, z $\phi$ w nawiasie. Druga opcja gubi nawias — $\lambda$ mnoży tylko $x$. Trzecia mnoży przez $\lambda$ funkcję zamiast warunku.` },
+  { q: R`$L(x, y) = xy + \lambda(x + 2y - 4)$. Ile wynosi $\frac{\partial L}{\partial x}$?`, opcje: [R`$y$`, R`$x + 2\lambda$`, R`$y + \lambda$`], dobra: 2, dlaczego: R`Przy zamrożonym $y$: $(x\cG{y})' = y$, a $\lambda(1 + 0 - 0) = \lambda$. Razem $y + \lambda$. Sam $y$ gubi część z $\lambda$. $x + 2\lambda$ to $\frac{\partial L}{\partial y}$.` },
+  { q: R`$L(x, y) = x^2 + \lambda(x^2 + y^2 - 1)$. Ile wynosi $\frac{\partial L}{\partial y}$?`, opcje: [R`$2\lambda y$`, R`$2x + 2\lambda y$`, R`$2y$`], dobra: 0, dlaczego: R`Przy zamrożonym $x$: $\cG{x^2}$ to liczba, pochodna $0$. W nawiasie $(y^2)' = 2y$, a $\lambda$ zostaje przed nim: $\lambda \cdot 2y = 2\lambda y$. Druga opcja nie zamroziła $x$. Trzecia zgubiła $\lambda$.` },
+  { q: R`Czym jest $\lambda$ w funkcji Lagrange’a?`, opcje: [R`trzecią zmienną funkcji $f$`, R`nieznaną liczbą (mnożnikiem) — wychodzi z układu razem z $x$ i $y$`, R`stałą równą $1$`], dobra: 1, dlaczego: R`$\lambda$ to mnożnik Lagrange’a: nieznana liczba, którą wyznaczasz z układu trzech równań. Funkcja $f$ ma dalej dwie zmienne, a $\lambda$ wcale nie musi być $1$ (np. w Zad. 1 a) wyszło $\pm\frac52$).` },
+]} />
+
+### Punkty stacjonarne
+
+<a id="cw-uklad" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: R`Rozwiązanie układu $\begin{cases} 2x + \lambda = 0 \\ 2y + \lambda = 0 \\ x + y - 2 = 0 \end{cases}$ to:`, opcje: [R`$x = 1$, $y = 1$, $\lambda = 2$`, R`$x = 2$, $y = 0$, $\lambda = -4$`, R`$x = 1$, $y = 1$, $\lambda = -2$`], dobra: 2, dlaczego: R`$x = -\frac{\lambda}{2}$, $y = -\frac{\lambda}{2}$. Do warunku: $-\frac{\lambda}{2} - \frac{\lambda}{2} = 2$, czyli $-\lambda = 2$, $\lambda = -2$, a $x = y = 1$. Przy $\lambda = 2$ pierwsze równanie daje $2 + 2 = 4 \neq 0$. $(2, 0)$ z $\lambda = -4$ spełnia pierwsze i trzecie równanie, ale drugie daje $0 - 4 \neq 0$.` },
+  { q: R`Z równania $2\lambda x - 4 = 0$ wyznaczasz $x = \frac{2}{\lambda}$. Kiedy wolno dzielić przez $\lambda$?`, opcje: ['zawsze', R`gdy $\lambda \neq 0$ — a $\lambda = 0$ daje $-4 = 0$, więc i tak nie jest rozwiązaniem`, 'nigdy — trzeba zgadywać'], dobra: 1, dlaczego: R`Przez zero dzielić nie wolno, więc najpierw sprawdzasz $\lambda = 0$: wychodzi $0 - 4 = 0$, fałsz. Skoro $\lambda \neq 0$, dzielenie jest w porządku (Zad. 1 a)).` },
+  { q: R`Z układu wyszło $\lambda^2 = \frac94$. Ile punktów stacjonarnych może z tego wyjść?`, opcje: [R`dwa — po jednym dla $\lambda = \frac32$ i $\lambda = -\frac32$`, R`jeden — dla $\lambda = \frac32$`, 'żaden'], dobra: 0, dlaczego: R`Dwie liczby mają kwadrat równy $\frac94$: $\frac32$ i $-\frac32$. Każda $\lambda$ daje swój punkt. Odpowiedź „jeden” gubi ujemną $\lambda$.` },
+  { q: R`Z równania $2x(1 + \lambda) = 0$ wychodzi:`, opcje: [R`$\lambda = -1$`, R`$x = 0$`, R`$x = 0$ lub $\lambda = -1$`], dobra: 2, dlaczego: R`Iloczyn jest zerem, gdy któryś czynnik jest zerem: $2x = 0$ albo $1 + \lambda = 0$. Dwa przypadki (Zad. 1 d)). Każda z pozostałych odpowiedzi gubi jeden z nich — np. po podzieleniu przez $x$.` },
+  { q: R`Warunek: $x^2 + y^2 = 1$. Który punkt na pewno nie może być punktem stacjonarnym?`, opcje: [R`$(0, 1)$`, R`$(1, 1)$`, R`$\left(\frac35, \frac45\right)$`], dobra: 1, dlaczego: R`Punkt stacjonarny spełnia warunek (trzecie równanie). $1^2 + 1^2 = 2 \neq 1$ — odpada. $0^2 + 1^2 = 1$ i $\frac{9}{25} + \frac{16}{25} = 1$ — oba leżą na okręgu.` },
+]} />
+
+### Macierz i wyznacznik w punkcie
+
+<a id="cw-wyznacznik" class="k-anchor"></a>
+
+<CwiczenieLiczby tytul="Macierz ze slajdu w punkcie (1, 1)" m={MCW} t="\overline{H}(1, 1) =" dlaczego={mcwDlaczego}>
+Funkcja $f(x, y) = x + y$, warunek $x^2 + y^2 = 2$, czyli $L = x + y + \lambda(x^2 + y^2 - 2)$. Pochodne: $\frac{\partial \phi}{\partial x} = 2x$, $\frac{\partial \phi}{\partial y} = 2y$, $\frac{\partial^2 L}{\partial x^2} = \frac{\partial^2 L}{\partial y^2} = 2\lambda$, $\frac{\partial^2 L}{\partial x \partial y} = 0$. Punkt stacjonarny $(1, 1)$ ma $\lambda = -\frac12$. Wpisz macierz w tym punkcie.
+</CwiczenieLiczby>
+
+<Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
+  { q: R`Wyznacznik macierzy $\overline{H}(1, 1)$ z ćwiczenia wyżej (regułą Sarrusa) to:`, mx: [{ t: '\\overline{H}(1, 1) =', m: [[0, 2, 2], [2, -1, 0], [2, 0, -1]] }], opcje: [R`$8$`, R`$-8$`, R`$0$`], dobra: 0, dlaczego: R`Przekątne w dół: $0 \cdot (-1) \cdot (-1) + 2 \cdot 0 \cdot 2 + 2 \cdot 2 \cdot 0 = 0$. W górę: $2 \cdot (-1) \cdot 2 = -4$, $0 \cdot 0 \cdot 0 = 0$, $2 \cdot 2 \cdot (-1) = -4$ — odejmujesz: $-(-4) - 0 - (-4) = 4 + 4 = 8$. $-8$ wychodzi, gdy zapomnisz, że minus razy minus daje plus. $W > 0$, więc w $(1, 1)$ jest maksimum warunkowe.` },
+  { q: R`Wyznacznik macierzy z Zad. 1 c) to:`, mx: [{ t: '\\overline{H} =', m: [[0, 1, 2], [1, 0, 1], [2, 1, 0]] }], opcje: [R`$-4$`, R`$2$`, R`$4$`], dobra: 2, dlaczego: R`W dół: $0 \cdot 0 \cdot 0 + 1 \cdot 1 \cdot 2 + 2 \cdot 1 \cdot 1 = 0 + 2 + 2 = 4$. W górę: $2 \cdot 0 \cdot 2 + 0 \cdot 1 \cdot 1 + 1 \cdot 1 \cdot 0 = 0$. Wynik $4 - 0 = 4$. $2$ to tylko jedna przekątna. $-4$ — pomylone znaki przekątnych.` },
+  { q: R`W rogu macierzy $\overline{H}$ stoi $0$. Które składniki reguły Sarrusa przez to na pewno znikają?`, opcje: ['wszystkie trzy przekątne w dół', R`dwa: przekątna w dół i przekątna w górę przechodzące przez róg`, 'żaden'], dobra: 1, dlaczego: R`Lewy górny element leży na jednej przekątnej w dół ($a_{11}a_{22}a_{33}$) i na jednej w górę ($a_{11}a_{23}a_{32}$). Oba iloczyny mają czynnik $0$. Pozostałe cztery zależą od innych liczb.` },
+]} />
+
+### Ekstrema warunkowe
+
+<a id="cw-ekstrema" class="k-anchor"></a>
+
+<Klasyfikator pytanie="Co jest w punkcie stacjonarnym? Spójrz na znak wyznacznika" kategorie={KAT_W} elementy={[
+  { tekst: R`$W(P_0) = 20$`, kat: 0, dlaczego: R`$W > 0$ — maksimum warunkowe (jak w Zad. 1 a) w punkcie $\left(-\frac45, -\frac35\right)$).` },
+  { tekst: R`$W(P_0) = -34$`, kat: 1, dlaczego: R`$W < 0$ — minimum warunkowe (Zad. 1 b)). To nie jest „brak ekstremum” z modułu 10.` },
+  { tekst: R`$W(P_0) = 0$`, kat: 2, dlaczego: R`$W = 0$ — procedura z zajęć nie rozstrzyga.` },
+  { tekst: R`$W(P_0) = 4$`, kat: 0, dlaczego: R`$W > 0$ — maksimum warunkowe (Zad. 1 c)).` },
+  { tekst: R`$W(P_0) = -16$`, kat: 1, dlaczego: R`$W < 0$ — minimum warunkowe (Zad. 1 d) w punktach $(0, 1)$ i $(0, -1)$).` },
+  { tekst: R`$W(P_0) = \frac85$`, kat: 0, dlaczego: R`Liczy się tylko znak: $\frac85 > 0$ — maksimum warunkowe. Wielkość wyznacznika nie ma znaczenia.` },
+]} />
+
+<Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
+  { q: R`Wartość ekstremum warunkowego w punkcie $P_0 = (x_0, y_0)$ to:`, opcje: [R`$\phi(x_0, y_0)$`, R`$\lambda_0$`, R`$f(x_0, y_0)$`], dobra: 2, dlaczego: R`Wartość to $f$ w punkcie — wstaw $x_0$ i $y_0$ do wzoru funkcji. $\phi(x_0, y_0)$ zawsze wynosi $0$, bo punkt leży na warunku. $\lambda_0$ to mnożnik, a nie wartość funkcji.` },
+  { q: R`$f(x, y) = x + 2y$ to płaszczyzna — nie ma ekstremów bezwarunkowych. Przy warunku $x^2 + y^2 = 5$ ma:`, opcje: ['maksimum i minimum warunkowe', 'też żadnych ekstremów', 'tylko maksimum'], dobra: 0, dlaczego: R`Ścieżka nad okręgiem na pochyłej płaszczyźnie raz się wznosi, raz opada — ma punkt najwyższy i najniższy. W Zad. 1 e): $f_{\min}(-1, -2) = -5$ i $f_{\max}(1, 2) = 5$.` },
+  { q: R`$f_{\max}\left(\frac12, \frac12\right) = \frac14$ znaczy:`, opcje: [R`maksimum warunkowe w punkcie $\left(\frac12, \frac12\right)$ o wartości $\frac14$`, R`$\lambda = \frac14$`, R`maksimum w punkcie $x = \frac14$`], dobra: 0, dlaczego: R`W nawiasie punkt, po znaku równości wartość funkcji w nim (Zad. 1 f)). $\lambda$ w tym zadaniu to $-\frac12$. $\frac14$ to wartość, nie współrzędna.` },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tag="Quiz · 10 pytań" tytul="" pytania={[
+  { q: R`Ekstremum warunkowe to ekstremum, w którym:`, opcje: ['punkty stacjonarne muszą spełniać dodatkowy warunek', R`funkcja ma wartość $0$`, R`pochodne cząstkowe są dodatnie`], dobra: 0, dlaczego: R`Slajd: od punktów stacjonarnych wymaga się spełnienia dodatkowych warunków. Wartość funkcji może być dowolna.` },
+  { q: R`Warunek ograniczający zapisujesz w postaci:`, opcje: [R`$\phi(x, y) = 1$`, R`$\phi(x, y) = 0$`, R`$f(x, y) = \phi(x, y)$`], dobra: 1, dlaczego: R`Slajd: warunek ograniczający postaci $\phi(x, y) = 0$. Dlatego najpierw przenosisz wszystko na lewą stronę.` },
+  { q: R`Funkcja Lagrange’a to:`, opcje: [R`$L = f \cdot \phi$`, R`$L = \lambda \cdot f + \phi$`, R`$L = f + \lambda \cdot \phi$`], dobra: 2, dlaczego: R`Slajd: $L(x, y) = f(x, y) + \lambda \cdot \phi(x, y)$. $\lambda$ mnoży warunek, nie funkcję.` },
+  { q: R`$\lambda$ w funkcji Lagrange’a nazywa się:`, opcje: ['mnożnikiem Lagrange’a', 'hesjanem', 'gradientem'], dobra: 0, dlaczego: R`Slajd: $\lambda$ — mnożnik Lagrange’a. Hesjan i gradient to macierz i wektor pochodnych z modułu 10.` },
+  { q: R`Warunek konieczny istnienia ekstremum warunkowego to układ:`, opcje: [R`dwóch równań: $\frac{\partial f}{\partial x} = 0$, $\frac{\partial f}{\partial y} = 0$`, R`trzech równań: $\frac{\partial L}{\partial x} = 0$, $\frac{\partial L}{\partial y} = 0$, $\phi = 0$`, R`jednego równania $\phi = 0$`], dobra: 1, dlaczego: R`Slajd: pierwsze pochodne funkcji Lagrange’a i warunek przyrównujesz do $0$ — trzy równania. Pierwsza opcja to warunek z modułu 10 (bez warunku ograniczającego).` },
+  { q: R`Ile niewiadomych ma układ z warunku koniecznego?`, opcje: [R`dwie: $x$, $y$`, R`trzy: $x$, $y$, $\lambda$`, R`cztery`], dobra: 1, dlaczego: R`Slajd: układ trzech równań z trzema niewiadomymi. Trzecia niewiadoma to $\lambda$.` },
+  { q: R`W lewym górnym rogu macierzy z kroku 5 stoi:`, opcje: [R`$\frac{\partial^2 L}{\partial x^2}$`, R`$\lambda$`, R`$0$`], dobra: 2, dlaczego: R`Na slajdzie róg to zawsze $0$. $\frac{\partial^2 L}{\partial x^2}$ stoi w drugim wierszu i drugiej kolumnie.` },
+  { q: R`Wyznacznik macierzy z kroku 5 jest dodatni. W punkcie jest:`, opcje: ['minimum warunkowe', 'maksimum warunkowe', 'brak ekstremum'], dobra: 1, dlaczego: R`Slajd, krok 6: wyznacznik dodatni — maksimum warunkowe. Uwaga: odwrotnie niż $a_{11}$ w module 10.` },
+  { q: R`Wyznacznik macierzy z kroku 5 jest ujemny. W punkcie jest:`, opcje: ['minimum warunkowe', 'brak ekstremum', 'maksimum warunkowe'], dobra: 0, dlaczego: R`Slajd, krok 6: wyznacznik ujemny — minimum warunkowe. „Brak ekstremum przy ujemnym $W$” to reguła z modułu 10.` },
+  { q: R`Gdzie w macierzy z kroku 5 stoją pochodne warunku $\frac{\partial \phi}{\partial x}$ i $\frac{\partial \phi}{\partial y}$?`, opcje: ['tylko na przekątnej', 'w pierwszym wierszu i pierwszej kolumnie (poza rogiem)', 'w prawym dolnym kwadracie'], dobra: 1, dlaczego: R`Tworzą „obramowanie”: pierwszy wiersz to $0$, $\frac{\partial \phi}{\partial x}$, $\frac{\partial \phi}{\partial y}$, pierwsza kolumna — to samo. W prawym dolnym kwadracie stoją drugie pochodne $L$.` },
+]} />

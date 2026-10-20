@@ -1,0 +1,97 @@
+---
+// Obwód z dwoma włącznikami: szeregowo = koniunkcja (∧), równolegle = alternatywa (∨).
+// Klikasz włącznik → żarówka świeci (1) albo nie (0). Analogia pasuje do mechanizmu 1:1.
+import { tex } from '../../../lib/tex.js';
+interface Props { typ: 'szeregowo' | 'rownolegle' }
+const { typ } = Astro.props;
+const ser = typ === 'szeregowo';
+const f = ser ? 'p \\land q' : 'p \\lor q';
+// geometria
+const H = ser ? 120 : 160;
+const y = ser ? 60 : 80;
+const yA = 38, yB = 122; // gałęzie układu równoległego
+---
+<figure class="k-fig k-obw" data-obw={typ}>
+  <div class="k-fig-box">
+    <svg viewBox={`0 0 420 ${H}`} role="img" aria-label={ser ? 'Obwód szeregowy: zasilanie, włącznik p, włącznik q, żarówka' : 'Obwód równoległy: zasilanie, dwie gałęzie z włącznikami p i q, żarówka'}>
+      <g fill="none" stroke="#6f679a" stroke-width="3" stroke-linecap="round" class="k-obw-wire">
+        {ser ? (
+          <>
+            <path d={`M58 ${y} H120`} /><path d={`M170 ${y} H220`} /><path d={`M270 ${y} H332`} />
+          </>
+        ) : (
+          <>
+            <path d={`M58 ${y} H100`} /><path d={`M100 ${yA} V${yB}`} />
+            <path d={`M100 ${yA} H150`} /><path d={`M200 ${yA} H280`} />
+            <path d={`M100 ${yB} H150`} /><path d={`M200 ${yB} H280`} />
+            <path d={`M280 ${yA} V${yB}`} /><path d={`M280 ${y} H332`} />
+          </>
+        )}
+      </g>
+      <g>
+        <rect x="14" y={y - 18} width="44" height="36" fill="#15131d" stroke="#ffd84a" stroke-width="2" />
+        <text x="36" y={y + 5} text-anchor="middle" fill="#ffd84a" font-size="16" font-family="inherit">⚡</text>
+        <text x="36" y={y + 36} text-anchor="middle" fill="#9b93c4" font-size="11" font-family="inherit">zasilanie</text>
+      </g>
+      {(ser ? [['p', 120, y], ['q', 220, y]] : [['p', 150, yA], ['q', 150, yB]]).map(([n, x0, yy]) => (
+        <g class="k-obw-sw" data-sw={n} tabindex="0" role="button" aria-label={`włącznik ${n}`}>
+          <rect x={Number(x0) - 6} y={Number(yy) - 34} width="62" height="50" fill="transparent" />
+          <circle cx={x0} cy={yy} r="4" fill="#eef0ff" />
+          <circle cx={Number(x0) + 50} cy={yy} r="4" fill="#eef0ff" />
+          <line class="k-obw-lever" x1={x0} y1={yy} x2={Number(x0) + 50} y2={yy} stroke="#27e8ff" stroke-width="3.5" stroke-linecap="round" />
+          <text x={Number(x0) + 25} y={Number(yy) - 18} text-anchor="middle" fill="#eef0ff" font-size="15" font-style="italic" font-family="inherit">{n}</text>
+        </g>
+      ))}
+      <g class="k-obw-bulb">
+        <circle class="k-obw-glow" cx="356" cy={y} r="30" fill="#ffd84a" opacity="0" />
+        <circle class="k-obw-b" cx="356" cy={y} r="18" fill="#1c1928" stroke="#eef0ff" stroke-width="2" />
+        <path d={`M346 ${y - 6} L366 ${y + 6} M346 ${y + 6} L366 ${y - 6}`} stroke="#9b93c4" stroke-width="1.6" />
+        <text x="356" y={y + 40} text-anchor="middle" fill="#9b93c4" font-size="11" font-family="inherit">żarówka</text>
+      </g>
+    </svg>
+  </div>
+  <div class="k-obw-ctl">
+    <button type="button" class="k-opt k-opt-sm" data-btn="p">p: <b>1</b></button>
+    <button type="button" class="k-opt k-opt-sm" data-btn="q">q: <b>1</b></button>
+    <span class="k-obw-out"><span set:html={tex(f)} /> = <b data-out>1</b> <span data-txt>— żarówka świeci</span></span>
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten schemat:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-obw]').forEach((box) => {
+    const ser = box.dataset.obw === 'szeregowo';
+    const st: Record<string, number> = { p: 1, q: 1 };
+    const render = () => {
+      box.querySelectorAll<SVGGElement>('.k-obw-sw').forEach((g) => {
+        const on = st[g.dataset.sw!];
+        const l = g.querySelector('line')!;
+        const x1 = Number(l.getAttribute('x1')), y1 = Number(l.getAttribute('y1'));
+        l.setAttribute('x2', String(on ? x1 + 50 : x1 + 40));
+        l.setAttribute('y2', String(on ? y1 : y1 - 26));
+        l.setAttribute('stroke', on ? '#27e8ff' : '#ff2e97');
+      });
+      const out = ser ? st.p & st.q : st.p | st.q;
+      box.querySelector('.k-obw-glow')!.setAttribute('opacity', out ? '.28' : '0');
+      box.querySelector('.k-obw-b')!.setAttribute('fill', out ? '#ffd84a' : '#1c1928');
+      box.querySelectorAll<HTMLButtonElement>('[data-btn]').forEach((b) => { b.querySelector('b')!.textContent = String(st[b.dataset.btn!]); b.classList.toggle('is-good', !!st[b.dataset.btn!]); });
+      box.querySelector('[data-out]')!.textContent = String(out);
+      box.querySelector('[data-txt]')!.textContent = out ? '— żarówka świeci' : '— żarówka nie świeci';
+    };
+    const flip = (n: string) => { st[n] ^= 1; render(); };
+    box.querySelectorAll<SVGGElement>('.k-obw-sw').forEach((g) => {
+      g.addEventListener('click', () => flip(g.dataset.sw!));
+      g.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); flip(g.dataset.sw!); } });
+    });
+    box.querySelectorAll<HTMLButtonElement>('[data-btn]').forEach((b) => b.addEventListener('click', () => flip(b.dataset.btn!)));
+    render();
+  });
+</script>
+
+<style>
+  .k-obw-sw{cursor:pointer;outline:none;}
+  .k-obw-sw:focus-visible rect{stroke:#27e8ff;stroke-width:1.5;}
+  .k-obw-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin-top:10px;}
+  .k-obw-out{font-size:.95rem;color:var(--muted);}
+  .k-obw-out b{font-family:var(--mono);font-size:1.15rem;color:#fff;}
+</style>

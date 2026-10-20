@@ -1,0 +1,30 @@
+---
+// Wszystkie odpowiedzi z listy (moduł 9) jako kafelki z linkiem do rozwiązania krok po kroku.
+// Odpowiedź to ta sama linia, którą kończy się rachunek (budowniczy badanie() w lib/zmiennosc.js).
+import { tex } from '../../../lib/tex.js';
+interface Props { lista: { id: string; nazwa: string; d: any }[] }
+const { lista } = Astro.props;
+---
+<ol class="k-odp">
+  {lista.map((z) => (
+    <li class="k-odp-i">
+      <a class="k-odp-n" href={`#zad-${z.id}`}>{z.nazwa} <span>krok po kroku ↑</span></a>
+      <div class="k-odp-f" set:html={tex(z.d.f, true)} />
+      <div class="k-odp-d" set:html={tex(z.d.odp, true)} />
+      {!z.d.wynik.punkty.length && <p class="k-odp-b">{z.d.rzad === 1 ? 'Ekstremów brak.' : 'Punktów przegięcia brak.'}</p>}
+    </li>
+  ))}
+</ol>
+
+<style>
+  .k-odp{list-style:none!important;margin:1em 0 1.6em!important;padding:0!important;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;}
+  .k-odp-i{margin:0!important;max-width:none!important;padding:8px 12px 6px;border:1px solid var(--line2);background:var(--ink2);min-width:0;}
+  .k-odp-n{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-weight:700;color:var(--cyan);text-decoration:none;font-size:.88rem;}
+  .k-odp-n span{font-weight:400;font-size:.76rem;color:var(--muted);}
+  .k-odp-f,.k-odp-d{overflow-x:auto;overflow-y:hidden;}
+  .k-odp-f :global(.katex-display),.k-odp-d :global(.katex-display){margin:.15em 0!important;padding:2px 0!important;background:none!important;border:0!important;text-align:left;}
+  .k-odp-f :global(.katex-display > .katex),.k-odp-d :global(.katex-display > .katex){text-align:left;font-size:.95em;}
+  .k-odp-f{color:var(--muted);}
+  .k-odp-d{color:#fff;}
+  .k-odp-b{margin:2px 0 4px!important;font-size:.88rem;color:var(--muted);}
+</style>

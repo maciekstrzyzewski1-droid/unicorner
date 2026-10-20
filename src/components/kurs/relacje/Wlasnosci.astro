@@ -1,0 +1,68 @@
+---
+// Badanie 7 własności relacji na macierzy. Klik w własność: werdykt + podświetlenie komórek, które o nim decydują
+// (zielone = dowód, różowe = kontrprzykład). Na końcu typ relacji porządkującej. Bez JS: lista wszystkich werdyktów.
+import { tex, texInline } from '../../../lib/tex.js';
+import { wlasnosci, typPorzadku, NAZWY, KOLEJNOSC } from '../../../lib/relacje.js';
+import Macierz from './Macierz.astro';
+type El = number | string;
+interface Props { et: El[]; m: number[][]; t?: string }
+const { et, m, t = 'R' } = Astro.props;
+const w = wlasnosci(m, et);
+const typ = typPorzadku(w);
+const lista = KOLEJNOSC.map((k) => ({ k, nazwa: NAZWY[k], ...w[k], cells: w[k].komorki.map(([i, j]) => `${i}-${j}`).join(' ') }));
+---
+<figure class="k-fig k-wl" data-wl>
+  <div class="k-fig-box">
+    <div class="k-wl-grid">
+      <Macierz w={et} k={et} m={m} t={t} przekatna mxid="W" />
+      <div class="k-wl-btns" data-js-only hidden>
+        {lista.map((p) => <button type="button" class="k-opt k-opt-sm" data-k={p.k} data-ok={p.ok ? '1' : '0'} data-cells={p.cells}>{p.nazwa}?</button>)}
+        <button type="button" class="k-opt k-opt-sm k-wl-typ" data-k="typ">typ porządku?</button>
+      </div>
+    </div>
+    <ul class="k-wl-out" aria-live="polite">
+      {lista.map((p) => (
+        <li data-k={p.k} class={p.ok ? 'is-tak' : 'is-nie'}>
+          <b>{p.ok ? 'TAK' : 'NIE'}</b> — relacja {p.ok ? 'jest' : 'nie jest'} {p.nazwa}. <span set:html={p.tekst} />
+        </li>
+      ))}
+      <li data-k="typ" class="is-typ">
+        <b>Typ:</b> <span set:html={texInline(typ.typ ? `relacja jest przechodnia, więc to relacja porządkująca: <b>${typ.typ}</b>.` : `relacja ${typ.tekst}.`)} />
+      </li>
+    </ul>
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-wl]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-wl]') === box) el.hidden = false; });
+    const items = Array.from(box.querySelectorAll<HTMLElement>('.k-wl-out [data-k]'));
+    const btns = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-wl-btns [data-k]'));
+    const cells = Array.from(box.querySelectorAll<HTMLElement>('[data-mx="W"] .k-mx-c'));
+    const pick = (b: HTMLButtonElement | null) => {
+      btns.forEach((x) => x.classList.toggle('is-on', x === b));
+      items.forEach((li) => (li.hidden = !b || li.dataset.k !== b.dataset.k));
+      cells.forEach((c) => c.classList.remove('is-ok', 'is-roz'));
+      if (!b || !b.dataset.cells) return;
+      const cls = b.dataset.ok === '1' ? 'is-ok' : 'is-roz';
+      b.dataset.cells.split(' ').forEach((id) => { const [i, j] = id.split('-'); cells.find((c) => c.dataset.i === i && c.dataset.j === j)?.classList.add(cls); });
+    };
+    btns.forEach((b) => b.addEventListener('click', () => pick(b.classList.contains('is-on') ? null : b)));
+    pick(null);
+  });
+</script>
+
+<style>
+  .k-wl-grid{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-start;}
+  .k-wl-btns{display:flex;flex-wrap:wrap;gap:8px;max-width:360px;align-content:flex-start;}
+  .k-wl-btns .k-opt{min-height:38px;}
+  .k-wl-btns .k-opt.is-on{border-color:var(--gold);background:rgba(255,216,74,.12);}
+  .k-wl-out{list-style:none;margin:12px 0 0!important;padding:0!important;display:grid;gap:6px;font-size:.92rem;line-height:1.6;}
+  .k-wl-out li{padding:8px 12px;border-left:2px solid var(--muted2);background:rgba(255,255,255,.03);margin:0!important;max-width:none!important;}
+  .k-wl-out li.is-tak{border-left-color:var(--ok);}
+  .k-wl-out li.is-tak b:first-child{color:var(--ok);}
+  .k-wl-out li.is-nie{border-left-color:var(--magenta);}
+  .k-wl-out li.is-nie b:first-child{color:var(--magenta);}
+  .k-wl-out li.is-typ{border-left-color:var(--gold);}
+</style>

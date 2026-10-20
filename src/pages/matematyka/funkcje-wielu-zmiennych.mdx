@@ -1,0 +1,706 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: matematyka
+slug: funkcje-wielu-zmiennych
+title: Funkcje wielu zmiennych
+podtytul: pochodne cząstkowe i ekstrema bezwarunkowe
+description: Funkcje dwóch zmiennych od zera — pochodne cząstkowe pierwszego i drugiego rzędu, gradient, hesjan, twierdzenie Schwarza i ekstrema bezwarunkowe procedurą z zajęć. Wszystkie zadania z listy rozwiązane krok po kroku.
+lede: Gdy wynik zależy od dwóch liczb naraz — ceny i reklamy, pracy i kapitału — potrzebna jest funkcja dwóch zmiennych. Nauczysz się liczyć jej pochodne po każdej zmiennej osobno i szukać jej szczytów i dołków procedurą z zajęć.
+wyglad: szeroki
+wymaga: Pochodne (moduł 8), układy równań (moduł 5) i wyznacznik macierzy 2 × 2 (moduł 4) — przypominamy je na miejscu.
+umiesz:
+  - policzyć wartość funkcji dwóch zmiennych w punkcie
+  - policzyć pochodne cząstkowe pierwszego i drugiego rzędu, zamrażając drugą zmienną
+  - zapisać gradient i hesjan oraz skorzystać z twierdzenia Schwarza
+  - rozwiązać układ równań ∇f = 0 i znaleźć punkty stacjonarne
+  - rozstrzygnąć wyznacznikiem hesjanu, czy w punkcie jest maksimum, minimum, czy nie ma ekstremum
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Legenda from '../../components/kurs/Legenda.astro';
+import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import Mx from '../../components/kurs/macierze/Mx.astro';
+import Tx from '../../components/kurs/macierze/Tx.astro';
+import CwiczenieLiczby from '../../components/kurs/macierze/CwiczenieLiczby.astro';
+import Rachunek from '../../components/kurs/pochodne/Rachunek.astro';
+import Przyklad from '../../components/kurs/pochodne/Przyklad.astro';
+import Wykres from '../../components/kurs/zmiennosc/Wykres.astro';
+import Powierzchnia from '../../components/kurs/wielu/Powierzchnia.astro';
+import Odpowiedzi from '../../components/kurs/wielu/Odpowiedzi.astro';
+import { ZAD1 as A, ZAD2 as B } from '../../lib/wielu-zadania.js';
+import { ETAPY_P, ETAPY_E } from '../../lib/wielu.js';
+
+export const R = String.raw;
+export const tyt = (d) => `$${d.f}$`;
+export const DX = R`\frac{\partial f}{\partial x}`;
+export const DY = R`\frac{\partial f}{\partial y}`;
+export const DXX = R`\frac{\partial^2 f}{\partial x^2}`;
+export const DYY = R`\frac{\partial^2 f}{\partial y^2}`;
+export const DXY = R`\frac{\partial^2 f}{\partial x \partial y}`;
+export const DYX = R`\frac{\partial^2 f}{\partial y \partial x}`;
+export const fx2y = (x, y) => x * x * y;
+export const KAT_EKSTR = ['maksimum', 'minimum', 'brak ekstremum', 'nie wiadomo'];
+export const HCW = [[4, 14], [14, 6]];
+export const hcwDlaczego = (i, j) => [
+  [R`$\frac{\partial^2 f}{\partial x^2} = 2y$, w punkcie $(1, 2)$: $2 \cdot 2 = 4$.`, R`$\frac{\partial^2 f}{\partial x \partial y} = 2x + 6y$, w punkcie: $2 \cdot 1 + 6 \cdot 2 = 2 + 12 = 14$.`],
+  [R`$\frac{\partial^2 f}{\partial y \partial x} = 2x + 6y = 14$ — tyle samo co nad przekątną (twierdzenie Schwarza).`, R`$\frac{\partial^2 f}{\partial y^2} = 6x$, w punkcie: $6 \cdot 1 = 6$.`],
+][i][j];
+
+## Po co to jest
+
+Zysk sklepu internetowego zależy od dwóch rzeczy naraz: od ceny i od wydatków na reklamę. Wyższa cena daje więcej z każdej sztuki, ale mniej klientów. Więcej reklamy to więcej klientów, ale też więcej kosztów. Szukasz **najlepszej pary** liczb — a nie jednej liczby, jak w modułach 8 i 9.
+
+Taką zależność opisuje **funkcja dwóch zmiennych**: wstawiasz dwie liczby, dostajesz jedną. Jej wykres to już nie krzywa, tylko **powierzchnia** — jak teren z górkami i dolinami:
+
+<Powierzchnia fn={(x, y) => -x * x + x * y - y * y + 2 * x - y - 11} zakres={{ x0: -1.5, x1: 3.5, y0: -2.5, y1: 2.5 }} z={[-22, -9]} osie={false} punkty={[{ x: 1, y: 0, t: 'szczyt' }]} leg={[['bialy', 'najwyższy punkt — maksimum']]}>
+wykres funkcji z zadania 2 k), $f(x, y) = -x^2 + xy - y^2 + 2x - y - 11$. Każdy punkt $(x, y)$ podłogi (płaszczyzny $xy$) ma swoją wysokość $f(x, y)$ — tu wszystkie są ujemne, ale liczy się kształt terenu. Na szczycie, przy $x = 1$ i $y = 0$, funkcja ma największą wartość. Pod koniec modułu znajdziesz ten szczyt z samego wzoru.
+</Powierzchnia>
+
+Narzędzia są te same co dla jednej zmiennej — pochodna przyrównana do zera i druga pochodna — tylko liczy się je **po każdej zmiennej osobno**.
+
+### Jak przejdziemy przez ten moduł
+
+1. **Pojęcia** ([sekcja 3](#pojecia)): funkcja dwóch zmiennych, pochodna cząstkowa, gradient, hesjan i ekstremum — każde na rysunku.
+2. **Pochodne cząstkowe** (Zad. 1): jeden przepis na wszystkie przykłady z listy.
+3. **Ekstrema bezwarunkowe** (Zad. 2): procedura z zajęć w sześciu krokach — najpierw układ równań, potem wyznacznik hesjanu.
+
+## Co będzie na kolokwium
+
+Na liście są dwa polecenia: Zad. 1 (12 funkcji) i Zad. 2 (16 funkcji). Poniżej oba polecenia i dwa typowe warianty — od najprostszego. Każde ma w module swój przepis i ćwiczenia.
+
+To na razie tylko mapa — nie musisz jeszcze rozumieć tych pojęć. Wrócisz tu, gdy będziesz szukać przepisu.
+
+<Polecenia items={[
+  { polecenie: R`Oblicz pochodne cząstkowe pierwszego i drugiego rzędu funkcji $f(x, y)$ względem każdej ze zmiennych`, jak: R`Liczysz pochodną po $x$, a $y$ traktujesz jak liczbę. Potem odwrotnie. Drugie pochodne liczysz z pierwszych tak samo.`, przepis: 'polecenie-czastkowe', cwiczenia: 'cw-czastkowe', zrodlo: 'Zad. 1 a)–l)' },
+  { polecenie: R`Wyznacz gradient i hesjan funkcji, także w punkcie`, jak: R`Gotowe pochodne układasz w wektor i macierz. W punkcie — wstawiasz liczby do gotowych wzorów.`, przepis: 'polecenie-punkt', cwiczenia: 'cw-punkt', zrodlo: 'pytania ze slajdów (gradient, hesjan)' },
+  { polecenie: R`Wyznacz punkty stacjonarne (rozwiąż układ $\nabla f(x, y) = 0$)`, jak: R`Obie pierwsze pochodne przyrównujesz do zera i rozwiązujesz układ dwóch równań.`, przepis: 'polecenie-uklad', cwiczenia: 'cw-uklad', zrodlo: 'krok 2 w Zad. 2' },
+  { polecenie: 'Wyznacz ekstrema bezwarunkowe funkcji', jak: R`Procedura z zajęć: punkty stacjonarne, hesjan w każdym punkcie, jego wyznacznik $W$ i warunek dostateczny.`, przepis: 'polecenie-ekstrema', cwiczenia: 'cw-ekstrema', zrodlo: 'Zad. 2 a)–p)' },
+]} />
+
+<a id="pojecia" class="k-anchor"></a>
+
+## Pojęcia od podstaw
+
+Pójdziemy tak: funkcja dwóch zmiennych → pochodna cząstkowa → gradient → drugie pochodne i hesjan → ekstremum.
+
+### Funkcja dwóch zmiennych
+
+Slajd z zajęć: **funkcja wielu zmiennych** $f(x_1, x_2, \ldots, x_n)$ ma więcej niż jeden argument. Zamiast $x_1, x_2$ pisze się zwykle $x, y$. Na zajęciach zajmujemy się funkcjami dwóch zmiennych: $f(x, y)$.
+
+<div class="k-symbole">
+  <Znak t="f(x, y)" nazwa="Funkcja dwóch zmiennych" czytamy="ef od iks, igrek" znaczy="Maszynka, do której wkładasz dwie liczby naraz: $x$ i $y$. Wynik to jedna liczba. Żeby go policzyć, musisz znać obie — sam $x$ nie wystarczy." pamiec="Jak położenie na mapie: dwie współrzędne (wschód i północ), a odpowiedź to wysokość terenu." />
+</div>
+
+Na przykład $f(x, y) = x^2y$:
+
+| punkt | rachunek | wartość |
+|---|---|---|
+| $(1, 2)$ | $f(1, 2) = 1^2 \cdot 2 = 1 \cdot 2$ | $2$ |
+| $(2, 1)$ | $f(2, 1) = 2^2 \cdot 1 = 4 \cdot 1$ | $4$ |
+| $(-1, 3)$ | $f(-1, 3) = (-1)^2 \cdot 3 = 1 \cdot 3$ | $3$ |
+
+Jak czytać tabelę: pierwsza liczba w nawiasie trafia w miejsce $x$, druga — w miejsce $y$. Kolejność ma znaczenie: $f(1, 2) = 2$, a $f(2, 1) = 4$.
+
+### Pochodna cząstkowa: po każdej zmiennej osobno
+
+Slajd z zajęć: **pochodna cząstkowa** funkcji $f$ względem zmiennej $x$ to pochodna, przy obliczaniu której wszystkie pozostałe zmienne traktujemy **jak stałe**.
+
+<div class="k-symbole">
+  <Znak t="\frac{\partial f}{\partial x}" nazwa="Pochodna cząstkowa po x" czytamy="de ef po de iks — pochodna cząstkowa ef względem iks" znaczy="Zwykła pochodna po $x$, w której litera $y$ jest „zamrożona”: zachowuje się jak liczba. Okrągłe $\partial$ (czytamy „de”) mówi, że pochodna jest cząstkowa." pamiec="Okrągłe de zamiast zwykłego: liczysz tylko część — po jednej literze." />
+  <Znak t="\frac{\partial f}{\partial y}" nazwa="Pochodna cząstkowa po y" czytamy="de ef po de igrek — pochodna cząstkowa ef względem igrek" znaczy="Teraz odwrotnie: liczysz po $y$, a zamrożony jest $x$." />
+</div>
+
+Co znaczy „zamrozić”? Weź $f(x, y) = x^2y$ i ustal $y = 2$. Zostaje zwykła funkcja jednej zmiennej: $f(x, 2) = x^2 \cdot 2 = 2x^2$. Jej pochodna to $4x$, a w punkcie $x = 1$: $4 \cdot 1 = 4$.
+
+Wzór robi to samo w jednym kroku, z literą zamiast liczby: przy zamrożonym $y$ (na złoto — litera zamrożona, czyli traktowana jak liczba) funkcja $x^2\cG{y}$ to „liczba $\cG{y}$ razy $x^2$”, więc
+
+$$
+\begin{aligned} &\frac{\partial f}{\partial x} = \cG{y} \cdot 2x = 2xy, \\ &\frac{\partial f}{\partial x}(1, 2) = 2 \cdot 1 \cdot 2 = 4. \end{aligned}
+$$
+
+Wyszło to samo. Zapis $\frac{\partial f}{\partial x}(1, 2)$ to pochodna cząstkowa w punkcie $(1, 2)$: wzór z wstawionymi liczbami. Na rysunku: zamrożenie $y = 2$ to przekrój powierzchni wzdłuż osi $x$ (turkusowa linia), a pochodna cząstkowa to nachylenie tego przekroju.
+
+<Powierzchnia fn={fx2y} zakres={{ x0: -1.5, x1: 2, y0: 0, y1: 3 }} z={[0, 12]} przekroje={[{ os: 'x', v: 2, kl: 'is-a' }, { os: 'y', v: 1, kl: 'is-g' }]} punkty={[{ x: 1, y: 2, t: '(1, 2)', dy: 28 }]} leg={[['cyan', 'przekrój przy zamrożonym $y = 2$ (idziesz wzdłuż osi $x$)'], ['zloto', 'przekrój przy zamrożonym $x = 1$ (idziesz wzdłuż osi $y$)'], ['bialy', 'punkt $(1, 2)$ na powierzchni']]}>
+siatka to wykres $f(x, y) = x^2y$. Obie kolorowe linie przechodzą przez punkt $(1, 2)$. Turkusowa leży nad prostą $y = 2$, złota — nad prostą $x = 1$. Każda z nich to wykres zwykłej funkcji jednej zmiennej — narysowane są niżej, osobno.
+</Powierzchnia>
+
+<div class="k-wyk-para">
+
+<Wykres dane={{ fn: (x) => 2 * x * x, okno: { x0: -0.6, x1: 2.1, y0: -0.5, y1: 6 }, kx: 1, ky: 2, nazwy: ['x', 'z'], w: 340, h: 280, kawalki: [{ od: -0.6, do: 2.1, kl: 'k-w-a' }], styczne: [{ x0: 1, y0: 2, k: 4, dl: 0.55, kl: 'is-przer' }], punkty: [{ x: 1, y: 2, kl: 'is-e', t: 'nachylenie 4', dx: -12, dy: -8, anchor: 'end' }] }} leg={[['cyan', 'przekrój $y = 2$: $z = 2x^2$'], ['bialy', 'styczna w punkcie $x = 1$']]} male>
+turkusowy przekrój z rysunku wyżej, oglądany z boku: $z = f(x, 2) = 2x^2$. Styczna w $x = 1$ ma nachylenie $4$ — to $\frac{\partial f}{\partial x}(1, 2)$.
+</Wykres>
+
+<Wykres dane={{ fn: (x) => x, okno: { x0: -0.3, x1: 3.3, y0: -0.5, y1: 3.5 }, kx: 1, ky: 1, nazwy: ['y', 'z'], w: 340, h: 280, kawalki: [{ od: -0.3, do: 3.3, kl: 'k-w-z' }], punkty: [{ x: 2, y: 2, kl: 'is-e', t: 'nachylenie 1', dx: 12, dy: 18, anchor: 'start' }] }} leg={[['zloto', 'przekrój $x = 1$: $z = y$']]} male>
+złoty przekrój: $z = f(1, y) = 1^2 \cdot y = y$. To prosta — wznosi się o $1$ na każdy krok o $1$ w prawo. Stąd $\frac{\partial f}{\partial y}(1, 2) = 1$. Ze wzoru: $\frac{\partial f}{\partial y} = \cG{x^2} \cdot 1 = x^2$, w punkcie $(1, 2)$: $1^2 = 1$.
+</Wykres>
+
+</div>
+
+<Ramka kind="zapamietaj" tytul="Ile jest pochodnych cząstkowych (slajd)">
+Pochodnych cząstkowych pierwszego rzędu jest tyle, ile zmiennych. Funkcja $f(x, y)$ ma dwie: $\frac{\partial f}{\partial x}$ i $\frac{\partial f}{\partial y}$. Funkcja trzech zmiennych $f(x, y, z)$ ma trzy.
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Zamrożona litera to liczba — nie zero">
+- Zamrożona litera **przy** $x$ zostaje jak współczynnik: $(5\cG{y^2} \cdot x^2)$ po $x$ to $5\cG{y^2} \cdot 2x = 10xy^2$. Tak jak $(5 \cdot 9 \cdot x^2)' = 45 \cdot 2x$.
+- Składnik **bez** $x$ znika: $-9\cG{y}$ po $x$ to $0$, bo to po prostu liczba. Tak jak $(-27)' = 0$.
+- Błąd: „$y$ jest stałą, więc $x^2y$ po $x$ to $0$”. Zero daje tylko składnik, w którym w ogóle nie ma $x$.
+</Ramka>
+
+<Pytania pytania={[
+  { q: R`$f(x, y) = x^3y + 2y$. Ile wynosi $\frac{\partial f}{\partial x}$?`, opcje: [R`$3x^2y + 2$`, R`$3x^2y$`, R`$3x^2$`], dobra: 1, dlaczego: R`Przy zamrożonym $y$: $(x^3\cG{y})$ daje $\cG{y} \cdot 3x^2$, a $2\cG{y}$ to liczba — pochodna $0$. Pierwsza opcja liczy pochodną $2y$ po $y$ — a liczysz po $x$, więc $2y$ to liczba. Trzecia gubi $y$, który jest współczynnikiem przy $x^3$.` },
+]} />
+
+### Gradient
+
+Slajd z zajęć: pierwsze pochodne cząstkowe tworzą wektor nazywany **gradientem**. Gradient to wektor kolumnowy (pionowy):
+
+<div class="k-rown">
+<Mx t="\nabla f(x, y) =" m={[[DX], [DY]]} />
+</div>
+
+<div class="k-symbole">
+  <Znak t="\nabla f" nazwa="Gradient" czytamy="nabla ef albo gradient ef" znaczy="Pionowy wektor z pierwszych pochodnych cząstkowych: u góry pochodna po $x$, na dole po $y$. Dla trzech zmiennych ma trzy pozycje." pamiec="Odwrócony trójkąt $\nabla$ to „nabla” — nazwa od harfy w kształcie trójkąta." />
+</div>
+
+Dla $f(x, y) = x^2y$ policzyliśmy już $\frac{\partial f}{\partial x} = 2xy$ i $\frac{\partial f}{\partial y} = x^2$, więc:
+
+<div class="k-rown">
+<Mx t="\nabla f(x, y) =" m={[['2xy'], ['x^2']]} />
+<span class="k-zn">,</span>
+<Mx t="\nabla f(1, 2) =" m={[['2 \\cdot 1 \\cdot 2'], ['1^2']]} />
+<span class="k-zn">=</span>
+<Mx m={[[4], [1]]} />
+</div>
+
+Jak czytać: w punkcie $(1, 2)$ nachylenie powierzchni wynosi $4$ w kierunku osi $x$ i $1$ w kierunku osi $y$ — tak jak na przekrojach wyżej.
+
+### Drugie pochodne cząstkowe i hesjan
+
+Z pochodnej cząstkowej można znowu policzyć pochodną cząstkową — to **pochodna cząstkowa drugiego rzędu**. Funkcja dwóch zmiennych ma ich cztery (slajd: drugich pochodnych jest tyle, ile wynosi kwadrat liczby zmiennych, $2^2 = 4$):
+
+<Rozbior t="\frac{\partial^2 f}{\partial x^2}, \quad \frac{\partial^2 f}{\partial y^2}, \quad \frac{\partial^2 f}{\partial x \partial y}, \quad \frac{\partial^2 f}{\partial y \partial x}" czytamy="de dwa ef po de iks kwadrat, de dwa ef po de igrek kwadrat, de dwa ef po de iks de igrek, de dwa ef po de igrek de iks" czesci={[
+  { t: '\\frac{\\partial^2 f}{\\partial x^2}', o: '<b>druga pochodna po $x$</b> — pochodną $\\frac{\\partial f}{\\partial x}$ liczysz jeszcze raz po $x$' },
+  { t: '\\frac{\\partial^2 f}{\\partial y^2}', o: '<b>druga pochodna po $y$</b> — pochodną $\\frac{\\partial f}{\\partial y}$ liczysz jeszcze raz po $y$' },
+  { t: '\\frac{\\partial^2 f}{\\partial x \\partial y}', o: '<b>pochodna mieszana</b> — na slajdzie: pierwsza pochodna względem $x$, druga względem $y$. Bierzesz $\\frac{\\partial f}{\\partial x}$ i liczysz z niej pochodną po $y$' },
+  { t: '\\frac{\\partial^2 f}{\\partial y \\partial x}', o: '<b>druga z pochodnych mieszanych</b> — najpierw względem $y$, potem względem $x$' },
+]} />
+
+<Ramka kind="botak" tytul="Kolejność w zapisie mieszanej pochodnej">
+Na zajęciach $\frac{\partial^2 f}{\partial x \partial y}$ czytamy od lewej: najpierw po $x$, potem po $y$. W niektórych książkach jest odwrotnie — ale w zadaniach z listy to nie ma znaczenia, bo obie pochodne mieszane wychodzą takie same (twierdzenie Schwarza, niżej).
+</Ramka>
+
+Dla $f(x, y) = x^2y$, gdzie $\frac{\partial f}{\partial x} = 2xy$ i $\frac{\partial f}{\partial y} = x^2$:
+
+| pochodna | liczysz z | zamrożone | wynik |
+|---|---|---|---|
+| $\frac{\partial^2 f}{\partial x^2}$ | $2xy$ po $x$ | $y$ | $2\cG{y} \cdot 1 = 2y$ |
+| $\frac{\partial^2 f}{\partial y^2}$ | $x^2$ po $y$ | $x$ | $0$ ($x^2$ to liczba) |
+| $\frac{\partial^2 f}{\partial x \partial y}$ | $2xy$ po $y$ | $x$ | $2\cG{x} \cdot 1 = 2x$ |
+| $\frac{\partial^2 f}{\partial y \partial x}$ | $x^2$ po $x$ | $y$ | $2x$ |
+
+Jak czytać tabelę: w drugiej kolumnie wzór, który różniczkujesz, i zmienna, po której liczysz. Trzecia kolumna mówi, która litera jest wtedy liczbą. Obie mieszane wyszły równe: $2x$.
+
+<Ramka kind="zapamietaj" tytul="Twierdzenie Schwarza (slajd)">
+Jeśli drugie pochodne mieszane istnieją i są ciągłe, to są sobie równe:
+
+$$
+\frac{\partial^2 f}{\partial x \partial y} = \frac{\partial^2 f}{\partial y \partial x}
+$$
+
+W praktyce: wystarczy policzyć jedną mieszaną pochodną — druga wyjdzie taka sama. W rozwiązaniach liczymy obie, bo druga to darmowe sprawdzenie rachunku: jeśli wyjdą różne, gdzieś jest błąd. „Ciągłe” znaczy tu: bez przerw i skoków — dla funkcji z listy zawsze tak jest, więc nie musisz tego sprawdzać.
+</Ramka>
+
+Slajd z zajęć: drugie pochodne cząstkowe tworzą kwadratową macierz nazywaną **hesjanem**:
+
+<div class="k-rown">
+<Mx t="H_f(x, y) =" m={[[DXX, DXY], [DYX, DYY]]} />
+</div>
+
+<div class="k-symbole">
+  <Znak t="H_f" nazwa="Hesjan" czytamy="hesjan funkcji ef" znaczy="Macierz drugich pochodnych cząstkowych. W pierwszym wierszu pochodne liczone najpierw po $x$, w drugim — najpierw po $y$. Na przekątnej (z lewego górnego rogu do prawego dolnego) stoją drugie pochodne po tej samej zmiennej." pamiec="Nazwa od matematyka Ludwiga Hessego — nie musisz jej pamiętać." />
+</div>
+
+Z twierdzenia Schwarza hesjan jest **symetryczny**: wyrażenia nad przekątną i pod nią są takie same. Dla $f(x, y) = x^2y$:
+
+<div class="k-rown">
+<Mx t="H_f(x, y) =" m={[['2y', '2x'], ['2x', '0']]} />
+</div>
+
+<Ramka kind="podobny" tytul="Trzy zmienne (pytanie ze slajdu)">
+Dla $f(x, y, z)$ gradient ma trzy pozycje, a hesjan jest macierzą $3 \times 3$ — tak samo zbudowaną: wiersz $1$ to pochodne liczone najpierw po $x$, wiersz $2$ — po $y$, wiersz $3$ — po $z$.
+
+<div class="k-rown">
+<Mx t="\nabla f =" m={[[DX], [DY], ['\\frac{\\partial f}{\\partial z}']]} />
+<span class="k-zn">,</span>
+<Mx t="H_f =" m={[[DXX, DXY, '\\frac{\\partial^2 f}{\\partial x \\partial z}'], [DYX, DYY, '\\frac{\\partial^2 f}{\\partial y \\partial z}'], ['\\frac{\\partial^2 f}{\\partial z \\partial x}', '\\frac{\\partial^2 f}{\\partial z \\partial y}', '\\frac{\\partial^2 f}{\\partial z^2}']]} />
+</div>
+
+Pochodnych drugiego rzędu jest tu $3^2 = 9$.
+</Ramka>
+
+### Ekstremum bezwarunkowe: szczyt, dołek i siodło
+
+Slajd z zajęć: **ekstremum bezwarunkowe** funkcji wielu zmiennych to odpowiednik ekstremum lokalnego funkcji jednej zmiennej — punkt, w którym funkcja przyjmuje **lokalnie** (w otoczeniu punktu) wartość największą albo najmniejszą. Otoczenie to tu małe kółko wokół punktu na płaszczyźnie $xy$ (a nie przedział, jak w module 9). „Bezwarunkowe”, bo $x$ i $y$ nie muszą spełniać żadnego dodatkowego równania (byle należały do dziedziny) — takie warunki dojdą w module 11.
+
+Na rysunkach trzy funkcje. Wszystkie w punkcie $(0, 0)$ są „płaskie” — obie pochodne cząstkowe są tam zerem — ale tylko dwie mają tam ekstremum:
+
+<div class="k-wyk-para is-3">
+
+<Powierzchnia fn={(x, y) => x * x + y * y} zakres={{ x0: -1.5, x1: 1.5, y0: -1.5, y1: 1.5 }} z={[0, 4.5]} punkty={[{ x: 0, y: 0, t: 'minimum', dy: 22 }]} tytul="miska: $f = x^2 + y^2$" male n={12} />
+
+<Powierzchnia fn={(x, y) => -x * x - y * y} zakres={{ x0: -1.5, x1: 1.5, y0: -1.5, y1: 1.5 }} z={[-4.5, 0]} punkty={[{ x: 0, y: 0, t: 'maksimum' }]} tytul="górka: $f = -x^2 - y^2$" male n={12} />
+
+<Powierzchnia fn={(x, y) => x * x - y * y} zakres={{ x0: -1.5, x1: 1.5, y0: -1.5, y1: 1.5 }} z={[-2.25, 2.25]} przekroje={[{ os: 'x', v: 0, kl: 'is-a' }, { os: 'y', v: 0, kl: 'is-g' }]} punkty={[{ x: 0, y: 0, t: 'siodło', kl: 'is-brak', dy: 26 }]} tytul="siodło: $f = x^2 - y^2$" male n={12} />
+
+</div>
+
+<Legenda items={[['bialy', 'punkt $(0, 0)$ — pełna kropka: ekstremum, pusta: brak ekstremum'], ['cyan', 'siodło wzdłuż osi $x$: dołek'], ['zloto', 'siodło wzdłuż osi $y$: szczyt']]} />
+
+Jak czytać rysunki: w misce punkt $(0, 0)$ leży najniżej — to minimum. W górce leży najwyżej — maksimum. Siodło wygląda jak siodło konia albo przełęcz w górach: idąc wzdłuż osi $x$ (turkusowa linia), jesteś w dołku, a idąc wzdłuż osi $y$ (złota linia) — na szczycie. Ani najwyżej, ani najniżej w okolicy, więc **ekstremum nie ma**.
+
+<Ramka kind="zapamietaj" tytul="Warunek konieczny (slajd, krok 2)">
+Jeśli w punkcie jest ekstremum (i pochodne istnieją), to obie pierwsze pochodne cząstkowe są tam zerem:
+
+$$
+\nabla f(x, y) = 0 \iff \begin{cases} \frac{\partial f}{\partial x} = 0 \\ \frac{\partial f}{\partial y} = 0 \end{cases}
+$$
+
+To układ dwóch równań z dwiema niewiadomymi. Jego rozwiązania to **punkty stacjonarne** $P_0 = (x_0, y_0)$ — kandydaci na ekstrema. Siodło pokazuje, że kandydat nie zawsze jest ekstremum.
+</Ramka>
+
+Co odróżnia miskę, górkę i siodło? Drugie pochodne — tak jak w module 9 znak $f''$ odróżniał kształt ∪ od ∩. Tu robią to dwie liczby z hesjanu: wyznacznik $W$ (siodło czy nie) i lewy górny element $a_{11}$ (miska czy górka).
+
+<Ramka kind="liceum" tytul="Wyznacznik macierzy 2 × 2 (moduł 4)">
+Iloczyn liczb na przekątnej minus iloczyn liczb na drugiej przekątnej ($\det$ to skrót od „wyznacznik”):
+
+<div class="k-rown">
+<Mx t="\det" m={[[2, 1], [1, 2]]} oznacz={[{ i: 0, j: 0, styl: 'cyan' }, { i: 1, j: 1, styl: 'cyan' }, { i: 0, j: 1, styl: 'zloto' }, { i: 1, j: 0, styl: 'zloto' }]} />
+<Tx t="= 2 \cdot 2 - 1 \cdot 1 = 4 - 1 = 3" />
+</div>
+
+<Legenda items={[['cyan', 'przekątna: lewy górny i prawy dolny — ich iloczyn bierzesz z plusem'], ['zloto', 'druga przekątna: prawy górny i lewy dolny — ich iloczyn odejmujesz']]} />
+</Ramka>
+
+<Ramka kind="zapamietaj" tytul="Warunek dostateczny (slajd, krok 6)">
+Policz $W(P_0) = \det H_f(x_0, y_0)$ — wyznacznik hesjanu w punkcie stacjonarnym.
+
+- $W(P_0) > 0$ — w $P_0$ **jest ekstremum**. O rodzaju ekstremum mówi lewy górny element hesjanu $a_{11} = \frac{\partial^2 f}{\partial x^2}$ w punkcie $P_0$ (czytamy „a jeden jeden”: wiersz 1, kolumna 1 — jak w module 4): gdy $a_{11} < 0$ — **maksimum**, gdy $a_{11} > 0$ — **minimum**.
+- $W(P_0) < 0$ — w $P_0$ **nie ma ekstremum** (siodło).
+- $W(P_0) = 0$ — tą metodą **nie da się rozstrzygnąć**.
+
+Do zapamiętania: znak $a_{11}$ działa jak znak $f''$ w module 9 — plus to dołek (minimum), minus to górka (maksimum).
+</Ramka>
+
+Sprawdźmy na trzech rysunkach. Wszystkie hesjany są stałe (bez $x$ i $y$), więc w $(0, 0)$ każdy ma te same liczby co w każdym innym punkcie:
+
+| funkcja | hesjan | $W$ | $a_{11}$ | wniosek |
+|---|---|---|---|---|
+| $x^2 + y^2$ | na przekątnej $2$ i $2$, poza nią $0$ | $2 \cdot 2 - 0 \cdot 0 = 4 > 0$ | $2 > 0$ | minimum |
+| $-x^2 - y^2$ | na przekątnej $-2$ i $-2$, poza nią $0$ | $(-2) \cdot (-2) - 0 \cdot 0 = 4 > 0$ | $-2 < 0$ | maksimum |
+| $x^2 - y^2$ | na przekątnej $2$ i $-2$, poza nią $0$ | $2 \cdot (-2) - 0 \cdot 0 = -4 < 0$ | — | brak (siodło) |
+
+Jak czytać tabelę: w każdym wierszu najpierw $W$. Dopiero gdy $W > 0$, patrzysz na znak $a_{11}$. Przy siodle $a_{11} = 2$ jest dodatni, ale to nie ma znaczenia — $W < 0$ rozstrzyga, że ekstremum nie ma.
+
+<Ramka kind="granica" etykieta="Uwaga — kiedy to nie działa" tytul="W = 0">
+- Dla $f(x, y) = x^4 + y^4$ w punkcie $(0, 0)$: wszystkie drugie pochodne są zerem, więc $W = 0$. A jednak to minimum — $x^4 + y^4 \geq 0$, a w $(0, 0)$ wartość to $0$.
+- Dla $f(x, y) = x^4 - y^4$ też $W = 0$, a ekstremum nie ma (jak siodło).
+- Dlatego przy $W = 0$ piszesz „nie wiadomo” — procedura z zajęć tego nie rozstrzyga. W zadaniach z listy taki przypadek nie występuje.
+</Ramka>
+
+<a id="polecenie-czastkowe" class="k-anchor"></a>
+
+## Pochodne cząstkowe
+
+**Cel: sześć wzorów — dwie pierwsze pochodne i cztery drugie — zapisane na końcu jako gradient i hesjan.**
+
+<Ramka kind="polecenie" tytul="Oblicz pochodne cząstkowe pierwszego i drugiego rzędu">
+> Oblicz pochodne cząstkowe pierwszego i drugiego rzędu funkcji $f(x, y)$ względem każdej ze zmiennych, np. $f(x, y) = 5x^2y^2 - 6xy + 12x - 9y + 1$.
+
+1. **Pierwsze pochodne.** $\frac{\partial f}{\partial x}$: zamroź $y$ (traktuj go jak liczbę) i licz zwykłą pochodną po $x$ wzorami i regułami z modułu 8. $\frac{\partial f}{\partial y}$: odwrotnie. Jeśli trzeba, najpierw zapisz pierwiastki i ułamki jako potęgi.
+2. **Drugie po tej samej zmiennej.** $\frac{\partial^2 f}{\partial x^2}$: wynik z $\frac{\partial f}{\partial x}$ jeszcze raz po $x$. $\frac{\partial^2 f}{\partial y^2}$: wynik z $\frac{\partial f}{\partial y}$ jeszcze raz po $y$.
+3. **Mieszane.** $\frac{\partial^2 f}{\partial x \partial y}$: wynik z $\frac{\partial f}{\partial x}$ po $y$. $\frac{\partial^2 f}{\partial y \partial x}$: wynik z $\frac{\partial f}{\partial y}$ po $x$. Muszą wyjść takie same (twierdzenie Schwarza) — jeśli nie, szukaj błędu.
+4. **Zapisz wynik** jako gradient (wektor pierwszych pochodnych) i hesjan (macierz drugich).
+</Ramka>
+
+W rachunkach przy pierwszej linii każdego etapu stoi jego numer — najedź na niego (na telefonie: stuknij), żeby przypomnieć sobie, po co ten etap jest. Na złoto zaznaczona jest litera zamrożona w danej pochodnej.
+
+<a id="zad-1a" class="k-anchor"></a>
+
+<Rachunek d={A.a} etapy={ETAPY_P} etapyNazwa="Przepis" tytul={tyt(A.a)} zrodlo="Zad. 1 a)">
+<div slot="plan">
+
+Cel: dwie pierwsze pochodne i cztery drugie.
+
+1. **Pierwsze pochodne:** każdy składnik osobno. Przy pochodnej po $x$ litera $y$ jest liczbą — składnik $-9y$ znika, a $y^2$ w $5x^2y^2$ zostaje jako współczynnik.
+2. **Drugie po tej samej zmiennej:** z wyników kroku 1, tą samą metodą.
+3. **Mieszane:** pochodną po $x$ liczymy po $y$ i odwrotnie. Obie wyjdą równe — to sprawdzenie.
+4. **Gradient i hesjan:** porządkujemy wyniki.
+
+</div>
+</Rachunek>
+
+Gdy w funkcji jest iloczyn, ale tylko jeden czynnik zawiera daną zmienną, reguła iloczynu nie jest potrzebna — drugi czynnik to liczba:
+
+<a id="zad-1d" class="k-anchor"></a>
+
+<Rachunek d={A.d} etapy={ETAPY_P} etapyNazwa="Przepis" tytul={tyt(A.d)} zrodlo="Zad. 1 d)">
+<div slot="plan">
+
+Cel: dwie pierwsze pochodne i cztery drugie.
+
+1. **Pierwsze pochodne:** po $x$ czynnik $\ln y$ to liczba, po $y$ czynnik $x^3$ to liczba. Wystarczy reguła 1 (stała przed funkcją).
+2. **Drugie po tej samej zmiennej:** $\frac{1}{y}$ zapisujemy jako $y^{-1}$, żeby użyć wzoru 3.
+3. **Mieszane:** obie wyjdą $\frac{3x^2}{y}$.
+4. **Gradient i hesjan.**
+
+</div>
+</Rachunek>
+
+Funkcja złożona — litera siedzi w wykładniku razem z drugą:
+
+<a id="zad-1f" class="k-anchor"></a>
+
+<Rachunek d={A.f} etapy={ETAPY_P} etapyNazwa="Przepis" tytul={tyt(A.f)} zrodlo="Zad. 1 f)">
+<div slot="plan">
+
+Cel: dwie pierwsze pochodne i cztery drugie.
+
+1. **Pierwsze pochodne:** reguła 5 — $e^{\square}$ razy pochodna wykładnika. Wykładnik $xy$ po $x$ daje $y$, po $y$ daje $x$.
+2. **Drugie po tej samej zmiennej:** w $ye^{xy}$ po $x$ czynnik $y$ jest liczbą — wystarczy reguła 5.
+3. **Mieszane:** w $ye^{xy}$ po $y$ **oba** czynniki mają $y$ — tu potrzebna jest reguła iloczynu.
+4. **Gradient i hesjan.**
+
+</div>
+</Rachunek>
+
+Logarytm z iloczynu:
+
+<a id="zad-1h" class="k-anchor"></a>
+
+<Rachunek d={A.h} etapy={ETAPY_P} etapyNazwa="Przepis" tytul={tyt(A.h)} zrodlo="Zad. 1 h)">
+<div slot="plan">
+
+Cel: dwie pierwsze pochodne i cztery drugie.
+
+1. **Pierwsze pochodne:** $\ln \square$ ze środkiem $x^2y$ — reguła 5. Po skróceniu wychodzą bardzo proste wyniki.
+2. **Drugie po tej samej zmiennej:** potęgi z minusem i wzór 3.
+3. **Mieszane:** $\frac{2}{x}$ nie ma $y$, a $\frac{1}{y}$ nie ma $x$ — obie mieszane to $0$.
+4. **Gradient i hesjan.**
+
+</div>
+</Rachunek>
+
+### Pozostałe przykłady z listy
+
+Ten sam przepis, krok po kroku. Kliknij przykład, żeby go rozwinąć.
+
+<Przyklad id="1b" nazwa="Zad. 1 b)" d={A.b} etapy={ETAPY_P} etapyNazwa="Przepis" cel="Cel: dwie pierwsze pochodne i cztery drugie." plan="Nowe tutaj: każdy składnik zależy tylko od jednej zmiennej, więc mieszane pochodne to $0$." />
+<Przyklad id="1c" nazwa="Zad. 1 c)" d={A.c} etapy={ETAPY_P} etapyNazwa="Przepis" cel="Cel: dwie pierwsze pochodne i cztery drugie." plan="Nowe tutaj: w $x^2y$ litera zamrożona jest współczynnikiem, a $e^y$ przy pochodnej po $x$ znika." />
+<Przyklad id="1e" nazwa="Zad. 1 e)" d={A.e} etapy={ETAPY_P} etapyNazwa="Przepis" cel="Cel: dwie pierwsze pochodne i cztery drugie." plan="Nowe tutaj: ułamek $\frac{x}{y}$ zapisujemy jako $x \cdot y^{-1}$ — bez reguły ilorazu." />
+<Przyklad id="1g" nazwa="Zad. 1 g)" d={A.g} etapy={ETAPY_P} etapyNazwa="Przepis" cel="Cel: dwie pierwsze pochodne i cztery drugie." plan="Nowe tutaj: pierwiastki jako potęgi i rachunki na ułamkach w wykładnikach." />
+<Przyklad id="1i" nazwa="Zad. 1 i)" d={A.i} etapy={ETAPY_P} etapyNazwa="Przepis" cel="Cel: dwie pierwsze pochodne i cztery drugie." plan="Nowe tutaj: trzy składniki, w tym iloczyn logarytmów — w każdej pochodnej jeden z nich jest liczbą." />
+<Przyklad id="1j" nazwa="Zad. 1 j)" d={A.j} etapy={ETAPY_P} etapyNazwa="Przepis" cel="Cel: dwie pierwsze pochodne i cztery drugie." plan="Nowe tutaj: $\frac{1}{y^2} = y^{-2}$ i wykładniki ujemne." />
+<Przyklad id="1k" nazwa="Zad. 1 k)" d={A.k} etapy={ETAPY_P} etapyNazwa="Przepis" cel="Cel: dwie pierwsze pochodne i cztery drugie." plan="Nowe tutaj: $\ln y$ w mianowniku — przy pochodnej po $y$ to funkcja złożona $(\ln y)^{-1}$. Najdłuższy rachunek na liście." />
+<Przyklad id="1l" nazwa="Zad. 1 l)" d={A.l} etapy={ETAPY_P} etapyNazwa="Przepis" cel="Cel: dwie pierwsze pochodne i cztery drugie." plan="Nowe tutaj: reguła iloczynu przy pochodnej po $x$, a po $y$ czynnik $x^3$ to liczba." />
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy pochodnych cząstkowych">
+- **Zamrożona litera wyzerowana.** $(x^2y)$ po $x$ to $2xy$, nie $2x$ ani $0$. Zero daje tylko składnik, w którym nie ma liczonej litery.
+- **Reguła iloczynu bez potrzeby.** W $x^3\ln y$ po $x$ czynnik $\ln y$ to liczba: $3x^2\ln y$. Reguła iloczynu też da dobry wynik, ale rachunek będzie dłuższy.
+- **Brak reguły iloczynu, gdy jest potrzebna.** W $ye^{xy}$ po $y$ oba czynniki mają $y$ — tu reguła iloczynu jest konieczna.
+- **Mieszana pochodna z $f$ zamiast z pierwszej pochodnej.** $\frac{\partial^2 f}{\partial x \partial y}$ liczysz z wyniku $\frac{\partial f}{\partial x}$, nie z wyjściowej funkcji.
+- **Różne pochodne mieszane.** Jeśli wyszły różne, to znak błędu — dla funkcji z listy muszą być równe.
+</Ramka>
+
+<a id="polecenie-punkt" class="k-anchor"></a>
+
+## Gradient i hesjan w punkcie
+
+**Cel: liczby zamiast wzorów — wartości pochodnych cząstkowych w jednym punkcie.**
+
+<Ramka kind="polecenie" tytul="Gradient i hesjan w punkcie">
+> Wyznacz gradient i hesjan funkcji w punkcie, np. $f(x, y) = 5x^2y^2 - 6xy + 12x - 9y + 1$ w punkcie $(1, 1)$.
+
+1. **Najpierw wzory:** policz pochodne cząstkowe tak jak w Zad. 1.
+2. **Potem liczby:** w każdy wzór wstaw $x$ i $y$ z punktu. Pierwsza liczba w nawiasie punktu to $x$, druga to $y$.
+3. **Ułóż wyniki** w gradient i hesjan — na tych samych miejscach co wzory.
+</Ramka>
+
+Dla Zad. 1 a) w punkcie $(1, 1)$ — wzory z [rozwiązania wyżej](#zad-1a):
+
+<div class="k-rown">
+<Mx t="\nabla f(1, 1) =" m={[['10 \\cdot 1 \\cdot 1^2 - 6 \\cdot 1 + 12'], ['10 \\cdot 1^2 \\cdot 1 - 6 \\cdot 1 - 9']]} />
+<span class="k-zn">=</span>
+<Mx m={[[16], [-5]]} />
+</div>
+
+<div class="k-rown">
+<Mx t="H_f(1, 1) =" m={[['10 \\cdot 1^2', '20 \\cdot 1 \\cdot 1 - 6'], ['20 \\cdot 1 \\cdot 1 - 6', '10 \\cdot 1^2']]} />
+<span class="k-zn">=</span>
+<Mx m={[[10, 14], [14, 10]]} />
+</div>
+
+Jak czytać: każdy element to ten sam wzór co w ogólnym gradiencie i hesjanie, tylko z liczbami zamiast liter. Na przykład $10 - 6 + 12 = 16$ i $10 - 6 - 9 = -5$.
+
+<Ramka kind="pulapka" tytul="Najpierw pochodna, potem liczby">
+Gdy najpierw wstawisz liczby do funkcji, dostaniesz jedną liczbę — a pochodna liczby to zawsze $0$. Kolejność jest zawsze ta sama: wzór na pochodną, dopiero potem punkt.
+</Ramka>
+
+<a id="polecenie-uklad" class="k-anchor"></a>
+
+## Punkty stacjonarne: warunek konieczny
+
+**Cel: wszystkie pary $(x, y)$, w których obie pierwsze pochodne cząstkowe są równe zeru.** To krok 2 procedury i zwykle najtrudniejsza część zadania o ekstremach — reszta to rachunek według wzoru.
+
+<Ramka kind="polecenie" tytul="Wyznacz punkty stacjonarne">
+> Rozwiąż układ $\nabla f(x, y) = 0$, np. dla $f(x, y) = -x^3 - y^3 + 3xy$.
+
+1. **Ułóż układ:** $\frac{\partial f}{\partial x} = 0$ i $\frac{\partial f}{\partial y} = 0$.
+2. **Układ liniowy** (same $x$ i $y$ bez potęg, jak w Zad. 2 a)): z jednego równania wyznacz zmienną i wstaw do drugiego albo dodaj równania stronami — tak jak w module 5.
+3. **Układ z potęgami:** z prostszego równania wyznacz jedną zmienną (np. $y = x^2$) i wstaw do drugiego. Zostaje równanie z jedną niewiadomą.
+4. **Iloczyn równy zeru:** wyłącz wspólny czynnik przed nawias, np. $3x(1 - x^3) = 0$. Każdy czynnik przyrównaj do zera osobno — każdy daje osobne rozwiązania.
+5. **Ułamki:** pomnóż równanie przez mianownik (nie może być zerem — pilnuj dziedziny).
+6. **Każde rozwiązanie zapisz jako punkt** $P = (x, y)$: do każdego $x$ policz jego $y$. Odrzuć punkty spoza dziedziny.
+7. **Sprzeczność** (np. $0 = -4$) znaczy: brak punktów stacjonarnych, więc brak ekstremów.
+</Ramka>
+
+Przykład rozwiązany na zajęciach — układ, który nie ma rozwiązań. (Funkcję z ramki, $-x^3 - y^3 + 3xy$, rozwiązujemy niżej jako [Zad. 2 e)](#zad-2e).)
+
+<a id="zad-2g" class="k-anchor"></a>
+
+<Rachunek d={B.g} etapy={ETAPY_E} etapyNazwa="Procedura" tytul={tyt(B.g)} zrodlo="Zad. 2 g)">
+<div slot="plan">
+
+Cel: ekstrema — albo informacja, że ich nie ma.
+
+1. **Pierwsze pochodne:** każdy składnik osobno.
+2. **Warunek konieczny:** układ $\nabla f = 0$. Ustawiamy $x$ pod $x$ i $y$ pod $y$ i dodajemy równania. Wychodzi fałsz, więc punktów stacjonarnych nie ma i dalsze kroki odpadają.
+
+</div>
+</Rachunek>
+
+<Ramka kind="pulapka" tytul="Typowe błędy w układzie">
+- **Dzielenie przez zmienną.** Z $-3x^4 + 3x = 0$ nie dziel przez $x$ — zgubisz rozwiązanie $x = 0$, a z nim punkt $(0, 0)$. Wyłącz $3x$ przed nawias.
+- **Jeden przypadek zamiast dwóch.** Z $3(x - y)(x + y) = 0$ wychodzą **dwa** przypadki: $y = x$ i $y = -x$. Każdy daje osobne punkty (Zad. 2 h)).
+- **Sam $x$ bez $y$.** Odpowiedź z kroku 2 to punkty $(x_0, y_0)$. Do każdego $x$ policz jego $y$.
+- **Punkty spoza dziedziny.** Gdy w treści jest $x, y > 0$ albo jest $\ln x$, rozwiązania z zerem albo liczbą ujemną odrzucasz (w Zad. 2 c) odpada $x = 0$, w Zad. 2 n) — punkty z ujemną współrzędną).
+</Ramka>
+
+<a id="polecenie-ekstrema" class="k-anchor"></a>
+
+## Ekstrema bezwarunkowe
+
+**Cel: przy każdym punkcie stacjonarnym jeden z wniosków — maksimum, minimum albo brak ekstremum — i przy ekstremum jego wartość.**
+
+<Ramka kind="polecenie" tytul="Wyznacz ekstrema bezwarunkowe funkcji">
+> Wyznacz ekstrema bezwarunkowe funkcji, np. $f(x, y) = x^2 + y^2 + xy - 6x - 9y$.
+
+Procedura ze slajdu, sześć kroków:
+
+1. **Pierwsze pochodne cząstkowe** $\frac{\partial f}{\partial x}$, $\frac{\partial f}{\partial y}$.
+2. **Warunek konieczny:** $\nabla f(x, y) = 0$ — rozwiąż układ ([przepis wyżej](#polecenie-uklad)). Wyjdą punkty stacjonarne $P_0 = (x_0, y_0)$. Gdy ich nie ma — koniec: brak ekstremów.
+3. **Drugie pochodne cząstkowe:** wszystkie cztery.
+4. **Hesjan** $H_f(x, y)$ i wstawienie do niego **każdego** punktu stacjonarnego osobno: $H_f(x_0, y_0)$.
+5. **Wyznacznik** $W(P_0) = \det H_f(x_0, y_0)$ dla każdego punktu.
+6. **Warunek dostateczny:** $W > 0$ i $a_{11} < 0$ — maksimum; $W > 0$ i $a_{11} > 0$ — minimum; $W < 0$ — brak ekstremum; $W = 0$ — nie wiadomo. Wartość ekstremum: wstaw punkt do wzoru funkcji $f$, np. $f_{\min}(1, 4) = -21$.
+</Ramka>
+
+Zapis wyniku jak w module 9: $f_{\min}(1, 4) = -21$ czytamy „minimum funkcji w punkcie $(1, 4)$ wynosi $-21$”. W nawiasie punkt (gdzie), po znaku równości wartość (ile).
+
+<a id="zad-2a" class="k-anchor"></a>
+
+<Rachunek d={B.a} etapy={ETAPY_E} etapyNazwa="Procedura" tytul={tyt(B.a)} zrodlo="Zad. 2 a)">
+<div slot="plan">
+
+Cel: ekstrema — gdzie są i jakie mają wartości.
+
+1. **Pierwsze pochodne:** każdy składnik osobno, druga litera zamrożona.
+2. **Warunek konieczny:** układ jest liniowy — wyznaczamy $y$ z pierwszego równania i wstawiamy do drugiego. Wyjdzie jeden punkt.
+3. **Drugie pochodne:** same liczby — hesjan nie zależy od punktu.
+4. **Hesjan w punkcie.**
+5. **Wyznacznik** $W$.
+6. **Warunek dostateczny** i wartość minimum ze wzoru funkcji.
+
+</div>
+</Rachunek>
+
+Dwa punkty stacjonarne — i tylko w jednym ekstremum:
+
+<a id="zad-2e" class="k-anchor"></a>
+
+<Rachunek d={B.e} etapy={ETAPY_E} etapyNazwa="Procedura" tytul={tyt(B.e)} zrodlo="Zad. 2 e)">
+<div slot="plan">
+
+Cel: ekstrema — gdzie są i jakie mają wartości.
+
+1. **Pierwsze pochodne.**
+2. **Warunek konieczny:** z pierwszego równania $y = x^2$, wstawiamy do drugiego. Wyłączamy $3x$ przed nawias — wychodzą dwa punkty.
+3. **Drugie pochodne:** tym razem zależą od $x$ i $y$.
+4. **Hesjan w każdym punkcie osobno** — w każdym wyjdą inne liczby.
+5. **Wyznacznik** dla każdego punktu.
+6. **Warunek dostateczny:** w $(0, 0)$ siodło, w $(1, 1)$ maksimum.
+
+</div>
+</Rachunek>
+
+Ułamki i dziedzina z treści zadania:
+
+<a id="zad-2c" class="k-anchor"></a>
+
+<Rachunek d={B.c} etapy={ETAPY_E} etapyNazwa="Procedura" tytul={tyt(B.c)} zrodlo="Zad. 2 c)">
+<div slot="plan">
+
+Cel: ekstrema dla $x > 0$ i $y > 0$.
+
+1. **Pierwsze pochodne:** ułamki zapisujemy jako potęgi.
+2. **Warunek konieczny:** wyznaczamy $y$ z pierwszego równania i wstawiamy do drugiego. Wychodzi $x(x^3 - 125) = 0$ — rozwiązanie $x = 0$ odrzucamy, bo jest poza dziedziną.
+3. **Drugie pochodne.**
+4. **Hesjan w punkcie** — w hesjanie są ułamki.
+5. **Wyznacznik.**
+6. **Warunek dostateczny** i wartość.
+
+</div>
+</Rachunek>
+
+<Pytania pytania={[
+  { q: R`Hesjan w punkcie stacjonarnym ma na przekątnej $2$ i $3$, a poza przekątną $4$. Co jest w tym punkcie?`, opcje: ['minimum, bo $a_{11} = 2 > 0$', 'brak ekstremum', 'maksimum'], dobra: 1, dlaczego: R`$W = 2 \cdot 3 - 4 \cdot 4 = 6 - 16 = -10 < 0$ — brak ekstremum. Znak $a_{11}$ sprawdzasz dopiero, gdy $W > 0$. Maksimum wymagałoby $W > 0$ i $a_{11} < 0$ — tu nie zachodzi żadne z nich.` },
+]} />
+
+### Pozostałe przykłady z listy
+
+<Przyklad id="2b" nazwa="Zad. 2 b)" d={B.b} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema albo informacja, że ich nie ma." plan="Nowe tutaj: pochodne to stałe $1$ — układ $1 = 0$ jest sprzeczny." />
+<Przyklad id="2d" nazwa="Zad. 2 d)" d={B.d} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: $x = 3y$ i wyłączenie $6y$ przed nawias. Dwa punkty: siodło i minimum z wartością ułamkową." />
+<Przyklad id="2f" nazwa="Zad. 2 f)" d={B.f} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: $y = \frac13 x^2$, potem $x(27 - x^3) = 0$. Siodło i maksimum." />
+<Przyklad id="2h" nazwa="Zad. 2 h)" d={B.h} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: dwa przypadki ($y = x$ i $y = -x$) i cztery punkty stacjonarne, w tym z pierwiastkami." />
+<Przyklad id="2i" nazwa="Zad. 2 i)" d={B.i} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: każde równanie układu ma tylko jedną niewiadomą." />
+<Przyklad id="2j" nazwa="Zad. 2 j)" d={B.j} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: $y = 3x$ z drugiego równania, potem $3x(x - 6) = 0$. Siodło i minimum." />
+<Przyklad id="2k" nazwa="Zad. 2 k)" d={B.k} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: maksimum — funkcja z pierwszego rysunku w module." />
+<Przyklad id="2l" nazwa="Zad. 2 l)" d={B.l} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: najpierw wymnażamy nawiasy. Jedyny punkt stacjonarny to siodło." />
+<Przyklad id="2m" nazwa="Zad. 2 m)" d={B.m} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: układ rozwiązany dodawaniem stronami." />
+<Przyklad id="2n" nazwa="Zad. 2 n)" d={B.n} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema dla $x > 0$ i $y > 0$." plan="Nowe tutaj: najtrudniejszy układ na liście — równanie dwukwadratowe (podstawienie $t = x^2$) i odrzucanie rozwiązań spoza dziedziny." />
+<Przyklad id="2o" nazwa="Zad. 2 o)" d={B.o} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: pierwiastek trzeciego stopnia w punkcie stacjonarnym. Hesjan liczy się bez pierwiastków, bo $x^3 = \frac14$." />
+<Przyklad id="2p" nazwa="Zad. 2 p)" d={B.p} etapy={ETAPY_E} etapyNazwa="Procedura" cel="Cel: ekstrema — gdzie są i jakie mają wartości." plan="Nowe tutaj: czynnik $e^{2x}$ — nigdy nie jest zerem, więc można przez niego podzielić. W hesjanie pojawia się liczba $e$." />
+
+<Ramka kind="pulapka" tytul="Typowe błędy w Zad. 2">
+- **Najpierw $a_{11}$, potem $W$.** Kolejność jest odwrotna: najpierw $W$. Gdy $W < 0$, znak $a_{11}$ nic nie mówi — ekstremum nie ma.
+- **Jeden hesjan dla wszystkich punktów.** Gdy w drugich pochodnych są $x$ albo $y$, w każdym punkcie hesjan ma inne liczby.
+- **Wartość z hesjanu albo z pochodnej.** Wartość ekstremum to $f(x_0, y_0)$ — wstaw punkt do wzoru **funkcji**.
+- **„Siodło to minimum”.** Przy $W < 0$ nie ma ani minimum, ani maksimum — nawet jeśli $a_{11} > 0$.
+</Ramka>
+
+## Wszystkie odpowiedzi z listy
+
+Wyniki wszystkich zadań w jednym miejscu — do sprawdzenia własnych rachunków. Link przy każdym przykładzie prowadzi do rozwiązania krok po kroku.
+
+### Zad. 1 — pochodne cząstkowe
+
+<Odpowiedzi rodzaj="pochodne" lista={['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l'].map((id) => ({ id: `1${id}`, nazwa: `Zad. 1 ${id})`, d: A[id] }))} />
+
+### Zad. 2 — ekstrema bezwarunkowe
+
+<Odpowiedzi rodzaj="ekstrema" lista={['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'].map((id) => ({ id: `2${id}`, nazwa: `Zad. 2 ${id})`, d: B[id] }))} />
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+<div><b>Pochodna cząstkowa</b>$\frac{\partial f}{\partial x}$: $y$ zamrożony (liczba). $\frac{\partial f}{\partial y}$: $x$ zamrożony. Wzory i reguły z modułu 8.</div>
+<div><b>Zamrożona litera</b>Przy liczonej literze — współczynnik: $(x^2y)$ po $x$ to $2xy$. Składnik bez liczonej litery — $0$.</div>
+<div><b>Drugie pochodne</b>$\frac{\partial^2 f}{\partial x^2}$, $\frac{\partial^2 f}{\partial y^2}$ i mieszane: $\frac{\partial^2 f}{\partial x \partial y}$ — najpierw po $x$, potem po $y$.</div>
+<div><b>Schwarz</b>Pochodne mieszane są równe (gdy są ciągłe — w zadaniach z listy zawsze). Liczysz obie — druga to sprawdzenie.</div>
+<div><b>Gradient</b>$\nabla f$ — wektor (kolumna) pierwszych pochodnych: u góry po $x$, na dole po $y$.</div>
+<div><b>Hesjan</b>$H_f$ — macierz drugich pochodnych: wiersz 1 — najpierw po $x$, wiersz 2 — najpierw po $y$. Symetryczny.</div>
+<div><b>Warunek konieczny</b>$\nabla f = 0$: obie pierwsze pochodne równe $0$ — układ równań. Rozwiązania to punkty stacjonarne.</div>
+<div><b>Układ</b>Wyznacz zmienną z prostszego równania i wstaw. Iloczyn $= 0$ — każdy czynnik osobno. Nie dziel przez zmienną.</div>
+<div><b>Wyznacznik 2 × 2</b>$W = a_{11} \cdot a_{22} - a_{12} \cdot a_{21}$ — przekątna minus druga przekątna ($a_{12}$ — wiersz 1, kolumna 2 itd.).</div>
+<div><b>Warunek dostateczny</b>$W > 0$: ekstremum ($a_{11} < 0$ — max, $a_{11} > 0$ — min). $W < 0$: brak. $W = 0$: nie wiadomo.</div>
+<div><b>Wartość</b>$f_{\max}(x_0, y_0) = f(x_0, y_0)$ — punkt wstawiasz do wzoru funkcji.</div>
+<div><b>Brak punktów</b>Układ sprzeczny ($0 = -4$) — brak punktów stacjonarnych, brak ekstremów.</div>
+</div>
+
+<Ramka kind="gdzie">
+- **Ekstrema warunkowe (moduł 11):** szukasz ekstremum, gdy $x$ i $y$ muszą spełniać dodatkowy warunek, np. budżet $x + y = 100$. Te same pochodne cząstkowe, układ równań i wyznacznik — tylko macierz jest większa.
+- **Ekonomia:** maksymalizacja zysku przy dwóch decyzjach naraz (cena i reklama, praca i kapitał), funkcje produkcji i użyteczności.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania na każde polecenie. Po każdej odpowiedzi zobaczysz, dlaczego jest dobra albo zła — złe odpowiedzi to typowe błędy.
+
+### Pochodne cząstkowe
+
+<a id="cw-czastkowe" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: R`$f(x, y) = x^3y^2 + 4y$. Ile wynosi $\frac{\partial f}{\partial x}$?`, opcje: [R`$3x^2y^2$`, R`$3x^2y^2 + 4$`, R`$6x^2y$`], dobra: 0, dlaczego: R`Przy zamrożonym $y$: $y^2$ to współczynnik przy $x^3$, więc $3x^2y^2$. Składnik $4y$ nie ma $x$ — to liczba, pochodna $0$, a nie $4$. $6x^2y$ miesza pochodną po $x$ z pochodną po $y$.` },
+  { q: R`$f(x, y) = x^3y^2 + 4y$. Ile wynosi $\frac{\partial f}{\partial y}$?`, opcje: [R`$2x^3y + 4$`, R`$2x^3y$`, R`$3x^2y^2 + 4$`], dobra: 0, dlaczego: R`Przy zamrożonym $x$: $x^3$ to współczynnik, $(y^2)' = 2y$, więc $2x^3y$. Do tego $(4y)' = 4$. Druga opcja gubi $4$. Trzecia to pochodna po $x$ (z dopisanym $4$).` },
+  { q: R`$f(x, y) = e^{3x + y}$. Ile wynosi $\frac{\partial f}{\partial x}$?`, opcje: [R`$e^{3x + y}$`, R`$3e^{3x + y}$`, R`$(3x + y)e^{3x + y - 1}$`], dobra: 1, dlaczego: R`Reguła 5: $e^{\square}$ razy pochodna wykładnika po $x$. $(3x + \cG{y})$ po $x$ to $3$. Pierwsza opcja gubi pochodną wykładnika. Trzecia używa wzoru na potęgę, choć zmienna jest w wykładniku.` },
+  { q: R`$f(x, y) = x^2y^3$. Ile wynosi $\frac{\partial^2 f}{\partial x \partial y}$?`, opcje: [R`$2y^3$`, R`$3x^2y^2$`, R`$6xy^2$`], dobra: 2, dlaczego: R`$\frac{\partial f}{\partial x} = 2xy^3$, a to po $y$: $2\cG{x} \cdot 3y^2 = 6xy^2$. $2y^3$ to $\frac{\partial^2 f}{\partial x^2}$ — drugi raz policzone po $x$, a miało być po $y$. $3x^2y^2$ to $\frac{\partial f}{\partial y}$, czyli pierwsza pochodna, nie druga.` },
+  { q: R`Ile pochodnych cząstkowych drugiego rzędu ma funkcja trzech zmiennych $f(x, y, z)$?`, opcje: [R`$3$`, R`$6$`, R`$9$`], dobra: 2, dlaczego: R`Kwadrat liczby zmiennych: $3^2 = 9$ (slajd). Z twierdzenia Schwarza różnych wzorów może być mniej — mieszane łączą się w pary — ale pochodnych jest $9$. $3$ to liczba pierwszych pochodnych, $6$ — liczba różnych wzorów po skorzystaniu z twierdzenia Schwarza.` },
+  { q: R`$f(x, y) = \ln(xy)$ dla $x, y > 0$. Ile wynosi $\frac{\partial f}{\partial x}$?`, opcje: [R`$\frac{1}{xy}$`, R`$\frac{1}{x}$`, R`$\frac{y}{x}$`], dobra: 1, dlaczego: R`Reguła 5: $\frac{1}{xy} \cdot (x\cG{y})' = \frac{1}{xy} \cdot \cG{y} = \frac{1}{x}$. $\frac{1}{xy}$ gubi pochodną środka. $\frac{y}{x}$ wychodzi, gdy $y$ z pochodnej środka trafi do licznika bez skrócenia, a powinno być $\frac{1}{xy} \cdot y = \frac{y}{xy} = \frac{1}{x}$.` },
+]} />
+
+### Gradient i hesjan w punkcie
+
+<a id="cw-punkt" class="k-anchor"></a>
+
+<CwiczenieLiczby tytul="Hesjan w punkcie (1, 2)" m={HCW} t="H_f(1, 2) =" dlaczego={hcwDlaczego}>
+Funkcja: $f(x, y) = x^2y + 3xy^2$. Pierwsze pochodne: $\frac{\partial f}{\partial x} = 2xy + 3y^2$, $\frac{\partial f}{\partial y} = x^2 + 6xy$. Policz drugie pochodne, wstaw $x = 1$, $y = 2$ i wpisz hesjan.
+</CwiczenieLiczby>
+
+<Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
+  { q: R`$f(x, y) = x^2y + y^3$. Ile wynosi $\frac{\partial f}{\partial x}$ w punkcie $(1, 2)$?`, opcje: [R`$4$`, R`$10$`, R`$13$`], dobra: 0, dlaczego: R`$\frac{\partial f}{\partial x} = 2xy$, w punkcie: $2 \cdot 1 \cdot 2 = 4$. $10$ to wartość funkcji $f(1, 2) = 2 + 8$. $13$ to $\frac{\partial f}{\partial y}(1, 2) = 1 + 3 \cdot 4$.` },
+  { q: R`$f(x, y) = x^2y + y^3$. Ile wynosi prawy dolny element hesjanu w punkcie $(1, 2)$?`, opcje: [R`$2$`, R`$6$`, R`$12$`], dobra: 2, dlaczego: R`Prawy dolny to $\frac{\partial^2 f}{\partial y^2}$. $\frac{\partial f}{\partial y} = x^2 + 3y^2$, a to po $y$: $6y$. W punkcie: $6 \cdot 2 = 12$. $6$ wychodzi, gdy za $y$ wstawisz $1$ — pierwszą liczbę z punktu, czyli $x$. To pomylone współrzędne. $2$ to $\frac{\partial^2 f}{\partial x \partial y} = 2x$ w punkcie.` },
+  { q: R`$f(x, y) = x^2 + y^2$. Gradient w punkcie $(3, 4)$ ma składowe:`, opcje: [R`$9$ i $16$`, R`$6$ i $8$`, R`$3$ i $4$`], dobra: 1, dlaczego: R`$\frac{\partial f}{\partial x} = 2x$, $\frac{\partial f}{\partial y} = 2y$, więc $2 \cdot 3 = 6$ i $2 \cdot 4 = 8$. $9$ i $16$ to $x^2$ i $y^2$ — same składniki funkcji. $3$ i $4$ to współrzędne punktu.` },
+]} />
+
+### Punkty stacjonarne
+
+<a id="cw-uklad" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: R`Rozwiązanie układu $\begin{cases} 2x - y = 0 \\ x + y - 3 = 0 \end{cases}$ to punkt:`, opcje: [R`$(1, 2)$`, R`$(2, 1)$`, R`$(0, 0)$`], dobra: 0, dlaczego: R`Z pierwszego: $y = 2x$. Wstaw do drugiego: $x + 2x - 3 = 0$, czyli $3x = 3$, $x = 1$, a $y = 2$. $(2, 1)$ ma zamienione współrzędne — sprawdź: $2 \cdot 2 - 1 = 3 \neq 0$. $(0, 0)$ spełnia tylko pierwsze równanie: $0 + 0 - 3 \neq 0$.` },
+  { q: R`Układ $\begin{cases} x^2 - y = 0 \\ y - 4 = 0 \end{cases}$ ma rozwiązania:`, opcje: [R`tylko $(2, 4)$`, R`$(4, 2)$`, R`$(2, 4)$ i $(-2, 4)$`], dobra: 2, dlaczego: R`Z drugiego $y = 4$, więc $x^2 = 4$, czyli $x = 2$ albo $x = -2$. Dwa punkty: $(2, 4)$ i $(-2, 4)$. „Tylko $(2, 4)$” gubi ujemny pierwiastek. $(4, 2)$ ma zamienione współrzędne.` },
+  { q: R`Z równania $x(x - 3) = 0$ wychodzi:`, opcje: [R`$x = 3$`, R`$x = 0$ lub $x = 3$`, R`$x = 0$`], dobra: 1, dlaczego: R`Iloczyn jest zerem, gdy któryś czynnik jest zerem: $x = 0$ albo $x - 3 = 0$. Odpowiedź „$x = 3$” wychodzi po podzieleniu przez $x$ — tak gubi się rozwiązanie $x = 0$.` },
+  { q: R`Układ $\nabla f = 0$ wyszedł $\begin{cases} x + y = 1 \\ x + y = 3 \end{cases}$. Co to znaczy?`, opcje: [R`Punkt stacjonarny to $(1, 3)$`, 'Układ jest sprzeczny — brak punktów stacjonarnych, więc brak ekstremów', 'Punktów stacjonarnych jest nieskończenie wiele'], dobra: 1, dlaczego: R`Ta sama suma $x + y$ nie może być naraz równa $1$ i $3$ — odjęcie równań daje $0 = -2$. Bez punktów stacjonarnych nie ma ekstremów (jak w Zad. 2 g)).` },
+  { q: R`Dziedzina: $x > 0$. Z układu wyszło $x = -2$ albo $x = 3$. Które rozwiązania zostają?`, opcje: ['oba', 'żadne', R`tylko $x = 3$ — $x = -2$ jest poza dziedziną`], dobra: 2, dlaczego: R`Punkt spoza dziedziny odrzucasz — funkcja tam nie istnieje. Zostaje $x = 3$ (jak w Zad. 2 c) i n)).` },
+]} />
+
+### Ekstrema bezwarunkowe
+
+<a id="cw-ekstrema" class="k-anchor"></a>
+
+<Klasyfikator pytanie="Co jest w punkcie stacjonarnym? Policz W i zdecyduj" kategorie={KAT_EKSTR} elementy={[
+  { tekst: R`Hesjan w punkcie: na przekątnej $4$ i $2$, poza przekątną $1$.`, kat: 1, dlaczego: R`$W = 4 \cdot 2 - 1 \cdot 1 = 8 - 1 = 7 > 0$ — ekstremum. $a_{11} = 4 > 0$ — minimum.` },
+  { tekst: R`Hesjan w punkcie: na przekątnej $-6$ i $-2$, poza przekątną $3$.`, kat: 0, dlaczego: R`$W = (-6) \cdot (-2) - 3 \cdot 3 = 12 - 9 = 3 > 0$ — ekstremum. $a_{11} = -6 < 0$ — maksimum.` },
+  { tekst: R`Hesjan w punkcie: na przekątnej $2$ i $-8$, poza przekątną $0$.`, kat: 2, dlaczego: R`$W = 2 \cdot (-8) - 0 \cdot 0 = -16 - 0 = -16 < 0$ — brak ekstremum (siodło). Dodatni $a_{11}$ niczego nie zmienia.` },
+  { tekst: R`Hesjan w punkcie: na przekątnej $3$ i $12$, poza przekątną $6$.`, kat: 3, dlaczego: R`$W = 3 \cdot 12 - 6 \cdot 6 = 36 - 36 = 0$ — procedura z zajęć nie rozstrzyga.` },
+  { tekst: R`Hesjan w punkcie: na przekątnej $-1$ i $-5$, poza przekątną $3$.`, kat: 2, dlaczego: R`$W = (-1) \cdot (-5) - 3 \cdot 3 = 5 - 9 = -4 < 0$ — brak ekstremum. Obie liczby na przekątnej są ujemne, ale to nie wystarcza: decyduje $W$.` },
+  { tekst: R`Hesjan w punkcie: na przekątnej $0$ i $5$, poza przekątną $2$.`, kat: 2, dlaczego: R`$W = 0 \cdot 5 - 2 \cdot 2 = 0 - 4 = -4 < 0$ — brak ekstremum.` },
+]} />
+
+<Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
+  { q: R`W punkcie stacjonarnym $W(P_0) = 5$ i $a_{11} = -3$. Co tam jest?`, opcje: ['maksimum', 'minimum', 'brak ekstremum'], dobra: 0, dlaczego: R`$W > 0$ — ekstremum, $a_{11} < 0$ — maksimum (jak ujemna $f''$ w module 9).` },
+  { q: R`W punkcie stacjonarnym $W(P_0) = -2$ i $a_{11} = 4$. Co tam jest?`, opcje: ['minimum', 'brak ekstremum', 'maksimum'], dobra: 1, dlaczego: R`$W < 0$ rozstrzyga: brak ekstremum. Znak $a_{11}$ sprawdzasz tylko przy $W > 0$.` },
+  { q: R`$f_{\min}(1, 4) = -21$ znaczy:`, opcje: [R`minimum w punkcie $x = -21$`, R`minimum w punkcie $(1, 4)$ o wartości $-21$`, R`$\frac{\partial f}{\partial x}(1, 4) = -21$`], dobra: 1, dlaczego: R`W nawiasie punkt $(x_0, y_0)$, po znaku równości wartość funkcji w tym punkcie. $-21$ to wartość funkcji, nie współrzędna punktu. Pochodne w punkcie stacjonarnym są zerem.` },
+  { q: R`Dlaczego hesjan liczysz osobno w każdym punkcie stacjonarnym?`, opcje: ['Tak każe procedura, ale wynik zawsze jest ten sam', 'Nie trzeba — wystarczy jeden punkt', R`Bo drugie pochodne zwykle zawierają $x$ i $y$ — w każdym punkcie wychodzą inne liczby`], dobra: 2, dlaczego: R`Np. w Zad. 2 e) hesjan ma na przekątnej $-6x$ i $-6y$: w $(0, 0)$ wychodzi $0$, a w $(1, 1)$ wychodzi $-6$. Tylko gdy hesjan ma same liczby (Zad. 2 a)), jest taki sam w każdym punkcie.` },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tag="Quiz · 10 pytań" tytul="" pytania={[
+  { q: R`Żeby policzyć wartość funkcji $f(x, y)$, potrzebujesz:`, opcje: ['jednej liczby', R`obu liczb: $x$ i $y$`, R`tylko $x$`], dobra: 1, dlaczego: R`Slajd: aby wyznaczyć wartość funkcji wielu zmiennych, trzeba znać wartości wszystkich jej argumentów.` },
+  { q: R`Licząc $\frac{\partial f}{\partial x}$:`, opcje: [R`traktujesz $y$ jak stałą`, R`traktujesz $x$ jak stałą`, 'liczysz pochodną po obu zmiennych jednocześnie'], dobra: 0, dlaczego: R`Pochodna cząstkowa po $x$: wszystkie zmienne poza $x$ traktujesz jak stałe.` },
+  { q: R`Gradient $\nabla f$ to:`, opcje: ['macierz drugich pochodnych', 'wektor pierwszych pochodnych cząstkowych', 'wyznacznik hesjanu'], dobra: 1, dlaczego: R`Slajd: gradient to kolumnowy wektor pierwszych pochodnych cząstkowych. Macierz drugich pochodnych to hesjan.` },
+  { q: R`Hesjan $H_f$ to:`, opcje: ['wektor pierwszych pochodnych', R`pochodna gradientu po $x$`, 'kwadratowa macierz drugich pochodnych cząstkowych'], dobra: 2, dlaczego: R`Slajd: hesjan to kwadratowa macierz drugich pochodnych cząstkowych. Dla dwóch zmiennych — $2 \times 2$.` },
+  { q: R`Twierdzenie Schwarza mówi, że (przy ciągłych pochodnych):`, opcje: [R`$\frac{\partial^2 f}{\partial x^2} = \frac{\partial^2 f}{\partial y^2}$`, 'pochodne mieszane są sobie równe', R`$\nabla f = 0$`], dobra: 1, dlaczego: R`$\frac{\partial^2 f}{\partial x \partial y} = \frac{\partial^2 f}{\partial y \partial x}$. Dlatego hesjan jest symetryczny. Drugie pochodne po $x$ i po $y$ zwykle są różne.` },
+  { q: R`Na zajęciach $\frac{\partial^2 f}{\partial x \partial y}$ to:`, opcje: [R`najpierw pochodna po $x$, potem po $y$`, R`najpierw pochodna po $y$, potem po $x$`, R`pochodna po iloczynie $xy$`], dobra: 0, dlaczego: R`Slajd: pochodna mieszana — pierwsza pochodna względem $x$, druga względem $y$. Z twierdzenia Schwarza kolejność i tak nie zmienia wyniku.` },
+  { q: R`Warunek konieczny istnienia ekstremum funkcji $f(x, y)$ to:`, opcje: [R`$W > 0$`, R`$f(x, y) = 0$`, R`$\nabla f(x, y) = 0$`], dobra: 2, dlaczego: R`Obie pierwsze pochodne równe zeru. $W > 0$ to część warunku dostatecznego, a $f = 0$ to miejsce zerowe.` },
+  { q: R`$W(P_0) < 0$. W punkcie $P_0$:`, opcje: ['jest maksimum', 'jest minimum', 'nie ma ekstremum'], dobra: 2, dlaczego: R`Slajd: gdy $W(P_0) < 0$, w $P_0$ nie istnieje ekstremum. Kształt powierzchni: siodło.` },
+  { q: R`$W(P_0) > 0$ i $a_{11} > 0$. W punkcie $P_0$ jest:`, opcje: ['minimum', 'maksimum', 'brak ekstremum'], dobra: 0, dlaczego: R`$W > 0$ — ekstremum, $a_{11} > 0$ — minimum (jak dodatnia $f''$ — dołek).` },
+  { q: R`Ile pochodnych cząstkowych pierwszego rzędu ma funkcja $n$ zmiennych?`, opcje: [R`$n^2$`, R`$n$`, R`$2n$`], dobra: 1, dlaczego: R`Tyle, ile zmiennych (slajd). $n^2$ to liczba pochodnych drugiego rzędu.` },
+]} />

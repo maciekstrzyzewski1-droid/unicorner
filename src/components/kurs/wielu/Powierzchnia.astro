@@ -1,0 +1,106 @@
+---
+// Wykres funkcji dwóch zmiennych jako siatka (powierzchnia z = f(x, y)) w rzucie ukośnym — statyczny SVG liczony przy buildzie.
+// Linie siatki biegną wzdłuż x (przy stałym y) i wzdłuż y (przy stałym x). Wybrane przekroje (np. y = 2) i punkty
+// są wyróżnione kolorem, żeby było widać, że pochodna cząstkowa to nachylenie wzdłuż jednego przekroju.
+// fn: (x, y) => z; zakres: { x0, x1, y0, y1 }; z: [z0, z1] — powyżej/poniżej siatka się urywa.
+// przekroje: [{ os: 'x' | 'y', v, kl }] — os 'x': linia wzdłuż x przy y = v; os 'y': wzdłuż y przy x = v. kl: 'is-a' turkus, 'is-g' złoto.
+// punkty: [{ x, y, t, kl, pion }] — kl: 'is-e' (biały), 'is-brak' (pusty), 'is-p' (fiolet); pion: kreska w dół do „podłogi”.
+// sciezki: [{ xy: t => [x, y], t0, t1, kl, cien }] — krzywa na powierzchni (np. warunek φ(x, y) = 0 „podniesiony” na wykres);
+// cien: ta sama krzywa na podłodze (z = z[0]) linią przerywaną — tak wygląda sam warunek na płaszczyźnie xy.
+import Legenda from '../Legenda.astro';
+import { texInline } from '../../../lib/tex.js';
+interface Props {
+  fn: (x: number, y: number) => number; zakres: { x0: number; x1: number; y0: number; y1: number }; z: [number, number];
+  n?: number; przekroje?: { os: 'x' | 'y'; v: number; kl: string }[]; punkty?: { x: number; y: number; t?: string; kl?: string; dx?: number; dy?: number; anchor?: string; pion?: boolean }[];
+  sciezki?: { xy: (t: number) => [number, number]; t0: number; t1: number; kl: string; cien?: boolean }[];
+  leg?: [string, string][]; male?: boolean; tytul?: string; w?: number; h?: number; skalaZ?: number; osie?: boolean;
+}
+const { fn, zakres: Z, z, n = 14, przekroje = [], punkty = [], sciezki = [], leg = [], male = false, tytul, w = 400, h = 320, skalaZ = 1, osie = true } = Astro.props;
+const A = (-38 * Math.PI) / 180, B = 0.5;
+// współrzędne zakresu → [-1, 1], potem obrót wokół osi z i pochylenie
+const nx = (x: number) => (2 * (x - Z.x0)) / (Z.x1 - Z.x0) - 1;
+const ny = (y: number) => (2 * (y - Z.y0)) / (Z.y1 - Z.y0) - 1;
+const nz = (v: number) => ((2 * (v - z[0])) / (z[1] - z[0]) - 1) * 0.85 * skalaZ;
+const rzut = (x: number, y: number, v: number) => {
+  const a = nx(x), b = ny(y);
+  const u = a * Math.cos(A) - b * Math.sin(A);
+  const g = a * Math.sin(A) + b * Math.cos(A);
+  return [u, -nz(v) + g * B];
+};
+// dopasowanie do viewBox
+const narozniki = [[Z.x0, Z.y0], [Z.x1, Z.y0], [Z.x0, Z.y1], [Z.x1, Z.y1]].flatMap(([a, b]) => [rzut(a, b, z[0]), rzut(a, b, z[1])]);
+const minU = Math.min(...narozniki.map((p) => p[0])), maxU = Math.max(...narozniki.map((p) => p[0]));
+const minV = Math.min(...narozniki.map((p) => p[1])), maxV = Math.max(...narozniki.map((p) => p[1]));
+const pad = 22, s = Math.min((w - 2 * pad) / (maxU - minU), (h - 2 * pad) / (maxV - minV));
+const ox = (w - s * (maxU - minU)) / 2 - s * minU, oy = (h - s * (maxV - minV)) / 2 - s * minV;
+const P = (x: number, y: number, v: number) => { const [u, g] = rzut(x, y, v); return [ox + s * u, oy + s * g]; };
+const r1 = (v: number) => Math.round(v * 10) / 10;
+// linia po powierzchni: urywa się poza zakresem z
+const linia = (punktyXY: [number, number][]) => {
+  let d = '', pioro = false;
+  for (const [a, b] of punktyXY) {
+    const v = fn(a, b);
+    if (!Number.isFinite(v) || v < z[0] || v > z[1]) { pioro = false; continue; }
+    const [X, Y] = P(a, b, v);
+    d += `${pioro ? 'L' : 'M'}${r1(X)} ${r1(Y)} `;
+    pioro = true;
+  }
+  return d.trim();
+};
+const krok = (a: number, b: number, k: number) => Array.from({ length: k + 1 }, (_, i) => a + ((b - a) * i) / k);
+const gesto = 60;
+const siatka = [
+  ...krok(Z.y0, Z.y1, n).map((yy) => linia(krok(Z.x0, Z.x1, gesto).map((xx) => [xx, yy]))),
+  ...krok(Z.x0, Z.x1, n).map((xx) => linia(krok(Z.y0, Z.y1, gesto).map((yy) => [xx, yy]))),
+];
+const wyroznione = przekroje.map((p) => ({ kl: p.kl, d: p.os === 'x' ? linia(krok(Z.x0, Z.x1, 120).map((xx) => [xx, p.v])) : linia(krok(Z.y0, Z.y1, 120).map((yy) => [p.v, yy])) }));
+// osie od punktu (0, 0, 0), jeśli mieści się w zakresie; inaczej od narożnika, a oś z od „podłogi” z[0]
+const x0 = Math.max(Z.x0, Math.min(0, Z.x1)), y0 = Math.max(Z.y0, Math.min(0, Z.y1)), z0 = z[0] <= 0 && 0 <= z[1] ? 0 : z[0];
+const O = P(x0, y0, z0), OX = P(Z.x1 + (Z.x1 - Z.x0) * 0.12, y0, z0), OY = P(x0, Z.y1 + (Z.y1 - Z.y0) * 0.12, z0), OZ = P(x0, y0, z[1]);
+const pkt = punkty.map((p) => { const [X, Y] = P(p.x, p.y, fn(p.x, p.y)); const [X0, Y0] = P(p.x, p.y, z[0]); return { ...p, X: r1(X), Y: r1(Y), X0: r1(X0), Y0: r1(Y0) }; });
+const sc = sciezki.map((c) => {
+  const ts = krok(c.t0, c.t1, 160).map((t) => c.xy(t));
+  const cien = c.cien ? ts.map(([a, b], i) => { const [X, Y] = P(a, b, z[0]); return `${i ? 'L' : 'M'}${r1(X)} ${r1(Y)}`; }).join(' ') : '';
+  return { kl: c.kl, d: linia(ts), cien };
+});
+---
+<figure class:list={['k-fig', 'k-pow', { 'is-male': male }]}>
+  {tytul && <p class="k-pow-n" set:html={texInline(tytul)} />}
+  <svg viewBox={`0 0 ${w} ${h}`} class="k-w" role="img" aria-label="Wykres funkcji dwóch zmiennych jako siatka">
+    {osie && <line class="k-pow-os" x1={r1(O[0])} y1={r1(O[1])} x2={r1(OX[0])} y2={r1(OX[1])} />}
+    {osie && <line class="k-pow-os" x1={r1(O[0])} y1={r1(O[1])} x2={r1(OY[0])} y2={r1(OY[1])} />}
+    {osie && <line class="k-pow-os" x1={r1(O[0])} y1={r1(O[1])} x2={r1(OZ[0])} y2={r1(OZ[1])} />}
+    {siatka.map((d) => d && <path class="k-pow-s" d={d} />)}
+    {sc.map((c) => c.cien && <path class:list={['k-pow-cien', c.kl]} d={c.cien} />)}
+    {pkt.filter((p) => p.pion).map((p) => <line class="k-pow-pion" x1={p.X0} y1={p.Y0} x2={p.X} y2={p.Y} />)}
+    {wyroznione.map((p) => p.d && <path class:list={['k-pow-p', p.kl]} d={p.d} />)}
+    {sc.map((c) => c.d && <path class:list={['k-pow-p', c.kl]} d={c.d} />)}
+    {pkt.map((p) => (
+      <g>
+        <circle class:list={['k-w-pkt', p.kl ?? 'is-e']} cx={p.X} cy={p.Y} r="5" />
+        {p.t && <text class:list={['k-w-tbig', 'k-w-etp', p.kl]} x={p.X + (p.dx ?? 0)} y={p.Y + (p.dy ?? -11)} text-anchor={p.anchor ?? 'middle'}>{p.t}</text>}
+      </g>
+    ))}
+    {osie && <text class="k-w-nazwa" x={r1(OX[0]) + 4} y={r1(OX[1]) + 14}>x</text>}
+    {osie && <text class="k-w-nazwa" x={r1(OY[0]) + 4} y={r1(OY[1]) + 4}>y</text>}
+    {osie && <text class="k-w-nazwa" x={r1(OZ[0]) + 6} y={r1(OZ[1]) + 4}>z</text>}
+  </svg>
+  {leg.length > 0 && <Legenda items={leg} />}
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<style>
+  .k-pow svg{display:block;width:100%;height:auto;max-width:440px;}
+  .k-pow.is-male svg{max-width:300px;}
+  .k-pow-n{margin:0 0 2px!important;font-size:.84rem;color:var(--muted);}
+  .k-pow-s{fill:none;stroke:rgba(198,194,214,.42);stroke-width:1;stroke-linejoin:round;}
+  .k-pow-p{fill:none;stroke-width:3.2;stroke-linejoin:round;stroke-linecap:round;}
+  .k-pow-p.is-a{stroke:#27e8ff;}
+  .k-pow-p.is-g{stroke:#ffd84a;}
+  .k-pow-p.is-p{stroke:#c3b1ff;}
+  .k-pow-p.is-m{stroke:#ff6fb5;}
+  .k-pow-cien{fill:none;stroke-width:1.8;stroke-dasharray:5 4;opacity:.75;}
+  .k-pow-cien.is-a{stroke:#27e8ff;} .k-pow-cien.is-g{stroke:#ffd84a;} .k-pow-cien.is-p{stroke:#c3b1ff;} .k-pow-cien.is-m{stroke:#ff6fb5;}
+  .k-pow-pion{stroke:rgba(255,255,255,.55);stroke-width:1.2;stroke-dasharray:3 3;}
+  .k-pow-os{stroke:rgba(255,255,255,.4);stroke-width:1.2;stroke-dasharray:4 4;}
+</style>

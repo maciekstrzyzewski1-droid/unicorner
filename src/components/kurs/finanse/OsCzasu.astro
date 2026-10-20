@@ -1,0 +1,201 @@
+---
+// Oś czasu jako tabela: wiersze = momenty (dziś, koniec 1. roku…), kolumny = kwoty (wpłaty albo wypłaty).
+// Złota kratka — kwota w chwili, w której się pojawia; turkusowe — ta sama kwota przeniesiona o kolejny okres
+// (w dół: · (1 + i), w górę: : (1 + i)); zielony wiersz — moment, na który liczysz wartość. Przy kilku kwotach
+// pod tabelą jest dodawanie pisemne wartości z zielonego wiersza. Wszystko liczone przy buildzie (lib/finanse.js).
+// „▶ Zobacz krok po kroku”: kwoty przechodzą wiersz po wierszu, podpis pokazuje rachunek jak na kartce.
+import { tex, texInline } from '../../../lib/tex.js';
+import { osCzasu } from '../../../lib/finanse.js';
+import Legenda from '../Legenda.astro';
+import Sterowanie from '../Sterowanie.astro';
+interface Props { wplaty: { t: number; kwota: any; nazwa?: string }[]; i: any; cel: number; okres?: string; wynik?: string; zero?: string; od?: number }
+const { wplaty, i, cel, okres = 'rok', wynik, zero = 'dziś', od } = Astro.props;
+const o = osCzasu({ wplaty, i, cel, okres, wynik, zero, od: od ?? null });
+const wDol = o.kolumny.every((c: any) => c.kier > 0);
+const wGore = o.kolumny.every((c: any) => c.kier < 0);
+const okr = ({ rok: 'rok', 'kwartał': 'kwartał', 'miesiąc': 'miesiąc' } as Record<string, string>)[okres] ?? 'okres';
+const leg: [string, string][] = [
+  ['zloto', o.wiele ? (wDol ? 'wpłata — w chwili, w której ją wpłacasz' : wGore ? 'wypłata — w chwili, w której ją dostajesz' : 'kwota w chwili, w której się pojawia')
+    : (wDol ? 'kwota w chwili wpłaty' : 'kwota w chwili, w której ją dostaniesz')],
+  ['cyan', wDol ? `ta sama kwota ${okr} później: razy $${o.fTex}$` : wGore ? `ta sama kwota ${okr} wcześniej: podzielona przez $${o.fTex}$` : `ta sama kwota przeniesiona o ${okr}`],
+  ['ok', 'wiersz, na który liczysz wartość'],
+];
+// legenda trybu „krok po kroku” (widoczna tylko wtedy)
+const legRuch: [string, string][] = [
+  ['ramka', 'liczysz teraz'],
+  ['ramka-cyan', 'stąd bierzesz kwotę'],
+  ['pusta', 'jeszcze niepoliczona'],
+  ...(o.wiele ? [['wyblakla', 'przygaszone: inne kwoty, czekają'] as [string, string]] : []),
+];
+---
+<figure class="k-fig k-oc" data-kbox data-oc>
+  <div class="k-fig-box">
+    <div class="k-oc-scroll k-tp-scroll" data-kk-scroll>
+      <table class:list={['k-oc-t', { 'is-waska': o.kolumny.length <= 2 }]}>
+        <thead>
+          <tr><th class="k-oc-m">moment</th>{o.kolumny.map((c: any) => <th>{c.nazwa}</th>)}</tr>
+        </thead>
+        <tbody>
+          {o.momenty.map((t: number) => (
+            <tr class:list={[{ 'is-cel': t === o.cel }]}>
+              <th class="k-oc-m" scope="row">{o.etykieta(t)}</th>
+              {o.kolumny.map((c: any, k: number) => {
+                const m = c.komorki[t];
+                return m ? (
+                  <td class:list={['k-oc-c', `is-${m.typ}`]} data-k={k} data-t={t} data-od={m.od}>
+                    {m.op && <span class="k-oc-op" set:html={tex(m.op)} />}
+                    <span class="k-oc-v" data-v set:html={tex(m.tex)} />
+                    {m.ex && <span class="k-oc-e" set:html={tex(m.ex)} />}
+                  </td>
+                ) : <td class="k-oc-c is-nic" data-k={k} data-t={t} />;
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    {o.kartka && (
+      <div class="k-oc-ka" data-oc-ka data-od={o.kartka.od}>
+        <p class="k-oc-ka-h">Dodawanie pisemne w wierszu „{o.etykieta(o.cel)}”:</p>
+        <table class="k-oc-ka-t">
+          {o.kartka.linie.map((l: any, n: number) => (
+            <tr data-k={l.k}>
+              <td class="k-oc-ka-op">{n > 0 ? '+' : ''}</td>
+              <td class="k-oc-ka-v" data-v set:html={tex(l.tex)} />
+              <td class="k-oc-ka-n">{l.nazwa}</td>
+            </tr>
+          ))}
+          <tr class="is-w">
+            <td class="k-oc-ka-op">=</td>
+            <td class="k-oc-ka-v" data-v set:html={tex(o.kartka.wynik)} />
+            <td class="k-oc-ka-n" set:html={texInline(wynik ? `$${wynik}$` : 'razem')} />
+          </tr>
+        </table>
+      </div>
+    )}
+    <Legenda items={leg} />
+  </div>
+  <Sterowanie opis="kwoty same przejdą wiersz po wierszu, a pod spodem zobaczysz rachunek" legenda={legRuch} />
+  <ol hidden data-kroki>
+    {o.kroki.map((s: any) => <li data-a={s.a} data-k={s.k} data-z={s.z} data-t={s.t} set:html={texInline(s.html)} />)}
+  </ol>
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  import { krokowka, own, lot, blysk, sleep, odslon, widok, EXPR, STAG } from '../../../lib/krokowka';
+  document.querySelectorAll<HTMLElement>('[data-oc]').forEach((box) => {
+    const komorki = own<HTMLElement>(box, 'td[data-od]');
+    const wszystkie = own<HTMLElement>(box, 'td.k-oc-c');
+    const ka = own<HTMLElement>(box, '[data-oc-ka]')[0];
+    const kaLinie = ka ? Array.from(ka.querySelectorAll<HTMLElement>('tr')) : [];
+    const kom = (k?: string, t?: string) => komorki.find((c) => c.dataset.k === k && c.dataset.t === t);
+    const czysc = () => {
+      wszystkie.forEach((c) => c.classList.remove('is-pusta', 'is-expr', 'is-teraz', 'is-zrodlo', 'is-bok'));
+      kaLinie.forEach((r) => r.classList.remove('is-pusta'));
+    };
+    krokowka(box, {
+      render: (st, li) => {
+        czysc();
+        komorki.forEach((c) => c.classList.toggle('is-pusta', Number(c.dataset.od) > st));
+        if (ka) kaLinie.forEach((r) => r.classList.toggle('is-pusta', Number(ka.dataset.od) > st));
+        const a = li.dataset.a;
+        if (a === 'skok') {
+          wszystkie.forEach((c) => c.classList.toggle('is-bok', c.dataset.k !== li.dataset.k));
+          kom(li.dataset.k, li.dataset.z)?.classList.add('is-zrodlo');
+          const cel = kom(li.dataset.k, li.dataset.t);
+          cel?.classList.add('is-teraz');
+          odslon(cel);
+          widok(box, cel);
+        }
+        if (a === 'suma') {
+          own<HTMLElement>(box, 'tr.is-cel td[data-od]').forEach((c) => c.classList.add('is-zrodlo'));
+          widok(box, ka);
+        }
+      },
+      animuj: async (_st, li) => {
+        const a = li.dataset.a;
+        if (a === 'skok') {
+          const src = kom(li.dataset.k, li.dataset.z), dst = kom(li.dataset.k, li.dataset.t);
+          if (!dst) return;
+          dst.classList.add('is-pusta');
+          await lot(box, src, dst, { kolor: 'cyan' });
+          dst.classList.remove('is-pusta');
+          if (dst.querySelector('.k-oc-e')) {
+            dst.classList.add('is-expr');
+            blysk(dst);
+            await sleep(EXPR);
+            dst.classList.remove('is-expr');
+          }
+          blysk(dst);
+        } else if (a === 'suma' && ka) {
+          const linie = kaLinie.filter((r) => r.dataset.k !== undefined);
+          const wynik = kaLinie.find((r) => r.classList.contains('is-w'));
+          kaLinie.forEach((r) => r.classList.add('is-pusta'));
+          await Promise.all(linie.map((r, n) => {
+            const dst = r.querySelector('.k-oc-ka-v');
+            const src = komorki.find((c) => c.dataset.k === r.dataset.k && c.closest('tr')?.classList.contains('is-cel'));
+            return lot(box, src, dst, { kolor: 'ok', delay: n * STAG * 3 }).then(() => { r.classList.remove('is-pusta'); blysk(dst); });
+          }));
+          await sleep(350);
+          wynik?.classList.remove('is-pusta');
+          blysk(wynik?.querySelector('.k-oc-ka-v'));
+        }
+      },
+      zamknij: czysc,
+    });
+  });
+</script>
+
+<style>
+  .k-oc{position:relative;scroll-margin-top:84px;}
+  .k-oc-scroll{overflow-x:auto;padding:2px 0 4px;}
+  .k-oc-t{border-collapse:separate;border-spacing:4px;font-size:1rem;}
+  .k-oc-t th{font-weight:500;color:var(--muted);text-align:center;padding:2px 6px;}
+  .k-oc-t thead th{font-family:var(--mono);font-size:.7rem;letter-spacing:.6px;text-transform:uppercase;white-space:nowrap;}
+  .k-oc-t th.k-oc-m{text-align:right;font-size:.84rem;line-height:1.25;max-width:7.2em;padding-right:8px;}
+  .k-oc-t thead th.k-oc-m{font-size:.7rem;}
+  .k-oc-t tr.is-cel th.k-oc-m{color:var(--ok);font-weight:700;}
+  .k-oc-t.is-waska th.k-oc-m{max-width:none!important;}
+  .k-oc-c{position:relative;min-width:5.4em;height:3.2em;padding:3px 8px;text-align:center;vertical-align:middle;white-space:nowrap;border-radius:3px;
+    background:rgba(255,255,255,.025);transition:background .2s,opacity .2s;}
+  .k-oc-c.is-nic{background:transparent;}
+  .k-oc-c.is-start{background:rgba(255,216,74,.22);color:#fff;}
+  .k-oc-c.is-ruch{background:rgba(39,232,255,.12);}
+  .k-oc-c.is-cel{background:rgba(90,209,160,.26);color:#fff;font-weight:700;}
+  .k-oc-t tr.is-cel .k-oc-c.is-nic{background:rgba(90,209,160,.07);}
+  .k-oc-op{display:block;font-size:.7rem;line-height:1.1;color:var(--muted);font-weight:400;}
+  .k-oc-v{display:block;}
+  .k-oc-e{display:none;color:var(--gold);font-size:.92em;}
+  .k-oc-c.is-expr .k-oc-e{display:block;}
+  .k-oc-c.is-expr .k-oc-v{display:none;}
+  .k-oc-c.is-pusta{background:transparent!important;outline:1px dashed var(--line2);outline-offset:-2px;}
+  .k-oc-c.is-pusta > *{visibility:hidden;}
+  .k-oc-c.is-bok{opacity:.38;}
+  .k-oc-c.is-zrodlo{box-shadow:inset 0 0 0 2px var(--cyan);}
+  .k-oc-c.is-teraz{box-shadow:inset 0 0 0 2px #fff;}
+  .k-oc-scroll.k-tp-scroll{border:0;background:none;}
+  .k-oc-t :global(.katex){font-size:1em!important;}
+  /* dodawanie pisemne */
+  .k-oc-ka{margin:12px 0 4px;}
+  .k-oc-ka-h{margin:0 0 4px!important;font-size:.86rem;color:var(--muted);}
+  .k-oc-ka-t{border-collapse:collapse;font-size:1.05rem;}
+  .k-oc-ka-t td{padding:2px 6px;}
+  .k-oc-ka-op{width:1.2em;text-align:center;color:var(--gold);font-weight:700;}
+  .k-oc-ka-v{text-align:right;min-width:6em;border-radius:3px;}
+  .k-oc-ka-n{font-size:.8rem;color:var(--muted);}
+  .k-oc-ka-t tr.is-w td{border-top:2px solid var(--gold);padding-top:4px;}
+  .k-oc-ka-t tr.is-w .k-oc-ka-v{color:#fff;font-weight:700;background:rgba(90,209,160,.16);}
+  .k-oc-ka-t tr.is-pusta .k-oc-ka-v{outline:1px dashed var(--line2);outline-offset:-2px;}
+  /* :global — KaTeX wstawiony przez set:html nie ma atrybutu zakresu Astro */
+  .k-oc-ka-t tr.is-pusta .k-oc-ka-v > :global(*){visibility:hidden;}
+  .k-oc-ka-t :global(.katex){font-size:1em!important;}
+  @media(max-width:560px){
+    .k-oc .k-fig-box{padding:12px 8px;}
+    .k-oc-t{border-spacing:2px;font-size:.86rem;}
+    .k-oc-c{min-width:0;padding:2px 4px;height:3em;}
+    .k-oc-t th.k-oc-m{max-width:4.8em;font-size:.72rem;padding-right:3px;}
+    .k-oc-t thead th{font-size:.56rem;letter-spacing:.2px;white-space:normal;padding:2px 2px;}
+    .k-oc-op{font-size:.64rem;}
+  }
+</style>

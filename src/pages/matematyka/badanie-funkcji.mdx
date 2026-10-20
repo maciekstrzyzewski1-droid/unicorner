@@ -1,0 +1,858 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: matematyka
+slug: badanie-funkcji
+title: Badanie zmienności funkcji
+podtytul: monotoniczność, ekstrema, wypukłość i punkty przegięcia
+description: Badanie zmienności funkcji krok po kroku — procedura z zajęć, tabela znaków i tabela zmienności, ekstrema lokalne, druga pochodna, wypukłość, wklęsłość i punkty przegięcia. Wszystkie zadania z listy rozwiązane.
+lede: Pochodna mówi, gdzie funkcja rośnie, gdzie maleje i gdzie zawraca. Tutaj zamienisz to w jedną procedurę z pięciu etapów — tę samą dla ekstremów i dla punktów przegięcia — i przejdziesz z nią wszystkie zadania z listy.
+wyglad: szeroki
+wymaga: Liczenie pochodnych (moduł 8). Reguły, których używamy w rachunkach, przypominamy przy każdej linii.
+umiesz:
+  - zbadać znak wyrażenia tabelą znaków z liczbami próbnymi
+  - wyznaczyć przedziały monotoniczności i ekstrema lokalne procedurą z zajęć
+  - odróżnić warunek konieczny od dostatecznego i rozpoznać punkt stacjonarny bez ekstremum
+  - policzyć drugą pochodną i odczytać z jej znaku wypukłość i wklęsłość
+  - wyznaczyć punkty przegięcia i zapisać je jako punkty (x₀, f(x₀))
+  - zbadać jedną funkcję w całości — monotoniczność, ekstrema, wypukłość i przegięcia
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Legenda from '../../components/kurs/Legenda.astro';
+import Rachunek from '../../components/kurs/pochodne/Rachunek.astro';
+import Przyklad from '../../components/kurs/pochodne/Przyklad.astro';
+import Wykres from '../../components/kurs/zmiennosc/Wykres.astro';
+import WykresIPochodna from '../../components/kurs/zmiennosc/WykresIPochodna.astro';
+import Wypuklosc from '../../components/kurs/zmiennosc/Wypuklosc.astro';
+import CwiczenieZmiennosc from '../../components/kurs/zmiennosc/CwiczenieZmiennosc.astro';
+import Odpowiedzi from '../../components/kurs/zmiennosc/Odpowiedzi.astro';
+import { ZAD1 as A, ZAD2 as B } from '../../lib/zmiennosc-zadania.js';
+import { CW_M, CW_W, ZNAK_PRZYKLAD } from '../../lib/zmiennosc-cwiczenia.js';
+import { ETAPY_M, ETAPY_W } from '../../lib/zmiennosc.js';
+
+export const R = String.raw;
+export const h = (x) => x ** 3 - 3 * x - 2;
+export const S3 = Math.sqrt(3) / 3;
+export const WYK_POCO = {
+  fn: h, okno: { x0: -2.3, x1: 2.6, y0: -6.4, y1: 3 }, kx: 1, ky: 2,
+  kawalki: [{ od: -2.3, do: -1, kl: 'k-w-b' }, { od: -1, do: 1, kl: 'k-w-r' }, { od: 1, do: 2.6, kl: 'k-w-b' }],
+  punkty: [
+    { x: -1, y: 0, kl: 'is-e', t: 'szczyt (max)', dy: -14 },
+    { x: 1, y: -4, kl: 'is-e', t: 'dołek (min)', dy: 26 },
+    { x: 0, y: -2, kl: 'is-p', t: 'przegięcie', dx: 12, dy: -8, anchor: 'start' },
+  ],
+};
+export const LEG_POCO = [['ok', 'funkcja rośnie'], ['roz', 'funkcja maleje'], ['bialy', 'ekstremum: szczyt albo dołek'], ['fiolet', 'punkt przegięcia']];
+export const WYK_EKSTREMA = {
+  fn: (x) => -(x ** 4) / 4 + x ** 3 / 3 + x * x, okno: { x0: -1.9, x1: 2.95, y0: -1.3, y1: 3.4 }, kx: 1, ky: 1,
+  pasy: [{ od: -1.45, do: -0.55, kl: 'is-c' }],
+  kawalki: [{ od: -1.9, do: -1, kl: 'k-w-b' }, { od: -1, do: 0, kl: 'k-w-r' }, { od: 0, do: 2, kl: 'k-w-b' }, { od: 2, do: 2.95, kl: 'k-w-r' }],
+  punkty: [
+    { x: -1, y: 5 / 12, kl: 'is-e', t: 'max lokalne', dy: -14 },
+    { x: 0, y: 0, kl: 'is-e', t: 'min lokalne', dy: 26 },
+    { x: 2, y: 8 / 3, kl: 'is-e', t: 'max lokalne', dy: -14 },
+  ],
+};
+export const LEG_EKSTREMA = [['fiolet', 'otoczenie punktu $x = -1$ — mały przedział wokół niego'], ['bialy', 'ekstremum lokalne'], ['ok', 'funkcja rośnie'], ['roz', 'funkcja maleje']];
+export const WYK_X3 = {
+  fn: (x) => x ** 3, okno: { x0: -1.6, x1: 1.6, y0: -2.4, y1: 2.4 }, w: 300, h: 280, rowne: true,
+  kawalki: [{ od: -1.6, do: 1.6, kl: 'k-w-b' }],
+  punkty: [{ x: 0, y: 0, kl: 'is-brak', t: 'f′(0) = 0', dx: -12, dy: -12, anchor: 'end' }],
+};
+export const WYK_PRZEG = {
+  fn: (x) => x ** 3 + 1, okno: { x0: -1.5, x1: 1.5, y0: -1.6, y1: 3.2 }, w: 300, h: 280, rowne: true,
+  kawalki: [{ od: -1.5, do: 0, kl: 'k-w-z' }, { od: 0, do: 1.5, kl: 'k-w-a' }],
+  punkty: [{ x: 0, y: 1, kl: 'is-p', t: 'P = (0, 1)', dx: -12, dy: -12, anchor: 'end' }],
+};
+export const WYK_X4 = {
+  fn: (x) => x ** 4, okno: { x0: -1.5, x1: 1.5, y0: -1.2, y1: 3.2 }, w: 300, h: 280, rowne: true,
+  kawalki: [{ od: -1.5, do: 1.5, kl: 'k-w-a' }],
+  punkty: [{ x: 0, y: 0, kl: 'is-brak', t: 'f″(0) = 0', dy: 26 }],
+};
+export const WYK_ZNAK = {
+  fn: (x) => (x - 1) * (x + 2), okno: { x0: -3.6, x1: 2.6, y0: -3, y1: 4.4 }, kx: 1, ky: 1,
+  kawalki: [{ od: -3.6, do: -2, kl: 'k-w-b' }, { od: -2, do: 1, kl: 'k-w-r' }, { od: 1, do: 2.6, kl: 'k-w-b' }],
+  punkty: [{ x: -2, y: 0, kl: 'is-brak', t: '' }, { x: 1, y: 0, kl: 'is-brak', t: '' }],
+  napisy: [{ x: -3.1, y: 1.4, t: '+', kl: 'k-w-tbig k-w-tb' }, { x: -0.5, y: -1, t: '−', kl: 'k-w-tbig k-w-tr' }, { x: 2.1, y: 1.4, t: '+', kl: 'k-w-tbig k-w-tb' }],
+};
+export const WYK_PARABOLA = {
+  fn: (x) => 2 - 6 * x * x, okno: { x0: -1.25, x1: 1.25, y0: -5, y1: 3.2 }, kx: 0.5, ky: 1, w: 340, h: 280,
+  kawalki: [{ od: -1.25, do: -S3, kl: 'k-w-z' }, { od: -S3, do: S3, kl: 'k-w-a' }, { od: S3, do: 1.25, kl: 'k-w-z' }],
+  punkty: [{ x: -S3, y: 0, kl: 'is-brak', t: '−√3/3', dx: -8, dy: -10, anchor: 'end' }, { x: S3, y: 0, kl: 'is-brak', t: '√3/3', dx: 8, dy: -10, anchor: 'start' }],
+  napisy: [{ x: 0.3, y: 2.5, t: '+', kl: 'k-w-tbig k-w-ta' }, { x: -1.1, y: -1.6, t: '−', kl: 'k-w-tbig k-w-tg' }, { x: 1.1, y: -1.6, t: '−', kl: 'k-w-tbig k-w-tg' }],
+};
+export const WYK_PELNE = {
+  fn: h, okno: { x0: -2.3, x1: 2.6, y0: -6.4, y1: 3 }, kx: 1, ky: 2,
+  kawalki: [{ od: -2.3, do: 0, kl: 'k-w-z' }, { od: 0, do: 2.6, kl: 'k-w-a' }],
+  punkty: [
+    { x: -1, y: 0, kl: 'is-e', t: 'max (−1, 0)', dy: -14 },
+    { x: 1, y: -4, kl: 'is-e', t: 'min (1, −4)', dy: 26 },
+    { x: 0, y: -2, kl: 'is-p', t: 'P = (0, −2)', dx: 12, dy: -8, anchor: 'start' },
+  ],
+  napisy: [{ x: -1.75, y: 2.4, t: '↗ ∩', kl: 'k-w-tbig k-w-tw' }, { x: -0.55, y: 2.4, t: '↘ ∩', kl: 'k-w-tbig k-w-tw' }, { x: 0.6, y: 2.4, t: '↘ ∪', kl: 'k-w-tbig k-w-tw' }, { x: 1.75, y: 2.4, t: '↗ ∪', kl: 'k-w-tbig k-w-tw' }],
+};
+export const LEG_PELNE = [['zloto', 'wklęsła (∩)'], ['cyan', 'wypukła (∪)'], ['bialy', 'ekstremum'], ['fiolet', 'punkt przegięcia']];
+export const tyt = (d) => `$${d.f}$`;
+
+## Po co to jest
+
+Wyobraź sobie wykres zysku firmy w zależności od wielkości produkcji. Zanim go narysujesz, chcesz wiedzieć trzy rzeczy:
+
+1. **Gdzie wykres idzie w górę, a gdzie w dół** — przy jakiej produkcji zysk rośnie, a przy jakiej spada.
+2. **Gdzie są szczyty i dołki** — przy jakiej produkcji zysk jest największy w okolicy.
+3. **Jak wykres się wygina** — czy zysk rośnie coraz szybciej, czy coraz wolniej.
+
+Na każde z tych pytań odpowiada pochodna. Tak wygląda wynik pełnego badania jednej funkcji z listy zadań:
+
+<Wykres dane={WYK_POCO} leg={LEG_POCO}>
+wykres funkcji $f(x) = (x + 1)^2(x - 2)$ z zadań 1 h) i 2 b). Zielone kawałki rosną, różowy maleje. Biała kropka po lewej to szczyt, po prawej — dołek. W fioletowym punkcie wykres zmienia wygięcie: z lewej wygina się jak odwrócona miska (∩), z prawej jak miska (∪).
+</Wykres>
+
+Na końcu modułu każdy taki opis zrobisz z samego wzoru funkcji, bez rysowania.
+
+### Jak przejdziemy przez ten moduł
+
+1. **Pojęcia na rysunkach** ([sekcja 3](#pojecia)): co znaczy „rośnie”, „ekstremum”, „wypukła” i „punkt przegięcia”.
+2. **Znak wyrażenia** ([sekcja 4](#polecenie-znak)): jedna umiejętność, której potrzebuje każde zadanie — jak sprawdzić, gdzie wyrażenie jest dodatnie, a gdzie ujemne.
+3. **Procedura z zajęć** w pięciu etapach — najpierw z pierwszą pochodną (monotoniczność i ekstrema, Zad. 1), potem z drugą (wypukłość i przegięcia, Zad. 2).
+
+## Co będzie na kolokwium
+
+Na liście są dwa polecenia: Zad. 1 (13 funkcji) i Zad. 2 (5 funkcji). Rozwiązuje się je tą samą procedurą z pięciu etapów. Poniżej są polecenia od najprostszego, w tym typowe warianty. Każde ma w module swój przepis i ćwiczenia.
+
+To na razie tylko mapa — nie musisz jeszcze rozumieć tych pojęć. Wrócisz tu, gdy będziesz szukać przepisu na konkretne polecenie.
+
+<Polecenia items={[
+  { polecenie: R`Zbadaj znak pochodnej (na przykład $f'(x) = \frac{-2(x + 4)(x - 1)}{(x^2 + 4)^2}$)`, jak: R`To etap 4 każdego zadania. Rozkładasz pochodną na czynniki i robisz tabelę znaków: z każdego przedziału jedna liczba próbna.`, przepis: 'polecenie-znak', cwiczenia: 'cw-znak', zrodlo: 'etap 4 w każdym zadaniu z listy' },
+  { polecenie: 'Wyznacz ekstrema i przedziały monotoniczności funkcji', jak: R`Procedura z pierwszą pochodną: dziedzina, pochodna, $f'(x) = 0$, znak pochodnej, tabela zmienności ze strzałkami.`, przepis: 'polecenie-monotonicznosc', cwiczenia: 'cw-monotonicznosc', zrodlo: 'Zad. 1 a)–m)' },
+  { polecenie: 'Oblicz drugą pochodną funkcji', jak: R`Liczysz pochodną, a potem pochodną wyniku — tymi samymi regułami co w module 8.`, przepis: 'polecenie-druga', cwiczenia: 'cw-druga', zrodlo: 'etap 2 w Zad. 2' },
+  { polecenie: 'Wyznacz przedziały wklęsłości i wypukłości oraz punkty przegięcia funkcji', jak: R`Ta sama procedura, ale z drugą pochodną $f''$. W tabeli zamiast strzałek są kształty ∪ i ∩.`, przepis: 'polecenie-wypuklosc', cwiczenia: 'cw-wypuklosc', zrodlo: 'Zad. 2 a)–e)' },
+  { polecenie: 'Zbadaj przebieg zmienności funkcji (monotoniczność, ekstrema, wypukłość, punkty przegięcia)', jak: R`Obie procedury na jednej funkcji i jedna wspólna tabela.`, przepis: 'polecenie-pelne', cwiczenia: 'cw-pelne', zrodlo: 'typowy wariant: Zad. 1 h) i Zad. 2 b) to ta sama funkcja' },
+]} />
+
+<a id="pojecia" class="k-anchor"></a>
+
+## Pojęcia od podstaw
+
+Najpierw zobaczysz każde pojęcie na rysunku, a dopiero potem w zapisie ze slajdów. Pójdziemy tak: rośnie i maleje → ekstremum → kiedy pochodna wskazuje ekstremum → druga pochodna → wypukłość → punkt przegięcia.
+
+### Monotoniczność: rośnie albo maleje
+
+<Ramka kind="zapamietaj" tytul="Rośnie, maleje">
+- Funkcja **rośnie** w przedziale, gdy, idąc po wykresie w prawo, idziesz w górę: większy argument ($x$) daje większą wartość ($f(x)$).
+- Funkcja **maleje** w przedziale, gdy, idąc w prawo, schodzisz w dół: większy argument daje mniejszą wartość.
+- To, gdzie funkcja rośnie, a gdzie maleje, to jej **monotoniczność**. Przedziały, w których tylko rośnie albo tylko maleje, to **przedziały monotoniczności**.
+</Ramka>
+
+Na przykład dla $f(x) = x^2$: $f(1) = 1$, a $f(2) = 4$. Większy argument, większa wartość — i tak jest dla każdych dwóch liczb dodatnich, więc w przedziale $(0, \infty)$ funkcja rośnie.
+
+Skąd to wiedzieć bez rysowania? Ze znaku pochodnej. Pochodna to nachylenie stycznej: dodatnia — styczna idzie w górę, ujemna — opada. Na slajdzie z zajęć zapisano to tak:
+
+<Ramka kind="zapamietaj" tytul="Pochodna a monotoniczność (slajd)">
+- Jeżeli $f'(x) > 0$ w każdym punkcie przedziału $X$, to funkcja $f$ jest w tym przedziale **rosnąca**: $f \uparrow \Leftrightarrow f'(x) > 0, \ \forall x \in X$.
+- Jeżeli $f'(x) < 0$ w każdym punkcie przedziału $X$, to funkcja jest w tym przedziale **malejąca**: $f \downarrow \Leftrightarrow f'(x) < 0, \ \forall x \in X$.
+- Jeżeli $f'(x) = 0$ w każdym punkcie przedziału, to funkcja jest w nim **stała**.
+
+Jak czytać zapis: $f \uparrow$ — „funkcja rośnie”, $f \downarrow$ — „funkcja maleje”, $\Leftrightarrow$ — „wtedy i tylko wtedy” (wynikanie w obie strony), $\forall x \in X$ — „dla każdego iks należącego do $X$”.
+
+W zadaniach korzystasz z kierunku „znak pochodnej → monotoniczność”. W drugą stronę bywa wyjątek: $f(x) = x^3$ rośnie wszędzie, a jednak $f'(0) = 0$ — zobaczysz to niżej.
+</Ramka>
+
+Zobacz to na dwóch wykresach jeden pod drugim — u góry funkcja, na dole jej pochodna:
+
+<WykresIPochodna fn={h} dfn={(x) => 3 * x * x - 3} okno={{ x0: -2.3, x1: 2.3 }} yf={[-7, 2]} yd={[-4, 9]} kyf={2} kyd={3} zera={[-1, 1]} nazwaF="f(x) = x^3 - 3x - 2" nazwaD="f'(x) = 3x^2 - 3" punkty={[{ x: -1, t: 'max', dy: -12 }, { x: 1, t: 'min', dy: 26 }]}>
+dolny wykres to pochodna. Tam, gdzie leży nad osią $x$ (znak „+”), górny wykres idzie w górę (↗). Tam, gdzie pod osią (znak „−”), górny wykres idzie w dół (↘). Przerywane linie stoją w miejscach, gdzie pochodna przecina oś, czyli $f'(x) = 0$: w $x = -1$ i $x = 1$. Dokładnie tam funkcja zawraca. Kolory przedziałów są w obu wykresach te same.
+</WykresIPochodna>
+
+<Ramka kind="pulapka" tytul="Przedziały wypisujesz osobno">
+- Odpowiedź zapisujesz: „rośnie w $(-\infty, -1)$ i w $(1, \infty)$” — każdy przedział osobno, po przecinku albo ze słowem „i”.
+- Nie pisz „rośnie w $(-\infty, -1) \cup (1, \infty)$”. Znak $\cup$ to suma zbiorów: wszystkie liczby z jednego albo z drugiego przedziału. Na całym tym zbiorze naraz funkcja nie rośnie: $f(-1{,}5) = -3{,}375 + 4{,}5 - 2 = -0{,}875$, a $f(1{,}5) = 3{,}375 - 4{,}5 - 2 = -3{,}125$. Większy argument, a mniejsza wartość.
+- Końce przedziału oddzielasz przecinkiem, $(0, 1)$, albo średnikiem, $(0; 1)$ — oba zapisy są poprawne. Średnik przydaje się, gdy w liczbach jest przecinek dziesiętny.
+- Znak $\cup$ jest dobry w rozwiązaniu nierówności: „$f'(x) > 0$ dla $x \in (-\infty, -1) \cup (1, \infty)$” — to tylko zbiór liczb, w których pochodna jest dodatnia.
+</Ramka>
+
+### Ekstremum lokalne: szczyt albo dołek w okolicy
+
+Slajd z zajęć: **ekstremum lokalne** to punkt, w którym funkcja przyjmuje lokalnie (w otoczeniu punktu) wartość największą albo najmniejszą.
+
+- **Maksimum lokalne** — w okolicy punktu nic nie jest wyżej. Na wykresie: szczyt.
+- **Minimum lokalne** — w okolicy punktu nic nie jest niżej. Na wykresie: dołek.
+- **Otoczenie** punktu to mały przedział wokół niego, np. od $x_0 - 0{,}5$ do $x_0 + 0{,}5$, gdzie $x_0$ (czytamy „iks zero”) to konkretny punkt na osi $x$. „Lokalnie” znaczy: patrzysz tylko na najbliższą okolicę, nie na cały wykres.
+
+<Wykres dane={WYK_EKSTREMA} leg={LEG_EKSTREMA}>
+wykres ma trzy ekstrema lokalne. Fioletowy pasek to otoczenie punktu $x = -1$: w tym pasku nic nie leży wyżej niż szczyt przy $x = -1$, więc to maksimum lokalne. Przy $x = 2$ wykres wznosi się dużo wyżej — to też maksimum lokalne, a przy okazji największa wartość na całym rysunku. Maksimum lokalne nie musi więc być najwyższym punktem wykresu.
+</Wykres>
+
+Jedno zdanie, żeby zapamiętać: maksimum lokalne to szczyt jednego pagórka — najwyższy w okolicy, choć gdzie indziej mogą być wyższe góry.
+
+<Ramka kind="zapamietaj" tytul="Jak zapisujesz ekstremum">
+Na zajęciach: $f_{\max}(1) = 1$. Czytamy: „maksimum funkcji w punkcie $1$ wynosi $1$”.
+
+- Liczba w nawiasie to **argument** — gdzie jest ekstremum (oś $x$).
+- Liczba po znaku równości to **wartość** — jak wysoko (oś $y$). Liczysz ją, wstawiając argument do wzoru funkcji $f$.
+- Minimum zapisujesz tak samo: $f_{\min}(x_0) = \ldots$
+</Ramka>
+
+### Kiedy pochodna wskazuje ekstremum: warunek konieczny i dostateczny
+
+Na szczycie i w dołku styczna jest pozioma (gdy pochodna w tym punkcie istnieje) — jej nachylenie to $0$. Stąd pierwszy warunek ze slajdu:
+
+<Ramka kind="zapamietaj" tytul="Warunek konieczny istnienia ekstremum (slajd)">
+Jeżeli funkcja $f$ ma w punkcie $x_0$ ekstremum i jeśli $f'(x_0)$ istnieje, to $f'(x_0) = 0$.
+
+Punkty, w których $f'(x) = 0$, nazywamy **punktami stacjonarnymi**.
+</Ramka>
+
+<div class="k-symbole">
+  <Znak t="f'(x_0) = 0" nazwa="Punkt stacjonarny" czytamy="ef prim od iks zero równa się zero" znaczy="W punkcie $x_0$ pochodna jest zerem, czyli styczna jest pozioma. To kandydat na ekstremum — nie pewniak." pamiec="„Stacjonarny” znaczy „stojący w miejscu”: w tym jednym punkcie styczna jest pozioma." />
+</div>
+
+„Konieczny” znaczy: bez tego ekstremum nie będzie, ale to jeszcze za mało. Jak z egzaminem: trzeba na niego przyjść, ale samo przyjście nie wystarcza do zdania. Dlatego jest drugi warunek:
+
+<Ramka kind="zapamietaj" tytul="Warunek dostateczny istnienia ekstremum (slajd)">
+Jeżeli $f'(x_0) = 0$ i pochodna **zmienia znak** przy przejściu przez $x_0$, to funkcja ma w $x_0$ ekstremum:
+
+- **maksimum lokalne**, gdy pochodna zmienia znak z „+” na „−” — funkcja najpierw rośnie, potem maleje;
+- **minimum lokalne**, gdy pochodna zmienia znak z „−” na „+” — funkcja najpierw maleje, potem rośnie.
+
+„Dostateczny” znaczy: jeśli to zachodzi, ekstremum na pewno jest.
+</Ramka>
+
+Po co dwa warunki? Bo pozioma styczna nie zawsze oznacza szczyt albo dołek:
+
+<Wykres dane={WYK_X3} leg={[['ok', 'funkcja rośnie'], ['bialy', 'punkt stacjonarny bez ekstremum (pusta kropka)']]} male>
+wykres $f(x) = x^3$. Pochodna $f'(x) = 3x^2$, więc $f'(0) = 3 \cdot 0^2 = 0$ — w zerze styczna jest pozioma. Ale $f'(-1) = 3 \cdot (-1)^2 = 3 > 0$ i $f'(1) = 3 \cdot 1^2 = 3 > 0$: po obu stronach ten sam znak. Funkcja rośnie, na chwilę się wypłaszcza i rośnie dalej. Ekstremum nie ma.
+</Wykres>
+
+<Ramka kind="granica" etykieta="Uwaga — kiedy to nie działa" tytul="Punkty, w których pochodnej nie ma">
+- Warunek konieczny mówi „jeśli $f'(x_0)$ istnieje”. Ekstremum bywa też tam, gdzie pochodnej nie ma.
+- Przykład: $f(x) = |x|$ (wartość bezwzględna) ma w zerze ostry dołek — minimum, choć pochodnej tam nie ma.
+- W zadaniach z listy takie punkty nie występują. Wyjątkiem są końce dziedziny w Zad. 1 m) — piszemy o nich przy tym przykładzie.
+</Ramka>
+
+<Pytania pytania={[
+  { q: R`W punkcie $x_0 = 2$ wyszło $f'(2) = 0$. Co już wiesz?`, opcje: ['Że w $x = 2$ jest ekstremum', 'Że $x = 2$ to punkt stacjonarny — kandydat; trzeba jeszcze sprawdzić zmianę znaku pochodnej', 'Że funkcja w $x = 2$ ma wartość $0$'], dobra: 1, dlaczego: R`$f'(2) = 0$ to tylko warunek konieczny. Ekstremum potwierdza dopiero zmiana znaku pochodnej — przykład $x^3$ pokazuje, że może jej nie być. $f'(2) = 0$ mówi o nachyleniu stycznej, a nie o wartości funkcji $f(2)$.` },
+]} />
+
+### Druga pochodna
+
+Pochodna $f'$ to też funkcja, więc i ją można zróżniczkować (policzyć jej pochodną). Slajd z zajęć:
+
+<Rozbior t="f'' = (f')'" czytamy="ef bis równa się pochodna z ef prim" czesci={[
+  { t: "f''", o: '<b>druga pochodna</b>, inaczej pochodna drugiego rzędu; czytamy „ef bis”' },
+  { t: "(f')'", o: '<b>pochodna pochodnej</b> — bierzesz wynik $f\'$ i liczysz z niego pochodną jeszcze raz' },
+]} />
+
+Dalsze pochodne liczysz tak samo, za każdym razem z poprzedniego wyniku. Trzecią zapisujesz $f'''$ (na slajdzie także $f^{(3)}$), a dalsze — numerem w nawiasie: $f^{(4)}$, $f^{(5)}$, … Ogólnie $f^{(n)} = \left(f^{(n-1)}\right)'$.
+
+<div class="k-symbole">
+  <Znak t="f''(x)" nazwa="Druga pochodna" czytamy="ef bis od iks" znaczy="Pochodna pierwszej pochodnej. Mówi, jak zmienia się nachylenie stycznej: gdy $f''(x) > 0$, nachylenie stycznej rośnie, idąc w prawo (np. z $-3$ na $0$, potem na $9$)." pamiec="Dwie kreski = pochodna liczona dwa razy." />
+  <Znak t="f^{(n)}(x)" nazwa="Pochodna rzędu n" czytamy="ef en-ta od iks, czyli en-ta pochodna" znaczy="Pochodna liczona $n$ razy po kolei. Nawias odróżnia ją od potęgi: $f^{(4)}$ to czwarta pochodna, a $f^4$ — funkcja do czwartej potęgi." pamiec="Funkcja, która ma $n$ pochodnych w przedziale, to funkcja $n$-krotnie różniczkowalna (słowo ze slajdu)." />
+</div>
+
+| funkcja | wynik | jak |
+|---|---|---|
+| $f(x)$ | $x^3 - 3x - 2$ | funkcja z rysunków wyżej |
+| $f'(x)$ | $3x^2 - 3$ | wzór 3 dla $x^3$ i $3x$, pochodna stałej to $0$ |
+| $f''(x)$ | $6x$ | pochodna z $3x^2 - 3$: $3 \cdot 2x - 0 = 6x$ |
+| $f'''(x)$ | $6$ | pochodna z $6x$ |
+| $f^{(4)}(x)$ | $0$ | pochodna stałej |
+
+Jak czytać tabelę: każdy wiersz od drugiego to pochodna wyniku z wiersza wyżej. Ostatnia kolumna mówi, co liczysz.
+
+### Wypukłość i wklęsłość: jak wykres się wygina
+
+Slajd z zajęć:
+
+<Ramka kind="zapamietaj" tytul="Wypukły, wklęsły (slajd)">
+- Wykres funkcji jest **wypukły** w przedziale, jeżeli we wszystkich punktach tego przedziału leży **powyżej swoich stycznych**. Kształt: ∪.
+- Wykres jest **wklęsły** w przedziale, jeżeli leży **poniżej każdej ze swoich stycznych**. Kształt: ∩.
+
+Znaczki ∪ i ∩ to tu obrazki kształtu (miska i odwrócona miska), a nie znaki działań na zbiorach.
+</Ramka>
+
+Przesuń punkt suwakiem. Turkusowe pole pokazuje, że wykres jest nad styczną, a złote — że pod nią:
+
+<Wypuklosc>
+krzywa to wykres $f(x) = x^3 - 3x - 2$ — ta sama funkcja co na rysunkach wyżej. Biały odcinek to styczna w punkcie $x_0$. Pole między wykresem a styczną jest turkusowe, gdy wykres leży nad styczną (wypukły), a złote, gdy pod nią (wklęsły). Kolumna „nachylenie stycznej” to $f'(x_0)$: dla $x_0$ od $-2$ do $0$ liczby maleją ($9$, potem $3{,}75$, $0$, $-2{,}25$, $-3$), a od $0$ do $2$ rosną. Wypukły wykres to taki, na którym nachylenie stycznej rośnie — dlatego jego druga pochodna (pochodna nachylenia) jest dodatnia. Kliknij wiersz tabeli, żeby przeskoczyć do punktu.
+</Wypuklosc>
+
+<Ramka kind="zapamietaj" tytul="Druga pochodna a kształt (slajd)">
+- Jeżeli $f''(x) > 0$ dla każdego $x \in X$, to wykres funkcji $f$ jest **wypukły** na $X$.
+- Jeżeli $f''(x) < 0$ dla każdego $x \in X$, to wykres funkcji $f$ jest **wklęsły** na $X$.
+
+Do zapamiętania: wypukły ∪ jak uśmiech — i druga pochodna z plusem.
+</Ramka>
+
+<Ramka kind="pulapka" tytul="„Wypukły” na zajęciach to ∪">
+- W mowie potocznej „wypukły” kojarzy się z garbem (∩). Na zajęciach jest odwrotnie: wypukły to ∪, bo leży nad stycznymi.
+- W niektórych książkach kształt ∪ nazywa się „wypukły w dół”, a ∩ — „wypukły w górę”. Na kolokwium trzymaj się nazw z zajęć.
+</Ramka>
+
+Ten sam układ co przy monotoniczności, tylko o piętro wyżej: druga pochodna steruje kształtem tak, jak pierwsza steruje strzałkami.
+
+<WykresIPochodna rzad={2} fn={h} dfn={(x) => 6 * x} okno={{ x0: -2.3, x1: 2.3 }} yf={[-7, 2]} yd={[-14, 14]} kyf={2} kyd={6} zera={[0]} nazwaF="f(x) = x^3 - 3x - 2" nazwaD="f''(x) = 6x" punkty={[{ x: 0, t: 'P', dx: 10, dy: -8, anchor: 'start' }]}>
+dolny wykres to druga pochodna $f''(x) = 6x$. Tam, gdzie jest pod osią (znak „−”), górny wykres jest wklęsły (∩). Tam, gdzie nad osią (znak „+”), górny wykres jest wypukły (∪). W $x = 0$ druga pochodna przecina oś — tam wykres zmienia kształt.
+</WykresIPochodna>
+
+### Punkt przegięcia
+
+<Ramka kind="zapamietaj" tytul="Punkt przegięcia (slajd)">
+Punkt $P_0 = (x_0, f(x_0))$ nazywamy **punktem przegięcia** wykresu funkcji $f$ wtedy i tylko wtedy, gdy w punkcie $x_0$ funkcja zmienia kształt z wklęsłej na wypukłą albo z wypukłej na wklęsłą.
+
+- **Warunek konieczny:** jeżeli funkcja ma w $x_0$ punkt przegięcia i $f''(x_0)$ istnieje, to $f''(x_0) = 0$.
+- **Warunek dostateczny:** jeżeli $f''(x_0) = 0$ i druga pochodna **zmienia znak** przy przejściu przez $x_0$, to w $x_0$ jest punkt przegięcia.
+</Ramka>
+
+Działa to dokładnie jak przy ekstremach, tylko z drugą pochodną. I tak jak tam, samo $f''(x_0) = 0$ nie wystarcza:
+
+<div class="k-wyk-para">
+
+<Wykres dane={WYK_PRZEG} leg={[['zloto', 'wklęsła (∩)'], ['cyan', 'wypukła (∪)'], ['fiolet', 'punkt przegięcia']]} male>
+wykres $f(x) = x^3 + 1$ — ten sam co na slajdzie z zajęć. $f''(x) = 6x$: dla $x < 0$ ujemna (wklęsła), dla $x > 0$ dodatnia (wypukła). W $x = 0$ znak się zmienia, więc $P = (0, f(0)) = (0, 1)$ to punkt przegięcia.
+</Wykres>
+
+<Wykres dane={WYK_X4} leg={[['cyan', 'wypukła (∪)'], ['bialy', 'f″ = 0 bez zmiany znaku (pusta kropka)']]} male>
+wykres $f(x) = x^4$. $f''(x) = 12x^2$, więc $f''(0) = 0$. Ale $f''(-1) = 12 > 0$ i $f''(1) = 12 > 0$ — po obu stronach plus. Wykres jest wypukły z obu stron, kształt się nie zmienia. Punktu przegięcia nie ma.
+</Wykres>
+
+</div>
+
+<Ramka kind="pulapka" tytul="Punkt przegięcia to punkt, nie liczba">
+- Odpowiedź to para liczb: $P = (x_0, f(x_0))$, np. $P = (0, 1)$. Samo „$x = 0$” to za mało.
+- Drugą współrzędną liczysz ze wzoru **funkcji** $f$, nie z $f''$. $f''(x_0)$ jest zawsze zerem — gdyby to była druga współrzędna, każdy punkt przegięcia leżałby na osi $x$.
+</Ramka>
+
+<a id="polecenie-znak" class="k-anchor"></a>
+
+## Znak wyrażenia: tabela znaków
+
+**Cel: dla każdego przedziału na osi $x$ wiedzieć, czy wyrażenie jest dodatnie (+), czy ujemne (−).** Tak wygląda gotowa tabela znaków dla przykładowej pochodnej $f'(x) = (x - 1)(x + 2)$:
+
+<Fragment set:html={ZNAK_PRZYKLAD.tabZn} />
+
+<Legenda items={[['ok', '„+” — wynik dodatni'], ['roz', '„−” — wynik ujemny'], ['fiolet', 'punkty, w których czynnik jest zerem']]} />
+
+Jak czytać tabelę: przy $x$ są przedziały i punkty, w których czynniki są zerem ($-2$ i $1$, na fioletowo). Przy każdym przedziale stoi liczba próbna — jedna liczba z tego przedziału. Dalej jest znak każdego czynnika, a na końcu, przy $f'(x)$, znak całej pochodnej. Na telefonie tabela jest obrócona: przedziały są w wierszach.
+
+To etap 4 każdego zadania z listy. Kluczowy pomysł: **wyrażenie może zmienić znak tylko tam, gdzie jest zerem albo gdzie go nie ma** (dziura w dziedzinie). Między takimi punktami znak jest stały:
+
+<Wykres dane={WYK_ZNAK} leg={[['ok', 'wyrażenie dodatnie (+)'], ['roz', 'wyrażenie ujemne (−)'], ['bialy', 'zero wyrażenia (pusta kropka)']]}>
+wykres $y = (x - 1)(x + 2)$. Przechodzi z jednej strony osi na drugą tylko w zerach: $x = -2$ i $x = 1$. Między nimi nie przecina osi, więc w każdym przedziale ma jeden znak. Dlatego wystarczy sprawdzić jedną liczbę z przedziału.
+</Wykres>
+
+<Ramka kind="botak" tytul="Dlaczego jedna liczba wystarczy">
+Funkcje z listy zadań nie „skaczą”: żeby z plusa przejść na minus, wykres musi przeciąć oś $x$ (czyli wyrażenie musi być zerem) albo przerwać się w dziurze dziedziny. Nazwa tej własności to ciągłość — nie musisz jej pamiętać. Wystarczy reguła: zera i dziury dzielą oś na przedziały, a w każdym przedziale znak jest jeden.
+</Ramka>
+
+<Ramka kind="polecenie" tytul="Zbadaj znak pochodnej (etap 4)">
+> Rozwiąż nierówności $f'(x) > 0$ i $f'(x) < 0$, np. dla $f'(x) = \frac{-2(x + 4)(x - 1)}{(x^2 + 4)^2}$.
+
+1. **Rozłóż na czynniki** (zrób to już w etapie 2): wyłącz wspólny czynnik przed nawias, użyj wzorów skróconego mnożenia ($x^2 - 9 = (x - 3)(x + 3)$) albo delty dla trójmianu.
+2. **Odrzuć czynniki zawsze dodatnie.** Mianownik do kwadratu, $e^{\ldots}$, $x^2 + 4$ — są dodatnie dla każdego $x$ z dziedziny, więc nie zmieniają znaku. Liczby ujemne (np. $-2$) **zostają** — odwracają znak.
+3. **Zaznacz punkty na osi**: zera czynników i dziury w dziedzinie, od najmniejszego do największego. Dzielą oś na przedziały.
+4. **W każdym przedziale weź jedną liczbę próbną** — najlepiej łatwą: $0$, $1$, $-1$, $2$. Wstaw ją do każdego czynnika i zapisz znak wyniku.
+5. **Znak iloczynu:** parzysta liczba minusów (0, 2, …) daje „+”, nieparzysta (1, 3, …) — „−”.
+6. **Odczytaj:** $f'(x) > 0$ w przedziałach z „+”, $f'(x) < 0$ w przedziałach z „−”.
+</Ramka>
+
+Rachunek z tabeli „na kartce” dla trzech liczb próbnych:
+
+$$
+\begin{aligned}
+x = -3\colon \ & (-3 - 1) \cdot (-3 + 2) \\ & = (-4) \cdot (-1) = 4 > 0 \\[6pt]
+x = 0\colon \ & (0 - 1) \cdot (0 + 2) \\ & = (-1) \cdot 2 = -2 < 0 \\[6pt]
+x = 2\colon \ & (2 - 1) \cdot (2 + 2) \\ & = 1 \cdot 4 = 4 > 0
+\end{aligned}
+$$
+
+Jak czytać: w każdym wierszu liczba próbna wstawiona do obu czynników. W pierwszym wierszu dwa minusy — iloczyn dodatni. W drugim jeden minus — iloczyn ujemny. Stąd: $f'(x) > 0$ dla $x \in (-\infty, -2) \cup (1, \infty)$ i $f'(x) < 0$ dla $x \in (-2, 1)$.
+
+<Ramka kind="kiedy" tytul="Czynnik zawsze dodatni — możesz go pominąć">
+- $(x^2 - 9)^2$ w mianowniku: kwadrat liczby różnej od zera jest dodatni.
+- $e^{x}$, $e^{-x}$, $e^{-\frac{x^2}{2}}$: $e$ do dowolnej potęgi jest dodatnie.
+- $x^2 + 4$, $1 + x^2$: $x^2 \geq 0$, więc po dodaniu liczby dodatniej wynik jest dodatni.
+
+Te czynniki nie zmieniają znaku, więc nie wpisujesz ich do tabeli. Na zajęciach pisze się pod nimi: „mianownik zawsze $> 0$ w dziedzinie $f$”.
+</Ramka>
+
+<a id="znak-parabola" class="k-anchor"></a>
+
+<Ramka kind="inaczej" tytul="Szkic paraboli zamiast liczb próbnych">
+Gdy czynnik to trójmian kwadratowy, np. $2 - 6x^2$ z Zad. 2 d), znak można odczytać ze szkicu paraboli (tak zrobiono to na zajęciach):
+
+1. Miejsca zerowe: $2 - 6x^2 = 0$, czyli $x = -\frac{\sqrt3}{3}$ albo $x = \frac{\sqrt3}{3}$.
+2. Współczynnik przy $x^2$ to $-6$, ujemny — ramiona paraboli w dół.
+3. Parabola z ramionami w dół jest nad osią (dodatnia) między miejscami zerowymi, a pod osią — na zewnątrz.
+
+<Wykres dane={WYK_PARABOLA} leg={[['cyan', 'dodatnia (+)'], ['zloto', 'ujemna (−)'], ['bialy', 'miejsca zerowe']]} male>
+szkic $y = 2 - 6x^2$. Między $-\frac{\sqrt3}{3} \approx -0{,}58$ a $\frac{\sqrt3}{3} \approx 0{,}58$ wykres jest nad osią, poza tym przedziałem — pod osią.
+</Wykres>
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy znaku">
+- **Zgubiona stała z minusem.** W $-18x$ liczba $-18$ odwraca znak: dla $x = 1$ wychodzi $-18 < 0$, choć $x$ jest dodatni.
+- **Zmiana znaku na kwadracie.** Czynnik $x^2$ jest zerem w $x = 0$, ale w obu sąsiednich przedziałach ma „+”. Punkt $0$ wpisujesz do tabeli, ale znak $x^2$ się w nim nie zmienia.
+- **Pominięta dziura w dziedzinie.** Przy $\frac{x^2}{x^2 - 9}$ punkty $-3$ i $3$ też dzielą oś, choć pochodna w nich nie jest zerem — w tych miejscach funkcji po prostu nie ma.
+</Ramka>
+
+<Pytania pytania={[
+  { q: R`Znak wyrażenia $(x - 3)(x + 1)$ w przedziale $(-1, 3)$ to:`, opcje: ['$+$', '$-$', 'zależy od tego, którą liczbę weźmiesz'], dobra: 1, dlaczego: R`Weź $x = 0$: $(0 - 3) \cdot (0 + 1) = (-3) \cdot 1 = -3 < 0$. Każda inna liczba z przedziału da ten sam znak, bo między zerami $-1$ i $3$ wyrażenie nie przecina osi.` },
+]} />
+
+<a id="polecenie-monotonicznosc" class="k-anchor"></a>
+
+## Monotoniczność i ekstrema
+
+**Cel: tabela zmienności — dla każdego przedziału strzałka ↗ albo ↘, a w każdym punkcie stacjonarnym wniosek: max, min albo „—” (brak ekstremum).** Tak wygląda gotowa tabela dla funkcji z rysunków:
+
+<Fragment set:html={A.h.tabZm} />
+
+<Legenda items={[['ok', '„+” i ↗ — funkcja rośnie'], ['roz', '„−” i ↘ — funkcja maleje'], ['fiolet', 'punkty stacjonarne']]} />
+
+Jak czytać tabelę: przy $x$ są przedziały i punkty stacjonarne (fioletowe). Przy $f'(x)$ — znak pochodnej. Przy $f(x)$ — co robi funkcja: przy „+” strzałka w górę, przy „−” w dół. W punkcie, gdzie strzałka zmienia kierunek z ↗ na ↘, jest maksimum, a z ↘ na ↗ — minimum. Na slajdach i w notatkach z zajęć strzałki pisze się też pionowo, ↑ i ↓ — znaczą to samo.
+
+<Ramka kind="polecenie" tytul="Wyznacz ekstrema i przedziały monotoniczności funkcji">
+> Wyznacz ekstrema i przedziały monotoniczności funkcji, np. $f(x) = (x + 1)^2(x - 2)$.
+
+Procedura ze slajdu, pięć etapów:
+
+1. **Dziedzina $D_f$.** Wypisz, czego nie wolno: mianownik $\neq 0$, pod logarytmem liczba $> 0$, pod pierwiastkiem kwadratowym liczba $\geq 0$.
+2. **Pochodna $f'(x)$.** Policz ją regułami z modułu 8, uprość i **rozłóż na czynniki**.
+3. **Warunek konieczny: $f'(x) = 0$.** Ułamek jest zerem, gdy licznik jest zerem. Iloczyn — gdy któryś czynnik jest zerem. Rozwiązania z dziedziny to punkty stacjonarne.
+4. **Nierówności $f'(x) > 0$ i $f'(x) < 0$.** Tabela znaków: punkty stacjonarne i dziury na osi, z każdego przedziału jedna liczba próbna.
+5. **Tabela zmienności i warunek dostateczny.** Przepisz znaki, dorysuj strzałki. Zmiana z „+” na „−” — maksimum, z „−” na „+” — minimum, bez zmiany — brak ekstremum. Wartość ekstremum: wstaw $x_0$ do wzoru **funkcji** $f$. Na koniec zapisz odpowiedź: gdzie rośnie, gdzie maleje i jakie są ekstrema.
+</Ramka>
+
+W rachunkach przy pierwszej linii każdego etapu stoi jego numer. Najedź na niego kursorem (na telefonie: stuknij), żeby przypomnieć sobie, po co ten etap jest w tym miejscu. Kliknij „▶ Zobacz krok po kroku”, żeby linie pojawiały się po kolei.
+
+<a id="zad-1h" class="k-anchor"></a>
+
+<Rachunek d={A.h} etapy={ETAPY_M} etapyNazwa="Procedura" tytul={tyt(A.h)} zrodlo="Zad. 1 h)">
+<div slot="plan">
+
+Cel: tabela zmienności — gdzie funkcja rośnie, gdzie maleje i gdzie ma ekstrema.
+
+1. **Dziedzina:** to wielomian, więc nic nie trzeba wyrzucać.
+2. **Pochodna:** najpierw wymnażamy nawiasy — wtedy każdy składnik liczymy wzorem 3. Wynik rozkładamy na czynniki, bo znak iloczynu łatwo odczytać ze znaków czynników. Inna droga: reguła iloczynu — wynik ten sam.
+3. **Warunek konieczny:** przyrównujemy pochodną do zera i dostajemy kandydatów na ekstrema.
+4. **Znak pochodnej:** tabela znaków z liczbami próbnymi.
+5. **Tabela zmienności:** strzałki, warunek dostateczny i wartości ekstremów ze wzoru funkcji.
+
+</div>
+</Rachunek>
+
+Teraz przykład z dziurami w dziedzinie — tam trzeba pilnować, żeby nie łączyć przedziałów przez dziurę:
+
+<a id="zad-1a" class="k-anchor"></a>
+
+<Rachunek d={A.a} etapy={ETAPY_M} etapyNazwa="Procedura" tytul={tyt(A.a)} zrodlo="Zad. 1 a)">
+<div slot="plan">
+
+Cel: tabela zmienności.
+
+1. **Dziedzina:** mianownik nie może być zerem — wyjdą dwie dziury w osi, $-3$ i $3$. W tabeli dostaną kolumny z „×”.
+2. **Pochodna:** to iloraz, więc reguła 4. Licznik upraszczamy, aż zostanie jeden czynnik.
+3. **Warunek konieczny:** ułamek jest zerem, gdy licznik jest zerem.
+4. **Znak:** mianownik to kwadrat — zawsze dodatni. O znaku decyduje licznik.
+5. **Tabela zmienności** z dziurami i wartość ekstremum.
+
+</div>
+</Rachunek>
+
+Przykład d) — z logarytmem. Wynik zgadza się z rozwiązaniem z zajęć:
+
+<a id="zad-1d" class="k-anchor"></a>
+
+<Rachunek d={A.d} etapy={ETAPY_M} etapyNazwa="Procedura" tytul={tyt(A.d)} zrodlo="Zad. 1 d)">
+<div slot="plan">
+
+Cel: tabela zmienności.
+
+1. **Dziedzina:** logarytm istnieje tylko dla liczb dodatnich, a mianownik $x$ nie może być zerem.
+2. **Pochodna:** reguła ilorazu, potem upraszczamy licznik.
+3. **Warunek konieczny:** $-\ln x = 0$, czyli $\ln x = 0$.
+4. **Znak:** mianownik $x^2$ jest dodatni. Jako liczby próbne bierzemy potęgi $e$ — wtedy logarytm liczy się od razu. Na zajęciach znak $\ln x$ odczytano ze szkicu wykresu $\ln x$ (ujemny dla $x < 1$, dodatni dla $x > 1$) — to też dobra droga.
+5. **Tabela zmienności** i wartość maksimum.
+
+</div>
+</Rachunek>
+
+Punkt stacjonarny, w którym ekstremum **nie ma** — tak wygląda to w tabeli:
+
+<a id="zad-1e" class="k-anchor"></a>
+
+<Rachunek d={A.e} etapy={ETAPY_M} etapyNazwa="Procedura" tytul={tyt(A.e)} zrodlo="Zad. 1 e)">
+<div slot="plan">
+
+Cel: tabela zmienności.
+
+1. **Dziedzina:** wszystkie liczby.
+2. **Pochodna:** reguła iloczynu, potem wyłączamy wspólny czynnik $x^2e^{-x}$ przed nawias.
+3. **Warunek konieczny:** dwa punkty stacjonarne, $0$ i $3$.
+4. **Znak:** $e^{-x}$ zawsze dodatnie. Uważaj na $x^2$ — jest zerem w $x = 0$, ale nie zmienia znaku.
+5. **Tabela zmienności:** w $x = 3$ maksimum, a w $x = 0$ — brak ekstremum.
+
+</div>
+</Rachunek>
+
+### Pozostałe przykłady z listy
+
+Ta sama procedura, krok po kroku. Kliknij przykład, żeby go rozwinąć.
+
+<Przyklad id="1b" nazwa="Zad. 1 b)" d={A.b} etapy={ETAPY_M} etapyNazwa="Procedura" cel="Cel: tabela zmienności." plan="Nowe tutaj: pochodna nigdy nie jest zerem — nie ma punktów stacjonarnych ani ekstremów. Funkcja rośnie w dwóch przedziałach osobno." />
+<Przyklad id="1c" nazwa="Zad. 1 c)" d={A.c} etapy={ETAPY_M} etapyNazwa="Procedura" cel="Cel: tabela zmienności." plan="Nowe tutaj: pochodna iloczynu z czynnikiem $e^{\square}$ (reguła 5) i wyłączenie $e^{-\frac{x^2}{2}}$ przed nawias. Ten czynnik jest zawsze dodatni." />
+<Przyklad id="1f" nazwa="Zad. 1 f)" d={A.f} etapy={ETAPY_M} etapyNazwa="Procedura" cel="Cel: tabela zmienności." plan="Nowe tutaj: dziura $x = -1$ tuż obok punktu stacjonarnego $0$ — w tabeli są trzy przedziały." />
+<Przyklad id="1g" nazwa="Zad. 1 g)" d={A.g} etapy={ETAPY_M} etapyNazwa="Procedura" cel="Cel: tabela zmienności." plan="Nowe tutaj: trzy punkty stacjonarne i dwie dziury — tabela ma $11$ kolumn. W $x = 0$ brak ekstremum." />
+<Przyklad id="1i" nazwa="Zad. 1 i)" d={A.i} etapy={ETAPY_M} etapyNazwa="Procedura" cel="Cel: tabela zmienności." plan="Nowe tutaj: trzy czynniki liniowe, w tym $-4x$ ze stałą ujemną. Wychodzą dwa maksima i minimum." />
+<Przyklad id="1j" nazwa="Zad. 1 j)" d={A.j} etapy={ETAPY_M} etapyNazwa="Procedura" cel="Cel: tabela zmienności." plan="Nowe tutaj: trójmian w liczniku rozkładamy deltą, a stała $-2$ zostaje w tabeli, bo odwraca znak." />
+<Przyklad id="1k" nazwa="Zad. 1 k)" d={A.k} etapy={ETAPY_M} etapyNazwa="Procedura" cel="Cel: tabela zmienności." plan="Nowe tutaj: dziedzina $(0, \infty)$ przez logarytm, punkt stacjonarny $\frac1e$ i liczby próbne jako potęgi $e$." />
+<Przyklad id="1l" nazwa="Zad. 1 l)" d={A.l} etapy={ETAPY_M} etapyNazwa="Procedura" cel="Cel: tabela zmienności." plan="Nowe tutaj: funkcja złożona z $\ln$. Mianownik $x^2 + 1$ jest zawsze dodatni." />
+<Przyklad id="1m" nazwa="Zad. 1 m)" d={A.m} etapy={ETAPY_M} etapyNazwa="Procedura" cel="Cel: tabela zmienności." plan="Nowe tutaj: pierwiastek — dziedzina $[-2, 2]$ z końcami. Na końcach dziedziny pochodnej nie ma." />
+
+<Ramka kind="pulapka" tytul="Typowe błędy w Zad. 1">
+- **Wartość ekstremum z pochodnej.** $f'(x_0)$ jest zawsze zerem. Wartość ekstremum to $f(x_0)$ — wstaw $x_0$ do wzoru funkcji.
+- **Punkt stacjonarny = ekstremum.** Nie zawsze: bez zmiany znaku pochodnej ekstremum nie ma — tak jest w Zad. 1 e) i 1 g) w punkcie $x = 0$.
+- **Łączenie przedziałów przez dziurę.** W Zad. 1 a) funkcja rośnie w $(-\infty, -3)$ i w $(-3, 0)$ — osobno, bo w $x = -3$ jej nie ma.
+- **Liczba próbna spoza dziedziny.** Przy $\ln x$ nie bierz liczb ujemnych ani zera — tam funkcji nie ma.
+</Ramka>
+
+<CwiczenieZmiennosc zad={CW_M.b} tytul="Sprawdź się: tabela zmienności dla $f(x) = x^4 - 2x^2$">
+W nagłówku są już przedziały i punkty stacjonarne. Uzupełnij znak pochodnej w każdym przedziale, strzałki i wnioski w punktach.
+</CwiczenieZmiennosc>
+
+<a id="polecenie-druga" class="k-anchor"></a>
+
+## Druga pochodna
+
+**Cel: wzór na $f''(x)$, rozłożony na czynniki.** Potrzebny w Zad. 2 i przy pełnym badaniu.
+
+<Ramka kind="polecenie" tytul="Oblicz drugą pochodną">
+> Oblicz drugą pochodną funkcji, np. $f(x) = xe^x$.
+
+1. **Policz $f'(x)$** i uprość. Wyłącz wspólny czynnik przed nawias — do drugiej pochodnej wejdzie krótszy wzór.
+2. **Policz pochodną wyniku:** $f''(x) = \left(f'(x)\right)'$, tymi samymi wzorami i regułami co pierwszą pochodną.
+3. **Przy ilorazie:** jeśli w mianowniku $f'$ jest $(\ldots)^2$, w mianowniku $f''$ wyjdzie $(\ldots)^4$. Zanim wymnożysz licznik, wyłącz w nim wspólny czynnik i skróć z mianownikiem (tak jak w Zad. 2 d) i e)).
+4. **Rozłóż wynik na czynniki** — będzie potrzebny znak $f''(x)$.
+</Ramka>
+
+Dwa krótkie przykłady:
+
+<div class="k-wyk-para">
+
+$$
+\begin{aligned}
+f(x) &= x^4 - 4x^3 \\
+f'(x) &= 4x^3 - 12x^2 \\
+f''(x) &= 12x^2 - 24x \\
+&= 12x(x - 2)
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+f(x) &= xe^x \\
+f'(x) &= 1 \cdot e^x + x \cdot e^x \\
+&= e^x(x + 1) \\
+f''(x) &= e^x(x + 1) + e^x \cdot 1 \\
+&= e^x(x + 2)
+\end{aligned}
+$$
+
+</div>
+
+Jak czytać: pierwszy rachunek to wielomian — każdy składnik osobno wzorem 3. Drugi to iloczyn — reguła 3 dwa razy. Przy $f''$ w drugim rachunku pierwszym czynnikiem jest $e^x$, a drugim $x + 1$; ich pochodne to $e^x$ i $1$.
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy drugiej pochodnej">
+- **Kwadrat pierwszej pochodnej.** $f''$ to nie $(f')^2$. Dla $f(x) = x^3$: $f'(x) = 3x^2$, $f''(x) = 6x$, a $(f')^2 = 9x^4$.
+- **Pochodna z $f$ zamiast z $f'$.** Drugą pochodną liczysz z wyniku pierwszej, nie z wyjściowej funkcji.
+- **Wymnażanie zamiast skracania.** W ilorazie z mianownikiem $(1 + x^2)^4$ wyłącz $(1 + x^2)$ w liczniku i skróć — zostanie $(1 + x^2)^3$ i dużo krótszy licznik.
+</Ramka>
+
+<a id="polecenie-wypuklosc" class="k-anchor"></a>
+
+## Wypukłość, wklęsłość i punkty przegięcia
+
+**Cel: tabela zmienności z drugą pochodną (w tym module nazywamy ją krótko tabelą kształtu): znak $f''(x)$ i kształt — ∪ (wypukła) albo ∩ (wklęsła) w każdym przedziale, a w punktach, gdzie $f''(x) = 0$: punkt przegięcia albo „—”.** Tak wygląda gotowa tabela dla funkcji z rysunków:
+
+<Fragment set:html={B.b.tabZm} />
+
+<Legenda items={[['cyan', '„+” i ∪ — wykres wypukły'], ['zloto', '„−” i ∩ — wykres wklęsły'], ['fiolet', 'punkt, w którym $f\'\'(x) = 0$']]} />
+
+Jak czytać tabelę: przy „+” kształt ∪, przy „−” kształt ∩. Gdzie kształt się zmienia, jest punkt przegięcia — w tym przykładzie w $x = 0$.
+
+<Ramka kind="polecenie" tytul="Wyznacz przedziały wklęsłości i wypukłości oraz punkty przegięcia">
+> Wyznacz przedziały wklęsłości i wypukłości oraz punkty przegięcia funkcji, np. $f(x) = \frac{x^2}{1 + x^2}$.
+
+Procedura ze slajdu — taka sama jak przy ekstremach, tylko z drugą pochodną:
+
+1. **Dziedzina $D_f$.**
+2. **Druga pochodna $f''(x)$** ([przepis wyżej](#polecenie-druga)), rozłożona na czynniki.
+3. **Warunek konieczny: $f''(x) = 0$.** Rozwiązania z dziedziny to kandydaci na punkty przegięcia.
+4. **Nierówności $f''(x) > 0$ i $f''(x) < 0$** — tabela znaków.
+5. **Tabela i warunek dostateczny.** Przy „+” wypukła (∪), przy „−” wklęsła (∩). Gdzie znak $f''$ się zmienia — punkt przegięcia $P = (x_0, f(x_0))$; drugą współrzędną liczysz ze wzoru funkcji $f$. Na koniec zapisz odpowiedź.
+</Ramka>
+
+<a id="zad-2a" class="k-anchor"></a>
+
+<Rachunek d={B.a} etapy={ETAPY_W} etapyNazwa="Procedura" tytul={tyt(B.a)} zrodlo="Zad. 2 a)">
+<div slot="plan">
+
+Cel: tabela kształtu — gdzie wykres jest wypukły, gdzie wklęsły i gdzie są punkty przegięcia.
+
+1. **Dziedzina:** wielomian, więc wszystkie liczby.
+2. **Druga pochodna:** dwa razy wzór 3, potem rozkład na czynniki (wzór $a^2 - b^2$).
+3. **Warunek konieczny:** $f''(x) = 0$ — kandydaci $-1$ i $1$.
+4. **Znak:** stała $-12$ jest ujemna — zostaje w tabeli, bo odwraca znak.
+5. **Tabela i punkty przegięcia:** druga współrzędna ze wzoru funkcji.
+
+</div>
+</Rachunek>
+
+Przykład d) — tu druga pochodna wymaga skracania. Wynik zgadza się z rozwiązaniem z zajęć:
+
+<a id="zad-2d" class="k-anchor"></a>
+
+<Rachunek d={B.d} etapy={ETAPY_W} etapyNazwa="Procedura" tytul={tyt(B.d)} zrodlo="Zad. 2 d)">
+<div slot="plan">
+
+Cel: tabela kształtu.
+
+1. **Dziedzina:** mianownik $1 + x^2$ nigdy nie jest zerem.
+2. **Druga pochodna:** pierwsza z reguły ilorazu, druga też. W liczniku wyłączamy $(1 + x^2)$ i skracamy z mianownikiem — bez tego rachunek robi się bardzo długi.
+3. **Warunek konieczny:** licznik $2 - 6x^2 = 0$.
+4. **Znak:** mianownik dodatni; o znaku decyduje $2 - 6x^2$. Na zajęciach znak odczytano ze szkicu paraboli — [tak jak tutaj](#znak-parabola).
+5. **Tabela i dwa punkty przegięcia** z tą samą drugą współrzędną $\frac14$.
+
+</div>
+</Rachunek>
+
+Druga pochodna, która nigdy nie jest zerem, i dziura w dziedzinie — punktu przegięcia nie ma:
+
+<a id="zad-2c" class="k-anchor"></a>
+
+<Rachunek d={B.c} etapy={ETAPY_W} etapyNazwa="Procedura" tytul={tyt(B.c)} zrodlo="Zad. 2 c)">
+<div slot="plan">
+
+Cel: tabela kształtu.
+
+1. **Dziedzina:** mianownik $x^2 \neq 0$, więc $x \neq 0$.
+2. **Druga pochodna:** zamiast reguły ilorazu dzielimy licznik przez mianownik — zostają potęgi i wzór 3.
+3. **Warunek konieczny:** $f''(x) = \frac{6}{x^4}$ nigdy nie jest zerem.
+4. **Znak:** $6 > 0$ i $x^4 > 0$ — dodatnia w całej dziedzinie.
+5. **Tabela:** wypukła po obu stronach dziury, punktów przegięcia brak.
+
+</div>
+</Rachunek>
+
+### Pozostałe przykłady z listy
+
+<Przyklad id="2b" nazwa="Zad. 2 b)" d={B.b} etapy={ETAPY_W} etapyNazwa="Procedura" cel="Cel: tabela kształtu." plan="Ta sama funkcja co w Zad. 1 h) — pierwsza pochodna jest już policzona. Druga to $6x$, a punkt przegięcia leży w połowie drogi między maksimum a minimum." />
+<Przyklad id="2e" nazwa="Zad. 2 e)" d={B.e} etapy={ETAPY_W} etapyNazwa="Procedura" cel="Cel: tabela kształtu." plan="Nowe tutaj: druga pochodna ilorazu ze skracaniem $(x^2 + 3)$ i trzy punkty przegięcia." />
+
+<Ramka kind="pulapka" tytul="Typowe błędy w Zad. 2">
+- **Pierwsza pochodna zamiast drugiej.** O kształcie mówi znak $f''$. Znak $f'$ mówi tylko, czy funkcja rośnie, czy maleje.
+- **Punkt przegięcia bez drugiej współrzędnej** albo z $f''(x_0)$ jako drugą współrzędną. Dobrze: $P = (x_0, f(x_0))$.
+- **Punkt przegięcia w dziurze dziedziny.** Dla $f(x) = \frac1x$ kształt zmienia się przy $x = 0$ (∩ z lewej, ∪ z prawej), ale $0$ nie należy do dziedziny — na wykresie nie ma tam żadnego punktu, więc nie ma też punktu przegięcia.
+- **Pomylone nazwy.** ∪ to wypukła (przy „+”), ∩ to wklęsła (przy „−”).
+</Ramka>
+
+<CwiczenieZmiennosc zad={CW_W.c} tytul="Sprawdź się: tabela kształtu dla $f(x) = 3x^5 - 5x^4$">
+Druga pochodna ma dwa zera: $0$ i $1$. Czy każde z nich daje punkt przegięcia? Wypełnij tabelę i sprawdź.
+</CwiczenieZmiennosc>
+
+<a id="polecenie-pelne" class="k-anchor"></a>
+
+## Pełne badanie funkcji
+
+**Cel: jedna wspólna tabela, z której odczytasz wszystko naraz — monotoniczność, ekstrema, wypukłość i punkty przegięcia.** Na kolokwium bywa jedno polecenie „zbadaj przebieg zmienności funkcji”. Na liście to dwa osobne zadania, ale Zad. 1 h) i Zad. 2 b) to ta sama funkcja, $f(x) = (x + 1)^2(x - 2) = x^3 - 3x - 2$. Złóżmy je razem.
+
+<Ramka kind="polecenie" tytul="Zbadaj przebieg zmienności funkcji">
+> Zbadaj monotoniczność, ekstrema, wypukłość i punkty przegięcia funkcji, np. $f(x) = (x + 1)^2(x - 2)$.
+
+1. **Dziedzina** — raz, wspólna dla wszystkiego.
+2. **Pierwsza pochodna** → etapy 3–5 procedury: punkty stacjonarne, znak $f'$, przedziały monotoniczności i ekstrema.
+3. **Druga pochodna** (policz ją z $f'$ z kroku 2) → etapy 3–5: zera $f''$, znak $f''$, wypukłość, wklęsłość i punkty przegięcia.
+4. **Wspólna tabela:** na osi wszystkie punkty z obu procedur. Wiersze: $f'(x)$, $f''(x)$ i zachowanie funkcji.
+5. **Odpowiedź** i — jeśli trzeba — szkic wykresu.
+</Ramka>
+
+Wyniki obu procedur dla tej funkcji (całe rachunki: [Zad. 1 h)](#zad-1h) i [Zad. 2 b)](#zad-2b)):
+
+<div class="k-wyk-para">
+
+$$
+\begin{aligned}
+f'(x) &= 3x^2 - 3 \\
+&= 3(x - 1)(x + 1) \\
+f'(x) = 0 &\iff x = -1 \ \text{lub} \ x = 1
+\end{aligned}
+$$
+
+$$
+\begin{aligned}
+f''(x) &= 6x \\
+f''(x) = 0 &\iff x = 0
+\end{aligned}
+$$
+
+</div>
+
+Na osi stają więc trzy punkty: $-1$, $0$ i $1$. W każdym przedziale i punkcie bierzesz znak z tabeli $f'$ i z tabeli $f''$:
+
+| $x$ | $f'(x)$ | $f''(x)$ | funkcja |
+|---|---|---|---|
+| $(-\infty, -1)$ | $+$ | $-$ | rośnie ↗, wklęsła ∩ |
+| $-1$ | $0$ | $-$ | **maksimum**: $f_{\max}(-1) = 0$ |
+| $(-1, 0)$ | $-$ | $-$ | maleje ↘, wklęsła ∩ |
+| $0$ | $-$ | $0$ | **punkt przegięcia**: $P = (0, -2)$ |
+| $(0, 1)$ | $-$ | $+$ | maleje ↘, wypukła ∪ |
+| $1$ | $0$ | $+$ | **minimum**: $f_{\min}(1) = -4$ |
+| $(1, \infty)$ | $+$ | $+$ | rośnie ↗, wypukła ∪ |
+
+Jak czytać tabelę: wiersze to przedziały i punkty z obu procedur, od lewej do prawej na osi. W punkcie $-1$ znak $f''$ to znak liczby $f''(-1) = 6 \cdot (-1) = -6$. W punkcie $0$ znak $f'$ to znak liczby $f'(0) = 3 \cdot 0^2 - 3 = -3$. Ostatnia kolumna łączy oba wnioski.
+
+<Wykres dane={WYK_PELNE} leg={LEG_PELNE}>
+wykres $f(x) = x^3 - 3x - 2$. Złota część jest wklęsła, turkusowa — wypukła. Napisy u góry streszczają każdy przedział: strzałka z $f'$, kształt z $f''$. Wklęsła część rośnie aż do maksimum, potem maleje. Po punkcie przegięcia wykres jest wypukły: maleje coraz wolniej do minimum, potem rośnie coraz szybciej.
+</Wykres>
+
+<Ramka kind="intuicja" tytul="Cztery połączenia znaków">
+- $f' > 0$, $f'' > 0$: rośnie coraz szybciej (↗ ∪).
+- $f' > 0$, $f'' < 0$: rośnie coraz wolniej (↗ ∩).
+- $f' < 0$, $f'' < 0$: maleje coraz szybciej (↘ ∩).
+- $f' < 0$, $f'' > 0$: maleje coraz wolniej (↘ ∪).
+
+W ekonomii: koszt, który rośnie coraz szybciej (każda kolejna sztuka jest droższa), ma wykres rosnący i wypukły.
+</Ramka>
+
+## Wszystkie odpowiedzi z listy
+
+Wyniki wszystkich zadań w jednym miejscu — do sprawdzenia własnych rachunków. Link przy każdym przykładzie prowadzi do rozwiązania krok po kroku.
+
+### Zad. 1 — ekstrema i przedziały monotoniczności
+
+<Odpowiedzi lista={['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm'].map((id) => ({ id: `1${id}`, nazwa: `Zad. 1 ${id})`, d: A[id] }))} />
+
+### Zad. 2 — wypukłość, wklęsłość i punkty przegięcia
+
+<Odpowiedzi lista={['a', 'b', 'c', 'd', 'e'].map((id) => ({ id: `2${id}`, nazwa: `Zad. 2 ${id})`, d: B[id] }))} />
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+<div><b>Procedura (5 etapów)</b>1) dziedzina, 2) pochodna rozłożona na czynniki, 3) warunek konieczny $= 0$, 4) znak: $> 0$ i $< 0$, 5) tabela i warunek dostateczny.</div>
+<div><b>Znak pochodnej</b>$f' > 0$ — rośnie ↗, $f' < 0$ — maleje ↘.</div>
+<div><b>Ekstremum</b>$f'(x_0) = 0$ i zmiana znaku: z „+” na „−” — max, z „−” na „+” — min. Bez zmiany — brak.</div>
+<div><b>Wartość ekstremum</b>Wstaw $x_0$ do wzoru $f$, nie $f'$. Zapis: $f_{\max}(x_0) = f(x_0)$.</div>
+<div><b>Druga pochodna</b>$f'' = (f')'$ — pochodna pochodnej, czytamy „ef bis”.</div>
+<div><b>Kształt</b>$f'' > 0$ — wypukła ∪ (nad stycznymi), $f'' < 0$ — wklęsła ∩ (pod stycznymi).</div>
+<div><b>Punkt przegięcia</b>$f''(x_0) = 0$ i zmiana znaku $f''$. Zapis: $P = (x_0, f(x_0))$.</div>
+<div><b>Tabela znaków</b>Zera i dziury na osi, z każdego przedziału jedna liczba próbna. Parzysta liczba minusów — „+”.</div>
+<div><b>Pomiń, bo dodatnie</b>Kwadrat w mianowniku, $e^{\ldots}$, $x^2 + c$ dla $c > 0$. Ujemne stałe zostają.</div>
+<div><b>Dziury w dziedzinie</b>Kolumna z „×”. Przedziałów po obu stronach dziury nie łączysz.</div>
+<div><b>Odpowiedź</b>„Rośnie w $(a, b)$ i w $(c, d)$” — przedziały osobno, bez $\cup$.</div>
+</div>
+
+<Ramka kind="gdzie">
+- **Funkcje dwóch zmiennych:** ekstremów szukasz tak samo — najpierw warunek konieczny (pochodne równe zero), potem dostateczny. Zamiast jednej pochodnej są pochodne cząstkowe.
+- **Ekonomia:** maksimum zysku, minimum kosztu przeciętnego, „prawo malejących przychodów” (funkcja rosnąca i wklęsła) — wszystko to jest badanie zmienności funkcji.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania na każde polecenie. Po każdej odpowiedzi zobaczysz, dlaczego jest dobra albo zła — złe odpowiedzi to typowe błędy.
+
+### Znak wyrażenia
+
+<a id="cw-znak" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: R`$f'(x) = x^2(x - 4)$. Znak pochodnej w przedziałach $(-\infty, 0)$ i $(0, 4)$ to:`, opcje: [R`„+” i „−”`, R`„−” i „−”`, R`„+” i „+”`], dobra: 1, dlaczego: R`$x = -1$: $(-1)^2 \cdot (-1 - 4) = 1 \cdot (-5) = -5 < 0$. $x = 1$: $1^2 \cdot (1 - 4) = 1 \cdot (-3) = -3 < 0$. Czynnik $x^2$ jest zerem w $0$, ale po obu stronach jest dodatni — znak się nie zmienia. „+” i „−” wychodzi, gdy potraktujesz $x^2$ jak $x$. „+” i „+” — gdy patrzysz tylko na $x^2$ i zgubisz minus z czynnika $x - 4$.` },
+  { q: R`Który czynnik możesz pominąć przy badaniu znaku $\frac{-2x}{(x^2 + 1)^2}$?`, opcje: [R`$-2$`, R`$x$`, R`$(x^2 + 1)^2$`], dobra: 2, dlaczego: R`$(x^2 + 1)^2$ jest kwadratem liczby dodatniej — zawsze dodatni, nie zmienia znaku. Liczba $-2$ jest ujemna, więc odwraca znak — musi zostać. $x$ zmienia znak w zerze — też zostaje.` },
+  { q: R`$f'(x) = e^x(2 - x)$ jest dodatnia dla:`, opcje: [R`$x < 2$`, R`$x > 2$`, R`żadnego $x$ — czynnik $e^x$ zmienia znak`], dobra: 0, dlaczego: R`$e^x > 0$ dla każdego $x$, więc o znaku decyduje $2 - x$. $x = 0$: $2 - 0 = 2 > 0$. $x = 3$: $2 - 3 = -1 < 0$. Pochodna jest dodatnia dla $x < 2$. Odpowiedź $x > 2$ to typowy błąd przy minusie przed $x$.` },
+  { q: R`W pewnym przedziale znaki trzech czynników wyszły: „−”, „−”, „+”. Znak iloczynu to:`, opcje: [R`„−”`, R`„+”`, R`nie da się ustalić bez liczb`], dobra: 1, dlaczego: R`Dwa minusy — liczba parzysta — dają plus: np. $(-2) \cdot (-3) \cdot 1 = 6 > 0$. Do znaku iloczynu wystarczą znaki czynników.` },
+  { q: R`Dlaczego w tabeli znaków wystarczy jedna liczba z przedziału?`, opcje: ['Bo w środku przedziału wyrażenie nie jest zerem i nie ma dziury w dziedzinie, więc nie zmienia znaku', 'Bo pochodna jest w przedziale stała', 'Bo tak się umówiono — inna liczba mogłaby dać inny znak'], dobra: 0, dlaczego: R`Znak może się zmienić tylko w zerze albo w dziurze dziedziny, a te punkty są końcami przedziałów. Wartość pochodnej w przedziale się zmienia (np. dla $(x - 1)(x + 2)$: $x = 2$ daje $4$, a $x = 3$ daje $10$ — obie dodatnie), stały jest tylko jej znak.` },
+]} />
+
+### Monotoniczność i ekstrema
+
+<a id="cw-monotonicznosc" class="k-anchor"></a>
+
+<CwiczenieZmiennosc zad={CW_M.a} tytul="Tabela zmienności dla $f(x) = x^3 - 12x$" />
+
+<CwiczenieZmiennosc zad={CW_M.c} tytul="Tabela zmienności dla $f(x) = x + \frac1x$">
+Uwaga na kolumnę $0$ — tej liczby nie ma w dziedzinie.
+</CwiczenieZmiennosc>
+
+<CwiczenieZmiennosc zad={CW_M.d} tytul="Tabela zmienności dla $f(x) = x^3 - 3x^2 + 3x$" />
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: R`W tabeli zmienności: z lewej strony $x = 2$ jest „+”, z prawej „−”. W $x = 2$ funkcja ma:`, opcje: ['minimum lokalne', 'brak ekstremum', 'maksimum lokalne'], dobra: 2, dlaczego: R`Z „+” na „−”: funkcja najpierw rośnie, potem maleje — szczyt, czyli maksimum. Minimum jest przy zmianie z „−” na „+”.` },
+  { q: R`$f'(x) = 3(x - 1)^2$. Co jest w punkcie $x = 1$?`, opcje: ['brak ekstremum — pochodna nie zmienia znaku', 'minimum lokalne', 'maksimum lokalne'], dobra: 0, dlaczego: R`$f'(0) = 3 \cdot (-1)^2 = 3 > 0$ i $f'(2) = 3 \cdot 1^2 = 3 > 0$ — po obu stronach plus. Punkt stacjonarny bez ekstremum, jak $x^3$ w zerze.` },
+  { q: R`$f(x) = x^3 - 3x + 1$ ma maksimum lokalne w $x = -1$. Ile wynosi to maksimum?`, opcje: [R`$0$, bo $f'(-1) = 0$`, R`$3$`, R`$-1$`], dobra: 1, dlaczego: R`Wartość liczysz ze wzoru funkcji: $f(-1) = (-1)^3 - 3 \cdot (-1) + 1 = -1 + 3 + 1 = 3$. $0$ to wartość pochodnej — w punkcie stacjonarnym zawsze zero. $-1$ to argument, nie wartość.` },
+  { q: R`Pochodna zmienia znak z „−” na „+” w $x = 2$, a $f(2) = 5$. Jak zapisać wynik?`, opcje: [R`$f_{\min}(5) = 2$`, R`$f_{\max}(2) = 5$`, R`$f_{\min}(2) = 5$`], dobra: 2, dlaczego: R`Z „−” na „+” — minimum. W nawiasie argument (gdzie: $2$), po znaku równości wartość (ile: $5$). Pierwsza opcja zamienia argument z wartością, druga myli minimum z maksimum.` },
+  { q: R`$f(x) = \frac{x}{x + 1}$ rośnie w $(-\infty, -1)$ i w $(-1, \infty)$. Czy można napisać „rośnie w $\mathbb{R} \setminus \{-1\}$”?`, opcje: ['Tak, to to samo', 'Tak, bo pochodna jest dodatnia w całej dziedzinie', R`Nie: $f(-2) = 2$, a $f(0) = 0$ — większy argument, mniejsza wartość`], dobra: 2, dlaczego: R`$f(-2) = \frac{-2}{-1} = 2$ i $f(0) = \frac{0}{1} = 0$. Na całej dziedzinie naraz funkcja nie rośnie — rośnie w każdym przedziale osobno. Dodatnia pochodna daje wzrost tylko w przedziale bez dziur.` },
+  { q: R`Dla $f(x) = \frac{x^2}{x^2 - 9}$ w tabeli są kolumny $-3$ i $3$ z „×”. Dlaczego?`, opcje: [R`Bo tam $f'(x) = 0$`, 'Bo tam funkcji nie ma — mianownik jest zerem', 'Bo tam są ekstrema'], dobra: 1, dlaczego: R`$(-3)^2 - 9 = 0$ i $3^2 - 9 = 0$ — dzielenie przez zero. Te liczby nie należą do dziedziny, ale dzielą oś na przedziały. Punkt stacjonarny tej funkcji to $0$.` },
+]} />
+
+### Druga pochodna
+
+<a id="cw-druga" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: R`$f(x) = x^4$. Druga pochodna to:`, opcje: [R`$12x^2$`, R`$4x^3$`, R`$16x^6$`], dobra: 0, dlaczego: R`$f'(x) = 4x^3$, $f''(x) = 4 \cdot 3x^2 = 12x^2$. $4x^3$ to dopiero pierwsza pochodna. $16x^6$ to $(4x^3)^2$ — kwadrat pierwszej pochodnej, a nie jej pochodna.` },
+  { q: R`$f(x) = e^{2x}$. Druga pochodna to:`, opcje: [R`$2e^{2x}$`, R`$4e^{2x}$`, R`$e^{2x}$`], dobra: 1, dlaczego: R`$f'(x) = e^{2x} \cdot 2 = 2e^{2x}$. $f''(x) = 2 \cdot e^{2x} \cdot 2 = 4e^{2x}$. $2e^{2x}$ to pierwsza pochodna. $e^{2x}$ — zgubiona pochodna wykładnika (reguła 5).` },
+  { q: R`$f(x) = \ln x$. Druga pochodna to:`, opcje: [R`$\frac{1}{x^2}$`, R`$\frac1x$`, R`$-\frac{1}{x^2}$`], dobra: 2, dlaczego: R`$f'(x) = \frac1x = x^{-1}$. $f''(x) = -1 \cdot x^{-2} = -\frac{1}{x^2}$. $\frac1x$ to pierwsza pochodna. $\frac{1}{x^2}$ — zgubiony minus z wykładnika $-1$.` },
+  { q: R`$f(x) = x^3 - 6x^2 + 1$. Ile wynosi $f''(1)$?`, opcje: [R`$-9$`, R`$-6$`, R`$6$`], dobra: 1, dlaczego: R`$f'(x) = 3x^2 - 12x$, $f''(x) = 6x - 12$, więc $f''(1) = 6 - 12 = -6$. $-9$ to $f'(1) = 3 - 12$ — pierwsza pochodna. $6$ — zły znak.` },
+  { q: R`$f(x) = xe^x$. Druga pochodna to:`, opcje: [R`$e^x(x + 1)$`, R`$xe^x$`, R`$e^x(x + 2)$`], dobra: 2, dlaczego: R`$f'(x) = e^x + xe^x = e^x(x + 1)$. Z reguły iloczynu: $f''(x) = e^x(x + 1) + e^x \cdot 1 = e^x(x + 2)$. $e^x(x + 1)$ to pierwsza pochodna. $xe^x$ to sama funkcja.` },
+]} />
+
+### Wypukłość i punkty przegięcia
+
+<a id="cw-wypuklosc" class="k-anchor"></a>
+
+<CwiczenieZmiennosc zad={CW_W.b} tytul="Tabela kształtu dla $f(x) = x^4 - 6x^2$" />
+
+<CwiczenieZmiennosc zad={CW_W.d} tytul="Tabela kształtu dla $f(x) = \frac1x$">
+Kolumna $0$ to dziura w dziedzinie.
+</CwiczenieZmiennosc>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: R`W przedziale $f''(x) > 0$. Wykres jest tam:`, opcje: ['wklęsły (∩)', 'wypukły (∪)', 'rosnący'], dobra: 1, dlaczego: R`Dodatnia druga pochodna — wypukły, kształt ∪. O tym, czy funkcja rośnie, mówi znak pierwszej pochodnej, nie drugiej.` },
+  { q: R`$f''$ zmienia znak w $x = 1$, a $f(1) = 3$. Punkt przegięcia to:`, opcje: [R`$P = (1, 0)$, bo $f''(1) = 0$`, R`$P = (1, 3)$`, R`$P = 1$`], dobra: 1, dlaczego: R`Punkt przegięcia to para $(x_0, f(x_0))$: $(1, 3)$. Druga współrzędna pochodzi z funkcji, nie z $f''$. Sama liczba $1$ to tylko pierwsza współrzędna.` },
+  { q: R`$f(x) = x^3 - 3x^2$. Punkt przegięcia to:`, opcje: [R`$P = (0, 0)$`, R`$P = (1, 0)$`, R`$P = (1, -2)$`], dobra: 2, dlaczego: R`$f'(x) = 3x^2 - 6x$, $f''(x) = 6x - 6 = 6(x - 1)$ — zmienia znak w $x = 1$. $f(1) = 1^3 - 3 \cdot 1^2 = 1 - 3 = -2$. $(1, 0)$ bierze $f''(1)$ zamiast $f(1)$. W $x = 0$ jest zero pierwszej pochodnej — to punkt stacjonarny, nie przegięcia.` },
+  { q: R`Wykres leży nad każdą ze swoich stycznych. Jest:`, opcje: ['wypukły', 'wklęsły', 'malejący'], dobra: 0, dlaczego: R`To definicja ze slajdu: nad stycznymi — wypukły (∪). Pod stycznymi — wklęsły (∩). O maleniu decyduje znak pierwszej pochodnej.` },
+  { q: R`Druga pochodna funkcji $f(x) = \frac1x$ to $f''(x) = \frac{2}{x^3}$ i zmienia znak przy $x = 0$. Punkt przegięcia:`, opcje: [R`$P = (0, 0)$`, 'nie ma — $0$ nie należy do dziedziny', R`$P = (0, 2)$`], dobra: 1, dlaczego: R`W $x = 0$ funkcji nie ma (dzielenie przez zero), więc nie ma tam żadnego punktu wykresu. Kształt zmienia się „przez dziurę”, ale punkt przegięcia musi leżeć na wykresie.` },
+]} />
+
+### Pełne badanie
+
+<a id="cw-pelne" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
+  { q: R`W przedziale $f'(x) > 0$ i $f''(x) < 0$. Funkcja:`, opcje: ['rośnie coraz szybciej', 'rośnie coraz wolniej', 'maleje coraz wolniej'], dobra: 1, dlaczego: R`$f' > 0$ — rośnie. $f'' < 0$ — wklęsła: nachylenie stycznej maleje, więc wzrost zwalnia (↗ ∩). Coraz szybciej rośnie funkcja wypukła.` },
+  { q: R`W przedziale $f'(x) < 0$ i $f''(x) > 0$. Funkcja:`, opcje: ['maleje coraz szybciej', 'rośnie', 'maleje coraz wolniej — wypłaszcza się'], dobra: 2, dlaczego: R`$f' < 0$ — maleje. $f'' > 0$ — wypukła (∪): nachylenie rośnie, czyli ze stromego spadku robi się łagodny. Tak wygląda wykres tuż przed minimum.` },
+  { q: R`$f(x) = (x + 1)^2(x - 2)$. Co robi funkcja w przedziale $(-1, 0)$?`, opcje: ['maleje i jest wklęsła', 'maleje i jest wypukła', 'rośnie i jest wklęsła'], dobra: 0, dlaczego: R`$f'(x) = 3(x - 1)(x + 1)$: dla $x = -0{,}5$ wychodzi $3 \cdot (-1{,}5) \cdot 0{,}5 = -2{,}25 < 0$ — maleje. $f''(x) = 6x$: $6 \cdot (-0{,}5) = -3 < 0$ — wklęsła.` },
+  { q: R`Przy pełnym badaniu w punkcie $x = 1$ wyszło: $f'(1) = 0$, pochodna zmienia znak z „−” na „+”, a $f''(1) = 6$. Co jest w $x = 1$?`, opcje: ['punkt przegięcia', 'minimum lokalne', 'maksimum lokalne'], dobra: 1, dlaczego: R`O ekstremum decyduje zmiana znaku $f'$: z „−” na „+” — minimum. Punkt przegięcia wymaga $f''(x_0) = 0$, a tu $f''(1) = 6$.` },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tag="Quiz · 10 pytań" tytul="" pytania={[
+  { q: R`Ekstremum lokalne to punkt, w którym funkcja przyjmuje:`, opcje: ['największą albo najmniejszą wartość w całej dziedzinie', 'największą albo najmniejszą wartość w otoczeniu tego punktu', 'wartość zero'], dobra: 1, dlaczego: R`„Lokalnie” znaczy: w otoczeniu punktu. Maksimum lokalne nie musi być najwyższym punktem całego wykresu. Wartość zero to miejsce zerowe — inne pojęcie.` },
+  { q: R`Warunek konieczny istnienia ekstremum w $x_0$ (gdy $f'(x_0)$ istnieje) to:`, opcje: [R`$f'(x_0) = 0$`, R`zmiana znaku $f'$ w $x_0$`, R`$f(x_0) = 0$`], dobra: 0, dlaczego: R`Bez poziomej stycznej nie ma szczytu ani dołka: $f'(x_0) = 0$. Zmiana znaku to warunek dostateczny. $f(x_0) = 0$ to miejsce zerowe.` },
+  { q: R`Warunek dostateczny istnienia ekstremum to:`, opcje: [R`$f'(x_0) = 0$`, R`$f''(x_0) = 0$`, R`$f'(x_0) = 0$ i pochodna zmienia znak przy przejściu przez $x_0$`], dobra: 2, dlaczego: R`Samo $f'(x_0) = 0$ nie wystarcza — przykład $x^3$ w zerze. Dopiero zmiana znaku przesądza. $f''(x_0) = 0$ to warunek konieczny punktu przegięcia.` },
+  { q: R`Pochodna zmienia znak z „−” na „+”. W tym punkcie jest:`, opcje: ['maksimum lokalne', 'minimum lokalne', 'punkt przegięcia'], dobra: 1, dlaczego: R`Najpierw maleje, potem rośnie — dołek, czyli minimum. Punkt przegięcia dotyczy zmiany znaku drugiej pochodnej.` },
+  { q: R`Czy każdy punkt stacjonarny jest ekstremum?`, opcje: ['Tak, z definicji', R`Tak, jeśli $f(x_0) = 0$`, R`Nie — np. $f(x) = x^3$ w zerze`], dobra: 2, dlaczego: R`$f(x) = x^3$: $f'(0) = 0$, ale funkcja rośnie po obu stronach — ekstremum brak. Punkt stacjonarny to tylko kandydat.` },
+  { q: R`Wykres wypukły w przedziale to taki, który:`, opcje: ['leży nad swoimi stycznymi', 'leży pod swoimi stycznymi', 'rośnie'], dobra: 0, dlaczego: R`Definicja ze slajdu: wypukły (∪) — powyżej stycznych, wklęsły (∩) — poniżej. Wypukły wykres może też maleć, np. $x^2$ dla $x < 0$.` },
+  { q: R`$f''(x) < 0$ dla każdego $x \in X$. Wykres funkcji na $X$ jest:`, opcje: ['wypukły', 'malejący', 'wklęsły'], dobra: 2, dlaczego: R`Ujemna druga pochodna — wklęsły (∩). Malenie zależy od znaku pierwszej pochodnej.` },
+  { q: R`Punkt przegięcia zapisujesz jako:`, opcje: [R`$(x_0, f''(x_0))$`, R`$(x_0, f(x_0))$`, R`samo $x_0$`], dobra: 1, dlaczego: R`Slajd: $P_0 = (x_0, f(x_0))$ — punkt na wykresie funkcji. $f''(x_0)$ jest zawsze zerem.` },
+  { q: R`Druga pochodna $f''$ to:`, opcje: [R`pochodna pochodnej: $(f')'$`, R`kwadrat pochodnej: $(f')^2$`, R`pochodna policzona w dwóch punktach`], dobra: 0, dlaczego: R`$f'' = (f')'$ — bierzesz wynik pierwszej pochodnej i liczysz z niego pochodną jeszcze raz. Kwadrat to inna rzecz: dla $f(x) = x^3$ jest $(f')^2 = 9x^4$, a $f'' = 6x$.` },
+  { q: R`W tabeli zmienności kolumna z „×” oznacza:`, opcje: [R`punkt, w którym $f'(x) = 0$`, 'punkt spoza dziedziny — tam funkcji nie ma', 'ekstremum'], dobra: 1, dlaczego: R`„×” to dziura w dziedzinie, np. zero mianownika. Dzieli oś na przedziały, ale nie ma w niej ani wartości funkcji, ani ekstremum.` },
+]} />

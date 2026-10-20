@@ -1,0 +1,685 @@
+
+/* ===== POMOCNICZE: interaktywne wykresy (krzyż keynesowski + AD-SAS-LAS) ===== */
+function _tri(){var p=[];for(var i=0;i<arguments.length;i+=2)p.push(arguments[i]+','+arguments[i+1]);return '<polygon points="'+p.join(' ')+'"/>';}
+function _arrowHead(a){var x1=a[0],y1=a[1],x2=a[2],y2=a[3];
+  if(y1===y2) return x2>x1?_tri(x2,y2,x2-7,y2-4,x2-7,y2+4):_tri(x2,y2,x2+7,y2-4,x2+7,y2+4);
+  return y2>y1?_tri(x2,y2,x2-4,y2-7,x2+4,y2-7):_tri(x2,y2,x2-4,y2+7,x2+4,y2+7);
+}
+/* pasek kroków: names = etykiety etapów [0..max]; etap 0 = stan początkowy */
+function _steps(names){
+  var max=names.length-1, dots='';
+  for(var i=0;i<=max;i++) dots+='<i class="fig-dot'+(i===0?' on':'')+'"></i>';
+  return '<div class="fig-steps">'
+    +'<button type="button" class="fig-btn fig-prev" onclick="figStep(this,-1)" disabled>‹ Cofnij</button>'
+    +'<span class="fig-track" aria-hidden="true">'+dots+'</span>'
+    +'<span class="fig-now">0 / '+max+' · '+names[0]+'</span>'
+    +'<button type="button" class="fig-btn fig-next" onclick="figStep(this,1)">Dalej ›</button>'
+    +'</div>';
+}
+/* wykres AD-SAS-LAS. PRZESUWA SIĘ TYLKO JEDNA krzywa (o.mover='ad'|'sras'); pozostałe dwie statyczne.
+   o.dir = kierunek SZOKU 'left'|'right'. Etap 1 (szok): mover jedzie w o.dir → luka E₂=o.e2 (zmiana P i Y).
+   Etap 2 (reakcja/polityka, gdy podane o.fix): TA SAMA krzywa wraca na miejsce → powrót do E₁ (potencjał).
+   Rzuty przerywane idą na OBIE osie: gB→E₂ (etap 1), gA→E₁ (etap 2). o.shock/o.fix = strzałki, *Lab = podpisy,
+   o.shockName/o.fixName = nazwy etapów na pasku, o.capInit/o.capShock/o.capFix = opisy etapów. */
+function adasFig(o){
+  var two=!!o.fix;
+  var names=two?['Start',(o.shockName||'Szok'),(o.fixName||'Reakcja')]:['Start',(o.shockName||'Szok')];
+  var dx=(o.dir==='right'?46:-46);
+  var ad=[85,55,285,185], sas=[85,185,285,55];
+  var base=(o.mover==='ad'?ad:sas), moverCls=(o.mover==='ad'?'c-ad':'c-sras');
+  function L(cls,c){return '<line class="'+cls+'" x1="'+c[0]+'" y1="'+c[1]+'" x2="'+c[2]+'" y2="'+c[3]+'"/>';}
+  var adLine=L('curve c-ad',ad), sasLine=L('curve c-sras',sas);
+  var moverLine=L('curve '+moverCls,base);
+  var staticLine=(o.mover==='ad'?sasLine:adLine);
+  var ghost=L('curve ghost '+moverCls,base);                                  /* pozycja wyjściowa (widoczna w etapie 1) */
+  var ghost2=two?L('curve ghost2 '+moverCls,[base[0]+dx,base[1],base[2]+dx,base[3]]):''; /* pozycja po szoku (widoczna w etapie 2) */
+  var mvClass='mv-'+o.mover+'-'+o.dir, e2x=o.e2[0], e2y=o.e2[1];
+  /* etykiety: nazwa ruchomej krzywej jedzie z linią (.mv); pozycje ₁/₂ dostają wyblakłe indeksy w stałych punktach */
+  var mvName=(o.mover==='ad'?'AD':'SAS'), stName=(o.mover==='ad'?'SAS':'AD');
+  var mvLY=(o.mover==='ad'?188:56), mvLC=(o.mover==='ad'?'#27e8ff':'#ff2e97');
+  var stLY=(o.mover==='ad'?56:188), stLC=(o.mover==='ad'?'#ff2e97':'#27e8ff');
+  var gapL=Math.min(e2x,185), gapR=Math.max(e2x,185), gapM=(gapL+gapR)/2;
+  function arrowG(cls,a,lab){
+    return '<g class="arrow '+cls+'"><line x1="'+a[0]+'" y1="'+a[1]+'" x2="'+a[2]+'" y2="'+a[3]+'"/>'+_arrowHead(a)
+      +(lab?'<text class="arr-lbl" x="'+((a[0]+a[2])/2)+'" y="'+(cls==='fix'?(a[1]+13):(a[1]-6))+'" text-anchor="middle">'+lab+'</text>':'')+'</g>';
+  }
+  return '<div class="econ-fig" data-stage="0" data-stages="'+(names.length-1)+'" data-names="'+names.join('|')+'">'
+   +'<svg viewBox="0 0 340 250" role="img">'
+     +'<line class="axis" x1="40" y1="30" x2="40" y2="210"/>'
+     +'<line class="axis" x1="40" y1="210" x2="320" y2="210"/>'
+     +'<text class="ax-lbl" x="16" y="120" text-anchor="middle" transform="rotate(-90 16 120)">P — poziom cen</text>'
+     +'<text class="ax-lbl" x="185" y="236" text-anchor="middle">Y — realny PKB</text>'
+     +'<line class="curve c-lras" x1="185" y1="40" x2="185" y2="210"/>'
+     +'<text class="curve-lbl" x="185" y="34" text-anchor="middle" fill="#a78bfa">LAS</text>'
+     +ghost+ghost2+staticLine
+     /* indeksy pozycji ruchomej krzywej: ₁ = pozycja wyjściowa (et.1), ₂ = po szoku (et.2) */
+     +'<text class="curve-lbl lbl-g1" x="298" y="'+mvLY+'" text-anchor="end" fill="'+mvLC+'">'+mvName+'₁</text>'
+     +(two?'<text class="curve-lbl lbl-g2" x="'+(298+dx)+'" y="'+mvLY+'" text-anchor="end" fill="'+mvLC+'">'+mvName+'₂</text>':'')
+     +'<g class="mv '+mvClass+'">'+moverLine
+       +'<text class="curve-lbl" x="298" y="'+mvLY+'" text-anchor="end" fill="'+mvLC+'">'+mvName+'</text></g>'
+     +'<text class="curve-lbl" x="298" y="'+stLY+'" text-anchor="end" fill="'+stLC+'">'+stName+'</text>'
+     /* rzut E₂ na OBIE osie (etap 1): pion → oś Y, poziom → oś P */
+     +'<line class="guide2 gB" x1="'+e2x+'" y1="'+e2y+'" x2="'+e2x+'" y2="210"/>'
+     +'<line class="guide2 gB" x1="'+e2x+'" y1="'+e2y+'" x2="40" y2="'+e2y+'"/>'
+     +'<text class="gmark gB" x="44" y="'+(e2y-3)+'">P₂</text>'
+     +'<text class="gmark gB" x="'+e2x+'" y="223" text-anchor="middle">Y₂</text>'
+     /* luka produkcyjna: rozstęp Y₂ ↔ potencjał (LAS, Y=185); widoczna w et.1, znika w et.2 (luka zamknięta) */
+     +'<g class="gap1"><line class="gapln" x1="'+gapL+'" y1="205" x2="'+gapR+'" y2="205"/>'
+       +'<line class="gapln" x1="'+gapL+'" y1="202" x2="'+gapL+'" y2="208"/>'
+       +'<line class="gapln" x1="'+gapR+'" y1="202" x2="'+gapR+'" y2="208"/>'
+       +'<text class="gaptx" x="'+gapM+'" y="199" text-anchor="middle">luka</text></g>'
+     /* rzut powrotu do E₁ na OBIE osie (etap 2) */
+     +(two?'<line class="guide2 gA" x1="185" y1="120" x2="185" y2="210"/>'
+         +'<line class="guide2 gA" x1="185" y1="120" x2="40" y2="120"/>'
+         +'<text class="gmark gA" x="44" y="117">P₁</text>'
+         +'<text class="gmark gA" x="185" y="223" text-anchor="middle">Y₁</text>':'')
+     +arrowG('shock',o.shock,o.shockLab)
+     +(two?arrowG('fix',o.fix,o.fixLab):'')
+     +'<circle class="e-dot eqA" cx="185" cy="120" r="4.5"/><text class="e-lbl eqA" x="192" y="114">E₁</text>'
+     +'<circle class="e-dot eqB" cx="'+e2x+'" cy="'+e2y+'" r="4.5"/><text class="e-lbl eqB" x="'+(e2x+7)+'" y="'+(e2y-6)+'">E₂</text>'
+   +'</svg>'
+   +'<div class="fig-cap c0">'+o.capInit+'</div>'
+   +'<div class="fig-cap c1">'+o.capShock+'</div>'
+   +(two?'<div class="fig-cap c2">'+o.capFix+'</div>':'')
+   +_steps(names)
+  +'</div>';
+}
+/* krzyż keynesowski AE-Y; jednoetapowy — TYLKO linia AE jedzie równolegle w DÓŁ, linia 45° statyczna.
+   Jedna oś znaczeniowa (produkcja Y); rzut E₂ na oś Y. */
+function kcFig(o){
+  var names=['Start',(o.shockName||'Szok')];
+  return '<div class="econ-fig" data-stage="0" data-stages="1" data-names="'+names.join('|')+'">'
+   +'<svg viewBox="0 0 340 250" role="img">'
+     +'<line class="axis" x1="40" y1="30" x2="40" y2="210"/>'
+     +'<line class="axis" x1="40" y1="210" x2="320" y2="210"/>'
+     +'<text class="ax-lbl" x="16" y="120" text-anchor="middle" transform="rotate(-90 16 120)">AE — planowane wydatki</text>'
+     +'<text class="ax-lbl" x="185" y="236" text-anchor="middle">Y — produkcja, dochód</text>'
+     +'<line class="curve c-45" x1="40" y1="210" x2="210" y2="40"/>'
+     +'<text class="curve-lbl" x="214" y="46" fill="#6f679a">45°</text>'
+     +'<line class="curve ghost c-ae" x1="40" y1="150" x2="300" y2="80"/>'
+     +'<text class="curve-lbl lbl-g1" x="305" y="82" fill="#27e8ff">AE₁</text>'
+     +'<g class="mv mv-ae-down"><line class="curve c-ae" x1="40" y1="150" x2="300" y2="80"/>'
+       +'<text class="curve-lbl" x="305" y="82" fill="#27e8ff">AE</text></g>'
+     +'<g class="arrow shock"><line x1="255" y1="92" x2="255" y2="124"/>'+_arrowHead([255,92,255,124])+'</g>'
+     /* przy WYJŚCIOWEJ produkcji (Y₁) planowane AE < produkcja → niesprzedany towar = nieplanowany wzrost zapasów */
+     +'<g class="gap1"><line class="gapln" x1="122" y1="129" x2="122" y2="161"/>'
+       +'<line class="gapln" x1="119" y1="129" x2="125" y2="129"/>'
+       +'<line class="gapln" x1="119" y1="161" x2="125" y2="161"/>'
+       +'<text class="gaptx" x="128" y="149">zapasy ↑</text></g>'
+     +'<line class="guide2 gB" x1="76" y1="174" x2="76" y2="210"/>'
+     +'<line class="guide2 gB" x1="76" y1="174" x2="40" y2="174"/>'
+     +'<text class="gmark gB" x="83" y="205">Y₂</text>'
+     +'<circle class="e-dot eqA" cx="122" cy="128" r="4.5"/><text class="e-lbl eqA" x="129" y="123">E₁</text>'
+     +'<circle class="e-dot eqB" cx="76" cy="174" r="4.5"/><text class="e-lbl eqB" x="83" y="169">E₂</text>'
+   +'</svg>'
+   +'<div class="fig-cap c0">'+o.capInit+'</div>'
+   +'<div class="fig-cap c1">'+o.capShock+'</div>'
+   +_steps(names)
+  +'</div>';
+}
+
+/* =================== DANE: ZADANIA =================== */
+ZADANIA = [
+{badge:"WZORCOWE", num:"★", title:"Twoje zadanie — równowaga dochodu i zapasy", html:`
+<div class="given"><b>Dane:</b> konsumpcja autonomiczna C₀ = 800 · MPC = 0,75 · wydatki inwestycyjne I = 200.<br><b>Pytania:</b> (a) co dzieje się z zapasami, gdy produkcja PKB = 800? (b) ile wynosi produkcja w stanie równowagi?</div>
+
+<h4>🧒 Wyobraź to sobie jak fabrykę cukierków</h4>
+<div class="eli5"><b>Wyobraź sobie</b>, że cała gospodarka to jedna wielka fabryka. <b>Produkcja (PKB)</b> to ile cukierków fabryka <i>zrobiła</i>. <b>Wydatki zagregowane (AE)</b> to ile cukierków ludzie i firmy <i>chcą kupić</i>.<br><br>
+• Jeśli ludzie chcą kupić <b>więcej</b>, niż fabryka zrobiła → cukierki znikają z magazynu (<b>zapasy spadają</b>), więc następnym razem fabryka zrobi więcej.<br>
+• Jeśli ludzie chcą kupić <b>mniej</b> → cukierki zalegają w magazynie (<b>zapasy rosną</b>), więc fabryka zwolni.<br>
+• <b>Równowaga</b> to magiczny punkt, gdzie fabryka robi DOKŁADNIE tyle, ile ludzie chcą kupić — magazyn się nie zmienia.</div>
+
+<h4>Krok 1 — zbuduję wzór na wydatki (AE)</h4>
+<p>Wydatki zagregowane to konsumpcja + inwestycje. Konsumpcja ma dwie części: część stałą C₀ (kupujemy zawsze, nawet bez dochodu) oraz część rosnącą z dochodem (MPC × Y — z każdej dodatkowej złotówki wydajemy 75 groszy).</p>
+<div class="formula">AE = C₀ + MPC·Y + I = 800 + 0,75·Y + 200 = 1000 + 0,75·Y</div>
+
+<h4>Krok 2 — sprawdzam, co się dzieje przy PKB = 800</h4>
+<p>Podstawiam Y = 800 do wzoru na wydatki:</p>
+<div class="formula">AE = 1000 + 0,75·800 = 1000 + 600 = <b>1600</b></div>
+<p>Fabryka zrobiła <b>800</b>, a ludzie chcą kupić aż <b>1600</b>. Chętnych jest dużo więcej niż towaru!</p>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż odpowiedź (a) ▾</button>
+<div class="sol"><div class="answer">Skoro wydatki (1600) &gt; produkcja (800), ludzie wykupują towar z magazynów. <b>Zapasy nieplanowo SPADAJĄ.</b> To sygnał, że produkcja jest za niska — firmy będą ją zwiększać, aż dojdą do równowagi.</div></div>
+
+<h4>Krok 3 — liczę równowagę (gdzie produkcja = wydatki)</h4>
+<p>W równowadze to, co fabryka zrobiła, równa się temu, co ludzie chcą kupić: Y = AE.</p>
+<div class="formula">Y = 1000 + 0,75·Y &nbsp;→&nbsp; Y − 0,75·Y = 1000 &nbsp;→&nbsp; 0,25·Y = 1000</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż odpowiedź (b) ▾</button>
+<div class="sol"><div class="answer">Y = 1000 / 0,25 = <b>4000</b> — produkcja w stanie równowagi.</div>
+<p class="muted">Sprawdzenie mnożnikiem: mnożnik = 1/(1−MPC) = 1/0,25 = <b>4</b>. Wydatki autonomiczne (800+200 = 1000) × 4 = <b>4000</b>. ✓ Zgadza się.</p></div>
+`},
+
+{badge:"WARIANT", num:"1", title:"Inne liczby — sama równowaga", html:`
+<div class="given"><b>Dane:</b> C₀ = 400 · MPC = 0,8 · I = 100. <b>Pytanie:</b> ile wynosi produkcja w równowadze i ile wynosi mnożnik?</div>
+<div class="eli5"><b>Skąd Y = 2500?</b><br>Mamy: AE = 500 + 0,8·Y. W równowadze Y = AE, więc: Y = 500 + 0,8Y. Odejmuję 0,8Y od obu stron: 0,2Y = 500. Dzielę przez 0,2: Y = 2500.<br><br><b>A skąd to 500 na początku?</b><br>To suma wszystkich wydatków autonomicznych — tych, które nie zależą od dochodu: C₀ (400) + I (100) = 500.<br><br><b>Sprawdzenie mnożnikiem:</b><br>Mnożnik = 5, wydatki autonomiczne = 500, więc: 500 × 5 = 2500. ✓ Zgadza się!<br>Mnożnik mówi: każda złotówka "niezależnych" wydatków generuje 5 zł dochodu w całej gospodarce — bo pieniądze krążą i wracają jako dochód innych ludzi.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">AE = 400 + 0,8·Y + 100 = 500 + 0,8·Y</div>
+<div class="formula">Y = 500 + 0,8·Y → 0,2·Y = 500 → <b>Y = 2500</b></div>
+<div class="answer">Mnożnik = 1/(1−0,8) = 1/0,2 = <b>5</b>. Równowaga: <b>Y = 2500</b>.</div></div>
+`},
+
+{badge:"WARIANT", num:"2", title:"Z wydatkami rządowymi (G)", html:`
+<div class="given"><b>Dane:</b> C₀ = 300 · MPC = 0,6 · I = 200 · zakupy rządowe G = 100. <b>Pytanie:</b> produkcja w równowadze?</div>
+<div class="eli5"><b>Dlaczego G (wydatki rządowe) wrzucamy po prostu do wzoru?</b><br>Z punktu widzenia popytu, nie ma znaczenia kto wydaje: firma, konsument czy rząd. Każda wydana złotówka to popyt na czyjąś produkcję. Dlatego AE = C₀ + I + G + MPC·Y = 300 + 200 + 100 + 0,6Y = 600 + 0,6Y.<br><br><b>Skąd 1500?</b><br>Mnożnik = 1/(1−0,6) = 1/0,4 = 2,5. Wydatki autonomiczne (wszystko co stałe) = 600. W równowadze: Y = 600 × 2,5 = 1500.<br><br><b>Albo klasycznie:</b> Y = 600 + 0,6Y → 0,4Y = 600 → Y = 1500. Ta sama odpowiedź, inna droga.</div>
+<div class="eli5"><b>Trik:</b> G wrzucamy do wydatków autonomicznych tak samo jak C₀ i I — to po prostu kolejny stały zastrzyk popytu.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">AE = 300 + 0,6·Y + 200 + 100 = 600 + 0,6·Y</div>
+<div class="formula">Y = 600 + 0,6·Y → 0,4·Y = 600 → <b>Y = 1500</b></div>
+<div class="answer">Wydatki autonomiczne = 600, mnożnik = 1/0,4 = 2,5; 600 × 2,5 = <b>1500</b>.</div></div>
+`},
+
+{badge:"WARIANT", num:"3", title:"O ile wzrośnie PKB? (efekt mnożnikowy)", html:`
+<div class="given"><b>Dane:</b> MPC = 0,75. Inwestycje rosną o ΔI = 50. <b>Pytanie:</b> o ile zmieni się produkcja w równowadze?</div>
+<div class="eli5"><b>Dlaczego 50 zł inwestycji daje aż 200 zł PKB?</b><br>Wyobraź sobie: firma buduje halę za 50 zł. To 50 zł trafia do kieszeni robotników jako wynagrodzenie. Oni mają MPC = 0,75, więc wydają 37,50 zł w sklepach. Sprzedawcy zarabiają 37,50 i wydają 75% = 28,13 zł. Kolejna osoba wydaje 75% z tego = 21,09 zł... i tak dalej, w nieskończoność.<br><br><b>Suma wszystkich "rund":</b><br>50 + 37,50 + 28,13 + 21,09 + ... = 50 × (1 + 0,75 + 0,75² + 0,75³ + ...) = 50 × 1/(1−0,75) = 50 × 4 = <b>200</b>.<br><br>Wzór mnożnika k = 1/(1−MPC) to matematyczny skrót od tej sumy nieskończonej geometrycznej.</div>
+<div class="eli5"><b>Dlaczego więcej niż 50?</b> Bo 50 zł wydane na inwestycje staje się czyimś dochodem. Ta osoba wyda z tego 75% dalej, kolejna znów 75%... i tak efekt się „mnoży".</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">ΔY = mnożnik × ΔI = 1/(1−0,75) × 50 = 4 × 50 = <b>200</b></div>
+<div class="answer">PKB wzrośnie o <b>200</b> (cztery razy więcej niż początkowy zastrzyk 50).</div></div>
+`},
+
+{badge:"WARIANT", num:"4", title:"Powyżej równowagi — co z zapasami?", html:`
+<div class="given"><b>Dane:</b> równowaga gospodarki to Y* = 2000. Aktualnie produkcja wynosi Y = 2500. <b>Pytanie:</b> co dzieje się z zapasami?</div>
+<div class="eli5"><b>Wyobraź sobie piekarnię (= cała gospodarka):</b><br>Dziś piekarz upiekł 2500 bułek. Ale klientów jest na tyle, żeby kupić tylko 2000. Zostaje 500 bułek na półce — nieplanowo. Piekarz widzi to i myśli: "po co piec tyle, skoro i tak nie sprzedaję?" Jutro zamówi mniej mąki i upiecze mniej.<br><br><b>Mechanizm samoregulacji:</b><br>Rosnące zapasy = sygnał dla firm, żeby produkować mniej. Malejące zapasy = sygnał, żeby produkować więcej. Gospodarka "ciągnie" zawsze w kierunku równowagi Y* = 2000, gdzie zapasy się nie zmieniają.<br><br><b>Reguła na pamięć:</b> Y > AE → zapasy rosną → produkcja spada. Y < AE → zapasy maleją → produkcja rośnie. Y = AE → równowaga.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<p>Produkcja (2500) jest <b>powyżej</b> równowagi (2000), więc ludzie chcą kupić mniej, niż fabryka wyprodukowała.</p>
+<div class="answer">Niesprzedany towar ląduje w magazynie → <b>zapasy nieplanowo ROSNĄ</b>. Firmy zareagują obniżeniem produkcji, aż wróci do Y* = 2000.</div>
+<p class="muted">Reguła do zapamiętania: produkcja &gt; wydatki → zapasy rosną; produkcja &lt; wydatki → zapasy spadają; produkcja = wydatki → równowaga.</p></div>
+`},
+
+{badge:"WARIANT", num:"5", title:"Z podatkiem (poziom trudniejszy)", html:`
+<div class="given"><b>Dane:</b> C₀ = 500 · MPC = 0,75 · I = 250 · G = 250 · podatek autonomiczny T = 200. <b>Pytanie:</b> produkcja w równowadze?</div>
+<div class="eli5"><b>Skąd się biorą wszystkie te liczby? Krok po kroku:</b><br><br><b>→ Skąd 350 w konsumpcji?</b><br>Wzór C = C₀ + MPC·(Y−T). Rozwijamy nawias: 0,75·(Y−200) = 0,75Y − 150. Dodajemy C₀: 500 + 0,75Y − 150 = <b>350 + 0,75Y</b>. Podatek "zjadł" 150 zł (= 0,75 × 200) z bazowej konsumpcji.<br><br><b>→ Skąd 850 w AE?</b><br>Sumujemy wszystkie stałe: 350 + 250 (inwestycje) + 250 (rząd) = <b>850</b>. Proste dodawanie.<br><br><b>→ Skąd Y = 3400?</b><br>W równowadze Y = AE: Y = 850 + 0,75Y → Y − 0,75Y = 850 → 0,25Y = 850 → Y = 3400.<br><br><b>Dlaczego podatek zmniejszył Y?</b><br>Porównaj z zadaniem bez podatku: tam Y = 4000. Tu Y = 3400, czyli o 600 mniej. Podatek T = 200 obciął bazową konsumpcję, a mnożnik (4) "zwielokrotnił" ten efekt: 200 × 0,75 × 4 = 600. Podatek nie boli tylko o T — boli o T × MPC × mnożnik.</div>
+<div class="eli5"><b>Uwaga:</b> ludzie konsumują z dochodu <i>po opodatkowaniu</i> (Y − T), a nie z całego Y. Najpierw odejmujemy podatek.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">C = C₀ + MPC·(Y − T) = 500 + 0,75·(Y − 200) = 350 + 0,75·Y</div>
+<div class="formula">AE = 350 + 0,75·Y + 250 + 250 = 850 + 0,75·Y</div>
+<div class="formula">Y = 850 + 0,75·Y → 0,25·Y = 850 → <b>Y = 3400</b></div>
+<div class="answer">Równowaga: <b>Y = 3400</b>.</div></div>
+`},
+
+{badge:"WARIANT", num:"6", title:"Odwrotnie — znajdź MPC", html:`
+<div class="given"><b>Dane:</b> C₀ = 200 · I = 100 · produkcja w równowadze Y = 1500. <b>Pytanie:</b> ile wynosi MPC?</div>
+<div class="eli5"><b>To zadanie "odwrócone" — mamy wynik, szukamy parametru.</b><br>Normalnie: znamy MPC → liczymy Y. Tu: znamy Y → szukamy MPC.<br><br><b>Krok po kroku:</b><br>W równowadze: Y = C₀ + I + MPC·Y (bo AE = wydatki autonomiczne + MPC·Y). Wstawiam liczby: 1500 = 200 + 100 + MPC·1500. Upraszczam: 1500 = 300 + 1500·MPC. Odejmuję 300: 1200 = 1500·MPC. Dzielę: MPC = 1200/1500 = 0,8.<br><br><b>Interpretacja:</b><br>W tej gospodarce z każdej nowej złotówki dochodu 80 groszy idzie na konsumpcję, a 20 groszy (MPS = 0,2) na oszczędności.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">W równowadze: Y = (C₀ + I) + MPC·Y → 1500 = 300 + MPC·1500</div>
+<div class="formula">1200 = MPC·1500 → MPC = 1200/1500 = <b>0,8</b></div>
+<div class="answer">MPC = <b>0,8</b> (a MPS = 1 − 0,8 = 0,2).</div></div>
+`},
+
+{badge:"TYPOWE", num:"7", title:"PKB nominalny, realny i deflator", html:`
+<div class="given">Gospodarka produkuje 2 dobra. Rok bazowy: <b>2020</b>.
+<table class="mini"><tr><th>Dobro</th><th>Ilość 2024</th><th>Cena 2020</th><th>Cena 2024</th></tr>
+<tr><td>Chleb</td><td>100</td><td>4 zł</td><td>5 zł</td></tr>
+<tr><td>Książki</td><td>50</td><td>20 zł</td><td>24 zł</td></tr></table>
+<b>Policz:</b> PKB nominalny 2024, PKB realny 2024 (w cenach 2020) i deflator PKB.</div>
+<div class="eli5"><b>Po co w ogóle te dwa rodzaje PKB?</b><br>Problem: PKB nominalny rośnie nawet jeśli nic nie produkujemy więcej — wystarczy, że ceny rosną. Potrzebujemy sposobu, żeby "oddzielić" wzrost ilości od wzrostu cen.<br><br><b>PKB nominalny</b> = tegoroczne ilości × tegoroczne ceny. Jakbyś dziś poszedł na zakupy i zapłacił po dzisiejszych cenach.<br><b>PKB realny</b> = tegoroczne ilości × ceny z roku bazowego. "Co by to kosztowało w 2020?" — usuwasz inflację.<br><b>Deflator</b> = (nominalny ÷ realny) × 100 = ile wynosi inflacja od roku bazowego. Deflator 121,4 → ceny 21,4% wyższe niż w 2020.<br><br><b>Szybkie sprawdzenie:</b> Chleb zdrożał z 4 do 5 zł (+25%), Książki z 20 do 24 zł (+20%). Deflator 121,4 to "średnia ważona" tych wzrostów, gdzie wagami są wielkości produkcji.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<p><b>PKB nominalny</b> = ilości 2024 × ceny 2024:</p>
+<div class="formula">100·5 + 50·24 = 500 + 1200 = <b>1700 zł</b></div>
+<p><b>PKB realny</b> = ilości 2024 × ceny bazowe 2020:</p>
+<div class="formula">100·4 + 50·20 = 400 + 1000 = <b>1400 zł</b></div>
+<p><b>Deflator PKB</b> = (nominalny / realny) × 100:</p>
+<div class="formula">(1700 / 1400) × 100 ≈ <b>121,4</b></div>
+<div class="answer">Ceny wzrosły średnio o ok. <b>21,4%</b> względem roku bazowego.</div></div>
+`},
+
+{badge:"TYPOWE", num:"8", title:"CPI i stopa inflacji", html:`
+<div class="given">Koszyk typowej rodziny kosztował <b>2000 zł</b> w roku bazowym i <b>2300 zł</b> w roku bieżącym. <b>Policz:</b> CPI oraz stopę inflacji.</div>
+<div class="eli5"><b>CPI = termometr cen dla typowej rodziny.</b><br>"Koszyk" to zestaw dóbr, które przeciętna rodzina kupuje każdego miesiąca: chleb, prąd, czynsz, benzyna, ubrania...<br><br><b>Jak działa:</b><br>Rok bazowy → CPI = 100 (to nasz punkt "zero"). Teraz → CPI = 115. Interpretacja: ten sam koszyk kosztuje 15% więcej niż w roku bazowym.<br><br><b>Wzory:</b><br>• CPI = (koszt koszyka dziś ÷ koszt koszyka w roku bazowym) × 100 = (2300 ÷ 2000) × 100 = 115<br>• Inflacja od roku bazowego = CPI − 100 = 15%<br>• Inflacja między dwoma latami niebazowymiCPI₂ − CPI₁)/CPI₁ × 100%<br><br><b>Różnica między CPI a deflatorem PKB:</b> CPI mierzy koszyk <i>konsumenta</i> (stały zestaw dóbr). Deflator mierzy <i>całą produkcję</i> (zmienна kompozycja). Dają podobne wyniki, ale nie identyczne.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">CPI = (koszt koszyka teraz / koszt w roku bazowym) × 100 = (2300/2000)×100 = <b>115</b></div>
+<div class="formula">Stopa inflacji = (CPI − 100) = <b>15%</b></div>
+<div class="answer">Ceny koszyka wzrosły o <b>15%</b>. (Gdyby pytano o inflację między dwoma latami nie-bazowymi: (CPI₂ − CPI₁)/CPI₁ × 100%.)</div></div>
+`},
+
+{badge:"TYPOWE", num:"9", title:"Stopa wzrostu gospodarczego", html:`
+<div class="given">PKB realny w 2023 r. = <b>500 mld</b>, w 2024 r. = <b>525 mld</b>. <b>Policz</b> tempo wzrostu gospodarczego.</div>
+<div class="eli5"><b>Wzór na tempo wzrostu to ogólny wzór na zmianę procentową:</b><br>(wartość końcowa − wartość początkowa) ÷ wartość początkowa × 100% = (525 − 500) ÷ 500 × 100% = 5%.<br><br><b>Dlaczego PKB realny, a nie nominalny?</b><br>Wyobraź sobie kraj, który w 2023 r. produkuje 100 samochodów po 50 000 zł = PKB nominalny 5 mln. W 2024 r. produkuje nadal 100 samochodów, ale ceny wzrosły do 55 000 zł = PKB nominalny 5,5 mln. Wzrost nominalny = 10% — ale przecież nic więcej nie wyprodukowali!<br>PKB realny (w cenach z 2023) = nadal 5 mln → wzrost 0%. To jest prawdziwy wzrost.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">stopa wzrostu = (PKB₂ − PKB₁)/PKB₁ × 100% = (525 − 500)/500 × 100% = <b>5%</b></div>
+<div class="answer">Gospodarka urosła o <b>5%</b>. Używamy PKB <b>realnego</b>, bo chcemy wzrost ilości, a nie cen.</div></div>
+`},
+
+{badge:"TYPOWE", num:"10", title:"Stopa bezrobocia i aktywności zawodowej", html:`
+<div class="given">Ludność w wieku produkcyjnym (16+) = <b>100 tys.</b> Pracujący = <b>60 tys.</b> Bezrobotni = <b>10 tys.</b> Reszta to bierni zawodowo. <b>Policz</b> stopę bezrobocia i wskaźnik aktywności zawodowej.</div>
+<div class="eli5"><b>Kluczowe rozróżnienie: siła robocza ≠ wszyscy ludzie.</b><br>Emeryci, studenci nie szukający pracy, opiekunowie domowi — to osoby bierne zawodowo. Nie wchodzą do siły roboczej i NIE liczą się do stopy bezrobocia.<br><br><b>Struktura 100 osób:</b><br>• 60 pracuje → pracujący<br>• 10 szuka pracy → bezrobotni<br>• 30 nie szuka → bierni zawodowo<br>Siła robocza = 60 + 10 = 70 (bez tych 30 biernych!).<br><br><b>Dlaczego dzielimy przez 70, nie przez 100?</b><br>Stopa bezrobocia pyta: "spośród tych, którzy CHCĄ pracować, ilu nie może?" Dlatego mianownik to siła robocza (70), nie cała populacja. Stopa = 10/70 ≈ 14,3%.<br><br><b>Wskaźnik aktywności</b> = 70/100 = 70% mówi z kolei: jaki procent całej dorosłej populacji w ogóle chce uczestniczyć w rynku pracy.</div>
+<div class="eli5"><b>Pamiętaj:</b> siła robocza = pracujący + bezrobotni (bez biernych!). Bierni — np. studenci, emeryci — nie liczą się do stopy bezrobocia.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">Siła robocza = 60 + 10 = 70 tys.</div>
+<div class="formula">Stopa bezrobocia = bezrobotni / siła robocza × 100% = 10/70 × 100% ≈ <b>14,3%</b></div>
+<div class="formula">Wskaźnik aktywności = siła robocza / ludność 16+ × 100% = 70/100 × 100% = <b>70%</b></div>
+<div class="answer">Stopa bezrobocia ≈ <b>14,3%</b>, aktywność zawodowa = <b>70%</b>.</div></div>
+`},
+
+{badge:"TYPOWE", num:"11", title:"Prawo Okuna", html:`
+<div class="given">Stopa bezrobocia jest o <b>2 pkt proc.</b> wyższa od naturalnej. Współczynnik Okuna = <b>3</b>. Produkt potencjalny = <b>1000 mld</b>. <b>Policz</b> lukę produktową i rzeczywisty PKB.</div>
+<div class="eli5"><b>Prawo Okuna to empiryczna reguła (nie prawo matematyczne):</b><br>Każdy 1 punkt procentowy bezrobocia POWYŻEJ naturalnej stopy ≈ PKB niższy o ~2-3% od potencjału.<br><br><b>Intuicja:</b> Jeśli zbyt wiele osób siedzi bezczynnie (bo nie ma pracy), gospodarka produkuje mniej niż mogłaby. Każdy bezrobotny to "zmarnowany" potencjał produkcyjny.<br><br><b>Obliczenie:</b> bezrobocie wyższe o 2 pp, współczynnik = 3 → luka = −3 × 2 = −6%. PKB = 1000 × (1 − 0,06) = 940 mld.<br><br><b>Luka ujemna (recesyjna)</b> = PKB < potencjał = gospodarka pracuje "na niepełnych obrotach". Są wolne moce produkcyjne i niedobrowolnie bezrobotni ludzie.<br><b>Luka dodatnia (inflacyjna)</b> = PKB > potencjał = gospodarka "przegrzana", grozi inflacja.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<p>Prawo Okuna: każdy 1 pkt proc. bezrobocia powyżej naturalnej stopy = PKB niższy o ok. 3% od potencjału.</p>
+<div class="formula">luka produktowa = −3 × 2 = <b>−6%</b></div>
+<div class="formula">rzeczywisty PKB = 1000 × (1 − 0,06) = <b>940 mld</b></div>
+<div class="answer">PKB jest <b>6% poniżej</b> potencjału (luka recesyjna), czyli wynosi <b>940 mld</b>.</div></div>
+`},
+
+{badge:"TYPOWE", num:"12", title:"Reguła 70 — czas podwojenia", html:`
+<div class="given">Gospodarka rośnie w tempie <b>3,5%</b> rocznie. <b>Policz</b>, po ilu latach PKB się podwoi.</div>
+<div class="eli5"><b>Skąd pochodzi "70"?</b><br>Przy procencie składanym, czas podwojenia = ln(2) ÷ ln(1+g) ≈ 0,693 ÷ g (dla małych g). 0,693 ≈ 0,7, czyli 70% — zaokrąglamy dla łatwości: 70 ÷ g%.<br><br><b>Dlaczego to ważne?</b><br>Drobna różnica w tempie wzrostu robi gigantyczną różnicę w długim terminie:<br>• 1% rocznie → podwojenie po 70 latach<br>• 2% rocznie → 35 lat<br>• 3,5% rocznie → 20 lat<br>• 7% rocznie → 10 lat<br><br>Kraj rosnący 7% podwoi swoje bogactwo gdy kraj rosnący 1% urośnie zaledwie o ~40%. W ciągu 70 lat kraj z 7% będzie <i>128 razy</i> bogatszy (2⁷), kraj z 1% — tylko 2 razy. To właśnie dlatego ekonomiści tak bardzo przejmują się długookresowym wzrostem.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">czas podwojenia ≈ 70 / stopa wzrostu = 70 / 3,5 = <b>20 lat</b></div>
+<div class="answer">PKB podwoi się po ok. <b>20 latach</b>. (Przy 7% byłoby to 10 lat, przy 2% — 35 lat.)</div></div>
+`},
+
+{badge:"TYPOWE", num:"13", title:"Mnożnik pieniężny i kreacja pieniądza", html:`
+<div class="given">Stopa rezerw obowiązkowych = <b>10%</b>. Bank centralny zwiększa bazę monetarną o <b>200</b>. <b>Policz</b> mnożnik pieniężny i maksymalny wzrost podaży pieniądza.</div>
+<div class="eli5"><b>Krok po kroku jak "rozmnaża się" pieniądz:</b><br>Bank A dostaje depozyt 200 zł. Musi zostawić 10% = 20 zł (rezerwa obowiązkowa). Pożycza 180 zł.<br>Ktoś bierze 180 zł kredytu, wpłaca do banku B. Bank B zostawia 18 zł, pożycza 162 zł.<br>Ktoś wpłaca 162 do banku C. Bank C zostawia 16,20, pożycza 145,80 zł...<br><br><b>Suma wszystkich tych "rund":</b><br>200 + 180 + 162 + 145,80 + ... = 200 × (1 + 0,9 + 0,9² + 0,9³ + ...) = 200 × 1/(1−0,9) = 200 × 1/0,1 = 200 × 10 = 2000.<br><br><b>Wzór mnożnik = 1/stopa rezerw</b> to skrót od tej sumy nieskończonego szeregu geometrycznego.<br>"Maksymalnie", bo w praktyce ludzie trzymają trochę gotówki w kieszeni (nie wszystko idzie z powrotem do banku), więc realny mnożnik jest niższy.</div>
+<div class="eli5"><b>Jak to działa:</b> wpłacasz 200 do banku, bank zostawia 10% (20) w rezerwie, a 180 pożycza dalej. Te 180 ktoś znów wpłaca, bank pożycza 162... i tak pieniądz się „rozmnaża".</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">mnożnik pieniężny = 1 / stopa rezerw = 1 / 0,10 = <b>10</b></div>
+<div class="formula">max wzrost podaży pieniądza = 200 × 10 = <b>2000</b></div>
+<div class="answer">Podaż pieniądza może wzrosnąć maksymalnie o <b>2000</b>.</div></div>
+`},
+
+{badge:"TYPOWE", num:"14", title:"Ilościowa teoria pieniądza (MV = PY)", html:`
+<div class="given">Podaż pieniądza M = <b>500</b>, prędkość obiegu V = <b>4</b>. <b>Policz</b> PKB nominalny (P·Y). Dodatkowo: jeśli M rośnie o 10%, V stała, a realny PKB rośnie o 3% — jaka będzie inflacja?</div>
+<div class="eli5"><b>MV = PY — co to w ogóle znaczy?</b><br>Obie strony opisują tę samą kwotę — łączne transakcje w gospodarce w ciągu roku.<br>• <b>MV (lewa)</b>: M = ile pieniędzy jest w obiegu, V = ile razy każda złotówka "zmieniła ręce". Razem: całkowity "obrót pieniądza".<br>• <b>PY (prawa)</b>: P = poziom cen, Y = realna produkcja. Razem: PKB nominalny — łączna wartość wszystkiego co kupiono.<br><br><b>Obliczenia:</b><br>PKB nominalny = M × V = 500 × 4 = 2000.<br>Inflacja: używamy wersji "przyrostowej": %ΔM + %ΔV = %ΔP + %ΔY → 10% + 0% = inflacja + 3% → inflacja = 7%.<br><br><b>Kluczowy wniosek ilościowej teorii pieniądza:</b><br>Jeśli bank centralny podwoi M, a V i Y są stałe, ceny też się podwoją. Więcej pieniędzy "gonić" będzie tę samą ilość towarów → wyższe ceny. To właśnie dlatego nadmierne drukowanie pieniędzy prowadzi do inflacji.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula">M·V = P·Y → PKB nominalny = 500 × 4 = <b>2000</b></div>
+<p>W tempie wzrostu: %ΔM + %ΔV ≈ %ΔP + %ΔY</p>
+<div class="formula">10% + 0% ≈ inflacja + 3% → inflacja ≈ <b>7%</b></div>
+<div class="answer">PKB nominalny = <b>2000</b>; przewidywana inflacja ≈ <b>7%</b>.</div></div>
+`}
+,
+{badge:"EGZAMIN", num:"15", title:"Funkcja konsumpcji, dochód równowagi i mnożnik", html:`
+<div class="given"><b>Dane:</b> gospodarka zamknięta (bez państwa i zagranicy) · konsumpcja autonomiczna A = 250 · MPC = 2/3 · inwestycje I = 350.<br><b>Pytania:</b> (a) funkcja konsumpcji, (b) popyt globalny i dochód równowagi, (c) mnożnik.</div>
+<div class="eli5">Każda 1 zł nowych wydatków podbija dochód o 3 zł: wydane pieniądze stają się czyimś dochodem, ten wydaje 2/3 dalej, kolejny znów 2/3… suma rund = 1/(1−2/3) = 3.<br><br><b>Sprawdzenie:</b> wydatki autonomiczne (A+I = 600) × 3 = <b>1800</b>. ✓</div>
+<h4>🧒 Co tu w ogóle znaczą te słowa</h4>
+<div class="eli5"><b>Gospodarka zamknięta bez państwa i zagranicy</b> = w grze są tylko <b>ludzie (konsumpcja)</b> i <b>firmy (inwestycje)</b>. Bez podatków, wydatków rządu i zagranicy.<br><br>• <b>Konsumpcja autonomiczna (A = 250)</b> — tyle ludzie wydają <i>zawsze</i>, nawet przy zerowym dochodzie.<br>• <b>MPC = 2/3</b> — z każdych 3 zł dochodu <b>2 zł na wydatki, 1 zł na oszczędności</b>.<br>• <b>YD</b> — dochód do dyspozycji.</div>
+<h4>Krok 1 (a) — funkcja konsumpcji</h4>
+<p>Stała część + część rosnąca z dochodem:</p>
+<div class="formula">C = A + MPC·YD = <b>250 + (2/3)·YD</b></div>
+<h4>Krok 2 (b) — popyt globalny</h4>
+<p>Konsumpcja + inwestycje:</p>
+<div class="formula">AE = C + I = (250 + 2/3·YD) + 350 = <b>600 + 2/3·YD</b></div>
+<h4>Krok 3 (b) — dochód równowagi</h4>
+<p>Równowaga: produkcja = planowane wydatki (Y = AE):</p>
+<div class="formula">Y = 600 + 2/3·Y → 1/3·Y = 600</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż dochód równowagi ▾</button>
+<div class="sol"><div class="answer">Y = 600 / (1/3) = <b>1800</b> — PKB w równowadze.</div></div>
+<h4>Krok 4 (c) — mnożnik</h4>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż mnożnik ▾</button>
+<div class="sol"><div class="answer">mnożnik = 1/(1−MPC) = 1/(1/3) = <b>3</b></div></div>
+`},
+{badge:"EGZAMIN", num:"16", title:"Luki koniunkturalne i reakcja polityki fiskalnej", html:`
+<div class="given"><b>Sytuacja:</b> gospodarka jest w długookresowej równowadze. Dla każdego zdarzenia ustal, jaka powstaje <b>luka</b> i jaką trzeba zastosować <b>politykę fiskalną</b>.<br><b>Zdarzenia:</b> (a) boom na giełdzie podnosi wartość akcji gospodarstw domowych; (b) firmy spodziewają się recesji; (c) rząd zwiększa zakupy sprzętu wojskowego; (d) spada ilość pieniądza, rosną stopy procentowe.</div>
+<h4>🧒 Dwa pojęcia, które wystarczą</h4>
+<div class="eli5"><b>Luka inflacyjna</b> = gospodarka „przegrzana", produkuje powyżej potencjału (popyt za duży) → grozi inflacja → trzeba <b>schłodzić</b> popyt = <b>polityka restrykcyjna</b> (mniej wydatków/transferów albo wyższe podatki).<br><br><b>Luka recesyjna</b> = gospodarka „niedogrzana", produkuje poniżej potencjału (popyt za mały) → bezrobocie → trzeba <b>pobudzić</b> popyt = <b>polityka ekspansywna</b> (więcej wydatków/transferów albo niższe podatki).<br><br>Cały trik: ustal, czy popyt (AD) rośnie czy spada → to mówi, która luka → a luka mówi, jaka polityka.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>a)</b> Boom na giełdzie → ludzie czują się bogatsi (<b>efekt majątkowy</b>) → więcej konsumpcji → AD w prawo → <b>luka inflacyjna</b> → <b>polityka restrykcyjna</b>.</div>
+<div class="answer"><b>b)</b> Firmy boją się recesji → tną inwestycje → AD w lewo → <b>luka recesyjna</b> → <b>polityka ekspansywna</b>.</div>
+<div class="answer"><b>c)</b> Rząd kupuje więcej (sprzęt wojskowy) → AD w prawo → <b>luka inflacyjna</b> → <b>polityka restrykcyjna</b>.</div>
+<div class="answer"><b>d)</b> Mniej pieniądza → wyższe stopy → droższy kredyt → mniej inwestycji → AD w lewo → <b>luka recesyjna</b> → <b>polityka ekspansywna</b>.</div>
+</div>
+`},
+{badge:"EGZAMIN", num:"17", title:"Wzrost gospodarczy — rozkład na czynniki", html:`
+<div class="given"><b>Dane:</b> ΔPKB = 3% · ΔL = 1% · ΔK = 4% · elastyczność PKB względem K/L = 0,3.<br><b>Pytanie:</b> ile ze wzrostu daje większy kapitał na pracownika, a ile postęp techniczny?</div>
+<h4>🧒 O co chodzi (po ludzku)</h4>
+<div class="eli5">Gospodarka rośnie z trzech powodów: <b>więcej rąk do pracy</b>, <b>więcej kapitału na pracownika</b> (maszyn, narzędzi) i <b>postęp techniczny</b> — czyli z tych samych nakładów wyciskamy więcej. Rozbijamy 3% wzrostu na te kawałki.</div>
+<h4>Krok 1 — wzrost PKB na 1 pracownika</h4>
+<div class="formula">ΔPKB − ΔL = 3% − 1% = <b>2%</b></div>
+<h4>Krok 2 — wzrost kapitału na 1 pracownika</h4>
+<div class="formula">ΔK − ΔL = 4% − 1% = <b>3%</b></div>
+<h4>Krok 3 — ile dało „doposażenie" w kapitał</h4>
+<p>Elastyczność 0,3: 1% więcej kapitału na pracownika → 0,3% więcej produkcji na pracownika.</p>
+<div class="formula">0,3 × 3% = <b>0,9%</b></div>
+<h4>Krok 4 — postęp techniczny (reszta)</h4>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż wynik ▾</button>
+<div class="sol"><div class="answer">postęp techniczny = 2% − 0,9% = <b>1,1%</b></div>
+<p class="muted">Z 2% wzrostu PKB na pracownika: 0,9 pkt proc. to większy kapitał, 1,1 pkt proc. to postęp techniczny.</p></div>
+`},
+{badge:"EGZAMIN", num:"18", title:"Domknięcie luki — ile zmienić G i transfery", html:`
+<div class="given"><b>Dla każdego przypadku</b> ustal rodzaj luki i policz, o ile zmienić zakupy rządowe (ΔG) albo transfery (ΔTr), żeby PKB zrównał się z potencjalnym.<br>(a) PKB=100, potencjalny=160, MPC=0,75 · (b) PKB=250, potencjalny=200, MPC=0,5 · (c) PKB=180, potencjalny=100, MPC=0,8.</div>
+<h4>🧒 Jak to działa (po ludzku)</h4>
+<div class="eli5">Najpierw liczysz <b>lukę</b> = o ile PKB ma się zmienić, żeby dojść do potencjału. Potem: ile „dosypać/zabrać", żeby ta zmiana wyszła — pomaga <b>mnożnik</b>:<br>• zakupy rządowe: mnożnik = 1/(1−MPC), więc <b>ΔG = luka × (1−MPC)</b>.<br>• transfery działają słabiej (część ludzie odłożą): mnożnik = MPC/(1−MPC), więc <b>ΔTr = luka × (1−MPC)/MPC</b>.<br>Dlatego transfer co do wartości jest zawsze <b>większy</b> niż ΔG.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="formula"><b>a)</b> luka = 160−100 = 60 (recesyjna) → ΔG = 60×0,25 = <b>+15</b> · ΔTr = 60×0,25/0,75 = <b>+20</b></div>
+<div class="formula"><b>b)</b> luka = 250−200 = 50 (inflacyjna) → ΔG = 50×0,5 = <b>−25</b> · ΔTr = 50×0,5/0,5 = <b>−50</b></div>
+<div class="formula"><b>c)</b> luka = 180−100 = 80 (inflacyjna) → ΔG = 80×0,2 = <b>−16</b> · ΔTr = 80×0,2/0,8 = <b>−20</b></div>
+<div class="answer">Recesyjna → dokładamy (+); inflacyjna → zabieramy (−). Transfer zawsze co do wartości większy niż ΔG, bo część transferu ucieka w oszczędności.</div>
+</div>
+`},
+{badge:"EGZAMIN", num:"19", title:"Szoki popytowe i podażowe — kierunek przesunięcia", html:`
+<div class="given"><b>Dla każdego zdarzenia</b> wskaż, co się przesuwa (AD czy SRAS), w którą stronę i jaki to typ szoku.<br>(a) obniżenie płacy minimalnej; (b) większe transfery TANF; (c) zapowiedź wyższych podatków; (d) mniejsze wydatki na obronność.</div>
+<h4>🧒 Jak rozpoznać, co się rusza</h4>
+<div class="eli5"><b>AD (popyt)</b> = ile wszyscy chcą kupić. Ruszają nim: konsumpcja, inwestycje, wydatki rządu, transfery, eksport.<br><b>SRAS (podaż krótkookresowa)</b> = ile firmy chcą wyprodukować przy danych <b>kosztach</b>. Rusza nią to, co zmienia koszty produkcji (płace, surowce).<br>Reguła: zmienia się <b>koszt firm</b> → SRAS; zmienia się <b>czyjś popyt</b> → AD. „W prawo" = więcej, „w lewo" = mniej.</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>a)</b> Niższa płaca minimalna → tańsza praca → niższe koszty firm → <b>SRAS w prawo</b> (pozytywny szok podażowy).</div>
+<div class="answer"><b>b)</b> Większe transfery → ludzie mają więcej do wydania → <b>AD w prawo</b> (pozytywny szok popytowy).</div>
+<div class="answer"><b>c)</b> Zapowiedź wyższych podatków → ludzie i firmy ograniczają wydatki → <b>AD w lewo</b> (negatywny szok popytowy).</div>
+<div class="answer"><b>d)</b> Mniejsze wydatki na obronność → rząd kupuje mniej → <b>AD w lewo</b> (negatywny szok popytowy).</div>
+</div>
+`}
+,
+{badge:"EGZAMIN", num:"20", title:"Obliczanie PKB i dochodu rozporządzalnego", html:`
+<div class="given"><b>Dane:</b> zakupy rządowe 150 · pożyczki rządowe 60 · podatki 100 · transfery rządowe 10 · oszczędności prywatne 200 · wydatki konsumpcyjne 510 · płace/zyski/odsetki/renty 800 · pożyczki dla przedsiębiorstw 110 · wydatki inwestycyjne 110 · eksport 50 · pożyczki dla zagranicy 130 · pożyczki od zagranicy 100 · import 20.<br><b>Pytania:</b> ile wynosi PKB i dochód rozporządzalny?</div>
+<div class="eli5"><b>Cały trik:</b> w danych jest pełno „wabików" — pożyczki, oszczędności. <b>Pożyczka to nie produkcja</b>, tylko przepływ pieniędzy (ktoś komuś pożycza), więc do PKB jej NIE liczymy. PKB liczymy metodą wydatkową: <b>kto i ile wydał na nowe dobra i usługi</b> = konsumpcja + inwestycje + wydatki rządu + (eksport − import).</div>
+<h4>Krok 1 — wybierz właściwe składniki</h4>
+<div class="formula">PKB = C + I + G + (X − M)</div>
+<p>C = 510, I = 110, G = 150, X = 50, M = 20. Pożyczki, oszczędności, podatki i transfery odrzucamy — to nie są wydatki na produkcję.</p>
+<h4>Krok 2 — policz PKB</h4>
+<div class="formula">PKB = 510 + 110 + 150 + (50 − 20) = 510 + 110 + 150 + 30</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż PKB ▾</button>
+<div class="sol"><div class="answer">PKB = <b>800</b>.</div><p class="muted">Kontrola metodą dochodową: płace+zyski+odsetki+renty = 800. ✓ Ta sama liczba.</p></div>
+<h4>Krok 3 — dochód rozporządzalny</h4>
+<p>To, co zostaje ludziom „do ręki": dochód minus podatki plus transfery.</p>
+<div class="formula">YD = PKB − podatki + transfery = 800 − 100 + 10</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż dochód rozporządzalny ▾</button>
+<div class="sol"><div class="answer">YD = <b>710</b>.</div><p class="muted">Kontrola: dochód rozporządzalny dzieli się na konsumpcję i oszczędności: 510 + 200 = 710. ✓</p></div>
+`},
+{badge:"EGZAMIN", num:"21", sq:true, title:"Kto jest bezrobotny? (definicja)", html:`
+<div class="given"><b>Pytanie:</b> która osoba zostanie uznana za bezrobotną? Uzasadnij.<br>1) Maciej — zwolniony, <i>przestał szukać pracy</i> (trudno znaleźć w jego wieku).<br>2) Aleksandra — studentka, zaczęła studia dzienne, bo brakowało ofert.<br>3) Anna — zwolniona przez recesję, <i>aktualnie szuka</i> nowej pracy.</div>
+<div class="eli5"><b>Kiedy ktoś jest „bezrobotny" w statystyce?</b> Muszą zachodzić 3 rzeczy naraz: (1) nie ma pracy, (2) <b>aktywnie jej szuka</b>, (3) jest gotów ją podjąć. Kto przestał szukać albo się uczy i nie szuka — wypada z „siły roboczej" i NIE jest liczony jako bezrobotny (jest <b>bierny zawodowo</b>).</div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>1) Maciej — NIE.</b> Przestał szukać pracy (zniechęcony) → nie spełnia warunku „aktywnie szuka" → bierny zawodowo, nie bezrobotny.</div>
+<div class="answer"><b>2) Aleksandra — NIE.</b> Studiuje dziennie i nie szuka pracy → poza siłą roboczą, nie bezrobotna.</div>
+<div class="answer"><b>3) Anna — TAK.</b> Bez pracy, gotowa i <b>aktywnie szuka</b> → bezrobotna (typ: bezrobocie cykliczne, bo przyczyną recesja).</div>
+</div>
+`},
+{badge:"EGZAMIN", num:"22", sq:true, title:"Paradoks zapobiegliwości (model dochód–wydatki)", html:`
+<div class="given"><b>Sytuacja:</b> gospodarka w równowadze krótkookresowej. Gospodarstwa domowe ze strachu przed kryzysem <b>zwiększają oszczędności</b> (obniżają konsumpcję autonomiczną). Co stanie się z nieplanowanymi inwestycjami w zapasy, produkcją i bezrobociem? Jak nazywa się to zjawisko? (krzyż keynesowski AE–Y)</div>
+`+kcFig({
+ shockName:'AE w dół',
+ capInit:'<b>Etap 0 — stan początkowy:</b> gospodarka w równowadze E₁, gdzie linia planowanych wydatków <b>AE</b> przecina linię <b>45°</b> (Y = AE). Zapasy się nie zmieniają — fabryki produkują dokładnie tyle, ile ludzie chcą kupić. Kliknij <b>Dalej ›</b>.',
+ capShock:'<b>Etap 1 — szok:</b> wszyscy naraz oszczędzają więcej → spada konsumpcja autonomiczna → <b>jedna krzywa AE przesuwa się równolegle w DÓŁ</b> (linia <b>45° stoi w miejscu</b>). Chwilowo niesprzedany towar zalega → <b>nieplanowane zapasy rosną</b>, firmy tną produkcję. Nowa równowaga <b>E₂</b> leży niżej i w lewo — przerywany rzut na oś <b>Y</b> pokazuje <b>spadek produkcji</b>: <b>PKB i dochód spadają, bezrobocie rośnie</b>. To <b>paradoks zapobiegliwości</b> — chcąc odłożyć więcej, społeczeństwo biednieje.'
+})+`
+<div class="eli5"><b>Po ludzku:</b>
+<span class="step"><span class="step-lbl">Krok 1.</span>W gospodarce narasta strach przed kryzysem, więc wszyscy naraz zaczynają odkładać więcej pieniędzy na czarną godzinę. To oznacza jednocześnie, że mniej wydają — spada <b>łączny popyt</b> na produkty i usługi.</span>
+<span class="step"><span class="step-lbl">Krok 2.</span>Sklepy i fabryki zostają z towarem, którego nikt nie kupuje. Magazyny się zapełniają.</span>
+<span class="step"><span class="step-lbl">Krok 3.</span>Firmy widzą, że zapasy rosną, więc ograniczają produkcję i zwalniają pracowników. Efektem tego jest spadek dochodów w całym społeczeństwie.</span>
+<span class="step"><span class="step-lbl">Paradoks.</span>Chociaż każdy indywidualnie chciał odłożyć więcej pieniędzy, to zbiorowo wszyscy zarabiają mniej — finalnie oszczędności wcale nie rosną. Właśnie dlatego to zjawisko nazywa się <b>paradoksem zapobiegliwości</b>.</span></div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>Zapasy:</b> konsumpcja spada → planowane wydatki (AE) &lt; produkcja → niesprzedany towar → <b>nieplanowane zapasy ROSNĄ</b>.</div>
+<div class="answer"><b>Produkcja:</b> firmy widzą rosnące zapasy → <b>tną produkcję</b> → PKB spada.</div>
+<div class="answer"><b>Bezrobocie:</b> mniejsza produkcja → <b>bezrobocie rośnie</b>.</div>
+<div class="answer"><b>Nazwa zjawiska:</b> paradoks zapobiegliwości (paradox of thrift).</div>
+<p class="muted">Krzyż keynesowski: linia wydatków AE przesuwa się w <b>dół</b> (niższa konsumpcja autonomiczna) → punkt równowagi w lewo → niższe Y.</p>
+</div>
+`},
+{badge:"EGZAMIN", num:"23", sq:true, title:"Wyjaśnij pojęcia (konwergencja, Fisher, wypychanie…)", html:`
+<div class="given"><b>Wyjaśnij pojęcia:</b> 1) hipoteza konwergencji, 2) rachunkowość wzrostu, 3) efekt Fishera, 4) efekt wypychania, 5) pułapka płynności.</div>
+<div class="eli5"><b>Po ludzku, każde pojęcie osobno:</b>
+<span class="step"><span class="step-lbl">Konwergencja.</span>Kraje biedniejsze rosną szybciej niż bogatsze i z czasem je doganiają. Działa to najlepiej, kiedy państwo importuje technologie z zagranicy i inwestuje w edukację.</span>
+<span class="step"><span class="step-lbl">Rachunkowość wzrostu.</span>Metoda, która rozkłada wzrost PKB na trzy składniki: ile z niego dała <b>praca</b>, ile <b>kapitał</b>, a ile <b>postęp techniczny</b> (to, czego nie tłumaczą same nakłady, nazywa się „resztą Solowa").</span>
+<span class="step"><span class="step-lbl">Efekt Fishera.</span>Kiedy inflacja rośnie, banki podnoszą nominalne stopy procentowe mniej więcej o tyle samo — w efekcie <b>realna stopa</b> (nominalna minus inflacja) w długim okresie się nie zmienia.</span>
+<span class="step"><span class="step-lbl">Efekt wypychania.</span>Kiedy rząd finansuje wydatki dużymi pożyczkami, na rynku rośnie popyt na pieniądz, co podnosi stopy procentowe. Wyższe stopy sprawiają, że firmom mniej opłaca się inwestować — część inwestycji zostaje „wypchnięta" przez wydatki rządu.</span>
+<span class="step"><span class="step-lbl">Pułapka płynności.</span>Sytuacja, w której stopy procentowe są już blisko zera i bank centralny nie może ich obniżyć niżej. Dosypywanie pieniądza do gospodarki przestaje działać, bo ludzie i tak wolą trzymać gotówkę zamiast wydawać albo inwestować.</span></div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż wyjaśnienia ▾</button>
+<div class="sol">
+<div class="answer"><b>1) Hipoteza konwergencji</b> — biedniejsze kraje rosną <b>szybciej</b> i doganiają bogatsze. Bo gdy kapitału jest mało, każda nowa maszyna daje duży przyrost produkcji; w bogatych krajach kapitału jest dużo, więc rosną wolniej.</div>
+<div class="answer"><b>2) Rachunkowość wzrostu</b> — rozłożenie wzrostu PKB na wkład <b>pracy</b>, <b>kapitału</b> i <b>postępu technicznego</b> (to, czego nie tłumaczą same nakłady — „reszta Solowa").</div>
+<div class="answer"><b>3) Efekt Fishera</b> — nominalna stopa procentowa = realna + oczekiwana inflacja. W długim okresie wzrost inflacji o 1 pkt podnosi nominalne stopy o 1 pkt, a realna stopa się nie zmienia.</div>
+<div class="answer"><b>4) Efekt wypychania (crowding out)</b> — gdy rząd dużo pożycza (wydatki/deficyt), <b>rosną stopy procentowe</b>, przez co firmom mniej opłaca się inwestować → wydatki rządowe „wypychają" prywatne inwestycje.</div>
+<div class="answer"><b>5) Pułapka płynności</b> — stopy są blisko zera i <b>polityka pieniężna przestaje działać</b>: dodatkowy pieniądz nie obniża już stóp ani nie pobudza wydatków (ludzie wolą trzymać gotówkę).</div>
+</div>
+`},
+{badge:"EGZAMIN", num:"24", sq:true, title:"Negatywny szok podażowy (drożeją surowce)", html:`
+<div class="given"><b>Sytuacja:</b> równowaga długookresowa. Rosną ceny surowców energetycznych → spada produkcja. Skutki krótko- i długookresowe dla poziomu cen, produkcji i bezrobocia? (wykres AD–SAS–LAS)</div>
+`+adasFig({
+ mover:'sras', dir:'left', e2:[162,105],
+ shock:[212,90,166,90], shockLab:'① szok', fix:[166,104,212,104], fixLab:'② długi okres',
+ shockName:'Krótki okres', fixName:'Długi okres',
+ capInit:'<b>Etap 0 — stan początkowy:</b> równowaga długookresowa. <b>AD</b>, <b>SAS</b> i <b>LAS</b> przecinają się w jednym punkcie <b>E₁</b> — produkcja równa potencjałowi (LAS), bezrobocie naturalne. Kliknij <b>Dalej ›</b>.',
+ capShock:'<b>Etap 1 — krótki okres (szok):</b> drożeją surowce → koszty firm ↑ → <b>jedna krzywa SAS przesuwa się w LEWO</b> (AD i LAS stoją w miejscu). Nowa równowaga <b>E₂</b> zmienia OBIE współrzędne — przerywane rzuty pokazują <b>P₂ (ceny ↑)</b> na osi P oraz <b>Y₂ (produkcja ↓ poniżej potencjału)</b> na osi Y; <b>bezrobocie ↑</b> → <b>stagflacja</b>.',
+ capFix:'<b>Etap 2 — długi okres (samoregulacja):</b> wysokie bezrobocie → presja na <b>spadek płac i kosztów</b> → <b>TA SAMA SAS wraca w PRAWO do LAS</b>. Równowaga wraca do <b>E₁</b> — rzuty <b>P₁/Y₁</b> pokazują powrót cen i produkcji do poziomu wyjściowego. Cały czas jedna krzywa (SAS): najpierw w lewo, potem z powrotem.'
+})+`
+<div class="eli5"><b>Po ludzku:</b>
+<span class="step"><span class="step-lbl">Krok 1.</span>Nagle drożeją surowce (np. energia, paliwa). Automatycznie rosną <b>koszty produkcji</b> we wszystkich firmach jednocześnie.</span>
+<span class="step"><span class="step-lbl">Krok 2.</span>Przy dotychczasowych cenach sprzedaży firmom mniej opłaca się produkować, więc ograniczają produkcję. To właśnie oznacza przesunięcie <b>krzywej krótkookresowej podaży (SAS) w lewo</b>.</span>
+<span class="step"><span class="step-lbl">Krok 3.</span>Efekt jest paskudny, bo dzieją się dwie zwykle wykluczające się rzeczy naraz: w sklepach jest drożej (inflacja ↑), a jednocześnie produkcja spada i rośnie bezrobocie (stagnacja). To zjawisko nazywa się <b>stagflacją</b> — nazwa łączy słowa „stagnacja" i „inflacja".</span>
+<span class="step"><span class="step-lbl">Co dalej.</span>Gospodarka z czasem sama się z tego wygrzebie. Wysokie bezrobocie wywiera presję na spadek płac (bezrobotni godzą się na niższe stawki, żeby dostać pracę). Niższe płace to niższe koszty firm, dzięki czemu SAS wraca na miejsce. Ale ten proces trwa długo.</span></div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>Krótki okres (SAS w lewo):</b> poziom cen <b>rośnie</b>, produkcja <b>spada</b>, bezrobocie <b>rośnie</b> → stagflacja.</div>
+<div class="answer"><b>Długi okres (samoregulacja):</b> wysokie bezrobocie → presja na <b>spadek płac i kosztów</b> → SAS wraca w prawo do LAS. Produkcja wraca do potencjalnej, bezrobocie do naturalnego, a poziom cen w okolice wyjściowego.</div>
+<p class="muted">Wykres: AD bez zmian; SAS najpierw w lewo (drożej + mniej), potem z powrotem w prawo do przecięcia z LAS.</p>
+</div>
+`},
+{badge:"EGZAMIN", num:"25", sq:true, title:"Polityka fiskalna — luka inflacyjna (Finstan)", html:`
+<div class="given"><b>Sytuacja:</b> równowaga długookresowa. Mocno rosną ceny akcji (główny majątek gospodarstw) → wzrost popytu konsumpcyjnego. Skutki dla cen, produkcji, bezrobocia? Jaka luka? Jaką politykę fiskalną zastosować, żeby ją zamknąć? (wykres AD–SAS–LAS)</div>
+`+adasFig({
+ mover:'ad', dir:'right', e2:[208,105],
+ shock:[158,166,212,166], shockLab:'① szok', fix:[212,182,158,182], fixLab:'② polityka',
+ shockName:'Szok', fixName:'Polityka',
+ capInit:'<b>Etap 0 — stan początkowy:</b> równowaga długookresowa w <b>E₁</b> — <b>AD</b> przecina <b>SAS</b> dokładnie na <b>LAS</b>, produkcja równa potencjałowi. Kliknij <b>Dalej ›</b>.',
+ capShock:'<b>Etap 1 — szok:</b> rosną ceny akcji → efekt majątkowy → konsumpcja ↑ → <b>jedna krzywa AD przesuwa się w PRAWO</b> (SAS i LAS stoją w miejscu). Powstaje <b>luka inflacyjna</b> — <b>E₂</b> zmienia OBIE współrzędne: rzuty pokazują <b>P₂ (ceny ↑)</b> na osi P oraz <b>Y₂ (produkcja ↑ powyżej potencjału)</b> na osi Y; <b>bezrobocie ↓</b>.',
+ capFix:'<b>Etap 2 — polityka:</b> skuteczna <b>restrykcyjna polityka fiskalna</b> (↓zakupy rządowe G, ↓transfery, ↑podatki) → <b>TA SAMA AD wraca w LEWO do LAS</b>. Powrót do <b>E₁</b> — rzuty <b>P₁/Y₁</b> pokazują ceny i produkcję z powrotem na poziomie wyjściowym. Wciąż jedna krzywa (AD): szok w prawo, polityka z powrotem w lewo.'
+})+`
+<div class="eli5"><b>Po ludzku:</b>
+<span class="step"><span class="step-lbl">Krok 1.</span>Mocno rosną ceny akcji, a że akcje to spora część majątku gospodarstw domowych, ich posiadacze czują, że są bogatsi. To zjawisko nazywa się <b>efektem majątkowym</b> — samo poczucie zamożności skłania ludzi do większych wydatków, nawet jeśli realny dochód się nie zmienił.</span>
+<span class="step"><span class="step-lbl">Krok 2.</span>Zwiększona konsumpcja podnosi <b>zagregowany popyt (AD)</b> i przesuwa jego krzywą w prawo. Gospodarka zaczyna produkować powyżej swojego potencjału — powstaje <b>luka inflacyjna</b>.</span>
+<span class="step"><span class="step-lbl">Krok 3.</span>Fabryki pracują na maksa, bezrobocie spada poniżej naturalnego poziomu (bezrobocie ↓), ale za to mocno rosną ceny (inflacja ↑).</span>
+<span class="step"><span class="step-lbl">Co robi rząd.</span>Żeby ostudzić przegrzaną gospodarkę, sięga po <b>restrykcyjną politykę fiskalną</b>: obniża własne wydatki, tnie transfery i podnosi podatki. Cel jest prosty — zabrać z obiegu część popytu, żeby produkcja wróciła do poziomu potencjalnego, a inflacja przestała się rozkręcać.</span></div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>Skutki (AD w prawo):</b> poziom cen <b>rośnie</b>, produkcja <b>rośnie</b> powyżej potencjału, bezrobocie <b>spada</b> poniżej naturalnego.</div>
+<div class="answer"><b>Luka:</b> inflacyjna (produkcja powyżej potencjału).</div>
+<div class="answer"><b>Polityka:</b> <b>restrykcyjna (zacieśniająca) fiskalna</b> — zmniejszyć zakupy rządowe G, obniżyć transfery, podnieść podatki. To przesuwa AD <b>w lewo</b>, z powrotem do produkcji potencjalnej (LAS).</div>
+<p class="muted">Wykres: AD najpierw w prawo (luka inflacyjna powyżej LAS), po skutecznej polityce AD wraca w lewo do LAS.</p>
+</div>
+`},
+{badge:"EGZAMIN", num:"26", sq:true, title:"Polityka pieniężna — luka recesyjna (Albernia)", html:`
+<div class="given"><b>Sytuacja:</b> równowaga długookresowa. Spadają wydatki konsumpcyjne (pesymizm konsumentów). Skutki dla cen, produkcji, bezrobocia? Jaka luka? Jaką politykę pieniężną zastosować, żeby ją zamknąć? (wykres AD–SAS–LAS)</div>
+`+adasFig({
+ mover:'ad', dir:'left', e2:[162,135],
+ shock:[212,166,158,166], shockLab:'① szok', fix:[158,182,212,182], fixLab:'② polityka',
+ shockName:'Szok', fixName:'Polityka',
+ capInit:'<b>Etap 0 — stan początkowy:</b> równowaga długookresowa w <b>E₁</b> — produkcja równa potencjałowi (LAS), bezrobocie naturalne. Kliknij <b>Dalej ›</b>.',
+ capShock:'<b>Etap 1 — szok:</b> pesymizm konsumentów → wydatki ↓ → <b>jedna krzywa AD przesuwa się w LEWO</b> (SAS i LAS stoją w miejscu). Powstaje <b>luka recesyjna</b> — <b>E₂</b> zmienia OBIE współrzędne: rzuty pokazują <b>P₂ (ceny ↓)</b> na osi P oraz <b>Y₂ (produkcja ↓ poniżej potencjału)</b> na osi Y; <b>bezrobocie ↑</b>.',
+ capFix:'<b>Etap 2 — polityka:</b> skuteczna <b>ekspansywna polityka pieniężna</b> (↓stóp procentowych, skup obligacji, ↓stopy rezerw) → tańszy kredyt → <b>TA SAMA AD wraca w PRAWO do LAS</b>. Powrót do <b>E₁</b> — rzuty <b>P₁/Y₁</b> pokazują ceny i produkcję z powrotem na poziomie wyjściowym. Wciąż jedna krzywa (AD): szok w lewo, polityka z powrotem w prawo.'
+})+`
+<div class="eli5"><b>Po ludzku:</b>
+<span class="step"><span class="step-lbl">Krok 1.</span>W gospodarce narasta pesymizm — ludzie boją się o pracę, martwią się o przyszłość i wstrzymują większe zakupy. Spada konsumpcja gospodarstw domowych.</span>
+<span class="step"><span class="step-lbl">Krok 2.</span>Mniejsze wydatki oznaczają spadek <b>zagregowanego popytu (AD)</b> i przesunięcie jego krzywej w lewo. Powstaje <b>luka recesyjna</b> — gospodarka produkuje poniżej swojego potencjału.</span>
+<span class="step"><span class="step-lbl">Krok 3.</span>Firmy widzą, że towar się nie sprzedaje, więc ograniczają produkcję, zwalniają pracowników i wstrzymują inwestycje. Bezrobocie rośnie powyżej naturalnego poziomu (bezrobocie ↑).</span>
+<span class="step"><span class="step-lbl">Co robi bank centralny.</span>Uruchamia <b>ekspansywną (luźną) politykę pieniężną</b>: obniża stopy procentowe, skupuje obligacje na rynku (operacje otwartego rynku) oraz obniża stopę rezerw obowiązkowych. Efektem jest tańszy kredyt, który zachęca ludzi i firmy do większych wydatków i inwestycji — AD stopniowo wraca w prawo, a gospodarka do produkcji potencjalnej.</span></div>
+<button class="reveal-btn" onclick="revealSol(this)">Pokaż rozwiązanie ▾</button>
+<div class="sol">
+<div class="answer"><b>Skutki (AD w lewo):</b> poziom cen <b>spada</b>, produkcja <b>spada</b> poniżej potencjału, bezrobocie <b>rośnie</b>.</div>
+<div class="answer"><b>Luka:</b> recesyjna (produkcja poniżej potencjału).</div>
+<div class="answer"><b>Polityka:</b> <b>ekspansywna (luźna) pieniężna</b> — bank centralny <b>obniża stopy procentowe</b>, <b>skupuje obligacje</b> (operacje otwartego rynku), obniża stopę rezerw. Tańszy kredyt → więcej inwestycji i konsumpcji → AD <b>w prawo</b>, z powrotem do LAS.</div>
+<p class="muted">Wykres: AD najpierw w lewo (luka recesyjna poniżej LAS), po skutecznej polityce pieniężnej AD wraca w prawo do LAS.</p>
+</div>
+`}
+
+];
+
+/* =================== DANE: ŚCIANA =================== */
+WALL = [
+{ico:"🧮", title:"Wzory, które musisz znać", items:[
+ "<b>Mnożnik wydatków</b> <code>k = 1/(1−MPC)</code>",
+ "<b>MPC + MPS = 1</b>",
+ "<b>Równowaga dochodu</b> <code>Y = AE</code>, czyli <code>Y = C₀+I+G + MPC·Y</code>",
+ "<b>Deflator PKB</b> <code>= PKB nom./PKB realny ×100</code>",
+ "<b>Stopa inflacji</b> <code>= (CPI₂−CPI₁)/CPI₁ ×100%</code>",
+ "<b>Stopa bezrobocia</b> <code>= bezrobotni/siła robocza ×100%</code>",
+ "<b>Reguła 70</b> <code>czas podwojenia ≈ 70/tempo wzrostu</code>",
+ "<b>Ilościowa teoria</b> <code>M·V = P·Y</code>",
+ "<b>Mnożnik pieniężny</b> <code>= 1/stopa rezerw</code>",
+ "<b>Efekt Fishera</b> <code>i ≈ r + oczekiwana inflacja</code>"]},
+
+{ico:"⚖️", title:"Równowaga dochodu (krzyż keynesowski)", items:[
+ "<b>AE</b> = konsumpcja + inwestycje + zakupy rządowe + eksport netto.",
+ "Konsumpcja: <code>C = C₀ + MPC·Yd</code> (część stała + część zależna od dochodu).",
+ "Równowaga = punkt, gdzie krzywa AE przecina linię <b>45°</b> (Y = AE).",
+ "<b>Produkcja &lt; wydatki</b> → zapasy <b>spadają</b> → firmy zwiększają produkcję.",
+ "<b>Produkcja &gt; wydatki</b> → zapasy <b>rosną</b> → firmy ograniczają produkcję.",
+ "Z podatkiem: konsumujemy z dochodu po opodatkowaniu <code>(Y−T)</code>."]},
+
+{ico:"📊", title:"PKB i dochód narodowy", items:[
+ "<b>PKB</b> = wartość rynkowa dóbr i usług <b>finalnych</b> wytworzonych w kraju w roku.",
+ "Liczymy tylko dobra finalne (inaczej podwójne liczenie) lub sumę <b>wartości dodanej</b>.",
+ "<b>PKB nominalny</b> — w cenach bieżących; <b>realny</b> — w cenach roku bazowego.",
+ "Realny PKB służy do mierzenia <b>wzrostu</b> (oczyszczony z inflacji).",
+ "<b>PKB per capita</b> = PKB / liczba ludności."]},
+
+{ico:"📉", title:"Bezrobocie", items:[
+ "<b>Siła robocza</b> = pracujący + bezrobotni (bierni się NIE liczą).",
+ "<b>Frykcyjne</b> — czas szukania pracy; <b>strukturalne</b> — niedopasowanie kwalifikacji.",
+ "<b>Cykliczne</b> — z powodu recesji (odchylenie od stopy naturalnej).",
+ "<b>Naturalna stopa</b> = frykcyjne + strukturalne (cykliczne = 0).",
+ "<b>NAIRU</b> — stopa, przy której inflacja się nie zmienia.",
+ "<b>Prawo Okuna</b> — wyższe bezrobocie ⇒ luka recesyjna w PKB."]},
+
+{ico:"🔥", title:"Inflacja i pieniądz", items:[
+ "<b>Inflacja</b> = wzrost ogólnego poziomu cen; <b>deflacja</b> = spadek; <b>dezinflacja</b> = wolniejszy wzrost.",
+ "<b>Stagflacja</b> = inflacja + spadek produkcji jednocześnie (szok podażowy).",
+ "Mierniki: <b>CPI</b> (koszyk konsumenta), <b>PPI</b> (ceny producentów), <b>deflator PKB</b>.",
+ "Koszty inflacji: „zdarte zelówki”, zmiana cenników, podatek inflacyjny.",
+ "Funkcje pieniądza: środek wymiany, jednostka rozrachunkowa, przechowywanie wartości.",
+ "<b>Neutralność pieniądza</b> — w długim okresie więcej pieniądza = tylko wyższe ceny."]},
+
+{ico:"🏦", title:"Bank centralny i polityka monetarna", items:[
+ "<b>Baza monetarna</b> = gotówka w obiegu + rezerwy banków.",
+ "<b>Podaż pieniądza</b> = baza × mnożnik pieniężny.",
+ "Narzędzia: operacje otwartego rynku, stopa rezerw, stopa dyskontowa.",
+ "<b>Ekspansywna</b> (luźna) → niższe stopy, więcej pieniądza, wyższy popyt.",
+ "<b>Restrykcyjna</b> (ciasna) → wyższe stopy, mniej pieniądza, niższa inflacja.",
+ "<b>Pułapka płynności</b> — stopy przy zerze, polityka pieniężna nie działa."]},
+
+{ico:"🏛️", title:"Polityka fiskalna i budżet", items:[
+ "<b>Polityka fiskalna</b> = zmiany wydatków rządowych (G) i podatków (T).",
+ "<b>Ekspansywna</b>: ↑G lub ↓T → wyższy popyt (walka z recesją).",
+ "<b>Restrykcyjna</b>: ↓G lub ↑T → niższy popyt (hamowanie inflacji).",
+ "<b>Deficyt</b>: G &gt; T; <b>nadwyżka</b>: G &lt; T.",
+ "<b>Automatyczne stabilizatory</b> — zasiłki i podatki działające same.",
+ "<b>Efekt wypychania</b> — deficyt ↑ stopy → mniej inwestycji prywatnych."]},
+
+{ico:"🚀", title:"Wzrost gospodarczy", items:[
+ "Źródła: <b>kapitał fizyczny</b>, <b>kapitał ludzki</b>, <b>postęp technologiczny</b>.",
+ "<b>Wydajność pracy</b> = produkcja na pracownika — klucz do długookresowego wzrostu.",
+ "<b>Malejąca produktywność kapitału</b> — sam kapitał nie wystarczy bez technologii.",
+ "<b>Reguła 70</b> — szybko liczy czas podwojenia dochodu.",
+ "<b>Hipoteza konwergencji</b> — biedniejsze kraje mogą doganiać bogatsze."]},
+
+{ico:"🌍", title:"Handel i kursy walut", items:[
+ "<b>Przewaga komparatywna</b> — produkuj to, co masz najniższym kosztem alternatywnym.",
+ "<b>Eksport netto</b> = eksport − import; dodatni = nadwyżka, ujemny = deficyt.",
+ "<b>Aprecjacja/deprecjacja</b> — wzrost/spadek wartości waluty (kurs płynny).",
+ "<b>Rewaluacja/dewaluacja</b> — to samo, ale przy kursie sztywnym (decyzja rządu).",
+ "Cła i kontyngenty chronią rynek krajowy, ale obniżają całkowitą nadwyżkę."]},
+
+{ico:"📈", title:"AD-AS i cykl koniunkturalny", items:[
+ "<b>AD</b> (popyt) opada — niższe ceny → wyższy popyt (efekt majątkowy i stopy proc.).",
+ "<b>SRAS</b> (krótka podaż) rośnie; <b>LRAS</b> (długa) pionowa na produkcie potencjalnym.",
+ "<b>Szok popytowy</b> przesuwa AD; <b>szok podażowy</b> przesuwa SRAS.",
+ "Cykl: ekspansja → <b>szczyt</b> → recesja → <b>dno</b> → ekspansja.",
+ "<b>Luka recesyjna</b>: PKB &lt; potencjał; <b>luka inflacyjna</b>: PKB &gt; potencjał."]}
+];
+
+/* =================== DANE: QUIZ =================== */
+QUIZ = [
+{cat:"pkb",topic:"PKB",q:"Co dokładnie mierzy PKB?",o:["Wartość wszystkich dóbr finalnych wytworzonych w kraju w danym roku","Liczbę zatrudnionych osób","Sumę oszczędności gospodarstw domowych","Ilość pieniądza w obiegu"],a:0,e:"PKB = wartość rynkowa dóbr i usług finalnych wytworzonych w gospodarce w danym roku."},
+{cat:"pkb",topic:"PKB",q:"Czym różni się PKB realny od nominalnego?",o:["Realny jest liczony w cenach roku bazowego (bez wpływu inflacji)","Realny dotyczy tylko usług","Nominalny pomija eksport","Nie ma różnicy"],a:0,e:"PKB realny liczymy w stałych cenach roku bazowego, dzięki czemu pokazuje zmianę ilości, a nie cen."},
+{cat:"pkb",topic:"PKB",q:"Deflator PKB obliczamy jako:",o:["(PKB nominalny / PKB realny) × 100","(PKB realny / PKB nominalny) × 100","PKB nominalny − PKB realny","PKB realny × stopa inflacji"],a:0,e:"Deflator = PKB nominalny / PKB realny × 100. Pokazuje ogólny wzrost cen względem roku bazowego."},
+{cat:"pkb",topic:"PKB",q:"Aby uniknąć podwójnego liczenia w PKB, sumujemy:",o:["Wartość dodaną na każdym etapie produkcji","Wszystkie transakcje w gospodarce","Tylko produkcję rządu","Dobra pośrednie i finalne razem"],a:0,e:"Liczymy dobra finalne lub równoważnie sumę wartości dodanej — inaczej policzylibyśmy te same składniki wielokrotnie."},
+
+{cat:"adas",topic:"Równowaga",q:"Gospodarka jest w równowadze dochodu, gdy:",o:["Produkcja = planowane wydatki zagregowane","Eksport = import","Inflacja = 0","Budżet jest zrównoważony"],a:0,e:"Równowaga dochodów i wydatków: realny PKB = planowane wydatki zagregowane (Y = AE)."},
+{cat:"adas",topic:"Równowaga",q:"Jeśli planowane wydatki przewyższają produkcję, to zapasy:",o:["Nieplanowo spadają, a firmy zwiększą produkcję","Nieplanowo rosną","Nie zmieniają się","Zamieniają się w oszczędności"],a:0,e:"Popyt > produkcja → towar znika z magazynów (zapasy spadają) → sygnał do zwiększenia produkcji."},
+{cat:"adas",topic:"Mnożnik",q:"Mnożnik wydatków przy MPC = 0,75 wynosi:",o:["4","0,25","1,75","7,5"],a:0,e:"k = 1/(1−MPC) = 1/(1−0,75) = 1/0,25 = 4."},
+{cat:"adas",topic:"Mnożnik",q:"Inwestycje rosną o 100, MPC = 0,8. O ile wzrośnie PKB w równowadze?",o:["500","100","80","400"],a:0,e:"ΔY = 1/(1−0,8) × 100 = 5 × 100 = 500."},
+{cat:"adas",topic:"AD-AS",q:"Stagflacja to:",o:["Jednoczesna inflacja i spadek produkcji","Wysoki wzrost i niska inflacja","Spadek cen i wzrost produkcji","Pełne zatrudnienie"],a:0,e:"Stagflacja = inflacja + spadek produkcji naraz; typowo wywołana negatywnym szokiem podażowym."},
+{cat:"adas",topic:"Cykl",q:"Punkt, w którym gospodarka przechodzi z ekspansji do recesji, to:",o:["Szczyt cyklu koniunkturalnego","Dno cyklu","Luka inflacyjna","Produkt potencjalny"],a:0,e:"Szczyt = przejście z ekspansji do recesji; dno = z recesji do ekspansji."},
+{cat:"adas",topic:"AD-AS",q:"Negatywny szok podażowy przesuwa krzywą:",o:["SRAS w lewo (wyższe ceny, niższa produkcja)","AD w prawo","LRAS w prawo","Popytu na pieniądz w dół"],a:0,e:"Szok podażowy (np. wzrost cen ropy) przesuwa SRAS w lewo → stagflacja."},
+
+{cat:"bezr",topic:"Bezrobocie",q:"Siłę roboczą tworzą:",o:["Pracujący i bezrobotni","Wszyscy dorośli","Tylko zatrudnieni","Pracujący i bierni zawodowo"],a:0,e:"Siła robocza = pracujący + bezrobotni. Bierni zawodowo (studenci, emeryci) się nie liczą."},
+{cat:"bezr",topic:"Bezrobocie",q:"Pracujący = 90, bezrobotni = 10, bierni = 50. Stopa bezrobocia wynosi:",o:["10%","6,7%","20%","11,1%"],a:0,e:"Siła robocza = 90+10 = 100. Stopa = 10/100 = 10%. Bierni nie wchodzą do mianownika."},
+{cat:"bezr",topic:"Bezrobocie",q:"Bezrobocie frykcyjne wynika z:",o:["Czasu poświęcanego na poszukiwanie pracy","Recesji","Automatyzacji likwidującej zawody","Zbyt wysokiej płacy minimalnej"],a:0,e:"Frykcyjne = naturalny czas między pracami (szukanie, zmiana). Występuje nawet w dobrej koniunkturze."},
+{cat:"bezr",topic:"Bezrobocie",q:"Naturalna stopa bezrobocia to suma bezrobocia:",o:["Frykcyjnego i strukturalnego","Cyklicznego i frykcyjnego","Cyklicznego i strukturalnego","Tylko strukturalnego"],a:0,e:"Naturalna stopa = frykcyjne + strukturalne. Bezrobocie cykliczne wtedy wynosi 0."},
+{cat:"bezr",topic:"Bezrobocie",q:"Prawo Okuna opisuje zależność między:",o:["Luką produktową a bezrobociem cyklicznym","Inflacją a stopą procentową","Podażą pieniądza a cenami","Eksportem a kursem walutowym"],a:0,e:"Prawo Okuna: im wyższe bezrobocie ponad naturalne, tym większa luka recesyjna (niższy PKB)."},
+
+{cat:"inf",topic:"Inflacja",q:"Inflacja to:",o:["Wzrost ogólnego poziomu cen","Spadek wartości eksportu","Wzrost bezrobocia","Spadek PKB"],a:0,e:"Inflacja = wzrost ogólnego poziomu cen. Stopa inflacji = procentowa zmiana wskaźnika cen."},
+{cat:"inf",topic:"Inflacja",q:"CPI mierzy:",o:["Koszt koszyka dóbr typowej rodziny","Ceny towarów kupowanych przez producentów","Podaż pieniądza","Eksport netto"],a:0,e:"CPI = wskaźnik cen dóbr i usług konsumpcyjnych typowego gospodarstwa. PPI dotyczy producentów."},
+{cat:"inf",topic:"Pieniądz",q:"Która funkcja pieniądza polega na ustalaniu cen i robieniu obliczeń?",o:["Jednostka rozrachunkowa","Środek wymiany","Przechowywanie wartości","Mnożnik pieniężny"],a:0,e:"Jako jednostka rozrachunkowa pieniądz pozwala wyrażać ceny i porównywać wartości."},
+{cat:"inf",topic:"Pieniądz",q:"Baza monetarna to:",o:["Gotówka w obiegu + rezerwy banków","Wszystkie depozyty","Podaż pieniądza M2","Dług publiczny"],a:0,e:"Baza monetarna (pieniądz wielkiej mocy) = gotówka w obiegu + rezerwy bankowe."},
+{cat:"inf",topic:"Pieniądz",q:"Przy stopie rezerw 20% mnożnik pieniężny wynosi:",o:["5","20","2","0,2"],a:0,e:"Mnożnik pieniężny = 1/stopa rezerw = 1/0,2 = 5."},
+{cat:"inf",topic:"Monetarna",q:"Ekspansywna polityka pieniężna to:",o:["Zwiększanie podaży pieniądza i obniżanie stóp","Podnoszenie podatków","Sprzedaż obligacji przez bank centralny","Zmniejszanie wydatków rządu"],a:0,e:"Ekspansywna (luźna) polityka pieniężna zwiększa podaż pieniądza, obniża stopy i pobudza popyt."},
+{cat:"inf",topic:"Monetarna",q:"Równanie ilościowej teorii pieniądza to:",o:["M · V = P · Y","C + I + G = Y","Y = C₀ + MPC·Y","i = r + π"],a:0,e:"M·V = P·Y: podaż pieniądza × prędkość obiegu = poziom cen × realny PKB."},
+{cat:"inf",topic:"Inflacja",q:"Efekt Fishera mówi, że wzrost oczekiwanej inflacji:",o:["Podnosi nominalną stopę procentową, realna bez zmian","Obniża wszystkie stopy","Nie wpływa na stopy","Zwiększa realny PKB"],a:0,e:"i ≈ r + oczekiwana inflacja. Realna stopa pozostaje stała, rośnie nominalna."},
+
+{cat:"fisk",topic:"Fiskalna",q:"Deficyt budżetowy występuje, gdy:",o:["Wydatki publiczne > wpływy z podatków","Wpływy > wydatki","Eksport > import","Inflacja > 0"],a:0,e:"Deficyt: G > T. Gdy T > G mamy nadwyżkę budżetową."},
+{cat:"fisk",topic:"Fiskalna",q:"Który element jest automatycznym stabilizatorem?",o:["Zasiłki dla bezrobotnych i podatki dochodowe","Stopa rezerw obowiązkowych","Kurs walutowy","Stopa dyskontowa"],a:0,e:"Automatyczne stabilizatory (zasiłki, progresywne podatki) działają same, bez decyzji rządu."},
+{cat:"fisk",topic:"Fiskalna",q:"Efekt wypychania (crowding out) polega na tym, że:",o:["Deficyt podnosi stopy proc. i ogranicza inwestycje prywatne","Import wypiera eksport","Inflacja wypiera oszczędności","Płaca minimalna zwiększa bezrobocie"],a:0,e:"Pożyczki rządu na pokrycie deficytu podnoszą stopy procentowe, zniechęcając firmy do inwestowania."},
+{cat:"fisk",topic:"Fiskalna",q:"Restrykcyjna polityka fiskalna to:",o:["Cięcie wydatków lub podwyżka podatków","Obniżka stóp procentowych","Skup obligacji","Druk pieniądza"],a:0,e:"Restrykcyjna polityka fiskalna (↓G lub ↑T) zmniejsza zagregowany popyt — hamuje inflację."},
+
+{cat:"wzr",topic:"Wzrost",q:"Reguła 70: przy wzroście 5% rocznie PKB podwoi się po około:",o:["14 latach","5 latach","35 latach","70 latach"],a:0,e:"70 / 5 = 14 lat."},
+{cat:"wzr",topic:"Wzrost",q:"Głównym źródłem długookresowego wzrostu wydajności jest:",o:["Postęp technologiczny","Wzrost cen","Większy deficyt budżetowy","Wyższa inflacja"],a:0,e:"Długookresowo to postęp technologiczny (obok kapitału ludzkiego) napędza wydajność pracy."},
+{cat:"wzr",topic:"Wzrost",q:"Malejąca krańcowa produktywność kapitału oznacza, że:",o:["Każda kolejna maszyna daje coraz mniejszy przyrost produkcji","Kapitał nigdy się nie zużywa","Technologia jest bez znaczenia","Produkcja rośnie w nieskończoność"],a:0,e:"Przy stałej technologii i kapitale ludzkim dorzucanie samego kapitału fizycznego daje coraz mniejsze przyrosty."},
+
+{cat:"handel",topic:"Handel",q:"Kraj ma przewagę komparatywną w dobrze, którego:",o:["Koszt alternatywny produkcji jest niższy niż u innych","Cena jest najwyższa","Produkcja jest największa","Eksport jest zakazany"],a:0,e:"Przewaga komparatywna = niższy koszt alternatywny. To ona, nie absolutna, decyduje o opłacalności handlu."},
+{cat:"handel",topic:"Kursy",q:"Aprecjacja waluty to:",o:["Wzrost jej wartości względem innych walut","Spadek jej wartości","Decyzja rządu przy kursie sztywnym","Wzrost inflacji"],a:0,e:"Aprecjacja = wzrost wartości (kurs płynny). Spadek to deprecjacja. Przy kursie sztywnym: rewaluacja/dewaluacja."},
+{cat:"handel",topic:"Handel",q:"Eksport netto to:",o:["Eksport minus import","Import minus eksport","Suma eksportu i importu","Eksport razy kurs"],a:0,e:"Eksport netto = eksport − import. Dodatni = nadwyżka handlowa, ujemny = deficyt."},
+
+{cat:"pkb",topic:"PKB",q:"Które z poniższych NIE jest wliczane do PKB danego roku?",o:["Sprzedaż samochodu używanego","Nowy telefon kupiony przez konsumenta","Usługa fryzjerska","Nowy dom"],a:0,e:"PKB liczy produkcję bieżącego roku. Używany samochód był już policzony, gdy go wyprodukowano — to tylko zmiana właściciela."},
+{cat:"pkb",topic:"PKB",q:"Wartość dodana producenta to:",o:["Wartość sprzedaży minus wartość zakupionych dóbr pośrednich","Cała wartość sprzedaży","Zysk netto po podatkach","Wartość eksportu"],a:0,e:"Wartość dodana = sprzedaż − zakupy dóbr i usług pośrednich. Suma wartości dodanej = PKB."},
+{cat:"pkb",topic:"PKB",q:"PKB per capita to:",o:["PKB podzielony przez liczbę ludności","PKB pomnożony przez inflację","PKB realny minus nominalny","Eksport na mieszkańca"],a:0,e:"PKB per capita = PKB / liczba ludności — przybliża średni dochód na osobę."},
+{cat:"pkb",topic:"PKB",q:"Bilans płatniczy kraju to:",o:["Podsumowanie wszystkich transakcji z zagranicą w danym roku","Tylko eksport towarów","Dług publiczny wobec zagranicy","Saldo budżetu państwa"],a:0,e:"Bilans płatniczy zestawia rachunek obrotów bieżących i finansowych — całość transakcji z zagranicą."},
+{cat:"pkb",topic:"PKB",q:"Dobra finalne to dobra:",o:["Sprzedawane użytkownikowi końcowemu","Kupowane przez firmy jako surowiec","Wyłącznie eksportowane","Tylko usługi rządowe"],a:0,e:"Dobra finalne trafiają do użytkownika końcowego; dobra pośrednie są wkładem do dalszej produkcji."},
+
+{cat:"adas",topic:"Mnożnik",q:"Przy MPC = 0,9 krańcowa skłonność do oszczędzania (MPS) wynosi:",o:["0,1","0,9","1","0,19"],a:0,e:"MPC + MPS = 1, więc MPS = 1 − 0,9 = 0,1."},
+{cat:"adas",topic:"Mnożnik",q:"Mnożnik wydatków przy MPC = 0,6 wynosi:",o:["2,5","6","1,6","0,4"],a:0,e:"k = 1/(1−0,6) = 1/0,4 = 2,5."},
+{cat:"adas",topic:"Cykl",q:"Dno cyklu koniunkturalnego to punkt, w którym gospodarka:",o:["Przechodzi z recesji do ekspansji","Przechodzi z ekspansji do recesji","Osiąga produkt potencjalny","Ma zerową inflację"],a:0,e:"Dno = przejście z recesji do ekspansji. Szczyt = odwrotnie."},
+{cat:"adas",topic:"Równowaga",q:"W krzyżu keynesowskim równowaga to punkt, w którym:",o:["Krzywa planowanych wydatków przecina linię 45°","AD przecina LRAS","Inflacja równa się bezrobociu","Oszczędności są zerowe"],a:0,e:"Linia 45° to miejsca, gdzie Y = AE; jej przecięcie z krzywą wydatków wyznacza równowagę."},
+{cat:"adas",topic:"AD-AS",q:"Luka inflacyjna występuje, gdy:",o:["Produkcja jest wyższa od produktu potencjalnego","Produkcja jest niższa od potencjału","Bezrobocie przekracza naturalne","Budżet ma deficyt"],a:0,e:"Luka inflacyjna: PKB > potencjał (gospodarka „przegrzana”). Luka recesyjna: PKB < potencjał."},
+{cat:"adas",topic:"Mnożnik",q:"Zasada akceleratora mówi, że:",o:["Wyższe tempo wzrostu PKB zwiększa planowane inwestycje","Inwestycje zawsze maleją","Konsumpcja nie zależy od dochodu","Mnożnik jest zawsze równy 1"],a:0,e:"Akcelerator: szybszy wzrost PKB → wyższe planowane wydatki inwestycyjne (i odwrotnie)."},
+{cat:"adas",topic:"AD-AS",q:"Długookresowa krzywa podaży zagregowanej (LRAS) jest:",o:["Pionowa na poziomie produktu potencjalnego","Pozioma","Opadająca","Taka sama jak AD"],a:0,e:"W długim okresie produkcja zależy od zasobów i technologii, nie od cen — stąd pionowa LRAS na potencjale."},
+
+{cat:"bezr",topic:"Bezrobocie",q:"Pracownik zniechęcony jest klasyfikowany jako:",o:["Bierny zawodowo (poza siłą roboczą)","Bezrobotny","Pracujący","Frykcyjnie bezrobotny"],a:0,e:"Zniechęceni przestali szukać pracy, więc wypadają z siły roboczej i nie liczą się do stopy bezrobocia."},
+{cat:"bezr",topic:"Bezrobocie",q:"Bezrobocie strukturalne wynika z:",o:["Niedopasowania kwalifikacji do potrzeb rynku","Recesji","Czasu poświęcanego na zmianę pracy","Sezonowości"],a:0,e:"Strukturalne = trwałe niedopasowanie umiejętności/lokalizacji do dostępnych miejsc pracy."},
+{cat:"bezr",topic:"Bezrobocie",q:"Krótkookresowa krzywa Phillipsa pokazuje:",o:["Odwrotną relację między bezrobociem a inflacją","Dodatnią relację bezrobocia i inflacji","Relację PKB i eksportu","Brak związku zmiennych"],a:0,e:"W krótkim okresie niższe bezrobocie wiąże się z wyższą inflacją (krzywa opadająca)."},
+{cat:"bezr",topic:"Bezrobocie",q:"Długookresowa krzywa Phillipsa jest pionowa, ponieważ:",o:["Oczekiwania inflacyjne się dostosowują, a bezrobocie wraca do naturalnego","Inflacja jest zawsze zerowa","Płace są sztywne na zawsze","Rząd kontroluje ceny"],a:0,e:"Długookresowo bezrobocie wraca do stopy naturalnej niezależnie od inflacji — stąd pionowa krzywa."},
+{cat:"bezr",topic:"Bezrobocie",q:"Bezrobocie cykliczne to:",o:["Odchylenie od stopy naturalnej wskutek wahań koniunktury","Bezrobocie wynikające z pór roku","Stałe niedopasowanie kwalifikacji","Naturalna stopa bezrobocia"],a:0,e:"Cykliczne rośnie w recesji i spada w ekspansji — to różnica między faktyczną a naturalną stopą."},
+
+{cat:"inf",topic:"Inflacja",q:"Dezinflacja oznacza, że:",o:["Ceny nadal rosną, ale wolniej niż wcześniej","Ceny spadają","Inflacja jest ujemna","Pieniądz traci status prawnego środka płatniczego"],a:0,e:"Dezinflacja = spadek stopy inflacji (np. z 8% na 4%). Spadek cen to deflacja."},
+{cat:"inf",topic:"Inflacja",q:"Deflacja to:",o:["Spadek ogólnego poziomu cen","Spowolnienie wzrostu cen","Wzrost podaży pieniądza","Wzrost bezrobocia"],a:0,e:"Deflacja = ujemna inflacja, czyli spadek ogólnego poziomu cen."},
+{cat:"inf",topic:"Pieniądz",q:"Pieniądz fiducjarny to pieniądz, którego wartość:",o:["Wynika z jego oficjalnego statusu, a nie z materiału","Pochodzi z zawartości złota","Jest gwarantowana towarem","Zależy od kursu walut"],a:0,e:"Pieniądz fiducjarny (np. banknot) nie ma wartości wewnętrznej — opiera się na zaufaniu i statusie prawnym."},
+{cat:"inf",topic:"Pieniądz",q:"Przy stopie rezerw 25% mnożnik pieniężny wynosi:",o:["4","25","2,5","0,25"],a:0,e:"Mnożnik pieniężny = 1/0,25 = 4."},
+{cat:"inf",topic:"Monetarna",q:"Restrykcyjna polityka pieniężna polega na:",o:["Podnoszeniu stóp i ograniczaniu podaży pieniądza","Obniżaniu stóp procentowych","Zwiększaniu wydatków rządu","Skupie obligacji"],a:0,e:"Restrykcyjna (ciasna) polityka pieniężna ogranicza podaż pieniądza i podnosi stopy — hamuje inflację."},
+{cat:"inf",topic:"Monetarna",q:"Gdy bank centralny skupuje obligacje na otwartym rynku, to:",o:["Zwiększa podaż pieniądza (działanie ekspansywne)","Zmniejsza podaż pieniądza","Podnosi rezerwę obowiązkową","Zwiększa podatki"],a:0,e:"Skup obligacji wpompowuje pieniądz do gospodarki → podaż pieniądza rośnie, stopy spadają."},
+{cat:"inf",topic:"Pieniądz",q:"Neutralność pieniądza oznacza, że w długim okresie zmiany podaży pieniądza:",o:["Wpływają tylko na ceny, nie na realny PKB","Zwiększają trwale produkcję","Obniżają bezrobocie naturalne","Nie mają wpływu na ceny"],a:0,e:"Długookresowo więcej pieniądza = wyższe ceny; realna produkcja zależy od czynników realnych."},
+{cat:"inf",topic:"Inflacja",q:"Podatek inflacyjny to:",o:["Utrata siły nabywczej pieniądza trzymanego przez społeczeństwo","Podatek od zysków kapitałowych","Cło nakładane na import","Opłata bankowa"],a:0,e:"Inflacja „opodatkowuje” gotówkę — jej realna wartość maleje, co przynosi korzyść emitentowi pieniądza."},
+{cat:"inf",topic:"Pieniądz",q:"Pułapka płynności to sytuacja, gdy:",o:["Stopy są przy zerze i polityka pieniężna przestaje działać","Banki nie mają rezerw","Inflacja jest bardzo wysoka","Kurs walutowy jest sztywny"],a:0,e:"Przy zerowej dolnej granicy stóp obniżki już nie pobudzają popytu — konwencjonalna polityka pieniężna jest nieskuteczna."},
+
+{cat:"fisk",topic:"Fiskalna",q:"Nadwyżka budżetowa występuje, gdy:",o:["Wpływy z podatków > wydatki publiczne","Wydatki > wpływy","Eksport > import","Dług = 0"],a:0,e:"Nadwyżka: T > G. Deficyt: G > T."},
+{cat:"fisk",topic:"Fiskalna",q:"Czym różni się dług publiczny od deficytu?",o:["Dług to skumulowany zasób, deficyt to roczny strumień","To synonimy","Dług dotyczy tylko zagranicy","Deficyt jest zawsze większy od długu"],a:0,e:"Deficyt to różnica wydatki−wpływy w danym roku; dług publiczny to suma narosłych deficytów z lat."},
+{cat:"fisk",topic:"Fiskalna",q:"Ekspansywna polityka fiskalna to:",o:["Wzrost wydatków rządowych lub obniżka podatków","Podwyżka podatków","Cięcie wydatków","Podniesienie stóp procentowych"],a:0,e:"Ekspansywna fiskalna (↑G lub ↓T) zwiększa zagregowany popyt — stosowana w walce z recesją."},
+{cat:"fisk",topic:"Fiskalna",q:"Saldo strukturalne budżetu to:",o:["Saldo, jakie byłoby przy PKB równym potencjałowi","Saldo w bieżącym roku","Dług publiczny do PKB","Saldo handlu zagranicznego"],a:0,e:"Saldo strukturalne oczyszcza budżet z wpływu cyklu — pokazuje sytuację przy pełnym wykorzystaniu zasobów."},
+
+{cat:"wzr",topic:"Wzrost",q:"Kapitał ludzki to:",o:["Wiedza i umiejętności pracowników (efekt edukacji)","Maszyny i budynki","Zasoby naturalne","Pieniądze w banku"],a:0,e:"Kapitał ludzki = jakość pracy wynikająca z edukacji, doświadczenia i zdrowia."},
+{cat:"wzr",topic:"Wzrost",q:"Reguła 70: przy wzroście 2% rocznie dochód podwoi się po około:",o:["35 latach","14 latach","20 latach","70 latach"],a:0,e:"70 / 2 = 35 lat."},
+{cat:"wzr",topic:"Wzrost",q:"Hipoteza konwergencji głosi, że:",o:["Biedniejsze kraje mają tendencję do doganiania bogatszych","Wszystkie kraje rosną tak samo szybko","Różnice w PKB rosną w czasie","Wzrost jest niemożliwy"],a:0,e:"Konwergencja: różnice w PKB per capita między krajami mają tendencję do zmniejszania się w czasie."},
+{cat:"wzr",topic:"Wzrost",q:"Całkowita produktywność czynników (TFP) rośnie głównie dzięki:",o:["Postępowi technologicznemu","Wzrostowi cen","Większemu zadłużeniu","Wyższym podatkom"],a:0,e:"TFP odzwierciedla efektywność wykorzystania czynników — napędza ją głównie technologia."},
+{cat:"handel",topic:"Handel",q:"Przewaga komparatywna różni się od absolutnej tym, że dotyczy:",o:["Niższego kosztu alternatywnego, a nie większej wydajności","Wyłącznie eksportu","Liczby ludności","Wielkości PKB"],a:0,e:"Absolutna = produkuję więcej; komparatywna = produkuję taniej (niższy koszt alternatywny) — to ona decyduje o handlu."},
+{cat:"handel",topic:"Kursy",q:"Deprecjacja waluty to:",o:["Spadek jej wartości względem innych walut (kurs płynny)","Wzrost wartości waluty","Decyzja banku przy kursie sztywnym","Wzrost rezerw walutowych"],a:0,e:"Deprecjacja = rynkowy spadek wartości waluty. Odpowiednikiem przy kursie sztywnym jest dewaluacja."},
+{cat:"handel",topic:"Handel",q:"Cło to:",o:["Podatek nakładany na import","Dotacja do eksportu","Limit ilościowy importu","Kurs walutowy"],a:0,e:"Cło = podatek od towarów importowanych. Ilościowe ograniczenie to kontyngent."},
+{cat:"handel",topic:"Handel",q:"Deficyt handlowy występuje, gdy:",o:["Import jest większy od eksportu","Eksport jest większy od importu","Budżet ma deficyt","Waluta się umacnia"],a:0,e:"Deficyt handlowy: wartość importu > wartość eksportu (eksport netto ujemny)."},
+{cat:"met",topic:"Podstawy",q:"Koszt alternatywny danej decyzji to:",o:["Wartość najlepszej rzeczy, z której rezygnujemy","Cena rynkowa dobra","Koszt księgowy","Podatek od transakcji"],a:0,e:"Koszt alternatywny = to, z czego rezygnujesz, wybierając daną opcję."},
+{cat:"met",topic:"Podstawy",q:"Ekonomia normatywna zajmuje się tym:",o:["Jak gospodarka POWINNA działać (oceny wartościujące)","Jak gospodarka faktycznie działa","Wyłącznie statystyką","Tylko handlem zagranicznym"],a:0,e:"Normatywna = sądy wartościujące (jak powinno być). Pozytywna = opis faktów (jak jest)."},
+{cat:"met",topic:"Podstawy",q:"Makroekonomia (w przeciwieństwie do mikroekonomii) bada:",o:["Gospodarkę jako całość (PKB, inflacja, bezrobocie)","Decyzje pojedynczego konsumenta","Cenę jednego dobra","Zysk pojedynczej firmy"],a:0,e:"Makro patrzy na agregaty całej gospodarki; mikro — na pojedyncze podmioty i rynki."}
+];

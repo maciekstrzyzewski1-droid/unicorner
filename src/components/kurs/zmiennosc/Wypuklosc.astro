@@ -1,0 +1,152 @@
+---
+// Wypukłość i wklęsłość na suwaku: f(x) = x³ − 3x − 2 (ta sama funkcja co Zad. 1 h i Zad. 2 b), f'(x) = 3x² − 3, f''(x) = 6x.
+// Suwak przesuwa punkt styczności x₀. Widać odcinek stycznej i pole między wykresem a styczną:
+// turkusowe, gdy wykres leży nad styczną (wypukły ∪), złote, gdy pod nią (wklęsły ∩). Tabela obok: nachylenie stycznej
+// f'(x₀) i druga pochodna f''(x₀). Każdy stan rysunku jest gotowy z buildu — skrypt tylko przełącza widoczny (bez JS: x₀ = 1).
+import { skala, sciezka, osie } from '../../../lib/wykres.js';
+import { fmt, par } from '../../../lib/zmiennosc.js';
+import { tex, texInline } from '../../../lib/tex.js';
+import Legenda from '../Legenda.astro';
+const f = (x: number) => x ** 3 - 3 * x - 2;
+const d1 = (x: number) => 3 * x * x - 3;
+const d2 = (x: number) => 6 * x;
+const W = 420, H = 400;
+const S = skala({ x0: -2.3, x1: 2.3, y0: -6.4, y1: 2.6, w: W, h: H, pad: 24 });
+const r1 = (v: number) => Math.round(v * 10) / 10;
+const XS = [-2, -1.5, -1, -0.5, 0, 0.5, 1, 1.5, 2];
+const START = XS.indexOf(1);
+const DL = 0.8;
+// pole między wykresem a styczną na [a, b]: najpierw po krzywej, potem wzdłuż stycznej z powrotem
+const pole = (x0: number, a: number, b: number) => {
+  const t = (x: number) => f(x0) + d1(x0) * (x - x0);
+  const pts: string[] = [];
+  for (let i = 0; i <= 40; i++) { const x = a + ((b - a) * i) / 40; pts.push(`${r1(S.X(x))},${r1(S.Y(f(x)))}`); }
+  for (let i = 40; i >= 0; i--) { const x = a + ((b - a) * i) / 40; pts.push(`${r1(S.X(x))},${r1(S.Y(t(x)))}`); }
+  const m = a + (b - a) * 0.25;  // nie środek: przy pełnym polu środkiem jest x₀, gdzie różnica wynosi 0
+  return { d: pts.join(' '), kl: f(m) - t(m) > 0 ? 'is-nad' : 'is-pod' };
+};
+const stany = XS.map((x0) => {
+  const y0 = f(x0), k = d1(x0), k2 = d2(x0);
+  const t = fmt(x0);
+  const pola = x0 === 0 ? [pole(x0, -DL, 0), pole(x0, 0, DL)] : [pole(x0, x0 - DL, x0 + DL)];
+  const st = { x1: r1(S.X(x0 - DL)), y1: r1(S.Y(y0 - k * DL)), x2: r1(S.X(x0 + DL)), y2: r1(S.Y(y0 + k * DL)) };
+  const rach2 = `f''(${t}) = 6 \\cdot ${par(t)} = ${fmt(k2)}`;
+  const opis = x0 === 0
+    ? `$x_0 = 0$. Druga pochodna: $${rach2}$. Styczna <b>przecina</b> wykres: z lewej wykres jest pod nią, z prawej — nad nią. Kształt zmienia się z ∩ na ∪: to <b>punkt przegięcia</b> $P = (0, -2)$.`
+    : `$x_0 = ${t}$. Druga pochodna: $${rach2} ${k2 > 0 ? '> 0' : '< 0'}$. Wykres leży <b>${k2 > 0 ? 'nad' : 'pod'}</b> styczną (${k2 > 0 ? 'turkusowe' : 'złote'} pole) — w tym miejscu jest <b>${k2 > 0 ? 'wypukły (∪)' : 'wklęsły (∩)'}</b>.`;
+  return { x0, y0, t, k, k2, pola, st, opis, p: { x: r1(S.X(x0)), y: r1(S.Y(y0)) } };
+});
+const leg: [string, string][] = [
+  ['cyan', "wypukły (∪): wykres nad styczną, $f''(x) > 0$"],
+  ['zloto', "wklęsły (∩): wykres pod styczną, $f''(x) < 0$"],
+  ['fiolet', 'punkt przegięcia'],
+  ['bialy', 'styczna w punkcie $x_0$'],
+];
+---
+<figure class="k-fig k-wyp" data-wyp>
+  <div class="k-wyp-uk">
+    <div class="k-wyp-rys">
+      <svg viewBox={`0 0 ${W} ${H}`} class="k-w" role="img" aria-label="Wykres f(x) = x³ − 3x − 2 ze styczną w wybranym punkcie i polem między wykresem a styczną">
+        <defs><clipPath id="k-wyp-clip"><rect x={S.X(-2.3)} y={S.Y(2.6)} width={S.X(2.3) - S.X(-2.3)} height={S.Y(-6.4) - S.Y(2.6)} /></clipPath></defs>
+        <Fragment set:html={osie(S, { kx: 1, ky: 2, siatka: true })} />
+        <g clip-path="url(#k-wyp-clip)">
+          {stany.map((s, i) => (
+            <g class="k-wyp-s" data-i={i} data-stat={i === START ? '' : undefined}>
+              {s.pola.map((p) => <polygon class:list={['k-wyp-pole', p.kl]} points={p.d} />)}
+            </g>
+          ))}
+          <path class="k-w-krzywa k-w-z" d={sciezka(f, -2.3, 0, S)} />
+          <path class="k-w-krzywa k-w-a" d={sciezka(f, 0, 2.3, S)} />
+          {stany.map((s, i) => (
+            <g class="k-wyp-s" data-i={i} data-stat={i === START ? '' : undefined}>
+              <line class="k-w-styczna" x1={s.st.x1} y1={s.st.y1} x2={s.st.x2} y2={s.st.y2} />
+              <circle class="k-w-pkt" cx={s.p.x} cy={s.p.y} r="5.5" />
+            </g>
+          ))}
+          <circle class="k-w-pkt is-p" cx={r1(S.X(0))} cy={r1(S.Y(-2))} r="4.5" />
+        </g>
+        <text class="k-w-tbig k-w-etp is-p" x={S.X(0) + 10} y={S.Y(-2) - 10}>P</text>
+      </svg>
+      <Legenda items={leg} />
+    </div>
+    <div class="k-wyp-bok">
+      <div class="k-wyp-ctl" data-js-only hidden>
+        <button type="button" class="k-btn k-btn-ghost" data-wyp-prev aria-label="punkt w lewo">‹</button>
+        <input type="range" min="0" max={stany.length - 1} step="1" value={START} data-wyp-r aria-label="położenie punktu styczności x₀" />
+        <button type="button" class="k-btn k-btn-ghost" data-wyp-next aria-label="punkt w prawo">›</button>
+      </div>
+      <p class="k-wyp-opis k-live" aria-live="polite" data-wyp-opis set:html={texInline(stany[START].opis)} />
+      <ol hidden data-wyp-opisy>{stany.map((s) => <li set:html={texInline(s.opis)} />)}</ol>
+      <table class="k-wyp-tab">
+        <thead><tr><th set:html={tex('x_0')} /><th>nachylenie stycznej <span set:html={tex("f'(x_0)")} /></th><th set:html={tex("f''(x_0)")} /><th>kształt</th></tr></thead>
+        <tbody>
+          {stany.map((s, i) => (
+            <tr data-w={i} class:list={[{ 'is-on': i === START }]}>
+              <td set:html={tex(s.t)} />
+              <td set:html={tex(fmt(s.k))} />
+              <td class:list={[s.k2 > 0 ? 'is-plus' : s.k2 < 0 ? 'is-minus' : 'is-zero']} set:html={tex(fmt(s.k2))} />
+              <td class:list={[s.k2 > 0 ? 'is-plus' : s.k2 < 0 ? 'is-minus' : 'is-zero']}>{s.k2 > 0 ? 'wypukły ∪' : s.k2 < 0 ? 'wklęsły ∩' : 'przegięcie'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-wyp]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((e) => (e.hidden = false));
+    const grupy = Array.from(box.querySelectorAll<SVGGElement>('g[data-i]'));
+    const wiersze = Array.from(box.querySelectorAll<HTMLElement>('tr[data-w]'));
+    const opisy = Array.from(box.querySelectorAll<HTMLElement>('[data-wyp-opisy] > li'));
+    const opis = box.querySelector<HTMLElement>('[data-wyp-opis]')!;
+    const r = box.querySelector<HTMLInputElement>('[data-wyp-r]')!;
+    const ustaw = (i: number) => {
+      i = Math.max(0, Math.min(wiersze.length - 1, i));
+      r.value = String(i);
+      box.classList.add('is-js');
+      grupy.forEach((g) => g.classList.toggle('is-on', Number(g.dataset.i) === i));
+      wiersze.forEach((w, j) => w.classList.toggle('is-on', j === i));
+      opis.innerHTML = opisy[i].innerHTML;
+    };
+    r.addEventListener('input', () => ustaw(Number(r.value)));
+    box.querySelector('[data-wyp-prev]')!.addEventListener('click', () => ustaw(Number(r.value) - 1));
+    box.querySelector('[data-wyp-next]')!.addEventListener('click', () => ustaw(Number(r.value) + 1));
+    wiersze.forEach((w, j) => w.addEventListener('click', () => ustaw(j)));
+  });
+</script>
+
+<style>
+  .k-wyp{container:wyp / inline-size;}
+  .k-wyp-uk{display:grid;grid-template-columns:minmax(0,1fr);gap:12px 32px;align-items:start;}
+  @container wyp (min-width: 820px){ .k-wyp-uk{grid-template-columns:minmax(0,420px) minmax(0,1fr);} }
+  .k-wyp svg{display:block;width:100%;height:auto;max-width:420px;}
+  .k-wyp-pole{stroke:none;}
+  .k-wyp-pole.is-nad{fill:rgba(39,232,255,.22);}
+  .k-wyp-pole.is-pod{fill:rgba(255,216,74,.24);}
+  .k-wyp-s{display:none;}
+  .k-wyp-s[data-stat]{display:inline;}
+  :global(.k-wyp.is-js) .k-wyp-s{display:none;}
+  :global(.k-wyp.is-js) .k-wyp-s.is-on{display:inline;}
+  .k-wyp-ctl{display:flex;align-items:center;gap:10px;margin:0 0 10px;}
+  .k-wyp-ctl[hidden]{display:none;}
+  .k-wyp-ctl input{flex:1;accent-color:#a78bfa;min-width:0;height:32px;}
+  .k-wyp-ctl .k-btn{padding:6px 14px;font-size:1rem;}
+  .k-wyp-opis{margin:0 0 12px!important;padding:12px 14px;border-left:2px solid rgba(39,232,255,.6);background:rgba(255,255,255,.03);font-size:.95rem;line-height:1.7;min-height:5.2em;}
+  .k-wyp-tab{border-collapse:collapse;width:100%;font-size:.9rem;}
+  .k-wyp-tab th,.k-wyp-tab td{border-bottom:1px solid var(--line2);padding:5px 10px;text-align:left;white-space:nowrap;}
+  .k-wyp-tab th{font-weight:500;color:var(--text);}
+  .k-wyp-tab tr{cursor:pointer;}
+  .k-wyp-tab tr:hover td{background:rgba(255,255,255,.03);}
+  .k-wyp-tab tr.is-on td{background:rgba(39,232,255,.1);}
+  .k-wyp-tab td.is-plus{color:#27e8ff;}
+  .k-wyp-tab td.is-minus{color:#ffd84a;}
+  .k-wyp-tab td.is-zero{color:#c3b1ff;font-weight:600;}
+  .k-wyp-tab :global(.katex){font-size:1em!important;}
+  @media(max-width:560px){
+    .k-wyp-tab{font-size:.78rem;}
+    .k-wyp-tab th,.k-wyp-tab td{padding:4px 4px;white-space:normal;}
+  }
+</style>

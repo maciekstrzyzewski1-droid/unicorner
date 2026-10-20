@@ -1,0 +1,96 @@
+---
+// Wyznacznik 2×2 i reguła Sarrusa (3×3) na przekątnych. Przy 3×3 dopisujemy z prawej dwie pierwsze kolumny (wyblakłe).
+// Każdy składnik to przycisk: podświetla swoje trzy (dwie) liczby — zielone dodajemy, różowe odejmujemy.
+import { tex, texInline } from '../../../lib/tex.js';
+import { przekatne, przekatneSumaTex, mat } from '../../../lib/macierze.js';
+import Mx from './Mx.astro';
+interface Props { A: any[][]; nA?: string }
+const { A, nA = 'A' } = Astro.props;
+const p = przekatne(A);
+const n = p.n;
+const sk = p.skladniki.map((t: any, k: number) => {
+  const rach = t.wart.map((v: any) => v.tex(true)).join(' \\cdot ');
+  const kier = n === 2 ? (t.znak > 0 ? 'główna przekątna (z lewej góry w prawy dół)' : 'druga przekątna (z prawej góry w lewy dół)')
+    : t.znak > 0 ? `przekątna w dół, zaczyna się w kolumnie ${t.kom[0][1] + 1}` : `przekątna w górę, zaczyna się w kolumnie ${t.kom[2][1] + 1} na dole`;
+  return {
+    k, znak: t.znak, cells: t.kom.map(([i, j]: number[]) => `${i}-${j}`).join(','),
+    chip: tex(`${t.znak > 0 ? '+' : '-'}\\ ${rach}`),
+    wart: tex(`= ${t.iloczyn.tex()}`),
+    opis: texInline(`${t.znak > 0 ? '<b>Dodajemy</b>' : '<b>Odejmujemy</b>'} iloczyn liczb z przekątnej (${kier}): $${t.nazwa} = ${rach} = ${t.iloczyn.tex()}$.`),
+  };
+});
+const suma = `\\det(${nA}) = ${przekatneSumaTex(p)} = ${p.wynik.tex()}`;
+---
+<figure class="k-fig k-prz" data-prz>
+  <div class="k-fig-box">
+    <div class="k-prz-row">
+      <div data-mx-wrap><Mx m={p.ext} t={`${nA} =`} wyblakle={n === 3 ? [3, 4] : []} /></div>
+      <ol class="k-prz-lista">
+        {sk.map((s) => (
+          <li><button type="button" class:list={['k-prz-chip', s.znak > 0 ? 'is-p' : 'is-m']} data-cells={s.cells} data-k={s.k}>
+            <span set:html={s.chip} /> <span class="k-prz-w" set:html={s.wart} />
+          </button></li>
+        ))}
+      </ol>
+    </div>
+    {n === 3 && <p class="k-prz-note">Dwie wyblakłe kolumny z prawej to <b>dopisane kolumny 1 i 2</b> — dzięki nim każda przekątna ma trzy liczby.</p>}
+    <div class="k-prz-suma" data-suma set:html={tex(suma)} />
+    <div class="k-prz-ctl" data-js-only hidden>
+      <button type="button" class="k-btn" data-next>Pokaż składnik 1 z {sk.length}</button>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Pokaż wszystkie</button>
+    </div>
+    <ul hidden data-expl>{sk.map((s) => <li set:html={s.opis} />)}</ul>
+  </div>
+  <div class="k-prz-out k-live" aria-live="polite" data-out><span data-js-only hidden>Kliknij składnik albo „Pokaż składnik 1”. Zobaczysz jego przekątną w macierzy.</span></div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-prz]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-prz]') === box) el.hidden = false; });
+    const mx = box.querySelector<HTMLElement>('[data-mx-wrap]')!;
+    const chips = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-prz-chip'));
+    const expl = Array.from(box.querySelectorAll<HTMLElement>('[data-expl] li'));
+    const suma = box.querySelector<HTMLElement>('[data-suma]')!;
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const next = box.querySelector<HTMLButtonElement>('[data-next]')!;
+    chips.forEach((c) => c.classList.add('is-ukryty'));
+    suma.hidden = true;
+    let pos = 0;
+    const done = () => chips.every((c) => !c.classList.contains('is-ukryty'));
+    const pick = (c: HTMLButtonElement) => {
+      mx.querySelectorAll('.k-nm-c').forEach((x) => x.classList.remove('is-plus', 'is-minus'));
+      chips.forEach((x) => x.classList.remove('is-on'));
+      const plus = c.classList.contains('is-p');
+      c.dataset.cells!.split(',').forEach((id) => { const [i, j] = id.split('-'); mx.querySelector(`.k-nm-c[data-i="${i}"][data-j="${j}"]`)?.classList.add(plus ? 'is-plus' : 'is-minus'); });
+      c.classList.remove('is-ukryty'); c.classList.add('is-on');
+      out.innerHTML = expl[Number(c.dataset.k)].innerHTML; out.classList.add('is-live');
+      pos = chips.findIndex((x) => x.classList.contains('is-ukryty'));
+      if (pos < 0) { next.hidden = true; suma.hidden = false; } else next.textContent = `Pokaż składnik ${pos + 1} z ${chips.length}`;
+      if (done()) suma.hidden = false;
+    };
+    chips.forEach((c) => c.addEventListener('click', () => pick(c)));
+    next.addEventListener('click', () => { const c = chips.find((x) => x.classList.contains('is-ukryty')); if (c) pick(c); });
+    box.querySelector('[data-all]')!.addEventListener('click', () => {
+      chips.forEach((c) => c.classList.remove('is-ukryty', 'is-on'));
+      mx.querySelectorAll('.k-nm-c').forEach((x) => x.classList.remove('is-plus', 'is-minus'));
+      suma.hidden = false; next.hidden = true;
+      out.innerHTML = 'Wszystkie składniki odkryte. Kliknij dowolny, żeby zobaczyć jego przekątną.'; out.classList.add('is-live');
+    });
+  });
+</script>
+
+<style>
+  .k-prz-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 28px;}
+  .k-prz-lista{list-style:none!important;margin:0!important;padding:0!important;display:grid;gap:6px;}
+  .k-prz-lista li{margin:0!important;padding:0!important;max-width:none!important;}
+  .k-prz-chip{display:flex;align-items:center;gap:6px;font:inherit;font-size:.95rem;color:var(--text);background:var(--surface);border:1px solid var(--line2);border-left:3px solid var(--ok);padding:4px 10px;cursor:pointer;text-align:left;}
+  .k-prz-chip.is-m{border-left-color:var(--magenta);}
+  .k-prz-chip.is-on{background:var(--surface2);border-color:var(--accent);}
+  .k-prz-chip.is-ukryty .k-prz-w{visibility:hidden;}
+  .k-prz-chip:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-prz-note{font-size:.86rem;color:var(--muted);margin:10px 0 0!important;}
+  .k-prz-suma{margin:12px 0 0;padding:8px 10px;border:1px solid var(--line2);background:rgba(255,255,255,.02);overflow-x:auto;}
+  .k-prz-ctl{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+  .k-prz-out{margin-top:10px;padding:8px 12px;border-left:2px solid var(--ok);background:rgba(90,209,160,.05);font-size:.92rem;line-height:1.65;min-height:1.6em;}
+</style>

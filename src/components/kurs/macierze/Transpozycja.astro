@@ -1,0 +1,78 @@
+---
+// Transpozycja krok po kroku: wiersz 1 macierzy A staje się kolumną 1 macierzy Aᵀ (ten sam kolor), potem wiersz 2…
+// Kliknięcie liczby w A pokazuje, gdzie trafia w Aᵀ (wiersz ↔ kolumna).
+import { texInline } from '../../../lib/tex.js';
+import { T, mat } from '../../../lib/macierze.js';
+import Mx from './Mx.astro';
+interface Props { A: any[][]; nA?: string }
+const { A, nA = 'A' } = Astro.props;
+const M = mat(A), MT = T(A);
+const kolA = M.map((r, i) => r.map(() => i % 5));
+const kolT = MT.map((r) => r.map((_, j) => j % 5));
+const kroki = M.map((r, i) => texInline(`<b>Wiersz ${i + 1}</b> macierzy $${nA}$ to $(${r.map((v) => v.tex()).join(',\\ ')})$. Te same liczby, w tej samej kolejności, wpisujesz w <b>kolumnę ${i + 1}</b> macierzy $${nA}^T$ — z góry na dół.`));
+const pary = M.flatMap((r, i) => r.map((v, j) => ({ id: `${i}-${j}`, h: texInline(`Liczba $${v.tex()}$ stoi w $${nA}$ w wierszu ${i + 1} i kolumnie ${j + 1} (to $a_{${i + 1}${j + 1}}$). W $${nA}^T$ stoi w wierszu ${j + 1} i kolumnie ${i + 1} — numery wiersza i kolumny zamieniają się miejscami.`) })));
+---
+<figure class="k-fig k-tr" data-tr>
+  <div class="k-fig-box">
+    <div class="k-tr-row">
+      <div data-mx-wrap="A"><Mx m={M} t={`${nA} =`} kolory={kolA} wym /></div>
+      <div data-mx-wrap="T"><Mx m={MT} t={`${nA}^T =`} kolory={kolT} wym /></div>
+    </div>
+    <div class="k-tr-ctl" data-js-only hidden>
+      <button type="button" class="k-btn" data-next>Przepisz wiersz 1</button>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Pokaż całą macierz</button>
+    </div>
+    <ul hidden data-kroki>{kroki.map((h) => <li set:html={h} />)}</ul>
+    <ul hidden data-pary>{pary.map((p) => <li data-cell={p.id} set:html={p.h} />)}</ul>
+  </div>
+  <div class="k-tr-out k-live" aria-live="polite" data-out><span data-js-only hidden>Kliknij „Przepisz wiersz 1” albo stuknij dowolną liczbę w lewej macierzy.</span></div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tr]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-tr]') === box) el.hidden = false; });
+    const A = box.querySelector<HTMLElement>('[data-mx-wrap="A"]')!, TT = box.querySelector<HTMLElement>('[data-mx-wrap="T"]')!;
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const next = box.querySelector<HTMLButtonElement>('[data-next]')!;
+    const rows = Array.from(box.querySelectorAll<HTMLElement>('[data-kroki] li'));
+    const tCells = Array.from(TT.querySelectorAll<HTMLElement>('.k-nm-c'));
+    tCells.forEach((c) => c.classList.add('is-ukryta'));
+    let shown = 0;
+    const clear = () => box.querySelectorAll('.k-nm-c.is-kolko').forEach((c) => c.classList.remove('is-kolko'));
+    const reveal = (col: number) => tCells.filter((c) => c.dataset.j === String(col)).forEach((c) => c.classList.remove('is-ukryta'));
+    next.addEventListener('click', () => {
+      if (shown >= rows.length) return;
+      clear(); reveal(shown);
+      A.querySelectorAll(`.k-nm-c[data-i="${shown}"]`).forEach((c) => c.classList.add('is-kolko'));
+      tCells.filter((c) => c.dataset.j === String(shown)).forEach((c) => c.classList.add('is-kolko'));
+      out.innerHTML = rows[shown].innerHTML; out.classList.add('is-live');
+      shown++;
+      if (shown >= rows.length) next.hidden = true; else next.textContent = `Przepisz wiersz ${shown + 1}`;
+    });
+    box.querySelector('[data-all]')!.addEventListener('click', () => {
+      for (let c = 0; c < rows.length; c++) reveal(c);
+      shown = rows.length; next.hidden = true; clear();
+      out.innerHTML = 'Cała macierz przepisana: każdy wiersz lewej macierzy jest teraz kolumną prawej (ten sam kolor). Stuknij liczbę w lewej macierzy, żeby zobaczyć, dokąd trafiła.';
+      out.classList.add('is-live');
+    });
+    A.querySelectorAll<HTMLElement>('.k-nm-c').forEach((c) => {
+      c.classList.add('is-klik'); c.tabIndex = 0; c.setAttribute('role', 'button');
+      const go = () => {
+        const i = c.dataset.i!, j = c.dataset.j!;
+        clear(); c.classList.add('is-kolko');
+        const t = TT.querySelector<HTMLElement>(`.k-nm-c[data-i="${j}"][data-j="${i}"]`)!;
+        t.classList.remove('is-ukryta'); t.classList.add('is-kolko');
+        out.innerHTML = box.querySelector(`[data-pary] [data-cell="${i}-${j}"]`)!.innerHTML; out.classList.add('is-live');
+      };
+      c.addEventListener('click', go);
+      c.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
+    });
+  });
+</script>
+
+<style>
+  .k-tr-row{display:flex;flex-wrap:wrap;align-items:center;gap:14px 30px;}
+  .k-tr-ctl{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+  .k-tr-out{margin-top:10px;padding:8px 12px;border-left:2px solid var(--cyan);background:rgba(39,232,255,.05);font-size:.92rem;line-height:1.65;min-height:1.6em;}
+</style>

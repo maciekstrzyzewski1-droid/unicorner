@@ -1,0 +1,29 @@
+---
+// Wszystkie odpowiedzi z listy (moduł 12) jako kafelki z linkiem do rozwiązania krok po kroku.
+// Wyniki z lib/calki-zadania.js — te same, co w ostatniej linii rachunków. Całka w jednym wierszu, wynik w drugim.
+import { tex } from '../../../lib/tex.js';
+import { lam } from '../../../lib/calki.js';
+interface Props { lista: { id: string; nazwa: string; d: { f: string; wynik: string } }[] }
+const { lista } = Astro.props;
+---
+<ol class="k-odp">
+  {lista.map((z) => (
+    <li class="k-odp-i">
+      <a class="k-odp-n" href={`#zad-${z.id}`}>{z.nazwa} <span>krok po kroku ↑</span></a>
+      <div class="k-odp-f" set:html={tex(lam(z.d.f, 24), true)} />
+      <div class="k-odp-d" set:html={tex(lam(`= ${z.d.wynik}`, 24), true)} />
+    </li>
+  ))}
+</ol>
+
+<style>
+  .k-odp{list-style:none!important;margin:1em 0 1.6em!important;padding:0!important;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;}
+  .k-odp-i{margin:0!important;max-width:none!important;padding:8px 12px 6px;border:1px solid var(--line2);background:var(--ink2);min-width:0;}
+  .k-odp-n{display:flex;justify-content:space-between;align-items:baseline;font-family:var(--mono);font-weight:700;color:var(--cyan);text-decoration:none;font-size:.88rem;}
+  .k-odp-n span{font-weight:400;font-size:.76rem;color:var(--muted);}
+  .k-odp-f,.k-odp-d{overflow-x:auto;overflow-y:hidden;}
+  .k-odp-f :global(.katex-display),.k-odp-d :global(.katex-display){margin:.15em 0!important;padding:2px 0!important;background:none!important;border:0!important;text-align:left;}
+  .k-odp-f :global(.katex-display > .katex),.k-odp-d :global(.katex-display > .katex){text-align:left;font-size:.92em;}
+  .k-odp-f{color:var(--muted);}
+  .k-odp-d{color:#fff;}
+</style>

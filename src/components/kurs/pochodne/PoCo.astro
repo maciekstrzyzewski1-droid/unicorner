@@ -1,0 +1,68 @@
+---
+// „Po co jest pochodna” — dwa rysunki: (1) droga w czasie: stromo = szybko, płasko = stoisz;
+// (2) zysk przy różnej produkcji: na szczycie wykres jest płaski (pochodna 0). Bez liczb do liczenia — tylko obraz.
+import { skala, sciezka, odcinek } from '../../../lib/wykres.js';
+const W = 400, H = 270;
+// 1) droga: 0–0,5 h po 60 km/h, 0,5–1,5 h po 130 km/h, 1,5–2 h korek, 2–3 h po 140 km/h → 300 km w 3 h
+const A = skala({ x0: 0, x1: 3.25, y0: 0, y1: 330, w: W, h: H, pad: 34 });
+const punkty: [number, number][] = [[0, 0], [0.5, 30], [1.5, 160], [2, 160], [3, 300]];
+const droga = punkty.map(([x, y], i) => `${i ? 'L' : 'M'}${A.X(x).toFixed(1)} ${A.Y(y).toFixed(1)}`).join(' ');
+// podpisy odcinków (współrzędne w jednostkach wykresu, dobrane tak, żeby nie wchodziły na linię ani na osie)
+const odc = [
+  { x: 0.06, y: 51, t: '60 km/h', kl: 'k-w-tm' },
+  { x: 1.14, y: 59, t: '130 km/h — stromo', kl: 'k-w-ta' },
+  { x: 1.75, y: 180, t: 'korek — płasko', kl: 'k-w-tw', kotwica: 'middle' },
+  { x: 2.6, y: 190, t: '140 km/h', kl: 'k-w-tm' },
+];
+// 2) zysk: Z(q) = 25 − (q − 5)², szczyt w q = 5
+const B = skala({ x0: 0, x1: 10.4, y0: 0, y1: 30, w: W, h: H, pad: 34 });
+const Z = (q: number) => 25 - (q - 5) ** 2;
+const Zp = (q: number) => -2 * (q - 5);
+const st = [
+  { q: 2, t: 'rośnie', kl: 'k-w-tb', dx: -10, dy: -14, kotwica: 'end' },
+  { q: 5, t: 'szczyt — płasko', kl: 'k-w-tw', dx: 0, dy: -16, kotwica: 'middle' },
+  { q: 8, t: 'maleje', kl: 'k-w-tr', dx: 10, dy: -14, kotwica: 'start' },
+].map((s) => ({ ...s, l: odcinek(s.q, Z(s.q), Zp(s.q), 0.9, B), x: B.X(s.q), y: B.Y(Z(s.q)) }));
+const os = (S: any, nx: string, ny: string, podOsia = false) => `
+  <line class="k-w-os" x1="${S.X(S.x0)}" y1="${S.Y(0)}" x2="${S.X(S.x1)}" y2="${S.Y(0)}"/>
+  <line class="k-w-os" x1="${S.X(0)}" y1="${S.Y(0)}" x2="${S.X(0)}" y2="${S.Y(S.y1)}"/>
+  <text class="k-w-tm k-w-t" x="${S.X(S.x1)}" y="${S.Y(0) + (podOsia ? 20 : -8)}" text-anchor="end">${nx}</text>
+  <text class="k-w-tm k-w-t" x="${S.X(0) + 8}" y="${S.Y(S.y1) + 4}">${ny}</text>`;
+---
+<figure class="k-fig k-poco">
+  <div class="k-poco-g">
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} class="k-w" role="img" aria-label="Wykres drogi w czasie: odcinki strome, gdy jedziesz szybko, i płaski w korku">
+        <Fragment set:html={os(A, 'czas', 'droga')} />
+        {[1, 2, 3].map((t) => <text class="k-w-podz" x={A.X(t)} y={A.Y(0) + 17} text-anchor="middle">{t} h</text>)}
+        {[100, 200, 300].map((d) => <text class="k-w-podz" x={A.X(0) - 6} y={A.Y(d) + 4} text-anchor="end">{d}</text>)}
+        <path d={droga} class="k-w-krzywa" />
+        {odc.map((o) => <text class={`k-w-t ${o.kl}`} x={A.X(o.x)} y={A.Y(o.y)} text-anchor={o.kotwica ?? 'start'}>{o.t}</text>)}
+      </svg>
+      <p class="k-poco-p"><b>Droga w czasie.</b> Tam, gdzie wykres jest stromy, jedziesz szybko. Tam, gdzie jest płaski, stoisz.</p>
+    </div>
+    <div>
+      <svg viewBox={`0 0 ${W} ${H}`} class="k-w" role="img" aria-label="Wykres zysku: rośnie, na szczycie jest płaski, potem maleje">
+        <Fragment set:html={os(B, 'liczba sztuk', 'zysk', true)} />
+        <path d={sciezka(Z, 0, 10, B)} class="k-w-krzywa" />
+        {st.map((s) => (
+          <g>
+            <line class="k-w-styczna" x1={s.l.x1} y1={s.l.y1} x2={s.l.x2} y2={s.l.y2} />
+            <circle class="k-w-pkt" cx={s.x} cy={s.y} r="4.5" />
+            <text class={`k-w-t ${s.kl}`} x={s.x + s.dx} y={s.y + s.dy} text-anchor={s.kotwica}>{s.t}</text>
+          </g>
+        ))}
+      </svg>
+      <p class="k-poco-p"><b>Zysk przy różnej produkcji.</b> Białe kreski pokazują, jak stromo biegnie wykres w danym miejscu. Na szczycie kreska leży płasko.</p>
+    </div>
+  </div>
+</figure>
+
+<style>
+  .k-poco{container:poco / inline-size;}
+  .k-poco-g{display:grid;grid-template-columns:minmax(0,1fr);gap:18px 32px;}
+  @container poco (min-width: 760px){ .k-poco-g{grid-template-columns:minmax(0,1fr) minmax(0,1fr);} }
+  .k-poco svg{max-width:440px;}
+  .k-poco-p{margin:6px 0 0!important;font-size:.9rem;line-height:1.55;color:var(--muted);max-width:440px;}
+  .k-poco-p b{color:var(--text);font-weight:600;}
+</style>

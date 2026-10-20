@@ -1,0 +1,40 @@
+---
+// Górny pasek sekcji Wiedza: logo, okruszki, powrót. Opcjonalny pasek postępu czytania.
+interface Props { crumbs?: { label: string; href?: string }[]; back?: { label: string; href: string }; progress?: boolean }
+const { crumbs = [], back = { label: '← Strona główna', href: '/index.html' }, progress = false } = Astro.props;
+---
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#27e8ff"/><stop offset=".4" stop-color="#a78bfa"/><stop offset=".72" stop-color="#ff2e97"/><stop offset="1" stop-color="#ffd84a"/>
+  </linearGradient>
+</defs></svg>
+<header class="wz-bar">
+  <div class="wz-wrap">
+    <nav class="wz-crumb" aria-label="Ścieżka">
+      <a class="wz-brand" href="/index.html" aria-label="Unicorner — strona główna">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wm">unicorner</span>
+      </a>
+      {crumbs.map((c, i) => (
+        <>
+          <span class={`sep ${i < crumbs.length - 1 ? '' : ''}`}>/</span>
+          {c.href ? <a href={c.href} class={i > 0 && i < crumbs.length - 1 ? 'hide-sm' : ''}>{c.label}</a> : <span class="cur">{c.label}</span>}
+        </>
+      ))}
+    </nav>
+    <a class="wz-back" href={back.href}>{back.label}</a>
+  </div>
+  {progress && <div class="wz-progress" id="wzProgress" aria-hidden="true"></div>}
+</header>
+{progress && (
+  <script is:inline>
+    (function(){
+      var bar=document.getElementById('wzProgress'); var art=document.querySelector('.art'); if(!bar||!art) return;
+      var tick=false;
+      function upd(){ tick=false; var r=art.getBoundingClientRect(); var total=r.height-window.innerHeight;
+        var p= total>0 ? Math.min(1,Math.max(0,-r.top/total)) : 1; bar.style.transform='scaleX('+p+')'; }
+      window.addEventListener('scroll',function(){ if(!tick){tick=true;requestAnimationFrame(upd);} },{passive:true});
+      upd();
+    })();
+  </script>
+)}

@@ -1,0 +1,38 @@
+---
+// Ćwiczenie „przyporządkuj”: każdy element trzeba wrzucić do jednej z kategorii; po kliknięciu widać, czy dobrze i dlaczego.
+import { texInline } from '../../lib/tex.js';
+interface Item { tekst: string; kat: number; dlaczego: string }
+interface Props { pytanie: string; kategorie: string[]; elementy: Item[] }
+const { pytanie, kategorie, elementy } = Astro.props;
+---
+<section class="k-klas" data-klas>
+  <div class="k-pyt-head"><span class="k-pyt-tag">Ćwiczenie</span><h3 class="k-pyt-h">{pytanie}</h3></div>
+  <ul class="k-klas-lista">
+    {elementy.map((e) => (
+      <li class="k-klas-item" data-kat={e.kat}>
+        <p class="k-klas-t" set:html={texInline(e.tekst)} />
+        <div class="k-klas-btns">
+          {kategorie.map((k, i) => <button type="button" class="k-opt k-opt-sm" data-i={i}>{k}</button>)}
+        </div>
+        <p class="k-pyt-wyj" hidden><b class="k-pyt-ok">Dobrze.</b><b class="k-pyt-bad">Nie.</b> <span set:html={texInline(e.dlaczego)} /></p>
+      </li>
+    ))}
+  </ul>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-klas]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('.k-klas-item').forEach((it) => {
+      const good = Number(it.dataset.kat);
+      const btns = Array.from(it.querySelectorAll<HTMLButtonElement>('.k-opt'));
+      btns.forEach((b) => b.addEventListener('click', () => {
+        if (it.dataset.done) return;
+        const i = Number(b.dataset.i);
+        it.dataset.done = i === good ? 'ok' : 'bad';
+        btns.forEach((o, j) => { o.disabled = true; if (j === good) o.classList.add('is-good'); });
+        if (i !== good) b.classList.add('is-bad');
+        it.querySelector<HTMLElement>('.k-pyt-wyj')!.hidden = false;
+      }));
+    });
+  });
+</script>

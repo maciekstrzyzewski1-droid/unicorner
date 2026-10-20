@@ -1,0 +1,191 @@
+---
+// Od siecznej do stycznej: f(x) = x², punkt P = (1, 1). Sieczna = prosta przez P i drugi punkt wykresu Q.
+// Dla Δx = 1; 0,5; 0,1; 0,01 liczymy Q, Δy i nachylenie siecznej Δy : Δx — wyniki zbliżają się do 2 = f′(1),
+// a sieczna do stycznej. Osie w tej samej skali (nachylenie widać naprawdę). Kolory w tabeli = kolory na rysunku.
+// Kliknięcie wiersza tabeli pokazuje tę sieczną; „▶ Zobacz krok po kroku” przechodzi wszystkie po kolei.
+import { sieczna } from '../../../lib/pochodne.js';
+import { skala, sciezka, osie, prosta } from '../../../lib/wykres.js';
+import { tex, texInline } from '../../../lib/tex.js';
+import Legenda from '../Legenda.astro';
+import Sterowanie from '../Sterowanie.astro';
+const S = sieczna();
+const W = 400, H = 560;
+const SK = skala({ x0: -0.8, x1: 2.7, y0: -0.7, y1: 4.7, w: W, h: H, pad: 26, rowne: true });
+const r1 = (v: number) => Math.round(v * 10) / 10;
+const P = { x: r1(SK.X(S.x0)), y: r1(SK.Y(S.fx0)) };
+const pkt = (x: string, y: string) => (x.includes(',') || y.includes(',') ? `(${x};\\ ${y})` : `(${x},\\ ${y})`);
+const sieczne = S.kroki.map((k: any) => ({
+  ...k,
+  l: prosta(S.x0, S.fx0, k.q, SK),
+  Q: { x: r1(SK.X(k.x1)), y: r1(SK.Y(k.fx1)) },
+  R: { x: r1(SK.X(k.x1)), y: r1(SK.Y(S.fx0)) },
+  qTex: pkt(k.tx.x1, k.tx.fx1),
+}));
+const st = prosta(S.x0, S.fx0, S.granica, SK);
+// rachunek dla każdego stanu (0 = sam punkt P, 1–4 = kolejne Δx, 5 = styczna) — ten sam tekst w panelu obok i w podpisie kroku
+const opis = [
+  `Startujesz w punkcie $P$ nad $x_0 = 1$. Wartość: $f(1) = 1^2 = 1$, więc $P = (1,\\ 1)$. Teraz wybierz krok w prawo — kliknij wiersz tabeli albo „Dalej”.`,
+  ...sieczne.map((k: any) => {
+    const t = k.tx;
+    const kw = k.dx >= 1 ? `${t.x1}^2` : `${t.x1} \\cdot ${t.x1}`;
+    const maly = k.dx < 0.5 ? ' Na rysunku $Q$ prawie dotyka $P$ — trójkąt jest za mały, żeby go zobaczyć, ale rachunek działa tak samo.' : '';
+    const dziel = k.dx === 1 ? '' : ` (dzielenie przez $${t.dx}$ to mnożenie przez $${Math.round(1 / k.dx)}$)`;
+    return `<b>Krok w prawo:</b> $\\cH{\\Delta x = ${t.dx}}$. Drugi punkt ma $x = 1 + ${t.dx} = ${t.x1}$, a $f(${t.x1}) = ${kw} = ${t.fx1}$, więc $Q = ${k.qTex}$.<br>` +
+      `<b>O ile w górę:</b> $\\cF{\\Delta y = ${t.fx1} - 1 = ${t.dy}}$.<br>` +
+      `<b>Nachylenie siecznej:</b> $\\cR{\\Delta y : \\Delta x = ${t.dy} : ${t.dx} = ${t.q}}$${dziel}.${maly}`;
+  }),
+  `Nachylenia siecznych: $3$; $2{,}5$; $2{,}1$; $2{,}01$ — coraz bliżej $2$. Sieczne przylegają coraz ciaśniej do jednej prostej: to <b>styczna</b> (biała, przerywana). Jej nachylenie, $2$, to pochodna $f'(1) = 2$. Blisko punktu $P$ styczna prawie pokrywa się z wykresem.`,
+];
+const leg: [string, string][] = [['fiolet', 'krok w prawo $\\Delta x$'], ['cyan', 'o ile w górę $\\Delta y$'], ['roz', 'punkt $Q$ i sieczna przez $P$ i $Q$'], ['bialy', 'styczna w punkcie $P$ (przerywana — pojawi się na końcu)']];
+---
+<figure class="k-fig k-sc" data-kbox data-sc>
+  <div class="k-sc-uk">
+    <div class="k-sc-rys">
+      <svg viewBox={`0 0 ${W} ${H}`} class="k-w" role="img" aria-label="Wykres y = x kwadrat, punkt P = (1, 1), sieczne przez P i drugi punkt Q oraz styczna w P">
+        <Fragment set:html={osie(SK, { kx: 1, ky: 1, siatka: true })} />
+        <path d={sciezka((x: number) => x * x, -0.8, 2.7, SK)} class="k-w-krzywa" />
+        <text class="k-w-et" x={SK.X(-0.62)} y={SK.Y(0.62 * 0.62) - 10}>y = x²</text>
+        <line class="k-sc-st" data-st x1={st.x1} y1={st.y1} x2={st.x2} y2={st.y2} />
+        {sieczne.map((s: any, i: number) => (
+          <g class="k-sc-s" data-s={i} data-stat={i === 0 ? '' : undefined}>
+            <line class="k-sc-sl" x1={s.l.x1} y1={s.l.y1} x2={s.l.x2} y2={s.l.y2} />
+            <line class="k-sc-dx" x1={P.x} y1={P.y} x2={s.R.x} y2={s.R.y} />
+            <line class="k-sc-dy" x1={s.R.x} y1={s.R.y} x2={s.Q.x} y2={s.Q.y} />
+            <circle class="k-sc-q" cx={s.Q.x} cy={s.Q.y} r="6" />
+            {s.dx >= 0.5 && <text class="k-sc-tdx" x={(P.x + s.R.x) / 2} y={s.R.y + 21} text-anchor="middle">Δx = {s.t.dx}</text>}
+            {s.dx >= 0.5 && <text class="k-sc-tdy" x={s.R.x + 9} y={(s.R.y + s.Q.y) / 2 + 5}>Δy = {s.t.dy}</text>}
+            {s.dx >= 0.5 && <text class="k-sc-tq" x={s.Q.x + 10} y={s.Q.y + 4}>Q</text>}
+          </g>
+        ))}
+        <circle cx={P.x} cy={P.y} r="6.5" class="k-sc-p" />
+        <text x={P.x - 12} y={P.y - 10} text-anchor="end" class="k-sc-tp">P</text>
+      </svg>
+      <Legenda items={leg} />
+    </div>
+    <div class="k-sc-bok">
+      <p class="k-sc-rach" data-sc-rach set:html={texInline(opis[1])} />
+      <table class="k-sc-tab">
+        <thead>
+          <tr>
+            <th><span class="k-ch" set:html={tex('\\Delta x')} /><span class="k-sc-th">krok w prawo</span></th>
+            <th class="k-sc-kq"><span class="k-sc-kropka"></span>Q<span class="k-sc-th">drugi punkt</span></th>
+            <th><span class="k-cf" set:html={tex('\\Delta y')} /><span class="k-sc-th">o ile w górę</span></th>
+            <th><span class="k-cr" set:html={tex('\\Delta y : \\Delta x')} /><span class="k-sc-th">nachylenie siecznej</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          {sieczne.map((k: any, i: number) => (
+            <tr data-w={i} tabindex="0" class:list={{ 'is-on': i === 0 }}>
+              <td class="k-ch" set:html={tex(k.tx.dx)} />
+              <td class="k-sc-kq" set:html={tex(k.qTex)} />
+              <td class="k-cf"><span class="k-sc-l" set:html={tex(`${k.tx.fx1} - 1`)} /><span class="k-sc-l" set:html={tex(`= ${k.tx.dy}`)} /></td>
+              <td class="k-cr"><span class="k-sc-l" set:html={tex(`${k.tx.dy} : ${k.tx.dx}`)} /><span class="k-sc-l" set:html={tex(`= ${k.tx.q}`)} /></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <button type="button" class="k-sc-gr" data-w={sieczne.length}>Δx coraz bliżej zera → sieczna przechodzi w styczną, nachylenie <span set:html={tex("2 = f'(1)")} /></button>
+      <p class="k-sc-hint" data-js-only hidden>Kliknij wiersz tabeli, żeby zobaczyć tę sieczną na rysunku.</p>
+    </div>
+  </div>
+  <Sterowanie opis="Δx będzie coraz mniejsze, a sieczna — coraz bliżej stycznej" legenda={leg} />
+  <ol hidden data-kroki>{opis.map((p) => <li set:html={texInline(p)} />)}</ol>
+  <ol hidden data-sc-opisy>{opis.map((p) => <li set:html={texInline(p)} />)}</ol>
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  import { krokowka, own, widok } from '../../../lib/krokowka';
+  document.querySelectorAll<HTMLElement>('[data-sc]').forEach((box) => {
+    const sieczne = own<SVGGElement>(box, 'g[data-s]');
+    const st = own<SVGElement>(box, '[data-st]');
+    const wiersze = own<HTMLElement>(box, '[data-w]');
+    const rach = own<HTMLElement>(box, '[data-sc-rach]')[0];
+    const opisy = own<HTMLElement>(box, '[data-sc-opisy] > li');
+    const rys = own<HTMLElement>(box, '.k-sc-rys')[0];
+    own<HTMLElement>(box, '[data-js-only]').forEach((e) => { e.hidden = false; });
+    // stan: 0 = sam P, 1–4 = sieczna dla kolejnego Δx (wcześniejsze blado), 5 = styczna
+    const stan = (k: number) => {
+      box.classList.add('is-wybor');
+      sieczne.forEach((g, i) => {
+        g.classList.toggle('is-on', i === k - 1);
+        g.classList.toggle('is-stara', i < k - 1 || (k === sieczne.length + 1));
+      });
+      st.forEach((e) => e.classList.toggle('is-on', k >= sieczne.length + 1));
+      wiersze.forEach((w, i) => w.classList.toggle('is-on', i === k - 1));
+      if (rach && opisy[k]) rach.innerHTML = opisy[k].innerHTML;
+    };
+    const svg = rys?.querySelector('svg');
+    wiersze.forEach((w, i) => {
+      // na telefonie rysunek stoi nad tabelą — po kliknięciu wiersza przewijamy tak, żeby było widać zmianę na rysunku
+      const wybierz = () => { stan(i + 1); widok(box, svg); };
+      w.addEventListener('click', wybierz);
+      w.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); wybierz(); } });
+    });
+    krokowka(box, {
+      render: (k) => { stan(k); widok(box, rys); },
+      zamknij: () => stan(1),
+    });
+    stan(1);
+  });
+</script>
+
+<style>
+  .k-sc{scroll-margin-top:84px;container:sc / inline-size;}
+  .k-sc-uk{display:grid;grid-template-columns:minmax(0,1fr);gap:14px 32px;align-items:start;}
+  @container sc (min-width: 820px){
+    .k-sc-uk{grid-template-columns:minmax(0,400px) minmax(0,1fr);}
+    .k-sc > :global(.k-kk-ctl .k-kk-cap){display:none;}
+  }
+  .k-sc-rys svg{max-width:400px;margin:0;}
+  .k-sc-rys :global(.k-leg){margin-top:6px!important;}
+  .k-sc-p{fill:#f2f0fa;stroke:var(--ink);stroke-width:1.5;}
+  .k-sc-tp{fill:#f2f0fa;font-size:16px;font-weight:700;}
+  .k-sc-sl{stroke:#ff2e97;stroke-width:2.4;}
+  .k-sc-dx{stroke:#a78bfa;stroke-width:3.4;}
+  .k-sc-dy{stroke:#27e8ff;stroke-width:3.4;}
+  .k-sc-q{fill:#ff2e97;stroke:var(--ink);stroke-width:1.5;}
+  .k-sc-tdx{fill:#c3b1ff;font-size:14px;font-weight:600;}
+  .k-sc-tdy{fill:#27e8ff;font-size:14px;font-weight:600;}
+  .k-sc-tq{fill:#ff6fb5;font-size:16px;font-weight:700;}
+  .k-sc-st{stroke:#f2f0fa;stroke-width:2.2;stroke-dasharray:8 6;}
+  /* bez JS: sieczna dla Δx = 1 i styczna */
+  .k-sc-s{display:none;}
+  .k-sc-s[data-stat]{display:inline;}
+  /* z JS (wybrany wiersz albo tryb kroków): tylko wybrana sieczna, wcześniejsze blado, styczna na końcu */
+  :global(.k-sc.is-wybor) .k-sc-s{display:none;}
+  :global(.k-sc.is-wybor) .k-sc-s.is-on{display:inline;}
+  :global(.k-sc.is-wybor) .k-sc-s.is-stara{display:inline;opacity:.2;}
+  :global(.k-sc.is-wybor) .k-sc-s.is-stara text{display:none;}
+  :global(.k-sc.is-wybor) [data-st]{display:none;}
+  :global(.k-sc.is-wybor) [data-st].is-on{display:inline;}
+  .k-sc-bok{min-width:0;}
+  .k-sc-rach{margin:0 0 14px!important;padding:12px 14px;border-left:2px solid rgba(255,46,151,.6);background:rgba(255,255,255,.03);font-size:.95rem;line-height:1.75;min-height:7.5em;}
+  .k-sc-tab{border-collapse:collapse;width:100%;font-size:.92rem;}
+  .k-sc-tab th,.k-sc-tab td{border-bottom:1px solid var(--line2);padding:8px 10px;text-align:left;vertical-align:top;}
+  .k-sc-tab th{font-weight:500;color:var(--text);}
+  .k-sc-th{display:block;font-family:var(--mono);font-size:.66rem;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-top:2px;}
+  .k-sc-kropka{display:inline-block;width:10px;height:10px;border-radius:50%;background:#ff2e97;margin-right:6px;}
+  .k-sc-tab tbody tr{cursor:pointer;transition:background .15s;}
+  .k-sc-tab tbody tr:hover{background:rgba(255,255,255,.035);}
+  .k-sc-tab tbody tr.is-on{background:rgba(255,46,151,.1);box-shadow:inset 2px 0 0 #ff2e97;}
+  .k-sc-tab tbody tr:focus-visible,.k-sc-gr:focus-visible{outline:2px solid var(--cyan);outline-offset:-2px;}
+  .k-sc-tab :global(.katex){font-size:1em!important;}
+  /* kolory kolumn = kolory na rysunku (KaTeX w treści ma kolor biały — tu dziedziczy kolor kolumny) */
+  .k-sc-tab :is(.k-ch,.k-cf,.k-cr) :global(.katex){color:inherit;}
+  .k-sc-tab .k-ch{color:#c3b1ff;} .k-sc-tab .k-cf{color:#27e8ff;} .k-sc-tab .k-cr{color:#ff6fb5;}
+  .k-sc-tab td.k-sc-kq{color:#ff6fb5;} .k-sc-tab td.k-sc-kq :global(.katex){color:inherit;}
+  .k-sc-gr{display:block;width:100%;margin:6px 0 0;padding:8px 10px;text-align:left;font:inherit;font-size:.88rem;color:var(--muted);background:none;border:none;border-bottom:1px solid var(--line2);cursor:pointer;}
+  .k-sc-gr:hover{background:rgba(255,255,255,.035);color:var(--text);}
+  .k-sc-gr.is-on{background:rgba(255,255,255,.06);color:var(--text);box-shadow:inset 2px 0 0 #f2f0fa;}
+  .k-sc-l{display:block;white-space:nowrap;}
+  /* wąsko: bez kolumny Q (współrzędne Q są w rachunku nad tabelą) */
+  @container sc (max-width: 520px){ .k-sc-kq{display:none;} }
+  .k-sc-hint{margin:8px 0 0!important;font-size:.84rem;color:var(--muted);}
+  @media(max-width:560px){
+    .k-sc-tab{font-size:.8rem;}
+    .k-sc-tab th,.k-sc-tab td{padding:6px 5px;}
+    .k-sc-th{font-size:.58rem;letter-spacing:.3px;}
+    .k-sc-rach{font-size:.9rem;min-height:9em;}
+  }
+</style>

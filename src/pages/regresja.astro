@@ -1,0 +1,413 @@
+---
+import Base from '../layouts/Base.astro';
+import cssStatKorelacjaMotyw from '../styles/stat-korelacja-motyw.css?raw';
+import cssStatCyberpunkB from '../styles/stat-cyberpunk-b.css?raw';
+import cssStatPelnyMotyw from '../styles/stat-pelny-motyw.css?raw';
+import cssGigaNapis from '../styles/giga-napis.css?raw';
+const title = "Analiza regresji — regresja liniowa · Unicorner";
+const description = "Regresja liniowa prosta i wieloraka: model Y=a+bX, metoda najmniejszych kwadratów, interpretacja parametrów, R² i φ², prognozowanie i błędy ex post. Materiały, ściąga Excela, zadania i quiz.";
+---
+
+<Base title={title} description={description}>
+<style is:inline set:html={cssStatKorelacjaMotyw}></style>
+<style is:inline set:html={cssStatCyberpunkB}></style>
+<style is:inline set:html={cssStatPelnyMotyw}></style>
+<style is:inline set:html={cssGigaNapis}></style>
+
+<div class="scanbar" aria-hidden="true"></div><div class="uc-sweep" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wordmark">Uni<span class="ai">corner</span></span>
+      </a>
+      <a class="back" href="index.html">← wszystkie przedmioty</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>Statystyka · UEP</span>
+    <h1>Analiza <span class="grad">regresji</span></h1>
+    <p class="lede">Jak opisać zależność liczbą i wzorem: model <b>Y = a + b·X</b>, parametry z <b>metody najmniejszych kwadratów</b>, ocena dopasowania (<b>R²</b>, φ²) oraz prognozowanie z modelu i ocena trafności prognoz.</p>
+  </section>
+
+  <nav class="pills">
+    <a href="#materialy">Materiały</a>
+    <a href="#excel">Ściąga Excela</a>
+    <a href="#zadania">Zadania</a>
+    <a href="#quiz">Quiz</a>
+  </nav>
+
+  <!-- ===================== MATERIAŁY ===================== -->
+  <section class="block" id="materialy">
+    <div class="sec-head"><span class="num">01</span><h2>Materiały</h2><span class="line"></span></div>
+    <p class="sub-note">Korelacja mówi, <b>jak silnie</b> zmienne idą razem. Regresja idzie krok dalej — <b>opisuje kształt zależności równaniem</b> i pozwala <b>prognozować</b>. Zmienną Y (zależną) modelujemy w oparciu o zmienną(e) X (niezależną).</p>
+
+    <div class="cards">
+
+      <div class="mcard">
+        <h3>Model regresji prostej</h3>
+        <div class="tagline">jedna zmienna objaśniająca</div>
+        <span class="fml"><span class="v">Y = a + b·X</span></span>
+        <ul>
+          <li><b>Y</b> — zmienna objaśniana (zależna)</li>
+          <li><b>X</b> — zmienna objaśniająca (niezależna)</li>
+          <li><b>a</b> — wyraz wolny</li>
+          <li><b>b</b> — współczynnik regresji (nachylenie)</li>
+        </ul>
+        <div class="callout">Zależność może być <b>liniowa</b> lub krzywoliniowa — tu zajmujemy się liniową.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Interpretacja parametrów</h3>
+        <div class="tagline">to najczęściej pytają</div>
+        <p><b>b</b> — o ile jednostek zmieni się <b>średnio</b> Y, gdy X wzrośnie o jednostkę.</p>
+        <p><b>a</b> — wartość Y, gdy X = 0. Gdy X = 0 jest niemożliwe/bez sensu — <b>a pomijamy w interpretacji</b>.</p>
+        <div class="callout"><b>Uwaga na jednostki!</b> X i Y bywają w różnych jednostkach — zawsze dopisz je do interpretacji b.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Metoda najmniejszych kwadratów</h3>
+        <div class="tagline">skąd biorą się a i b</div>
+        <span class="fml"><span class="v">b = Σ(xᵢ−x̄)(yᵢ−ȳ) / Σ(xᵢ−x̄)²</span></span>
+        <span class="fml"><span class="v">a = ȳ − b·x̄</span></span>
+        <ul>
+          <li>Równoważnie: <b>b = cov(x,y) / S²ₓ</b></li>
+          <li>MNK minimalizuje sumę kwadratów reszt (odchyleń od prostej)</li>
+          <li>Prosta regresji zawsze przechodzi przez punkt <b>(x̄, ȳ)</b></li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Miary dopasowania</h3>
+        <div class="tagline">jak dobry jest model</div>
+        <span class="fml">determinacja: <span class="v">R² ∈ ⟨0; 1⟩</span></span>
+        <span class="fml">zbieżność: <span class="v">φ² = 1 − R²</span></span>
+        <ul>
+          <li><b>R²</b> — jaka <b>część zmienności Y</b> jest wyjaśniona modelem; im bliżej 1, tym lepiej</li>
+          <li><b>φ²</b> — część niewyjaśniona; im bliżej 0, tym lepiej</li>
+          <li>Dla regresji prostej <b>R² = r²</b> (kwadrat korelacji)</li>
+          <li><b>s</b> — standardowy błąd szacunku (przeciętny błąd modelu)</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Przykład — wydatki a dochód</h3>
+        <div class="tagline">model z wykładu</div>
+        <span class="fml"><span class="v">ŷ = 8,0871 + 0,0376·x</span></span>
+        <ul>
+          <li>b = 14929,59 / 397483,36 = <b>0,0376</b></li>
+          <li>R² = 0,976² = <b>0,952</b> → φ² = 0,048</li>
+          <li><b>Interpretacja b:</b> wzrost dochodu o 1 zł → wydatki na odzież rosną średnio o 0,0376 zł</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Regresja wieloraka</h3>
+        <div class="tagline">wiele zmiennych objaśniających</div>
+        <span class="fml"><span class="v">Y = a₀ + a₁X₁ + a₂X₂ + … + aₖXₖ</span></span>
+        <ul>
+          <li><b>aᵢ</b> — o ile średnio zmieni się Y przy wzroście Xᵢ o jednostkę, <b>gdy pozostałe X są stałe</b> (ceteris paribus)</li>
+          <li><b>a₀</b> — wyraz wolny, zwykle <b>nieinterpretowany</b></li>
+        </ul>
+        <div class="callout">Przykład: sprzedaż pralki <b>Y = 7 605 837 − 4063,38·X₁ + 7606,77·X₂</b> — cena ↑ o 1 zł → sprzedaż ↓ o 4063,38 zł (przy stałym dochodzie).</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Prognozowanie z modelu</h3>
+        <div class="tagline">po co to wszystko</div>
+        <p>Podstawiasz przyszłą wartość X do równania i liczysz Y. Warunki, żeby wolno było prognozować:</p>
+        <ul>
+          <li><b>R² &gt; 0,9</b></li>
+          <li>zmienne objaśniające <b>istotne statystycznie</b> (test t-Studenta)</li>
+          <li>parametry <b>sensowne merytorycznie</b> (znak i wartość)</li>
+          <li>znane <b>przyszłe wartości X</b></li>
+        </ul>
+        <div class="callout"><b>Pułapka jednostek:</b> X podstawiaj w tych samych jednostkach co przy szacowaniu modelu (np. tys. zł), a wynik Y wychodzi w jednostce Y (np. mln zł).</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Ocena trafności — błąd ex post</h3>
+        <div class="tagline">czy prognoza się sprawdziła</div>
+        <span class="fml"><span class="v">błąd = |yₜ − y*ₜ| / yₜ · 100%</span></span>
+        <div class="scale">
+          <div class="row"><span class="bar" style="width:24px;background:#5ad1a0"></span><span class="lbl">0–3% — <b>bardzo dobra</b></span></div>
+          <div class="row"><span class="bar" style="width:44px;background:#8b5cf6"></span><span class="lbl">3–5% — <b>dobra</b></span></div>
+          <div class="row"><span class="bar" style="width:68px;background:#c084fc"></span><span class="lbl">5–10% — <b>dopuszczalna</b></span></div>
+          <div class="row"><span class="bar" style="width:92px;background:#f472b6"></span><span class="lbl">&gt; 10% — <b>niedopuszczalna</b></span></div>
+        </div>
+        <div class="callout">yₜ — wartość rzeczywista, y*ₜ — wartość prognozowana. Błąd ex post liczysz, gdy znasz już rzeczywisty wynik.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== ŚCIĄGA EXCEL ===================== -->
+  <section class="block" id="excel">
+    <div class="sec-head"><span class="num">02</span><h2>Ściąga funkcji Excela</h2><span class="line"></span></div>
+    <p class="sub-note">Nachylenie i wyraz wolny to dwie osobne funkcje. Całą tabelę statystyk (parametry, R², błąd standardowy, test t) dostaniesz przez <b>Dane → Analiza danych → Regresja</b> albo funkcją tablicową <b>REGLINP</b>.</p>
+    <div class="xtable-wrap">
+      <table class="xt">
+        <thead><tr><th>Co liczysz</th><th>Funkcja Excela</th><th>Uwaga</th></tr></thead>
+        <tbody>
+          <tr><td class="measure"><b>Współczynnik b (nachylenie)</b></td><td class="fn">=NACHYLENIE(Y;X)</td><td>Kolejność: najpierw Y, potem X</td></tr>
+          <tr><td class="measure"><b>Wyraz wolny a</b></td><td class="fn">=ODCIĘTA(Y;X)</td><td>Wartość Y dla X = 0</td></tr>
+          <tr><td class="measure"><b>Współczynnik determinacji R²</b></td><td class="fn">=R.KWADRAT(Y;X)</td><td>Lub <span style="font-family:var(--mono)">=WSP.KORELACJI(Y;X)^2</span></td></tr>
+          <tr><td class="measure"><b>Standardowy błąd szacunku s</b></td><td class="fn">=REGBŁSTD(Y;X)</td><td>Przeciętny błąd modelu</td></tr>
+          <tr><td class="measure"><b>Prognoza dla nowego X</b></td><td class="fn">=REGLINX(nowy_x;Y;X)</td><td>Podstawia x do prostej regresji</td></tr>
+          <tr><td class="measure"><b>Pełne statystyki (a,b,R²,s,t)</b></td><td class="fn">=REGLINP(Y;X;PRAWDA;PRAWDA)</td><td>Funkcja tablicowa (LINEST)</td></tr>
+          <tr><td class="measure"><b>Cały raport regresji</b></td><td class="fn">Dane → Analiza danych → Regresja</td><td>Dodatek „Analysis ToolPak”</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== ZADANIA ===================== -->
+  <section class="block" id="zadania">
+    <div class="sec-head"><span class="num">03</span><h2>Zadania krok po kroku</h2><span class="line"></span></div>
+    <p class="sub-note">Główny przykład (wydatki na odzież Y ~ dochód X, 10 lat): Σ(xᵢ−x̄)(yᵢ−ȳ) = 14929,59 • Σ(xᵢ−x̄)² = 397483,36 • r = 0,976. Prognozy na modelu Y = 183,144 + 0,046·X. Akceptuję przecinek/kropkę i drobne zaokrąglenia.</p>
+    <div id="exList"></div>
+    <div class="progress"><span class="lbl" id="exLbl">0 / 0</span><div class="bar"><i id="exFill"></i></div></div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="block" id="quiz">
+    <div class="sec-head"><span class="num">04</span><h2>Quiz teoretyczny</h2><span class="line"></span></div>
+    <p class="sub-note">Model, interpretacja a i b, MNK, R² i φ², regresja wieloraka, warunki prognozowania i ocena błędów ex post.</p>
+    <div id="quizList"></div>
+    <div class="quiz-score" id="quizScore" style="display:none">
+      <div class="big" id="scoreBig">0 / 0</div>
+      <div id="scoreMsg" style="color:var(--muted);margin-top:6px"></div>
+    </div>
+  </section>
+
+  <div class="giant" aria-hidden="true"><span>REGRESJA</span></div>
+
+  <footer>
+    <p class="disclaimer">
+      <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani żadną katedrą.
+      Materiały to własne opracowania na bazie zajęć. Licz też z oryginalnych źródeł.
+    </p>
+  </footer>
+</div>
+
+<script is:inline>
+const EXS=[
+ {theme:'MNK', diff:'średnie',
+  title:'Współczynnik regresji b',
+  data:'Model wydatki~dochód. Σ(xᵢ−x̄)(yᵢ−ȳ) = 14929,59, Σ(xᵢ−x̄)² = 397483,36. Policz b.',
+  ans:0.0376, tol:0.001, unit:'',
+  sol:[['Wzór','b = Σ(xᵢ−x̄)(yᵢ−ȳ) / Σ(xᵢ−x̄)²'],
+       ['Podstawienie','= 14929,59 / 397483,36 = <span class="calc">0,0376</span>'],
+       ['Sens','wzrost dochodu o 1 zł → wydatki rosną średnio o 0,0376 zł']],
+  excel:'=NACHYLENIE(Y;X)'},
+
+ {theme:'MNK', diff:'średnie',
+  title:'Współczynnik b z kowariancji',
+  data:'Ten sam model, ale z gotowych miar: cov(x,y) = 1492,96 oraz wariancja dochodu S²ₓ = 39748,34. Policz b.',
+  ans:0.0376, tol:0.001, unit:'',
+  sol:[['Wzór','b = cov(x,y) / S²ₓ'],
+       ['Podstawienie','= 1492,96 / 39748,34 = <span class="calc">0,0376</span>'],
+       ['Uwaga','oba wzory na b dają ten sam wynik']],
+  excel:'=NACHYLENIE(Y;X)'},
+
+ {theme:'Wyraz wolny', diff:'średnie',
+  title:'Wyraz wolny a',
+  data:'Wiedząc, że b = 0,0376, średni dochód x̄ = 1000 zł oraz średnie wydatki ȳ = 45,69 zł, policz a.',
+  ans:8.09, tol:0.06, unit:'',
+  sol:[['Wzór','a = ȳ − b·x̄'],
+       ['Podstawienie','= 45,69 − 0,0376·1000 = 45,69 − 37,60'],
+       ['Wynik','a = <span class="calc">8,09</span>. Model: ŷ = 8,09 + 0,0376·x']],
+  excel:'=ODCIĘTA(Y;X)'},
+
+ {theme:'Dopasowanie', diff:'łatwe',
+  title:'Współczynnik determinacji R²',
+  data:'Współczynnik korelacji r = 0,976. Policz R² dla regresji prostej.',
+  ans:0.952, tol:0.005, unit:'',
+  sol:[['Zasada','dla regresji prostej R² = r²'],
+       ['Podstawienie','= 0,976² = <span class="calc">0,952</span>'],
+       ['Sens','model wyjaśnia ok. 95,2% zmienności wydatków']],
+  excel:'=R.KWADRAT(Y;X)'},
+
+ {theme:'Dopasowanie', diff:'łatwe',
+  title:'Współczynnik zbieżności φ²',
+  data:'Współczynnik determinacji R² = 0,952. Policz φ².',
+  ans:0.048, tol:0.003, unit:'',
+  sol:[['Wzór','φ² = 1 − R²'],
+       ['Podstawienie','= 1 − 0,952 = <span class="calc">0,048</span>'],
+       ['Sens','ok. 4,8% zmienności Y model NIE wyjaśnia']],
+  excel:'=1 − R.KWADRAT(Y;X)'},
+
+ {theme:'Prognoza', diff:'średnie',
+  title:'Prognoza — II kwartał',
+  data:'Model przychodów: Y = 183,144 + 0,046·X (X w tys. zł, Y w mln zł). Wydatki na promocję w II kw. = 7,120 mln zł. Policz prognozę Y.',
+  ans:510.66, tol:0.6, unit:'mln zł',
+  sol:[['Zamiana jednostek','7,120 mln zł = 7120 tys. zł (X musi być w tys. zł)'],
+       ['Podstawienie','Y = 183,144 + 0,046·7120 = 183,144 + 327,52'],
+       ['Wynik','Y = <span class="calc">510,66</span> mln zł']],
+  excel:'=REGLINX(7120;Y;X)'},
+
+ {theme:'Prognoza', diff:'średnie',
+  title:'Prognoza — III kwartał',
+  data:'Ten sam model Y = 183,144 + 0,046·X. Wydatki na promocję w III kw. = 6,890 mln zł = 6890 tys. zł. Policz prognozę.',
+  ans:500.08, tol:0.6, unit:'mln zł',
+  sol:[['Podstawienie','Y = 183,144 + 0,046·6890 = 183,144 + 316,94'],
+       ['Wynik','Y = <span class="calc">500,08</span> mln zł']],
+  excel:'=REGLINX(6890;Y;X)'},
+
+ {theme:'Ocena prognozy', diff:'trudne',
+  title:'Względny błąd ex post',
+  data:'Dla IV kw. wartość rzeczywista przychodów yₜ = 586,5 mln zł, a prognoza y*ₜ = 601,8 mln zł. Policz względny błąd ex post (w %).',
+  ans:2.61, tol:0.1, unit:'%',
+  sol:[['Wzór','błąd = |yₜ − y*ₜ| / yₜ · 100%'],
+       ['Podstawienie','= |586,5 − 601,8| / 586,5 · 100% = 15,3 / 586,5 · 100%'],
+       ['Wynik','= <span class="calc">2,61%</span> → przedział 0–3% → prognoza bardzo dobra']],
+  excel:'=ABS(586,5−601,8)/586,5*100'},
+
+ {theme:'Od zera', diff:'trudne',
+  title:'Policz b dla małego zbioru',
+  data:'Dane: x = 1, 2, 3, 4, 5 oraz y = 2, 4, 5, 4, 5. Policz współczynnik regresji b.',
+  ans:0.6, tol:0.02, unit:'',
+  sol:[['Średnie','x̄ = 3, ȳ = 4'],
+       ['Sumy','Σ(x−x̄)(y−ȳ) = 6 ; Σ(x−x̄)² = 10'],
+       ['Wynik','b = 6 / 10 = <span class="calc">0,6</span>']],
+  excel:'=NACHYLENIE({2;4;5;4;5};{1;2;3;4;5})'},
+
+ {theme:'Od zera', diff:'średnie',
+  title:'Policz wyraz wolny a',
+  data:'Ten sam zbiór: x̄ = 3, ȳ = 4, wyliczone b = 0,6. Policz a.',
+  ans:2.2, tol:0.05, unit:'',
+  sol:[['Wzór','a = ȳ − b·x̄'],
+       ['Podstawienie','= 4 − 0,6·3 = 4 − 1,8'],
+       ['Wynik','a = <span class="calc">2,2</span>. Model: ŷ = 2,2 + 0,6·x']],
+  excel:'=ODCIĘTA({2;4;5;4;5};{1;2;3;4;5})'},
+
+ {theme:'Od zera', diff:'średnie',
+  title:'Prognoza z własnego modelu',
+  data:'Model ŷ = 2,2 + 0,6·x. Policz przewidywaną wartość Y dla x = 6.',
+  ans:5.8, tol:0.05, unit:'',
+  sol:[['Podstawienie','ŷ = 2,2 + 0,6·6 = 2,2 + 3,6'],
+       ['Wynik','ŷ = <span class="calc">5,8</span>']],
+  excel:'=REGLINX(6;{2;4;5;4;5};{1;2;3;4;5})'}
+];
+
+const KEY='unicorner_regres_v1';
+let solved=JSON.parse(localStorage.getItem(KEY)||'{}');
+const exList=document.getElementById('exList');
+EXS.forEach((e,i)=>{
+  const d=document.createElement('div'); d.className='ex'+(solved['e'+i]?' solved':''); d.id='ex'+i;
+  d.innerHTML=`
+    <div class="ex-top"><span class="ex-theme">${e.theme}</span><span class="ex-diff">${e.diff}</span></div>
+    <h3>${i+1}. ${e.title}</h3>
+    <div class="data">${e.data}</div>
+    <div class="answer-row">
+      <input type="text" inputmode="decimal" placeholder="Twój wynik" aria-label="wynik">
+      ${e.unit?`<span class="unit">${e.unit}</span>`:''}
+      <button class="btn" data-act="check">Sprawdź</button>
+      <button class="btn ghost" data-act="show">Pokaż rozwiązanie</button>
+    </div>
+    <div class="verdict"></div>
+    <div class="solution">
+      <h4>Rozwiązanie</h4>
+      ${e.sol.map(s=>`<div class="step"><b>${s[0]}:</b> ${s[1]}</div>`).join('')}
+      <div class="excel-tag"><span>▦</span><b>W Excelu:</b> ${e.excel}</div>
+    </div>`;
+  const inp=d.querySelector('input'), verd=d.querySelector('.verdict'), sol=d.querySelector('.solution');
+  const reveal=ok=>{ sol.classList.add('show'); if(ok){ d.classList.add('solved'); solved['e'+i]=1; localStorage.setItem(KEY,JSON.stringify(solved)); updateProg(); } };
+  d.querySelector('[data-act=check]').onclick=()=>{
+    const raw=inp.value.replace(',','.').replace(/[^0-9.\-]/g,'');
+    if(raw===''){verd.className='verdict bad';verd.textContent='Wpisz wynik liczbowy.';return;}
+    const v=parseFloat(raw); const ok=Math.abs(v-e.ans)<=(e.tol||0.01)+1e-9;
+    if(ok){verd.className='verdict ok';verd.textContent='✓ Dobrze! Wynik: '+String(e.ans).replace('.',',')+(e.unit?' '+e.unit:'');}
+    else{verd.className='verdict bad';verd.textContent='✗ Nie tym razem — sprawdź rozwiązanie poniżej.';}
+    reveal(ok);
+  };
+  d.querySelector('[data-act=show]').onclick=()=>{ sol.classList.add('show'); };
+  inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')d.querySelector('[data-act=check]').click();});
+  exList.appendChild(d);
+});
+function updateProg(){
+  const done=EXS.filter((_,i)=>solved['e'+i]).length;
+  document.getElementById('exLbl').textContent=done+' / '+EXS.length;
+  document.getElementById('exFill').style.width=(done/EXS.length*100)+'%';
+}
+updateProg();
+
+const QUIZ=[
+ {q:'W modelu Y = a + b·X zmienna X to:',
+  o:['Zmienna objaśniana (zależna)','Zmienna objaśniająca (niezależna)','Wyraz wolny','Błąd losowy'],c:1,
+  e:'X jest zmienną <b>objaśniającą (niezależną)</b> — to na jej podstawie modelujemy Y (objaśnianą/zależną).'},
+ {q:'Parametr b (współczynnik regresji) informuje o tym:',
+  o:['Ile wynosi Y, gdy X = 0','O ile średnio zmieni się Y, gdy X wzrośnie o jednostkę','Jaka część zmienności Y jest wyjaśniona','Jak silna jest korelacja'],c:1,
+  e:'<b>b</b> mówi, o ile jednostek zmieni się <b>średnio</b> Y przy wzroście X o jednostkę. Pamiętaj o jednostkach obu zmiennych.'},
+ {q:'Parametr a (wyraz wolny) to:',
+  o:['Wartość Y, gdy X = 0','Nachylenie prostej','Współczynnik determinacji','Średnia z reszt'],c:0,
+  e:'<b>a</b> to teoretyczna wartość Y przy X = 0. Gdy X = 0 nie ma sensu, interpretację a się pomija.'},
+ {q:'Parametry modelu regresji wyznacza się metodą:',
+  o:['Największej wiarygodności','Najmniejszych kwadratów','Momentów','Rang wiązanych'],c:1,
+  e:'Klasycznie stosuje się <b>metodę najmniejszych kwadratów (MNK)</b> — minimalizuje sumę kwadratów reszt.'},
+ {q:'Współczynnik determinacji R² informuje o tym:',
+  o:['Jaka część zmienności Y jest wyjaśniona przez model','Ile wynosi nachylenie prostej','Jaki jest kierunek zależności','Ile jest obserwacji'],c:0,
+  e:'<b>R²</b> to udział zmienności Y wyjaśnionej modelem. Mieści się w ⟨0; 1⟩ — im bliżej 1, tym lepsze dopasowanie.'},
+ {q:'Zależność między R² a współczynnikiem zbieżności φ² to:',
+  o:['φ² = R²','φ² = 1 − R²','φ² = R² − 1','φ² = √R²'],c:1,
+  e:'<b>φ² = 1 − R²</b> — to część zmienności, której model NIE wyjaśnia. Im bliżej 0, tym lepiej.'},
+ {q:'W regresji liniowej prostej współczynnik determinacji jest równy:',
+  o:['Współczynnikowi korelacji r','Kwadratowi współczynnika korelacji r²','Odwrotności r','Nachyleniu b'],c:1,
+  e:'Dla regresji prostej <b>R² = r²</b>. Np. r = 0,976 → R² = 0,952.'},
+ {q:'Model wydatki~dochód ma b = 0,0376. Poprawna interpretacja to:',
+  o:['Wzrost dochodu o 1 zł → wydatki rosną średnio o 0,0376 zł','Wydatki wynoszą 0,0376 zł','Korelacja wynosi 0,0376','Dochód rośnie o 3,76% rocznie'],c:0,
+  e:'b = 0,0376 znaczy: wzrost X (dochodu) o 1 zł → średni wzrost Y (wydatków) o <b>0,0376 zł</b>.'},
+ {q:'Który warunek musi być spełniony, aby użyć modelu do prognozowania?',
+  o:['R² < 0,5','R² > 0,9 i istotne zmienne objaśniające','b = 0','Brak korelacji między zmiennymi'],c:1,
+  e:'Do prognoz wymaga się m.in. <b>R² > 0,9</b>, istotności statystycznej zmiennych (test t) i sensownych merytorycznie parametrów.'},
+ {q:'Model oszacowano z X w tys. zł. Prognozując, przyszłe X należy podstawić:',
+  o:['W mln zł','W tych samych jednostkach co przy szacowaniu (tys. zł)','W sztukach','Bez jednostek'],c:1,
+  e:'Przyszłe X podstawiamy w <b>tych samych jednostkach</b> co przy szacowaniu modelu — inaczej prognoza będzie błędna o rząd wielkości.'},
+ {q:'Względny błąd prognozy ex post wyniósł 2,6%. Prognozę oceniamy jako:',
+  o:['Bardzo dobrą','Dopuszczalną','Niedopuszczalną','Nie da się ocenić'],c:0,
+  e:'Błąd w przedziale <b>0–3%</b> → prognoza <b>bardzo dobra</b>. 3–5% dobra, 5–10% dopuszczalna, powyżej 10% niedopuszczalna.'},
+ {q:'W regresji wielorakiej parametr a₁ interpretujemy przy założeniu, że:',
+  o:['Pozostałe zmienne objaśniające są stałe (ceteris paribus)','Y = 0','Wszystkie zmienne rosną razem','Model nie ma wyrazu wolnego'],c:0,
+  e:'a₁ mówi o wpływie X₁ na Y <b>przy niezmienionych pozostałych</b> zmiennych objaśniających (ceteris paribus).'},
+ {q:'Czym regresja różni się od korelacji?',
+  o:['Niczym, to synonimy','Korelacja mierzy siłę i kierunek, regresja opisuje kształt zależności i pozwala prognozować','Regresja działa tylko dla danych porządkowych','Korelacja wymaga metody najmniejszych kwadratów'],c:1,
+  e:'Korelacja odpowiada „jak silnie i w którą stronę”, a regresja „jakim równaniem” — i dzięki temu umożliwia <b>prognozowanie</b>.'}
+];
+const quizList=document.getElementById('quizList'); let answered=0, correct=0;
+QUIZ.forEach((q,i)=>{
+  const order=q.o.map((t,idx)=>idx).sort(()=>Math.random()-0.5);
+  const card=document.createElement('div'); card.className='quiz-card';
+  card.innerHTML=`<div class="q-no">Pytanie ${i+1} / ${QUIZ.length}</div><div class="q-text">${q.q}</div><div class="opts"></div><div class="q-exp">${q.e}</div>`;
+  const opts=card.querySelector('.opts'), exp=card.querySelector('.q-exp');
+  order.forEach(idx=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=q.o[idx];
+    b.onclick=()=>{
+      opts.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      if(idx===q.c){b.classList.add('correct');correct++;}
+      else{b.classList.add('wrong');opts.querySelectorAll('.opt').forEach(x=>{if(x.textContent===q.o[q.c])x.classList.add('correct');});}
+      exp.classList.add('show'); answered++;
+      if(answered===QUIZ.length){
+        const sc=document.getElementById('quizScore'); sc.style.display='block';
+        document.getElementById('scoreBig').textContent=correct+' / '+QUIZ.length;
+        const pct=correct/QUIZ.length;
+        document.getElementById('scoreMsg').textContent=
+          pct===1?'Komplet — regresja opanowana. 🦄':pct>=0.7?'Dobrze. Dopnij interpretację b oraz warunki prognozowania.':'Wróć do kart o MNK, R² i prognozowaniu — tam sedno.';
+      }
+    };
+    opts.appendChild(b);
+  });
+  quizList.appendChild(card);
+});
+</script>
+
+</Base>

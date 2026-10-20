@@ -1,0 +1,91 @@
+---
+// Trzy zbiory z LICZEBNOŚCIAMI (zasada włączeń i wyłączeń). Liczby w obszarach odkrywa się krokami:
+// środek (wszystkie trzy) → „tylko dwa” → „tylko jeden” → poza zbiorami. Liczone w kodzie z danych zadania.
+// Bez JS widać wszystkie liczby i wszystkie kroki.
+import { texInline } from '../../../lib/tex.js';
+interface Props {
+  dane: { A: number; B: number; C: number; AB: number; AC: number; BC: number; ABC: number; U: number };
+  nazwy?: { A: string; B: string; C: string };
+}
+const { dane: d, nazwy } = Astro.props;
+const r = {
+  abc: d.ABC, ab: d.AB - d.ABC, ac: d.AC - d.ABC, bc: d.BC - d.ABC,
+  a: d.A - d.AB - d.AC + d.ABC, b: d.B - d.AB - d.BC + d.ABC, c: d.C - d.AC - d.BC + d.ABC,
+};
+const suma = d.A + d.B + d.C - d.AB - d.AC - d.BC + d.ABC;
+const poza = d.U - suma;
+for (const [k, v] of Object.entries({ ...r, poza })) if (v < 0) throw new Error(`Venn3: ujemna liczba w obszarze ${k} — sprawdź dane`);
+if (Object.values(r).reduce((x, y) => x + y, 0) !== suma) throw new Error('Venn3: obszary nie sumują się do |A ∪ B ∪ C|');
+const pkt = [
+  { k: 'abc', x: 220, y: 158, krok: 1 },
+  { k: 'ab', x: 220, y: 100, krok: 2 }, { k: 'ac', x: 182, y: 184, krok: 2 }, { k: 'bc', x: 258, y: 184, krok: 2 },
+  { k: 'a', x: 138, y: 118, krok: 3 }, { k: 'b', x: 302, y: 118, krok: 3 }, { k: 'c', x: 220, y: 252, krok: 3 },
+];
+const kroki = [
+  `<b>Środek.</b> Do wszystkich trzech zbiorów naraz należy $|A \\cap B \\cap C| = ${d.ABC}$. Wpisujemy ${d.ABC} w sam środek.`,
+  `<b>Tylko dwa zbiory.</b> $|A \\cap B| = ${d.AB}$, ale ${d.ABC} z nich siedzi już w środku, więc „tylko A i B” to $${d.AB} - ${d.ABC} = ${r.ab}$. Tak samo: tylko A i C: $${d.AC} - ${d.ABC} = ${r.ac}$, tylko B i C: $${d.BC} - ${d.ABC} = ${r.bc}$.`,
+  `<b>Tylko jeden zbiór.</b> Od całego zbioru odejmujemy to, co już wpisane w jego kole. Tylko A: $${d.A} - ${r.ab} - ${r.ac} - ${d.ABC} = ${r.a}$. Tylko B: $${d.B} - ${r.ab} - ${r.bc} - ${d.ABC} = ${r.b}$. Tylko C: $${d.C} - ${r.ac} - ${r.bc} - ${d.ABC} = ${r.c}$.`,
+  `<b>Poza zbiorami.</b> W kołach jest razem $${[r.abc, r.ab, r.ac, r.bc, r.a, r.b, r.c].join(' + ')} = ${suma}$ — tyle samo, ile daje wzór. Poza kołami zostaje $${d.U} - ${suma} = ${poza}$.`,
+];
+---
+<figure class="k-fig k-v3" data-v3>
+  <div class="k-fig-box">
+    <svg viewBox="0 0 440 300" role="img" aria-label={`Diagram Venna trzech zbiorów z liczebnościami: środek ${r.abc}, tylko A i B ${r.ab}, tylko A i C ${r.ac}, tylko B i C ${r.bc}, tylko A ${r.a}, tylko B ${r.b}, tylko C ${r.c}, poza ${poza}`}>
+      <rect x="8" y="8" width="424" height="284" fill="none" stroke="#6f679a" stroke-width="1.5" />
+      <text x="20" y="32" class="k-v3-u">U = {d.U}</text>
+      <circle cx="180" cy="130" r="80" fill="rgba(39,232,255,.05)" stroke="#27e8ff" stroke-width="2.2" />
+      <circle cx="260" cy="130" r="80" fill="rgba(255,46,151,.05)" stroke="#ff2e97" stroke-width="2.2" />
+      <circle cx="220" cy="199" r="80" fill="rgba(255,216,74,.05)" stroke="#ffd84a" stroke-width="2.2" />
+      <text x="96" y="52" class="k-v3-lab" fill="#27e8ff">A</text>
+      <text x="332" y="52" class="k-v3-lab" fill="#ff2e97">B</text>
+      <text x="318" y="270" class="k-v3-lab" fill="#ffd84a">C</text>
+      {pkt.map((p) => <text class="k-v3-n" data-krok={p.krok} x={p.x} y={p.y + 7} text-anchor="middle">{r[p.k as keyof typeof r]}</text>)}
+      <text class="k-v3-n k-v3-poza" data-krok="4" x="62" y="262" text-anchor="middle">{poza}</text>
+      <text class="k-v3-pl" data-krok="4" x="62" y="280" text-anchor="middle">poza</text>
+    </svg>
+  </div>
+  {nazwy && (
+    <p class="k-v3-leg">
+      <span><b style="color:#27e8ff">A</b> — {nazwy.A}</span>
+      <span><b style="color:#ff2e97">B</b> — {nazwy.B}</span>
+      <span><b style="color:#ffd84a">C</b> — {nazwy.C}</span>
+    </p>
+  )}
+  <ol class="k-v3-kroki">
+    {kroki.map((k, i) => <li data-krok={i + 1} set:html={texInline(k)} />)}
+  </ol>
+  <div class="k-v3-ctl" data-js-only hidden>
+    <button type="button" class="k-btn" data-next>Pokaż krok 1 z 4</button>
+    <button type="button" class="k-btn k-btn-ghost" data-all>Pokaż wszystko</button>
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten rysunek:</span> <slot /></figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-v3]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-v3]') === box) el.hidden = false; });
+    const ctl = box.querySelector<HTMLElement>('.k-v3-ctl')!;
+    let shown = 0;
+    const render = () => {
+      box.querySelectorAll<SVGElement>('svg [data-krok]').forEach((el) => el.classList.toggle('is-off', Number(el.dataset.krok) > shown));
+      box.querySelectorAll<HTMLElement>('.k-v3-kroki [data-krok]').forEach((li) => (li.hidden = Number(li.dataset.krok) > shown));
+      if (shown >= 4) ctl.hidden = true;
+      else ctl.querySelector('[data-next]')!.textContent = `Pokaż krok ${shown + 1} z 4`;
+    };
+    ctl.querySelector('[data-next]')!.addEventListener('click', () => { shown++; render(); });
+    ctl.querySelector('[data-all]')!.addEventListener('click', () => { shown = 4; render(); });
+    render();
+  });
+</script>
+
+<style>
+  .k-v3 svg{max-width:520px;}
+  .k-v3-u{font-family:var(--mono);font-size:15px;font-weight:700;fill:#9b93c4;}
+  .k-v3-lab{font-family:var(--mono);font-size:20px;font-weight:800;font-style:italic;}
+  .k-v3-n{font-family:var(--mono);font-size:21px;font-weight:800;fill:#eef0ff;transition:opacity .25s;}
+  .k-v3-pl{font-family:var(--mono);font-size:12px;fill:#9b93c4;}
+  .k-v3-n.is-off,.k-v3-pl.is-off{opacity:0;}
+  .k-v3-leg{display:flex;flex-wrap:wrap;gap:4px 16px;margin:10px 0 0!important;font-size:.88rem;color:var(--muted);}
+  .k-v3-kroki{margin:10px 0 0!important;padding-left:1.4em!important;list-style:decimal;display:grid;gap:6px;font-size:.92rem;line-height:1.6;}
+  .k-v3-ctl{display:flex;flex-wrap:wrap;gap:10px;margin-top:10px;}
+</style>

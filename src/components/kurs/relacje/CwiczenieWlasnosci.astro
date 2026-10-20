@@ -1,0 +1,104 @@
+---
+// Ćwiczenie „zbadaj własności”: przy każdej z 7 własności uczeń wybiera Tak/Nie, na końcu typ relacji porządkującej.
+// „Sprawdź” koloruje odpowiedzi i pod każdą pokazuje uzasadnienie (lib/relacje.js → wlasnosci, typPorzadku).
+import { wlasnosci, typPorzadku, NAZWY, KOLEJNOSC } from '../../../lib/relacje.js';
+import Macierz from './Macierz.astro';
+type El = number | string;
+interface Props { tytul: string; et: El[]; m: number[][]; t?: string; zrodlo?: string }
+const { tytul, et, m, t = 'R', zrodlo } = Astro.props;
+const w = wlasnosci(m, et);
+const typ = typPorzadku(w);
+const TYPY = ['preporządek', 'liniowy preporządek', 'porządek', 'liniowy porządek', 'ostry porządek', 'liniowy ostry porządek', 'żaden (nie jest porządkująca)'];
+const dobryTyp = typ.typ ? TYPY.indexOf(typ.typ) : 6;
+if (dobryTyp < 0) throw new Error(`CwiczenieWlasnosci: nieznany typ ${typ.typ}`);
+const typTekst = typ.typ
+  ? `Relacja jest przechodnia${w.asymetryczna.ok ? ' i asymetryczna' : w.quasi.ok ? ', quasi-asymetryczna i zwrotna' : ' i zwrotna'}${w.spojna.ok ? ', a do tego spójna' : ', ale nie jest spójna'} — to ${typ.typ}.`
+  : `Relacja ${typ.tekst}.`;
+---
+<section class="k-ct k-cw" data-cw>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Zbadaj własności</span>
+    <h3 class="k-pyt-h">{tytul}</h3>
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </div>
+  <div class="k-ct-tresc"><slot /></div>
+  <div class="k-cw-grid">
+    <Macierz w={et} k={et} m={m} t={t} przekatna />
+    <ol class="k-cw-list">
+      {KOLEJNOSC.map((k) => (
+        <li class="k-cw-row" data-row data-ok={w[k].ok ? 'tak' : 'nie'}>
+          <span class="k-cw-q">{NAZWY[k]}?</span>
+          <span class="k-cw-opts">
+            <button type="button" class="k-opt k-opt-sm" data-a="tak">tak</button>
+            <button type="button" class="k-opt k-opt-sm" data-a="nie">nie</button>
+          </span>
+          <span class="k-cw-why" hidden><b>{w[k].ok ? 'Tak' : 'Nie'}.</b> <span set:html={w[k].tekst} /></span>
+        </li>
+      ))}
+      <li class="k-cw-row k-cw-typ" data-row data-ok={String(dobryTyp)}>
+        <span class="k-cw-q">typ relacji porządkującej?</span>
+        <span class="k-cw-opts">
+          {TYPY.map((x, i) => <button type="button" class="k-opt k-opt-sm" data-a={String(i)}>{x}</button>)}
+        </span>
+        <span class="k-cw-why" hidden><b>{TYPY[dobryTyp]}.</b> {typTekst}</span>
+      </li>
+    </ol>
+  </div>
+  <div class="k-ct-ctl" data-js-only hidden>
+    <button type="button" class="k-btn" data-check>Sprawdź</button>
+    <button type="button" class="k-btn k-btn-ghost" data-show>Pokaż odpowiedzi</button>
+    <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
+  </div>
+  <p class="k-ct-sum" data-sum hidden aria-live="polite"></p>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cw]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-cw]') === box) el.hidden = false; });
+    const rows = Array.from(box.querySelectorAll<HTMLElement>('[data-row]'));
+    const sum = box.querySelector<HTMLElement>('[data-sum]')!;
+    rows.forEach((r) => r.querySelectorAll<HTMLButtonElement>('[data-a]').forEach((b) => b.addEventListener('click', () => {
+      r.querySelectorAll('[data-a]').forEach((x) => x.classList.toggle('is-sel', x === b));
+      r.dataset.pick = b.dataset.a;
+      r.classList.remove('is-good', 'is-bad');
+    })));
+    const mark = (reveal: boolean) => {
+      let good = 0, empty = 0;
+      rows.forEach((r) => {
+        const why = r.querySelector<HTMLElement>('.k-cw-why')!;
+        r.querySelectorAll<HTMLButtonElement>('[data-a]').forEach((b) => b.classList.remove('is-good', 'is-bad'));
+        if (reveal) { r.dataset.pick = r.dataset.ok; r.querySelectorAll('[data-a]').forEach((x) => x.classList.toggle('is-sel', (x as HTMLElement).dataset.a === r.dataset.ok)); }
+        const p = r.dataset.pick;
+        if (!p) { empty++; why.hidden = true; return; }
+        const ok = p === r.dataset.ok;
+        if (ok) good++;
+        r.querySelector<HTMLButtonElement>(`[data-a="${p}"]`)!.classList.add(ok ? 'is-good' : 'is-bad');
+        if (!ok) r.querySelector<HTMLButtonElement>(`[data-a="${r.dataset.ok}"]`)!.classList.add('is-good');
+        why.hidden = false;
+      });
+      sum.hidden = false;
+      sum.innerHTML = reveal ? 'Tak wyglądają poprawne odpowiedzi — pod każdą jest uzasadnienie.'
+        : empty ? `Dobrze: <b>${good}</b> z ${rows.length}. Bez odpowiedzi: <b>${empty}</b>.` : good === rows.length ? '<b class="k-ct-ok">Wszystko dobrze!</b>' : `Dobrze: <b>${good}</b> z ${rows.length}. Przeczytaj uzasadnienia przy różowych odpowiedziach.`;
+    };
+    box.querySelector('[data-check]')!.addEventListener('click', () => mark(false));
+    box.querySelector('[data-show]')!.addEventListener('click', () => mark(true));
+    box.querySelector('[data-clear]')!.addEventListener('click', () => {
+      rows.forEach((r) => { delete r.dataset.pick; r.querySelectorAll('[data-a]').forEach((x) => x.classList.remove('is-sel', 'is-good', 'is-bad')); r.querySelector<HTMLElement>('.k-cw-why')!.hidden = true; });
+      sum.hidden = true;
+    });
+  });
+</script>
+
+<style>
+  .k-cw-grid{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:flex-start;}
+  .k-cw-list{list-style:none!important;margin:0!important;padding:0!important;display:grid;gap:6px;flex:1 1 300px;}
+  .k-cw-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;padding:6px 8px;border:1px solid var(--line);margin:0!important;max-width:none!important;}
+  .k-cw-q{flex:1 1 150px;font-size:.92rem;}
+  .k-cw-opts{display:flex;flex-wrap:wrap;gap:6px;}
+  .k-cw-opts .k-opt{min-height:36px;min-width:52px;justify-content:center;}
+  .k-cw-opts .k-opt.is-sel{border-color:var(--cyan);background:rgba(39,232,255,.1);}
+  .k-cw-opts .k-opt.is-good{border-color:var(--ok);background:rgba(90,209,160,.14);}
+  .k-cw-opts .k-opt.is-bad{border-color:var(--magenta);background:rgba(255,46,151,.14);}
+  .k-cw-typ .k-cw-q{flex-basis:100%;}
+  .k-cw-why{flex-basis:100%;font-size:.88rem;line-height:1.55;color:var(--muted);}
+</style>

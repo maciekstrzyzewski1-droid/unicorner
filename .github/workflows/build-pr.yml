@@ -1,0 +1,27 @@
+name: Build (pull request)
+
+# Sprawdza, czy strona sie buduje, zanim cokolwiek trafi na main.
+# Nic nie publikuje — deploy robi deploy.yml po merge.
+
+on:
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install
+        run: npm ci
+      - name: Build (Astro)
+        run: npm run build

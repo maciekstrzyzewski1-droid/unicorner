@@ -1,0 +1,75 @@
+---
+// Siedem własności relacji pokazanych na macierzach: przy każdej przykład „TAK” (zielone = to, na co patrzysz)
+// i „NIE” (różowe = kontrprzykład). Przykłady sprawdzane przy buildzie przez lib/relacje.js.
+import { texInline } from '../../../lib/tex.js';
+import { wlasnosci } from '../../../lib/relacje.js';
+import Macierz from './Macierz.astro';
+const et = ['a', 'b', 'c'];
+type Mark = { i: number; j: number; styl: 'ok' | 'zloto' | 'roz' | 'kolko' | 'skresl' };
+const diag = (styl: Mark['styl'] = 'ok'): Mark[] => [0, 1, 2].map((i) => ({ i, j: i, styl }));
+const para = (i: number, j: number, s1: Mark['styl'], s2: Mark['styl']): Mark[] => [{ i, j, styl: s1 }, { i: j, j: i, styl: s2 }];
+const KARTY = [
+  { k: 'zwrotna', nazwa: 'Zwrotna', znaczy: 'każdy element jest w relacji z samym sobą', zycie: '„jest w tym samym wieku co” — każdy jest w swoim wieku',
+    tak: [[1, 0, 1], [0, 1, 0], [1, 1, 1]], takZ: diag(), takP: 'przekątna: same 1',
+    nie: [[1, 0, 0], [1, 0, 1], [0, 0, 1]], nieP: 'na przekątnej jest 0 (przy $b$)' },
+  { k: 'antyzwrotna', nazwa: 'Antyzwrotna', znaczy: 'żaden element nie jest w relacji z samym sobą', zycie: '„jest starszy niż” — nikt nie jest starszy od siebie',
+    tak: [[0, 1, 0], [0, 0, 1], [1, 0, 0]], takZ: diag(), takP: 'przekątna: same 0',
+    nie: [[0, 1, 0], [0, 1, 0], [1, 0, 0]], nieP: 'na przekątnej jest 1 (przy $b$)' },
+  { k: 'symetryczna', nazwa: 'Symetryczna', znaczy: 'jeśli $x$ jest w relacji z $y$, to $y$ z $x$ też', zycie: '„jest znajomym na Facebooku” — zawsze w obie strony',
+    tak: [[1, 1, 0], [1, 0, 1], [0, 1, 0]], takZ: [...para(0, 1, 'ok', 'ok'), ...para(0, 2, 'zloto', 'zloto')], takP: 'lustrzane komórki równe: 1 i 1, 0 i 0',
+    nie: [[1, 1, 0], [0, 0, 1], [0, 1, 0]], nieP: 'w lustrze 1 i 0' },
+  { k: 'asymetryczna', nazwa: 'Asymetryczna', znaczy: 'jeśli $x$ jest w relacji z $y$, to $y$ z $x$ na pewno nie (i nikt sam ze sobą)', zycie: '„jest starszy niż”',
+    tak: [[0, 1, 1], [0, 0, 1], [0, 0, 0]], takZ: [...diag(), ...para(0, 1, 'ok', 'zloto')], takP: 'przekątna: same 0, przy każdej 1 w lustrze 0',
+    nie: [[0, 1, 0], [1, 0, 0], [0, 0, 0]], nieP: 'dwie jedynki w lustrze' },
+  { k: 'quasi', nazwa: 'Quasi-asymetryczna', znaczy: 'jak asymetryczna, ale przekątna może być dowolna', zycie: '„$\\leq$” na liczbach',
+    tak: [[1, 1, 1], [0, 0, 1], [0, 0, 1]], takZ: [...para(0, 1, 'ok', 'zloto'), ...para(1, 2, 'ok', 'zloto')], takP: 'przy każdej 1 w lustrze 0 (przekątnej nie sprawdzasz)',
+    nie: [[1, 1, 0], [1, 1, 0], [0, 0, 1]], nieP: 'dwie jedynki w lustrze' },
+  { k: 'spojna', nazwa: 'Spójna', znaczy: 'każde dwa różne elementy są w relacji przynajmniej w jedną stronę', zycie: '„$\\leq$” — każde dwie liczby da się porównać',
+    tak: [[0, 1, 1], [0, 0, 1], [0, 0, 0]], takZ: [...para(0, 1, 'ok', 'zloto'), ...para(0, 2, 'ok', 'zloto'), ...para(1, 2, 'ok', 'zloto')], takP: 'w każdej lustrzanej parze jest co najmniej jedna 1',
+    nie: [[1, 1, 0], [0, 1, 0], [0, 0, 1]], nieP: 'dwa zera w lustrze ($a$ i $c$)' },
+  { k: 'przechodnia', nazwa: 'Przechodnia', znaczy: 'jeśli $x$ z $y$ i $y$ z $z$, to $x$ z $z$', zycie: '„jest starszy niż” — starszy od starszego jest starszy',
+    tak: [[1, 1, 1], [0, 1, 1], [0, 0, 1]], takZ: [{ i: 0, j: 1, styl: 'ok' }, { i: 1, j: 2, styl: 'ok' }, { i: 0, j: 2, styl: 'zloto' }], takP: '$a \\to b$ i $b \\to c$ (zielone), więc musi być $a \\to c$ (złote) — jest',
+    nie: [[0, 1, 0], [0, 0, 1], [0, 0, 0]], nieP: '$a \\to b$ i $b \\to c$, ale w $(a, c)$ jest 0' },
+] as const;
+const karty = KARTY.map((c) => {
+  const wt = wlasnosci(c.tak as unknown as number[][], et)[c.k], wn = wlasnosci(c.nie as unknown as number[][], et)[c.k];
+  if (!wt.ok || wn.ok) throw new Error(`GaleriaWlasnosci: zły przykład dla „${c.k}”`);
+  return { ...c, nieZ: wn.komorki.map(([i, j]) => ({ i, j, styl: 'roz' as const })) };
+});
+---
+<div class="k-gw">
+  {karty.map((c) => (
+    <section class="k-gw-c">
+      <h4 class="k-gw-h">{c.nazwa}</h4>
+      <p class="k-gw-z" set:html={texInline(c.znaczy)} />
+      <div class="k-gw-m">
+        <figure>
+          <span class="k-gw-tag is-tak">TAK</span>
+          <Macierz w={et} k={et} m={c.tak as unknown as number[][]} oznacz={c.takZ as unknown as Mark[]} />
+          <figcaption set:html={texInline(c.takP)} />
+        </figure>
+        <figure>
+          <span class="k-gw-tag is-nie">NIE</span>
+          <Macierz w={et} k={et} m={c.nie as unknown as number[][]} oznacz={c.nieZ} />
+          <figcaption set:html={texInline(c.nieP)} />
+        </figure>
+      </div>
+      <p class="k-gw-zy" set:html={texInline(`<b>Z życia:</b> ${c.zycie}`)} />
+    </section>
+  ))}
+</div>
+
+<style>
+  .k-gw{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin:1.2em 0 1.6em;}
+  .k-gw-c{border:1px solid var(--line2);background:rgba(255,255,255,.02);padding:12px 14px;}
+  .k-gw-h{font-family:var(--disp);font-size:1.05rem;color:#fff;margin:0 0 2px!important;}
+  .k-gw-z{font-size:.9rem;color:var(--muted);margin:0 0 8px!important;line-height:1.5;}
+  .k-gw-m{display:flex;flex-wrap:wrap;gap:10px 18px;}
+  .k-gw-m figure{margin:0;display:flex;flex-direction:column;gap:4px;max-width:150px;}
+  .k-gw-m figcaption{font-size:.8rem;line-height:1.4;color:var(--muted);}
+  .k-gw-tag{align-self:flex-start;font-family:var(--mono);font-size:.68rem;font-weight:800;letter-spacing:1.2px;padding:1px 7px;color:#0b0918;}
+  .k-gw-tag.is-tak{background:var(--ok);}
+  .k-gw-tag.is-nie{background:var(--magenta);color:#fff;}
+  .k-gw-zy{font-size:.86rem;color:var(--muted);margin:8px 0 0!important;line-height:1.5;}
+  @media(max-width:560px){ .k-gw{grid-template-columns:1fr;} }
+</style>

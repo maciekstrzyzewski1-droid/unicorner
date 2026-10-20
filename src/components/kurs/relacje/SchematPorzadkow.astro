@@ -1,0 +1,42 @@
+---
+// Schemat relacji porządkujących (jak na zajęciach): w górę rośnie „asymetria”, w prawo dochodzi spójność.
+// Każde pole: nazwa + wymagane własności. `podswietl` = nazwa pola do zaznaczenia.
+interface Props { podswietl?: string }
+const { podswietl } = Astro.props;
+const pola = [
+  [{ n: 'ostry porządek', w: ['asymetryczna', 'przechodnia'] }, { n: 'liniowy ostry porządek', w: ['asymetryczna', 'przechodnia', 'spójna'] }],
+  [{ n: 'porządek', w: ['quasi-asymetryczna', 'przechodnia', 'zwrotna'] }, { n: 'liniowy porządek', w: ['quasi-asymetryczna', 'przechodnia', 'zwrotna', 'spójna'] }],
+  [{ n: 'preporządek', w: ['przechodnia', 'zwrotna'] }, { n: 'liniowy preporządek', w: ['przechodnia', 'zwrotna', 'spójna'] }],
+];
+---
+<figure class="k-fig k-sp">
+  <div class="k-fig-box">
+    <div class="k-sp-wrap">
+      <div class="k-sp-y"><span>coraz mocniejsza asymetria ↑</span></div>
+      <div class="k-sp-grid">
+        {pola.flat().map((p) => (
+          <div class={`k-sp-p ${podswietl === p.n ? 'is-on' : ''}`}>
+            <b>{p.n}</b>
+            <span>{p.w.map((x, i) => <>{i > 0 && ', '}<i class={x === 'spójna' ? 'is-sp' : ''}>{x}</i></>)}</span>
+          </div>
+        ))}
+      </div>
+      <div class="k-sp-x">dochodzi spójność →</div>
+    </div>
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać ten schemat:</span> <slot /></figcaption>
+</figure>
+
+<style>
+  .k-sp-wrap{display:grid;grid-template-columns:auto 1fr;grid-template-rows:auto auto;gap:6px 8px;max-width:620px;margin:0 auto;}
+  .k-sp-y{display:flex;align-items:center;justify-content:center;border-right:2px solid var(--muted2);padding-right:6px;}
+  .k-sp-y span{writing-mode:vertical-rl;transform:rotate(180deg);font-family:var(--mono);font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+  .k-sp-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+  .k-sp-p{border:1px solid var(--line2);background:rgba(255,255,255,.02);padding:10px 12px;display:flex;flex-direction:column;gap:4px;}
+  .k-sp-p b{font-family:var(--mono);font-size:.82rem;letter-spacing:.6px;text-transform:uppercase;color:#fff;}
+  .k-sp-p span{font-size:.86rem;line-height:1.45;color:var(--muted);}
+  .k-sp-p i{font-style:normal;}
+  .k-sp-p i.is-sp{color:var(--cyan);}
+  .k-sp-p.is-on{border-color:var(--gold);background:rgba(255,216,74,.08);}
+  .k-sp-x{grid-column:2;border-top:2px solid var(--muted2);padding-top:4px;text-align:right;font-family:var(--mono);font-size:.7rem;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+</style>

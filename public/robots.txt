@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /moderacja.html
+
+Sitemap: https://unicorner.pl/sitemap.xml

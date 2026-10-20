@@ -1,0 +1,48 @@
+---
+// Rachunek „w słupkach”: wiersze liczb jeden pod drugim, wynik w ostatnim wierszu — jak dodawanie pisemne.
+// wiersze: [{ lab (LaTeX), v: [liczby], wynik? }]; podpis — LaTeX nad tabelką (np. operacja w_2' = w_2 - w_1);
+// kreska — numer kolumny (od 0), po której stoi pionowa kreska (macierz rozszerzona); nr — numery kolumn w nagłówku.
+import { tex } from '../../../lib/tex.js';
+import { Q } from '../../../lib/macierze.js';
+interface W { lab: string; v: (number | string | Q)[]; wynik?: boolean }
+interface Props { wiersze: W[]; podpis?: string; kreska?: number; nr?: boolean; opis?: string }
+const { wiersze, podpis, kreska, nr = false, opis } = Astro.props;
+const n = wiersze[0].v.length;
+const kr = (j: number) => (kreska === j ? 'is-kr' : '');
+---
+<div class="k-sl">
+  {podpis && <div class="k-sl-p" set:html={tex(podpis)} />}
+  {opis && <p class="k-sl-o">{opis}</p>}
+  <div class="k-sl-scroll">
+    <table class="k-sl-t">
+      {nr && <tr><th></th>{[...Array(n).keys()].map((j) => <th class={`k-sl-nr ${kr(j)}`}>{j + 1}.</th>)}</tr>}
+      {wiersze.map((w) => (
+        <tr class={w.wynik ? 'is-wynik' : ''}>
+          <th set:html={tex(w.lab)} />
+          {w.v.map((x, j) => <td class={kr(j)} set:html={tex(Q.of(x).tex().replace('\\frac', '\\dfrac'))} />)}
+        </tr>
+      ))}
+    </table>
+  </div>
+</div>
+
+<style>
+  .k-sl{margin:8px 0 10px;}
+  .k-sl-p{font-size:.92rem;margin:0 0 4px;color:#fff;}
+  .k-sl-o{font-size:.86rem;color:var(--muted);margin:0 0 4px!important;}
+  .k-sl-scroll{overflow-x:auto;}
+  .k-sl-t{border-collapse:collapse;font-size:.9rem;}
+  .k-sl-t th,.k-sl-t td{border:1px solid var(--line2);padding:3px 8px;text-align:center;white-space:nowrap;}
+  .k-sl-t th{color:var(--muted);font-weight:500;text-align:right;background:rgba(255,255,255,.02);}
+  .k-sl-t th.k-sl-nr{text-align:center;font-family:var(--mono);font-size:.74rem;}
+  .k-sl-t td{min-width:2.1em;}
+  .k-sl-t tr.is-wynik td{background:rgba(255,216,74,.14);color:#fff;font-weight:700;border-top:2px solid var(--gold);}
+  .k-sl-t tr.is-wynik th{color:var(--gold);border-top:2px solid var(--gold);}
+  .k-sl-t .is-kr{border-right:2px solid var(--muted);}
+  .k-sl-t :global(.katex){font-size:1em!important;}
+  @media(max-width:560px){
+    .k-sl-t{font-size:.82rem;}
+    .k-sl-t th,.k-sl-t td{padding:2px 4px;}
+    .k-sl-t td{min-width:1.8em;}
+  }
+</style>

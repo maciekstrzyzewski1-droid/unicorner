@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia bariery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 14px;letter-spacing:-.02em;}
+.sub{font-family:'Fraunces',Georgia,serif;font-weight:400;font-size:clamp(1.1rem,3.4vw,1.35rem);line-height:1.35;color:var(--text);margin:0 0 22px;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;color:#fff;}
+strong{font-weight:600;color:#fff;}
+em{font-style:italic;}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;font-size:1.05rem;}
+.box p{font-size:.95rem;margin:0 0 10px;} .box p:last-child{margin-bottom:0;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 132px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .ev.crit:before{background:var(--red);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .ev.crit .yr{color:var(--red);}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.bars{margin:30px 0;} .bars .bt{font-family:'Fraunces',serif;color:#fff;margin-bottom:14px;font-size:1.05rem;}
+.bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.red{background:var(--red);} .bars .fill.blue{background:var(--blue);} .bars .fill.green{background:var(--green);}
+.bars .val{flex:0 0 64px;text-align:right;font-variant-numeric:tabular-nums;}
+.caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .st{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:10px;}
+.twocol .side.a .st{color:var(--red);} .twocol .side.b .st{color:var(--green);}
+.twocol .side p{margin:0 0 8px;}
+figure.diag{margin:34px 0;border:1px solid var(--line);background:var(--card);padding:18px;}
+figure.diag svg{width:100%;height:auto;display:block;}
+figure.diag figcaption{font-size:.8rem;color:var(--muted);margin-top:12px;line-height:1.5;}
+blockquote{margin:30px 0;padding:4px 0 4px 20px;border-left:2px solid var(--gold);font-family:'Fraunces',serif;font-size:1.15rem;line-height:1.5;color:#fff;}
+blockquote cite{display:block;font-family:'Work Sans',sans-serif;font-style:normal;font-size:.8rem;color:var(--muted);margin-top:8px;}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+ul.sources{list-style:none;padding:0;font-size:.85rem;color:var(--muted);line-height:1.6;}
+ul.sources li{margin-bottom:10px;padding-left:14px;border-left:1px solid var(--line);}
+ul.sources a{color:var(--muted);word-break:break-word;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 96px;font-size:1.08rem;} .bars .lab{flex:0 0 100px;font-size:.78rem;} .bars .val{flex:0 0 54px;font-size:.78rem;} .twocol{grid-template-columns:1fr;}}
+</style>
+</head>
+<body><div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy</div>
+  <h1>Anatomia bariery</h1>
+  <p class="lede">Przez 27 lat można było kupić bilet i przelecieć z Londynu do Nowego Jorku w trzy i pół godziny. Potem ta możliwość zniknęła. Popularna wersja mówi, że zabiła ją jedna katastrofa. Dokumenty mówią coś innego: Concorde przebił barierę dźwięku, ale nigdy nie przebił bariery rachunku.</p>
+  <div class="meta">Październik 2026 · czas czytania ok. 30 minut</div>
+</header>
+
+<p>Trafiłem na Concorde przypadkiem. Czytałem życiorys Phila Collinsa i w jednym zdaniu mignęło, że tego samego dnia zagrał koncert w Londynie i drugi w Filadelfii. Pomiędzy nimi przeleciał przez Atlantyk Concordem.</p>
+
+<p>Nie wiedziałem wtedy, co to jest. Sprawdziłem. Okazało się, że to samolot pasażerski, który leciał ponad dwa razy szybciej niż dźwięk. Zwykły rejsowy samolot, z biletami, stewardesami i obiadem. Tyle że lecący z prędkością, szybszą niż kula wystrzelona z pistoletu.</p>
+
+<p>Najbardziej uderzyło mnie co innego. Dziś czegoś takiego nie ma. Lot z Europy do Nowego Jorku trwa siedem, osiem godzin, czyli mniej więcej tyle, ile w latach 60. Łapiemy się na przekonaniu, że technologia zawsze idzie do przodu: telefony są szybsze, auta bezpieczniejsze, internet szerszy. A tu mamy rzecz, która istniała, działała, i po prostu przestała istnieć.</p>
+
+<p>Ten tekst odpowiada na trzy pytania. Jak w ogóle doszło do zbudowania takiej maszyny? Kto nią latał i ile to kosztowało? I dlaczego jej zabrakło — bo, jak się okaże, katastrofa z lipca 2000 roku była raczej ostatnim pchnięciem niż przyczyną.</p>
+
+<p>Ale zacznijmy od dnia, w którym jeden muzyk zagrał na dwóch kontynentach.</p>
+
+<h2><span class="num">Rozdział pierwszy</span>Dzień, w którym Phil Collins był wszędzie</h2>
+
+<p>13 lipca 1985 roku odbył się Live Aid — podwójny koncert charytatywny zorganizowany przez Boba Geldofa, z którego dochód szedł na pomoc dla ofiar głodu w Etiopii. Jedna połowa grała na stadionie Wembley w Londynie. Druga na stadionie JFK w Filadelfii. Transmisję oglądały setki milionów ludzi.</p>
+
+<p>Phil Collins był wtedy u szczytu popularności. Album <em>No Jacket Required</em> sprzedawał się wszędzie. Na Wembley wystąpił po południu: zagrał swoje utwory i zaśpiewał ze Stingiem. Według relacji brytyjskiego dziennikarza radiowego, który leciał z nim tego dnia, Collins skończył około 15:50.</p>
+
+<p>Potem zaczęła się logistyka, która brzmi jak scenariusz filmu. Helikopter z Wembley na lotnisko Heathrow — pilotował go znany prezenter Noel Edmonds, który miał licencję pilota. Na Heathrow czekał Concorde do Nowego Jorku. Z Nowego Jorku kolejny helikopter do Filadelfii.</p>
+
+<p>Wieczorem Collins stał na scenie po drugiej stronie oceanu. Zagrał te same piosenki, potem usiadł za perkusją u Erica Claptona, a na koniec grał na reaktywacji Led Zeppelin. Był jedynym artystą, który wystąpił na obu koncertach.</p>
+
+<p>Według jego własnej relacji na pokładzie Concorde'a siedziała Cher, która nie wiedziała, że Live Aid w ogóle się odbywa. Po wylądowaniu pojechała do Filadelfii i zaśpiewała w finałowym utworze.</p>
+
+<p>Dlaczego to w ogóle było możliwe? Bo Londyn jest pięć godzin „przed” wschodnim wybrzeżem USA, a Concorde leciał przez Atlantyk około trzech i pół godziny. Na zegarku lokalnym pasażer lądował w Nowym Jorku <strong>wcześniej, niż wystartował w Londynie</strong>. British Airways reklamowało to zresztą hasłem „Arrive before you leave” — przylatuj, zanim wylecisz.</p>
+
+<p>Zwykłym samolotem ten numer by się nie udał. Collins wylądowałby w Nowym Jorku, gdy w Filadelfii koncert dobiegałby końca.</p>
+
+<h2><span class="num">Rozdział drugi</span>Co to znaczy „szybciej niż dźwięk”</h2>
+
+<p>Żeby zrozumieć, dlaczego Concorde był tak niezwykły — i dlaczego miał tak wiele problemów — trzeba najpierw zrozumieć, czym jest bariera dźwięku.</p>
+
+<p>Dźwięk to fala ciśnienia w powietrzu. Każdy ruchomy przedmiot rozpycha powietrze przed sobą i wysyła takie fale we wszystkie strony. Rozchodzą się one z określoną prędkością. Na wysokości, na której latał Concorde, gdzie jest około minus 57 stopni, to mniej więcej 1060 km/h. Tę prędkość nazywa się <strong>Mach 1</strong>. Mach 2 to dwa razy tyle.</p>
+
+<p>Dopóki samolot leci wolniej niż dźwięk, fale ciśnienia uciekają przed nim. Powietrze z przodu „dowiaduje się” z wyprzedzeniem, że nadlatuje samolot, i zdąży się rozstąpić. Gdy samolot jest szybszy od własnych fal, sytuacja się odwraca. Fale nie nadążają uciekać i zaczynają się nakładać na siebie. Tworzą stożek gwałtownie sprężonego powietrza ciągnący się za samolotem — <strong>falę uderzeniową</strong>.</p>
+
+<p>Najlepiej widać to na wodzie. Motorówka płynąca wolno rozsyła fale okrężnie, przed siebie i na boki. Motorówka płynąca szybciej niż fale na powierzchni zostawia za sobą wyraźny klin w kształcie litery V. Ten klin nie powstaje raz, w chwili przyspieszenia. Ciągnie się za łodzią przez cały czas, dopóki płynie ona szybko. I uderza w brzeg w każdym miejscu, obok którego łódź przepłynie.</p>
+
+<p>Z samolotem jest dokładnie tak samo. To ważne, bo wiele osób sądzi, że huk naddźwiękowy słychać tylko raz, w momencie „przebijania bariery”. W rzeczywistości stożek fali uderzeniowej sunie po ziemi pod całą trasą lotu. Każdy, nad kim przeleci samolot naddźwiękowy, słyszy swój własny huk — podwójne, ostre uderzenie przypominające bliski grzmot.</p>
+
+<figure class="diag">
+<svg viewBox="0 0 640 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Porównanie fal dźwiękowych przy prędkości poddźwiękowej i naddźwiękowej">
+  <g font-family="inherit" font-size="13" fill="#a9a292">
+    <text x="20" y="22">Wolniej niż dźwięk</text>
+    <text x="340" y="22">Szybciej niż dźwięk (Mach 2)</text>
+  </g>
+  <g fill="none" stroke="#6f8fa8" stroke-width="1.4" opacity=".85">
+    <circle cx="150" cy="125" r="80"/><circle cx="165" cy="125" r="60"/><circle cx="180" cy="125" r="40"/><circle cx="195" cy="125" r="20"/>
+  </g>
+  <circle cx="205" cy="125" r="5" fill="#d1a13f"/>
+  <g fill="none" stroke="#6f8fa8" stroke-width="1.4" opacity=".85">
+    <circle cx="420" cy="125" r="80"/><circle cx="460" cy="125" r="60"/><circle cx="500" cy="125" r="40"/><circle cx="540" cy="125" r="20"/>
+  </g>
+  <path d="M580 125 L400 50 M580 125 L400 200" stroke="#c96a4e" stroke-width="2.4" fill="none"/>
+  <circle cx="580" cy="125" r="5" fill="#d1a13f"/>
+  <g font-family="inherit" font-size="12" fill="#ece5d1">
+    <text x="20" y="222">fale wyprzedzają samolot</text>
+    <text x="340" y="222">fale nakładają się w stożek uderzeniowy</text>
+  </g>
+</svg>
+<figcaption>Każdy okrąg to fala dźwiękowa wysłana chwilę wcześniej (złota kropka to samolot). Gdy samolot leci szybciej niż fale, ich krawędzie łączą się w stożek — czerwone linie. To on, sunąc po ziemi, daje huk naddźwiękowy.</figcaption>
+</figure>
+
+<h3>Maszyna, która rosła w locie</h3>
+
+<p>Lot z prędkością Mach 2 ma też skutki, które słabo pasują do wyobrażeń o lotnictwie. Powietrze przed samolotem jest tak gwałtownie sprężane i trące o kadłub, że poszycie się nagrzewa. Nos Concorde'a osiągał około <strong>127°C</strong> — przy temperaturze otoczenia minus 57°C.</p>
+
+<p>Metal od ciepła się rozszerza. Kadłub Concorde'a wydłużał się w locie o kilkanaście do trzydziestu centymetrów (źródła podają różne wartości). W kokpicie otwierała się szczelina między pulpitem mechanika pokładowego a ścianką. Według anegdot powtarzanych w środowisku załóg mechanicy wkładali tam czapki, które po wylądowaniu zostawały zakleszczone — tę historię traktujmy jednak jako legendę, nie fakt udokumentowany.</p>
+
+<p>Słynny „opadający nos” też miał konkretny powód. Skrzydło w kształcie delty — szerokiego trójkąta — świetnie sprawdza się przy dużych prędkościach, ale przy wolnym lądowaniu musi być mocno uniesione do góry, żeby dawać siłę nośną. Samolot ląduje więc z nosem zadartym wysoko. Pilot widziałby wtedy tylko niebo. Dlatego nos opuszczano mechanicznie przy starcie i lądowaniu, a podnoszono w przelocie.</p>
+
+<p>Do tego dochodziły silniki. Cztery Rolls-Royce/SNECMA Olympus 593 miały <strong>dopalacze</strong> — urządzenie, które wtryskuje paliwo do gorących spalin za silnikiem i spala je jeszcze raz, dając dodatkowy ciąg kosztem ogromnego zużycia paliwa. Takie same rozwiązania stosuje się w myśliwcach. Concorde używał ich tylko przy starcie i przy przejściu przez barierę dźwięku. Potem leciał już bez nich — co samo w sobie było osiągnięciem, bo radziecki konkurent Tu-144 potrzebował dopalaczy przez cały lot.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">Mach 2,04</div><div class="d">Maksymalna prędkość przelotowa — ok. 2180 km/h.</div></div>
+  <div class="nrow"><div class="n">17–18 km</div><div class="d">Wysokość przelotu (55–60 tys. stóp), mniej więcej dwa razy wyżej niż zwykłe samoloty pasażerskie. Pasażerowie widzieli krzywiznę Ziemi.</div></div>
+  <div class="nrow"><div class="n">~127°C</div><div class="d">Temperatura nosa przy Mach 2. Za oknem było ok. −57°C.</div></div>
+  <div class="nrow"><div class="n">92–128</div><div class="d">Liczba miejsc, w zależności od konfiguracji; zwykle ok. 100. Cztery fotele w rzędzie.</div></div>
+  <div class="nrow"><div class="n">~3 h 30 min</div><div class="d">Typowy lot Londyn–Nowy Jork. Zwykłym samolotem: ok. 7–8 godzin.</div></div>
+</div>
+
+<h2><span class="num">Rozdział trzeci</span>Jak to w ogóle doszło do skutku</h2>
+
+<p>Concorde nie powstał dlatego, że jakaś linia lotnicza policzyła, że jej się opłaci. Powstał dlatego, że dwa rządy uznały, że muszą go mieć.</p>
+
+<p>Pod koniec lat 50. Wielka Brytania i Francja niezależnie od siebie pracowały nad naddźwiękowymi samolotami pasażerskimi. Brytyjskie studia ruszyły w 1954 roku. Szybko okazało się, że koszt jest za duży dla jednego kraju. Brytyjski rząd postawił warunek: projekt ma ruszyć tylko z partnerem zagranicznym. Realne zainteresowanie wykazała jedynie Francja.</p>
+
+<p>29 listopada 1962 roku oba kraje podpisały porozumienie. Ważny szczegół: nie była to umowa handlowa między firmami, tylko <strong>traktat międzynarodowy</strong> między państwami. Na wniosek Brytyjczyków wpisano do niego wysokie kary za wycofanie się. Od tej chwili zerwanie projektu oznaczało nie tylko porzucenie samolotu, ale też kryzys dyplomatyczny i ogromne odszkodowania.</p>
+
+<p>Ta klauzula wkrótce zadziałała. W połowie lat 60. nowy brytyjski rząd chciał się z projektu wycofać, ale uznał, że koszty zerwania traktatu i utrata tysięcy miejsc pracy byłyby gorsze niż kontynuacja. Concorde stał się projektem, którego nie dało się już zatrzymać — nawet gdy wszyscy widzieli, że rachunki rosną.</p>
+
+<p>Ekonomiści mają na to nazwę: <strong>efekt kosztów utopionych</strong>. Polega on na tym, że kontynuujemy coś tylko dlatego, że już dużo w to włożyliśmy — choć z punktu widzenia przyszłości lepiej byłoby przestać. W literaturze angielskiej zjawisko to bywa wręcz nazywane „błędem Concorde'a” (<em>Concorde fallacy</em>).</p>
+
+<h3>Rachunek, który rósł szybciej niż samolot</h3>
+
+<p>Pierwszy prototyp oblatano w Tuluzie 2 marca 1969 roku. Do tego czasu koszty wielokrotnie przekroczyły pierwotne szacunki — najczęściej podaje się, że całość wyniosła mniej więcej sześć razy więcej, niż zakładano w 1962 roku.</p>
+
+<p>Ciekawe świadectwo zostawili Amerykanie. W odtajnionej notatce dla prezydenta Nixona z 1972 roku jego doradca ds. gospodarczych pisze, że Concorde jest rozwijany od dziesięciu lat kosztem około <strong>4,5 miliarda dolarów</strong> po stronie brytyjskiej i francuskiej. Amerykańscy eksperci, na których się powołuje, uznali go za „technologiczną porażkę, która okaże się ekonomicznie nieudana i środowiskowo (głównie hałas) niezadowalająca”.</p>
+
+<p>Można by to uznać za zazdrość konkurenta. Tyle że podobne zdanie mieli ludzie, którzy mieli samolotem latać. Już w 1965 roku dyrektor techniczny BOAC — poprzednika British Airways — Beverley Shenstone ostrzegał:</p>
+
+<blockquote>„Największy, najdroższy i najbardziej wątpliwy projekt, jaki kiedykolwiek podjęto w rozwoju samolotów cywilnych.”<cite>Beverley Shenstone, BOAC, 1965 (cyt. za Air &amp; Space / Smithsonian)</cite></blockquote>
+
+<h3>Zamówienia, które wyparowały</h3>
+
+<p>Na początku wyglądało to obiecująco. Pan Am, BOAC i Air France wzięły opcje na po sześć maszyn. Za nimi poszły kolejne linie: American, TWA, United, Qantas, Japan Airlines i inne. W sumie światowe linie zarezerwowały kilkadziesiąt do ponad stu maszyn — źródła podają różne liczby, bo chodziło o niewiążące opcje, a nie twarde zamówienia.</p>
+
+<p>W 1973 roku wszystko się posypało. Prawie wszystkie opcje anulowano w ciągu kilku miesięcy. Złożyło się na to kilka rzeczy naraz:</p>
+
+<p><strong>Kryzys naftowy.</strong> Jesienią 1973 roku ceny ropy gwałtownie skoczyły. Dla samolotu, który pali paliwo jak żaden inny, był to cios bezpośredni.</p>
+
+<p><strong>Hałas.</strong> Huk naddźwiękowy sprawił, że USA w tym samym roku zakazały cywilnych lotów naddźwiękowych nad swoim lądem. Concorde mógł więc latać szybko tylko nad oceanem. To odcięło większość potencjalnych tras.</p>
+
+<p><strong>Katastrofa konkurenta.</strong> W czerwcu 1973 roku radziecki Tu-144 rozbił się na oczach publiczności podczas pokazu w Le Bourget pod Paryżem. Nie miało to nic wspólnego z Concorde'em, ale wizerunkowo uderzyło w całą ideę naddźwiękowego latania pasażerskiego.</p>
+
+<p>Ostatecznie zostali tylko dwaj klienci: British Airways i Air France. Obie były wtedy liniami państwowymi. Jak zauważa Narodowe Muzeum Lotnictwa i Kosmonautyki Smithsonian, w praktyce musiały kupić samolot, który zbudowały ich własne rządy.</p>
+
+<div class="bars">
+  <div class="bt">Od entuzjazmu do dwóch klientów</div>
+  <div class="row"><div class="lab">Opcje zarezerwowane przez linie (lata 60.)</div><div class="track"><div class="fill blue" style="width:100%"></div></div><div class="val">70+</div></div>
+  <div class="row"><div class="lab">Zbudowane egzemplarze (łącznie z testowymi)</div><div class="track"><div class="fill" style="width:28.5%"></div></div><div class="val">20</div></div>
+  <div class="row"><div class="lab">Egzemplarze w służbie liniowej</div><div class="track"><div class="fill" style="width:20%"></div></div><div class="val">14</div></div>
+  <div class="row"><div class="lab">Klienci, którzy je odebrali</div><div class="track"><div class="fill red" style="width:3%"></div></div><div class="val">2</div></div>
+  <div class="caption">Liczba opcji różni się w źródłach (od ok. 70 do ponad 100), dlatego podano wartość minimalną. 14 maszyn liniowych podzielono po równo: siedem dla British Airways, siedem dla Air France.</div>
+</div>
+
+<div class="tl">
+  <div class="ev"><div class="yr">1954</div><div class="txt">W Wielkiej Brytanii ruszają pierwsze studia nad naddźwiękowym samolotem pasażerskim.</div></div>
+  <div class="ev"><div class="yr">29 listopada 1962</div><div class="txt">Traktat brytyjsko-francuski. Projekt otrzymuje nazwę Concorde — „zgoda”, „porozumienie”.</div></div>
+  <div class="ev"><div class="yr">2 marca 1969</div><div class="txt">Pierwszy lot prototypu 001 w Tuluzie.</div></div>
+  <div class="ev"><div class="yr">1971</div><div class="txt">USA kasują własny projekt naddźwiękowca, Boeinga 2707, zanim powstał jakikolwiek prototyp.</div></div>
+  <div class="ev crit"><div class="yr">1973</div><div class="txt">Kryzys naftowy, zakaz lotów naddźwiękowych nad USA, katastrofa Tu-144 w Le Bourget. Linie masowo rezygnują z opcji.</div></div>
+  <div class="ev"><div class="yr">21 stycznia 1976</div><div class="txt">Pierwsze loty pasażerskie: British Airways z Londynu do Bahrajnu, Air France z Paryża do Rio de Janeiro.</div></div>
+  <div class="ev"><div class="yr">1979</div><div class="txt">Ostatni zbudowany egzemplarz wykonuje pierwszy lot. Linia produkcyjna zostaje zamknięta.</div></div>
+</div>
+
+<h2><span class="num">Rozdział czwarty</span>Kto nim latał</h2>
+
+<p>Concorde latał głównie na dwóch trasach: Londyn–Nowy Jork i Paryż–Nowy Jork. Przez lata próbowano innych kierunków — Waszyngton, Bahrajn, Singapur, Ameryka Południowa — ale większość szybko upadła. Zostały te dwie, plus sezonowe loty na Barbados i loty czarterowe.</p>
+
+<p>Bilet był drogi nawet jak na pierwszą klasę. Według Narodowych Muzeów Szkocji w 2003 roku standardowy bilet w obie strony Londyn–Nowy Jork kosztował <strong>6636 funtów</strong>. Muzeum Smithsonian podaje około 12 tysięcy dolarów za lot w obie strony, co po uwzględnieniu inflacji odpowiada dziś mniej więcej 66 tysiącom dolarów.</p>
+
+<p>Kim byli ludzie, którzy płacili takie pieniądze? Przede wszystkim nie celebryci, choć to oni trafiali do gazet. Rdzeniem klientów byli <strong>ludzie biznesu</strong>, dla których dzień pracy był wart więcej niż różnica w cenie biletu. Bankier mógł rano wylecieć z Londynu, odbyć spotkanie w Nowym Jorku i wieczorem być z powrotem. Dla takiej osoby Concorde nie był luksusem. Był narzędziem.</p>
+
+<p>Celebryci oczywiście też latali. Dziennikarz lotniczy Andreas Spaeth, który leciał Concorde'em osiem razy, wspomina, że na pokładzie spotkał m.in. Paula McCartneya, Lizę Minnelli i Hugh Granta. Gdy leciała królowa Elżbieta II, zawsze zajmowała miejsce 1A.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">~50 000</div><div class="d">Liczba lotów wykonanych przez Concorde'y British Airways w latach 1976–2003.</div></div>
+  <div class="nrow"><div class="n">2,5 mln+</div><div class="d">Pasażerów przewiezionych z prędkością naddźwiękową przez samą flotę BA.</div></div>
+  <div class="nrow"><div class="n">£6636</div><div class="d">Standardowy bilet w obie strony Londyn–Nowy Jork w 2003 roku.</div></div>
+  <div class="nrow"><div class="n">2:52:59</div><div class="d">Rekord przelotu Nowy Jork–Londyn, 7 lutego 1996. Najszybsze przekroczenie Atlantyku samolotem pasażerskim — do dziś niepobite.</div></div>
+</div>
+
+<p>Ten rekord ustanowiła maszyna G-BOAD pod dowództwem kapitana Lesliego Scotta. Według Księgi Rekordów Guinnessa pokonała 6035 kilometrów ze średnią prędkością ponad 2000 km/h. Pomógł silny wiatr z zachodu. Dla porównania: rekord zwykłego samolotu na tej trasie, ustanowiony w 2020 roku przy wyjątkowo silnym prądzie strumieniowym, to prawie pięć godzin.</p>
+
+<h3>Słońce, które wschodziło na zachodzie</h3>
+
+<p>Jest jeden efekt, który brzmi jak zmyślenie, a wynika z prostej arytmetyki.</p>
+
+<p>Ziemia obraca się z zachodu na wschód. Na równiku punkt na powierzchni porusza się z prędkością około 1670 km/h. Im dalej od równika, tym wolniej, bo okrąg, który zakreśla, jest mniejszy. Na szerokości Londynu i Nowego Jorku, czyli około 50 stopni na północ, ta prędkość to mniej więcej 1070 km/h.</p>
+
+<p>Concorde leciał ponad 2100 km/h. Czyli <strong>dwa razy szybciej, niż obraca się Ziemia na tej szerokości</strong>. Lecąc na zachód, wyprzedzał obrót planety. Jeśli wystartował wieczorem z Londynu, gdy słońce już zaszło, mógł je „dogonić”. Pasażerowie widzieli wtedy, jak słońce wschodzi na zachodzie.</p>
+
+<p>Ten sam efekt naukowcy wykorzystali w 1973 roku, zanim samolot wszedł do służby. Prototyp 001 dostał w dachu specjalne okna i poleciał nad Saharę na spotkanie z całkowitym zaćmieniem Słońca. Z ziemi zaćmienie trwało w najlepszym miejscu nieco ponad siedem minut. Concorde, lecąc razem z cieniem Księżyca, utrzymał się w nim przez <strong>74 minuty</strong>. Wyniki opublikowano w czasopiśmie „Nature”. To do dziś najdłuższa obserwacja całkowitego zaćmienia w historii.</p>
+
+<h2><span class="num">Rozdział piąty</span>Dlaczego się nie opłacał</h2>
+
+<p>Teraz najważniejsza część tej historii. Bo zanim dojdziemy do katastrofy, trzeba zobaczyć, że Concorde od początku miał problem, którego żadna inżynieria nie rozwiązała.</p>
+
+<p>Tym problemem było paliwo. Według Smithsonian Concorde spalał około <strong>25 600 litrów paliwa na godzinę</strong>. Boeing 747 spalał mniej więcej połowę tego, a woził czterokrotnie więcej ludzi.</p>
+
+<p>Czasem pada argument, że Concorde leciał krócej, więc w sumie zużywał niewiele więcej. To prawda tylko częściowo. Liczy się zużycie na pasażera. Amerykańska telewizja publiczna PBS opublikowała dane, które pozwalają to policzyć dla trasy Londyn–Nowy Jork.</p>
+
+<div class="bars">
+  <div class="bt">Paliwo na jednego pasażera, Londyn–Nowy Jork</div>
+  <div class="row"><div class="lab">Boeing 747-100</div><div class="track"><div class="fill blue" style="width:36%"></div></div><div class="val">~220 l</div></div>
+  <div class="row"><div class="lab">McDonnell Douglas DC-10</div><div class="track"><div class="fill blue" style="width:46%"></div></div><div class="val">~280 l</div></div>
+  <div class="row"><div class="lab">Concorde</div><div class="track"><div class="fill red" style="width:100%"></div></div><div class="val">~600 l</div></div>
+  <div class="caption">Obliczenie własne na podstawie danych PBS NOVA (spalanie na godzinę, prędkość, liczba osób na pokładzie, dystans 5547 km), przy pełnym obłożeniu. Inne szacunki, uwzględniające realne obłożenie i rozbieg na lotnisku, dają wyniki znacznie gorsze dla Concorde'a — w jednym z wyliczeń z 1979 roku aż 16 razy więcej paliwa na pasażerokilometr niż Boeing 747.</div>
+</div>
+
+<p>Prawie trzy razy więcej paliwa na osobę, w najkorzystniejszym wariancie. A paliwo to tylko jeden koszt. Dochodziła obsługa techniczna maszyny, która była skomplikowana, unikalna i miała tylko czternaście egzemplarzy na świecie. Każda część zamienna była praktycznie rękodziełem.</p>
+
+<p>Do tego zakaz lotów naddźwiękowych nad lądem. Samolot, który miał latać wszędzie, mógł w praktyce latać szybko tylko nad wodą. Trasa Nowy Jork–Los Angeles? Wykluczona. Europa–Azja nad Rosją? Wykluczona. Zostawał Atlantyk.</p>
+
+<p>Jak to możliwe, że w ogóle latał 27 lat? Bo British Airways i Air France nie musiały spłacać kosztów jego budowy. Te poniosły rządy, czyli podatnicy. Linie płaciły tylko za eksploatację. Przy takim rozliczeniu, zwłaszcza w British Airways, Concorde przez część swojej historii przynosił zysk operacyjny. Ale gdyby doliczyć koszt opracowania samolotu, rachunek nigdy by się nie zamknął. Encyklopedia Britannica pisze wprost: koszty rozwoju były tak wielkie, że nie dało się ich odzyskać, a samolot nigdy nie był finansowo opłacalny.</p>
+
+<p>Innymi słowy: Concorde działał jako prestiżowy pokaz, utrzymywany dzięki temu, że największy rachunek zapłacił ktoś inny. To układ stabilny tylko do pierwszego poważnego wstrząsu.</p>
+
+<h2><span class="num">Rozdział szósty</span>25 lipca 2000</h2>
+
+<p>Wstrząs przyszedł w upalne wtorkowe popołudnie na lotnisku Charles de Gaulle pod Paryżem.</p>
+
+<p>Lot AF 4590 był czarterem do Nowego Jorku. Na pokładzie było 100 pasażerów — w większości niemieckich turystów, którzy w Nowym Jorku mieli wejść na statek wycieczkowy — i 9 członków załogi. Maszyna o znakach F-BTSC miała 25 lat i była, według francuskiej komisji badania wypadków, sprawna i dopuszczona do lotu.</p>
+
+<p>Wszystko, co poniżej, pochodzi z raportu końcowego BEA — francuskiego urzędu badania wypadków lotniczych — opublikowanego w styczniu 2002 roku.</p>
+
+<h3>Pięć minut wcześniej</h3>
+
+<p>Pięć minut przed Concorde'em z tego samego pasa wystartował DC-10 linii Continental Airlines. Podczas startu odpadł od niego metalowy pasek z osłony silnika. Miał około <strong>43 centymetrów długości i trzech centymetrów szerokości</strong>. Upadł na pas startowy.</p>
+
+<p>Pasy na lotniskach regularnie się kontroluje właśnie po to, żeby wyłapać takie przedmioty. Tego dnia kontrola zaplanowana na godzinę 15:00 została przesunięta, bo na pasie trwały ćwiczenia straży pożarnej. Do startu Concorde'a o 16:42 nie została wykonana.</p>
+
+<h3>Łańcuch zdarzeń</h3>
+
+<p>Rozpędzający się Concorde najechał na pasek prawym przednim kołem lewego podwozia. Opona została rozcięta i rozerwana. Duży jej fragment — jeden z kawałków znalezionych na pasie ważył około 4,5 kilograma — z ogromną prędkością uderzył w spód lewego skrzydła.</p>
+
+<p>Tu jest najmniej intuicyjny element całej historii. Fragment opony <strong>nie przebił</strong> zbiornika paliwa. Zbiornik pękł mimo to.</p>
+
+<p>Dlaczego? Bo był prawie pełny, a ciecz praktycznie nie daje się ścisnąć. Gdy uderzamy w pusty pojemnik, ścianka się ugina i energia się rozprasza. Gdy uderzamy w pełny, energia nie ma gdzie się podziać. Przenosi się przez ciecz jako fala ciśnienia i rozsadza pojemnik w jego najsłabszym miejscu — niekoniecznie tam, gdzie padł cios. Podobnie dzieje się, gdy mocno uderzymy w pełny kartonik soku: pęka na zgięciu albo na szwie, a nie pod palcem.</p>
+
+<p>Według BEA właśnie tak pękł zbiornik nr 5. Paliwo zaczęło wylewać się z dużą prędkością i niemal natychmiast zapaliło się pod skrzydłem. Silnik nr 2 stracił moc niemal całkowicie, silnik nr 1 na chwilę osłabł.</p>
+
+<p>Samolot miał już zbyt dużą prędkość, żeby bezpiecznie przerwać start. BEA oceniło później, że próba hamowania skończyłaby się wypadnięciem z pasa przy dużej prędkości, złamaniem podwozia i pożarem. Concorde oderwał się od ziemi, ciągnąc za sobą długi ogon ognia.</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">16:42:31</div><div class="txt">Kapitan rozpoczyna start z pasa 26R.</div></div>
+  <div class="ev"><div class="yr">16:43:03</div><div class="txt">Prędkość V1 — od tej chwili przerwanie startu jest niebezpieczne.</div></div>
+  <div class="ev crit"><div class="yr">ok. 16:43:10</div><div class="txt">Opona najeżdża na metalowy pasek. Pęka zbiornik paliwa nr 5, wybucha pożar pod lewym skrzydłem.</div></div>
+  <div class="ev crit"><div class="yr">16:43:13</div><div class="txt">Kontroler z wieży: „Macie płomienie… macie płomienie za sobą”.</div></div>
+  <div class="ev crit"><div class="yr">16:43:22</div><div class="txt">Alarm pożaru silnika nr 2. Załoga go wyłącza.</div></div>
+  <div class="ev crit"><div class="yr">16:43:56</div><div class="txt">Drugi pilot: „Podwozie się nie chowa”. Wypuszczone podwozie stawia ogromny opór.</div></div>
+  <div class="ev crit"><div class="yr">16:44:14</div><div class="txt">Załoga próbuje dolecieć do pobliskiego lotniska Le Bourget.</div></div>
+  <div class="ev crit"><div class="yr">ok. 16:44:30</div><div class="txt">Silnik nr 1 traci ciąg. Samolot przechyla się gwałtownie w lewo i spada na hotel w Gonesse.</div></div>
+  <div class="caption">Czas lokalny (raport BEA podaje UTC, czyli o dwie godziny mniej). Od rozpoczęcia startu do zakończenia zapisu w kokpicie minęły dwie minuty.</div>
+</div>
+
+<p>Samolot leciał około minuty z prędkością około 370 km/h na wysokości około 60 metrów. Nie był w stanie ani wznieść się wyżej, ani przyspieszyć. Z dwoma działającymi silnikami po jednej stronie i niesprawnym podwoziem nie miał szans dolecieć do jakiegokolwiek lotniska.</p>
+
+<p>Zginęło wszystkie 109 osób na pokładzie i 4 osoby na ziemi, w hotelu. Była to jedyna śmiertelna katastrofa Concorde'a w ciągu 27 lat jego służby.</p>
+
+<p>BEA doszło do jeszcze jednego ponurego wniosku. Nawet gdyby wszystkie cztery silniki pracowały normalnie, samolot najpewniej i tak zostałby utracony, bo pożar zniszczyłby konstrukcję skrzydła.</p>
+
+<h3>Ostrzeżenia, które już były</h3>
+
+<p>Najbardziej niepokojące w raporcie jest to, że problem z oponami był znany. BEA ustaliło, że do lipca 2000 roku w Concorde'ach pękała lub traciła powietrze średnio jedna opona na około 1500 startów i lądowań. Już w 1979 roku w Waszyngtonie odłamki opony uszkodziły zbiorniki paliwa w innym Concordzie. Wtedy skończyło się bez ofiar.</p>
+
+<p>Opony Concorde'a pracowały w wyjątkowo trudnych warunkach. Samolot startował i lądował znacznie szybciej niż zwykłe maszyny, a na kołach spoczywał duży ciężar. Każde uszkodzenie opony uwalniało więc więcej energii. Ryzyko było znane, ale nie wydawało się na tyle wysokie, by zmienić konstrukcję. Po Gonesse zmieniło się to w kilka miesięcy.</p>
+
+<h3>Kto zawinił</h3>
+
+<p>Postępowanie sądowe trwało dekadę. W 2010 roku francuski sąd uznał Continental Airlines i jej mechanika za winnych nieumyślnego spowodowania śmierci. Ustalono, że pasek został wykonany z tytanu zamiast z miękkiego aluminium, niezgodnie z zaleceniami producenta. Tytan jest znacznie twardszy, więc lepiej ciął oponę.</p>
+
+<p>W 2012 roku sąd apelacyjny w Wersalu uchylił wyrok karny. Uznał, że mechanik, nawet jeśli wiedział, że pasek może odpaść, nie mógł przewidzieć, że skończy się to katastrofą. Utrzymał jednak odpowiedzialność cywilną Continental i nakazał wypłatę miliona euro odszkodowania dla Air France. Rodziny ofiar przyjęły ten wyrok z rozczarowaniem.</p>
+
+<h2><span class="num">Rozdział siódmy</span>Powrót i koniec</h2>
+
+<p>Po katastrofie wszystkie Concorde'y uziemiono. Przez ponad rok inżynierowie wprowadzali poprawki. Najważniejsze były dwie.</p>
+
+<p>Pierwsza to <strong>wkładki w zbiornikach paliwa</strong> z kevlaru — tego samego materiału, z którego robi się kamizelki kuloodporne — nasączonego gumą. Nie zatrzymują one uderzenia, ale gdy zbiornik pęknie, ograniczają wyciek do około pół litra na sekundę. Za mało, żeby wywołać taki pożar jak w Gonesse.</p>
+
+<p>Druga to <strong>nowe opony Michelin NZG</strong>. Gdy ulegną zniszczeniu, rozpadają się na drobne kawałki, zbyt lekkie, by rozerwać zbiornik. Dodatkowo okablowanie w komorach podwozia obłożono metalową osłoną.</p>
+
+<p>7 listopada 2001 roku Concorde wrócił na trasę do Nowego Jorku. Problem w tym, że wrócił w najgorszym możliwym momencie. Dwa miesiące wcześniej, 11 września, doszło do zamachów w Nowym Jorku i Waszyngtonie. Ruch lotniczy na całym świecie się załamał. Szczególnie mocno ucierpiało drogie latanie biznesowe przez Atlantyk — dokładnie ten rynek, z którego żył Concorde.</p>
+
+<p>10 kwietnia 2003 roku British Airways i Air France jednocześnie ogłosiły wycofanie samolotu. Oba komunikaty mówiły o powodach handlowych: spadających przychodach i rosnących kosztach utrzymania. Prezes Airbusa, następcy producentów Concorde'a, stwierdził, że koszty obsługi starzejącego się samolotu szybko rosną. Bez wsparcia producenta żadna linia nie mogła legalnie dalej latać.</p>
+
+<p>Air France zakończyła loty rejsowe pod koniec maja 2003 roku. British Airways wykonały ostatni lot pasażerski 24 października 2003 roku z Nowego Jorku do Londynu. Na pokładzie byli m.in. aktorka Joan Collins i modelka Christie Brinkley. 26 listopada ostatni Concorde poleciał na lotnisko Filton pod Bristolem, gdzie kiedyś go budowano. To był koniec.</p>
+
+<div class="twocol">
+  <div class="side a"><div class="st">Wersja popularna</div><p>Concorde przestał latać, bo się rozbił. Katastrofa pokazała, że jest niebezpieczny.</p></div>
+  <div class="side b"><div class="st">Wersja z dokumentów</div><p>Po katastrofie samolot naprawiono i wrócił do służby. Skończył się niespełna dwa lata później, z powodów, które znano od 1973 roku: koszt, paliwo, hałas i zbyt mały rynek. Katastrofa i 11 września dobiły układ, który od początku był kruchy.</p></div>
+</div>
+
+<p>Uczciwie trzeba dodać, że te dwie wersje się nie wykluczają. Katastrofa odstraszyła część klientów i pociągnęła za sobą kosztowne modyfikacje. Bez niej Concorde mógłby polatać kilka lat dłużej. Ale nie ma dowodów, że latałby do dziś. Samolot zaprojektowany w latach 60. i tak zbliżał się do końca życia, a nikt nie budował na poważnie jego następcy.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Czy to wróci</h2>
+
+<p>Od 2003 roku nikt nie przewiózł pasażera rejsowym samolotem z prędkością naddźwiękową. Ale w 2026 roku coś się wyraźnie ruszyło. Warto rozdzielić, co tu jest faktem, a co prognozą.</p>
+
+<h3>Fakt: huk da się zamienić w „puknięcie”</h3>
+
+<p>Największą barierą był hałas. Kluczowy jest tu kształt samolotu. Fale uderzeniowe powstają przy każdym wybrzuszeniu kadłuba, skrzydłach, silnikach. W Concordzie zlewały się w dwa potężne uderzenia — z przodu i z tyłu. Jeśli jednak tak ukształtować samolot, żeby te fale się nie zlewały, docierają do ziemi rozproszone i dużo słabsze.</p>
+
+<p>Na tym pomyśle zbudowano X-59 — eksperymentalny samolot NASA i Lockheeda Martina. Ma bardzo długi, cienki nos, a pilot nie widzi przez przednią szybę: patrzy na ekran z obrazem z kamery. 5 czerwca 2026 roku X-59 po raz pierwszy przekroczył prędkość dźwięku. Tydzień później osiągnął Mach 1,4 na wysokości około 17 kilometrów — czyli warunki, w których ma latać nad miastami podczas badań reakcji mieszkańców.</p>
+
+<div class="bars">
+  <div class="bt">Głośność huku naddźwiękowego (PLdB)</div>
+  <div class="row"><div class="lab">Concorde</div><div class="track"><div class="fill red" style="width:100%"></div></div><div class="val">~105</div></div>
+  <div class="row"><div class="lab">X-59 (cel projektowy)</div><div class="track"><div class="fill green" style="width:71%"></div></div><div class="val">75</div></div>
+  <div class="caption">PLdB to skala „odczuwanej głośności” stworzona do pomiaru krótkich, impulsowych dźwięków. Jest logarytmiczna: różnica 30 jednostek oznacza dźwięk w odczuciu kilkukrotnie cichszy, a nie o 30% cichszy. NASA porównuje 75 PLdB do trzaśnięcia drzwiami auta kilka metrów dalej. Wartość dla X-59 to cel — pomiary nad zamieszkanymi terenami dopiero mają się odbyć.</div>
+</div>
+
+<h3>Fakt: prawo się zmienia</h3>
+
+<p>W czerwcu 2025 roku prezydent USA podpisał rozporządzenie nakazujące zniesienie zakazu lotów naddźwiękowych nad lądem z 1973 roku. 2 lipca 2026 roku amerykański urząd lotnictwa FAA opublikował projekt przepisów. Zamiast zakazu prędkości ma obowiązywać limit hałasu: można latać szybciej niż dźwięk, jeśli huk na ziemi pozostaje poniżej ustalonego progu. Ostateczne przepisy mają powstać w połowie 2027 roku.</p>
+
+<h3>Prognoza: samoloty pasażerskie</h3>
+
+<p>Najgłośniejszym kandydatem na następcę Concorde'a jest amerykańska firma Boom Supersonic i jej Overture. Ma latać z prędkością Mach 1,7, zabierać do 80 pasażerów i wejść do służby około 2029 roku. Ma też zamówienia warunkowe od dużych linii, m.in. United i American.</p>
+
+<p>Tu trzeba być ostrożnym. Żaden z głównych producentów silników nie zgodził się zbudować silnika dla Overture. Boom robi go sam — to silnik o nazwie Symphony, którego rdzeń miał przejść pierwsze pełne testy w 2026 roku. Firma musi więc jednocześnie certyfikować zupełnie nowy samolot i zupełnie nowy silnik. Duzi producenci certyfikują sam silnik przez dekadę lub dłużej. Niezależni analitycy uważają, że termin 2029 prawdopodobnie się przesunie.</p>
+
+<h3>Fakt, który się nie zmienił</h3>
+
+<p>Jest jedna rzecz, której ani kształt samolotu, ani przepisy nie zmienią. Opór powietrza rośnie bardzo szybko wraz z prędkością. Lot naddźwiękowy zawsze będzie zużywał dużo więcej paliwa niż poddźwiękowy.</p>
+
+<p>Badacze z MIT w pracy finansowanej przez NASA policzyli, że nowe samoloty naddźwiękowe spalałyby od 3 do 10 razy więcej paliwa na pasażerokilometr niż zwykłe. Międzynarodowa Rada ds. Czystego Transportu (ICCT) szacuje 5 do 7 razy więcej. Te liczby oznaczają, że bilet będzie drogi, a emisje wysokie. Nawet jeśli problem hałasu zostanie rozwiązany, problem rachunku pozostanie — dokładnie ten sam, który zatrzymał Concorde'a.</p>
+
+<h2><span class="num">Zakończenie</span>Bariera, której nie przebito</h2>
+
+<p>Wróćmy do Phila Collinsa, który 13 lipca 1985 roku zagrał rano w Londynie i wieczorem w Filadelfii. Wtedy wydawało się to zapowiedzią przyszłości. Skoro w 1985 roku dało się przelecieć Atlantyk w trzy godziny, to w 2025 roku pewnie da się w jedną.</p>
+
+<p>Stało się odwrotnie. Dziś ten sam wyczyn byłby niemożliwy.</p>
+
+<p>Concorde pokazuje, że technologia nie idzie po prostu do przodu. Idzie tam, gdzie ktoś jest gotów za nią zapłacić. W latach 60. zapłaciły za nią dwa rządy, dla prestiżu i z obawy przed zerwaniem traktatu. Linie lotnicze nigdy by tego nie zrobiły. Pasażerowie płacili za bilety, ale nie za koszt budowy samolotu. Gdy przyszły katastrofa, zamachy i starzenie się floty, nie było nikogo, kto chciałby wyłożyć pieniądze na ciąg dalszy.</p>
+
+<p>Bariera dźwięku okazała się łatwiejsza do pokonania niż bariera rachunku. Inżynierowie przebili tę pierwszą już w latach 60. Drugiej nie przebił nikt do dziś. Za kilka lat okaże się, czy cichy huk i nowe przepisy wystarczą — czy też Concorde zostanie na zawsze tym, czym jest teraz: maszyną z przyszłości, którą oglądamy w muzeum.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+
+<ul class="sources">
+  <li>Bureau d’Enquêtes et d’Analyses (BEA), „Accident on 25 July 2000 at La Patte d’Oie in Gonesse (95) to the Concorde registered F-BTSC operated by Air France”, raport końcowy (tłum. ang.), styczeń 2002. <a href="https://bea.aero/uploads/tx_elydbrapports/f-sc000725a.pdf">bea.aero</a></li>
+  <li>BEA, raport okresowy w sprawie F-BTSC (tłum. ang.), 2000–2001 (częstotliwość uszkodzeń opon). <a href="http://www.concordesst.com/accident/englishreport/interimreport.html">concordesst.com</a></li>
+  <li>Office of the Historian, U.S. Department of State, „Foreign Relations of the United States, 1969–1976, Vol. E–15, Part 2, Document 1: Memorandum From Flanigan to President Nixon”. <a href="https://history.state.gov/historicaldocuments/frus1969-76ve15p2Ed2/d1">history.state.gov</a></li>
+  <li>Encyclopaedia Britannica, „Concorde”. <a href="https://www.britannica.com/technology/Concorde">britannica.com</a></li>
+  <li>Smithsonian National Air and Space Museum, S. Pandey, „What Happened to the Concordes?”, 2024. <a href="https://airandspace.si.edu/stories/editorial/what-happened-concordes">airandspace.si.edu</a></li>
+  <li>Air &amp; Space / Smithsonian Magazine, „The Concorde Redemption” (cytat B. Shenstone’a). <a href="https://www.smithsonianmag.com/air-space-magazine/the-concorde-redemption-2394800/">smithsonianmag.com</a></li>
+  <li>National Museums Scotland, „Concorde: The story of supersonic passenger flight”. <a href="https://www.nms.ac.uk/discover-catalogue/concorde-the-story-of-supersonic-passenger-flight">nms.ac.uk</a></li>
+  <li>British Airways, „Celebrating Concorde” (dane floty BA, rekord, pierwszy i ostatni lot). <a href="https://www.britishairways.com/content/information/about-ba/history-and-heritage/celebrating-concorde">britishairways.com</a></li>
+  <li>Guinness World Records, „Fastest flight across the Atlantic in a commercial aircraft”. <a href="https://www.guinnessworldrecords.com/world-records/fastest-flight-across-the-atlantic-in-a-commercial-aircraft">guinnessworldrecords.com</a></li>
+  <li>Aerospace Bristol, „G-BOAD crossed the Atlantic at a record-breaking pace”, 2025. <a href="https://aerospacebristol.org/news/2025/2/6/g-boad-crossed-the-atlantic-at-a-record-blistering-pace-29-years-ago">aerospacebristol.org</a></li>
+  <li>J. Beckman i in., „Eclipse Flight of Concorde 001”, <em>Nature</em> 246, 72–74 (1973). <a href="https://doi.org/10.1038/246072a0">doi.org/10.1038/246072a0</a></li>
+  <li>Aerospaceweb.org, temperatury poszycia Concorde’a w locie. <a href="https://aerospaceweb.org/question/planes/q0199a.shtml">aerospaceweb.org</a></li>
+  <li>Grace’s Guide to British Industrial History, „Concorde” (dopalacze, rozszerzalność kadłuba, opadający nos). <a href="https://www.gracesguide.co.uk/Concorde">gracesguide.co.uk</a></li>
+  <li>PBS NOVA, „Supersonic Dream” — dane o zużyciu paliwa (materiał edukacyjny). <a href="https://www.pbs.org/wgbh/nova/teachers/activities/3203_concorde_02.html">pbs.org</a></li>
+  <li>A. Spaeth, „Flying in the Concorde, the fastest of passenger jets”, AeroReport (MTU Aero Engines). <a href="https://aeroreport.de/en/aviation/flying-in-the-concorde-the-fastest-of-passenger-jets">aeroreport.de</a></li>
+  <li>History.com, „The Concorde makes its final commercial flight”. <a href="https://www.history.com/this-day-in-history/october-24/the-concorde-makes-its-final-flight">history.com</a></li>
+  <li>Air France, materiały prasowe o modyfikacjach i powrocie do służby, październik 2001. <a href="http://www.concordesst.com/returntoflight/afreturnkit.pdf">concordesst.com</a></li>
+  <li>FlightGlobal, „Test flights from Heathrow validate Concorde fuel tank modifications”, 2001. <a href="https://www.flightglobal.com/ops-safety/2001/07/test-flights-from-heathrow-validate-concorde-fuel-tank-modifications/">flightglobal.com</a></li>
+  <li>Komunikaty British Airways i Air France z 10 kwietnia 2003 r. (archiwum). <a href="http://concordesst.com/retire/announcements.html">concordesst.com</a></li>
+  <li>CNN, France 24, Christian Science Monitor — relacje z wyroku sądu apelacyjnego w Wersalu, 29 listopada 2012. <a href="https://www.cnn.com/2012/11/29/world/europe/france-concorde-crash-ruling/index.html">cnn.com</a></li>
+  <li>Kent Online, „The Kent DJ who travelled on Concorde with Phil Collins…”, 2025 (relacja S. Blacknella). <a href="https://www.kentonline.co.uk/hythe/news/i-flew-on-concorde-with-phil-collins-and-dated-kate-bush-327061/">kentonline.co.uk</a></li>
+  <li>Forbes, K. Hardcastle, „The Story Behind Phil Collins’ Live Aid Outfit…”, 2026. <a href="https://www.forbes.com/sites/katehardcastle/2026/07/13/the-story-behind-phil-collins-live-aid-outfit-and-the-day-it-crossed-the-atlantic/">forbes.com</a></li>
+  <li>NASA, „NASA’s X-59 Aircraft Flies Supersonic for First Time”, 5 czerwca 2026, oraz wpis z 12 czerwca 2026 o osiągnięciu Mach 1,4. <a href="https://www.nasa.gov/aeronautics/x-59-first-supersonic-flight/">nasa.gov</a></li>
+  <li>J. Doebler, J. Rathsam, „How loud is X-59’s shaped sonic boom?”, NASA Technical Reports Server. <a href="https://ntrs.nasa.gov/api/citations/20205002229/downloads/Accepted_Doebler_Rathsam_sonic_thump_scale_v9_camera_ready_nocoverpage_nologos.pdf">ntrs.nasa.gov</a></li>
+  <li>Physics Today, „NASA unveils a supersonic plane with a quiet boom”, 2024. <a href="https://pubs.aip.org/physicstoday/article/77/3/20/3267527/NASA-unveils-a-supersonic-plane-with-a-quiet-boomA">pubs.aip.org</a></li>
+  <li>Federal Register, „Enabling Supersonic Overland Flight” (projekt przepisów FAA), 2 lipca 2026. <a href="https://www.federalregister.gov/documents/2026/07/02/2026-13440/enabling-supersonic-overland-flight">federalregister.gov</a></li>
+  <li>Federal Aviation Administration, „Supersonic Flight”. <a href="https://www.faa.gov/supersonic">faa.gov</a></li>
+  <li>Boom Supersonic, strona programu silnika Symphony. <a href="https://boomsupersonic.com/symphony">boomsupersonic.com</a></li>
+  <li>Inside Climate News, „Low Boom, High Pollution? NASA Readies for Supersonic Test Flight”, 2024 (szacunki MIT i ICCT). <a href="https://insideclimatenews.org/news/16092024/nasa-supersonic-test-flight-low-boom-high-pollution/">insideclimatenews.org</a></li>
+</ul>
+
+<footer class="end">
+  Uwagi o niepewności: liczba opcji zakupu z lat 60. i wielkość wydłużenia kadłuba w locie różnią się w źródłach, dlatego podano je jako przedziały. Porównanie zużycia paliwa jest obliczeniem własnym na danych PBS i przedstawia wariant najkorzystniejszy dla Concorde’a. Informacje o Boom Overture to zapowiedzi firmy, nie fakty — nie wiadomo, czy samolot powstanie w zapowiadanym terminie.
+</footer>
+
+</div>
+</body></html>

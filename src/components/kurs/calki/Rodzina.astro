@@ -1,0 +1,68 @@
+---
+// Rodzina funkcji pierwotnych: wykresy F(x) = x²/2 + C dla C = −2…2 (funkcja podcałkowa f(x) = x).
+// Wykresy są przesunięte w pionie, a styczne w tym samym x są równoległe — wszystkie mają tę samą pochodną.
+// Przyciski wybierają C: wybrany wykres jest jasny, a podpis pod rysunkiem mówi, jaki to wzór. Bez JS widać wszystko.
+import { skala, sciezka, osie, odcinek, liczba } from '../../../lib/wykres.js';
+import { texInline } from '../../../lib/tex.js';
+const W = 420, H = 400;
+const S = skala({ x0: -2.4, x1: 2.4, y0: -2.6, y1: 5.4, w: W, h: H, pad: 22, rowne: true });
+const X0 = 1.5;
+const STALE = [-2, -1, 0, 1, 2];
+const F = (c: number) => (x: number) => (x * x) / 2 + c;
+const wykresy = STALE.map((c) => ({
+  c, d: sciezka(F(c), -2.4, 2.4, S),
+  l: odcinek(X0, F(c)(X0), X0, 0.55, S),
+  px: S.X(X0), py: S.Y(F(c)(X0)),
+  ex: S.X(-1.15), ey: S.Y(F(c)(-1.15) + 0.32),
+  wzor: c === 0 ? '\\tfrac12 x^2' : `\\tfrac12 x^2 ${c > 0 ? '+' : '-'} ${Math.abs(c)}`,
+}));
+const opis = (c: number) => texInline(`Wybrany wykres: $F(x) = ${wykresy.find((w) => w.c === c)!.wzor}$. Jego pochodna to $F'(x) = x$ — tak samo jak każdego innego wykresu z rysunku.`);
+---
+<figure class="k-fig k-rodz" data-rodz>
+  <div class="k-rodz-btn" data-js-only hidden>
+    {STALE.map((c) => <button type="button" class:list={['k-btn', 'k-btn-ghost', { 'is-on': c === 0 }]} data-c={c} aria-pressed={c === 0 ? 'true' : 'false'}>C = {liczba(c)}</button>)}
+  </div>
+  <svg viewBox={`0 0 ${W} ${H}`} class="k-w" role="img" aria-label="Pięć parabol y = x kwadrat przez dwa plus C, przesuniętych w pionie, z równoległymi stycznymi w punkcie x = 1,5">
+    <Fragment set:html={osie(S, { siatka: true })} />
+    <line class="k-w-prow" x1={S.X(X0)} y1={S.Y(-2.6)} x2={S.X(X0)} y2={S.Y(5.4)} />
+    <text class="k-w-t k-w-tc" x={S.X(X0) + 6} y={S.Y(-2.35)}>x = 1,5</text>
+    {wykresy.map((w) => (
+      <g class:list={['k-rodz-g', { 'is-on': w.c === 0 }]} data-g={w.c}>
+        <path d={w.d} class="k-w-krzywa" />
+        <line class="k-w-styczna k-rodz-st" x1={w.l.x1} y1={w.l.y1} x2={w.l.x2} y2={w.l.y2} />
+        <circle class="k-w-pkt" cx={w.px} cy={w.py} r="4" />
+        <text class="k-w-t k-w-etp" x={w.ex} y={w.ey} text-anchor="middle">C = {liczba(w.c)}</text>
+      </g>
+    ))}
+  </svg>
+  <p class="k-rodz-live k-live" aria-live="polite" data-js-only hidden set:html={opis(0)} />
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+  <ul hidden data-opisy>{STALE.map((c) => <li data-c={c} set:html={opis(c)} />)}</ul>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-rodz]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-rodz]') === box) el.hidden = false; });
+    const live = box.querySelector<HTMLElement>('.k-rodz-live')!;
+    box.querySelectorAll<HTMLButtonElement>('.k-rodz-btn [data-c]').forEach((b) => b.addEventListener('click', () => {
+      const c = b.dataset.c!;
+      box.querySelectorAll<HTMLButtonElement>('.k-rodz-btn [data-c]').forEach((x) => { const on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-pressed', String(on)); });
+      box.querySelectorAll<SVGGElement>('[data-g]').forEach((g) => g.classList.toggle('is-on', g.dataset.g === c));
+      live.innerHTML = box.querySelector(`[data-opisy] [data-c="${c}"]`)!.innerHTML;
+      live.classList.add('is-live');
+    }));
+  });
+</script>
+
+<style>
+  .k-rodz svg{max-width:440px;}
+  .k-rodz-btn{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px;}
+  .k-rodz-btn .k-btn{min-height:36px;padding:4px 10px;font-size:.84rem;}
+  .k-rodz-btn .k-btn.is-on{background:rgba(39,232,255,.14);border-color:var(--cyan);color:#fff;}
+  .k-rodz-g .k-w-krzywa{stroke:rgba(39,232,255,.42);stroke-width:2;transition:stroke .2s,stroke-width .2s;}
+  .k-rodz-g .k-rodz-st{stroke:#a78bfa;stroke-width:2;}
+  .k-rodz-g .k-w-etp{fill:var(--muted);}
+  .k-rodz-g.is-on .k-w-krzywa{stroke:#f2f0fa;stroke-width:3;}
+  .k-rodz-g.is-on .k-w-etp{fill:#f2f0fa;font-weight:700;}
+  .k-rodz-live{margin:6px 0 0;font-size:.92rem;color:var(--text);}
+</style>

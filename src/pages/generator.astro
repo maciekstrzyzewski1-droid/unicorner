@@ -1,0 +1,263 @@
+---
+// Generator AI — notatki → fiszki + quiz. Rama jak w sekcji Wiedza, logika po stronie przeglądarki + Cloudflare Worker.
+import Base from '../layouts/Base.astro';
+import '../styles/wiedza.css';
+import '../styles/generator.css';
+import Bar from '../components/wiedza/Bar.astro';
+import Foot from '../components/wiedza/Foot.astro';
+
+const title = 'Generator AI — fiszki i quiz z notatek · Unicorner';
+const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. AI ułoży z nich fiszki i quiz z wyjaśnieniami. Beta.';
+// numer wersji skryptu = moment builda (żeby przeglądarka nie brała starego pliku z pamięci)
+const v = Date.now().toString(36);
+---
+<Base title={title} description={description}>
+  <Fragment slot="head">
+    <link rel="canonical" href="https://unicorner.pl/generator.html" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Generator AI · Unicorner" />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content="https://unicorner.pl/generator.html" />
+    <meta property="og:locale" content="pl_PL" />
+  </Fragment>
+
+  <Bar crumbs={[{ label: 'Generator AI' }]} />
+
+  <main class="wz-wrap g-main">
+    <!-- ===== nagłówek ===== -->
+    <section class="g-hero">
+      <div class="g-hero-txt">
+        <span class="wz-eyebrow"><span class="dot"></span>Generator AI · beta</span>
+        <h1>Twoje notatki.<br><span class="grad">Gotowa nauka.</span></h1>
+        <p>Wrzuć PDF z wykładu, <b>zdjęcia notatek (także odręcznych)</b> albo wklej tekst. AI ułoży z tego fiszki i quiz z wyjaśnieniami, a Ty powiesz mu, na czym ma się skupić.</p>
+      </div>
+      <ol class="g-steps" aria-label="Jak to działa">
+        <li><span class="n">01</span><span><b>Wrzuć materiał</b>PDF, zdjęcia albo tekst</span></li>
+        <li><span class="n">02</span><span><b>Powiedz, czego chcesz</b>np. „pytania jak na egzaminie”</span></li>
+        <li><span class="n">03</span><span><b>Ucz się</b>fiszki, quiz i wynik od razu</span></li>
+      </ol>
+    </section>
+
+    <!-- ===== konsola ===== -->
+    <section class="g-console" aria-label="Generator">
+      <div class="g-sec">
+        <div class="g-label"><span>01</span> Materiał</div>
+        <div class="g-seg" role="tablist" aria-label="Rodzaj materiału">
+          <button type="button" role="tab" class="on" data-src="pdf" aria-selected="true">PDF</button>
+          <button type="button" role="tab" data-src="img" aria-selected="false">Zdjęcia<span class="hide-xs"> notatek</span></button>
+          <button type="button" role="tab" data-src="txt" aria-selected="false"><span class="hide-xs">Wklej tekst</span><span class="show-xs">Tekst</span></button>
+        </div>
+
+        <div class="g-src" id="srcFile">
+          <div class="g-drop" id="drop" tabindex="0" role="button" aria-label="Wybierz plik">
+            <svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 31V13m0 0-7 7m7-7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 30v5a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4v-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
+            <div class="big" id="dropBig">Przeciągnij PDF tutaj</div>
+            <div class="small" id="dropSmall">albo kliknij, żeby wybrać · jeden plik, mniej więcej jeden wykład</div>
+          </div>
+          <input type="file" id="file" accept="application/pdf,.pdf" style="display:none" />
+          <div class="g-filechip" id="filechip"><span class="ic">PDF</span><span id="filename"></span></div>
+          <div class="g-thumbs" id="thumbs"></div>
+        </div>
+
+        <div class="g-src" id="srcText" hidden>
+          <textarea id="pasted" rows="8" maxlength="14000" placeholder="Wklej tutaj notatki, fragment skryptu albo opracowanie (min. ok. 300 znaków)…"></textarea>
+          <div class="g-count"><span id="pastedCount">0</span> / 14 000 znaków</div>
+        </div>
+      </div>
+
+      <div class="g-sec">
+        <div class="g-label"><span>02</span> Na czym się skupić <em>opcjonalnie</em></div>
+        <textarea id="instr" rows="2" maxlength="300" placeholder="np. skup się na rozdziale o inflacji, pytania jak na egzaminie, więcej przykładów liczbowych"></textarea>
+        <div class="g-chips" id="chips">
+          <button type="button" data-t="Pytania w stylu egzaminacyjnym, sprawdzające zrozumienie, a nie pamięć słówek.">Jak na egzaminie</button>
+          <button type="button" data-t="Skup się na definicjach i kluczowych pojęciach.">Definicje</button>
+          <button type="button" data-t="Więcej przykładów liczbowych i zadań z obliczeniami.">Przykłady liczbowe</button>
+          <button type="button" data-t="Trudniejsze pytania, wymagające łączenia kilku faktów.">Trudniej</button>
+          <button type="button" data-t="Prostszy język, jak dla kogoś, kto widzi ten temat pierwszy raz.">Po ludzku</button>
+        </div>
+      </div>
+
+      <div class="g-sec g-go">
+        <div class="g-acct">
+          <div class="g-label"><span>03</span> Konto</div>
+          <div id="acctOut">
+            <p class="g-acct-p"><b>Zaloguj się, żeby generować.</b> W becie dostajesz <b>30 kredytów</b> miesięcznie za darmo, a każda talia zapisuje się na Twoim koncie.</p>
+            <p class="g-prices">Nowa talia <b>3 kr.</b> · poprawka całej talii <b>2 kr.</b> · wyjaśnienie albo nowe pytanie <b>1 kr.</b></p>
+            <div id="gsiBtn" class="g-gsi"></div>
+          </div>
+          <div id="acctIn" class="g-who" hidden>
+            <img id="meAvatar" alt="" referrerpolicy="no-referrer" />
+            <div class="g-who-t">
+              <b id="meName"></b>
+              <span id="meUsage"></span>
+              <span class="g-meter g-umeter"><i id="meBar"></i></span>
+            </div>
+            <button class="g-mini" id="logout" type="button">Wyloguj</button>
+          </div>
+        </div>
+        <div class="g-actions">
+          <button class="g-btn" id="gen" disabled>
+            <span id="genLabel">Generuj fiszki i quiz</span><span class="g-cost" id="genCost">3 kr.</span>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 12h14m0 0-6-6m6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="g-btn ghost" id="reset" hidden>Wyczyść</button>
+        </div>
+      </div>
+
+      <div class="g-progress" id="progress" hidden>
+        <div class="g-bar"><i></i></div>
+        <ol>
+          <li data-s="0">Przygotowuję materiał</li>
+          <li data-s="1">AI czyta i wybiera najważniejsze</li>
+          <li data-s="2">Układam fiszki i pytania</li>
+        </ol>
+      </div>
+      <div class="g-status" id="status" role="status" aria-live="polite"></div>
+    </section>
+
+    <!-- ===== wynik ===== -->
+    <section class="g-result" id="result" hidden>
+      <div class="g-rtitle">
+        <h2 id="deckTitle">Twój materiał</h2>
+        <span id="deckMeta"></span>
+        <button class="g-sharebtn" id="shareBtn" type="button" hidden>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="2"/><circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="2"/><circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="2"/></svg>
+          <span id="shareBtnTx">Udostępnij</span>
+        </button>
+      </div>
+      <div class="g-share" id="shareBox" hidden>
+        <p class="g-share-t"><b>Każdy, kto ma ten link, może uczyć się z tej talii</b> — bez logowania i bez Twoich kredytów. Twoje imię i e-mail nie są nigdzie pokazywane. Zmiany w talii od razu widać pod linkiem.</p>
+        <div class="g-share-row">
+          <input id="shareUrl" type="text" readonly aria-label="Link do talii" />
+          <button class="g-btn" id="shareCopy" type="button">Kopiuj link</button>
+          <button class="g-btn ghost" id="shareNative" type="button" hidden>Wyślij…</button>
+        </div>
+        <div class="g-share-f"><span id="shareViews"></span><button class="g-link" id="shareOff" type="button">Wyłącz udostępnianie</button></div>
+      </div>
+      <div class="g-rhead">
+        <div class="g-tabs" role="tablist">
+          <button class="g-tab on" data-pane="fc" role="tab">Fiszki <span id="fcCount">0</span></button>
+          <button class="g-tab" data-pane="qz" role="tab">Quiz <span id="qzCount">0</span></button>
+        </div>
+        <div class="g-score" id="score" hidden>
+          <span class="lbl">Wynik</span><b id="scoreVal">0 / 0</b>
+          <span class="g-meter"><i id="scoreBar"></i></span>
+          <button class="g-mini" id="quizAgain" type="button">Od nowa</button>
+        </div>
+      </div>
+
+      <div class="g-pane on" id="pane-fc">
+        <div class="g-sbar" id="studyBar" hidden>
+          <div class="g-sbar-t">
+            <b>Powtórki</b>
+            <span id="sbInfo"></span>
+          </div>
+          <button class="g-btn" id="studyGo" type="button">Ucz się</button>
+        </div>
+        <div class="g-study" id="study" hidden>
+          <div class="g-study-top">
+            <span id="stProg"></span>
+            <span class="g-study-bar"><i id="stBar"></i></span>
+            <button class="g-mini" id="stExit" type="button">Zakończ</button>
+          </div>
+          <div class="g-study-card" id="stCard">
+            <div class="g-study-k" id="stKind"></div>
+            <div class="g-study-term" id="stTerm"></div>
+            <div class="g-study-def" id="stDef" hidden></div>
+          </div>
+          <div class="g-study-acts" id="stActs">
+            <button class="g-btn" id="stShow" type="button">Pokaż odpowiedź <kbd>spacja</kbd></button>
+            <button class="g-btn ghost g-no" id="stNo" type="button" hidden>Jeszcze nie <kbd>1</kbd></button>
+            <button class="g-btn g-yes" id="stYes" type="button" hidden>Umiem <kbd>2</kbd></button>
+          </div>
+          <div class="g-study-done" id="stDone" hidden>
+            <h3>Na dziś gotowe 🎯</h3>
+            <p id="stSum"></p>
+            <div class="g-editrow"><button class="g-btn" id="stQuiz" type="button">Sprawdź się w quizie</button><button class="g-btn ghost" id="stBack" type="button">Wróć do fiszek</button></div>
+          </div>
+        </div>
+        <p class="g-hint" id="fcHint">Kliknij fiszkę, żeby ją odwrócić.</p>
+        <div class="g-fc-grid" id="fcGrid"></div>
+      </div>
+      <div class="g-pane" id="pane-qz">
+        <div class="g-qmode" id="qMode" hidden>
+          <div class="g-qmode-sw" role="tablist" aria-label="Które pytania">
+            <button class="on" data-m="all" type="button">Wszystkie <span id="qmAll">0</span></button>
+            <button data-m="bad" type="button">Moje błędy <span id="qmBad">0</span></button>
+          </div>
+          <button class="g-btn ghost g-weak" id="weakGo" type="button" hidden><span>Dorób pytania z moich błędów</span><span class="g-cost">2 kr.</span></button>
+        </div>
+        <p class="g-hint" id="qmEmpty" hidden>W tej talii nie masz teraz żadnych błędów. Rozwiąż quiz — pytania, w których się pomylisz, trafią tutaj, także na innym urządzeniu.</p>
+        <div id="qzList"></div>
+      </div>
+
+      <div class="g-editp" id="editPanel" hidden>
+        <div class="g-label"><span>AI</span> Popraw tę talię</div>
+        <textarea id="editInstr" rows="2" maxlength="300" placeholder="np. zrób trudniejsze pytania, dodaj 5 pytań o stopy procentowe, więcej przykładów liczbowych"></textarea>
+        <div class="g-chips" id="editChips">
+          <button type="button" data-t="Zrób pytania trudniejsze, wymagające łączenia kilku faktów.">Trudniej</button>
+          <button type="button" data-t="Dodaj 5 nowych pytań do quizu.">+5 pytań</button>
+          <button type="button" data-t="Dodaj 5 nowych fiszek z pojęciami, których jeszcze nie ma w talii.">+5 fiszek</button>
+          <button type="button" data-t="Dodaj więcej konkretnych przykładów do definicji i wyjaśnień.">Więcej przykładów</button>
+          <button type="button" data-t="Przepisz definicje i wyjaśnienia prostszym językiem.">Prościej</button>
+        </div>
+        <div class="g-editrow">
+          <button class="g-btn" id="editGo" type="button"><span>Popraw talię</span><span class="g-cost">2 kr.</span></button>
+          <button class="g-btn ghost" id="editUndo" type="button" hidden>Cofnij zmianę</button>
+          <span class="g-note" id="editNote"></span>
+        </div>
+      </div>
+
+      <div class="g-tools">
+        <button class="g-btn" id="dlHtml">Pobierz jako plik (działa offline)</button>
+        <button class="g-btn ghost" id="dlJson">JSON</button>
+        <button class="g-btn ghost" id="forget">Usuń zapamiętane</button>
+      </div>
+    </section>
+
+    <!-- ===== moje talie ===== -->
+    <section class="g-decks" id="decksSec" hidden>
+      <div class="wz-glabel"><h2>Moje talie</h2><span class="d" id="decksCount"></span><span class="line"></span></div>
+      <div class="g-deck-grid" id="deckGrid"></div>
+      <p class="g-empty" id="decksEmpty" hidden>Tu pojawią się Twoje talie. Każde generowanie zapisuje się automatycznie.</p>
+      <div class="g-danger">
+        <button class="g-link" id="delAccount" type="button">Usuń konto i wszystkie talie</button>
+      </div>
+    </section>
+
+    <details class="g-tips">
+      <summary>Gdzie zapisują się talie</summary>
+      <div>
+        <p><b>Po zalogowaniu każda talia zapisuje się na Twoim koncie</b> i znajdziesz ją w „Moje talie” na każdym urządzeniu, na którym się zalogujesz.</p>
+        <p>Dodatkowo ostatni wynik zostaje w tej przeglądarce. To nie jest trwały schowek:</p>
+        <ul>
+          <li><b>Tryb prywatny</b> — wynik znika po zamknięciu karty.</li>
+          <li><b>Telefon</b> — system (zwłaszcza iPhone) potrafi wyczyścić dane strony po kilku dniach.</li>
+          <li><b>Inna przeglądarka, inne urządzenie albo czyszczenie danych</b> — pusto.</li>
+        </ul>
+        <p><b>Chcesz mieć na stałe? Kliknij „Pobierz jako plik”.</b> Dostajesz jeden plik HTML z fiszkami i quizem, który działa offline, bez internetu.</p>
+      </div>
+    </details>
+
+    <p class="g-disc">
+      <b>Beta.</b> Materiały generuje AI i <b>mogą zawierać błędy</b> — sprawdzaj z oryginałem. Pliki trafiają do modelu AI wyłącznie po to, żeby wygenerować materiał; nie zapisujemy ich — na koncie zostaje tylko gotowa talia (fiszki i quiz). Nie wgrywaj materiałów, do których nie masz praw. Logując się, akceptujesz <a href="/regulamin.html">Regulamin</a> i <a href="/prywatnosc.html">Politykę prywatności</a>.
+    </p>
+  </main>
+
+  <div class="g-modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <div class="g-modal-box">
+      <button class="g-modal-x" id="modalX" type="button" aria-label="Zamknij">✕</button>
+      <div class="g-modal-k">Wyjaśnienie AI</div>
+      <h3 id="modalTitle"></h3>
+      <div id="modalBody"></div>
+    </div>
+  </div>
+  <div class="g-toast" id="toast" role="status" aria-live="polite"></div>
+
+  <Foot label="unicorner · generator ai" />
+
+
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
+  <script is:inline src={`/assets/generator.js?v=${v}`}></script>
+</Base>

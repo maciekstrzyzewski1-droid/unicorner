@@ -1,0 +1,36 @@
+---
+// Jak wypełniać kolumny z literkami: tabele dla 1, 2 i 3 literek obok siebie.
+// Widać wzór kolumn i to, że każda nowa literka podwaja liczbę wierszy.
+import { tex } from '../../../lib/tex.js';
+import { wiersze } from '../../../lib/logika.js';
+const ZESTAWY = [['p'], ['p', 'q'], ['p', 'q', 'r']];
+const slowo = (n) => (n === 1 ? 'literka' : 'literki');
+const wierszy = (k) => (k === 2 || k === 4 ? `${k} wiersze` : `${k} wierszy`);
+const opis = (blok, ile) => (blok === 1 ? '0 i 1 na zmianę' : blok === ile / 2 ? `${blok} zera, potem ${blok} jedynki` : `${blok} zera, ${blok} jedynki — i tak na zmianę`);
+---
+<figure class="k-fig k-uklad">
+  <div class="k-uklad-grid">
+    {ZESTAWY.map((zm) => {
+      const rows = wiersze(zm);
+      return (
+        <div class="k-uklad-t">
+          <div class="k-uklad-h">{zm.length} {slowo(zm.length)} → {wierszy(rows.length)}</div>
+          <table>
+            <thead><tr>{zm.map((z) => <th set:html={tex(z)} />)}</tr></thead>
+            <tbody>
+              {rows.map((r, i) => (
+                <tr class={zm.length > 1 && i === rows.length / 2 ? 'k-uklad-pol' : ''}>
+                  {zm.map((z) => <td class={`v${r[z]}`}>{r[z]}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <ul class="k-uklad-opis">
+            {zm.map((z, i) => <li><span set:html={tex(z)} />: {opis(2 ** (zm.length - 1 - i), rows.length)}</li>)}
+          </ul>
+        </div>
+      );
+    })}
+  </div>
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+</figure>

@@ -1,0 +1,407 @@
+---
+import Base from '../layouts/Base.astro';
+import cssStatSzeregMotyw from '../styles/stat-szereg-motyw.css?raw';
+import cssStatCyberpunkA from '../styles/stat-cyberpunk-a.css?raw';
+import cssStatPelnyMotyw from '../styles/stat-pelny-motyw.css?raw';
+import cssGigaNapis from '../styles/giga-napis.css?raw';
+const title = "Analiza dynamiki — indeksy · Unicorner";
+const description = "Przyrosty, indeksy indywidualne (łańcuchowe i jednopodstawowe), średnie tempo zmian, indeksy agregatowe Laspeyresa, Paaschego i Fishera. Materiały, ściąga Excela, zadania i quiz.";
+---
+
+<Base title={title} description={description}>
+<style is:inline set:html={cssStatSzeregMotyw}></style>
+<style is:inline set:html={cssStatCyberpunkA}></style>
+<style is:inline set:html={cssStatPelnyMotyw}></style>
+<style is:inline set:html={cssGigaNapis}></style>
+
+<div class="scanbar" aria-hidden="true"></div><div class="uc-sweep" aria-hidden="true"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <linearGradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
+    <stop offset="0" stop-color="#5ad1ff"/><stop offset="0.34" stop-color="#a78bfa"/>
+    <stop offset="0.66" stop-color="#f472b6"/><stop offset="1" stop-color="#fcd34d"/>
+  </linearGradient>
+</defs></svg>
+
+<div class="wrap">
+  <header>
+    <div class="topbar">
+      <a class="brand" href="index.html">
+        <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
+        <span class="wordmark">Uni<span class="ai">corner</span></span>
+      </a>
+      <a class="back" href="index.html">← wszystkie przedmioty</a>
+    </div>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow"><span class="dot"></span>Statystyka opisowa · UEP</span>
+    <h1>Analiza dynamiki <span class="grad">— indeksy</span></h1>
+    <p class="lede">Jak zmienia się zjawisko w czasie: przyrosty, indeksy indywidualne (łańcuchowe i jednopodstawowe), średnie tempo zmian i <b>indeksy agregatowe Laspeyresa, Paaschego i Fishera</b>. Cała pułapka egzaminu siedzi w tym, które liczebności są wagą.</p>
+  </section>
+
+  <nav class="pills">
+    <a href="#materialy">Materiały</a>
+    <a href="#excel">Ściąga Excela</a>
+    <a href="#zadania">Zadania</a>
+    <a href="#quiz">Quiz</a>
+  </nav>
+
+  <!-- ===================== MATERIAŁY ===================== -->
+  <section class="block" id="materialy">
+    <div class="sec-head"><span class="num">01</span><h2>Materiały</h2><span class="line"></span></div>
+    <p class="sub-note">Podstawą jest <b>szereg czasowy</b> — wartości zjawiska w kolejnych okresach. Warunek: dane <b>porównywalne</b> (ta sama częstość, ten sam zakres przestrzenny, te same jednostki). Oznaczenia: y<sub>t</sub> — wartość w okresie t, y<sub>0</sub>/y<sub>c</sub> — okres bazowy (constans), y<sub>t−1</sub> — okres poprzedni.</p>
+
+    <div class="cards">
+
+      <div class="mcard">
+        <h3>Przyrosty</h3>
+        <div class="tagline">zmiana bezwzględna i względna</div>
+        <span class="fml">absolutny: <span class="v">Δy = y<sub>t</sub> − y<sub>0</sub></span></span>
+        <span class="fml">względny: <span class="v">(y<sub>t</sub> − y<sub>0</sub>) / y<sub>0</sub> · 100%</span></span>
+        <ul>
+          <li>Absolutny — o ile <b>jednostek</b> zmieniło się zjawisko</li>
+          <li>Względny — o ile <b>procent</b>, względem bazy</li>
+          <li>Jedno- lub łańcuchowo (baza stała vs poprzedni okres)</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Indeks łańcuchowy</h3>
+        <div class="tagline">indeks indywidualny · podstawa zmienna</div>
+        <span class="fml"><span class="v">ł i<sub>t</sub> = y<sub>t</sub> / y<sub>t−1</sub> · 100%</span></span>
+        <p>Porównuje okres t do <b>poprzedniego</b> (t−1). Każdy ma inną podstawę.</p>
+        <ul>
+          <li>Pokazuje dynamikę <b>rok do roku</b></li>
+          <li>Dla pierwszego okresu — <b>nie da się wyznaczyć</b></li>
+          <li>105,2% → wzrost o 5,2% względem poprzedniego okresu</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Indeks jednopodstawowy</h3>
+        <div class="tagline">indeks indywidualny · podstawa stała</div>
+        <span class="fml"><span class="v">s i<sub>t</sub> = y<sub>t</sub> / y<sub>c</sub> · 100%</span></span>
+        <p>Porównuje każdy okres do <b>jednego, stałego</b> okresu bazowego (constans).</p>
+        <ul>
+          <li>Pokazuje skumulowaną zmianę względem bazy</li>
+          <li>185,6% → o 85,6% więcej niż w okresie bazowym</li>
+          <li>Stopa zmian = indeks − 100%</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Zamiana indeksów</h3>
+        <div class="tagline">łańcuchowy ↔ jednopodstawowy</div>
+        <span class="fml">łań → jedno: <span class="v">s i<sub>t</sub> = ł i<sub>t</sub> · s i<sub>t−1</sub> / 100</span></span>
+        <span class="fml">jedno → łań: <span class="v">ł i<sub>t</sub> = s i<sub>t</sub> / s i<sub>t−1</sub> · 100</span></span>
+        <div class="callout">Dwóch zjawisk <b>nie porównasz</b>, jeśli jedno masz w łańcuchowych, a drugie w jednopodstawowych — najpierw sprowadź do jednego typu.</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Średnie tempo zmian</h3>
+        <div class="tagline">średnia geometryczna</div>
+        <span class="fml"><span class="v">ŝ = ⁿ⁻¹√(y<sub>n</sub> / y<sub>1</sub>) · 100%</span></span>
+        <p>Równoważnie: pierwiastek stopnia (n−1) z iloczynu indeksów łańcuchowych.</p>
+        <ul>
+          <li>Liczone gdy zjawisko ma <b>stałą tendencję</b> (rosnącą lub malejącą)</li>
+          <li><b>Geometryczna</b>, nie arytmetyczna — bo zmiany się składają (mnożą)</li>
+          <li>113,2% → średnio +13,2% rocznie</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Indeks wartości</h3>
+        <div class="tagline">agregatowy · wielkości absolutne</div>
+        <span class="fml"><span class="v">I<sub>w</sub> = Σq<sub>j1</sub>p<sub>j1</sub> / Σq<sub>j0</sub>p<sub>j0</sub></span></span>
+        <p>Zmiana <b>łącznej wartości</b> (sprzedaży/produkcji) — łączny efekt zmian ilości i cen.</p>
+        <ul>
+          <li>q — ilość, p — cena; indeks 0 = baza, 1 = okres badany</li>
+          <li>Rozkład: <b>I<sub>w</sub> = I<sub>C</sub> · I<sub>I</sub></b> (ceny × ilości)</li>
+        </ul>
+      </div>
+
+      <div class="mcard">
+        <h3>Indeks cen (waga: ilość q)</h3>
+        <div class="tagline">agregatowy · Laspeyres / Paasche / Fisher</div>
+        <span class="fml">Laspeyres (q<sub>0</sub>): <span class="v">Σq<sub>0</sub>p<sub>1</sub> / Σq<sub>0</sub>p<sub>0</sub></span></span>
+        <span class="fml">Paasche (q<sub>1</sub>): <span class="v">Σq<sub>1</sub>p<sub>1</sub> / Σq<sub>1</sub>p<sub>0</sub></span></span>
+        <span class="fml">Fisher: <span class="v">√(I<sub>C</sub><sup>L</sup> · I<sub>C</sub><sup>P</sup>)</span></span>
+        <div class="callout">Indeks <b>cen</b> → wagą jest <b>ilość</b>. Laspeyres bierze ilości z <b>bazy</b> (q₀), Paasche z okresu <b>badanego</b> (q₁).</div>
+      </div>
+
+      <div class="mcard">
+        <h3>Indeks ilości (waga: cena p)</h3>
+        <div class="tagline">agregatowy · Laspeyres / Paasche / Fisher</div>
+        <span class="fml">Laspeyres (p<sub>0</sub>): <span class="v">Σq<sub>1</sub>p<sub>0</sub> / Σq<sub>0</sub>p<sub>0</sub></span></span>
+        <span class="fml">Paasche (p<sub>1</sub>): <span class="v">Σq<sub>1</sub>p<sub>1</sub> / Σq<sub>0</sub>p<sub>1</sub></span></span>
+        <span class="fml">Fisher: <span class="v">√(I<sub>I</sub><sup>L</sup> · I<sub>I</sub><sup>P</sup>)</span></span>
+        <div class="callout">Indeks <b>ilości</b> → wagą jest <b>cena</b>. Lustrzane odbicie indeksu cen — zamieniasz rolę p i q.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===================== ŚCIĄGA EXCEL ===================== -->
+  <section class="block" id="excel">
+    <div class="sec-head"><span class="num">02</span><h2>Ściąga funkcji Excela</h2><span class="line"></span></div>
+    <p class="sub-note">Indeksy to głównie dzielenie kolumn i sumy iloczynów — pełną mocą Excela jest tu <b>SUMA.ILOCZYNÓW</b> (liczy Σq·p jednym wzorem) oraz <b>blokowanie odwołań</b> ($) przy bazie stałej.</p>
+    <div class="xtable-wrap">
+      <table class="xt">
+        <thead><tr><th>Czego liczysz</th><th>Formuła w Excelu</th><th>Uwaga</th></tr></thead>
+        <tbody>
+          <tr><td class="measure"><b>Indeks łańcuchowy</b><small>yₜ / yₜ₋₁ · 100</small></td><td class="fn">=B4/B3*100</td><td>Zwykłe odwołanie względne — „przeciągasz" w dół</td></tr>
+          <tr><td class="measure"><b>Indeks jednopodstawowy</b><small>yₜ / y_baza · 100</small></td><td class="fn">=B4/B$3*100</td><td><b>$</b> blokuje wiersz bazy, żeby się nie przesuwał</td></tr>
+          <tr><td class="measure"><b>Σ q·p (wartość)</b></td><td class="fn">=SUMA.ILOCZYNÓW(q;p)</td><td>Liczy Σqⱼpⱼ jednym wzorem — serce indeksów agregatowych</td></tr>
+          <tr><td class="measure"><b>Indeks wartości Iw</b></td><td class="fn">=SUMA.ILOCZYNÓW(q1;p1)/SUMA.ILOCZYNÓW(q0;p0)*100</td><td>Wszystko z okresu 1 / wszystko z okresu 0</td></tr>
+          <tr><td class="measure"><b>Indeks cen Laspeyres</b></td><td class="fn">=SUMA.ILOCZYNÓW(q0;p1)/SUMA.ILOCZYNÓW(q0;p0)*100</td><td>Waga q0 — ilości z bazy w obu sumach</td></tr>
+          <tr><td class="measure"><b>Indeks cen Paasche</b></td><td class="fn">=SUMA.ILOCZYNÓW(q1;p1)/SUMA.ILOCZYNÓW(q1;p0)*100</td><td>Waga q1 — ilości z okresu badanego</td></tr>
+          <tr><td class="measure"><b>Indeks Fishera</b></td><td class="fn">=PIERWIASTEK(I_L*I_P)</td><td>Średnia geometryczna Laspeyresa i Paaschego</td></tr>
+          <tr><td class="measure"><b>Średnie tempo zmian</b><small>średnia geometryczna</small></td><td class="fn">=(yn/y1)^(1/(n−1))*100</td><td>lub =ŚREDNIA.GEOMETRYCZNA(zakres indeksów łańcuchowych)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===================== ZADANIA ===================== -->
+  <section class="block" id="zadania">
+    <div class="sec-head"><span class="num">03</span><h2>Zadania krok po kroku</h2><span class="line"></span></div>
+    <p class="sub-note">Policz, wpisz wynik, sprawdź. Indeksy podawaj <b>w procentach</b> (np. 120,3). Akceptuję przecinek/kropkę i drobne zaokrąglenia. Dane z ćwiczeń: mieszkania (pozwolenia na budowę, w tys.) i koszyk pieczywa.</p>
+    <div id="exList"></div>
+    <div class="progress"><span class="lbl" id="exLbl">0 / 0</span><div class="bar"><i id="exFill"></i></div></div>
+  </section>
+
+  <!-- ===================== QUIZ ===================== -->
+  <section class="block" id="quiz">
+    <div class="sec-head"><span class="num">04</span><h2>Quiz teoretyczny</h2><span class="line"></span></div>
+    <p class="sub-note">Definicje, interpretacje i klasyczne pułapki — zwłaszcza która waga należy do którego indeksu.</p>
+    <div id="quizList"></div>
+    <div class="quiz-score" id="quizScore" style="display:none">
+      <div class="big" id="scoreBig">0 / 0</div>
+      <div id="scoreMsg" style="color:var(--muted);margin-top:6px"></div>
+    </div>
+  </section>
+
+  <div class="giant" aria-hidden="true"><span>DYNAMIKA</span></div>
+
+  <footer>
+    <p class="disclaimer">
+      <b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani żadną katedrą.
+      Materiały to własne opracowania na bazie zajęć. Licz też z oryginalnych źródeł.
+    </p>
+  </footer>
+</div>
+
+<script is:inline>
+const tbl=(head,rows)=>'<div class="dtable-wrap"><table class="dt"><thead><tr>'+head.map(h=>`<th>${h}</th>`).join('')+'</tr></thead><tbody>'+rows.map(r=>'<tr>'+r.map(c=>`<td>${c}</td>`).join('')+'</tr>').join('')+'</tbody></table></div>';
+
+// dane mieszkania
+const miesz=[['2013','138,8'],['2014','156,9'],['2015','188,8'],['2016','211,5'],['2017','250,9'],['2018','257,6']];
+// dane pieczywo
+const breadHead=['Produkt','q₀ (2017)','p₀','q₁ (2018)','p₁'];
+const bread=[['Bułka pszenna','4926','0,35','4876','0,39'],['Bułka razowa','1542','0,49','1596','0,55'],['Chleb pszenno-żytni','2965','1,79','2716','1,89'],['Chleb razowy','1293','2,59','1315','2,99']];
+const sums='<div class="callout"><b>Sumy pomocnicze:</b> Σq₀p₀ = 11135,90 • Σq₁p₁ = 11844,53 • Σq₀p₁ = 12239,16 • Σq₁p₀ = 10756,13</div>';
+
+const EXS=[
+ {theme:'Indeks łańcuchowy', diff:'łatwe',
+  title:'Indeks łańcuchowy dla 2015',
+  data:'Mieszkania, na które wydano pozwolenia (w tys.). Policz indeks łańcuchowy dla 2015 (w %).'+tbl(['Rok','y (tys.)'],miesz),
+  ans:120.3, tol:0.3, unit:'%',
+  sol:[['Wzór','ł i₂₀₁₅ = y₂₀₁₅ / y₂₀₁₄ · 100'],
+       ['Podstawienie','= 188,8 / 156,9 · 100 = <span class="calc">120,3%</span>'],
+       ['Interpretacja','w 2015 liczba wzrosła o <b>20,3%</b> względem 2014']],
+  excel:'=188,8/156,9*100  →  w arkuszu: =B5/B4*100'},
+
+ {theme:'Indeks jednopodstawowy', diff:'łatwe',
+  title:'Indeks jednopodstawowy dla 2018 (2013 = 100)',
+  data:'Te same dane, okres bazowy 2013. Policz indeks jednopodstawowy dla 2018 (w %).'+tbl(['Rok','y (tys.)'],miesz),
+  ans:185.6, tol:0.4, unit:'%',
+  sol:[['Wzór','s i₂₀₁₈ = y₂₀₁₈ / y₂₀₁₃ · 100'],
+       ['Podstawienie','= 257,6 / 138,8 · 100 = <span class="calc">185,6%</span>'],
+       ['Interpretacja','o <b>85,6%</b> więcej mieszkań niż w 2013']],
+  excel:'=B7/B$2*100  ($ blokuje wiersz bazy)'},
+
+ {theme:'Interpretacja', diff:'łatwe',
+  title:'Stopa wzrostu z indeksu',
+  data:'Indeks jednopodstawowy dla 2017 wynosi 180,8% (2013 = 100). O ile procent wzrosło zjawisko względem bazy?',
+  ans:80.8, tol:0.3, unit:'%',
+  sol:[['Reguła','stopa zmian = indeks − 100%'],
+       ['Obliczenie','180,8% − 100% = <span class="calc">80,8%</span>'],
+       ['Sens','w 2017 było o 80,8% więcej niż w roku bazowym 2013']],
+  excel:'=180,8−100'},
+
+ {theme:'Średnie tempo', diff:'średnie',
+  title:'Średnioroczne tempo zmian (2013→2018)',
+  data:'Mieszkania: y₂₀₁₃ = 138,8 i y₂₀₁₈ = 257,6 (6 lat, czyli 5 indeksów łańcuchowych). Policz średnioroczne tempo wzrostu (w %).',
+  ans:13.2, tol:0.4, unit:'%',
+  sol:[['Wzór','ŝ = ⁵√(y₂₀₁₈ / y₂₀₁₃) · 100'],
+       ['Podstawienie','= ⁵√(257,6 / 138,8) · 100 = ⁵√1,856 · 100 = <span class="calc">113,2%</span>'],
+       ['Tempo','113,2% − 100% = <b>13,2%</b> średnio rocznie']],
+  excel:'=(257,6/138,8)^(1/5)*100  potem −100'},
+
+ {theme:'Zamiana indeksów', diff:'średnie',
+  title:'Łańcuchowy → jednopodstawowy',
+  data:'Indeksy łańcuchowe: ł2017 = 105%, ł2018 = 102%. Baza jednopodstawowa 2016 = 100%, więc s2017 = 105%. Policz s2018 (jednopodstawowy, w %).',
+  ans:107.1, tol:0.3, unit:'%',
+  sol:[['Wzór','s i₂₀₁₈ = ł i₂₀₁₈ · s i₂₀₁₇ / 100'],
+       ['Podstawienie','= 102 · 105 / 100 = <span class="calc">107,1%</span>'],
+       ['Sens','w 2018 o 7,1% więcej niż w bazowym 2016']],
+  excel:'=102*105/100'},
+
+ {theme:'Zamiana indeksów', diff:'średnie',
+  title:'Jednopodstawowy → łańcuchowy',
+  data:'Indeksy jednopodstawowe (2015 = 100): s2016 = 110%, s2017 = 125%. Policz indeks łańcuchowy ł2017 (w %).',
+  ans:113.6, tol:0.3, unit:'%',
+  sol:[['Wzór','ł i₂₀₁₇ = s i₂₀₁₇ / s i₂₀₁₆ · 100'],
+       ['Podstawienie','= 125 / 110 · 100 = <span class="calc">113,6%</span>'],
+       ['Sens','w 2017 o 13,6% więcej niż w 2016']],
+  excel:'=125/110*100'},
+
+ {theme:'Indeks wartości', diff:'średnie',
+  title:'Agregatowy indeks wartości Iw',
+  data:'Koszyk pieczywa, okres 0 = 2017, 1 = 2018. Policz indeks wartości (w %).'+tbl(breadHead,bread)+sums,
+  ans:106.36, tol:0.5, unit:'%',
+  sol:[['Wzór','Iw = Σq₁p₁ / Σq₀p₀ · 100'],
+       ['Podstawienie','= 11844,53 / 11135,90 · 100 = <span class="calc">106,36%</span>'],
+       ['Sens','łączna wartość sprzedaży wzrosła o 6,36%']],
+  excel:'=SUMA.ILOCZYNÓW(q1;p1)/SUMA.ILOCZYNÓW(q0;p0)*100'},
+
+ {theme:'Indeks cen', diff:'trudne',
+  title:'Indeks cen Laspeyresa',
+  data:'Ten sam koszyk. Policz indeks cen wg Laspeyresa (waga q₀, w %).'+tbl(breadHead,bread)+sums,
+  ans:109.91, tol:0.6, unit:'%',
+  sol:[['Wzór','I_C^L = Σq₀p₁ / Σq₀p₀ · 100'],
+       ['Wskazówka','waga = ilości z bazy (q₀) w liczniku i mianowniku'],
+       ['Podstawienie','= 12239,16 / 11135,90 · 100 = <span class="calc">109,91%</span>'],
+       ['Sens','przy stałych ilościach z 2017 ceny wzrosły o ~9,9%']],
+  excel:'=SUMA.ILOCZYNÓW(q0;p1)/SUMA.ILOCZYNÓW(q0;p0)*100'},
+
+ {theme:'Indeks cen', diff:'trudne',
+  title:'Indeks cen Paaschego',
+  data:'Ten sam koszyk. Policz indeks cen wg Paaschego (waga q₁, w %).'+tbl(breadHead,bread)+sums,
+  ans:110.12, tol:0.6, unit:'%',
+  sol:[['Wzór','I_C^P = Σq₁p₁ / Σq₁p₀ · 100'],
+       ['Wskazówka','waga = ilości z okresu badanego (q₁)'],
+       ['Podstawienie','= 11844,53 / 10756,13 · 100 = <span class="calc">110,12%</span>'],
+       ['Sens','przy aktualnych ilościach ceny wzrosły o ~10,1%']],
+  excel:'=SUMA.ILOCZYNÓW(q1;p1)/SUMA.ILOCZYNÓW(q1;p0)*100'},
+
+ {theme:'Indeks ilości', diff:'trudne',
+  title:'Indeks ilości Laspeyresa',
+  data:'Ten sam koszyk. Policz indeks ilości wg Laspeyresa (waga p₀, w %).'+tbl(breadHead,bread)+sums,
+  ans:96.59, tol:0.5, unit:'%',
+  sol:[['Wzór','I_I^L = Σq₁p₀ / Σq₀p₀ · 100'],
+       ['Wskazówka','indeks ilości → wagą jest cena; Laspeyres bierze ceny z bazy (p₀)'],
+       ['Podstawienie','= 10756,13 / 11135,90 · 100 = <span class="calc">96,59%</span>'],
+       ['Sens','wolumen sprzedaży spadł o ~3,4% (indeks < 100)']],
+  excel:'=SUMA.ILOCZYNÓW(q1;p0)/SUMA.ILOCZYNÓW(q0;p0)*100'}
+];
+
+const KEY='unicorner_dyn_v1';
+let solved=JSON.parse(localStorage.getItem(KEY)||'{}');
+const exList=document.getElementById('exList');
+EXS.forEach((e,i)=>{
+  const d=document.createElement('div'); d.className='ex'+(solved['e'+i]?' solved':''); d.id='ex'+i;
+  d.innerHTML=`
+    <div class="ex-top"><span class="ex-theme">${e.theme}</span><span class="ex-diff">${e.diff}</span></div>
+    <h3>${i+1}. ${e.title}</h3>
+    <div class="data">${e.data}</div>
+    <div class="answer-row">
+      <input type="text" inputmode="decimal" placeholder="Twój wynik" aria-label="wynik">
+      ${e.unit?`<span class="unit">${e.unit}</span>`:''}
+      <button class="btn" data-act="check">Sprawdź</button>
+      <button class="btn ghost" data-act="show">Pokaż rozwiązanie</button>
+    </div>
+    <div class="verdict"></div>
+    <div class="solution">
+      <h4>Rozwiązanie</h4>
+      ${e.sol.map(s=>`<div class="step"><b>${s[0]}:</b> ${s[1]}</div>`).join('')}
+      <div class="excel-tag"><span>▦</span><b>W Excelu:</b> ${e.excel}</div>
+    </div>`;
+  const inp=d.querySelector('input'), verd=d.querySelector('.verdict'), sol=d.querySelector('.solution');
+  const reveal=ok=>{ sol.classList.add('show'); if(ok){ d.classList.add('solved'); solved['e'+i]=1; localStorage.setItem(KEY,JSON.stringify(solved)); updateProg(); } };
+  d.querySelector('[data-act=check]').onclick=()=>{
+    const raw=inp.value.replace(',','.').replace(/[^0-9.\-]/g,'');
+    if(raw===''){verd.className='verdict bad';verd.textContent='Wpisz wynik liczbowy.';return;}
+    const v=parseFloat(raw); const ok=Math.abs(v-e.ans)<=(e.tol||0.01)+1e-9;
+    if(ok){verd.className='verdict ok';verd.textContent='✓ Dobrze! Wynik: '+String(e.ans).replace('.',',')+(e.unit?' '+e.unit:'');}
+    else{verd.className='verdict bad';verd.textContent='✗ Nie tym razem — sprawdź rozwiązanie poniżej.';}
+    reveal(ok);
+  };
+  d.querySelector('[data-act=show]').onclick=()=>{ sol.classList.add('show'); };
+  inp.addEventListener('keydown',ev=>{if(ev.key==='Enter')d.querySelector('[data-act=check]').click();});
+  exList.appendChild(d);
+});
+function updateProg(){
+  const done=EXS.filter((_,i)=>solved['e'+i]).length;
+  document.getElementById('exLbl').textContent=done+' / '+EXS.length;
+  document.getElementById('exFill').style.width=(done/EXS.length*100)+'%';
+}
+updateProg();
+
+const QUIZ=[
+ {q:'Indeks łańcuchowy porównuje poziom zjawiska w okresie t do:',
+  o:['Stałego, z góry przyjętego okresu bazowego','Okresu bezpośrednio go poprzedzającego','Średniej wartości z całego szeregu','Okresu następującego zaraz po nim'],c:1,
+  e:'Łańcuchowy ma <b>podstawę zmienną</b> — każdy okres odnosi do poprzedniego (t−1). Pokazuje dynamikę rok do roku.'},
+ {q:'Indeks jednopodstawowy 185,6% (2013 = 100) oznacza, że zjawisko:',
+  o:['Spadło o 85,6% względem bazy','Wzrosło o 185,6% względem 2013','Wzrosło o 85,6% względem 2013','Jest 185,6 razy większe niż w 2013'],c:2,
+  e:'Stopa zmian = indeks − 100%. 185,6% − 100% = <b>+85,6%</b> względem okresu bazowego 2013.'},
+ {q:'Dlaczego średnie tempo zmian liczymy średnią geometryczną, a nie arytmetyczną?',
+  o:['Bo jest łatwiejsza w ręcznym liczeniu','Bo zmiany w czasie się składają, nie sumują','Bo zawsze daje wyraźnie wyższy wynik','To w praktyce nie ma żadnego znaczenia'],c:1,
+  e:'Dynamika kumuluje się multiplikatywnie — kolejne indeksy się <b>mnożą</b>. Średnia geometryczna oddaje to poprawnie, arytmetyczna by zawyżała.'},
+ {q:'W indeksie CEN według Laspeyresa wagą są:',
+  o:['Ceny pochodzące z okresu badanego','Ilości pochodzące z okresu bazowego','Ilości pochodzące z okresu badanego','Ceny pochodzące z okresu bazowego'],c:1,
+  e:'Indeks cen → wagą jest <b>ilość</b>. Laspeyres używa ilości z <b>bazy</b> (q₀): Σq₀p₁ / Σq₀p₀.'},
+ {q:'Indeks cen Paaschego używa jako wagi:',
+  o:['Ilości pochodzące z okresu badanego','Ilości pochodzące z okresu bazowego','Ceny pochodzące z okresu bazowego','Średnie ilości z obu okresów'],c:0,
+  e:'Paasche bierze ilości z okresu <b>badanego</b> (q₁): Σq₁p₁ / Σq₁p₀. Różnica L vs P to właśnie który okres dostarcza wag.'},
+ {q:'Indeks Fishera to:',
+  o:['Suma indeksów Laspeyresa i Paaschego','Średnia arytmetyczna indeksów L i P','Średnia geometryczna indeksów L i P','Iloraz indeksu L przez indeks P'],c:2,
+  e:'Fisher = <b>√(I_L · I_P)</b> — średnia geometryczna indeksów Laspeyresa i Paaschego. Uznawany za „idealny”.'},
+ {q:'Indeks WARTOŚCI można rozłożyć jako:',
+  o:['Iw = I_cen · I_ilości','Iw = I_cen + I_ilości','Iw = I_cen − I_ilości','Iw = I_cen / I_ilości'],c:0,
+  e:'Łączna zmiana wartości to <b>iloczyn</b> zmian cen i ilości, np. Iw = I_C^L · I_I^P = I_C^P · I_I^L = I_C^F · I_I^F.'},
+ {q:'Której pary nie da się bezpośrednio porównać?',
+  o:['Dwa zjawiska w indeksach łańcuchowych','Dwa zjawiska w indeksach jednopodstawowych','Jedno łańcuchowe, drugie jednopodstawowe','Dwa zjawiska w tych samych jednostkach'],c:2,
+  e:'Mieszanki typów nie porównasz wprost — najpierw <b>sprowadź oba do tego samego typu</b> indeksu (oba łańcuchowe albo oba jednopodstawowe).'},
+ {q:'Warunkiem poprawnej analizy szeregu czasowego NIE jest:',
+  o:['Ta sama częstość zbierania danych','Ten sam zakres przestrzenny danych','Te same jednostki miary wartości','Rosnąca z czasem liczba obserwacji'],c:3,
+  e:'Porównywalność wymaga tej samej częstości, zakresu i jednostek. Liczba obserwacji nie musi rosnąć — to nie warunek.'},
+ {q:'Agregatowy indeks ilości 96,6% oznacza, że:',
+  o:['Ceny spadły przeciętnie o 3,4%','Wolumen sprzedaży spadł o 3,4%','Wartość sprzedaży wzrosła o 96,6%','Ilość sprzedanych dóbr wzrosła o 3,4%'],c:1,
+  e:'Indeks ilości < 100% → <b>spadek wolumenu</b>: 96,6% − 100% = −3,4%. Indeks ilości mierzy zmianę ilości przy ustalonych cenach.'},
+ {q:'Aby zamienić indeks łańcuchowy na jednopodstawowy, trzeba:',
+  o:['Dodać do indeksu łańcuchowego 100 punktów','Mnożyć ł iₜ przez s iₜ₋₁, dzielić przez 100','Podzielić indeks przez liczbę wszystkich okresów','Odjąć indeks z okresu bezpośrednio poprzedniego'],c:1,
+  e:'s iₜ = ł iₜ · s iₜ₋₁ / 100. Kumulujesz dynamikę, mnożąc kolejny łańcuchowy przez jednopodstawowy z poprzedniego okresu.'},
+ {q:'Indeks łańcuchowy dla pierwszego okresu szeregu:',
+  o:['Zawsze przyjmuje wartość 100%','Zawsze jest równy zeru procent','Nie da się go w ogóle wyznaczyć','Równa się indeksowi jednopodstawowemu'],c:2,
+  e:'Brak okresu poprzedniego (t−1), więc <b>nie da się go policzyć</b>. Pierwszy indeks jednopodstawowy z kolei zawsze = 100% (baza).'}
+];
+const quizList=document.getElementById('quizList'); let answered=0, correct=0;
+QUIZ.forEach((q,i)=>{
+  const order=q.o.map((t,idx)=>idx).sort(()=>Math.random()-0.5);
+  const card=document.createElement('div'); card.className='quiz-card';
+  card.innerHTML=`<div class="q-no">Pytanie ${i+1} / ${QUIZ.length}</div><div class="q-text">${q.q}</div><div class="opts"></div><div class="q-exp">${q.e}</div>`;
+  const opts=card.querySelector('.opts'), exp=card.querySelector('.q-exp');
+  order.forEach(idx=>{
+    const b=document.createElement('button'); b.className='opt'; b.textContent=q.o[idx];
+    b.onclick=()=>{
+      opts.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      if(idx===q.c){b.classList.add('correct');correct++;}
+      else{b.classList.add('wrong');opts.querySelectorAll('.opt').forEach(x=>{if(x.textContent===q.o[q.c])x.classList.add('correct');});}
+      exp.classList.add('show'); answered++;
+      if(answered===QUIZ.length){
+        const sc=document.getElementById('quizScore'); sc.style.display='block';
+        document.getElementById('scoreBig').textContent=correct+' / '+QUIZ.length;
+        const pct=correct/QUIZ.length;
+        document.getElementById('scoreMsg').textContent=
+          pct===1?'Komplet — indeksy masz w małym palcu. 🦄':pct>=0.7?'Dobrze. Dopnij wagi L vs P i jesteś gotowy.':'Wróć do kart o indeksach agregatowych — tam siedzi większość błędów.';
+      }
+    };
+    opts.appendChild(b);
+  });
+  quizList.appendChild(card);
+});
+</script>
+
+</Base>

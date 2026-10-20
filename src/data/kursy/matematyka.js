@@ -1,0 +1,36 @@
+// Kurs „Matematyka” (UEP, 1. rok) — opis kursu i lista modułów.
+// status: 'live' = strona istnieje w src/pages/matematyka/<slug>.mdx i jest linkowana; 'soon' = kafelek „wkrótce”.
+// cwiczenia: id kotwicy sekcji „Ćwiczenia przed kolokwium” w module (link na stronie kursu i w nagłówku modułu).
+// Kolejność = kolejność tematów na zajęciach (Temat 1 … Temat 13).
+import { SLOWNICZEK } from './matematyka-slowniczek.js';
+
+export const COURSE = {
+  slug: 'matematyka',
+  name: 'Matematyka',
+  h1: 'Matematyka',
+  h1Grad: '— od zera, bez dziur',
+  seoTitle: 'Matematyka od zera — kurs dla studentów ekonomii',
+  desc: 'Od logiki i zbiorów, przez macierze i programowanie liniowe, po pochodne i całki. Każdy symbol wyjaśniony, każdy krok z „dlaczego”.',
+  seoDesc: 'Kurs matematyki od zera: logika, zbiory, relacje, macierze, układy równań, programowanie liniowe, matematyka finansowa, pochodne i całki. Każdy symbol wyjaśniony, zadania krok po kroku.',
+  dlaKogo: '1. rok, ekonomia i zarządzanie',
+  wymagania: 'matematyka z liceum (podstawa)',
+  slowniczek: { tytul: 'Słowniczek symboli', url: '/matematyka/symbole.html', kolumna: 'Symbol' },
+};
+
+export const MODULES = [
+  { nr: 1, slug: 'logika', title: 'Logika', short: 'Zdania, spójniki, tabelki zero-jedynkowe, tautologie i kwantyfikatory.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
+  { nr: 2, slug: 'zbiory', title: 'Zbiory', short: 'Działania na zbiorach, przedziały, iloczyn kartezjański, zasada włączeń i wyłączeń.', status: 'live', minutes: 60, cwiczenia: 'cwiczenia' },
+  { nr: 3, slug: 'relacje', title: 'Relacje', short: 'Macierz i graf relacji, własności, złożenie, relacje porządkujące i optimum Pareto.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
+  { nr: 4, slug: 'macierze', title: 'Macierze', short: 'Mnożenie, wyznacznik, macierz odwrotna i rząd — kiedy działa, a kiedy nie.', status: 'live', minutes: 90, cwiczenia: 'cwiczenia' },
+  { nr: 5, slug: 'uklady-rownan', title: 'Układy równań liniowych', short: 'Macierz rozszerzona, postać bazowa, układy oznaczone, nieoznaczone i sprzeczne, rozwiązania bazowe.', status: 'live', minutes: 75, cwiczenia: 'cwiczenia' },
+  { nr: 6, slug: 'programowanie-liniowe', title: 'Programowanie liniowe', short: 'Model decyzyjny, zbiór rozwiązań dopuszczalnych i metoda geometryczna.', status: 'soon' },
+  { nr: 7, slug: 'matematyka-finansowa', title: 'Matematyka finansowa', short: 'Wartość przyszła i bieżąca, strumienie wpłat, renta, IRR i plan spłaty kredytu.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
+  { nr: 8, slug: 'pochodne', title: 'Pochodna funkcji jednej zmiennej', short: 'Co mierzy pochodna, tabela wzorów i reguły: iloczyn, iloraz, funkcja złożona — cała lista przykładów krok po kroku.', status: 'live', minutes: 80, cwiczenia: 'cwiczenia' },
+  { nr: 9, slug: 'badanie-funkcji', title: 'Badanie zmienności funkcji', short: 'Monotoniczność, ekstrema, wypukłość i punkty przegięcia — z tabelką.', status: 'live', minutes: 90, cwiczenia: 'cwiczenia' },
+  { nr: 10, slug: 'funkcje-wielu-zmiennych', title: 'Funkcje wielu zmiennych', short: 'Pochodne cząstkowe, gradient, hesjan i ekstrema bezwarunkowe.', status: 'live', minutes: 90, cwiczenia: 'cwiczenia' },
+  { nr: 11, slug: 'ekstrema-warunkowe', title: 'Ekstrema warunkowe', short: 'Funkcja Lagrange’a, układ trzech równań i wyznacznik 3 × 3.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
+  { nr: 12, slug: 'calka-nieoznaczona', title: 'Całka nieoznaczona', short: 'Wzory, całkowanie przez podstawianie i przez części.', status: 'live', minutes: 90, cwiczenia: 'cwiczenia' },
+  { nr: 13, slug: 'calka-oznaczona', title: 'Całka oznaczona', short: 'Pole pod wykresem i między wykresami.', status: 'soon' },
+];
+
+export { SLOWNICZEK };

@@ -1,0 +1,965 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: matematyka
+slug: calka-nieoznaczona
+title: Całka nieoznaczona
+podtytul: funkcja pierwotna, wzory i trzy metody całkowania
+description: Całka nieoznaczona od zera — funkcja pierwotna i stała C, wzory i reguły ze slajdów, całkowanie elementarne, przez podstawianie i przez części. Wszystkie 43 przykłady z listy krok po kroku.
+lede: Całkowanie to pochodna czytana od tyłu — znasz wynik różniczkowania i szukasz funkcji, z której powstał. Poznasz wzory ze slajdów i trzy metody z zajęć, a potem przejdziesz krok po kroku wszystkie przykłady z listy zadań.
+wyglad: szeroki
+wymaga: Pochodne (moduł 8) — wzory i reguła funkcji złożonej. Potęgi i pierwiastki z liceum przypominamy na miejscu.
+umiesz:
+  - wyjaśnić, co to funkcja pierwotna i skąd w wyniku bierze się + C
+  - zapisać pierwiastki i ułamki jako potęgi i policzyć całkę wzorem 3
+  - rozbić całkę na składniki i wyłączyć liczby przed całkę
+  - wybrać podstawienie t, policzyć dt i wrócić do x
+  - wybrać u i v′ w całkowaniu przez części i wstawić je do wzoru
+  - sprawdzić każdy wynik pochodną
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import Legenda from '../../components/kurs/Legenda.astro';
+import Rachunek from '../../components/kurs/pochodne/Rachunek.astro';
+import Przyklad from '../../components/kurs/pochodne/Przyklad.astro';
+import CwiczeniePotegi from '../../components/kurs/pochodne/CwiczeniePotegi.astro';
+import Rodzina from '../../components/kurs/calki/Rodzina.astro';
+import Odpowiedzi from '../../components/kurs/calki/Odpowiedzi.astro';
+import { ZAD1 as A, ZAD2 as B, ZAD3 as U } from '../../lib/calki-zadania.js';
+import { ETAPY_EL, ETAPY_PS, ETAPY_CZ, LEG, cwCalkiPotegi } from '../../lib/calki.js';
+import { cwZapis } from '../../lib/pochodne.js';
+
+export const R = String.raw;
+export const tyt = (d) => `$${d.f}$`;
+export const CEL = 'Cel: całka, czyli rodzina funkcji, których pochodna to funkcja spod całki.';
+export const zapis = cwZapis([
+  { t: R`\sqrt{x}`, n: [1, 2], jak: R`pierwiastek kwadratowy to potęga $\tfrac12$.` },
+  { t: R`\sqrt[3]{x^2}`, n: [2, 3], jak: R`wykładnik spod pierwiastka ($2$) idzie do licznika, stopień pierwiastka ($3$) — do mianownika: $x^{\frac23}$.` },
+  { t: R`\frac{1}{x^4}`, n: [-4, 1], jak: R`potęga przechodzi z mianownika do licznika i wykładnik zmienia znak: $x^{-4}$.` },
+  { t: R`\frac{1}{\sqrt{x}}`, n: [-1, 2], jak: R`najpierw $\sqrt{x} = x^{\frac12}$, potem z mianownika do licznika: $x^{-\frac12}$.` },
+  { t: R`x\sqrt{x}`, n: [3, 2], jak: R`$x \cdot x^{\frac12}$ — przy mnożeniu potęg wykładniki dodajesz: $1 + \tfrac12 = \tfrac32$.` },
+  { t: R`\frac{1}{\sqrt[4]{x^5}}`, n: [-5, 4], jak: R`$\sqrt[4]{x^5} = x^{\frac54}$, a z mianownika do licznika: $x^{-\frac54}$ (Zad. 1 b)).` },
+]);
+export const potegi = cwCalkiPotegi([
+  { f: R`x^6`, a: [1, 1], n: [6, 1] },
+  { f: R`4x^3`, a: [4, 1], n: [3, 1] },
+  { f: R`x^{-3}`, a: [1, 1], n: [-3, 1] },
+  { f: R`6x^{-4}`, a: [6, 1], n: [-4, 1] },
+  { f: R`x^{\frac12}`, a: [1, 1], n: [1, 2] },
+  { f: R`5x^{\frac23}`, a: [5, 1], n: [2, 3] },
+  { f: R`x^{-\frac12}`, a: [1, 1], n: [-1, 2] },
+  { f: R`2x^{-\frac13}`, a: [2, 1], n: [-1, 3] },
+]);
+
+## Po co to jest
+
+Pochodna odpowiada na pytanie: **jak szybko coś się zmienia?** Całka odpowiada na pytanie odwrotne: **znasz tempo zmian — ile tego jest?**
+
+Przykład z ekonomii. Koszt całkowity produkcji $x$ sztuk towaru oznaczmy $K(x)$. Koszt krańcowy to jego pochodna $K'(x)$. Mówi, ile mniej więcej kosztuje każda **kolejna** sztuka. Firma zna koszt krańcowy, na przykład $K'(x) = 2x + 10$ zł. Chce znać sam koszt całkowity $K(x)$. Szuka więc funkcji, której pochodna to $2x + 10$.
+
+Szukanie funkcji po jej pochodnej to właśnie **całkowanie**. Na slajdzie: całkowanie jest działaniem odwrotnym do różniczkowania (różniczkowanie to liczenie pochodnej).
+
+Pasuje $K(x) = x^2 + 10x$, bo $(x^2 + 10x)' = 2x + 10$. Ale pasuje też $x^2 + 10x + 500$, bo pochodna liczby $500$ to $0$. Te $500$ zł to **koszty stałe** — np. czynsz, który firma płaci nawet bez produkcji. Z samego kosztu krańcowego nie da się ich odczytać. Dlatego wynik całkowania zawsze kończy się zapisem $+ C$: „plus jakaś stała, której stąd nie znamy”.
+
+### Do czego całka przyda się dalej
+
+- **Moduł 13 — całka oznaczona:** pole pod wykresem i między wykresami. Żeby je policzyć, najpierw liczysz całkę nieoznaczoną z tego modułu.
+- **Ekonomia:** z funkcji krańcowych (koszt, przychód, zysk krańcowy) odtwarzasz funkcje całkowite.
+
+### Jak przejdziemy przez ten moduł
+
+1. **Pojęcia:** funkcja pierwotna, stała $C$ i zapis $\int f(x) \, dx$ ([pojęcia od podstaw](#pojecia)).
+2. **Wzory i reguły ze slajdów:** to tabela pochodnych czytana od tyłu ([wzory](#wzory)).
+3. **Trzy metody z zajęć:** każda z przepisem krok po kroku — [całkowanie elementarne](#polecenie-elementarne), [przez podstawianie](#polecenie-podstawianie) i [przez części](#polecenie-czesci). Na nich przejdziemy wszystkie $43$ przykłady z listy.
+
+## Co będzie na kolokwium
+
+Na liście zadań z tego tematu są trzy polecenia: Zad. 1 (podstawowe wzory, przykłady a–j), Zad. 2 (przez podstawianie, a–r) i Zad. 3 (przez części, a–o). Moduł dodaje do nich dwa typowe warianty spoza listy. Każde polecenie ma w module swój przepis i ćwiczenia.
+
+To na razie tylko mapa — nie musisz jeszcze rozumieć tych zapisów. Wrócisz tu, gdy będziesz szukać przepisu.
+
+<Polecenia items={[
+  { polecenie: R`Oblicz całkę, stosując podstawowe wzory, np. $\int \frac{dx}{\sqrt[4]{x^5}}$`, jak: R`Pierwiastki i ułamki zapisujesz jako potęgi, całkę rozbijasz na składniki i każdy liczysz wzorem ze slajdu.`, przepis: 'polecenie-elementarne', cwiczenia: 'cw-elementarne', zrodlo: 'Zad. 1 a)–j)' },
+  { polecenie: R`Oblicz całkę metodą przez podstawianie, np. $\int (x^2 + 2)^3 x \, dx$`, jak: R`„Środek” zamieniasz na nową zmienną $t$, liczysz prostszą całkę po $t$ i wracasz do $x$.`, przepis: 'polecenie-podstawianie', cwiczenia: 'cw-podstawianie', zrodlo: 'Zad. 2 a)–r)' },
+  { polecenie: R`Oblicz całkę metodą przez części, np. $\int x4^x \, dx$`, jak: R`Funkcję dzielisz na dwa kawałki $u$ i $v'$, liczysz $u'$ i $v$ i wstawiasz wszystko do wzoru ze slajdu.`, przepis: 'polecenie-czesci', cwiczenia: 'cw-czesci', zrodlo: 'Zad. 3 a)–o)' },
+  { polecenie: R`Oblicz całkę (polecenie nie mówi, jaką metodą)`, jak: R`Najpierw rozpoznajesz metodę po kształcie funkcji pod całką, potem liczysz jej przepisem.`, przepis: 'polecenie-metoda', cwiczenia: 'cw-metoda', zrodlo: 'typowy wariant' },
+  { polecenie: R`Sprawdź, czy wynik całkowania jest poprawny`, jak: R`Liczysz pochodną wyniku. Musi wyjść funkcja spod całki.`, przepis: 'polecenie-sprawdz', cwiczenia: 'cw-sprawdz', zrodlo: 'typowy wariant; kontrola każdego wyniku' },
+]} />
+
+<a id="pojecia" class="k-anchor"></a>
+
+## Pojęcia od podstaw
+
+Pójdziemy tak: pochodna od tyłu → funkcja pierwotna → stała $C$ → zapis całki.
+
+### Pochodna od tyłu
+
+Zagadka: jaka funkcja ma pochodną $2x$? Z modułu 8 wiesz, że $(x^2)' = 2x$. Odpowiedź: $x^2$. To jest całe całkowanie: **odgadnąć funkcję po jej pochodnej.** Kilka takich zagadek:
+
+| funkcja $f(x)$ | szukana funkcja $F(x)$ | sprawdzenie: $F'(x)$ |
+|---|---|---|
+| $2x$ | $x^2$ | $(x^2)' = 2x$ |
+| $3x^2$ | $x^3$ | $(x^3)' = 3x^2$ |
+| $1$ | $x$ | $(x)' = 1$ |
+| $e^x$ | $e^x$ | $(e^x)' = e^x$ |
+| $\frac1x$ (dla $x > 0$) | $\ln x$ | $(\ln x)' = \frac1x$ |
+
+Jak czytać tabelę: w pierwszej kolumnie stoi funkcja, którą znasz. W drugiej — funkcja, której pochodna daje tę pierwszą. W trzeciej kolumnie liczysz tę pochodną dla sprawdzenia — wychodzi dokładnie pierwsza kolumna.
+
+Uwaga na wielkość liter: małe $f$ i duże $F$ to dwie różne funkcje. $f(x)$ to funkcja, którą znasz. $F(x)$ to funkcja, której szukasz.
+
+<Ramka kind="zapamietaj" tytul="Funkcja pierwotna">
+Slajd z zajęć: $F(x)$ jest **funkcją pierwotną** funkcji $f(x)$, gdy $F'(x) = f(x)$.
+
+Po ludzku: funkcja pierwotna to funkcja, z której $f(x)$ „powstała” przez liczenie pochodnej. Na przykład $x^2$ to funkcja pierwotna funkcji $2x$.
+</Ramka>
+
+### Stała $C$ — cała rodzina funkcji
+
+Zagadka „jaka funkcja ma pochodną $2x$?” ma więcej niż jedną odpowiedź. Pasuje $x^2$, ale też $x^2 + 5$ i $x^2 - 3$. Pochodna stałej to $0$, więc dodana liczba niczego w pochodnej nie zmienia:
+
+$$
+(x^2 + 5)' = 2x + 0 = 2x
+$$
+
+Na wykresie dodanie liczby przesuwa cały wykres w górę albo w dół. Kształt zostaje ten sam, więc przy tym samym $x$ wszystkie wykresy są tak samo strome:
+
+<Rodzina>
+pięć wykresów funkcji $F(x) = \frac12 x^2 + C$ dla $C = -2, -1, 0, 1, 2$. Każdy jest przesunięty w pionie względem sąsiada o $1$. Fioletowe kreski to styczne w tym samym miejscu, $x = 1{,}5$ — wszystkie są równoległe. Równoległe styczne to równe pochodne: każdy z tych wykresów ma pochodną $F'(x) = x$. Tekst wyżej liczył $x^2 + C$ (pochodna $2x$), a rysunek pokazuje $\frac12 x^2 + C$ (pochodna $x$) — mechanizm jest ten sam. Przyciskami nad rysunkiem wybierasz jeden wykres — zrobi się jasny.
+</Rodzina>
+
+Slajd z zajęć zapisuje to tak: **całka nieoznaczona to rodzina wszystkich funkcji pierwotnych** funkcji $f(x)$, różniących się o stałą. (Ściślej: na jednym przedziale, np. dla samych $x > 0$. Przy $\frac1x$ po obu stronach zera stała może być inna.) Ta stała to $C$ — **stała całkowania**. Jeśli funkcja ma jedną funkcję pierwotną, to ma ich nieskończenie wiele — po jednej dla każdej liczby $C$.
+
+<Ramka kind="pulapka" tytul="Zgubione C">
+- Wynik bez $+ C$ jest niepełny. Opisuje tylko jedną funkcję z całej rodziny.
+- $+ C$ dopisujesz w tej linii rachunku, w której znika ostatni znak całki. W następnych liniach $C$ już tylko przepisujesz.
+- Nową całkę liczoną z boku (pomocniczo) piszesz bez $C$. Stała pojawia się raz, w głównym rachunku, gdy znika w nim ostatni znak całki. Zobaczysz to przy całkowaniu przez części.
+- Stałe z kilku całek zbierają się w jedno $C$ — nie trzeba pisać $C_1 + C_2$.
+- Wynik może wyglądać inaczej niż w odpowiedziach i nadal być dobry. Na przykład $\frac{(2x - 1)^4}{8} + C$ i $2x^4 - 4x^3 + 3x^2 - x + C$ różnią się tylko o stałą $\frac18$ (Zad. 1 f)). Po wymnożeniu $\frac{(2x - 1)^4}{8} = 2x^4 - 4x^3 + 3x^2 - x + \frac18$.
+</Ramka>
+
+### Zapis całki
+
+<Rozbior t="\int f(x) \, dx = F(x) + C" czytamy="całka z ef od iks de iks równa się duże ef od iks plus ce" czesci={[
+  { t: '\\int', o: '<b>znak całki</b> — wydłużona litera S' },
+  { t: 'f(x)', o: '<b>funkcja podcałkowa</b> — to, co całkujesz (tak nazywa ją slajd)' },
+  { t: 'dx', o: '<b>po iks</b> — mówi, że zmienną jest $x$; zamyka całkę jak nawias' },
+  { t: 'F(x)', o: '<b>funkcja pierwotna</b> — jedna z funkcji, których pochodna to $f(x)$' },
+  { t: 'C', o: '<b>stała całkowania</b> — dowolna liczba' },
+]} />
+
+<div class="k-symbole">
+  <Znak t="\int" nazwa="Znak całki" czytamy="całka" znaczy="Polecenie: znajdź funkcję, której pochodna to wyrażenie za znakiem. Zawsze stoi w parze z $dx$ — zwykle na końcu, czasem w liczniku (ramka niżej). Zamiast $dx$ może być $dt$ — zależnie od zmiennej, po której całkujesz." pamiec="Wydłużone S — od łacińskiego „summa”, czyli suma." />
+  <Znak t="dx" nazwa="Różniczka" czytamy="de iks" znaczy="Mówi, po jakiej zmiennej całkujesz. To nie jest „d razy x”. W całkowaniu przez podstawianie pojawi się też $dt$ — całka po $t$." pamiec="$\int$ otwiera całkę, $dx$ ją zamyka — jak nawias." />
+  <Znak t="C" nazwa="Stała całkowania" czytamy="ce" znaczy="Dowolna liczba dopisana do wyniku. Pochodna stałej to zero, więc nie da się jej odczytać z funkcji podcałkowej." pamiec="C jak „constans”, czyli stała. Na wykresie: o ile przesunąć wykres w górę." />
+</div>
+
+<Ramka kind="botak" tytul="Zapisy z dx w liczniku">
+W tabeli wzorów jest zapis $\int \frac{dx}{x}$ (wzór 6). Na liście są $\int \frac{dx}{\sqrt[4]{x^5}}$ (Zad. 1 b)), $\int \frac{x \, dx}{\sqrt[3]{2x^2 - 1}}$ (Zad. 2 g)) i $\int \frac{e^x \, dx}{2e^x + 1}$ (Zad. 2 o)). To umowa w zapisie — $dx$ można dopisać do licznika. Na przykład $\int \frac{dx}{x}$ znaczy to samo co $\int \frac1x \, dx$, a $\int \frac{x \, dx}{\sqrt[3]{2x^2 - 1}}$ — to samo co $\int \frac{x}{\sqrt[3]{2x^2 - 1}} \, dx$. Samo $\int dx$ to całka z jedynki.
+</Ramka>
+
+<Pytania pytania={[
+  { q: R`Która funkcja jest funkcją pierwotną funkcji $f(x) = 3x^2$?`, opcje: [R`$6x$`, R`$x^3 + 7$`, R`$\frac{x^3}{3}$`], dobra: 1, dlaczego: R`$(x^3 + 7)' = 3x^2 + 0 = 3x^2$ — pasuje, a siódemka nie przeszkadza. $6x$ to pochodna $3x^2$, czyli ruch w złą stronę. $\left(\frac{x^3}{3}\right)' = x^2$ — brakuje trójki.` },
+]} />
+
+<a id="wzory" class="k-anchor"></a>
+
+## Wzory i reguły z zajęć
+
+**Reguły** mówią, co zrobić z sumą, z liczbą przed funkcją i z ułamkiem postaci $\frac{f'}{f}$. **Wzory** podają całki najprostszych funkcji. Numeracja jak na slajdzie.
+
+### Reguły
+
+| nr | reguła | wzór ze slajdu | po ludzku |
+|---|---|---|---|
+| 1 | stała przed całkę | $\int c \, f(x) \, dx = c \int f(x) \, dx$ | liczba wychodzi przed całkę |
+| 2 | suma i różnica | $\int (f(x) \pm g(x)) \, dx = \int f(x) \, dx \pm \int g(x) \, dx$ | każdy składnik osobno |
+| 3 | funkcja postaci $\frac{f'}{f}$ | $\int \frac{f'(x)}{f(x)} \, dx = \ln \lvert f(x) \rvert + C$, gdy $f(x) \neq 0$ | w liczniku pochodna mianownika — wynik to $\ln \lvert \text{mianownik} \rvert$ |
+
+Jak czytać tabelę: każdy wiersz to jedna reguła z numerem jak na slajdzie. Reguły 1 i 2 działają dokładnie tak samo jak dla pochodnych. Reguła 3 to gotowy skrót — wrócimy do niej przy [podstawianiu](#regula-3).
+
+<Ramka kind="pulapka" tytul="Nie ma ogólnej reguły na iloczyn i iloraz">
+- Dla pochodnych są reguły iloczynu, ilorazu i funkcji złożonej. Dla całek takich ogólnych reguł **nie ma**.
+- Reguła 3 nie jest regułą ilorazu. Działa tylko dla szczególnego ułamka $\frac{f'}{f}$, w którym licznik to pochodna mianownika.
+- $\int x \cdot e^x \, dx$ to **nie** $\int x \, dx \cdot \int e^x \, dx$. Sprawdzenie pochodną: $\left(\frac{x^2}{2} \cdot e^x\right)' = xe^x + \frac{x^2}{2}e^x$ — to nie jest $xe^x$.
+- Zamiast reguł są **metody**: podstawianie (zamiast reguły funkcji złożonej) i przez części (zamiast reguły iloczynu).
+</Ramka>
+
+### Tabela wzorów
+
+Każdy wzór to wzór na pochodną czytany od tyłu. Ostatnia kolumna pokazuje, z której pochodnej wzór się bierze:
+
+| nr | wzór ze slajdu | po ludzku | sprawdzenie pochodną |
+|---|---|---|---|
+| 1 | $\int 0 \, dx = C$ | całka z zera to stała | $(C)' = 0$ |
+| 2 | $\int dx = x + C$ | całka z jedynki to $x$ | $(x)' = 1$ |
+| 3 | $\int x^n \, dx = \frac{x^{n+1}}{n+1} + C$, $n \neq -1$ | wykładnik rośnie o $1$, przez nowy wykładnik dzielisz | $\left(\frac{x^{n+1}}{n+1}\right)' = x^n$ |
+| 4 | $\int a^x \, dx = \frac{a^x}{\ln a} + C$, $a > 0$, $a \neq 1$ | $a^x$ zostaje, dzielisz przez $\ln$ podstawy | $\left(\frac{a^x}{\ln a}\right)' = \frac{a^x \ln a}{\ln a} = a^x$ |
+| 5 | $\int e^x \, dx = e^x + C$ | $e^x$ się nie zmienia | $(e^x)' = e^x$ |
+| 6 | $\int \frac{dx}{x} = \ln \lvert x \rvert + C$, $x \neq 0$ | jedynka przez $x$ daje logarytm | $(\ln \lvert x \rvert)' = \frac1x$ (dla $x < 0$ — ramka niżej) |
+| 7 ★ | $\int \sin x \, dx = -\cos x + C$ | | |
+| 8 ★ | $\int \cos x \, dx = \sin x + C$ | | |
+| 9 ★ | $\int \frac{dx}{\cos^2 x} = \operatorname{tg} x + C$, $\cos x \neq 0$ | | |
+| 10 ★ | $\int \frac{dx}{\sin^2 x} = -\operatorname{ctg} x + C$, $\sin x \neq 0$ | | |
+
+Jak czytać tabelę: $a$, $C$ i $n$ to stałe (konkretne liczby), a $e \approx 2{,}718$ to liczba Eulera. W kolumnie „sprawdzenie” liczysz pochodną wyniku i wychodzi funkcja spod całki. Tak można sprawdzić każdy wzór i każdy wynik.
+
+Wzory 7–10 (funkcje trygonometryczne) są na slajdzie oznaczone gwiazdką, a na liście zadań nie ma ani jednej funkcji trygonometrycznej. Zapytaj prowadzącego, czy obowiązują na kolokwium. Dalej w module ich nie używamy.
+
+<Rozbior t="\int x^n \, dx = \frac{x^{n+1}}{n+1} + C" czytamy="całka z iks do potęgi en de iks równa się iks do potęgi en plus jeden, przez en plus jeden, plus ce" czesci={[
+  { t: 'x^{n+1}', o: '<b>wykładnik o jeden większy</b> — przy pochodnej wykładnik maleje o jeden' },
+  { t: 'n+1', o: '<b>dzielisz przez nowy wykładnik</b> — przy pochodnej mnożyło się przez stary' },
+]} />
+
+<Ramka kind="intuicja" tytul="Wzór 3 to wzór na pochodną puszczony od tyłu">
+Pochodna: wykładnik schodzi przed $x$, a w wykładniku zostaje o $1$ mniej. Całka robi te same ruchy w odwrotnej kolejności: wykładnik **rośnie** o $1$, a przez nowy wykładnik **dzielisz**. Przykład: $\int x^4 \, dx = \frac{x^5}{5} + C$, a z powrotem $\left(\frac{x^5}{5}\right)' = \frac{5x^4}{5} = x^4$.
+</Ramka>
+
+<Ramka kind="granica" etykieta="Uwaga — kiedy to nie działa" tytul="Wzór 3 nie dla 1/x">
+- Dla $n = -1$ wzór 3 daje $\frac{x^0}{0}$ — dzielenie przez zero. Dlatego na slajdzie stoi $n \neq -1$.
+- $x^{-1}$ to $\frac1x$. Ta jedna potęga ma własny wzór 6: $\int \frac{1}{x} \, dx = \ln \lvert x \rvert + C$.
+- Wszystkie inne wykładniki, także ujemne i ułamkowe, liczysz wzorem 3: $\int x^{-3} \, dx = \frac{x^{-2}}{-2} + C$.
+</Ramka>
+
+<Ramka kind="skad" tytul="Skąd kreski przy ln">
+Kreski w $\ln \lvert x \rvert$ to wartość bezwzględna (liczba bez minusa). Logarytm istnieje tylko dla liczb dodatnich, a $\frac1x$ — także dla ujemnych. Kreski sprawiają, że wynik działa po obu stronach zera.
+
+Sprawdzenie dla $x < 0$: wtedy $\lvert x \rvert = -x$. Z reguły funkcji złożonej $(\ln(-x))' = \frac{1}{-x} \cdot (-1) = \frac1x$. Wyszła funkcja spod całki.
+
+Gdy wyrażenie w środku jest zawsze dodatnie, np. $x^2 + 1$, kreski można pominąć.
+</Ramka>
+
+<Pytania pytania={[
+  { q: R`$\int x^5 \, dx =$`, opcje: [R`$5x^4 + C$`, R`$\frac{x^6}{6} + C$`, R`$x^6 + C$`], dobra: 1, dlaczego: R`Wzór 3: wykładnik $5 + 1 = 6$, dzielisz przez $6$. $5x^4$ to pochodna, a nie całka. $x^6$ — brak dzielenia przez nowy wykładnik: $(x^6)' = 6x^5$, a nie $x^5$.` },
+]} />
+
+<a id="polecenie-sprawdz" class="k-anchor"></a>
+
+### Jak sprawdzić każdy wynik
+
+Całka ma ogromną zaletę: **każdy wynik da się sprawdzić.** Wystarczy policzyć jego pochodną — tak jak w ostatniej kolumnie tabeli.
+
+<Ramka kind="polecenie" tytul="Sprawdzenie wyniku całki">
+> Sprawdź, czy $\int f(x) \, dx = F(x) + C$.
+
+1. **Pochodna:** policz pochodną wyniku $F(x)$ wzorami i regułami z modułu 8 (najważniejsze są w ramce niżej). Pochodna $C$ to $0$ — możesz ją pominąć.
+2. **Uprość:** uprość wynik.
+3. **Porównaj:** porównaj z funkcją spod całki. Wyszła ta sama funkcja, choćby w innym zapisie — wynik jest dobry. Gdy po uproszczeniu nadal wychodzi inna funkcja — w rachunku jest błąd.
+</Ramka>
+
+<Ramka kind="zapamietaj" tytul="Pochodne do sprawdzania — przypomnienie z modułu 8">
+
+| funkcja | pochodna |
+|---|---|
+| liczba $c$ | $0$ |
+| $x^n$ | $n x^{n-1}$ |
+| $e^x$ | $e^x$ |
+| $a^x$ | $a^x \ln a$ |
+| $\ln x$, $\ln \lvert x \rvert$ | $\frac1x$ |
+| $c \cdot f(x)$ | $c \cdot f'(x)$ — liczba zostaje |
+| $f(x) + g(x)$ | $f'(x) + g'(x)$ — każdy składnik osobno |
+| $u \cdot v$ | $u' v + u v'$ — reguła iloczynu |
+| $f(g(x))$ | $f'(g(x)) \cdot g'(x)$ — pochodna funkcji zewnętrznej (środek bez zmian) razy pochodna środka |
+
+Jak czytać tabelę: w lewej kolumnie funkcja, w prawej jej pochodna. Cztery ostatnie wiersze to reguły (w module 8: reguły 1, 2, 3 i 5). Na przykład z ostatniej: $(\ln \lvert 2x + 1 \rvert)' = \frac{1}{2x + 1} \cdot 2$, bo pochodna środka $2x + 1$ to $2$.
+
+</Ramka>
+
+Przykład: Zad. 2 d) daje $\int \frac{x}{x^2 + 1} \, dx = \frac12 \ln(x^2 + 1) + C$. Sprawdzenie regułą funkcji złożonej:
+
+$$
+\begin{aligned}
+\left(\tfrac12 \ln(x^2 + 1)\right)' &= \frac12 \cdot \frac{1}{x^2 + 1} \cdot 2x \\
+&= \frac{x}{x^2 + 1}
+\end{aligned}
+$$
+
+Wyszła funkcja spod całki — wynik jest dobry.
+
+<Ramka kind="kiedy" tytul="Kiedy sprawdzać">
+Na kolokwium zawsze, gdy zostaje czas. Sprawdzenie najczęściej wyłapuje zgubioną liczbę (np. $\frac12$ w podstawianiu) i zły znak w całkowaniu przez części.
+</Ramka>
+
+<a id="polecenie-elementarne" class="k-anchor"></a>
+
+## Całkowanie elementarne
+
+Slajd z zajęć: całkowanie elementarne polega na takim przekształceniu wyrażenia pod całką (o ile to konieczne), żeby można było zastosować wzory 1–10. Prościej: **zamieniasz funkcję na sumę „klocków” z tabeli i każdy klocek liczysz wzorem.**
+
+Najczęstszy pierwszy ruch: zamiana pierwiastków i ułamków na potęgi. Wtedy prawie wszystko liczy się jednym wzorem — wzorem 3.
+
+<Ramka kind="liceum" tytul="Pierwiastki i ułamki jako potęgi">
+
+| zapis | potęga | dlaczego |
+|---|---|---|
+| $\sqrt{x}$ | $x^{\frac12}$ | pierwiastek kwadratowy to potęga $\frac12$ |
+| $\sqrt[3]{x^2}$ | $x^{\frac23}$ | wykładnik spod pierwiastka do licznika, stopień pierwiastka do mianownika |
+| $\frac{1}{x^4}$ | $x^{-4}$ | z mianownika do licznika — wykładnik zmienia znak |
+| $\frac{1}{\sqrt{x}}$ | $x^{-\frac12}$ | najpierw $\sqrt{x} = x^{\frac12}$, potem z mianownika do licznika |
+| $x\sqrt{x}$ | $x^{\frac32}$ | $x^1 \cdot x^{\frac12}$ — przy mnożeniu wykładniki dodajesz |
+| $\frac{x^m}{x^n}$ | $x^{m - n}$ | przy dzieleniu wykładniki odejmujesz |
+
+
+Jak czytać tabelę: w każdym wierszu ta sama funkcja (dla $x > 0$) zapisana na dwa sposoby. Prawa kolumna mówi, z której reguły potęgowania korzystasz.
+</Ramka>
+
+<CwiczeniePotegi tytul="Zamień na potęgę" tryb="zapis" wiersze={zapis}>
+Wpisz wykładnik tak, żeby po obu stronach była ta sama funkcja.
+</CwiczeniePotegi>
+
+<Ramka kind="polecenie" tytul="Całkowanie elementarne">
+> Oblicz całkę, stosując podstawowe wzory, np. $\int (x^4 + x^8) \, dx$.
+
+1. **Przekształć:** zapisz funkcję tak, żeby pasowała do wzorów.
+   - Pierwiastki i ułamki „liczba przez potęgę” zamień na potęgi, np. $\frac{2}{x^3} = 2x^{-3}$.
+   - Potęga razy potęga — wykładniki dodajesz. Potęga przez potęgę — wykładniki odejmujesz.
+   - Liczba z mianownika zostaje jako ułamek, np. $\frac{1}{3x^2} = \frac13 x^{-2}$. W kroku 2 wyjdzie przed całkę.
+   - Iloczyn nawiasów wymnóż.
+   - Ułamek z sumą w liczniku rozbij na sumę ułamków.
+   - $\frac1x$ zostaw — ma własny wzór 6.
+2. **Rozbij na składniki:** każdy składnik to osobna całka (reguła 2). Liczbę przed funkcją wyłącz przed całkę (reguła 1).
+3. **Wzory:** każdą małą całkę policz wzorem z tabeli. Przy wzorze 3 nowy wykładnik policz od razu na kartce albo zostaw go w postaci sumy (np. $4 + 1$) i policz przy upraszczaniu. W tej linii znika ostatnia całka, więc dopisz $+ C$.
+4. **Uprość:** policz wykładniki zostawione w postaci sumy, np. $4 + 1$. Dzielenie przez ułamek zamień na mnożenie przez odwrotność. Potęgi możesz zapisać z powrotem jako pierwiastki i ułamki. $+ C$ tylko przepisujesz.
+</Ramka>
+
+<Legenda items={LEG.potega} />
+
+<a id="zad-1a" class="k-anchor"></a>
+
+<Rachunek d={A.a} etapy={ETAPY_EL} etapyNazwa="Procedura" tytul={tyt(A.a)} zrodlo="Zad. 1 a)">
+<div slot="plan">
+
+Cel: całka, czyli rodzina funkcji, których pochodna to $x^4 + x^8$.
+
+1. **Przekształć:** odpada — pod całką stoją już same potęgi.
+2. **Rozbij:** dwa składniki, więc dwie osobne całki (reguła 2).
+3. **Wzory:** obie całki wzorem 3. Przycisk „▶ Zobacz krok po kroku” pokazuje, jak fioletowe wykładniki wlatują do szablonu wzoru. Całki znikają, więc dopisujemy $+ C$.
+4. **Uprość:** liczymy nowe wykładniki. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+Teraz twoja kolej: wzór 3 na liczbach. Liczba przed $x$ czeka z przodu (reguła 1), a ty dzielisz ją przez nowy wykładnik.
+
+<CwiczeniePotegi tytul="Wzór 3 na liczbach" tryb="calka" wiersze={potegi}>
+Policz całkę każdej potęgi: w pierwsze pole wpisz liczbę przed $x$, w małe pole u góry — nowy wykładnik.
+</CwiczeniePotegi>
+
+<a id="zad-1b" class="k-anchor"></a>
+
+<Rachunek d={A.b} etapy={ETAPY_EL} etapyNazwa="Procedura" tytul={tyt(A.b)} zrodlo="Zad. 1 b)">
+<div slot="plan">
+
+Cel: całka z ułamka z pierwiastkiem.
+
+1. **Przekształć:** pierwiastek zapisujemy jako potęgę, a potem przenosimy ją z mianownika do licznika — bo wzór 3 działa tylko na $x^n$.
+2. **Rozbij:** odpada — jest jeden składnik.
+3. **Wzory:** wzór 3 z wykładnikiem ułamkowym. Na kartce dodajemy $1$ do $-\frac54$. Całka znika, więc dopisujemy $+ C$.
+4. **Uprość:** dzielenie przez $-\frac14$ to mnożenie przez $-4$. Na końcu wracamy do zapisu z pierwiastkiem. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+<a id="zad-1d" class="k-anchor"></a>
+
+<Rachunek d={A.d} etapy={ETAPY_EL} etapyNazwa="Procedura" tytul={tyt(A.d)} zrodlo="Zad. 1 d)">
+<div slot="plan">
+
+Cel: całka z sumy ułamków.
+
+1. **Przekształć:** $\frac{2}{x^3}$ i $\frac{1}{x^2}$ zamieniamy na potęgi. $\frac1x$ zostawiamy — dla niego jest wzór 6.
+2. **Rozbij:** trzy składniki, liczba $2$ przed całkę.
+3. **Wzory:** potęgi wzorem 3, $\frac1x$ wzorem 6. Całki znikają, więc dopisujemy $+ C$.
+4. **Uprość:** wracamy do ułamków. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+<a id="zad-1e" class="k-anchor"></a>
+
+<Rachunek d={A.e} etapy={ETAPY_EL} etapyNazwa="Procedura" tytul={tyt(A.e)} zrodlo="Zad. 1 e)">
+<div slot="plan">
+
+Cel: całka z iloczynu nawiasów.
+
+1. **Przekształć:** wymnażamy nawiasy z boku — na samej funkcji podcałkowej, bez znaku całki. Całki iloczynu nie liczy się „każdy nawias osobno” — takiej reguły nie ma. Po wymnożeniu zostaje suma potęg.
+2. **Rozbij:** cztery składniki, liczby przed całki.
+3. **Wzory:** potęgi wzorem 3, samo $\int dx$ wzorem 2. Całki znikają, więc dopisujemy $+ C$.
+4. **Uprość:** porządkujemy ułamki. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+### Pozostałe przykłady z Zad. 1
+
+Ułożone od najprostszych. Kliknij przykład, żeby rozwinąć rachunek.
+
+<Przyklad id="1i" nazwa="Zad. 1 i)" d={A.i} etapy={ETAPY_EL} etapyNazwa="Procedura" cel={CEL} plan="Dwa składniki z tabeli: $e^x$ (wzór 5) i $\frac1x$ (wzór 6). Liczba $4$ przed całkę." />
+<Przyklad id="1j" nazwa="Zad. 1 j)" d={A.j} etapy={ETAPY_EL} etapyNazwa="Procedura" cel={CEL} plan="Stała podstawa, w wykładniku $x$ — wzór 4 z $a = 5$. Nie wzór 3: zmienna stoi w wykładniku." />
+<Przyklad id="1c" nazwa="Zad. 1 c)" d={A.c} etapy={ETAPY_EL} etapyNazwa="Procedura" cel={CEL} plan="Jak w b): wszystko zapisujemy jako potęgi. Potem dzielimy potęgi (wykładniki odejmujemy), a liczba $3$ z mianownika zostaje jako $\frac13$ i wychodzi przed całkę. Na końcu wzór 3." />
+<Przyklad id="1g" nazwa="Zad. 1 g)" d={A.g} etapy={ETAPY_EL} etapyNazwa="Procedura" cel={CEL} plan="Ułamek z sumą w liczniku: z boku, na samej funkcji podcałkowej, dzielimy każdy składnik licznika przez mianownik. Zostają dwie potęgi i $\frac1x$." />
+<Przyklad id="1h" nazwa="Zad. 1 h)" d={A.h} etapy={ETAPY_EL} etapyNazwa="Procedura" cel={CEL} plan="Jak w g), ale z pierwiastkami: z boku zapisujemy je jako potęgi, potem każdy składnik licznika dzielimy przez $x^{\frac13}$." />
+<Przyklad id="1f" nazwa="Zad. 1 f)" d={A.f} etapy={ETAPY_EL} etapyNazwa="Procedura" cel={CEL} plan="Jak w e): z boku wymnażamy — tu sześcian ze wzoru skróconego mnożenia. Na końcu porównujemy wynik z drogą przez podstawianie (poznamy ją w następnej sekcji)." />
+
+<Ramka kind="pulapka" tytul="Typowe błędy w całkowaniu elementarnym">
+- **Pochodna zamiast całki:** $\int x^5 \, dx = 5x^4$ — źle. Przy całce wykładnik **rośnie**: $\frac{x^6}{6} + C$.
+- **Mnożenie zamiast dzielenia:** $\int x^5 \, dx = 6x^6$ — źle. Przez nowy wykładnik **dzielisz**.
+- **Wzór 3 dla $\frac1x$:** $\int x^{-1} \, dx = \frac{x^0}{0}$ — nie da się. Dla $\frac1x$ jest wzór 6: $\ln \lvert x \rvert + C$.
+- **Wzór 3 dla $e^x$ albo $2^x$:** zmienna stoi w wykładniku, więc działa wzór 5 albo 4, nie wzór 3.
+- **Całka iloczynu jako iloczyn całek:** najpierw wymnóż nawiasy (jak w e)), dopiero potem całkuj.
+- **Ujemny wykładnik:** dodanie jedynki to krok w prawo na osi liczbowej. $-4 + 1 = -3$ (a nie $-5$), $-\frac13 + 1 = \frac23$.
+</Ramka>
+
+<Ramka kind="granica" etykieta="Uwaga — kiedy to nie działa" tytul="Gdy nie da się rozbić na klocki">
+- Zad. 1 f) $\int (2x - 1)^3 \, dx$ da się wymnożyć — sześcian to cztery składniki.
+- Zad. 2 r) $\int (x + 5)^{999} \, dx$ w praktyce już nie: po wymnożeniu byłoby tysiąc składników.
+- Podobnie $\int \sqrt{2x + 9} \, dx$ (Zad. 2 c)): pierwiastka z sumy nie rozbijesz na sumę pierwiastków. W obu przypadkach działa podstawianie — następna sekcja.
+</Ramka>
+
+<a id="polecenie-podstawianie" class="k-anchor"></a>
+
+## Całkowanie przez podstawianie
+
+Podstawianie to odpowiednik reguły funkcji złożonej z modułu 8. Pomaga, gdy pod całką jest **funkcja w funkcji**, a po zamianie „środka” na nową zmienną zostaje prosta całka. Kiedy tak jest, wyjaśniamy niżej, w „Jak wybrać t”. Na slajdzie wzór wygląda tak:
+
+<Rozbior t="\int f(g(x)) \, g'(x) \, dx = \int f(t) \, dt" czytamy="całka z ef od gie od iks razy gie prim od iks de iks równa się całka z ef od te de te, gdzie te równa się gie od iks, a de te równa się gie prim od iks de iks" czesci={[
+  { t: 'f', o: '<b>funkcja zewnętrzna</b> — to, co robisz ze środkiem (np. podnosisz do potęgi, wstawiasz pod pierwiastek)' },
+  { t: 'g(x)', o: '<b>środek</b> — funkcja wstawiona do innej funkcji; to zastąpisz literą $t$' },
+  { t: "g'(x) \\, dx", o: '<b>pochodna środka razy $dx$</b> — to zastąpisz przez $dt$' },
+  { t: 'f(t) \\, dt', o: '<b>prostsza całka</b> — w samej zmiennej $t$, liczona wzorami z tabeli' },
+]} />
+
+Na slajdzie obok wzoru jest dopisek: $t = g(x)$, $dt = g'(x) \, dx$. **Ten dopisek to cała metoda.** Zamieniasz środek na $t$, a pochodną środka razy $dx$ — na $dt$. Zostaje całka, w której jest już tylko $t$ — zwykle prosta, liczona wzorami z tabeli.
+
+<Ramka kind="skad" tytul="Dlaczego dt = g′(x) dx">
+To zapis tego, o ile zmienia się $t$, gdy $x$ zmienia się o maleńki krok $dx$: pochodna mówi, ile razy szybciej zmienia się $t$ niż $x$. Na przykład dla $t = x^2 + 2$ masz $dt = 2x \, dx$. Na kolokwium nie trzeba tego uzasadniać — wystarczy zapisać $dt$: pochodna środka, a za nią $dx$.
+</Ramka>
+
+### Jak wybrać t
+
+Za $t$ bierzesz **środek** — to, co siedzi wewnątrz innej funkcji: w nawiasie z potęgą, pod pierwiastkiem, w wykładniku albo w mianowniku. Pełna lista jest w ramce niżej.
+
+Podstawienie zadziała, gdy po zamianie na $t$ zostaje funkcja z tabeli albo suma takich funkcji (potęga $t$, $\frac1t$, $e^t$, $a^t$), a nie iloczyn. Tak jest w dwóch typowych sytuacjach:
+
+- **Pochodna obok:** obok środka stoi jego pochodna, w której jest $x$. Może być pomnożona przez liczbę (np. jest $x$ zamiast $2x$) — tę liczbę poprawisz przy liczeniu $dt$.
+- **Środek liniowy:** środek ma postać $kx + b$ (liczba razy $x$ plus liczba), np. $2x + 9$. Pochodna takiego środka to sama liczba, więc obok wystarczy samo $dx$. Warunek: poza środkiem nie ma innej funkcji z $x$ albo po zapisaniu jej przez $t$ (i rozbiciu ułamka) cała funkcja staje się sumą potęg $t$.
+
+Przy środku liniowym może stać jeszcze licznik z $x$, jak w Zad. 2 k) niżej. Zapisujesz go przez $t$ i rozbijasz ułamek. Zostaje suma potęg $t$ — też klocki z tabeli, więc podstawienie zadziała. Inaczej w $\int xe^{2x} \, dx$: z $t = 2x$ masz $x = \frac{t}{2}$ i $dx = \frac12 \, dt$. Wtedy $xe^{2x} \, dx = \frac{t}{2} \cdot e^t \cdot \frac12 \, dt$, czyli zostaje $\frac14 \int te^t \, dt$ — znowu iloczyn.
+
+| całka | środek $t$ | $dt$ | co stoi obok środka |
+|---|---|---|---|
+| $\int (x^2 + 2)^3 x \, dx$ | $x^2 + 2$ (w nawiasie z potęgą) | $2x \, dx$ | $x \, dx$ — brakuje liczby $2$ |
+| $\int \sqrt{2x + 9} \, dx$ | $2x + 9$ (pod pierwiastkiem) | $2 \, dx$ | samo $dx$ — brakuje liczby $2$ |
+| $\int \frac{(\ln x)^2}{x} \, dx$ | $\ln x$ (w nawiasie z potęgą) | $\frac1x \, dx$ | $\frac1x \, dx$ — dokładnie |
+| $\int xe^{-x^2} \, dx$ | $-x^2$ (w wykładniku) | $-2x \, dx$ | $x \, dx$ — brakuje liczby $-2$ |
+| $\int 7^{1 - x} \, dx$ | $1 - x$ (w wykładniku) | $-dx$ | samo $dx$ — brakuje liczby $-1$ |
+
+Jak czytać tabelę: w drugiej kolumnie w nawiasie jest wskazówka, gdzie szukać środka. W trzeciej — pochodna środka razy $dx$. Ostatnia kolumna porównuje $dt$ z tym, co naprawdę stoi w całce obok środka. Brakuje najwyżej liczby — więc podstawienie zadziała.
+
+<Ramka kind="zapamietaj" tytul="Gdzie szukać środka">
+- w nawiasie podniesionym do potęgi: $(x^2 + 2)^3$,
+- pod pierwiastkiem: $\sqrt{2x + 9}$,
+- w wykładniku: $e^{-x^2}$, $7^{1 - x}$,
+- w mianowniku: $\frac{x}{x^2 + 1}$,
+- sam logarytm w nawiasie z potęgą: $(\ln x)^2$ — środkiem jest $\ln x$,
+- sam $\ln x$, gdy obok stoi $\frac1x$: w $\frac{\ln x}{x}$ środkiem jest $\ln x$.
+
+$(\ln x)^2$ zapisuje się też krócej: $\ln^2 x$. To nie to samo co $\ln(x^2)$.
+
+Samo miejsce nie wystarczy. Podstawienie zadziała, gdy po zamianie na $t$ zostaje funkcja z tabeli albo suma takich funkcji ($t^n$, $\frac1t$, $e^t$, $a^t$), a nie iloczyn. Dwie typowe sytuacje: obok środka stoi jego pochodna, w której jest $x$ (może być pomnożona przez liczbę), albo środek jest liniowy ($kx + b$), a reszty funkcji nie ma albo po zapisaniu jej przez $t$ cała funkcja staje się sumą potęg $t$ (jak w Zad. 2 k)). W $\int (x^2 + 1)^2 \, dx$ środek $x^2 + 1$ siedzi w nawiasie z potęgą, ale obok nie ma $x$. Podstawienie nie pomoże. Tę całkę liczysz po wymnożeniu kwadratu: $(x^2 + 1)^2 = x^4 + 2x^2 + 1$.
+</Ramka>
+
+<Ramka kind="polecenie" tytul="Całkowanie przez podstawianie">
+> Oblicz całkę metodą przez podstawianie, np. $\int (x^2 + 2)^3 x \, dx$.
+
+1. **Wybierz $t$:** za $t$ weź środek. Sprawdź, czy po zamianie zostanie funkcja z tabeli albo suma takich funkcji. Tak jest, gdy obok środka stoi jego pochodna, w której jest $x$ (może być pomnożona przez liczbę), albo gdy środek jest liniowy, a reszty funkcji nie ma (Zad. 2 c)) albo po zapisaniu jej przez $t$ cała funkcja staje się sumą potęg $t$ (Zad. 2 k)).
+2. **Policz $dt$:** pochodna $t$, a za nią $dx$. Wyznacz z tego to, co stoi w całce obok środka, np. $x \, dx = \frac12 \, dt$. Gdy środek jest liniowy, a obok stoi jeszcze $x$, wyznacz też $x$ przez $t$. Wszystko zapisz w ramce z boku, jak w zeszycie.
+3. **Zamień na $t$:** w miejsce środka wpisz $t$, a resztę razem z $dx$ zastąp tym, co wyszło w ramce. Sprawdź, czy nie został żaden $x$. Liczbę wyłącz przed całkę, pierwiastek zapisz jako potęgę, a ułamek z sumą w liczniku rozbij na składniki.
+4. **Policz całkę po $t$:** użyj wzorów z tabeli. W tej linii znika ostatnia całka, więc dopisz $+ C$.
+5. **Wróć do $x$:** za $t$ wstaw środek. $+ C$ tylko przepisujesz.
+</Ramka>
+
+<Ramka kind="botak" tytul="Ramka z boku rachunku">
+Ramka $\left| \begin{aligned} t &= \ldots \\ dt &= \ldots \end{aligned} \right|$ to zapis z zajęć: notatka na boku, w której liczysz $t$ i $dt$. Nie jest częścią równania — rachunek biegnie dalej obok niej.
+
+Strzałka $\Rightarrow$ w ramce znaczy „więc”. Na przykład $dt = 2x \, dx \Rightarrow x \, dx = \frac12 \, dt$: z pierwszej równości wynika druga.
+</Ramka>
+
+<Legenda items={LEG.podst} />
+
+<a id="zad-2a" class="k-anchor"></a>
+
+<Rachunek d={B.a} etapy={ETAPY_PS} etapyNazwa="Procedura" tytul={tyt(B.a)} zrodlo="Zad. 2 a)">
+<div slot="plan">
+
+Cel: całka z nawiasu do potęgi, przy którym stoi $x$.
+
+1. **Wybierz $t$:** środek to $x^2 + 2$ — siedzi w nawiasie z potęgą. Obok stoi $x$, czyli pochodna środka ($2x$) bez dwójki. Dlatego podstawienie zadziała.
+2. **Policz $dt$:** pochodna środka to $2x$, więc $dt = 2x \, dx$. W całce jest tylko $x \, dx$, czyli połowa $dt$. Zapisujemy to w ramce.
+3. **Zamień na $t$:** złoty środek staje się $t$, turkusowe $x \, dx$ — $\frac12 \, dt$. Przycisk „▶ Zobacz krok po kroku” pokazuje, co gdzie trafia.
+4. **Policz całkę po $t$:** wzór 3. Całka znika, więc dopisujemy $+ C$.
+5. **Wróć do $x$:** za $t$ wstawiamy $x^2 + 2$. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+Przykład ze środkiem liniowym — obok środka stoi samo $dx$:
+
+<a id="zad-2c" class="k-anchor"></a>
+
+<Rachunek d={B.c} etapy={ETAPY_PS} etapyNazwa="Procedura" tytul={tyt(B.c)} zrodlo="Zad. 2 c)">
+<div slot="plan">
+
+Cel: całka z pierwiastka z sumy — takiego pierwiastka nie da się rozbić na klocki.
+
+1. **Wybierz $t$:** wyrażenie pod pierwiastkiem, $2x + 9$. Środek jest liniowy (pochodna to liczba $2$), więc obok wystarczy samo $dx$. Poza środkiem nie ma innej funkcji z $x$ — podstawienie zadziała.
+2. **Policz $dt$:** $dt = 2 \, dx$, więc $dx = \frac12 \, dt$. Zapisujemy to w ramce.
+3. **Zamień na $t$:** pierwiastek zapisujemy jako potęgę.
+4. **Policz całkę po $t$:** wzór 3 z wykładnikiem $\frac12$. Całka znika, więc dopisujemy $+ C$.
+5. **Wróć do $x$:** za $t$ wstawiamy $2x + 9$. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+<a id="zad-2d" class="k-anchor"></a>
+
+<Rachunek d={B.d} etapy={ETAPY_PS} etapyNazwa="Procedura" tytul={tyt(B.d)} zrodlo="Zad. 2 d)">
+<div slot="plan">
+
+Cel: całka z ułamka, w którym licznik to prawie pochodna mianownika.
+
+1. **Wybierz $t$:** środek to mianownik $x^2 + 1$. Jego pochodna to $2x$, a w liczniku jest $x$ — brakuje tylko dwójki. Dlatego podstawienie zadziała.
+2. **Policz $dt$:** $dt = 2x \, dx$, więc $x \, dx = \frac12 \, dt$. Zapisujemy to w ramce.
+3. **Zamień na $t$:** zostaje $\frac1t$.
+4. **Policz całkę po $t$:** wzór 6 — wychodzi logarytm. Całka znika, więc dopisujemy $+ C$.
+5. **Wróć do $x$:** kreski wartości bezwzględnej możemy opuścić, bo $x^2 + 1 > 0$. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+<a id="regula-3" class="k-anchor"></a>
+
+<Ramka kind="inaczej" tytul="Skrót: reguła 3 ze slajdu">
+Gdy w liczniku stoi **dokładnie** pochodna mianownika, reguła 3 daje wynik od razu: $\int \frac{f'(x)}{f(x)} \, dx = \ln \lvert f(x) \rvert + C$. W d) w liczniku brakuje liczby $2$. Dopisujesz ją w liczniku, a przed całką mnożysz przez $\frac12$:
+
+$$
+\begin{aligned}
+\int \frac{x}{x^2 + 1} \, dx &= \frac12 \int \frac{2x}{x^2 + 1} \, dx \\
+&= \frac12 \ln(x^2 + 1) + C
+\end{aligned}
+$$
+
+Ten sam skrót działa w Zad. 2 f) i o) — sprawdź oba rachunki niżej. To po prostu podstawienie $t = \text{mianownik}$ zrobione w pamięci.
+</Ramka>
+
+Gdy przy środku liniowym stoi jeszcze $x$, zapisujesz go przez $t$:
+
+<a id="zad-2k" class="k-anchor"></a>
+
+<Rachunek d={B.k} etapy={ETAPY_PS} etapyNazwa="Procedura" tytul={tyt(B.k)} zrodlo="Zad. 2 k)">
+<div slot="plan">
+
+Cel: całka z ułamka z pierwiastkiem trzeciego stopnia.
+
+1. **Wybierz $t$:** wyrażenie pod pierwiastkiem, $x + 3$. Obok stoi licznik $x - 3$, a nie pochodna środka. Ale środek jest liniowy, a licznik zapiszemy przez $t$. Po rozbiciu ułamka zostanie suma potęg $t$, więc podstawienie zadziała.
+2. **Policz $dt$:** pochodna środka to $1$, więc $dt = dx$. W ramce zapisujemy też licznik przez $t$: z $t = x + 3$ mamy $x = t - 3$, więc $x - 3 = t - 6$.
+3. **Zamień na $t$:** po zamianie nie zostaje żaden $x$. Ułamek rozbijamy na dwa.
+4. **Policz całkę po $t$:** dwie potęgi, wzór 3. Całki znikają, więc dopisujemy $+ C$.
+5. **Wróć do $x$:** za $t$ wstawiamy $x + 3$. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+Środek może też siedzieć w wykładniku:
+
+<a id="zad-2n" class="k-anchor"></a>
+
+<Rachunek d={B.n} etapy={ETAPY_PS} etapyNazwa="Procedura" tytul={tyt(B.n)} zrodlo="Zad. 2 n)">
+<div slot="plan">
+
+Cel: całka z $e$ do potęgi, przy którym stoi $x$.
+
+1. **Wybierz $t$:** środek to wykładnik $-x^2$. Jego pochodna to $-2x$, a obok stoi $x$ — brakuje tylko liczby $-2$. Dlatego podstawienie zadziała.
+2. **Policz $dt$:** $dt = -2x \, dx$, więc $x \, dx = -\frac12 \, dt$. Minus zostaje: dzielimy przez $-2$, a nie przez $2$. Zapisujemy to w ramce.
+3. **Zamień na $t$:** zostaje $e^t$.
+4. **Policz całkę po $t$:** wzór 5. Całka znika, więc dopisujemy $+ C$.
+5. **Wróć do $x$:** za $t$ wstawiamy $-x^2$. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+### Pozostałe przykłady z Zad. 2
+
+Ułożone od najprostszych. Kliknij przykład, żeby rozwinąć rachunek.
+
+<Przyklad id="2b" nazwa="Zad. 2 b)" d={B.b} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Dokładnie jak a): $t = x^2 + 3$, $x \, dx = \frac12 \, dt$." />
+<Przyklad id="2r" nazwa="Zad. 2 r)" d={B.r} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Środek liniowy z pochodną $1$: $t = x + 5$, $dt = dx$. Wymnażanie odpada — wyszłoby tysiąc składników." />
+<Przyklad id="2q" nazwa="Zad. 2 q)" d={B.q} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Środek w wykładniku: $t = 2x + 3$, $dx = \frac12 \, dt$. Potem wzór 4." />
+<Przyklad id="2p" nazwa="Zad. 2 p)" d={B.p} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Jak q), ale pochodna wykładnika jest ujemna: $t = 1 - x$, $dx = -dt$." />
+<Przyklad id="2e" nazwa="Zad. 2 e)" d={B.e} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Środek w mianowniku, w nawiasie z potęgą: $t = x^2 + 5$. Po zamianie potęga z minusem." />
+<Przyklad id="2f" nazwa="Zad. 2 f)" d={B.f} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Jak d): mianownik to $t$, a w liczniku prawie jego pochodna. Wychodzi logarytm." />
+<Przyklad id="2o" nazwa="Zad. 2 o)" d={B.o} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Jak d), tylko z $e^x$: mianownik $2e^x + 1$ to $t$, a $e^x \, dx = \frac12 \, dt$." />
+<Przyklad id="2m" nazwa="Zad. 2 m)" d={B.m} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Środkiem jest $\ln x$, a $\frac1x$ obok to dokładnie jego pochodna. Wynik $\frac{(\ln x)^3}{3}$ zapisuje się też krócej: $\frac{\ln^3 x}{3}$." />
+<Przyklad id="2h" nazwa="Zad. 2 h)" d={B.h} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Środek pod pierwiastkiem: $t = 2 + x^2$, obok stoi $x$." />
+<Przyklad id="2g" nazwa="Zad. 2 g)" d={B.g} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Środek pod pierwiastkiem trzeciego stopnia w mianowniku: $t = 2x^2 - 1$, $x \, dx = \frac14 \, dt$." />
+<Przyklad id="2i" nazwa="Zad. 2 i)" d={B.i} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Jak g), z minusem: $t = 3 - 5x^2$, $x \, dx = -\frac{1}{10} \, dt$." />
+<Przyklad id="2l" nazwa="Zad. 2 l)" d={B.l} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Licznik to dokładnie pochodna środka: $t = x^3 + 5$, $dt = 3x^2 \, dx$." />
+<Przyklad id="2j" nazwa="Zad. 2 j)" d={B.j} etapy={ETAPY_PS} etapyNazwa="Procedura" cel={CEL} plan="Jak k): $t = x + 2$, a licznik zapisujemy przez $t$. Z $t = x + 2$ mamy $x = t - 2$, więc $x - 2 = t - 4$." />
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy podstawianiu">
+- **Zgubiona liczba z $dt$:** $\int (x^2 + 2)^3 x \, dx = \frac{(x^2 + 2)^4}{4} + C$ — źle. $x \, dx$ to $\frac12 \, dt$, więc wynik to $\frac{(x^2 + 2)^4}{8} + C$.
+- **$x$ zostaje w całce po $t$:** $\int t^3 \cdot x \, dt$ — tak się nie da policzyć. Każdy $x$ (także ten przy $dx$) trzeba zamienić.
+- **Brak powrotu do $x$:** wynik $\frac{t^4}{8} + C$ jest niedokończony. Zadanie było o $x$.
+- **Zgubiony minus:** przy $t = 1 - x$ jest $dt = -dx$, więc $dx = -dt$.
+- **Brak $dx$ w zapisie całki:** $\int \frac{x - 3}{\sqrt[3]{x + 3}}$ bez $dx$ to niedokończony zapis. Bez $dx$ nie ma czego zamienić na $dt$.
+</Ramka>
+
+<Ramka kind="granica" etykieta="Uwaga — kiedy to nie działa" tytul="Gdy podstawienie nie pomaga">
+- $\int e^{x^2} \, dx$: środek $x^2$ ma pochodną $2x$, a obok nie stoi żaden $x$. Podstawienie nie zadziała. Tej całki w ogóle nie da się zapisać wzorami ze slajdu.
+- $\int xe^x \, dx$: środek to sam $x$, więc podstawianie nic nie zmienia. To iloczyn dwóch różnych funkcji — działa całkowanie przez części.
+- $\int xe^{2x} \, dx$: środek $2x$ jest liniowy, ale poza nim stoi jeszcze $x$. Z $t = 2x$ masz $x = \frac t2$ i $dx = \frac12 \, dt$. Zostaje $\frac14 \int te^t \, dt$ — znowu iloczyn. Też działa całkowanie przez części.
+</Ramka>
+
+<a id="polecenie-czesci" class="k-anchor"></a>
+
+## Całkowanie przez części
+
+Całkowanie przez części to odpowiednik reguły iloczynu z modułu 8. Pomaga przy **iloczynie dwóch różnych funkcji**, np. $x \cdot 4^x$ albo $x^2 \ln x$, i przy samym $\ln x$. Wzór ze slajdu:
+
+<Rozbior t="\begin{aligned} &\int u(x) \, v'(x) \, dx \\ &= u(x) \, v(x) - \int u'(x) \, v(x) \, dx \end{aligned}" czytamy="całka z u od iks razy fau prim od iks de iks równa się u od iks razy fau od iks minus całka z u prim od iks razy fau od iks de iks" czesci={[
+  { t: 'u(x)', o: '<b>$u$</b> — kawałek, z którego liczysz pochodną; wybierasz to, co po pochodnej się upraszcza' },
+  { t: "v'(x)", o: '<b>$v\'$</b> — kawałek, który całkujesz; musisz umieć go scałkować' },
+  { t: 'u(x) \\, v(x)', o: '<b>pierwszy kawałek wyniku</b> — gotowy, bez całki' },
+  { t: "\\int u'(x) \\, v(x) \\, dx", o: '<b>nowa całka</b> — ma być prostsza od wyjściowej' },
+]} />
+
+<Ramka kind="skad" tytul="Skąd ten wzór">
+Z reguły iloczynu: $(u \cdot v)' = u' \cdot v + u \cdot v'$. Całka „cofa” pochodną, więc po scałkowaniu obu stron $u \cdot v = \int u' v \, dx + \int u v' \, dx$. Przenosisz jedną całkę na drugą stronę — wychodzi wzór ze slajdu. Nie trzeba tego umieć wyprowadzić. Wystarczy wiedzieć, że to reguła iloczynu od tyłu.
+</Ramka>
+
+Cztery kawałki ramki — $u$, $u'$, $v'$ i $v$ — zapisujesz przed rachunkiem, jak w zeszycie z zajęć:
+
+$$
+\left| \begin{array}{ll} u(x) = \ldots & u'(x) = \ldots \\[6pt] v'(x) = \ldots & v(x) = \ldots \end{array} \right|
+$$
+
+Jak czytać ramkę: lewą kolumnę ($u$ i $v'$) wybierasz w etapie 1, prawą ($u'$ i $v$) liczysz w etapie 2. W górnym wierszu $u$ i jego pochodna $u'$. W dolnym $v'$ i jego całka $v$.
+
+### Jak wybrać u
+
+Wybór $u$ decyduje o wszystkim. Dobry wybór daje prostszą nową całkę, zły — trudniejszą.
+
+| całka | $u$ | $v'$ | dlaczego |
+|---|---|---|---|
+| obok środka stoi jego pochodna, w której jest $x$ (np. $xe^{x^2}$, $\frac{\ln x}{x}$) | — | — | to nie na części, tylko na podstawianie (chyba że polecenie każe liczyć przez części, jak w Zad. 3 m)) |
+| wielomian razy $e^{kx}$ ($k \neq 0$, np. $e^x$, $e^{-3x}$) albo $a^x$ (np. $x4^x$) | wielomian | $e^{kx}$ albo $a^x$ | wielomian po pochodnej traci stopień; $e^x$ i $4^x$ całkujesz wzorem, $e^{-3x}$ — podstawieniem $t = -3x$ (skrót spoza slajdu niżej) |
+| logarytm razy potęga $x^n$, $n \neq -1$ (np. $x^2 \ln x$, $\frac{\ln^2 x}{x^5}$) | logarytm | potęga $x^n$ | logarytm po pochodnej się upraszcza, np. $(\ln x)' = \frac1x$; całki z logarytmu nie ma we wzorach |
+| sam logarytm: $\ln x$, $\ln^2 x$, $\ln(x^3)$ | ten logarytm | $1$ | to sztuczka: $\ln x = \ln x \cdot 1$, a $\int 1 \, dx = x$ |
+| dwa wielomiany: $x^4(1 + x)^3$ (Zad. 3 i)) | $(1 + x)^3$ | $x^4$ | nawias ma niższy stopień — po trzech pochodnych daje liczbę, a potęgi $x$ łatwo scałkować; prościej jednak wymnożyć i liczyć elementarnie |
+
+Jak czytać tabelę: w każdym wierszu jeden typ całki z listy. Kolumny $u$ i $v'$ mówią, jak podzielić funkcję na dwa kawałki. Ostatnia kolumna — dlaczego właśnie tak. Przypomnienie: $\ln^2 x$ to $(\ln x)^2$, a nie $\ln(x^2)$.
+
+<Ramka kind="zapamietaj" tytul="Zasada wyboru">
+- Najpierw sprawdź podstawianie. Gdy obok środka stoi jego pochodna, w której jest $x$ (np. $xe^{x^2}$, $\frac{\ln x}{x}$), liczysz przez podstawianie, nie przez części. Wyjątek: polecenie każe liczyć przez części, jak w Zad. 3 m).
+- Logarytm razy potęga $x^n$ ($n \neq -1$) — logarytm idzie do $u$.
+- Wielomian razy $e^{kx}$ ($k \neq 0$, np. $e^{-3x}$) albo $a^x$ (np. $4^x$) — wielomian idzie do $u$.
+- Sam logarytm: $u$ to ten logarytm, a $v' = 1$.
+- Dwa wielomiany: do $u$ ten, który po pochodnych szybciej zamieni się w liczbę, czyli o niższym stopniu (Zad. 3 i)). Albo wymnóż i licz elementarnie.
+</Ramka>
+
+<Ramka kind="polecenie" tytul="Całkowanie przez części">
+> Oblicz całkę metodą przez części, np. $\int x4^x \, dx$.
+
+1. **Wybierz $u$ i $v'$:** skorzystaj z zasady wyboru wyżej.
+2. **Policz $u'$ i $v$:** $u'$ to pochodna $u$, a $v$ to całka z $v'$ — bez $+ C$. Wpisz wszystko do ramki.
+3. **Wzór:** $u \cdot v - \int u' \cdot v \, dx$ — każdy kawałek ramki na swoje miejsce. Od razu uprość $u' \cdot v$ w nowej całce: skróć, a liczbę wyłącz przed całkę.
+4. **Nowa całka:** policz ją.
+   - Gdy nowa całka jest w tabeli, policz ją wzorem. Całkę z $e^{kx}$ policz podstawieniem $t = kx$ i pokaż je na kolokwium (wynik $\frac1k e^{kx}$ to skrót spoza slajdu — niżej).
+   - Gdy jej nie ma w tabeli, a nadal jest w niej logarytm albo wielomian razy $e^{kx}$ lub $a^x$, policz ją jeszcze raz przez części. Tak samo przy dwóch wielomianach (Zad. 3 i)).
+   - Nową całkę liczoną z boku (pomocniczo) piszesz bez $C$. Stała pojawia się raz, w głównym rachunku.
+   - W linii głównego rachunku, w której znika ostatni znak całki, dopisz $+ C$.
+5. **Uprość:** zbierz wynik, uważaj na minus przed nawiasem. $+ C$ tylko przepisujesz.
+</Ramka>
+
+<Legenda items={LEG.czesci} />
+
+<a id="zad-3o" class="k-anchor"></a>
+
+<Rachunek d={U.o} etapy={ETAPY_CZ} etapyNazwa="Procedura" tytul={tyt(U.o)} zrodlo="Zad. 3 o)">
+<div slot="plan">
+
+Cel: całka z iloczynu wielomianu ($x$) i funkcji wykładniczej ($4^x$).
+
+1. **Wybierz $u$ i $v'$:** $u = x$ (wielomian), $v' = 4^x$. Po pochodnej $x$ zamienia się w $1$, a $4^x$ umiemy scałkować.
+2. **Policz $u'$ i $v$:** $u' = 1$, a $v$ ze wzoru 4. Wszystkie cztery kawałki zapisujemy w ramce.
+3. **Wzór:** kawałki ramki wlatują do wzoru ze slajdu. Pokazuje to przycisk „▶ Zobacz krok po kroku”.
+4. **Nowa całka:** $\int 4^x \, dx$ — znowu wzór 4. Całka znika, więc dopisujemy $+ C$.
+5. **Uprość:** wyłączamy wspólny czynnik przed nawias. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+<a id="zad-3a" class="k-anchor"></a>
+
+<Rachunek d={U.a} etapy={ETAPY_CZ} etapyNazwa="Procedura" tytul={tyt(U.a)} zrodlo="Zad. 3 a)">
+<div slot="plan">
+
+Cel: całka z samego logarytmu. We wzorach jej nie ma — ale pochodną $\ln x$ znamy.
+
+1. **Wybierz $u$ i $v'$:** sztuczka $\ln x = \ln x \cdot 1$. $u = \ln x$, $v' = 1$.
+2. **Policz $u'$ i $v$:** $u' = \frac1x$, $v = x$. Zapisujemy je w ramce.
+3. **Wzór:** w nowej całce $\frac1x \cdot x = 1$ — logarytm zniknął.
+4. **Nowa całka:** $\int 1 \, dx = x$. Całka znika, więc dopisujemy $+ C$.
+
+</div>
+</Rachunek>
+
+<a id="zad-3d" class="k-anchor"></a>
+
+<Rachunek d={U.d} etapy={ETAPY_CZ} etapyNazwa="Procedura" tytul={tyt(U.d)} zrodlo="Zad. 3 d)">
+<div slot="plan">
+
+Cel: całka z potęgi razy logarytm.
+
+1. **Wybierz $u$ i $v'$:** w iloczynie z potęgą $x^2$ logarytm idzie do $u$, więc $u = \ln x$, $v' = x^2$.
+2. **Policz $u'$ i $v$:** $u' = \frac1x$, $v = \frac{x^3}{3}$. Zapisujemy je w ramce.
+3. **Wzór:** w nowej całce $\frac1x$ skraca się z $x^3$.
+4. **Nowa całka:** zwykła potęga, wzór 3. Całka znika, więc dopisujemy $+ C$.
+
+</div>
+</Rachunek>
+
+Czasem nowej całki nie ma w tabeli i trzeba ją liczyć przez części jeszcze raz. W Zad. 3 b) wychodzi $\int \ln x \, dx$ — jej wynik jest już gotowy w a):
+
+<a id="zad-3b" class="k-anchor"></a>
+
+<Rachunek d={U.b} etapy={ETAPY_CZ} etapyNazwa="Procedura" tytul={tyt(U.b)} zrodlo="Zad. 3 b)">
+<div slot="plan">
+
+Cel: całka z kwadratu logarytmu.
+
+1. **Wybierz $u$ i $v'$:** sam logarytm, jak w a): $u = \ln^2 x$, $v' = 1$.
+2. **Policz $u'$ i $v$:** $u'$ regułą funkcji złożonej z modułu 8, $v = x$. Zapisujemy je w ramce.
+3. **Wzór:** nowa całka to $2 \int \ln x \, dx$ — prostsza, bo logarytm jest już w pierwszej potędze.
+4. **Nowa całka:** to dokładnie Zad. 3 a) — bierzemy gotowy wynik. Całka znika, więc dopisujemy $+ C$.
+5. **Uprość:** wymnażamy nawias, uważając na minus. $+ C$ tylko przepisujemy.
+
+</div>
+</Rachunek>
+
+Przy $e^{-3x}$ potrzebna jest całka, której nie ma w tabeli. Liczy się ją podstawieniem $t = -3x$ — a wynik warto zapamiętać:
+
+<Ramka kind="kiedy" tytul="Skrót spoza slajdu: e do potęgi kx">
+$\int e^{kx} \, dx = \frac1k e^{kx} + C$ dla liczby $k \neq 0$. Tego wzoru nie ma na slajdzie. Wynika z podstawienia $t = kx$, $dx = \frac1k \, dt$ — na kolokwium pokaż to podstawienie. Na przykład dla $e^{-3x}$ ramka z boku wygląda tak:
+
+$$
+\left| \begin{aligned} t &= -3x \\ dt &= -3 \, dx \Rightarrow dx = -\tfrac13 \, dt \end{aligned} \right|
+$$
+
+A sam rachunek:
+
+$$
+\begin{aligned}
+\int e^{-3x} \, dx &= -\tfrac13 \int e^t \, dt \\
+&= -\tfrac13 e^t + C \\
+&= -\tfrac13 e^{-3x} + C
+\end{aligned}
+$$
+
+Sprawdzenie pochodną: $\left(-\frac13 e^{-3x}\right)' = -\frac13 \cdot e^{-3x} \cdot (-3) = e^{-3x}$. Gdy liczysz tak $v$ w ramce przez części, piszesz wynik bez $C$.
+</Ramka>
+
+<a id="zad-3k" class="k-anchor"></a>
+
+<Rachunek d={U.k} etapy={ETAPY_CZ} etapyNazwa="Procedura" tytul={tyt(U.k)} zrodlo="Zad. 3 k)">
+<div slot="plan">
+
+Cel: całka z $x$ razy $e^{-3x}$.
+
+1. **Wybierz $u$ i $v'$:** $u = x$ (wielomian), $v' = e^{-3x}$.
+2. **Policz $u'$ i $v$:** $u' = 1$. $v$ to całka z $e^{-3x}$ — liczymy ją z boku podstawieniem $t = -3x$, jak w skrócie wyżej, i bez $C$. Wychodzi $v = -\frac13 e^{-3x}$. Zapisujemy wszystko w ramce.
+3. **Wzór:** minus razy minus da plus przed nową całką.
+4. **Nowa całka:** znowu $\int e^{-3x} \, dx$ — wynik znamy z rachunku $v$. Całka znika, więc dopisujemy $+ C$.
+
+</div>
+</Rachunek>
+
+### Pozostałe przykłady z Zad. 3
+
+Ułożone od najprostszych. Kliknij przykład, żeby rozwinąć rachunek.
+
+<Przyklad id="3l" nazwa="Zad. 3 l)" d={U.l} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Wielomian razy $e^x$: $u = x + 3$, $v' = e^x$." />
+<Przyklad id="3h" nazwa="Zad. 3 h)" d={U.h} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Jak a): $u = \ln(x^3)$, $v' = 1$. Krócej: $\ln(x^3) = 3\ln x$ i wynik z a) razy $3$. Uwaga: $\ln(x^3)$ to nie to samo co $\ln^3 x = (\ln x)^3$." />
+<Przyklad id="3c" nazwa="Zad. 3 c)" d={U.c} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Jak d): $\ln$ do $u$, a $\sqrt{x} = x^{\frac12}$ do $v'$." />
+<Przyklad id="3j" nazwa="Zad. 3 j)" d={U.j} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Jak d), tylko pod logarytmem $2x$: $u'$ regułą funkcji złożonej wychodzi znowu $\frac1x$." />
+<Przyklad id="3m" nazwa="Zad. 3 m)" d={U.m} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Polecenie każe liczyć przez części, choć obok $\ln x$ stoi jego pochodna $\frac1x$. Logarytm z logarytmu do $u$, a $\frac1x$ do $v'$. Wtedy $v = \ln x$ — bez kresek, bo $\ln(\ln x)$ istnieje tylko dla $x > 1$, a tam $\ln \lvert x \rvert = \ln x$. Inna droga: podstawienie $t = \ln x$ daje $\int \ln t \, dt$, czyli całkę z Zad. 3 a)." />
+<Przyklad id="3e" nazwa="Zad. 3 e)" d={U.e} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Dwa razy przez części: najpierw $u = \ln^2 x$, potem w nowej całce $u = \ln x$. Nową całkę liczymy z boku, bez $C$." />
+<Przyklad id="3n" nazwa="Zad. 3 n)" d={U.n} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Wielomian stopnia $2$ razy $e^{-2x}$ — dwa razy przez części, za każdym razem wielomian traci stopień. $v$ liczymy z boku podstawieniem $t = -2x$, jak w Zad. 3 k). Nową całkę też liczymy z boku, bez $C$." />
+<Przyklad id="3f" nazwa="Zad. 3 f)" d={U.f} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Jak e), tylko $v' = \frac{1}{x^5} = x^{-5}$. Dwa razy przez części." />
+<Przyklad id="3g" nazwa="Zad. 3 g)" d={U.g} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Jak f), z $v' = x^{-\frac32}$. Dwa razy przez części." />
+<Przyklad id="3i" nazwa="Zad. 3 i)" d={U.i} etapy={ETAPY_CZ} etapyNazwa="Procedura" cel={CEL} plan="Dwa wielomiany: $u = (1 + x)^3$, $v' = x^4$. Po trzech pochodnych z nawiasu zostaje liczba, więc liczymy przez części trzy razy. Na końcu wynik się skraca. Bez polecenia „przez części” prościej byłoby wymnożyć." />
+
+<Ramka kind="pulapka" tytul="Typowe błędy przy całkowaniu przez części">
+- **Zgubiony minus:** we wzorze przed nową całką stoi minus. Gdy w nowej całce jest też minus (jak w k)), minus razy minus daje plus.
+- **$v'$ zamiast $v$:** do wzoru wstawiasz $v$ (całkę z $v'$), a nie samo $v'$.
+- **$+ C$ w ramce i z boku:** $v$ i nową całkę liczoną z boku piszesz bez $C$. Stałą dopisujesz dopiero w linii głównego rachunku, w której znika ostatni znak całki.
+- **Odwrócony wybór:** w $\int x^2 \ln x \, dx$ z $u = x^2$ trzeba najpierw scałkować $\ln x$, a w nowej całce wraca wyjściowa $\int x^2 \ln x \, dx$. W iloczynie z potęgą $x^n$ ($n \neq -1$) logarytm idzie do $u$.
+</Ramka>
+
+<Ramka kind="granica" etykieta="Uwaga — kiedy to nie działa" tytul="Iloczyn, przy którym części się nie opłacają">
+- $\int x e^{x^2} \, dx$ to iloczyn. Ale $x$ obok to prawie pochodna wykładnika $x^2$. Działa podstawianie $t = x^2$.
+- W $\int x e^{x^2} \, dx$ przez części się nie opłaca. $v' = e^{x^2}$ nie scałkujesz wzorem. Przy $u = e^{x^2}$, $v' = x$ nowa całka to $\int x^3 e^{x^2} \, dx$ — trudniejsza.
+- $\int \frac{\ln x}{x} \, dx$ to iloczyn $\ln x \cdot \frac1x$. Przy $u = \ln x$, $v' = \frac1x$ wychodzi $v = \ln x$. W nowej całce $\int \frac1x \cdot \ln x \, dx$ wraca wyjściowa całka. Podstawienie $t = \ln x$ jest prostsze.
+- Gdy polecenie nie narzuca metody, przed częściami sprawdź, czy obok „środka” nie stoi jego pochodna.
+</Ramka>
+
+<a id="polecenie-metoda" class="k-anchor"></a>
+
+## Którą metodą?
+
+Gdy polecenie nie mówi, jaką metodą liczyć, decydujesz po kształcie funkcji pod całką.
+
+<Ramka kind="polecenie" tytul="Wybór metody">
+> Oblicz całkę (bez podanej metody).
+
+1. **Elementarne:** czy po krótkim przekształceniu zostaje suma klocków z tabeli? Krótkie przekształcenie to: pierwiastki na potęgi, działania na potęgach (mnożenie i dzielenie potęg), rozbicie ułamka, wymnożenie dwóch nawiasów, kwadratu albo sześcianu. Jeśli tak — liczysz wzorami.
+2. **Podstawianie:** czy po zamianie środka na $t$ zostaje funkcja z tabeli albo suma takich funkcji, a nie iloczyn? Tak jest, gdy obok środka stoi jego pochodna, w której jest $x$ (jak w $\int x(x^2 + 1)^5 \, dx$), albo gdy środek jest liniowy, a reszty funkcji nie ma (jak w $\int \sqrt{2x + 9} \, dx$) albo po zapisaniu jej przez $t$ zostaje suma potęg $t$ (Zad. 2 k)). Jeśli tak — $t$ = środek.
+3. **Przez części:** czy to jeden z trzech typów: wielomian razy $e^{kx}$ albo $a^x$; logarytm razy potęga $x^n$ ($n \neq -1$); sam logarytm? Jeśli tak — wybierasz $u$ i $v'$.
+</Ramka>
+
+<Klasyfikator pytanie="Którą metodą policzysz tę całkę?" kategorie={['elementarne', 'podstawianie', 'przez części']} elementy={[
+  { tekst: R`$\int (x^3 - 2\sqrt{x}) \, dx$`, kat: 0, dlaczego: R`Suma potęg: $x^3 - 2x^{\frac12}$. Każdy składnik wzorem 3.` },
+  { tekst: R`$\int x(x^2 + 1)^5 \, dx$`, kat: 1, dlaczego: R`Środek $x^2 + 1$ w nawiasie z potęgą, obok $x$, czyli pochodna środka ($2x$) bez dwójki. $t = x^2 + 1$. Da się też wymnożyć, ale podstawianie jest dużo krótsze.` },
+  { tekst: R`$\int xe^{2x} \, dx$`, kat: 2, dlaczego: R`Wielomian $x$ razy $e^{2x}$. $u = x$, $v' = e^{2x}$. Środek $2x$ jest liniowy, ale przy $t = 2x$ masz $x = \frac t2$ i $dx = \frac12 \, dt$. Zostaje $\frac14 \int te^t \, dt$ — znowu iloczyn.` },
+  { tekst: R`$\int \frac{x^2 + 3}{x} \, dx$`, kat: 0, dlaczego: R`Rozbij ułamek: $x + \frac3x$. Wzór 3 i wzór 6.` },
+  { tekst: R`$\int \frac{\ln x}{x} \, dx$`, kat: 1, dlaczego: R`Środek $\ln x$, a $\frac1x$ obok to jego pochodna. $t = \ln x$, wynik $\frac{\ln^2 x}{2} + C$.` },
+  { tekst: R`$\int x^2 \ln x \, dx$`, kat: 2, dlaczego: R`Potęga razy $\ln$ — przez części, $u = \ln x$ (Zad. 3 d)).` },
+  { tekst: R`$\int \sqrt{4x + 1} \, dx$`, kat: 1, dlaczego: R`Pierwiastek z sumy — nie rozbijesz go na klocki. Środek liniowy: $t = 4x + 1$, $dx = \frac14 \, dt$.` },
+  { tekst: R`$\int (x + 1)(x - 2) \, dx$`, kat: 0, dlaczego: R`Wymnóż: $x^2 - x - 2$. Suma potęg.` },
+  { tekst: R`$\int x \cdot 3^x \, dx$`, kat: 2, dlaczego: R`Wielomian razy $3^x$ — jak Zad. 3 o). $u = x$, $v' = 3^x$.` },
+]} />
+
+## Wszystkie odpowiedzi z listy
+
+Wyniki wszystkich przykładów z listy w jednym miejscu — do sprawdzenia własnych rachunków. Link przy każdym przykładzie prowadzi do rozwiązania krok po kroku. Twój wynik może wyglądać inaczej i nadal być dobry. Na przykład $\frac13 \sqrt{(2x + 9)^3}$ to to samo co $\frac13 (2x + 9)^{\frac32}$, a wyniki różniące się o stałą też są dobre.
+
+### Zad. 1 — podstawowe wzory
+
+<Odpowiedzi lista={['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j'].map((id) => ({ id: `1${id}`, nazwa: `Zad. 1 ${id})`, d: A[id] }))} />
+
+### Zad. 2 — przez podstawianie
+
+<Odpowiedzi lista={['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r'].map((id) => ({ id: `2${id}`, nazwa: `Zad. 2 ${id})`, d: B[id] }))} />
+
+### Zad. 3 — przez części
+
+<Odpowiedzi lista={['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'].map((id) => ({ id: `3${id}`, nazwa: `Zad. 3 ${id})`, d: U[id] }))} />
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+<div><b>Funkcja pierwotna</b>$F'(x) = f(x)$. Całka to rodzina wszystkich funkcji pierwotnych: $\int f(x) \, dx = F(x) + C$.</div>
+<div><b>Zawsze + C</b>Dopisujesz w linii głównego rachunku, w której znika ostatni znak całki. Dalej tylko je przepisujesz. Nowa całka liczona z boku — bez $C$. Gdy dwa wyniki różnią się o stałą, oba są dobre.</div>
+<div><b>Wzór 3</b>$\int x^n \, dx = \frac{x^{n+1}}{n+1} + C$: wykładnik w górę o $1$, przez nowy wykładnik dzielisz. Nie dla $n = -1$.</div>
+<div><b>Pozostałe wzory</b>$\int 0 \, dx = C$, $\int dx = x + C$, $\int e^x \, dx = e^x + C$, $\int \frac{dx}{x} = \ln \lvert x \rvert + C$ dla $x \neq 0$, $\int a^x \, dx = \frac{a^x}{\ln a} + C$ dla $a > 0$, $a \neq 1$.</div>
+<div><b>Reguły</b>Liczba przed całkę (1), każdy składnik osobno (2), ułamek $\frac{f'}{f}$ (3). Ogólnej reguły na iloczyn i iloraz nie ma.</div>
+<div><b>Najpierw potęgi</b>$\sqrt{x} = x^{\frac12}$, $\frac{1}{x^4} = x^{-4}$, $\frac{1}{\sqrt{x}} = x^{-\frac12}$.</div>
+<div><b>Podstawianie</b>$t$ = środek, $dt$ = pochodna środka razy $dx$. Działa, gdy po zamianie zostaje funkcja z tabeli albo suma takich funkcji, a nie iloczyn: obok środka stoi jego pochodna, w której jest $x$, albo środek jest liniowy ($kx + b$), a reszty funkcji nie ma albo po zapisaniu jej przez $t$ zostaje suma potęg $t$. Zamień wszystko na $t$, policz, wróć do $x$.</div>
+<div><b>Reguła 3</b>$\int \frac{f'(x)}{f(x)} \, dx = \ln \lvert f(x) \rvert + C$, gdy $f(x) \neq 0$. Licznik to pochodna mianownika.</div>
+<div><b>e do kx (nie ze slajdu)</b>$\int e^{kx} \, dx = \frac1k e^{kx} + C$ dla $k \neq 0$. Na kolokwium pokaż podstawienie $t = kx$.</div>
+<div><b>Przez części</b>$\int u v' \, dx = uv - \int u' v \, dx$. Ramka: $u$, $u'$ / $v'$, $v$.</div>
+<div><b>Wybór u</b>Najpierw sprawdź podstawianie: gdy obok środka stoi jego pochodna, w której jest $x$ (a nie sama liczba) — podstawianie, np. $xe^{x^2}$, $\frac{\ln x}{x}$. Logarytm razy potęga $x^n$ ($n \neq -1$) — logarytm do $u$. Wielomian razy $e^{kx}$ ($k \neq 0$) albo $a^x$ — wielomian do $u$. Sam logarytm — $u$ to logarytm, $v' = 1$. Dwa wielomiany — do $u$ ten o niższym stopniu (szybciej zamieni się w liczbę) albo wymnóż i licz elementarnie.</div>
+<div><b>Sprawdzenie</b>Pochodna wyniku musi dać funkcję spod całki.</div>
+</div>
+
+<Ramka kind="gdzie">
+- **Całka oznaczona (moduł 13):** najpierw liczysz całkę nieoznaczoną z tego modułu, potem wstawiasz granice. Tak liczy się m.in. pole pod wykresem (gdy wykres leży nad osią $x$).
+- **Ekonomia:** z kosztu krańcowego odtwarzasz koszt całkowity, z przychodu krańcowego — przychód. Stała $C$ przy koszcie to koszty stałe. Przy przychodzie zwykle $C = 0$, bo bez sprzedaży nie ma przychodu.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania na każde polecenie. Po każdej odpowiedzi zobaczysz, dlaczego jest dobra albo zła — złe odpowiedzi to typowe błędy.
+
+### Całkowanie elementarne
+
+<a id="cw-elementarne" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: R`$\int x^7 \, dx =$`, opcje: [R`$\frac{x^8}{8} + C$`, R`$7x^6 + C$`, R`$x^8 + C$`], dobra: 0, dlaczego: R`Wzór 3: wykładnik $7 + 1 = 8$, dzielisz przez $8$. $7x^6$ to pochodna, a nie całka. $x^8$ — brak dzielenia: $(x^8)' = 8x^7$.` },
+  { q: R`$\int \frac{1}{x^3} \, dx =$`, opcje: [R`$\ln \lvert x^3 \rvert + C$`, R`$-\frac{1}{2x^2} + C$`, R`$-\frac{1}{4x^4} + C$`], dobra: 1, dlaczego: R`$\frac{1}{x^3} = x^{-3}$, wzór 3: $\frac{x^{-2}}{-2} = -\frac{1}{2x^2}$. Spośród potęg $x$ logarytm daje tylko $x^{-1} = \frac1x$ (wzór 6). $-\frac{1}{4x^4}$ — wykładnik zmniejszony o $1$ zamiast zwiększony.` },
+  { q: R`$\int \sqrt{x} \, dx =$`, opcje: [R`$\frac{1}{2\sqrt{x}} + C$`, R`$\frac32 x^{\frac32} + C$`, R`$\frac23 x\sqrt{x} + C$`], dobra: 2, dlaczego: R`$\sqrt{x} = x^{\frac12}$, wzór 3: $\frac{x^{\frac32}}{\frac32} = \frac23 x^{\frac32} = \frac23 x\sqrt{x}$. $\frac{1}{2\sqrt{x}}$ to pochodna. $\frac32 x^{\frac32}$ — mnożenie przez nowy wykładnik zamiast dzielenia.` },
+  { q: R`$\int (6x^2 - 4x + 3) \, dx =$`, opcje: [R`$2x^3 - 2x^2 + 3 + C$`, R`$2x^3 - 2x^2 + 3x + C$`, R`$12x - 4 + C$`], dobra: 1, dlaczego: R`Każdy składnik osobno: $6 \cdot \frac{x^3}{3} = 2x^3$, $4 \cdot \frac{x^2}{2} = 2x^2$, $\int 3 \, dx = 3x$. Pierwsza opcja gubi $x$ przy trójce — całka z liczby to liczba razy $x$. $12x - 4$ to pochodna.` },
+  { q: R`$\int 2^x \, dx =$`, opcje: [R`$2^x \ln 2 + C$`, R`$x \cdot 2^{x-1} + C$`, R`$\frac{2^x}{\ln 2} + C$`], dobra: 2, dlaczego: R`Wzór 4: $\frac{a^x}{\ln a}$ z $a = 2$. $2^x \ln 2$ to pochodna (mnożenie zamiast dzielenia). $x \cdot 2^{x-1}$ to podwójny błąd: wzór na pochodną potęgi ($n x^{n-1}$), i to użyty tam, gdzie zmienna stoi w wykładniku.` },
+  { q: R`$\int \frac{5}{x} \, dx =$`, opcje: [R`$5\ln \lvert x \rvert + C$`, R`$-\frac{5}{x^2} + C$`, R`$\ln \lvert 5x \rvert + C$`], dobra: 0, dlaczego: R`Liczba $5$ przed całkę (reguła 1), $\int \frac1x \, dx = \ln \lvert x \rvert$ (wzór 6). $-\frac{5}{x^2}$ to pochodna. $\ln \lvert 5x \rvert$ ma pochodną $\frac{5}{5x} = \frac1x$ — piątka gubi się w środku logarytmu.` },
+]} />
+
+### Przez podstawianie
+
+<a id="cw-podstawianie" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: R`Co wziąć za $t$ w $\int (x^3 + 1)^4 \cdot 3x^2 \, dx$?`, opcje: [R`$t = x^3 + 1$`, R`$t = 3x^2$`, R`$t = (x^3 + 1)^4$`], dobra: 0, dlaczego: R`Środek siedzi w nawiasie z potęgą, a obok stoi dokładnie jego pochodna $3x^2$. $t = 3x^2$ to pochodna środka, a nie środek. $t = (x^3 + 1)^4$ to cała funkcja złożona, a nie środek. Wtedy $dt = 4(x^3 + 1)^3 \cdot 3x^2 \, dx$ — tego w całce nie ma i rachunek się komplikuje.` },
+  { q: R`$t = x^2 + 4$ w całce $\int \frac{x}{x^2 + 4} \, dx$. Czym zastąpisz $x \, dx$?`, opcje: [R`$2 \, dt$`, R`$\frac12 \, dt$`, R`$dt$`], dobra: 1, dlaczego: R`$dt = 2x \, dx$, więc $x \, dx = \frac12 \, dt$ (obie strony przez $2$). W $2 \, dt$ pomnożono przez $2$ zamiast podzielić. Samo $dt$ gubi liczbę $2$.` },
+  { q: R`$\int (3x - 1)^5 \, dx =$`, opcje: [R`$\frac{(3x - 1)^6}{6} + C$`, R`$15(3x - 1)^4 + C$`, R`$\frac{(3x - 1)^6}{18} + C$`], dobra: 2, dlaczego: R`$t = 3x - 1$, $dt = 3 \, dx$, więc $dx = \frac13 \, dt$. $\frac13 \cdot \frac{t^6}{6} = \frac{t^6}{18}$. Za $t$ wstawiasz $3x - 1$: $\frac{(3x - 1)^6}{18} + C$. Pierwsza opcja gubi $\frac13$ z $dt$. Druga to pochodna.` },
+  { q: R`$\int e^{5x} \, dx =$`, opcje: [R`$5e^{5x} + C$`, R`$\frac15 e^{5x} + C$`, R`$e^{5x} + C$`], dobra: 1, dlaczego: R`$t = 5x$, $dx = \frac15 \, dt$, więc $\frac15 e^{5x} + C$. To samo daje skrót spoza slajdu: $\int e^{kx} \, dx = \frac1k e^{kx} + C$ dla $k \neq 0$. $5e^{5x}$ to pochodna. $e^{5x}$ gubi $\frac15$ — sprawdzenie: $(e^{5x})' = 5e^{5x}$.` },
+  { q: R`$\int \frac{2x}{x^2 + 1} \, dx =$`, opcje: [R`$\ln(x^2 + 1) + C$`, R`$2\ln(x^2 + 1) + C$`, R`$\frac{x^2}{\frac{x^3}{3} + x} + C$`], dobra: 0, dlaczego: R`W liczniku dokładnie pochodna mianownika — reguła 3: $\ln \lvert x^2 + 1 \rvert$, a kreski można pominąć. W $2\ln(x^2 + 1)$ dwójka jest policzona dwa razy: $(2\ln(x^2 + 1))' = \frac{4x}{x^2 + 1}$. Trzecia opcja całkuje licznik i mianownik osobno — takiej reguły nie ma.` },
+  { q: R`Po zamianie wyszło $\int t^3 \cdot x \, dt$. Co jest nie tak?`, opcje: ['Nic — liczysz dalej wzorem 3', 'Brakuje $+ C$', 'W całce po $t$ został $x$ — źle policzone albo źle użyte $dt$'], dobra: 2, dlaczego: R`Całka po $t$ nie może zawierać $x$ — tak się jej nie policzy. Zwykle zostaje on wtedy, gdy obok środka stał $x$, a w ramce nie wyznaczono $x \, dx$ z $dt$. $+ C$ dopisujesz dopiero w linii, w której znika ostatnia całka — tu całka jeszcze stoi.` },
+]} />
+
+### Przez części
+
+<a id="cw-czesci" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: R`$\int xe^x \, dx$: co wziąć za $u$?`, opcje: [R`$u = e^x$, $v' = x$`, R`$u = x$, $v' = e^x$`, R`$u = xe^x$, $v' = 1$`], dobra: 1, dlaczego: R`Wielomian do $u$: po pochodnej $x$ zamienia się w $1$. Przy $u = e^x$ nowa całka miałaby $\frac{x^2}{2}$ — trudniej. $u = xe^x$ nic nie upraszcza.` },
+  { q: R`$\int x^3 \ln x \, dx$: co wziąć za $u$?`, opcje: [R`$u = \ln x$`, R`$u = x^3$`, R`$u = x^3 \ln x$`], dobra: 0, dlaczego: R`W iloczynie logarytmu z potęgą $x^3$ logarytm idzie do $u$. Wtedy $u' = \frac1x$, a $v = \frac{x^4}{4}$, więc w nowej całce $\frac1x$ skraca się z $x^4$. Przy $u = x^3$ trzeba by najpierw scałkować $\ln x$, a w nowej całce wraca wyjściowa: $3\int x^3 \ln x \, dx - 3\int x^3 \, dx$. Przy $u = x^3 \ln x$ i $v' = 1$ nowa całka to $\int (3x^3 \ln x + x^3) \, dx$ — wraca w niej wyjściowa całka, więc nic się nie uprościło.` },
+  { q: R`$\int xe^x \, dx =$`, opcje: [R`$xe^x + e^x + C$`, R`$\frac{x^2}{2}e^x + C$`, R`$xe^x - e^x + C$`], dobra: 2, dlaczego: R`$u = x$, $v = e^x$: $xe^x - \int 1 \cdot e^x \, dx = xe^x - e^x + C$. Plus zamiast minusa to zgubiony minus ze wzoru. $\frac{x^2}{2}e^x$ to całka „każdy czynnik osobno” — takiej reguły nie ma.` },
+  { q: R`Wzór na całkowanie przez części: $\int u v' \, dx =$`, opcje: [R`$uv - \int u'v \, dx$`, R`$u'v - \int uv' \, dx$`, R`$uv + \int u'v \, dx$`], dobra: 0, dlaczego: R`Ze slajdu: $u \cdot v$ minus całka z $u' \cdot v$. Druga opcja ma pomieszane kawałki ramki. Trzecia ma plus zamiast minusa.` },
+  { q: R`$\int \ln x \, dx =$`, opcje: [R`$\frac1x + C$`, R`$x\ln x - x + C$`, R`$x\ln x + C$`], dobra: 1, dlaczego: R`$u = \ln x$, $v' = 1$: $x\ln x - \int \frac1x \cdot x \, dx = x\ln x - x + C$. $\frac1x$ to pochodna. $x \ln x$ gubi nową całkę.` },
+]} />
+
+### Którą metodą?
+
+<a id="cw-metoda" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: R`$\int x^2 e^{x^3} \, dx$ — którą metodą?`, opcje: [R`Podstawianie $t = x^3$`, 'Przez części', 'Elementarnie'], dobra: 0, dlaczego: R`Środek $x^3$ w wykładniku, a obok $x^2$, czyli pochodna środka ($3x^2$) bez trójki. Przez części się nie opłaca: $v' = e^{x^3}$ nie scałkujesz wzorem, a przy $u = e^{x^3}$, $v' = x^2$ nowa całka to $\int x^5 e^{x^3} \, dx$ — trudniejsza. Elementarnie się nie da: $e^{x^3}$ nie ma we wzorach.` },
+  { q: R`$\int \frac{x^2 + 1}{x} \, dx$ — którą metodą?`, opcje: [R`Podstawianie $t = x^2 + 1$`, R`Elementarnie: $x + \frac1x$`, 'Przez części'], dobra: 1, dlaczego: R`Ułamek z sumą w liczniku rozbijasz: $\frac{x^2}{x} + \frac1x = x + \frac1x$. Potem wzór 3 i wzór 6. Podstawienie $t = x^2 + 1$ nic nie da: $x^2 + 1$ nie siedzi wewnątrz innej funkcji, więc nie ma środka do podstawienia. Przez części też: np. $u = x^2 + 1$, $v' = \frac1x$ daje nową całkę $\int 2x \ln \lvert x \rvert \, dx$ — trudniejszą niż na starcie.` },
+  { q: R`$\int x^2 e^x \, dx$ — którą metodą?`, opcje: ['Elementarnie', R`Podstawianie $t = x^2$`, 'Przez części, dwa razy'], dobra: 2, dlaczego: R`Wielomian razy $e^x$. Wielomian stopnia $2$ traci stopień przy każdej pochodnej, więc przez części liczysz dwa razy (jak Zad. 3 n)). Elementarnie się nie da: iloczynu $x^2 e^x$ nie zamienisz na sumę klocków z tabeli. $t = x^2$ nic nie da: $x^2$ nie siedzi wewnątrz innej funkcji, a w wykładniku $e^x$ stoi samo $x$.` },
+  { q: R`$\int x \ln x \, dx$ — którą metodą?`, opcje: ['Elementarnie', R`Podstawianie $t = \ln x$`, R`Przez części, $u = \ln x$`], dobra: 2, dlaczego: R`Logarytm razy potęga $x$ — przez części, logarytm do $u$. Elementarnie się nie da: $\ln x$ nie ma we wzorach, a iloczynu nie rozbijesz na klocki. Przy $t = \ln x$ obok musiałoby stać $\frac1x$, a stoi $x$.` },
+  { q: R`$\int \ln x \, dx$ — którą metodą?`, opcje: [R`Przez części: $u = \ln x$, $v' = 1$`, 'Elementarnie — wzorem z tabeli', R`Podstawianie $t = \ln x$`], dobra: 0, dlaczego: R`Sam logarytm — trzeci typ z przepisu. Całki z $\ln x$ nie ma w tabeli, więc elementarnie się nie da. Przy $t = \ln x$ obok musiałoby stać $\frac1x$, a nie stoi nic. Sztuczka: $\ln x = \ln x \cdot 1$, czyli $u = \ln x$, $v' = 1$ (Zad. 3 a)).` },
+]} />
+
+### Sprawdzanie wyniku
+
+<a id="cw-sprawdz" class="k-anchor"></a>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: R`Jak sprawdzić, że $\int xe^{x^2} \, dx = \frac12 e^{x^2} + C$?`, opcje: ['Policzyć pochodną wyniku i porównać z funkcją spod całki', 'Policzyć całkę z wyniku', 'Wstawić $x = 0$ do wyniku'], dobra: 0, dlaczego: R`Całkowanie to odwrotność pochodnej: $\left(\frac12 e^{x^2}\right)' = \frac12 e^{x^2} \cdot 2x = xe^{x^2}$ — zgadza się. Całka z wyniku to krok w złą stronę. Wartość w jednym punkcie nic nie mówi, bo $C$ jest dowolne.` },
+  { q: R`Czy $\int \frac{1}{2x + 1} \, dx = \ln \lvert 2x + 1 \rvert + C$?`, opcje: ['Tak', R`Nie — pochodna wyniku to $\frac{2}{2x + 1}$, brakuje $\frac12$`, R`Nie — wynik to $\frac{1}{(2x + 1)^2}$`], dobra: 1, dlaczego: R`$(\ln \lvert 2x + 1 \rvert)' = \frac{1}{2x + 1} \cdot 2$ — dwa razy za dużo, więc „tak” odpada. Dobrze: $\frac12 \ln \lvert 2x + 1 \rvert + C$ (podstawienie $t = 2x + 1$, $dx = \frac12 \, dt$). Trzecia opcja to ruch w stronę pochodnej — przypomina $\left(\frac{1}{2x + 1}\right)' = -\frac{2}{(2x + 1)^2}$. Nie przechodzi też sprawdzenia: $\left(\frac{1}{(2x + 1)^2}\right)' = -\frac{4}{(2x + 1)^3}$, a nie $\frac{1}{2x + 1}$.` },
+  { q: R`Czy $\int 3x^2(x^3 + 2)^4 \, dx = \frac{(x^3 + 2)^5}{5} + C$?`, opcje: ['Nie — brakuje trójki', R`Nie — brakuje $x^2$`, R`Tak — pochodna wyniku to $(x^3 + 2)^4 \cdot 3x^2$`], dobra: 2, dlaczego: R`Reguła funkcji złożonej: $\left(\frac{(x^3 + 2)^5}{5}\right)' = \frac{5(x^3 + 2)^4}{5} \cdot 3x^2 = 3x^2(x^3 + 2)^4$. Trójka i $x^2$ pojawiają się z pochodnej środka — nic nie brakuje.` },
+  { q: R`Dwie osoby policzyły $\int x \, dx$: wyszło $\frac{x^2}{2} + 3 + C$ i $\frac{x^2}{2} + C$. Kto ma rację?`, opcje: ['Tylko druga osoba', 'Obie — wyniki różnią się o stałą', 'Tylko pierwsza osoba'], dobra: 1, dlaczego: R`Pochodna obu wyników to $x$. Trójka to tylko inna stała — „schowa się” w $C$. Zwykle pisze się krócej: $\frac{x^2}{2} + C$.` },
+  { q: R`Czy $\int xe^x \, dx = xe^x + C$?`, opcje: ['Tak', R`Nie — powinno być $\frac{x^2}{2}e^x + C$`, R`Nie — pochodna wyniku to $e^x + xe^x$, o $e^x$ za dużo`], dobra: 2, dlaczego: R`Reguła iloczynu: $(xe^x)' = 1 \cdot e^x + x \cdot e^x$ — o $e^x$ za dużo, więc „tak” odpada. Dobrze: $xe^x - e^x + C$ (przez części, $u = x$, $v' = e^x$). $\frac{x^2}{2}e^x$ to całka „każdy czynnik osobno”: jej pochodna to $xe^x + \frac{x^2}{2}e^x$.` },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tag="Quiz · 10 pytań" tytul="" pytania={[
+  { q: R`Funkcja pierwotna funkcji $f(x)$ to:`, opcje: [R`funkcja $F(x)$, dla której $F'(x) = f(x)$`, R`pochodna funkcji $f(x)$`, R`funkcja $f(x)$ podzielona przez $x$`], dobra: 0, dlaczego: R`Definicja ze slajdu: $F'(x) = f(x)$ — to $f$ powstaje z $F$ przez pochodną, a nie odwrotnie. Pochodna $f$ to ruch w drugą stronę. Dzielenie przez $x$ nie ma tu nic do rzeczy: dla $f(x) = 2x$ wyszłoby $2$, a $(2)' = 0$, nie $2x$.` },
+  { q: R`Skąd w wyniku całki bierze się $+ C$?`, opcje: ['To błąd zaokrąglenia', 'Pochodna stałej to zero, więc wszystkie funkcje $F(x) + C$ mają tę samą pochodną', 'Tak każe wzór 3'], dobra: 1, dlaczego: R`Dodanie liczby nie zmienia pochodnej, więc z samej $f(x)$ nie da się odczytać stałej. Całka to cała rodzina funkcji — $C$ ją opisuje. Z zaokrąglaniem nie ma to nic wspólnego. Dotyczy to każdego wzoru, nie tylko wzoru 3.` },
+  { q: R`$\int 0 \, dx =$`, opcje: [R`$0$`, R`$x + C$`, R`$C$`], dobra: 2, dlaczego: R`Wzór 1: pochodna każdej stałej to $0$, więc całka z zera to dowolna stała. Samo $0$ to tylko jedna z tych stałych. $x + C$ to całka z jedynki (wzór 2).` },
+  { q: R`Dla jakiego $n$ wzór 3 ($\int x^n \, dx = \frac{x^{n+1}}{n+1} + C$) nie działa?`, opcje: [R`$n = 0$`, R`$n = -1$`, R`dla ujemnych $n$`], dobra: 1, dlaczego: R`Dla $n = -1$ w mianowniku byłoby $0$. Wtedy działa wzór 6: $\ln \lvert x \rvert$. Dla $n = 0$ wzór daje $x$ — dobrze. Inne ujemne $n$ też są w porządku, np. $\int x^{-2} \, dx = -x^{-1} + C$.` },
+  { q: R`Czy $\int f(x) \cdot g(x) \, dx = \int f(x) \, dx \cdot \int g(x) \, dx$?`, opcje: ['Nie — dla całek nie ma takiej reguły', 'Tak, zawsze', 'Tylko dla wielomianów'], dobra: 0, dlaczego: R`Przykład: $\int x \cdot x \, dx = \frac{x^3}{3} + C$, a $\int x \, dx \cdot \int x \, dx = \frac{x^2}{2} \cdot \frac{x^2}{2} = \frac{x^4}{4}$ (pomijając stałe). To są wielomiany, więc odpada też trzecia opcja. Do iloczynów służą metody: podstawianie i przez części.` },
+  { q: R`W całkowaniu przez podstawianie za $t$ bierzesz:`, opcje: ['zawsze samo $x$, bo całkujesz po $x$', 'całą funkcję spod całki, żeby zostało samo $\\int dt$', 'środek — tak, żeby po zamianie została funkcja z tabeli'], dobra: 2, dlaczego: R`Podstawienie ma zostawić całkę z funkcji z tabeli albo z sumy takich funkcji. Udaje się, gdy obok środka stoi jego pochodna, w której jest $x$, albo gdy środek jest liniowy, np. $2x + 9$, a reszty funkcji nie ma albo po zapisaniu jej przez $t$ zostaje suma potęg $t$. Samo $x$ niczego nie zmienia — całka zostaje ta sama. Przy całej funkcji jako $t$ w $dt$ wychodzi jej pochodna, której obok nie ma — rachunek się komplikuje.` },
+  { q: R`$dt$ to:`, opcje: [R`liczba $d$ razy $t$`, R`pochodna środka razy $dx$`, R`całka z $t$`], dobra: 1, dlaczego: R`Dla $t = g(x)$ masz $dt = g'(x) \, dx$ — zapis ze slajdu. $dt$ to nie mnożenie: $d$ to znak różniczki, jak w $dx$. Nie jest to też całka — $dt$ tylko zamyka całkę po $t$, tak jak $dx$ zamyka całkę po $x$.` },
+  { q: R`W całkowaniu przez części za $u$ bierzesz:`, opcje: [R`to, co po pochodnej się upraszcza (np. $\ln x$, wielomian)`, 'to, co najłatwiej scałkować', 'zawsze pierwszy czynnik w zapisie'], dobra: 0, dlaczego: R`Nowa całka $\int u' v \, dx$ ma być prostsza, więc $u$ ma się uprościć po pochodnej. To, co łatwo scałkować, idzie do $v'$. Kolejność czynników w zapisie nie ma znaczenia.` },
+  { q: R`We wzorze $\int u v' \, dx = uv - \int u' v \, dx$ litera $v$ to:`, opcje: [R`pochodna $v'$`, R`$v'$ razy $x$`, R`całka z $v'$ (bez $+ C$)`], dobra: 2, dlaczego: R`$v'$ to kawałek pod całką, a $v$ — jego całka, liczona w ramce. Pochodna $v'$ to ruch w złą stronę. $v'$ razy $x$ to nie całka: np. $\int e^x \, dx = e^x$, a nie $xe^x$. W ramce $v$ liczysz bez $C$ — stała pojawi się w linii, w której zniknie ostatnia całka.` },
+  { q: R`Jak sprawdzić wynik całki nieoznaczonej?`, opcje: ['Wstawić dowolną liczbę za $x$', 'Policzyć pochodną wyniku — musi wyjść funkcja spod całki', 'Policzyć całkę z wyniku'], dobra: 1, dlaczego: R`Całkowanie odwraca pochodną, więc pochodna dobrego wyniku to funkcja spod całki. Jedna liczba nie wystarczy, bo $C$ jest dowolne. Całka z wyniku to ruch w złą stronę.` },
+]} />

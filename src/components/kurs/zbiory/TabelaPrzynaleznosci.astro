@@ -1,0 +1,87 @@
+---
+// Tabela przynależności: wiersz = element uniwersum, 1 = należy, 0 = nie należy. Kolumny działań liczone kodem
+// (lib/zbiory.js) — to ta sama tabela 0-1 co w logice: ∩ działa jak ∧, ∪ jak ∨, ′ jak negacja.
+// `odslaniaj` = kolumny działań ukryte i odkrywane po jednej (z wynikiem jako zbiorem pod tabelą).
+import { tex } from '../../../lib/tex.js';
+import { DZIALANIA, sprawdz, nalezy, wynik, zapis } from '../../../lib/zbiory.js';
+type El = number | string;
+interface Props { U: El[]; A: El[]; B: El[]; dzialania: string[]; odslaniaj?: boolean }
+const { U, A, B, dzialania, odslaniaj = false } = Astro.props;
+sprawdz(U, A, B);
+const kol = dzialania.map((k) => ({ k, t: DZIALANIA[k].t, f: DZIALANIA[k].f, w: wynik(U, A, B, k) }));
+const numery = kol.length >= 3;
+const v = (b: boolean) => (b ? 1 : 0);
+---
+<figure class={`k-tp k-tpz ${numery ? 'k-tp-num' : ''}`} data-tpz={odslaniaj ? '' : undefined}>
+  {numery && (
+    <ol class="k-leg" aria-hidden="true">
+      {kol.map((c, i) => <li><span class="k-nr">{i + 1}</span><span set:html={tex(`x \\in ${c.t}`)} /></li>)}
+    </ol>
+  )}
+  <div class="k-tp-scroll">
+    <table>
+      <thead>
+        <tr>
+          {['x', 'x \\in A', 'x \\in B'].map((t) => <th class="k-tp-var" set:html={tex(t)} />)}
+          {kol.map((c, i) => (
+            <th class="k-tp-wynik" data-col={i}>
+              <span class="k-th-full" set:html={tex(`x \\in ${c.t}`)} />
+              {numery && <span class="k-nr k-th-nr">{i + 1}</span>}
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        {U.map((x) => {
+          const a = nalezy(A, x), b = nalezy(B, x);
+          return (
+            <tr>
+              <td class="k-tpz-x">{x}</td>
+              <td class={`k-tp-var v${v(a)}`}>{v(a)}</td>
+              <td class={`k-tp-var v${v(b)}`}>{v(b)}</td>
+              {kol.map((c, i) => { const w = v(c.f(a, b)); return <td class={`k-tp-wynik v${w}`} data-col={i}>{w}</td>; })}
+            </tr>
+          );
+        })}
+      </tbody>
+    </table>
+  </div>
+  <ul class="k-tpz-w">
+    {kol.map((c, i) => <li data-col={i} set:html={tex(`${c.t} = ${zapis(c.w)}`)} />)}
+  </ul>
+  {odslaniaj && (
+    <div class="k-tp-ctl" data-js-only hidden>
+      <button type="button" class="k-btn" data-next>Odkryj następną kolumnę</button>
+      <button type="button" class="k-btn k-btn-ghost" data-all>Odkryj całą tabelę</button>
+    </div>
+  )}
+  <figcaption>
+    {odslaniaj && <span class="k-tp-tip" data-js-only hidden>Policz kolumnę w głowie albo na kartce, a potem ją odkryj i sprawdź się. </span>}
+    <span class="k-lbl">Jak czytać tę tabelę:</span> <slot />
+  </figcaption>
+</figure>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-tpz]').forEach((box) => {
+    const total = box.querySelectorAll('thead [data-col]').length;
+    if (!total) return;
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-tpz]') === box) el.hidden = false; });
+    const ctl = box.querySelector<HTMLElement>(':scope > .k-tp-ctl')!;
+    let shown = 0;
+    const render = () => {
+      box.querySelectorAll<HTMLElement>('tbody [data-col]').forEach((td) => td.classList.toggle('k-tp-hid', Number(td.dataset.col) >= shown));
+      box.querySelectorAll<HTMLElement>('.k-tpz-w [data-col]').forEach((li) => (li.hidden = Number(li.dataset.col) >= shown));
+      if (shown >= total) ctl.hidden = true;
+      else ctl.querySelector('[data-next]')!.textContent = `Odkryj kolumnę ${shown + 1} z ${total}`;
+    };
+    ctl.querySelector('[data-next]')!.addEventListener('click', () => { shown++; render(); });
+    ctl.querySelector('[data-all]')!.addEventListener('click', () => { shown = total; render(); });
+    render();
+  });
+</script>
+
+<style>
+  .k-tpz-x{font-family:var(--mono);font-weight:800;color:#fff;background:rgba(255,255,255,.03);}
+  .k-tpz-w{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px 18px;font-size:.92rem;}
+  .k-tpz-w li{padding:4px 10px;border-left:2px solid var(--gold);background:rgba(255,216,74,.06);}
+</style>

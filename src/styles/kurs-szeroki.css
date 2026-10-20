@@ -1,0 +1,90 @@
+/* ===== Szeroki układ na komputerze + elementy wspólne nowszych modułów =====
+   Moduł z `wyglad: szeroki` we frontmatterze dostaje klasę .k-szeroki na .k-shell (layouts/Kurs.astro).
+   Tekst zostaje w kolumnie do czytania (długie linijki męczą), a rysunki, tabele i rachunki dostają całą szerokość.
+   Kolory jak w całym kursie (styles/global.css): turkus, złoto, fiolet, róż, zieleń „ok”. */
+
+/* informacja o większym ekranie — we wszystkich modułach, tylko na wąskich ekranach */
+.k-ekran{display:none;margin:0 0 18px;padding:10px 14px;font-size:.88rem;line-height:1.55;color:#c9c3e6;border-left:2px solid rgba(39,232,255,.45);background:rgba(255,255,255,.03);max-width:700px;}
+@media(max-width:760px){.k-ekran{display:block;}}
+
+/* --- szeroki układ --- */
+.k-szeroki.k-shell{max-width:1520px;}
+@media(min-width:1100px){
+  .k-szeroki .k-grid{grid-template-columns:220px minmax(0,1fr);gap:52px;}
+  .k-szeroki .k-prose>:is(p,ul,ol:not(.k-odp),h3,h4,blockquote,.k-ramka,.k-rozbior,.k-pyt,.k-klas,.k-pol,.k-symbole,.k-ct,.k-leg,.k-ekran,.k-anchor+p){max-width:840px;}
+  .k-szeroki .k-after{max-width:none;margin-left:272px;}
+}
+
+/* chmurka z podpowiedzią (lib/podpowiedzi.ts) — np. wzór reguły po najechaniu na etykietę „reguła 4” */
+.k-tip{position:fixed;z-index:60;width:max-content;max-width:min(420px,calc(100vw - 16px));padding:10px 14px 8px;background:#15131d;
+  border:1px solid rgba(255,255,255,.14);border-radius:6px;box-shadow:0 12px 32px rgba(0,0,0,.6);color:#e8e6f3;font-size:.86rem;line-height:1.5;pointer-events:auto;}
+.k-tip[hidden]{display:none!important;}
+.k-tip-i{display:block;}
+.k-tip-i+.k-tip-i{margin-top:8px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);}
+.k-tip-h{display:block;font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#c3b1ff;margin-bottom:2px;}
+.k-tip-f{display:block;overflow-x:auto;}
+.k-tip-f .katex-display{margin:.2em 0!important;text-align:left;}
+.k-tip-f .katex-display>.katex{text-align:left;}
+.k-tip-p{display:block;color:#cfcae4;margin-top:2px;}
+
+/* małe wykresy SVG (lib/wykres.js) */
+.k-w{display:block;width:100%;height:auto;}
+.k-w-os{stroke:rgba(255,255,255,.32);stroke-width:1.2;}
+.k-w-siatka{stroke:rgba(255,255,255,.055);stroke-width:1;}
+.k-w-podz{fill:var(--muted);font-size:13px;font-family:'Inter',system-ui,sans-serif;}
+.k-w-nazwa{fill:#cfcae4;font-size:15px;font-style:italic;font-family:'Times New Roman',serif;}
+.k-w-krzywa{fill:none;stroke:#c6c2d6;stroke-width:2.6;stroke-linejoin:round;}
+.k-w-et{fill:#c6c2d6;font-size:14px;font-family:'Inter',system-ui,sans-serif;}
+.k-w-a{stroke:#27e8ff;} .k-w-b{stroke:#5ad1a0;} .k-w-c{stroke:#a78bfa;} .k-w-r{stroke:#ff2e97;}
+/* podpisy: ta — turkus (o ile w górę), tb — zieleń (rośnie), tc — fiolet (krok w prawo), tr — róż (maleje), tw — biały, tm — przygaszony */
+.k-w-ta{fill:#27e8ff;} .k-w-tb{fill:#5ad1a0;} .k-w-tc{fill:#c3b1ff;} .k-w-tr{fill:#ff6fb5;} .k-w-tw{fill:#f2f0fa;} .k-w-tm{fill:var(--muted);}
+.k-w-styczna{stroke:#f2f0fa;stroke-width:2.2;}
+.k-w-pkt{fill:#f2f0fa;stroke:var(--ink);stroke-width:1.5;}
+.k-w-t{font-size:14px;font-family:'Inter',system-ui,sans-serif;}
+.k-w-tbig{font-size:15px;font-weight:600;font-family:'Inter',system-ui,sans-serif;}
+
+/* ===== moduł 9: tabele znaków i tabele zmienności (HTML z lib/zmiennosc.js) ===== */
+.k-znt{container-type:inline-size;margin:4px 0;}
+.k-zn-tab{border-collapse:collapse;font-size:.92rem;}
+.k-zn-tab th,.k-zn-tab td{border:1px solid rgba(255,255,255,.14);padding:6px 9px;text-align:center;vertical-align:middle;white-space:nowrap;}
+.k-zn-tab th{font-weight:500;color:var(--text);background:rgba(255,255,255,.035);}
+.k-zn-tab .katex{font-size:1em!important;}
+.k-zn-tab tr.is-x th.is-pkt,.k-zn-tab tr.is-pkt>th{color:#c3b1ff;}
+.k-zn-tab tr.is-pr td,.k-zn-tab tr.is-pr th{font-size:.78rem;color:var(--muted);font-weight:400;}
+.k-zn-pr{display:block;font-size:.76rem;color:var(--muted);font-weight:400;}
+.k-zn-tab tr.is-wyn th,.k-zn-tab tr.is-wyn td,.k-zn-tab td.is-wyn{font-weight:700;background:rgba(255,255,255,.05);}
+.k-zn-tab td{font-family:var(--mono);font-size:1rem;}
+.k-znt.is-r1 td.is-plus{color:#5ad1a0;} .k-znt.is-r1 td.is-minus{color:#ff6fb5;}
+.k-znt.is-r2 td.is-plus{color:#27e8ff;} .k-znt.is-r2 td.is-minus{color:#ffd84a;}
+.k-zn-tab td.is-zero{color:#fff;}
+.k-zn-tab td.is-wykl{color:var(--muted2);}
+.k-zn-tab td.is-ksz{font-size:1.15rem;}
+.k-zn-tab td.is-wn{font-family:inherit;font-size:.86rem;font-weight:700;color:#fff;}
+.k-zn-tab td.is-przeg{color:#c3b1ff;}
+.k-zn-tab td.is-brak{color:var(--muted);}
+.k-znt .is-v{display:none;}
+.k-zn-tab.is-v th:first-child{text-align:left;}
+/* za wąsko na tabelę poziomą (liczba kolumn → próg) — tabela pionowa: wiersz = przedział albo punkt */
+@container (max-width: 340px){ .k-znt.is-w3 .is-h{display:none;} .k-znt.is-w3 .is-v{display:table;} }
+@container (max-width: 470px){ .k-znt.is-w5 .is-h{display:none;} .k-znt.is-w5 .is-v{display:table;} }
+@container (max-width: 610px){ .k-znt.is-w7 .is-h{display:none;} .k-znt.is-w7 .is-v{display:table;} }
+@container (max-width: 760px){ .k-znt.is-w9 .is-h{display:none;} .k-znt.is-w9 .is-v{display:table;} }
+@container (max-width: 920px){ .k-znt.is-w11 .is-h{display:none;} .k-znt.is-w11 .is-v{display:table;} }
+
+/* wykresy zadań (lib/zmiennosc.js: wykresSvg) */
+.k-zw{max-width:460px;}
+.k-w-z{stroke:#ffd84a;}
+.k-w-asym{stroke:rgba(255,255,255,.35);stroke-width:1.2;stroke-dasharray:5 5;}
+.k-w-pkt.is-p{fill:#a78bfa;}
+.k-w-pkt.is-brak{fill:var(--ink);stroke:#f2f0fa;stroke-width:2;}
+.k-w-etp{fill:#f2f0fa;paint-order:stroke;stroke:var(--ink);stroke-width:4px;stroke-linejoin:round;}
+.k-w-etp.is-p{fill:#c3b1ff;}
+.k-w-etp.is-brak{fill:var(--muted);font-size:13px;}
+.k-w-pas{fill:rgba(255,255,255,.06);}
+.k-w-pas.is-c{fill:rgba(167,139,250,.2);}
+.k-w-styczna.is-przer{stroke-dasharray:7 5;}
+.k-w-prow{stroke:rgba(195,177,255,.55);stroke-width:1.2;stroke-dasharray:2 4;}
+.k-w-tg{fill:#ffd84a;}
+.k-wyk-para{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:4px 28px;align-items:start;}
+.k-wyk-para>.k-fig{margin-top:.6em;margin-bottom:.6em;}
+.k-wyk-para.is-3{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));}

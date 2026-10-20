@@ -1,0 +1,19 @@
+---
+// Statyczny wykres funkcji (lib/zmiennosc.js: wykresSvg) z legendą i podpisem „Jak czytać” w slocie.
+// Kolorowe kawałki krzywej, asymptoty pionowe, punkty z etykietami, pasy w tle, odcinki stycznych, napisy.
+import { wykresSvg } from '../../../lib/zmiennosc.js';
+import Legenda from '../Legenda.astro';
+interface Props { dane: any; leg?: [string, string][]; male?: boolean }
+const { dane, leg = [], male = false } = Astro.props;
+const svg = wykresSvg(dane);
+---
+<figure class:list={['k-fig', 'k-wyk', { 'is-male': male }]}>
+  <div class="k-wyk-svg" set:html={svg} />
+  {leg.length > 0 && <Legenda items={leg} />}
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<style>
+  .k-wyk-svg :global(svg){max-width:460px;margin:0;}
+  .k-wyk.is-male .k-wyk-svg :global(svg){max-width:340px;}
+</style>

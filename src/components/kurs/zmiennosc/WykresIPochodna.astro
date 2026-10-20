@@ -1,0 +1,60 @@
+---
+// Dwa wykresy jeden pod drugim, ze wspólną osią x: funkcja i jej pochodna (rzad 1) albo funkcja i druga pochodna (rzad 2).
+// Przedziały między zerami pochodnej mają w obu wykresach ten sam kolor, a przerywane pionowe linie łączą zera pochodnej
+// z punktami na wykresie funkcji — widać, że znak pochodnej „steruje” wykresem funkcji. Statyczny rysunek, liczony przy buildzie.
+import { wykresSvg } from '../../../lib/zmiennosc.js';
+import { tex } from '../../../lib/tex.js';
+import Legenda from '../Legenda.astro';
+interface Props {
+  fn: (x: number) => number; dfn: (x: number) => number; rzad?: number;
+  okno: { x0: number; x1: number }; yf: [number, number]; yd: [number, number];
+  kx?: number; kyf?: number; kyd?: number; zera: number[]; nazwaF: string; nazwaD: string;
+  punkty?: { x: number; t: string; dx?: number; dy?: number; anchor?: string }[];
+}
+const { fn, dfn, rzad = 1, okno, yf, yd, kx = 1, kyf = 1, kyd = 1, zera, nazwaF, nazwaD, punkty = [] } = Astro.props;
+const brzegi = [okno.x0, ...zera, okno.x1];
+const kl = (z: number) => (rzad === 1 ? (z > 0 ? 'k-w-b' : 'k-w-r') : z > 0 ? 'k-w-a' : 'k-w-z');
+const przedzialy = brzegi.slice(1).map((b, i) => { const a = brzegi[i]; const z = Math.sign(dfn((a + b) / 2)); return { od: a, do: b, z, kl: kl(z) }; });
+const znakT = (z: number) => (z > 0 ? '+' : '−');
+const kszT = (z: number) => (rzad === 1 ? (z > 0 ? '↗' : '↘') : z > 0 ? '∪' : '∩');
+const tk = (z: number) => (rzad === 1 ? (z > 0 ? 'k-w-tb' : 'k-w-tr') : z > 0 ? 'k-w-ta' : 'k-w-tg');
+const gora = (y: [number, number]) => y[1] - (y[1] - y[0]) * 0.12;
+const dol = (y: [number, number]) => y[0] + (y[1] - y[0]) * 0.05;
+// środek przedziału do podpisu; gdy wypada przy osi y, przesuwamy go w stronę dłuższej części przedziału
+const srodek = (p: { od: number; do: number }) => { const m = (p.od + p.do) / 2, szer = okno.x1 - okno.x0; if (Math.abs(m) > szer * 0.06) return m; return p.do > -p.od ? Math.min(p.do, okno.x1) * 0.5 : Math.max(p.od, okno.x0) * 0.5; };
+const svgF = wykresSvg({
+  fn, okno: { ...okno, y0: yf[0], y1: yf[1] }, kx, ky: kyf, h: 250,
+  kawalki: przedzialy, prowadnice: zera,
+  punkty: punkty.map((p) => ({ ...p, y: fn(p.x), kl: rzad === 1 ? 'is-e' : 'is-p' })),
+  napisy: przedzialy.map((p) => ({ x: srodek(p), y: gora(yf), t: kszT(p.z), kl: `k-w-tbig ${tk(p.z)}` })),
+});
+const svgD = wykresSvg({
+  fn: dfn, okno: { ...okno, y0: yd[0], y1: yd[1] }, kx, ky: kyd, h: 190,
+  kawalki: przedzialy, prowadnice: zera,
+  punkty: zera.map((x) => ({ x, y: 0, kl: 'is-brak', t: '0', dy: -10, dx: 10, anchor: 'start' })),
+  napisy: przedzialy.map((p) => ({ x: srodek(p), y: p.z > 0 ? gora(yd) : dol(yd), t: znakT(p.z), kl: `k-w-tbig ${tk(p.z)}` })),
+});
+const leg: [string, string][] = rzad === 1
+  ? [['ok', 'pochodna dodatnia („+”) — funkcja rośnie (↗)'], ['roz', 'pochodna ujemna („−”) — funkcja maleje (↘)'], ['fiolet', 'przerywana linia: pochodna równa zero']]
+  : [['cyan', 'druga pochodna dodatnia („+”) — wykres wypukły (∪)'], ['zloto', 'druga pochodna ujemna („−”) — wykres wklęsły (∩)'], ['fiolet', 'przerywana linia: druga pochodna równa zero']];
+---
+<figure class="k-fig k-wip">
+  <div class="k-wip-p">
+    <p class="k-wip-n">wykres funkcji <span set:html={tex(nazwaF)} /></p>
+    <div set:html={svgF} />
+  </div>
+  <div class="k-wip-p">
+    <p class="k-wip-n">wykres {rzad === 1 ? 'pochodnej' : 'drugiej pochodnej'} <span set:html={tex(nazwaD)} /></p>
+    <div set:html={svgD} />
+  </div>
+  <Legenda items={leg} />
+  <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>
+</figure>
+
+<style>
+  .k-wip-p{max-width:460px;}
+  .k-wip-p + .k-wip-p{margin-top:4px;}
+  .k-wip-n{margin:0 0 2px!important;font-size:.84rem;color:var(--muted);}
+  .k-wip-n :global(.katex){font-size:1.02em;color:var(--text);}
+  .k-wip :global(svg){display:block;width:100%;height:auto;}
+</style>

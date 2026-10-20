@@ -1,0 +1,49 @@
+---
+import '../styles/tailwind.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = 'Unicorner — materiały do egzaminów',
+  description = 'Fiszki, zadania i quizy do egzaminów. Zrobione po ludzku przez studentów, dla studentów.',
+} = Astro.props;
+// Domyślne canonical + og: dla stron bez własnych. Strony ze slotem "head" (kursy, Wiedza, generator, talia)
+// ustawiają je same, więc tam ich nie dublujemy.
+const ownHead = Astro.slots.has('head');
+const canonical = new URL(Astro.url.pathname, Astro.site).href; // build.format 'file' -> /foo.html
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <!-- Cloudflare Web Analytics — bez ciasteczek, bez bannera zgody, nie sledzi miedzy witrynami -->
+    <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "6fc25d3473eb493fb665fb08cb75aa5b"}'></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {!ownHead && (
+      <>
+        <link rel="canonical" href={canonical} />
+        <meta property="og:type" content="website" />
+        <meta property="og:title" content={title} />
+        <meta property="og:description" content={description} />
+        <meta property="og:url" content={canonical} />
+        <meta property="og:locale" content="pl_PL" />
+      </>
+    )}
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Chakra+Petch:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Exo+2:wght@500;600;700;800&family=Audiowide&family=Syncopate:wght@700&family=Bebas+Neue&display=swap"
+      rel="stylesheet"
+    />
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

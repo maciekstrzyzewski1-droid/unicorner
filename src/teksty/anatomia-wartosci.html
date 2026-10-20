@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia wartości</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;color:#fff;}
+strong{font-weight:600;color:#fff;}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;}
+.box p{margin:0 0 12px;font-size:.95rem;line-height:1.6;} .box p:last-child{margin-bottom:0;}
+.box.warn{border-color:var(--red);} .box.warn .bt{color:var(--red);}
+/* liczby */
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 132px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+/* wykres słupkowy poziomy */
+.bars{margin:30px 0;} .bars .bt{font-family:'Fraunces',serif;color:#fff;margin-bottom:14px;font-size:1.05rem;}
+.bars .sub{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:18px 0 10px;}
+.bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.red{background:var(--red);} .bars .fill.blue{background:var(--blue);} .bars .fill.green{background:var(--green);}
+.bars .val{flex:0 0 74px;text-align:right;font-variant-numeric:tabular-nums;}
+.caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+/* trzy źródła wzrostu */
+.flow{margin:32px 0;display:grid;gap:10px;}
+.flow .fb{border:1px solid var(--line);background:var(--card);padding:14px 18px;border-left:3px solid var(--gold);}
+.flow .fb.red{border-left-color:var(--red);} .flow .fb.green{border-left-color:var(--green);}
+.flow .ft{font-family:'Fraunces',serif;color:#fff;font-size:1.02rem;margin-bottom:4px;}
+.flow .fd{font-size:.9rem;line-height:1.55;color:var(--text);}
+/* dwie strony */
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .st{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:10px;}
+.twocol .side.a .st{color:var(--red);} .twocol .side.b .st{color:var(--green);}
+/* tabela */
+.tblwrap{margin:30px 0;overflow-x:auto;}
+table.tbl{width:100%;border-collapse:collapse;font-size:.84rem;line-height:1.45;}
+table.tbl th,table.tbl td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top;}
+table.tbl th{background:var(--card);color:var(--gold);font-weight:600;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;}
+table.tbl td:first-child{color:var(--muted);}
+/* kroki receptury */
+.steps{margin:32px 0;counter-reset:st;}
+.steps .s{border:1px solid var(--line);background:var(--card);padding:16px 18px 16px 62px;margin-bottom:10px;position:relative;}
+.steps .s:before{counter-increment:st;content:counter(st);position:absolute;left:18px;top:14px;font-family:'Fraunces',serif;font-size:1.6rem;color:var(--gold);line-height:1;}
+.steps .st{font-family:'Fraunces',serif;color:#fff;font-size:1.05rem;margin-bottom:6px;}
+.steps .sd{font-size:.9rem;line-height:1.58;}
+.steps .sd p{margin:0 0 8px;} .steps .sd p:last-child{margin-bottom:0;}
+.steps .flag{color:var(--red);}
+blockquote{margin:30px 0;padding:4px 0 4px 20px;border-left:2px solid var(--gold);font-family:'Fraunces',serif;font-size:1.15rem;line-height:1.5;color:#fff;}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+/* źródła — bez numeracji */
+ul.sources{list-style:none;padding:0;font-size:.85rem;color:var(--muted);line-height:1.6;}
+ul.sources li{margin-bottom:10px;padding-left:14px;border-left:1px solid var(--line);}
+ul.sources a{color:var(--muted);word-break:break-word;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+footer.end p{margin:0 0 12px;}
+/* objaśnienia pojęć z innych części */
+sup.ex{font-size:.66em;color:var(--gold);font-weight:600;cursor:pointer;padding:0 2px;line-height:0;}
+ol.explain{max-width:720px;margin:0 auto;padding:30px 22px 120px 46px;border-top:1px solid var(--line);font-size:.88rem;line-height:1.6;color:var(--muted);}
+ol.explain:before{content:"Objaśnienia";display:block;margin:0 0 16px -24px;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;}
+ol.explain li{margin-bottom:12px;padding-left:4px;}
+.ex-pop{position:absolute;z-index:10;max-width:320px;background:var(--card);border:1px solid var(--gold);padding:12px 14px;font-size:.85rem;line-height:1.55;color:var(--text);}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 96px;font-size:1.08rem;} .bars .lab{flex:0 0 96px;font-size:.78rem;} .bars .val{flex:0 0 60px;font-size:.78rem;} .twocol{grid-template-columns:1fr;} .steps .s{padding-left:52px;} .steps .s:before{left:14px;} table.tbl{font-size:.78rem;} table.tbl th,table.tbl td{padding:7px 7px;} .ex-pop{left:16px!important;right:16px;max-width:none;}}
+</style>
+</head>
+<body><div class="wrap">
+<header class="top">
+  <div class="kicker">Artykuł badawczy · Seria krypto, część ósma</div>
+  <h1>Anatomia wartości</h1>
+  <p class="lede">W protokołach kryptowalutowych leżą miliardy dolarów, a ich tokeny potrafią stracić 80% wartości. Ten tekst rozkłada na części, co naprawdę mierzą TVL, opłaty i przychody. Pokazuje, dlaczego kapitał w projekcie to nie to samo co popyt na jego token. I kończy się recepturą, według której da się szukać kryptowalut z potencjałem bez zgadywania.</p>
+  <div class="meta">Październik 2026 · czas czytania ok. 28 minut</div>
+</header>
+
+<p>24 września 2026 roku The Clearing House ogłosiła, że wybrała firmę Quant. To izba rozliczeniowa należąca do największych banków w Stanach Zjednoczonych. Quant ma dostarczyć warstwę, która połączy jej nową sieć tokenizowanych depozytów z istniejącymi systemami płatności. Tokenizowany depozyt to zwykły depozyt bankowy zapisany w formie tokena na blockchainie. Sieć nazywa się On-Chain Money Initiative i według izby ma być dostępna dla banków w pierwszej połowie 2027 roku.</p>
+
+<p>Token QNT był już wtedy w ruchu. 16 sierpnia tydzień zamknął się na poziomie około 57 dolarów. 7 października QNT kosztował około 240 dolarów. To wzrost o ponad 320% w siedem tygodni.</p>
+
+<p>Ujawniam od razu: też na tym zarobiłem. Kupiłem QNT po około 50 dolarów, a część sprzedałem przy 270. Kto pisze o tokenie, który ma w portfelu, powinien to powiedzieć na początku.</p>
+
+<p>A teraz szczegół, który łatwo przeoczyć. Ani izba, ani Quant nie napisały w komunikatach z 24 września, że banki będą musiały kupić choćby jeden token QNT. Bank może korzystać z oprogramowania firmy. Token może zostać obok tej historii.</p>
+
+<p>Quant od lat wiąże część swoich opłat z tokenem. W grudniu 2021 roku ogłosił na przykład, że roczna licencja na produkcyjną wersję swojej platformy Overledger będzie płatna w QNT. Czy podobna zasada obejmie sieć banków, na razie nie wiadomo.</p>
+
+<p>Czy to znaczy, że wzrost był pomyłką? Niekoniecznie. Znaczy tylko, że cena zareagowała na opowieść, zanim ktokolwiek sprawdził mechanizm.</p>
+
+<p>I to jest temat tego tekstu. W krypto ciągle mylimy dwa pytania. Pierwsze: czy projekt jest używany? Drugie: czy jego token na tym zarabia? Na pierwsze odpowiadają statystyki takie jak TVL. Na drugie — coś zupełnie innego.</p>
+
+<p>Przez długi czas sam patrzyłem głównie na TVL w serwisie DefiLlama. I długo nie rozumiałem, dlaczego Ondo, z ponad trzema miliardami dolarów w tokenizowanych aktywach, ma token, który od szczytu stracił ponad trzy czwarte wartości. Ten tekst jest odpowiedzią na to pytanie. Wszystkie liczby pochodzą ze stanu na 7 października 2026 roku.</p>
+
+<div class="box warn">
+  <div class="bt">Zastrzeżenie</div>
+  <p><strong>To nie jest porada inwestycyjna.</strong> Tekst ma wyłącznie charakter edukacyjny. Nie stanowi rekomendacji kupna ani sprzedaży żadnego kryptoaktywa ani innego instrumentu finansowego, nie jest ofertą i nie uwzględnia niczyjej sytuacji finansowej, celów ani skłonności do ryzyka.</p>
+  <p><strong>Ryzyko jest bardzo wysokie.</strong> Kryptoaktywa są skrajnie zmienne i mogą stracić całą wartość. Opisane wskaźniki i receptura nie gwarantują zysku. Przeszłe zachowanie cen nie mówi nic pewnego o przyszłych.</p>
+  <p><strong>Brak odpowiedzialności.</strong> Autor ani serwis Unicorner nie ponoszą odpowiedzialności za decyzje podjęte na podstawie tego tekstu ani za wynikające z nich straty. Decyzje inwestycyjne podejmuje się samodzielnie, na własne ryzyko, najlepiej po konsultacji z licencjonowanym doradcą.</p>
+  <p><strong>Konflikt interesów.</strong> Autor posiada token QNT. Dane pochodzą z DefiLlama i CoinMarketCap ze stanu na 7 października 2026 roku i mogą się szybko zmienić.</p>
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Co właściwie mierzy TVL</h2>
+
+<p>TVL to skrót od angielskiego <em>total value locked</em>, czyli „całkowita zablokowana wartość”. To suma wartości wszystkich aktywów, które użytkownicy wpłacili do inteligentnych kontraktów danego protokołu. Inteligentny kontrakt to program na blockchainie. Sam przechowuje pieniądze i sam wykonuje zapisane w nim reguły — na przykład udziela pożyczki pod zastaw albo wymienia jeden token na drugi.</p>
+
+<p>Najpopularniejszym źródłem TVL jest DefiLlama. Jej metodologia jest dość rygorystyczna. Liczy tylko aktywa leżące w kontraktach na blockchainie. Nie liczy dolarów trzymanych na kontach bankowych emitenta stablecoina<sup class="ex" data-ex="stablecoin">1</sup>. Nie liczy też zwykłego stakingu, czyli blokowania tokenów w celu zabezpieczania sieci. Własne tokeny protokołu, pożyczone środki i tokeny jeszcze niewydane trafiają do osobnych kategorii, które można włączyć lub wyłączyć. DefiLlama usuwa też sztuczną płynność, na przykład pule bez żadnego handlu.</p>
+
+<p>Mimo to TVL najłatwiej zrozumieć przez porównanie z bankiem. TVL przypomina sumę depozytów. Mówi, ile pieniędzy ludzie powierzyli instytucji. Nie mówi, ile instytucja na nich zarabia. Nie mówi też, ile z tego zarobku dostaną jej właściciele. W przypadku protokołu właścicielami są — w pewnym przybliżeniu — posiadacze jego tokena.</p>
+
+<p>Jest jeszcze jedna różnica. Depozytu w banku zwykle nie da się wypłacić w sekundę bez żadnych warunków. W zdecentralizowanych finansach, czyli DeFi, przeważnie się da. TVL jest więc liczbą chwilową. Kapitał, który dziś leży w protokole, jutro może leżeć w innym.</p>
+
+<h3>Trzy powody, dla których TVL rośnie</h3>
+
+<p>Kiedy TVL idzie w górę, mogą za tym stać trzy zupełnie różne zjawiska. Tylko jedno z nich mówi o rosnącym popycie.</p>
+
+<div class="flow">
+  <div class="fb green"><div class="ft">Nowy kapitał</div><div class="fd">Ktoś wpłaca do protokołu stablecoiny, bitcoina albo tokenizowane obligacje. To jedyny wzrost, który oznacza, że przybyło użytkowników lub pieniędzy.</div></div>
+  <div class="fb"><div class="ft">Wzrost cen</div><div class="fd">W kontraktach leżą tokeny, które drożeją. TVL liczony w dolarach rośnie, choć nikt nic nowego nie wpłacił. Gdy ceny spadną, TVL spadnie tak samo.</div></div>
+  <div class="fb red"><div class="ft">Dźwignia i podwójne liczenie</div><div class="fd">Te same pieniądze krążą między protokołami i w statystyce pojawiają się kilka razy. TVL rośnie, choć z zewnątrz przybyło niewiele.</div></div>
+</div>
+
+<p>Trzeci mechanizm wymaga wyjaśnienia. Załóżmy, że wpłacam ETH do protokołu A. W zamian dostaję token potwierdzający depozyt — coś jak kwit z przechowalni. Ten kwit wpłacam do protokołu B jako zabezpieczenie pożyczki. Pożyczone stablecoiny wpłacam do protokołu C. Z zewnątrz przyszło jedno ETH. W kontraktach widać trzy depozyty.</p>
+
+<p>DefiLlama ma reguły, które ograniczają takie liczenie w obrębie pojedynczego protokołu. Skala zjawiska w całym ekosystemie okazała się jednak ogromna. Badacze z University College London, Nanyang Technological University i DLT Science Foundation zaproponowali inną miarę. Nazwali ją TVR, od <em>total value redeemable</em>. To wartość, którą da się z systemu ostatecznie wyjąć, gdy rozplącze się wszystkie kwity i pożyczki. Praca jest udostępniona jako preprint, czyli nie przeszła jeszcze recenzji w czasopiśmie.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">139,87 mld $</div><div class="d">Różnica między TVL a TVR całego DeFi 2 grudnia 2021 roku, w szczycie poprzedniej hossy.</div></div>
+  <div class="nrow"><div class="n">ok. 2 : 1</div><div class="d">Stosunek TVL do TVR w tym samym dniu. Mniej więcej połowa „zablokowanej wartości” była tymi samymi pieniędzmi policzonymi ponownie.</div></div>
+  <div class="nrow"><div class="n">+1 mld $</div><div class="d">O tyle mocniej spada TVL niż TVR przy 25-procentowym spadku ceny ETH. Dźwignia sprawia, że TVL reaguje na spadki ponadproporcjonalnie.</div></div>
+</div>
+<p class="caption">Źródło: Luo, Feng, Xu, Tasca, „Piercing the Veil of TVL: DeFi Reappraised”, preprint arXiv.</p>
+
+<p>Bank Rozrachunków Międzynarodowych opisał to samo zjawisko od strony ryzyka. W analizie z grudnia 2021 roku jego ekonomiści zauważyli, że DeFi służy głównie spekulacji i arbitrażowi między kryptoaktywami. Zauważyli też, że pożyczone środki można ponownie użyć jako zabezpieczenia, co spiętrza dźwignię.</p>
+
+<p>Wniosek z tego rozdziału jest prosty. TVL odpowiada na pytanie „ile kapitału tu leży”. Nie odpowiada na pytanie „ile z tego ma posiadacz tokena”. Jak duża bywa ta różnica, najlepiej widać na przykładzie Avalanche.</p>
+
+<h2><span class="num">Rozdział drugi</span>Avalanche, czyli TVL kupiony za tokeny</h2>
+
+<p>18 sierpnia 2021 roku fundacja Avalanche ogłosiła program Avalanche Rush. Przeznaczyła na niego 180 milionów dolarów w tokenach AVAX. Pieniądze miały trafić do użytkowników jako nagrody za wpłacanie kapitału do protokołów na tej sieci. W pierwszej fazie dostały je Aave, Curve i lokalny protokół pożyczkowy BENQI.</p>
+
+<p>Takie nagrody nazywa się <em>liquidity mining</em>, czyli „wydobywaniem płynności”. Działa to jak promocyjne oprocentowanie lokaty. Kapitał przychodzi po nagrodę. Kiedy nagroda się kończy, kapitał zwykle odchodzi tam, gdzie płacą więcej.</p>
+
+<p>W dniu ogłoszenia TVL Avalanche wynosił 285 milionów dolarów. 2 grudnia 2021 roku sięgnął 11,49 miliarda. To wzrost czterdziestokrotny w niespełna cztery miesiące. Pod koniec 2022 roku TVL wynosił 768 milionów dolarów, o 93% mniej niż w szczycie.</p>
+
+<p>Na ten skok złożyły się dwa z trzech mechanizmów z poprzedniego rozdziału. Nagrody przyciągały kapitał. Jednocześnie AVAX drożał, więc tokeny AVAX leżące w kontraktach były warte coraz więcej. TVL i cena nakręcały się nawzajem — w górę, a potem w dół.</p>
+
+<div class="bars">
+  <div class="bt">Avalanche: TVL i cena AVAX w wybranych dniach</div>
+  <div class="sub">TVL sieci (mln $)</div>
+  <div class="row"><div class="lab">18.08.2021</div><div class="track"><div class="fill" style="width:2.5%"></div></div><div class="val">285</div></div>
+  <div class="row"><div class="lab">02.12.2021</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">11 494</div></div>
+  <div class="row"><div class="lab">30.06.2022</div><div class="track"><div class="fill" style="width:18.6%"></div></div><div class="val">2 138</div></div>
+  <div class="row"><div class="lab">31.12.2022</div><div class="track"><div class="fill" style="width:6.7%"></div></div><div class="val">768</div></div>
+  <div class="row"><div class="lab">15.03.2024</div><div class="track"><div class="fill" style="width:10.4%"></div></div><div class="val">1 197</div></div>
+  <div class="row"><div class="lab">05.10.2025</div><div class="track"><div class="fill" style="width:19.8%"></div></div><div class="val">2 272</div></div>
+  <div class="row"><div class="lab">06.10.2026</div><div class="track"><div class="fill" style="width:5.6%"></div></div><div class="val">646</div></div>
+  <div class="sub">Cena AVAX ($)</div>
+  <div class="row"><div class="lab">18.08.2021</div><div class="track"><div class="fill blue" style="width:19.8%"></div></div><div class="val">23,6</div></div>
+  <div class="row"><div class="lab">02.12.2021</div><div class="track"><div class="fill blue" style="width:100%"></div></div><div class="val">119,3</div></div>
+  <div class="row"><div class="lab">30.06.2022</div><div class="track"><div class="fill blue" style="width:14.8%"></div></div><div class="val">17,7</div></div>
+  <div class="row"><div class="lab">31.12.2022</div><div class="track"><div class="fill blue" style="width:9.1%"></div></div><div class="val">10,9</div></div>
+  <div class="row"><div class="lab">15.03.2024</div><div class="track"><div class="fill blue" style="width:45.4%"></div></div><div class="val">54,2</div></div>
+  <div class="row"><div class="lab">05.10.2025</div><div class="track"><div class="fill blue" style="width:25.2%"></div></div><div class="val">30,1</div></div>
+  <div class="row"><div class="lab">06.10.2026</div><div class="track"><div class="fill blue" style="width:9.3%"></div></div><div class="val">11,1</div></div>
+  <div class="caption">Źródło: DefiLlama (historyczny TVL sieci i ceny). Między marcem 2024 a październikiem 2025 TVL wzrósł o 90%, a cena AVAX spadła o 44%.</div>
+</div>
+
+<p>Najciekawszy jest drugi epizod na wykresie. W marcu 2024 roku TVL Avalanche wynosił 1,2 miliarda dolarów, a AVAX kosztował 54 dolary. W październiku 2025 roku TVL doszedł do 2,27 miliarda, najwyżej od 2022 roku. AVAX kosztował wtedy 30 dolarów. Kapitału przybyło, a token potaniał.</p>
+
+<p>Pierwsze wyjaśnienie to podaż. W listopadzie 2021 roku w obiegu było 224 miliony AVAX. W październiku 2026 roku jest ich 443 miliony, prawie dwa razy więcej. Cena tokena to kapitalizacja podzielona przez liczbę tokenów w obiegu. Gdyby AVAX miał dziś kapitalizację z 21 listopada 2021 roku, czyli 28,8 miliarda dolarów, kosztowałby około 65 dolarów, a nie 129 jak wtedy. Samo dosypanie nowych tokenów obniżyłoby więc cenę o połowę, nawet gdyby wartość całej sieci się nie zmieniła. To obliczenie własne na danych CoinMarketCap.</p>
+
+<p>Drugie wyjaśnienie to opłaty. 7 października 2026 roku sieć Avalanche zebrała w ciągu doby 22,5 tysiąca dolarów opłat transakcyjnych. Kapitalizacja AVAX wynosiła prawie 5 miliardów dolarów. Nawet gdyby każdy dolar opłat trafiał do posiadaczy tokena, rocznie dawałoby to około 8 milionów dolarów. To mniej więcej jedna sześćsetna kapitalizacji.</p>
+
+<p>Avalanche nie jest tu wyjątkiem. To typowy przypadek. Żeby zobaczyć, gdzie naprawdę płyną pieniądze, trzeba zejść poziom niżej — do opłat i przychodów.</p>
+
+<h2><span class="num">Rozdział trzeci</span>Lejek pieniędzy: opłaty, przychód i to, co dociera do tokena</h2>
+
+<p>Na stronie każdego protokołu DefiLlama pokazuje kilka liczb, które wyglądają podobnie, a znaczą co innego. Najlepiej czytać je jak lejek. Na górze są wszystkie pieniądze, które płacą użytkownicy. Na dole — to, co realnie trafia do posiadacza tokena.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">Opłaty</div><div class="d"><em>Fees</em>. Wszystko, co płacą użytkownicy za korzystanie z protokołu. Na giełdzie zdecentralizowanej to prowizje od wymiany. W protokole pożyczkowym — odsetki płacone przez pożyczkobiorców.</div></div>
+  <div class="nrow"><div class="n">Przychód</div><div class="d"><em>Revenue</em>. Część opłat, którą zatrzymuje sam protokół. Reszta trafia do dostawców kapitału — pożyczkodawców i dostawców płynności.</div></div>
+  <div class="nrow"><div class="n">Przychód dla posiadaczy</div><div class="d"><em>Holders revenue</em>. Część przychodu, która dociera do posiadaczy tokena: przez odkup i spalenie tokenów, wypłatę za staking albo podobny mechanizm. To najważniejsza liczba w całym lejku.</div></div>
+  <div class="nrow"><div class="n">Zysk</div><div class="d"><em>Earnings</em>. Według definicji DefiLlama to przychód protokołu minus nagrody rozdane użytkownikom w tokenach. Jeśli nagrody są większe niż przychód, protokół w praktyce kupuje sobie kapitał za własny token.</div></div>
+</div>
+
+<p>Dobrą analogią jest kantor. Klienci płacą mu marżę przy wymianie — to opłaty. Większość marży trafia do ludzi, którzy wnieśli do kantoru gotówkę, bo bez niej nie byłoby czym handlować. Kantor zatrzymuje swoją część — to przychód. Wspólnicy kantoru dostają tylko to, co z tej części postanowią sobie wypłacić — to przychód dla posiadaczy. Zdecentralizowana giełda działa dokładnie tak. Dostawcy płynności wnoszą tokeny do puli i biorą większość prowizji. Protokół może zatrzymać ich ułamek. A to, czy ułamek trafi do posiadaczy tokena, rozstrzyga głosowanie.</p>
+
+<h3>Trzy protokoły, trzy różne lejki</h3>
+
+<p>Uniswap to jedna z największych zdecentralizowanych giełd. Przez lata cała prowizja trafiała do dostawców płynności, a posiadacze UNI nie dostawali nic. 25 grudnia 2025 roku przegłosowano propozycję nazwaną UNIfication. Za oddano ponad 125 milionów tokenów-głosów, przeciw — 742. Protokół zaczął zatrzymywać część opłat i przeznaczać je na odkup i spalenie UNI. Dodatkowo spalono jednorazowo 100 milionów UNI. Miało to odpowiadać temu, co zgromadziłoby się, gdyby mechanizm działał od początku.</p>
+
+<p>Aave to jeden z największych protokołów pożyczkowych, z TVL 18,8 miliarda dolarów. Zarabia, ale w ostatnich 30 dniach DefiLlama nie odnotowała przepływu do posiadaczy tokena. Przychód trafia do skarbca protokołu, w którym leży 140 milionów dolarów. Czy te pieniądze trafią kiedyś do posiadaczy AAVE, rozstrzygają kolejne głosowania.</p>
+
+<p>Ondo to zagadka ze wstępu. Na DefiLlama, po wpisaniu nazwy, wyskakuje kilka pozycji. „Ondo Finance (Combined)” to strona zbiorcza całej firmy. Pod nią są produkty: Ondo Yield Assets, czyli tokenizowane obligacje skarbowe USA (tokeny USDY i OUSG), Ondo Global Markets, czyli tokenizowane akcje, i Ondo Perps, czyli giełda kontraktów terminowych. Osobno widnieją Flux Finance, protokół pożyczkowy powiązany z Ondo, i Ondo v1 (Legacy), stary produkt bez kapitału. Przy produktach z obligacjami DefiLlama pokazuje zamiast TVL wartość aktywów w zarządzaniu, oznaczoną jako RWA AUM. To aktywa ze świata realnego zapisane w formie tokenów.</p>
+
+<div class="bars">
+  <div class="bt">Lejek pieniędzy w ostatnich 30 dniach (stan na 7.10.2026)</div>
+  <div class="sub">Uniswap</div>
+  <div class="row"><div class="lab">Opłaty</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">154,3 mln</div></div>
+  <div class="row"><div class="lab">Przychód</div><div class="track"><div class="fill" style="width:7.9%"></div></div><div class="val">12,3 mln</div></div>
+  <div class="row"><div class="lab">Dla posiadaczy</div><div class="track"><div class="fill green" style="width:7.9%"></div></div><div class="val">12,3 mln</div></div>
+  <div class="sub">Aave</div>
+  <div class="row"><div class="lab">Opłaty</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">37,6 mln</div></div>
+  <div class="row"><div class="lab">Przychód</div><div class="track"><div class="fill" style="width:13.1%"></div></div><div class="val">4,9 mln</div></div>
+  <div class="row"><div class="lab">Dla posiadaczy</div><div class="track"><div class="fill red" style="width:0%"></div></div><div class="val">0</div></div>
+  <div class="sub">Ondo Finance</div>
+  <div class="row"><div class="lab">Opłaty</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">6,4 mln</div></div>
+  <div class="row"><div class="lab">Przychód</div><div class="track"><div class="fill red" style="width:0%"></div></div><div class="val">0</div></div>
+  <div class="row"><div class="lab">Dla posiadaczy</div><div class="track"><div class="fill red" style="width:0%"></div></div><div class="val">0</div></div>
+  <div class="caption">Źródło: DefiLlama. Długość słupków liczona osobno dla każdego protokołu (opłaty = 100%). Kwoty w dolarach.</div>
+</div>
+
+<p>Ondo ma 3,14 miliarda dolarów aktywów i w ciągu 30 dni zebrało 6,36 miliona dolarów opłat. Według DefiLlama przychód protokołu wyniósł zero. Przychód dla posiadaczy tokena — także zero. Zakładka Token Rights, czyli „prawa tokena”, mówi resztę. Token ONDO daje prawo głosu. Mechanizm dzielenia się opłatami jest wyłączony. Nie ma odkupu ani dywidend. Podobnie opisuje to dokument informacyjny o tokenie, przygotowany w 2026 roku przez kanadyjską platformę Newton: ONDO służy do głosowania i stakingu, ale nie daje prawa do przychodów ani zysków firmy.</p>
+
+<p>To rozwiązuje zagadkę ze wstępu. Aktywa Ondo mogą urosnąć dziesięciokrotnie, a do posiadacza ONDO z tego tytułu bezpośrednio nie trafi ani jeden dolar. Do tego w obiegu jest dopiero 4,87 miliarda z 10 miliardów tokenów. W marcu 2024 roku było ich 1,39 miliarda — od tamtej pory podaż w obiegu wzrosła trzy i pół raza. ONDO kosztował 2,14 dolara 15 grudnia 2024 roku. 7 października 2026 roku kosztował 47 centów, o 78% mniej.</p>
+
+<p>Ondo nie jest przez to złą firmą. Może być świetną firmą. Ale cena tokena ONDO zależy od wiary, że kiedyś zmieni się jego model, a nie od miliardów w obligacjach.</p>
+
+<h3>Ile trafia do posiadacza na każde 100 dolarów</h3>
+
+<p>Z lejka da się zbudować prosty wskaźnik. Bierzemy przychód dla posiadaczy z 30 dni, mnożymy przez 12 i dzielimy przez kapitalizację. Wychodzi, ile dolarów rocznie trafia do posiadaczy tokena na każde 100 dolarów jego wartości rynkowej. To odpowiednik stopy dywidendy albo odwrotność wskaźnika cena do zysku, znanego z giełdy akcji.</p>
+
+<div class="bars">
+  <div class="bt">Roczny przepływ do posiadaczy na każde 100 $ kapitalizacji</div>
+  <div class="row"><div class="lab">UNI</div><div class="track"><div class="fill green" style="width:100%"></div></div><div class="val">2,90 $</div></div>
+  <div class="row"><div class="lab">AAVE — do posiadaczy</div><div class="track"><div class="fill red" style="width:0%"></div></div><div class="val">0 $</div></div>
+  <div class="row"><div class="lab">AAVE — do skarbca</div><div class="track"><div class="fill blue" style="width:76.7%"></div></div><div class="val">2,22 $</div></div>
+  <div class="row"><div class="lab">ONDO</div><div class="track"><div class="fill red" style="width:0%"></div></div><div class="val">0 $</div></div>
+  <div class="caption">Obliczenie własne: wartość z 30 dni × 12 ÷ kapitalizacja, dane DefiLlama z 7.10.2026. Dla UNI oznacza to wycenę około 35 razy wyższą niż roczny przepływ do posiadaczy. Trzydziestodniowe dane są zmienne — warto sprawdzić też dłuższe okresy.</div>
+</div>
+
+<p>Ten wskaźnik ma dwie ważne granice. Po pierwsze, porównuje się nim protokoły z tej samej kategorii — giełdy z giełdami, pożyczki z pożyczkami. Po drugie, sam z siebie nie przewiduje ceny. Zajmę się tym w rozdziale siódmym.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Łańcuchy: kto płaci za blok</h2>
+
+<p>Protokoły to jedno. Drugim piętrem są same blockchainy pierwszej warstwy, w skrócie L1: Ethereum, Avalanche, Stellar. Ich tokeny — ETH, AVAX, XLM — służą do płacenia za transakcje i do zabezpieczania sieci. Na stronach łańcuchów DefiLlama rozróżnia dwa rodzaje opłat.</p>
+
+<p><strong>Opłaty łańcucha</strong> to to, co użytkownicy płacą samej sieci za umieszczenie transakcji w bloku. Na Ethereum od 2021 roku działa mechanizm opisany w propozycji EIP-1559. Podstawowa część każdej opłaty jest spalana, czyli trwale usuwana z obiegu. Vitalik Buterin wyjaśniał, że chodziło o stabilniejsze opłaty i o to, by producentom bloków nie opłacało się nimi manipulować. Efektem ubocznym jest to, że aktywność sieci zmniejsza podaż ETH.</p>
+
+<p><strong>Opłaty aplikacji</strong> to to, co zarabiają protokoły działające na danym łańcuchu — giełdy, pożyczki, emitenci tokenów.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">713 tys. $</div><div class="d">Opłaty łańcucha Ethereum w ciągu doby. Według DefiLlama 289 tysięcy dolarów z tego trafiło do przychodu sieci, czyli zostało spalone. W skali roku daje to około 106 milionów.</div></div>
+  <div class="nrow"><div class="n">7,16 mln $</div><div class="d">Opłaty aplikacji działających na Ethereum w tej samej dobie. Użytkownicy płacą aplikacjom dziesięć razy więcej niż samej sieci.</div></div>
+  <div class="nrow"><div class="n">146,8 mld $</div><div class="d">Wartość stablecoinów na Ethereum. Do tego 14 miliardów dolarów w tokenizowanych aktywach ze świata realnego i 52,5 miliarda dolarów TVL.</div></div>
+</div>
+
+<p>Najbardziej uderzające jest jednak porównanie opłat łańcucha z kapitalizacją jego tokena. Gdyby przeliczyć dzisiejsze dobowe opłaty na rok, wyszłoby to tak:</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">ok. 1 200 ×</div><div class="d"><strong>Ethereum.</strong> Kapitalizacja 313 mld $ wobec około 260 mln $ opłat łańcucha rocznie.</div></div>
+  <div class="nrow"><div class="n">ok. 600 ×</div><div class="d"><strong>Avalanche.</strong> Kapitalizacja 5 mld $ wobec około 8 mln $ opłat rocznie.</div></div>
+  <div class="nrow"><div class="n">ok. 10 400 ×</div><div class="d"><strong>Stellar.</strong> Kapitalizacja 7,1 mld $ wobec około 0,7 mln $ opłat rocznie. Opłaty z całej doby: 1 857 dolarów.</div></div>
+</div>
+<p class="caption">Obliczenie własne: opłaty łańcucha z 24 godzin × 365, dane DefiLlama z 7.10.2026.</p>
+
+<p>Żadna spółka giełdowa nie byłaby wyceniana na tysiąckrotność rocznych przychodów. Wniosek nie brzmi jednak „tokeny L1 są przewartościowane”. Brzmi tak: tokeny L1 nie są wyceniane na podstawie opłat. Rynek wycenia je na innej zasadzie.</p>
+
+<h3>Za co płaci rynek, kupując token sieci</h3>
+
+<p>Najlepszy znany model tej innej zasady opublikowali w 2021 roku w „Review of Financial Studies” Lin William Cong, Ye Li i Neng Wang. Według ich modelu wartość tokena nie bierze się z dyskontowania przyszłych zysków, jak w przypadku akcji. Bierze się z łącznego popytu użytkowników, którzy potrzebują tokena do transakcji na platformie. Kluczowe są oczekiwania co do przyszłej adopcji.</p>
+
+<p>Model opisuje sprzężenie zwrotne. Oczekiwanie wzrostu przyciąga użytkowników, bo trzymając token, korzystają z rozwoju platformy. Napływ użytkowników podnosi cenę, a wyższa cena wzmacnia oczekiwania. Adopcja przebiega według krzywej w kształcie litery S: powolny start, gwałtowny i niestabilny wzrost, w końcu nasycenie.</p>
+
+<p>Badanie zachowań inwestorów potwierdza, że rynek naprawdę tak myśli. Shimon Kogan, Igor Makarov, Marina Niessner i Antoinette Schoar przeanalizowali transakcje 200 tysięcy użytkowników platformy eToro. Wyniki opisali w 2024 roku w „Journal of Financial Economics”. Przy akcjach i złocie ci sami ludzie kupowali spadki i sprzedawali wzrosty. Przy kryptowalutach robili odwrotnie — kupowali to, co już rosło. Autorzy tłumaczą to tym, że inwestorzy traktują wzrost ceny jako sygnał rosnącej szansy na masową adopcję. A to pcha cenę dalej w tę samą stronę.</p>
+
+<p>Dlatego cena tokena L1 to w praktyce zakład na przyszłą adopcję sieci — i na to, że ten token będzie do niej potrzebny. W przypadku ETH dochodzi jeszcze rola pieniądza i zabezpieczenia w całym ekosystemie.</p>
+
+<h3>Ethereum i tokeny zbudowane na nim</h3>
+
+<p>To prowadzi do relacji między łańcuchem a aplikacjami. Działa ona w obie strony, ale nierówno.</p>
+
+<p>Od ETH do aplikacji zależność jest silna. ETH jest głównym zabezpieczeniem pożyczek w DeFi. Kiedy tanieje, maleje wartość zastawu. Pożyczki, w których zastaw spadł poniżej wymaganego poziomu, są automatycznie likwidowane — protokół sprzedaje zabezpieczenie, żeby spłacić dług. TVL liczony w dolarach się kurczy, a tokeny aplikacji zwykle tanieją mocniej niż samo ETH. Ekonomiści nazywają to wysoką betą, czyli silną reakcją na ruch całego rynku.</p>
+
+<p>Od aplikacji do ETH zależność jest dziś słabsza, niż sugerowałaby intuicja. Aplikacje płacą sieci opłaty, część z nich jest spalana. Ale przy dzisiejszych opłatach to około 106 milionów dolarów rocznie wobec 313 miliardów kapitalizacji. Popyt na ETH bierze się dziś przede wszystkim z jego roli jako zabezpieczenia i „pieniądza” ekosystemu, w którym leży prawie 150 miliardów dolarów w stablecoinach.</p>
+
+<p>Tokeny aplikacji mają przy tym własne lejki. Uniswap ze spalaniem UNI i Aave ze skarbcem pokazują, że dwa protokoły na tym samym łańcuchu mogą traktować posiadaczy zupełnie różnie. Wybierając tokeny z jednego ekosystemu, nie wystarczy więc patrzeć na łańcuch. Na stronie łańcucha DefiLlama pokazuje listę protokołów. Sortowanie jej po przychodzie dla posiadaczy, a nie po TVL, daje zupełnie inną kolejność.</p>
+
+<h2><span class="num">Rozdział piąty</span>Stellar, czyli dlaczego powolny wzrost mówi więcej niż skok</h2>
+
+<p>Popularna wśród inwestorów obserwacja mówi, że TVL rosnący powoli i równo przez długi czas jest lepszym znakiem niż nagły skok. Stellar dobrze pokazuje, dlaczego tak jest — i gdzie ta obserwacja przestaje wystarczać.</p>
+
+<div class="bars">
+  <div class="bt">Stellar: TVL sieci i cena XLM, październik 2025 – październik 2026</div>
+  <div class="sub">TVL sieci (mln $)</div>
+  <div class="row"><div class="lab">05.10.2025</div><div class="track"><div class="fill" style="width:54.1%"></div></div><div class="val">144</div></div>
+  <div class="row"><div class="lab">01.12.2025</div><div class="track"><div class="fill" style="width:58.6%"></div></div><div class="val">156</div></div>
+  <div class="row"><div class="lab">01.02.2026</div><div class="track"><div class="fill" style="width:57.1%"></div></div><div class="val">152</div></div>
+  <div class="row"><div class="lab">01.04.2026</div><div class="track"><div class="fill" style="width:62.4%"></div></div><div class="val">166</div></div>
+  <div class="row"><div class="lab">01.06.2026</div><div class="track"><div class="fill" style="width:90.2%"></div></div><div class="val">240</div></div>
+  <div class="row"><div class="lab">01.08.2026</div><div class="track"><div class="fill" style="width:79.3%"></div></div><div class="val">211</div></div>
+  <div class="row"><div class="lab">06.10.2026</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">266</div></div>
+  <div class="sub">Cena XLM ($)</div>
+  <div class="row"><div class="lab">05.10.2025</div><div class="track"><div class="fill blue" style="width:100%"></div></div><div class="val">0,394</div></div>
+  <div class="row"><div class="lab">01.12.2025</div><div class="track"><div class="fill blue" style="width:63.2%"></div></div><div class="val">0,249</div></div>
+  <div class="row"><div class="lab">01.02.2026</div><div class="track"><div class="fill blue" style="width:45.9%"></div></div><div class="val">0,181</div></div>
+  <div class="row"><div class="lab">01.04.2026</div><div class="track"><div class="fill blue" style="width:42.4%"></div></div><div class="val">0,167</div></div>
+  <div class="row"><div class="lab">01.06.2026</div><div class="track"><div class="fill blue" style="width:65.7%"></div></div><div class="val">0,259</div></div>
+  <div class="row"><div class="lab">01.08.2026</div><div class="track"><div class="fill blue" style="width:43.7%"></div></div><div class="val">0,172</div></div>
+  <div class="row"><div class="lab">06.10.2026</div><div class="track"><div class="fill blue" style="width:54.8%"></div></div><div class="val">0,216</div></div>
+  <div class="caption">Źródło: DefiLlama (historyczny TVL sieci i ceny). W ciągu roku TVL wzrósł o 85%, a XLM potaniał o 45%.</div>
+</div>
+
+<p>W ciągu roku TVL Stellara wzrósł ze 144 do 266 milionów dolarów, czyli o 85%. W tym samym czasie XLM potaniał z 0,39 do 0,22 dolara, czyli o 45%. Po przeliczeniu TVL na XLM wzrost jest ponad trzykrotny. To obliczenie własne, ale DefiLlama pozwala zobaczyć to samo, przełączając wykres TVL z dolarów na token sieci.</p>
+
+<p>Dlaczego to ważne? Z trzech mechanizmów wzrostu TVL drugi — wzrost cen — zostaje tu praktycznie wykluczony. Ceny w tym okresie spadały. Najprostszym wyjaśnieniem jest więc nowy kapitał. Ktoś wpłacał do sieci pieniądze w czasie, gdy większość rynku się z niego wycofywała.</p>
+
+<p>Równość wzrostu też coś mówi. Przypadek Avalanche Rush pokazał, jak wygląda kapitał kupiony nagrodami: gwałtowny skok, a potem równie gwałtowny odpływ. Kapitał, który przychodzi powoli i zostaje przez spadki, rzadziej jest najemnikiem goniącym za promocją. To interpretacja, nie dowód — ale dobrze uzasadniona mechanizmem.</p>
+
+<p>Obok TVL DefiLlama pokazuje dla Stellara dwie większe liczby: 951 milionów dolarów w stablecoinach i 2,87 miliarda dolarów w tokenizowanych aktywach ze świata realnego. Stellar od lat celuje w płatności i tokenizację. Te liczby mówią, że coraz więcej instytucji rzeczywiście z niego korzysta.</p>
+
+<p>I tu obserwacja przestaje wystarczać. Ta sama strona DefiLlama pokazuje, że sieć zarobiła w ciągu doby 1 857 dolarów opłat. Aplikacje na Stellarze zatrzymały w tym czasie około 16 tysięcy dolarów przychodu. Kapitalizacja XLM wynosiła 7 miliardów dolarów. Od listopada 2021 roku liczba XLM w obiegu wzrosła z 24,3 do 35,1 miliarda, o 44%.</p>
+
+<p>Adopcja Stellara jest więc realna, ale XLM bezpośrednio jej nie przechwytuje. Cena XLM to zakład opisany w modelu Conga, Li i Wanga: na to, że rosnące użycie sieci przełoży się kiedyś na popyt na sam token. W latach 2021–2025 XLM był też częścią narracji o „monetach ISO 20022”<sup class="ex" data-ex="iso-20022">2</sup>, która podbijała jego cenę niezależnie od danych.</p>
+
+<blockquote>Równy wzrost TVL to dobry znak, że sieć przyciąga prawdziwy kapitał. Nie jest dowodem, że skorzysta na tym token.</blockquote>
+
+<h2><span class="num">Rozdział szósty</span>Podaż, czyli cichy sprzedawca</h2>
+
+<p>Cena tokena to kapitalizacja podzielona przez liczbę tokenów w obiegu. Kiedy liczba tokenów rośnie, cena może spadać nawet wtedy, gdy łączna wartość projektu stoi w miejscu. Przypadek AVAX z rozdziału drugiego pokazał, że samo rozwodnienie podaży potrafi obniżyć cenę o połowę.</p>
+
+<p>Działa to jak bieg pod prąd na ruchomych schodach jadących w dół. Żeby stać w miejscu, trzeba cały czas biec. Żeby iść w górę, trzeba biec szybciej niż schody. Projekt z rosnącą podażą potrzebuje stale rosnącego popytu tylko po to, by cena się nie zmieniała.</p>
+
+<div class="bars">
+  <div class="bt">Zmiana liczby tokenów w obiegu: listopad 2021 – październik 2026</div>
+  <div class="row"><div class="lab">AVAX</div><div class="track"><div class="fill red" style="width:100%"></div></div><div class="val">+98%</div></div>
+  <div class="row"><div class="lab">DOT</div><div class="track"><div class="fill red" style="width:74.3%"></div></div><div class="val">+73%</div></div>
+  <div class="row"><div class="lab">XLM</div><div class="track"><div class="fill red" style="width:45.1%"></div></div><div class="val">+44%</div></div>
+  <div class="row"><div class="lab">ETH</div><div class="track"><div class="fill" style="width:2.6%"></div></div><div class="val">+2,5%</div></div>
+  <div class="row"><div class="lab">UNI</div><div class="track"><div class="fill green" style="width:0.5%"></div></div><div class="val">−0,5%</div></div>
+  <div class="row"><div class="lab">QNT</div><div class="track"><div class="fill green" style="width:0%"></div></div><div class="val">ok. 0%</div></div>
+  <div class="caption">Obliczenie własne na podstawie podaży w obiegu z CoinMarketCap (21.11.2021 i 4.10.2026). Dla ONDO, notowanego od 2024 roku: z 1,39 do 4,87 mld od marca 2024 roku, czyli wzrost o 250%.</div>
+</div>
+
+<p>Część nowych tokenów to emisja — nagrody dla walidatorów zabezpieczających sieć. Część to odblokowania, czyli <em>unlocks</em>. Projekty zwykle przyznają tokeny zespołowi, inwestorom i funduszom rozwoju z blokadą. Po określonym czasie tokeny trafiają do obiegu i ich właściciele mogą je sprzedać.</p>
+
+<p>Firma Keyrock, która zajmuje się zapewnianiem płynności na rynku krypto, przeanalizowała w 2024 roku ponad 16 tysięcy takich odblokowań. To badanie branżowe, a nie recenzowane, ale jedno z najobszerniejszych na ten temat.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">90%</div><div class="d">Odblokowań wywierało presję spadkową na cenę, niezależnie od ich wielkości i rodzaju.</div></div>
+  <div class="nrow"><div class="n">30 dni</div><div class="d">Na tyle przed odblokowaniem cena zaczynała zwykle reagować. Rynek wyprzedza wydarzenie.</div></div>
+  <div class="nrow"><div class="n">ok. −25%</div><div class="d">Średni efekt odblokowań dla zespołu — najgorszy ze wszystkich typów. Inwestorzy instytucjonalni sprzedawali ostrożniej.</div></div>
+  <div class="nrow"><div class="n">+1,18%</div><div class="d">Średni efekt odblokowań na rozwój ekosystemu — jedyny dodatni. Te tokeny częściej trafiają do użytkowników i budowy infrastruktury niż na giełdę.</div></div>
+</div>
+<p class="caption">Źródło: Keyrock, „From Locked to Liquidity: What 16,000+ Token Unlocks Teach Us”, grudzień 2024.</p>
+
+<p>Z podażą wiąże się też wskaźnik FDV, od <em>fully diluted valuation</em>. To cena tokena pomnożona przez jego maksymalną podaż. Duża różnica między FDV a kapitalizacją oznacza, że większość tokenów dopiero trafi na rynek. Dla ONDO kapitalizacja wynosiła 2,25 miliarda dolarów, a FDV — 4,63 miliarda.</p>
+
+<p>Odwrotnym przypadkiem jest podaż stała albo malejąca. QNT ma od lat praktycznie niezmienną liczbę tokenów. UNI po głosowaniu z grudnia 2025 roku zaczął ubywać przez spalanie. Rzadkość nie tworzy popytu. Ale gdy popyt już się pojawi, nie musi walczyć ze schodami.</p>
+
+<h2><span class="num">Rozdział siódmy</span>Ślady na łańcuchu: kto kupuje, kto sprzedaje</h2>
+
+<p>Opłaty, przychody i podaż mówią, ile token jest wart według jakiegoś modelu. Nie mówią, kiedy rynek to zauważy. Do tego służy druga rodzina danych — zachowanie samych posiadaczy, widoczne na blockchainie.</p>
+
+<h3>Ile kosztowały wszystkie monety</h3>
+
+<p>We wrześniu 2018 roku Antoine Le Calvez, rozwijając pomysł zespołu Coin Metrics, opisał kapitalizację zrealizowaną, czyli <em>realized cap</em>. Każdą monetę wycenia się po cenie z chwili, gdy ostatnio się przemieściła. Wynik przybliża łączną kwotę, którą posiadacze za swoje monety zapłacili.</p>
+
+<p>Miesiąc później Murad Mahmudov i David Puell zaproponowali wskaźnik MVRV. To kapitalizacja rynkowa podzielona przez zrealizowaną. Jeśli MVRV wynosi 3, rynek wycenia monety na trzykrotność ich średniego kosztu zakupu — większość posiadaczy siedzi na dużym zysku i kusi ją sprzedaż. Według dokumentacji firmy analitycznej Glassnode wartości powyżej 3,5 zbiegały się historycznie z późną fazą hossy. Wartości poniżej 1 oznaczają, że przeciętny posiadacz jest na stracie, co zbiegało się z dnami bessy.</p>
+
+<p>Pokrewny wskaźnik NUPL mówi, jaka część całej kapitalizacji to niezrealizowany zysk albo strata. Oba zostały zbudowane dla bitcoina. Dla altcoinów są dostępne w części serwisów analitycznych, ale trzeba je czytać ostrożniej. Tokeny leżące w kontraktach DeFi i na giełdach zaburzają obraz „kosztu zakupu”, a historia danych jest krótsza.</p>
+
+<h3>Gdzie leżą monety</h3>
+
+<p>Firma CryptoQuant opisuje wskaźnik rezerw na giełdach, czyli liczby monet w portfelach kontrolowanych przez giełdy. Rosnące rezerwy oznaczają, że coraz więcej monet jest gotowych do sprzedaży — to sygnał presji podażowej. Malejące oznaczają, że monety odpływają z giełd, najczęściej do portfeli długoterminowych. Pojedyncze przelewy bywają mylące, bo giełdy przenoszą środki między własnymi portfelami. Liczy się trend z kilku tygodni.</p>
+
+<p>Trzecim śladem jest dźwignia. Na kontraktach perpetual, czyli bezterminowych kontraktach na kryptowaluty, istnieje opłata finansowania — <em>funding</em>. Gdy przeważają zakłady na wzrost, płacą ci, którzy grają na wzrost. Wysoki funding i rosnąca liczba otwartych pozycji oznaczają wzrost napędzany pożyczonymi pieniędzmi. Taki wzrost łatwiej odwrócić. Wzrost przy spokojnym fundingu częściej napędzają zakupy za gotówkę. To praktyczna reguła analityków, nie prawo rynku.</p>
+
+<p>Czwarty ślad to wykres tokena wyceniany w bitcoinach, nie w dolarach. Kiedy cały rynek rośnie, prawie każdy altcoin rośnie w dolarach. Dopiero para z bitcoinem pokazuje, czy token naprawdę zyskuje na tle rynku.</p>
+
+<h3>Co naprawdę napędza ceny — według badań</h3>
+
+<p>Tu trzeba uczciwie powiedzieć, czego nie wiemy. Yukun Liu i Aleh Tsyvinski opisali w 2021 roku w „Review of Financial Studies”, co przewiduje stopy zwrotu z kryptowalut. Kryptowaluty nie reagowały na typowe czynniki giełdowe ani makroekonomiczne. Silnymi predyktorami okazały się za to momentum, czyli kontynuacja trendu, oraz uwaga inwestorów, mierzona między innymi popularnością wyszukiwań. W kolejnej pracy, w „Journal of Finance” z 2022 roku, Liu, Tsyvinski i Xi Wu pokazali, że przekrój stóp zwrotu z kryptowalut dobrze opisują trzy czynniki: rynek, wielkość i momentum.</p>
+
+<p>Nie znalazłem recenzowanego badania, które wykazałoby, że przychód dla posiadaczy sam z siebie przewiduje stopy zwrotu altcoinów. Dowody na rolę trendu i uwagi są mocne. Dowody na rolę fundamentów — znacznie słabsze.</p>
+
+<p>Co z tego wynika? Fundamenty nie mówią, co wzrośnie w przyszłym tygodniu. Mówią, co ma szansę utrzymać wartość, gdy minie moda. Uwaga i narracja potrafią wynieść każdy token. Tak samo działa pompa i zrzut<sup class="ex" data-ex="pump-dump">3</sup> — tyle że tam uwaga jest kupowana celowo. Różnica między narracją z mechanizmem a narracją bez niego wychodzi zwykle dopiero na spadkach.</p>
+
+<p>Przykład z jesieni 2026 roku. Analizując tygodniowe notowania 300 największych kryptowalut z CoinMarketCap, widać, że bitcoin zrobił tegoroczne dno 28 czerwca, przy tygodniowym zamknięciu około 59,5 tysiąca dolarów. Większość altcoinów zrobiła niższe dno później, 16 sierpnia. Od tamtego dnia typowy duży altcoin odbił o kilkadziesiąt procent. Kilka tokenów z konkretną opowieścią — jak QNT — urosło kilkukrotnie. To obliczenie własne.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Receptura: jak szukać tokenów z potencjałem</h2>
+
+<p>Wszystko to da się złożyć w procedurę. Nie jest to przepis na zysk — takiego nie ma. To sposób, żeby zadać właściwe pytania we właściwej kolejności i nie pomylić popularności projektu z wartością tokena.</p>
+
+<p>Cała procedura sprowadza się do czterech pytań. Czy ktoś realnie używa projektu? Czy token na tym zarabia albo jest do tego potrzebny? Czy cena już to uwzględnia? I czy jest powód, żeby rynek zauważył to właśnie teraz?</p>
+
+<div class="steps">
+  <div class="s"><div class="st">Filtr przetrwania</div><div class="sd"><p>Projekt przeszedł co najmniej jedną pełną bessę i wciąż działa. Token ma płynność na kilku giełdach. Lista tokenów dostępnych dla użytkowników z Unii Europejskiej bywa krótsza niż globalna — warto ją sprawdzić na początku.</p><p class="flag">Uwaga: przetrwanie to nie odbudowa. Według notowań CoinMarketCap wiele projektów z lat 2017–2020 jest dziś o ponad 90% poniżej szczytu z 2021 roku.</p></div></div>
+  <div class="s"><div class="st">Popyt na usługę</div><div class="sd"><p>Na DefiLlama: opłaty z 30 dni w porównaniu z 90 dniami i rokiem. Dla łańcucha: opłaty aplikacji, stablecoiny i tokenizowane aktywa na sieci oraz wskaźnik napływów (<em>Inflows</em>). TVL warto oglądać także w tokenie sieci, nie tylko w dolarach.</p><p class="flag">Czerwona flaga: TVL skacze razem ze startem programu nagród.</p></div></div>
+  <div class="s"><div class="st">Przechwytywanie wartości</div><div class="sd"><p>Zakładka Token Rights: czy działa dzielenie się opłatami, odkup lub spalanie. Czy przychód dla posiadaczy jest większy od zera. Dla łańcuchów: czy opłaty są spalane i czy staking daje realny udział w opłatach.</p><p class="flag">Czerwona flaga: token służy tylko do głosowania.</p></div></div>
+  <div class="s"><div class="st">Wycena</div><div class="sd"><p>Roczny przychód dla posiadaczy na każde 100 dolarów kapitalizacji — porównywany tylko w obrębie jednej kategorii. Obok tego: FDV w stosunku do kapitalizacji.</p></div></div>
+  <div class="s"><div class="st">Podaż</div><div class="sd"><p>Kalendarz odblokowań na najbliższe 30–90 dni (zakładka Unlocks na DefiLlama albo serwisy z harmonogramami tokenów). Roczna emisja nowych tokenów.</p><p class="flag">Czerwona flaga: duże odblokowanie dla zespołu w ciągu miesiąca.</p></div></div>
+  <div class="s"><div class="st">Pozycja ceny</div><div class="sd"><p>Ile token urósł od dna z ostatnich 12 miesięcy. Ile brakuje mu do szczytu. Jak wygląda jego wykres w bitcoinach. Jeśli jest dostępny — MVRV tokena.</p><p class="flag">Uwaga: spadek o 95% może oznaczać okazję albo projekt, którego nikt już nie potrzebuje. Sama głębokość spadku nie rozstrzyga.</p></div></div>
+  <div class="s"><div class="st">Przepływy</div><div class="sd"><p>Trend rezerw na giełdach z kilku tygodni, duże transakcje, funding i liczba otwartych pozycji na kontraktach. Najzdrowiej wygląda wzrost przy malejących rezerwach i spokojnym fundingu.</p></div></div>
+  <div class="s"><div class="st">Katalizator</div><div class="sd"><p>Konkretne wydarzenie z datą — aktualizacja sieci, uruchomienie produktu, decyzja regulatora, umowa z instytucją. I kluczowe pytanie: czy to wydarzenie wymaga tokena, czy tylko firmy, która go wydała?</p></div></div>
+  <div class="s"><div class="st">Plan wyjścia przed wejściem</div><div class="sd"><p>Przed zakupem: ile, w ilu częściach, przy jakich poziomach sprzedaż części pozycji i co musiałoby się stać, żeby teza przestała być aktualna.</p></div></div>
+</div>
+
+<h3>Trzy tokeny przez sito</h3>
+
+<p>Dla ilustracji — bez żadnej rekomendacji — trzy tokeny z tego tekstu przepuszczone przez najważniejsze kroki, według danych z 7 października 2026 roku:</p>
+
+<div class="tblwrap">
+<table class="tbl">
+  <tr><th>Krok</th><th>UNI</th><th>ONDO</th><th>XLM</th></tr>
+  <tr><td>Popyt na usługę</td><td>154 mln $ opłat w 30 dni</td><td>3,14 mld $ aktywów, rosną</td><td>2,87 mld $ RWA, TVL +85% r/r</td></tr>
+  <tr><td>Przechwytywanie</td><td>Tak — odkup i spalanie</td><td>Nie — tylko głosowanie</td><td>Słabe — 1,9 tys. $ opłat na dobę</td></tr>
+  <tr><td>Wycena</td><td>ok. 35 × roczny przepływ</td><td>Brak przepływu</td><td>ok. 10 400 × opłaty</td></tr>
+  <tr><td>Podaż</td><td>Malejąca</td><td>W obiegu 49% maks. podaży</td><td>+44% od 2021 r.</td></tr>
+  <tr><td>Pozycja ceny</td><td>Ok. +200% od dna z czerwca</td><td>Ok. +90% od dna z kwietnia</td><td>Ok. +35% od dna z maja</td></tr>
+</table>
+</div>
+<p class="caption">Dane: DefiLlama i CoinMarketCap, 7.10.2026; pozycja ceny i wycena — obliczenia własne na tygodniowych notowaniach. Tabela ilustruje metodę i nie jest oceną inwestycyjną.</p>
+
+<p>Żaden z tych tokenów nie przechodzi przez sito czysto. UNI ma najlepszy lejek, ale cena w dużej mierze już zareagowała. ONDO ma rosnący biznes, ale token bez prawa do jego przychodów i z dużą podażą przed sobą. XLM ma realną adopcję i najmniejsze odbicie od dna, ale prawie żadnego przechwytywania wartości. Każdy z nich to inny zakład. I właśnie o to chodzi — żeby wiedzieć, na co się zakładamy.</p>
+
+<p>Sam trzymam się kilku prostych zasad. Kupuję w częściach i sprzedaję w częściach. Nie zakochuję się w projektach. Nie łapię dołka ani szczytu co do dolara. Nikt z nas tego nie potrafi — i nie musimy, jeśli wiemy, co kupujemy i dlaczego.</p>
+
+<h2><span class="num">Zakończenie</span>Kto i dlaczego musi go kupić</h2>
+
+<p>Wróćmy do 24 września. W pierwszej połowie 2027 roku sieć tokenizowanych depozytów amerykańskich banków ma ruszyć na oprogramowaniu Quanta. Wtedy okaże się, czy banki będą potrzebowały QNT, czy tylko usług firmy. Od tej odpowiedzi zależy, czy wrześniowy wzrost był wyceną przyszłego popytu, czy tylko opowieścią, która go wyprzedziła.</p>
+
+<p>Ta sama zasada dotyczy każdego tokena. TVL mówi, ile kapitału leży w projekcie. Opłaty mówią, ile ludzie płacą za jego usługi. Ale wartość tokena to odpowiedź na jedno, węższe pytanie.</p>
+
+<p>Kto i dlaczego będzie musiał go kupić — nie tylko dziś, ale za rok?</p>
+
+<p>Kiedy umiemy na nie odpowiedzieć liczbami, a nie hasłem, przestajemy kupować narrację. Zaczynamy kupować mechanizm.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+<ul class="sources">
+  <li>Yichen Luo, Yebo Feng, Jiahua Xu, Paolo Tasca, „Piercing the Veil of TVL: DeFi Reappraised”, preprint arXiv:2404.11745 (University College London, Nanyang Technological University, DLT Science Foundation), 2024–2025. <a href="https://arxiv.org/abs/2404.11745">arxiv.org/abs/2404.11745</a></li>
+  <li>Sirio Aramonte, Wenqian Huang, Andreas Schrimpf, „DeFi risks and the decentralisation illusion”, BIS Quarterly Review, Bank Rozrachunków Międzynarodowych, grudzień 2021. <a href="https://www.bis.org/publ/qtrpdf/r_qt2112b.htm">bis.org</a></li>
+  <li>Lin William Cong, Ye Li, Neng Wang, „Tokenomics: Dynamic Adoption and Valuation”, The Review of Financial Studies, 2021 (wersja robocza: NBER Working Paper 27222). <a href="https://www.nber.org/papers/w27222">nber.org/papers/w27222</a></li>
+  <li>Shimon Kogan, Igor Makarov, Marina Niessner, Antoinette Schoar, „Are Cryptos Different? Evidence from Retail Trading”, Journal of Financial Economics, t. 159, 2024 (NBER Working Paper 31317). <a href="https://www.nber.org/papers/w31317">nber.org/papers/w31317</a></li>
+  <li>Yukun Liu, Aleh Tsyvinski, „Risks and Returns of Cryptocurrency”, The Review of Financial Studies, t. 34(6), 2021 (NBER Working Paper 24877). <a href="https://www.nber.org/papers/w24877">nber.org/papers/w24877</a></li>
+  <li>Yukun Liu, Aleh Tsyvinski, Xi Wu, „Common Risk Factors in Cryptocurrency”, The Journal of Finance, t. 77(2), 2022 (NBER Working Paper 25882). <a href="https://www.nber.org/papers/w25882">nber.org/papers/w25882</a></li>
+  <li>DefiLlama, „What to include as TVL” — dokumentacja metodologii. <a href="https://docs.llama.fi/list-your-project/what-to-include-as-tvl">docs.llama.fi</a></li>
+  <li>DefiLlama, strony protokołów i łańcuchów (stan na 7.10.2026): Ondo Finance i jego zakładka Token Rights, Aave, Uniswap, Stellar, Avalanche, Ethereum; API historycznego TVL łańcuchów i cen. <a href="https://defillama.com/protocol/ondo-finance">defillama.com/protocol/ondo-finance</a>, <a href="https://defillama.com/protocol/token-rights/ondo-finance">defillama.com/protocol/token-rights/ondo-finance</a>, <a href="https://defillama.com/protocol/aave">defillama.com/protocol/aave</a>, <a href="https://defillama.com/protocol/uniswap">defillama.com/protocol/uniswap</a>, <a href="https://defillama.com/chain/stellar">defillama.com/chain/stellar</a>, <a href="https://defillama.com/chain/avalanche">defillama.com/chain/avalanche</a>, <a href="https://defillama.com/chain/ethereum">defillama.com/chain/ethereum</a></li>
+  <li>CoinMarketCap, tygodniowe zestawienia historyczne 2021–2026 i notowania z 7.10.2026 (ceny, kapitalizacja, podaż w obiegu). <a href="https://coinmarketcap.com/historical/">coinmarketcap.com/historical</a></li>
+  <li>Glassnode, „MVRV Ratio” oraz „Realized Capitalization” — dokumentacja wskaźników. <a href="https://docs.glassnode.com/further-information/metric-guides/mvrv/mvrv-ratio">docs.glassnode.com</a></li>
+  <li>CryptoQuant, „Exchange Reserve” — przewodnik po wskaźnikach. <a href="https://userguide.cryptoquant.com/cryptoquant-metrics/exchange/exchange-reserve">userguide.cryptoquant.com</a></li>
+  <li>Keyrock, „From Locked to Liquidity: What 16,000+ Token Unlocks Teach Us”, grudzień 2024. <a href="https://keyrock.com/from-locked-to-liquidity-what-16000-token-unlocks-teach-us/">keyrock.com</a></li>
+  <li>Vitalik Buterin, „EIP-1559 FAQ”. <a href="https://notes.ethereum.org/@vbuterin/eip-1559-faq">notes.ethereum.org</a></li>
+  <li>The Block, „Uniswap governance passes major ‘UNIfication’ proposal; 100 million token burn imminent”, grudzień 2025. <a href="https://www.theblock.co/post/383742/uniswap-passes-unification-proposal">theblock.co</a></li>
+  <li>The Block, „Avalanche launches $180 million DeFi incentive scheme with Aave and Curve”, 18 sierpnia 2021. <a href="https://www.theblock.co/post/114782/avalanche-launches-180-million-defi-incentive-scheme-aave-curve">theblock.co</a></li>
+  <li>Quant Network, ogłoszenie o opłacie licencyjnej za dostęp do Overledger MainNet płatnej w QNT, 10 grudnia 2021. <a href="https://quant.network/?p=582">quant.network</a></li>
+  <li>PYMNTS, „The Clearing House Taps Quant to Power Tokenized Deposits Network”, 24 września 2026. <a href="https://www.pymnts.com/?p=4226802">pymnts.com</a></li>
+  <li>Newton, „Crypto Asset Statement — Ondo Finance (ONDO)”, 2026. <a href="https://help.newton.co/hc/en-us/articles/36591814129683-Crypto-Asset-Statement-Ondo-Finance-ONDO">help.newton.co</a></li>
+</ul>
+
+<footer class="end">
+  <p>Dane rynkowe pochodzą z DefiLlama i CoinMarketCap ze stanu na 7 października 2026 roku. Dane trzydziestodniowe i dobowe są zmienne, a serwisy bywają korygowane wstecz. Obliczenia oznaczone jako własne wykonano na tych danych; mogą różnić się od wartości „annualizowanych” podawanych przez same serwisy, które liczą je z dłuższych okresów.</p>
+  <p>Tekst ma charakter wyłącznie edukacyjny i nie stanowi porady inwestycyjnej, rekomendacji ani oferty. Autor ani Unicorner nie ponoszą odpowiedzialności za decyzje inwestycyjne ani straty poniesione w związku z jego treścią. Autor posiada token QNT.</p>
+</footer>
+</div>
+<ol class="explain">
+  <li data-ex="stablecoin"><b>Stablecoin</b> — token, którego cena ma być stale równa walucie tradycyjnej, najczęściej dolarowi. Emitent obiecuje, że za każdy token trzyma odpowiednie rezerwy. Szerzej: „Anatomia obietnicy”.</li>
+  <li data-ex="iso-20022"><b>„Monety ISO 20022”</b> — popularna w krypto lista tokenów (m.in. XRP, XLM, QNT, HBAR, XDC), które rzekomo „wybrał” bankowy standard wiadomości ISO 20022. Standard nie wymaga żadnego tokena, ale ta opowieść przez lata podbijała ceny. Szerzej: „Anatomia narracji”.</li>
+  <li data-ex="pump-dump"><b>Pompa i zrzut</b> (<i>pump and dump</i>) — schemat, w którym grupa skupuje tani token, sztucznie nakręca zainteresowanie i sprzedaje go z zyskiem tym, którzy kupili na fali emocji. Szerzej: „Anatomia tłumu”.</li>
+</ol>
+<script>
+(function(){
+  var pop=null;
+  function close(){if(pop){pop.remove();pop=null;}}
+  document.addEventListener('click',function(e){
+    var s=e.target.closest('sup.ex');
+    if(!s){if(!e.target.closest('.ex-pop'))close();return;}
+    e.preventDefault();close();
+    var li=document.querySelector('ol.explain li[data-ex="'+s.dataset.ex+'"]');
+    if(!li)return;
+    pop=document.createElement('div');pop.className='ex-pop';pop.innerHTML=li.innerHTML;
+    document.body.appendChild(pop);
+    var r=s.getBoundingClientRect();
+    var left=Math.min(r.left+window.scrollX,window.scrollX+document.documentElement.clientWidth-340);
+    pop.style.left=Math.max(16,left)+'px';pop.style.top=(r.bottom+window.scrollY+8)+'px';
+  });
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')close();});
+})();
+</script>
+</body></html>

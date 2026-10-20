@@ -1,0 +1,164 @@
+---
+// Ćwiczenie „wypełnij tabelę zmienności”: nagłówek (przedziały i punkty) jest gotowy, uczeń stuka pola —
+// w wierszu pochodnej znak (+ / −), w wierszu funkcji strzałkę albo kształt i wniosek w punktach (max, min, —, P).
+// Poprawne wartości i wyjaśnienia liczy przy buildzie budowniczy badanie() (lib/zmiennosc.js), więc zgadzają się z rachunkami.
+// Jedna siatka CSS: na szerokim ekranie kolumny = przedziały (jak w zeszycie), w wąskim pojemniku wiersze = przedziały.
+import { tex, texInline } from '../../../lib/tex.js';
+import Legenda from '../Legenda.astro';
+interface Props { zad: any; tytul: string; zrodlo?: string }
+const { zad, tytul, zrodlo } = Astro.props;
+const r1 = zad.rzad === 1;
+const prim = r1 ? "f'(x)" : "f''(x)";  // podpis wiersza pochodnej
+const kol: any[] = zad.kol;
+const zn = (v: number) => (v > 0 ? '+' : '−');
+const ksztalt = (v: number) => (r1 ? (v > 0 ? '↗' : '↘') : v > 0 ? '∪' : '∩');
+const wnT: Record<string, string> = { max: 'max', min: 'min', brak: '—', przeg: 'P' };
+// pola do wypełnienia: { id, r (wiersz 2 = pochodna, 3 = funkcja), c (kolumna), ok, opcje, dlaczego }
+type Pole = { id: string; r: number; c: number; ok?: string; opcje?: string[]; stale?: string; kl?: string; dl?: string; blok?: string };
+const pola: Pole[] = [];
+kol.forEach((k, i) => {
+  const c = i + 2;
+  if (k.rodzaj === 'wykl') {
+    pola.push({ id: `${i}d`, r: 2, c, stale: '×', kl: 'is-wykl' }, { id: `${i}f`, r: 3, c, stale: '×', kl: 'is-wykl' });
+    return;
+  }
+  if (k.rodzaj === 'zero') {
+    const L = kol[i - 1].znak, P = kol[i + 1].znak;
+    pola.push({ id: `${i}d`, r: 2, c, stale: '0', kl: 'is-zero' });
+    const dl = r1
+      ? k.wn === 'brak'
+        ? `Po obu stronach $x = ${k.t}$ ten sam znak „${zn(L)}”: funkcja nie zawraca — ekstremum nie ma, wpisz „—”.`
+        : `Przy $x = ${k.t}$ znak zmienia się z „${zn(L)}” na „${zn(P)}”: funkcja ${L > 0 ? 'rośnie, potem maleje — <b>max</b>' : 'maleje, potem rośnie — <b>min</b>'}.`
+      : k.wn === 'brak'
+        ? `Po obu stronach $x = ${k.t}$ ten sam znak „${zn(L)}”: kształt się nie zmienia — punktu przegięcia nie ma, wpisz „—”.`
+        : `Przy $x = ${k.t}$ znak $f''$ zmienia się z „${zn(L)}” na „${zn(P)}”: wykres zmienia kształt — punkt przegięcia <b>P</b>.`;
+    pola.push({ id: `${i}f`, r: 3, c, ok: wnT[k.wn], opcje: r1 ? ['max', 'min', '—'] : ['P', '—'], dl });
+    return;
+  }
+  pola.push({ id: `${i}d`, r: 2, c, ok: zn(k.znak), opcje: ['+', '−'],
+    dl: `Przedział $${k.t}$: weź z niego jedną liczbę i wstaw ją do czynników. Wychodzi znak „${zn(k.znak)}”:`, blok: k.kart });
+  pola.push({ id: `${i}f`, r: 3, c, ok: ksztalt(k.znak), opcje: r1 ? ['↗', '↘'] : ['∪', '∩'],
+    dl: r1 ? `Przedział $${k.t}$: przy „+” funkcja rośnie (↗), przy „−” maleje (↘). Tu pochodna ma znak „${zn(k.znak)}”, więc ${ksztalt(k.znak)}.`
+      : `Przedział $${k.t}$: przy „+” wykres jest wypukły (∪), przy „−” wklęsły (∩). Tu $f''$ ma znak „${zn(k.znak)}”, więc ${ksztalt(k.znak)}.` });
+});
+const leg: [string, string][] = r1
+  ? [['ok', '„+” i ↗ — funkcja rośnie'], ['roz', '„−” i ↘ — funkcja maleje']]
+  : [['cyan', '„+” i ∪ — wykres wypukły'], ['zloto', '„−” i ∩ — wykres wklęsły']];
+const n = kol.length;
+---
+<section class:list={['k-ct', 'k-czm', `is-r${zad.rzad}`]} data-czm>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Wypełnij tabelę</span>
+    <h3 class="k-pyt-h" set:html={texInline(tytul)} />
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </div>
+  <div class="k-ct-tresc">
+    <p set:html={texInline(`${r1 ? 'Pochodna' : 'Druga pochodna'} jest już policzona i rozłożona na czynniki: $${zad.pochodna}$.`)} />
+    <slot />
+  </div>
+  <p class="k-ct-how" data-js-only hidden>Stuknij (albo kliknij) pole, żeby wybrać wartość — każde stuknięcie pokazuje następną możliwość. Na koniec wybierz „Sprawdź”.</p>
+  <div class:list={['k-czm-box', `is-w${n}`]}>
+    <div class="k-czm-g" style={`--n:${n}`}>
+      <div class="k-czm-c is-l" style="--c:1;--r:1" set:html={tex('x')} />
+      {kol.map((k, i) => <div class:list={['k-czm-c', 'is-x', { 'is-pkt': k.rodzaj !== 'przedzial' }]} style={`--c:${i + 2};--r:1`} set:html={tex(k.t)} />)}
+      <div class="k-czm-c is-l" style="--c:1;--r:2" set:html={tex(prim)} />
+      <div class="k-czm-c is-l" style="--c:1;--r:3" set:html={tex('f(x)')} />
+      {pola.map((p) => p.stale
+        ? <div class:list={['k-czm-c', 'is-stale', p.kl]} style={`--c:${p.c};--r:${p.r}`}>{p.stale}</div>
+        : <div class="k-czm-c" style={`--c:${p.c};--r:${p.r}`}>
+            <button type="button" class="k-czm-b" data-pole={p.id} data-ok={p.ok} data-opcje={JSON.stringify(p.opcje)} aria-label={`${p.r === 2 ? 'znak' : 'zachowanie funkcji'} — pole do wypełnienia`}>?</button>
+          </div>)}
+    </div>
+  </div>
+  <Legenda items={leg} />
+  <div class="k-ct-ctl" data-js-only hidden>
+    <button type="button" class="k-btn" data-check>Sprawdź</button>
+    <button type="button" class="k-btn k-btn-ghost" data-show>Pokaż odpowiedzi</button>
+    <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
+  </div>
+  <div class="k-ct-wynik" hidden aria-live="polite">
+    <p class="k-ct-sum" data-sum></p>
+    <ul class="k-ct-bledy" data-bledy></ul>
+  </div>
+  <ul hidden data-expl>{pola.filter((p) => p.dl).map((p) => <li data-pole={p.id} set:html={texInline(p.dl!) + (p.blok ? tex(p.blok, true) : '')} />)}</ul>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-czm]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => (el.hidden = false));
+    const pola = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-czm-b'));
+    const wynik = box.querySelector<HTMLElement>('.k-ct-wynik')!;
+    const sum = box.querySelector<HTMLElement>('[data-sum]')!;
+    const bledy = box.querySelector<HTMLElement>('[data-bledy]')!;
+    const ustaw = (b: HTMLButtonElement, v: string) => {
+      b.dataset.v = v; b.textContent = v || '?';
+      b.classList.remove('is-good', 'is-bad', 'is-empty', 'is-shown', 'is-plus', 'is-minus');
+      // kolor wybranej wartości (jak w tabelach modułu): „+”, ↗, ∪ — jeden kolor, „−”, ↘, ∩ — drugi
+      if (['+', '↗', '∪'].includes(v)) b.classList.add('is-plus');
+      if (['−', '↘', '∩'].includes(v)) b.classList.add('is-minus');
+    };
+    pola.forEach((b) => b.addEventListener('click', () => {
+      const op: string[] = JSON.parse(b.dataset.opcje || '[]');
+      const i = op.indexOf(b.dataset.v ?? '');
+      ustaw(b, i + 1 < op.length ? op[i + 1] : '');
+    }));
+    box.querySelector('[data-check]')!.addEventListener('click', () => {
+      let dobre = 0, puste = 0;
+      const zle: HTMLButtonElement[] = [];
+      pola.forEach((b) => {
+        const v = b.dataset.v ?? '';
+        b.classList.remove('is-good', 'is-bad', 'is-empty');
+        if (!v) { puste++; b.classList.add('is-empty'); }
+        else if (v === b.dataset.ok) { dobre++; b.classList.add('is-good'); }
+        else { zle.push(b); b.classList.add('is-bad'); }
+      });
+      bledy.innerHTML = '';
+      if (!zle.length && !puste) sum.innerHTML = '<b class="k-ct-ok">Wszystko dobrze!</b> Tabela jest wypełniona poprawnie.';
+      else {
+        sum.innerHTML = `Dobrze: <b>${dobre}</b> · Źle: <b>${zle.length}</b> · Puste: <b>${puste}</b>` +
+          (zle.length ? ' — jak dojść do pól oznaczonych na różowo:' : ' — uzupełnij puste pola i sprawdź jeszcze raz.');
+        zle.slice(0, 5).forEach((b) => {
+          const src = box.querySelector(`[data-expl] [data-pole="${b.dataset.pole}"]`);
+          if (src) { const li = document.createElement('li'); li.innerHTML = src.innerHTML; bledy.appendChild(li); }
+        });
+        if (zle.length > 5) { const li = document.createElement('li'); li.textContent = `…i jeszcze ${zle.length - 5}. Popraw te powyżej i sprawdź ponownie.`; bledy.appendChild(li); }
+      }
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-show]')!.addEventListener('click', () => {
+      pola.forEach((b) => { ustaw(b, b.dataset.ok!); b.classList.add('is-shown'); });
+      sum.innerHTML = 'Tak wygląda wypełniona tabela. Spróbuj jeszcze raz samodzielnie — „Wyczyść” zeruje pola.';
+      bledy.innerHTML = '';
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-clear]')!.addEventListener('click', () => { pola.forEach((b) => ustaw(b, '')); wynik.hidden = true; });
+  });
+</script>
+
+<style>
+  .k-czm-box{container-type:inline-size;margin:6px 0 4px;}
+  .k-czm-g{display:grid;grid-template-columns:auto repeat(var(--n),minmax(0,auto));gap:3px;justify-content:start;}
+  .k-czm-c{grid-column:var(--c);grid-row:var(--r);display:flex;align-items:center;justify-content:center;min-height:42px;padding:2px 8px;border:1px solid rgba(255,255,255,.12);white-space:nowrap;font-size:.92rem;}
+  .k-czm-c.is-l{background:rgba(255,255,255,.035);font-weight:500;}
+  .k-czm-c.is-x{background:rgba(255,255,255,.035);}
+  .k-czm-c.is-pkt{color:#c3b1ff;}
+  .k-czm-c.is-stale{font-family:var(--mono);color:#fff;}
+  .k-czm-c.is-wykl{color:var(--muted2);}
+  .k-czm-c :global(.katex){font-size:1em!important;}
+  .k-czm-b{min-width:46px;min-height:38px;padding:0 8px;border:1px dashed rgba(255,255,255,.35);background:rgba(255,255,255,.03);color:var(--muted);font-family:var(--mono);font-size:1.05rem;font-weight:700;cursor:pointer;border-radius:3px;}
+  .k-czm-b:hover{background:rgba(255,255,255,.07);}
+  .k-czm-b.is-plus,.k-czm-b.is-minus,.k-czm-b[data-v]:not([data-v=""]){border-style:solid;color:#fff;}
+  .k-czm.is-r1 .k-czm-b.is-plus{color:#5ad1a0;} .k-czm.is-r1 .k-czm-b.is-minus{color:#ff6fb5;}
+  .k-czm.is-r2 .k-czm-b.is-plus{color:#27e8ff;} .k-czm.is-r2 .k-czm-b.is-minus{color:#ffd84a;}
+  .k-czm-b.is-good{border-color:#5ad1a0;box-shadow:inset 0 0 0 1px #5ad1a0;}
+  .k-czm-b.is-bad{border-color:#ff2e97;box-shadow:inset 0 0 0 1px #ff2e97;background:rgba(255,46,151,.12);}
+  .k-czm-b.is-empty{border-color:var(--muted);background:rgba(255,255,255,.08);}
+  .k-czm-b.is-shown{border-color:rgba(167,139,250,.7);}
+  .k-czm :global(.k-ct-bledy .katex-display){margin:.3em 0!important;text-align:left;overflow-x:auto;overflow-y:hidden;}
+  .k-czm :global(.k-ct-bledy .katex-display > .katex){text-align:left;}
+  /* wąski pojemnik: wiersze = przedziały i punkty, kolumny = x, pochodna, funkcja */
+  @container (max-width: 360px){ .k-czm-box.is-w3 .k-czm-g{grid-template-columns:auto auto auto;} .k-czm-box.is-w3 .k-czm-c{grid-column:var(--r);grid-row:var(--c);} }
+  @container (max-width: 500px){ .k-czm-box.is-w5 .k-czm-g{grid-template-columns:auto auto auto;} .k-czm-box.is-w5 .k-czm-c{grid-column:var(--r);grid-row:var(--c);} }
+  @container (max-width: 640px){ .k-czm-box.is-w7 .k-czm-g{grid-template-columns:auto auto auto;} .k-czm-box.is-w7 .k-czm-c{grid-column:var(--r);grid-row:var(--c);} }
+  @container (max-width: 800px){ .k-czm-box.is-w9 .k-czm-g{grid-template-columns:auto auto auto;} .k-czm-box.is-w9 .k-czm-c{grid-column:var(--r);grid-row:var(--c);} }
+</style>

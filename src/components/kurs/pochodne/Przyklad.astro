@@ -1,0 +1,50 @@
+---
+// Przykład z listy zwinięty w <details> (bez JS też działa): nagłówek „Przykład r) · f(x) = …”, w środku plan i pełny Rachunek.
+// Kotwica zad-<id> — do niej prowadzi tabela odpowiedzi (Odpowiedzi.astro); link do kotwicy rozwija przykład.
+import { tex, texInline } from '../../../lib/tex.js';
+import { ETYKIETA, PLANY } from '../../../lib/pochodne.js';
+import Rachunek from './Rachunek.astro';
+// Moduł 9 (i dalsze) podaje własne etapy, cel i plan: etapy={ETAPY_M} plan="…" cel="Cel: …".
+interface Etap { nr: number; nazwa: string; co: string; po: string }
+interface Props { id: string; d: any; otwarty?: boolean; nazwa?: string; etapy?: Etap[]; etapyNazwa?: string; plan?: string; cel?: string }
+const { id, d, otwarty = false, nazwa, etapy, etapyNazwa, cel = "Cel: wzór na $f'(x)$." } = Astro.props;
+const plan = Astro.props.plan ?? (PLANY as Record<string, string>)[id];
+---
+<a id={`zad-${id}`} class="k-anchor"></a>
+<details class="k-det" open={otwarty}>
+  <summary><span class="k-det-n">{nazwa ?? `Przykład ${ETYKIETA(id)}`}</span> <span set:html={tex(d.f)} /></summary>
+  <Rachunek d={d} etapy={etapy} etapyNazwa={etapyNazwa}>
+    {plan && <div slot="plan" set:html={texInline(plan.startsWith('<') ? `<p>${cel}</p>${plan}` : `<p>${cel} ${plan}</p>`)} />}
+  </Rachunek>
+</details>
+
+<script>
+  // link do przykładu (np. z kafelków „Wszystkie odpowiedzi”) rozwija zwinięty przykład, zanim strona do niego przewinie
+  const rozwin = (hash: string) => {
+    const id = decodeURIComponent(hash.replace(/^#/, ''));
+    if (!id.startsWith('zad-')) return;
+    const det = document.getElementById(id)?.nextElementSibling;
+    if (det instanceof HTMLDetailsElement) det.open = true;
+  };
+  document.addEventListener('click', (ev) => {
+    const a = (ev.target as Element | null)?.closest?.('a[href^="#zad-"]');
+    if (a) rozwin(a.getAttribute('href')!);
+  });
+  window.addEventListener('hashchange', () => rozwin(location.hash));
+  if (location.hash.startsWith('#zad-')) {
+    rozwin(location.hash);
+    document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+  }
+</script>
+
+<style>
+  .k-det{margin:.7em 0;border:1px solid var(--line2);background:rgba(13,12,19,.6);}
+  .k-det > summary{cursor:pointer;list-style:none;display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;padding:10px 14px;}
+  .k-det > summary::-webkit-details-marker{display:none;}
+  .k-det > summary::before{content:'▸';color:var(--cyan);font-size:.9rem;width:1em;}
+  .k-det[open] > summary::before{content:'▾';}
+  .k-det > summary:hover{background:rgba(255,255,255,.035);}
+  .k-det-n{font-family:var(--mono);font-size:.78rem;font-weight:700;letter-spacing:.8px;color:var(--cyan);text-transform:uppercase;}
+  .k-det > :global(.k-rach){margin:0 10px 12px;}
+  @media(max-width:560px){ .k-det > :global(.k-rach){margin:0 4px 10px;} }
+</style>
