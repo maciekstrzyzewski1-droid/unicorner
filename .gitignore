@@ -10,10 +10,15 @@ jakość claude/
 # === Odpady po "Zapisz stronę jako" w przeglądarce (nowe; już-śledzone zostają) ===
 *_files/
 
-# === env ===
+# === env / lokalne sekrety ===
 .env
 .env.*
 !.env.example
+.dev.vars
+.dev.vars.*
+*.pem
+*.key
+*.p12
 
 # === System / edytor ===
 .DS_Store
