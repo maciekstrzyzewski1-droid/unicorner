@@ -79,27 +79,36 @@ function scopeCss(css) {
 const text = (html) => html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 const pick = (html, re) => { const m = html.match(re); return m ? text(m[1]) : ''; };
 
-// Artykuły to nasze pliki, ale gdyby trafił do nich cudzy HTML, na stronę nie przejdzie żaden skrypt:
-// usuwamy <script> (także `</script >` i niezamknięte znaczniki), atrybuty on…= i adresy javascript:.
-// Powtarzamy do stabilizacji, żeby wycięcie jednego fragmentu nie skleiło nowego znacznika.
-const ON_ATTR = /\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
-const JS_URL = /(\s(?:href|src|action|formaction|xlink:href)\s*=\s*["']?)\s*javascript:/gi;
+// Artykuły to nasze pliki, ale gdyby trafił do nich cudzy HTML, na stronę nie przejdzie żaden skrypt.
+// 1) Bloki <script>…</script> wycinamy (także `</script >` i niezamknięty znacznik). Szukamy zawsze od
+//    początku, więc wycięcie jednego fragmentu nie może skleić nowego znacznika.
 function stripScripts(html) {
-  let prev;
-  do {
-    prev = html;
-    html = html
-      .replace(/<script\b[\s\S]*?<\/script[^>]*>/gi, '')
-      .replace(/<script\b[\s\S]*$/i, '')
-      .replace(/<[^>]+>/g, (tag) => tag.replace(ON_ATTR, '').replace(JS_URL, '$1#'));
-  } while (html !== prev);
-  return html;
+  for (;;) {
+    const lower = html.toLowerCase();
+    const start = lower.indexOf('<script');
+    if (start === -1) return html;
+    const close = lower.indexOf('</script', start);
+    const end = close === -1 ? -1 : lower.indexOf('>', close);
+    html = html.slice(0, start) + (end === -1 ? '' : html.slice(end + 1));
+  }
 }
 
-function parse(raw) {
+// 2) Atrybutów on…= ani adresów javascript: nie czyścimy po cichu: build się zatrzymuje i wskazuje plik.
+const ON_ATTR = /\son[a-z]+\s*=/i;
+const JS_URL = /\s(?:href|src|action|formaction|xlink:href)\s*=\s*["']?\s*javascript:/i;
+function assertNoActiveHtml(html, file) {
+  if (html.toLowerCase().includes('<script')) throw new Error(`${file}: został znacznik <script>`);
+  for (const [tag] of html.matchAll(/<[^>]*>/g)) {
+    if (ON_ATTR.test(tag) || JS_URL.test(tag))
+      throw new Error(`${file}: niedozwolony atrybut on…= albo adres javascript: w ${tag.slice(0, 120)}`);
+  }
+}
+
+function parse(raw, file) {
   const styles = [...raw.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n');
   let body = (raw.match(/<body[^>]*>([\s\S]*)<\/body>/i) || [, raw])[1];
   body = stripScripts(body);
+  assertNoActiveHtml(body, file);
   const title = pick(body, /<h1[^>]*>([\s\S]*?)<\/h1>/i) || pick(raw, /<title>([\s\S]*?)<\/title>/i);
   const lede = pick(body, /<p[^>]*class="[^"]*\blede\b[^"]*"[^>]*>([\s\S]*?)<\/p>/i)
     || pick(body, /<p[^>]*class="[^"]*\b(?:dek|subtitle|lead)\b[^"]*"[^>]*>([\s\S]*?)<\/p>/i)
@@ -117,7 +126,7 @@ export function getArticles() {
   cache = ARTICLES.map((meta, idx) => {
     const raw = RAW[`../teksty/${meta.slug}.html`];
     if (!raw) throw new Error(`Brak pliku src/teksty/${meta.slug}.html`);
-    const p = parse(raw);
+    const p = parse(raw, `src/teksty/${meta.slug}.html`);
     const cat = CATEGORIES.find((c) => c.id === meta.category);
     return {
       ...p,
