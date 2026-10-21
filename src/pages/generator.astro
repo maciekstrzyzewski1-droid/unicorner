@@ -257,7 +257,8 @@ const v = Date.now().toString(36);
   <Foot label="unicorner · generator ai" />
 
 
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <!-- integrity: odcisk SHA-384 pliku z cdnjs (zgodny z paczką npm pdfjs-dist 3.11.174); przy zmianie wersji policz go od nowa -->
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
   <script is:inline src={`/assets/generator.js?v=${v}`}></script>
 </Base>
