@@ -2,6 +2,7 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
+import { unified } from '@astrojs/markdown-remark';
 import tailwindcss from '@tailwindcss/vite';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -36,9 +37,13 @@ export default defineConfig({
   build: { format: 'file' },
   integrations: [react(), mdx(), pdfjsWasm],
   // wzory $...$ i $$...$$ w plikach .md/.mdx renderowane przy buildzie (KaTeX) — zero JS po stronie przegladarki
+  // Astro 7: domyślny procesor Markdown to Sätteri, który nie uruchamia wtyczek remark/rehype.
+  // Zostajemy przy unified (jak w Astro 5) — MDX dziedziczy go razem z wtyczkami.
   markdown: {
-    remarkPlugins: [remarkMath],
-    rehypePlugins: [[rehypeKatex, KATEX_OPCJE], rehypeInterpunkcja, rehypeTabele],
+    processor: unified({
+      remarkPlugins: [remarkMath],
+      rehypePlugins: [[rehypeKatex, KATEX_OPCJE], rehypeInterpunkcja, rehypeTabele],
+    }),
   },
   vite: {
     plugins: [tailwindcss()],

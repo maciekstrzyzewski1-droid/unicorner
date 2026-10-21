@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Unicorner (unicorner.pl): Astro 5 + React (wyspy) + MDX. Opis projektu, struktura i „jak dodać treść": `README.md`. Czytaj go tylko wtedy, gdy zadanie tego wymaga.
+Unicorner (unicorner.pl): Astro 7 + React (wyspy) + MDX (procesor Markdown: unified z `@astrojs/markdown-remark`, nie domyślny Sätteri). Opis projektu, struktura i „jak dodać treść": `README.md`. Czytaj go tylko wtedy, gdy zadanie tego wymaga.
 
 ## Rozmowa
 - Odpowiadaj po polsku. Krótko i konkretnie. Jeśli coś się nie opłaca, powiedz to wprost.

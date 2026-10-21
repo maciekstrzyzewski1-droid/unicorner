@@ -13,7 +13,8 @@ const {
 // Domyślne canonical + og: dla stron bez własnych. Strony ze slotem "head" (kursy, Wiedza, generator, talia)
 // ustawiają je same, więc tam ich nie dublujemy.
 const ownHead = Astro.slots.has('head');
-const canonical = new URL(Astro.url.pathname, Astro.site).href; // build.format 'file' -> /foo.html
+// build.format 'file' -> /foo.html; Astro 7 podaje stronę główną jako /index.html — canonical ma być „/”
+const canonical = new URL(Astro.url.pathname.replace(/(^|\/)index\.html$/, '$1'), Astro.site).href;
 ---
 
 <!doctype html>
