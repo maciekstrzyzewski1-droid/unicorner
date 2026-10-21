@@ -5,6 +5,10 @@ import '../styles/wiedza.css';
 import '../styles/generator.css';
 import Bar from '../components/wiedza/Bar.astro';
 import Foot from '../components/wiedza/Foot.astro';
+// pdf.js z naszej domeny (paczka npm pdfjs-dist, aktualizacje bezpieczeństwa przez Dependabot).
+// Wersja „legacy": działa na starszych przeglądarkach niż wersja główna (ta wymaga najnowszych API JS).
+import pdfjsUrl from 'pdfjs-dist/legacy/build/pdf.min.mjs?url';
+import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
 
 const title = 'Generator AI — fiszki i quiz z notatek · Unicorner';
 const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. AI ułoży z nich fiszki i quiz z wyjaśnieniami. Beta.';
@@ -257,8 +261,14 @@ const v = Date.now().toString(36);
   <Foot label="unicorner · generator ai" />
 
 
-  <!-- integrity: odcisk SHA-384 pliku z cdnjs (zgodny z paczką npm pdfjs-dist 3.11.174); przy zmianie wersji policz go od nowa -->
-  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js" integrity="sha384-/1qUCSGwTur9vjf/z9lmu/eCUYbpOTgSjmpbMQZ1/CtX2v/WcAIKqRv+U1DUCG6e" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <!-- pdf.js ładowany dopiero przy pierwszym PDF-ie (ok. 1,8 MB), z naszej domeny. Nieudane ładowanie można ponowić. -->
+  <script is:inline define:vars={{ pdfjsUrl, pdfjsWorkerUrl }}>
+    let pdfjsPromise = null;
+    window.ucLoadPdfjs = () => pdfjsPromise || (pdfjsPromise = import(pdfjsUrl).then(m => {
+      m.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl;
+      return m;
+    }, e => { pdfjsPromise = null; throw e; }));
+  </script>
   <script is:inline src="https://accounts.google.com/gsi/client" async defer></script>
   <script is:inline src={`/assets/generator.js?v=${v}`}></script>
 </Base>

@@ -10,10 +10,6 @@ const MAX_PHOTOS = 4;
 const MAX_INSTR = 300;
 const STORE_KEY = "uc_gen_last";
 
-if (window.pdfjsLib) {
-  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-}
-
 const $ = id => document.getElementById(id);
 const drop=$("drop"), fileInput=$("file"), pasted=$("pasted"), instr=$("instr");
 const genBtn=$("gen"), resetBtn=$("reset"), statusEl=$("status");
@@ -95,7 +91,7 @@ function renderUsage(){
 async function onGoogleCredential(resp){
   setStatus("Loguję…","info");
   const r = await api("/auth/google", { method:"POST", body:{ credential: resp.credential } });
-  if(!r.ok){ setStatus(r.data.error ? r.data.error+(r.data.detail?" ("+r.data.detail+")":"") : "Logowanie nieudane.","err"); return; }
+  if(!r.ok){ setStatus(r.data.error || "Logowanie nieudane.","err"); return; }
   setSession(r.data.token, r.data.user, r.data.usage);
   clearStatus();
   await loadDecks();
@@ -303,8 +299,11 @@ async function compressImage(file){
 }
 
 async function extractText(file){
+  let pdfjsLib;
+  try{ pdfjsLib = await window.ucLoadPdfjs(); }
+  catch(e){ throw new Error("nie udało się uruchomić czytnika PDF. Odśwież stronę albo zaktualizuj przeglądarkę. Możesz też zrobić zdjęcia stron (zakładka „Zdjęcia notatek”) lub wkleić tekst."); }
   const buf = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({data:buf, isEvalSupported:false}).promise; // CVE-2024-4367: bez eval w pdf.js
+  const pdf = await pdfjsLib.getDocument({data:buf, isEvalSupported:false}).promise; // isEvalSupported:false — dodatkowa ochrona, jak przy CVE-2024-4367
   let text="";
   for(let p=1;p<=pdf.numPages;p++){
     const page=await pdf.getPage(p);
