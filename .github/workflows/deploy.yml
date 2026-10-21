@@ -3,16 +3,16 @@ name: Deploy do GitHub Pages
 # Buduje strone Astro i publikuje dist/ na GitHub Pages.
 # WYMAGANIE JEDNORAZOWE: Repo -> Settings -> Pages -> "Build and deployment" -> Source = "GitHub Actions".
 # Domena unicorner.pl utrzymywana przez public/CNAME (-> dist/CNAME).
+# Akcje przypiete do pelnego SHA (komentarz = wersja); aktualizuje je Dependabot (.github/dependabot.yml).
 
 on:
   push:
     branches: [main]
   workflow_dispatch: {}
 
+# Domyslnie tylko odczyt; prawo publikacji ma wylacznie job "deploy".
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 # Nie przerywaj trwajacego deployu; kolejkuj po jednym.
 concurrency:
@@ -24,28 +24,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-      - name: Setup Node
-        uses: actions/setup-node@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          node-version: 20
+          persist-credentials: false
+      - name: Setup Node
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
           cache: npm
       - name: Install
         run: npm ci
       - name: Build (Astro)
         run: npm run build
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:
           path: ./dist
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5.0.1
