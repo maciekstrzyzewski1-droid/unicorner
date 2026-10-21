@@ -1,5 +1,5 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 10 (konta, kredyty, udostępnianie, błędy, powtórki, PDF-y ze skanami)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 11 (konta, kredyty, udostępnianie, błędy, powtórki, PDF-y ze skanami, dłuższe odpowiedzi AI)
    ---------------------------------------------------------------------
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)
@@ -62,7 +62,7 @@ const WRITE_LIMIT_PER_HOUR = 1500;       // zapisów odpowiedzi/powtórek/zmian 
 const MAX_DECKS_PER_USER = 300;
 const MAX_DECK_JSON = 120_000;           // maks. rozmiar zapisanej talii (znaki JSON)
 const MAX_INPUT_CHARS = 40000;          // tekst materiału (generator i poprawki talii)
-const MAX_TOKENS = 3000;
+const MAX_TOKENS = 8000;                 // odpowiedź generatora: pełna talia 20 fiszek + 20 pytań z wyjaśnieniami ≈ 4–5 tys. tokenów (jak EDIT_MAX_TOKENS)
 const MAX_INSTRUCTION_CHARS = 300;     // „na czym się skupić” z generatora
 const MAX_IMAGES = 4;                    // maks. zdjęć notatek na jedno generowanie
 const MAX_PDF_IMAGES = 12;               // maks. stron PDF jako obraz (skany, zdjęcia kartek, slajdy-obrazki)
@@ -414,7 +414,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 10, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 11, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { console.error("health: baza", e && e.stack || e); out.db_error = "błąd bazy (szczegóły w logach)"; }
