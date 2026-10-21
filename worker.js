@@ -25,8 +25,11 @@
      POST /s/:share_id/copy  → zapisuje kopię udostępnionej talii na swoim koncie
      GET  /reviews           → zatwierdzone opinie (czyta strona główna)
      POST /reviews           → nowa opinia (trafia do moderacji)
-     GET  /admin/list?code=… → opinie oczekujące (moderacja.html)
+     POST /admin/list        → {code} → opinie oczekujące (moderacja.html)
      POST /admin/decide      → {code, id, action:"approve"|"reject"}
+
+   Błędy: użytkownik dostaje krótki komunikat; szczegóły trafiają tylko do logów
+   Cloudflare (panel → Worker → Logs).
 
    Sesja: po zalogowaniu strona dostaje losowy token i wysyła go w nagłówku
    „Authorization: Bearer …”. W bazie trzymamy tylko jego skrót (SHA-256).
@@ -46,6 +49,7 @@
    ===================================================================== */
 
 const MODEL = "claude-haiku-4-5-20251001";
+const DEFAULT_ORIGIN = "https://unicorner.pl"; // CORS, gdy w panelu nie ustawiono ALLOWED_ORIGIN
 const GOOGLE_CLIENT_ID = "243769752280-r6h2cj3pn9n47p020seuk58n9ijj9si7.apps.googleusercontent.com"; // publiczny identyfikator z Google Cloud
 const SESSION_DAYS = 60;                 // ile dni trwa zalogowanie
 const FREE_MONTHLY_CREDITS_DEFAULT = 30; // darmowe kredyty na konto na miesiąc (beta)
@@ -115,15 +119,16 @@ export default {
       if (path === "/reviews" && request.method === "POST")
         return await handleReviewsPost(request, env, cors);
 
-      if (path === "/admin/list" && request.method === "GET")
-        return await handleAdminList(url, env, cors, request);
+      if (path === "/admin/list" && request.method === "POST")
+        return await handleAdminList(request, env, cors);
 
       if (path === "/admin/decide" && request.method === "POST")
         return await handleAdminDecide(request, env, cors);
 
       return json({ error: "Not found" }, 404, cors);
     } catch (e) {
-      return json({ error: "Błąd serwera", detail: String(e && e.message || e).slice(0, 160) }, 500, cors);
+      console.error("Nieobsłużony błąd", path, e && e.stack || e);
+      return json({ error: "Błąd serwera — spróbuj ponownie za chwilę." }, 500, cors);
     }
   },
 };
@@ -131,12 +136,6 @@ export default {
 /* ===================== GENERATOR (tekst + zdjęcia) ===================== */
 
 async function handleGenerate(request, env, cors) {
-  let body;
-  try { body = await request.json(); }
-  catch { return json({ error: "Bad JSON" }, 400, cors); }
-
-  const { text, images, instruction, source } = body || {};
-
   // generować może tylko zalogowany użytkownik (kredyty)
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Zaloguj się, żeby generować.", need_login: true }, 401, cors);
@@ -144,6 +143,13 @@ async function handleGenerate(request, env, cors) {
   // ochrona przed skryptami: limit na konto + luźniejszy na IP
   if (!(await limitUserAndIp(env, request, user, "g", GEN_LIMIT_PER_HOUR)))
     return json({ error: "Limit generowań na godzinę wykorzystany — spróbuj później." }, 429, cors);
+
+  // treść żądania czytamy dopiero po sprawdzeniu logowania i limitu
+  let body;
+  try { body = await request.json(); }
+  catch { return json({ error: "Bad JSON" }, 400, cors); }
+
+  const { text, images, instruction, source } = body || {};
 
   // --- walidacja wejścia: tekst LUB zdjęcia ---
   const imgs = Array.isArray(images) ? images : [];
@@ -222,7 +228,8 @@ ${rules}${instrBlock}` + (material ? `\n\nDODATKOWY MATERIAŁ TEKSTOWY:\n"""\n${
     parsed = parseJsonLoose(await callAI(env, { system, content: userContent, maxTokens: MAX_TOKENS }));
   } catch (e) {
     if (reserved) await releaseCredits(env, user, COST.generate);
-    return json({ error: e.message, detail: e.detail }, e.status || 502, cors);
+    const pe = publicError(e, AI_UNAVAILABLE, 502);
+    return json({ error: pe.error }, pe.status, cors);
   }
   const deck = normalizeDeck(parsed || {});
   if (!deck.flashcards.length && !deck.quiz.length) {
@@ -293,11 +300,28 @@ async function handleReviewsPost(request, env, cors) {
 
 /* ===================== MODERACJA ===================== */
 
-function adminOk(env, code) { return env.ADMIN_CODE && code === env.ADMIN_CODE; }
+/* porównanie kodu w stałym czasie: oba ciągi najpierw skracamy SHA-256 do 32 bajtów,
+   więc czas porównania nie zależy ani od treści, ani od długości kodu */
+async function adminOk(env, code) {
+  if (!env.ADMIN_CODE || typeof code !== "string" || !code) return false;
+  const enc = new TextEncoder();
+  const [a, b] = await Promise.all([
+    crypto.subtle.digest("SHA-256", enc.encode(code)),
+    crypto.subtle.digest("SHA-256", enc.encode(String(env.ADMIN_CODE))),
+  ]);
+  const x = new Uint8Array(a), y = new Uint8Array(b);
+  let diff = 0;
+  for (let i = 0; i < x.length; i++) diff |= x[i] ^ y[i];
+  return diff === 0;
+}
 
-async function handleAdminList(url, env, cors, request) {
+/* kod przychodzi w treści żądania POST, nigdy w adresie URL */
+async function handleAdminList(request, env, cors) {
   if (!(await rateLimit(env, "adm:" + clientIp(request), 60, 3600)).ok) return json({ error: "Za dużo prób" }, 429, cors);
-  if (!adminOk(env, url.searchParams.get("code"))) return json({ error: "Zły kod" }, 401, cors);
+  let body;
+  try { body = await request.json(); }
+  catch { return json({ error: "Bad JSON" }, 400, cors); }
+  if (!(await adminOk(env, body && body.code))) return json({ error: "Zły kod" }, 401, cors);
   const keys = (await env.UC_KV.list({ prefix: "rev:p:", limit: 100 })).keys;
   const out = [];
   for (const k of keys) {
@@ -309,12 +333,12 @@ async function handleAdminList(url, env, cors, request) {
 }
 
 async function handleAdminDecide(request, env, cors) {
+  if (!(await rateLimit(env, "adm:" + clientIp(request), 60, 3600)).ok) return json({ error: "Za dużo prób" }, 429, cors);
   let body;
   try { body = await request.json(); }
   catch { return json({ error: "Bad JSON" }, 400, cors); }
   const { code, id, action } = body || {};
-  if (!(await rateLimit(env, "adm:" + clientIp(request), 60, 3600)).ok) return json({ error: "Za dużo prób" }, 429, cors);
-  if (!adminOk(env, code)) return json({ error: "Zły kod" }, 401, cors);
+  if (!(await adminOk(env, code))) return json({ error: "Zły kod" }, 401, cors);
   if (!id || !["approve", "reject"].includes(action)) return json({ error: "Złe parametry" }, 400, cors);
 
   const key = "rev:p:" + String(id);
@@ -373,7 +397,7 @@ async function handleHealth(env, cors) {
   const out = { ok: true, version: 9, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
-    catch (e) { out.db_error = String(e.message || e).slice(0, 120); }
+    catch (e) { console.error("health: baza", e && e.stack || e); out.db_error = "błąd bazy (szczegóły w logach)"; }
   }
   out.ok = out.ai_key && out.kv && out.db;
   return json(out, 200, cors);
@@ -383,16 +407,19 @@ async function handleHealth(env, cors) {
 
 async function handleAuthGoogle(request, env, cors) {
   if (!env.DB) return json({ error: "Logowanie jeszcze nie jest skonfigurowane (brak bazy DB)." }, 503, cors);
+  const rl = await rateLimit(env, "a:" + clientIp(request), 60, 3600);
+  if (!rl.ok) return json({ error: "Za dużo prób logowania — spróbuj za chwilę." }, 429, cors);
+
   let body;
   try { body = await request.json(); }
   catch { return json({ error: "Bad JSON" }, 400, cors); }
 
-  const rl = await rateLimit(env, "a:" + clientIp(request), 60, 3600);
-  if (!rl.ok) return json({ error: "Za dużo prób logowania — spróbuj za chwilę." }, 429, cors);
-
   let claims;
   try { claims = await verifyGoogleIdToken(String((body && body.credential) || ""), env); }
-  catch (e) { return json({ error: "Logowanie nieudane", detail: String(e.message || e).slice(0, 120) }, 401, cors); }
+  catch (e) {
+    console.error("auth/google:", String(e && e.message || e));
+    return json({ error: "Logowanie nieudane — odśwież stronę i spróbuj ponownie." }, 401, cors);
+  }
 
   await ensureSchema(env);
   const now = Date.now();
@@ -527,14 +554,33 @@ async function callAI(env, { system, content, maxTokens }) {
       headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
       body: JSON.stringify({ model: MODEL, max_tokens: maxTokens || MAX_TOKENS, system, messages: [{ role: "user", content }] }),
     });
-  } catch { throw httpErr(502, "Nie udało się połączyć z AI"); }
-  if (!res.ok) throw httpErr(502, "AI error " + res.status, (await res.text()).slice(0, 200));
-  const data = await res.json();
+  } catch (e) {
+    console.error("AI: brak połączenia", String(e && e.message || e));
+    throw httpErr(502, AI_UNAVAILABLE);
+  }
+  if (!res.ok) {
+    const raw = await res.text().catch(() => "");
+    console.error("AI: błąd", res.status, raw.slice(0, 500));
+    throw httpErr(502, AI_UNAVAILABLE);
+  }
+  let data;
+  try { data = await res.json(); }
+  catch { throw httpErr(502, AI_UNAVAILABLE); }
   if (data.stop_reason === "max_tokens")
     throw httpErr(502, "Odpowiedź AI była za długa i została ucięta — spróbuj z mniejszą talią albo krótszym materiałem. Kredyty wróciły na konto.");
   return (data.content && data.content[0] && data.content[0].text) || "";
 }
-function httpErr(status, error, detail) { const e = new Error(error); e.status = status; e.detail = detail; return e; }
+function httpErr(status, error) { const e = new Error(error); e.status = status; return e; }
+
+const AI_UNAVAILABLE = "Generator chwilowo niedostępny — spróbuj za kilka minut. Kredyty wróciły na konto.";
+
+/* błąd dla użytkownika: nasze komunikaty (httpErr, mają status) przechodzą bez zmian,
+   każdy inny wyjątek trafia tylko do logów, a użytkownik dostaje ogólny komunikat */
+function publicError(e, fallback, fallbackStatus) {
+  if (e && e.status && e.message) return { error: e.message, status: e.status };
+  console.error(fallback, e && e.stack || e);
+  return { error: fallback, status: fallbackStatus || 500 };
+}
 
 function parseJsonLoose(raw) {
   let p = safeParse(raw);
@@ -617,7 +663,8 @@ async function withCredits(env, user, cost, cors, fn) {
     return json(out, 200, cors);
   } catch (e) {
     await releaseCredits(env, user, cost);
-    return json({ error: e.message || "Błąd", detail: e.detail }, e.status || 500, cors);
+    const pe = publicError(e, "Coś poszło nie tak — spróbuj ponownie. Kredyty wróciły na konto.", 500);
+    return json({ error: pe.error }, pe.status, cors);
   }
 }
 
@@ -724,7 +771,8 @@ async function handleDeckPut(request, env, cors, id) {
   const d = normalizeDeck(body);
   if (!d.flashcards.length && !d.quiz.length) return json({ error: "Pusta talia" }, 400, cors);
   d.title = d.title || old.title;
-  try { await storeDeck(env, user, id, d); } catch (e) { return json({ error: e.message }, e.status || 500, cors); }
+  try { await storeDeck(env, user, id, d); }
+  catch (e) { const pe = publicError(e, "Nie udało się zapisać talii — spróbuj ponownie.", 500); return json({ error: pe.error }, pe.status, cors); }
   return json({ ok: true, deck: { id, ...d } }, 200, cors);
 }
 
@@ -845,9 +893,9 @@ function defaultTitle(source) {
 
 async function saveDeck(env, user, d) {
   const cnt = await env.DB.prepare("SELECT COUNT(*) AS n FROM decks WHERE user_id = ?").bind(user.id).first();
-  if (cnt && cnt.n >= MAX_DECKS_PER_USER) throw new Error("limit talii");
+  if (cnt && cnt.n >= MAX_DECKS_PER_USER) throw httpErr(409, `Masz już ${MAX_DECKS_PER_USER} talii — usuń starsze, żeby zapisać nową.`);
   const data = JSON.stringify({ flashcards: d.flashcards, quiz: d.quiz });
-  if (data.length > MAX_DECK_JSON) throw new Error("talia za duża");
+  if (data.length > MAX_DECK_JSON) throw httpErr(413, "Talia za duża — usuń część fiszek lub pytań");
   const id = crypto.randomUUID(), now = Date.now();
   await env.DB.prepare(
     "INSERT INTO decks (id, user_id, title, source, instruction, data, fc_count, qz_count, created_at, updated_at) VALUES (?,?,?,?,?,?,?,?,?,?)"
@@ -964,7 +1012,7 @@ async function handleSharedCopy(request, env, cors, sid) {
   try {
     const deck = await saveDeck(env, user, { title: d.title || "Talia od znajomego", source: "share", instruction: "", flashcards: d.flashcards, quiz: d.quiz });
     return json({ deck }, 200, cors);
-  } catch (e) { return json({ error: "Nie udało się zapisać talii (" + (e.message || "błąd") + ")" }, 400, cors); }
+  } catch (e) { const pe = publicError(e, "Nie udało się zapisać talii — spróbuj ponownie.", 500); return json({ error: pe.error }, pe.status, cors); }
 }
 
 /* ===================== KRYPTO / BASE64 ===================== */
@@ -992,11 +1040,12 @@ function bytesToB64url(b) {
 /* ===================== POMOCNICZE ===================== */
 
 function corsHeaders(request, env) {
-  const conf = (env.ALLOWED_ORIGIN || "*").split(",").map(s => s.trim()).filter(Boolean);
+  // bez ustawionej zmiennej wpuszczamy tylko unicorner.pl („*” trzeba wpisać świadomie)
+  const conf = (env.ALLOWED_ORIGIN || DEFAULT_ORIGIN).split(",").map(s => s.trim()).filter(Boolean);
   const reqOrigin = request.headers.get("Origin") || "";
   let allow;
   if (conf.includes("*")) allow = "*";
-  else allow = conf.includes(reqOrigin) ? reqOrigin : conf[0] || "*";
+  else allow = conf.includes(reqOrigin) ? reqOrigin : conf[0] || DEFAULT_ORIGIN;
   return {
     "Access-Control-Allow-Origin": allow,
     "Access-Control-Allow-Methods": "GET, POST, PUT, PATCH, DELETE, OPTIONS",
@@ -1033,7 +1082,11 @@ async function rateLimit(env, key, limit, ttl) {
       ).bind(k, (bucket + 1) * ttl * 1000, limit).first();
       if (Math.random() < 0.02) await env.DB.prepare("DELETE FROM rate WHERE exp < ?").bind(Date.now()).run(); // sprzątanie
       return { ok: !!row };
-    } catch { return { ok: true }; } // awaria licznika nie może blokować użytkowników
+    } catch (e) {
+      // awaria licznika = blokujemy (bez działającej bazy i tak nie działają sesje ani kredyty)
+      console.error("rateLimit: awaria bazy", String(e && e.message || e));
+      return { ok: false };
+    }
   }
   const kk = "rl:" + k;
   const n = parseInt(await env.UC_KV.get(kk), 10) || 0;

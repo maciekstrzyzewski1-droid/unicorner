@@ -61,8 +61,12 @@ async function load(){
   sessionStorage.setItem('uc_admin', code);
   msg("Wczytuję…");
   try{
-    const res = await fetch(WORKER_URL + "/admin/list?code=" + encodeURIComponent(code));
+    const res = await fetch(WORKER_URL + "/admin/list", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ code })
+    });
     if(res.status===401){ msg("Zły kod.", true); return; }
+    if(!res.ok){ const d=await res.json().catch(()=>({})); msg(d.error||"Błąd.", true); return; }
     const list = await res.json();
     render(list);
     msg(list.length ? list.length + " oczekujących" : "Brak oczekujących opinii ✦");
