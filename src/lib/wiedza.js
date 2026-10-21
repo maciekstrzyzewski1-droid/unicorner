@@ -79,10 +79,27 @@ function scopeCss(css) {
 const text = (html) => html.replace(/<[^>]+>/g, ' ').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/\s+/g, ' ').trim();
 const pick = (html, re) => { const m = html.match(re); return m ? text(m[1]) : ''; };
 
+// Artykuły to nasze pliki, ale gdyby trafił do nich cudzy HTML, na stronę nie przejdzie żaden skrypt:
+// usuwamy <script> (także `</script >` i niezamknięte znaczniki), atrybuty on…= i adresy javascript:.
+// Powtarzamy do stabilizacji, żeby wycięcie jednego fragmentu nie skleiło nowego znacznika.
+const ON_ATTR = /\son[a-z]+\s*=\s*(?:"[^"]*"|'[^']*'|[^\s>]+)/gi;
+const JS_URL = /(\s(?:href|src|action|formaction|xlink:href)\s*=\s*["']?)\s*javascript:/gi;
+function stripScripts(html) {
+  let prev;
+  do {
+    prev = html;
+    html = html
+      .replace(/<script\b[\s\S]*?<\/script[^>]*>/gi, '')
+      .replace(/<script\b[\s\S]*$/i, '')
+      .replace(/<[^>]+>/g, (tag) => tag.replace(ON_ATTR, '').replace(JS_URL, '$1#'));
+  } while (html !== prev);
+  return html;
+}
+
 function parse(raw) {
   const styles = [...raw.matchAll(/<style[^>]*>([\s\S]*?)<\/style>/gi)].map((m) => m[1]).join('\n');
   let body = (raw.match(/<body[^>]*>([\s\S]*)<\/body>/i) || [, raw])[1];
-  body = body.replace(/<script[\s\S]*?<\/script>/gi, '');
+  body = stripScripts(body);
   const title = pick(body, /<h1[^>]*>([\s\S]*?)<\/h1>/i) || pick(raw, /<title>([\s\S]*?)<\/title>/i);
   const lede = pick(body, /<p[^>]*class="[^"]*\blede\b[^"]*"[^>]*>([\s\S]*?)<\/p>/i)
     || pick(body, /<p[^>]*class="[^"]*\b(?:dek|subtitle|lead)\b[^"]*"[^>]*>([\s\S]*?)<\/p>/i)
