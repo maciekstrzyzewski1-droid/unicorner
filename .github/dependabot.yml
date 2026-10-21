@@ -1,0 +1,11 @@
+# Dependabot: aktualizacje akcji GitHub przypietych do SHA (raz w tygodniu, jeden zbiorczy PR).
+# Alerty i poprawki bezpieczenstwa dla npm dzialaja niezaleznie od tego pliku (Settings -> Advanced Security).
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      akcje:
+        patterns: ["*"]
