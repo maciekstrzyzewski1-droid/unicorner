@@ -263,6 +263,17 @@ const v = Date.now().toString(36);
 
   <!-- pdf.js ładowany dopiero przy pierwszym PDF-ie (ok. 1,8 MB), z naszej domeny. Nieudane ładowanie można ponowić. -->
   <script is:inline define:vars={{ pdfjsUrl, pdfjsWorkerUrl }}>
+    // Safari (także na iOS 26) nie umie iterować ReadableStream przez `for await`, a pdf.js 6 tak czyta tekst strony.
+    // Bez tej łatki na iPhonie: „undefined is not a function (near '…t of e…')”.
+    const RS = window.ReadableStream;
+    if (RS && !RS.prototype[Symbol.asyncIterator]) {
+      RS.prototype[Symbol.asyncIterator] = async function* () {
+        const reader = this.getReader();
+        try {
+          for (;;) { const { done, value } = await reader.read(); if (done) return; yield value; }
+        } finally { reader.releaseLock(); }
+      };
+    }
     let pdfjsPromise = null;
     window.ucLoadPdfjs = () => pdfjsPromise || (pdfjsPromise = import(pdfjsUrl).then(m => {
       m.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl;
