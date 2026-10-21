@@ -1,7 +1,7 @@
 # Wdrożenie
 
 Dwa niezależne tory: **strona** (automatyczny deploy z GitHuba) i **Worker** (ręcznie w panelu Cloudflare).
-Stan na 2026-10-19, Worker w wersji 9 (konta, kredyty, udostępnianie, powtórki).
+Stan na 2026-10-21, Worker w wersji 10 (konta, kredyty, udostępnianie, powtórki, PDF-y ze skanami).
 
 ---
 
@@ -57,7 +57,8 @@ Logowanie używa Google Identity Services. Identyfikator klienta (`GOOGLE_CLIENT
 **Generator i konta**
 - [ ] Logowanie przez Google działa, widać licznik kredytów.
 - [ ] Generowanie z PDF (tekst) oraz z 1–2 zdjęć notatek (JPG z telefonu).
-- [ ] Skan-PDF bez warstwy tekstu: komunikat podpowiada wgranie stron jako zdjęć.
+- [ ] Skan-PDF / zdjęcia kartek zapisane jako PDF: generator sam zamienia strony na obrazy (do 12 stron) i robi talię. Długi PDF: pod wynikiem informacja, z których stron powstała talia.
+- [ ] `GET /health` zwraca `"version":10` (strona z nowym odczytem PDF wymaga Workera v10 — stary przyjmie najwyżej 4 obrazy).
 - [ ] Zapisana talia widoczna w „Moje talie", udostępnienie linkiem (podgląd w `talia.html`) i zapis kopii na drugie konto.
 - [ ] Konto bez kredytów dostaje czytelny komunikat, a nie błąd 500.
 - [ ] iPhone: zdjęcie prosto z aparatu (HEIC). Safari zwykle konwertuje do JPG; jeśli poleci błąd odczytu, zgłosić.

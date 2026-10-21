@@ -1,5 +1,5 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 9 (konta, kredyty, udostępnianie, błędy, powtórki)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 10 (konta, kredyty, udostępnianie, błędy, powtórki, PDF-y ze skanami)
    ---------------------------------------------------------------------
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)
@@ -61,10 +61,12 @@ const IP_LIMIT_FACTOR = 4;               // limit na IP = 4× limit na użytkown
 const WRITE_LIMIT_PER_HOUR = 1500;       // zapisów odpowiedzi/powtórek/zmian na użytkownika na godzinę
 const MAX_DECKS_PER_USER = 300;
 const MAX_DECK_JSON = 120_000;           // maks. rozmiar zapisanej talii (znaki JSON)
-const MAX_INPUT_CHARS = 14000;
+const MAX_INPUT_CHARS = 40000;          // tekst materiału (generator i poprawki talii)
 const MAX_TOKENS = 3000;
 const MAX_INSTRUCTION_CHARS = 300;     // „na czym się skupić” z generatora
 const MAX_IMAGES = 4;                    // maks. zdjęć notatek na jedno generowanie
+const MAX_PDF_IMAGES = 12;               // maks. stron PDF jako obraz (skany, zdjęcia kartek, slajdy-obrazki)
+const MAX_IMAGES_TOTAL_B64 = 3_600_000;  // łączny limit obrazów w jednym żądaniu (~2,7 MB)
 const MAX_IMAGE_B64 = 400_000;           // ~300 KB pliku po kompresji na froncie
 const GEN_LIMIT_PER_HOUR = 12;           // generowań na użytkownika na godzinę
 const REVIEWS_LIMIT_PER_DAY = 5;         // opinii na IP na dobę
@@ -159,14 +161,22 @@ async function handleGenerate(request, env, cors) {
   if (!hasImages && !hasText)
     return json({ error: "Za mało materiału do przetworzenia" }, 400, cors);
 
-  if (imgs.length > MAX_IMAGES)
-    return json({ error: `Maksymalnie ${MAX_IMAGES} zdjęcia naraz` }, 400, cors);
+  const isPdf = source === "pdf";
+  const maxImgs = isPdf ? MAX_PDF_IMAGES : MAX_IMAGES;
+  if (imgs.length > maxImgs)
+    return json({ error: isPdf ? `Maksymalnie ${maxImgs} stron-obrazów naraz` : `Maksymalnie ${maxImgs} zdjęcia naraz` }, 400, cors);
 
   const imageBlocks = [];
+  let imgBytes = 0;
   for (const im of imgs) {
     if (!im || typeof im.data !== "string" || !im.data) return json({ error: "Uszkodzone zdjęcie" }, 400, cors);
     if (im.data.length > MAX_IMAGE_B64) return json({ error: "Zdjęcie za duże — odśwież stronę i spróbuj ponownie" }, 413, cors);
+    imgBytes += im.data.length;
+    if (imgBytes > MAX_IMAGES_TOTAL_B64) return json({ error: "Materiał za duży na jedno generowanie" }, 413, cors);
     const mt = ["image/jpeg", "image/png", "image/webp"].includes(im.media_type) ? im.media_type : "image/jpeg";
+    // przy PDF-ie podpis strony przed obrazem — AI wie, w jakiej kolejności czytać i co łączyć z tekstem „[Strona N]”
+    const page = Number.isInteger(im.page) && im.page > 0 && im.page < 100000 ? im.page : null;
+    if (isPdf && page) imageBlocks.push({ type: "text", text: `[Strona ${page} — obraz]` });
     imageBlocks.push({ type: "image", source: { type: "base64", media_type: mt, data: im.data } });
   }
 
@@ -209,7 +219,17 @@ Zasady:
 - Jeśli materiału jest mało, zrób mniej pozycji, ale poprawnych.`;
 
   let userContent;
-  if (imageBlocks.length) {
+  if (imageBlocks.length && isPdf) {
+    const pdfInstr =
+`Materiał to plik PDF. Strony bez tekstu do skopiowania (skany, zdjęcia kartek, slajdy-obrazki, wykresy) masz wyżej jako obrazy podpisane numerem strony; pozostałe strony są w tekście poniżej, oznaczone „[Strona N]”.
+1. Najpierw uważnie odczytaj treść z obrazów (po polsku; mogą to być wydruki, zdjęcia pod kątem, pismo odręczne, wykresy).
+2. Połącz ją z tekstem w kolejności stron. Fragmenty NIECZYTELNE pomiń — nie zgaduj i nie dopisuj.
+3. Z wykresów i schematów odtwórz, co pokazują (osie, zależności, liczby), jeśli da się to odczytać.
+4. Dopiero z tak odczytanej treści zrób fiszki i quiz.
+
+${rules}${instrBlock}` + (material ? `\n\nTEKST Z POZOSTAŁYCH STRON:\n"""\n${material}\n"""` : "");
+    userContent = [...imageBlocks, { type: "text", text: pdfInstr }];
+  } else if (imageBlocks.length) {
     const imgInstr =
 `Materiał to zdjęcia notatek — najpewniej pismo odręczne, możliwe skróty, strzałki i schematy.
 1. Najpierw uważnie odczytaj treść ze wszystkich zdjęć (to notatki studenckie po polsku).
@@ -394,7 +414,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 9, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 10, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { console.error("health: baza", e && e.stack || e); out.db_error = "błąd bazy (szczegóły w logach)"; }
