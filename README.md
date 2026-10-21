@@ -6,7 +6,7 @@ i generator AI robiący fiszki oraz quiz z własnych notatek. Działa na telefon
 Strony z materiałami nie wymagają logowania; logowanie (Google) potrzebne jest tylko w generatorze.
 
 - **Live:** https://unicorner.pl
-- **Frontend:** Astro 5 + React 18 (wyspy), Tailwind 4, MDX + KaTeX. Build do statycznych plików.
+- **Frontend:** Astro 7 + React 18 (wyspy), Tailwind 4, MDX + KaTeX. Build do statycznych plików.
 - **Hosting:** GitHub Pages, wdrażane przez GitHub Actions (`.github/workflows/deploy.yml`) z katalogu `dist/`.
 - **Backend:** Cloudflare Worker (`worker.js`) + KV + baza D1. Generator AI, konta (Google), talie, kredyty, opinie, moderacja.
 - **Efekty 3D / animacje:** three + React Three Fiber, ogl, GSAP, framer-motion (komponenty w `src/components/*.jsx`).
@@ -25,7 +25,7 @@ npm run build     # build do dist/ (~35 s, 62 strony)
 npm run preview   # podgląd zbudowanej strony
 ```
 
-Wymagany Node 20+ (workflow używa 20). Testów automatycznych nie ma. Jedyną kontrolą jest
+Wymagany Node 24 (Astro 7 wymaga co najmniej 22.23.4; workflow używa 24). Testów automatycznych nie ma. Jedyną kontrolą jest
 przechodzący `npm run build`, więc przed pushem zawsze go uruchom. Na pull requestach robi to też CI
 (`.github/workflows/build-pr.yml`).
 
