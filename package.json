@@ -20,7 +20,7 @@
     "clsx": "^2",
     "framer-motion": "^11",
     "gsap": "^3.15.0",
-    "katex": "^0.16.47",
+    "katex": "^0.19.0",
     "ogl": "^1.0.11",
     "pdfjs-dist": "^6.4.299",
     "postprocessing": "^6.39.4",
@@ -36,5 +36,8 @@
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "tailwindcss": "^4"
+  },
+  "overrides": {
+    "katex": "$katex"
   }
 }
