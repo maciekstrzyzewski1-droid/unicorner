@@ -22,6 +22,7 @@
     "gsap": "^3.15.0",
     "katex": "^0.16.47",
     "ogl": "^1.0.11",
+    "pdfjs-dist": "^6.4.299",
     "postprocessing": "^6.39.4",
     "react": "^18",
     "react-dom": "^18",
