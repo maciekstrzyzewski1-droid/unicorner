@@ -9,6 +9,9 @@ import Foot from '../components/wiedza/Foot.astro';
 // Wersja „legacy": działa na starszych przeglądarkach niż wersja główna (ta wymaga najnowszych API JS).
 import pdfjsUrl from 'pdfjs-dist/legacy/build/pdf.min.mjs?url';
 import pdfjsWorkerUrl from 'pdfjs-dist/legacy/build/pdf.worker.min.mjs?url';
+import { version as pdfjsVersion } from 'pdfjs-dist/package.json';
+// dekodery skanów (WebAssembly), kopiowane przy buildzie przez integrację w astro.config.mjs
+const pdfjsWasmUrl = `/pdfjs/${pdfjsVersion}/wasm/`;
 
 const title = 'Generator AI — fiszki i quiz z notatek · Unicorner';
 const description = 'Wgraj PDF z wykładem, zdjęcia notatek albo wklej tekst. AI ułoży z nich fiszki i quiz z wyjaśnieniami. Beta.';
@@ -56,7 +59,7 @@ const v = Date.now().toString(36);
           <div class="g-drop" id="drop" tabindex="0" role="button" aria-label="Wybierz plik">
             <svg viewBox="0 0 48 48" fill="none" aria-hidden="true"><path d="M24 31V13m0 0-7 7m7-7 7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/><path d="M10 30v5a4 4 0 0 0 4 4h20a4 4 0 0 0 4-4v-5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>
             <div class="big" id="dropBig">Przeciągnij PDF tutaj</div>
-            <div class="small" id="dropSmall">albo kliknij, żeby wybrać · jeden plik, mniej więcej jeden wykład</div>
+            <div class="small" id="dropSmall">albo kliknij, żeby wybrać · wykład, skrypt, a nawet skan lub zdjęcia kartek</div>
           </div>
           <input type="file" id="file" accept="application/pdf,.pdf" style="display:none" />
           <div class="g-filechip" id="filechip"><span class="ic">PDF</span><span id="filename"></span></div>
@@ -64,8 +67,8 @@ const v = Date.now().toString(36);
         </div>
 
         <div class="g-src" id="srcText" hidden>
-          <textarea id="pasted" rows="8" maxlength="14000" placeholder="Wklej tutaj notatki, fragment skryptu albo opracowanie (min. ok. 300 znaków)…"></textarea>
-          <div class="g-count"><span id="pastedCount">0</span> / 14 000 znaków</div>
+          <textarea id="pasted" rows="8" maxlength="40000" placeholder="Wklej tutaj notatki, fragment skryptu albo opracowanie (min. ok. 300 znaków)…"></textarea>
+          <div class="g-count"><span id="pastedCount">0</span> / 40 000 znaków</div>
         </div>
       </div>
 
@@ -262,7 +265,7 @@ const v = Date.now().toString(36);
 
 
   <!-- pdf.js ładowany dopiero przy pierwszym PDF-ie (ok. 1,8 MB), z naszej domeny. Nieudane ładowanie można ponowić. -->
-  <script is:inline define:vars={{ pdfjsUrl, pdfjsWorkerUrl }}>
+  <script is:inline define:vars={{ pdfjsUrl, pdfjsWorkerUrl, pdfjsWasmUrl }}>
     // Safari (także na iOS 26) nie umie iterować ReadableStream przez `for await`, a pdf.js 6 tak czyta tekst strony.
     // Bez tej łatki na iPhonie: „undefined is not a function (near '…t of e…')”.
     const RS = window.ReadableStream;
@@ -274,6 +277,7 @@ const v = Date.now().toString(36);
         } finally { reader.releaseLock(); }
       };
     }
+    window.ucPdfjsWasmUrl = pdfjsWasmUrl;
     let pdfjsPromise = null;
     window.ucLoadPdfjs = () => pdfjsPromise || (pdfjsPromise = import(pdfjsUrl).then(m => {
       m.GlobalWorkerOptions.workerSrc = pdfjsWorkerUrl;

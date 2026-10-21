@@ -4,8 +4,11 @@
 (function(){
 const API = window.UC_API || "https://red-queen-3002.unicorner.workers.dev";
 const GOOGLE_CLIENT_ID = window.UC_GCID || "243769752280-r6h2cj3pn9n47p020seuk58n9ijj9si7.apps.googleusercontent.com";
-const MAX_CHARS = 14000;   // limit długości tekstu wysyłanego do AI (kontrola kosztu)
+const MAX_CHARS = 40000;   // limit długości tekstu wysyłanego do AI (kontrola kosztu); taki sam w Workerze
 const MIN_CHARS = 300;
+const MAX_PDF_IMAGES = 12; // maks. stron PDF wysłanych jako obraz (skany, zdjęcia kartek, slajdy-obrazki); taki sam w Workerze
+const PDF_IMG_SIDE = 1400; // dłuższy bok obrazu strony w pikselach
+const PDF_IMG_BYTES = 220000; // docelowy rozmiar JPEG jednej strony
 const MAX_PHOTOS = 4;
 const MAX_INSTR = 300;
 const STORE_KEY = "uc_gen_last";
@@ -190,10 +193,16 @@ function progress(step){ // step: -1 = ukryj, 0..2 = etap
   box.querySelectorAll("li").forEach(li=>{ const s=+li.dataset.s; li.className = s<step ? "done" : s===step ? "on" : ""; });
 }
 let stepTimer=null;
+/* dopisek przy etapie „Przygotowuję materiał” (np. „Czytam stronę 3 z 20”) — widać, że coś się dzieje */
+function prepDetail(txt){
+  const li=$("progress").querySelector('li[data-s="0"]'); if(!li) return;
+  if(!li.dataset.base) li.dataset.base=li.textContent;
+  li.textContent = txt ? li.dataset.base+" · "+txt : li.dataset.base;
+}
 
 /* ---------- wybór źródła ---------- */
 const DROP_TXT = {
-  pdf: ["Przeciągnij PDF tutaj","albo kliknij, żeby wybrać · jeden plik, mniej więcej jeden wykład","application/pdf,.pdf",false],
+  pdf: ["Przeciągnij PDF tutaj","albo kliknij, żeby wybrać · wykład, skrypt, a nawet skan lub zdjęcia kartek","application/pdf,.pdf",false],
   img: ["Przeciągnij zdjęcia notatek tutaj","albo kliknij · do 4 zdjęć naraz, także pismo odręczne","image/*",true],
 };
 function setMode(m){
@@ -298,20 +307,104 @@ async function compressImage(file){
   return { media_type:"image/jpeg", data:b64 };
 }
 
-async function extractText(file){
+/* JPEG z canvasu, zmniejszany, aż zmieści się w limicie — zwraca base64 bez nagłówka */
+async function canvasToJpeg(c, maxBytes){
+  let q=0.82, blob;
+  do{ blob = await new Promise(res=>c.toBlob(res,"image/jpeg",q)); q-=0.1; }
+  while(blob && blob.size>maxBytes && q>0.35);
+  if(!blob) throw new Error("nie udało się zamienić strony PDF na obraz.");
+  return await new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result.split(",")[1]); r.onerror=()=>rej(new Error("Błąd odczytu")); r.readAsDataURL(blob); });
+}
+
+/* pusta strona (jednolity kolor) — nie wysyłamy jej do AI */
+function isBlank(c){
+  const t=document.createElement("canvas"); t.width=t.height=64;
+  const x=t.getContext("2d"); x.drawImage(c,0,0,64,64);
+  const d=x.getImageData(0,0,64,64).data; let sum=0, sq=0, n=0;
+  for(let i=0;i<d.length;i+=4){ const v=(d[i]+d[i+1]+d[i+2])/3; sum+=v; sq+=v*v; n++; }
+  const mean=sum/n; return Math.sqrt(Math.max(0,sq/n-mean*mean))<1;
+}
+
+/* jaką część strony zajmują obrazy (skan, zdjęcie, slajd-obrazek) — z listy operacji rysowania, bez renderowania */
+function imageShare(ops, OPS, w, h){
+  const mul=(m,n)=>[m[0]*n[0]+m[2]*n[1], m[1]*n[0]+m[3]*n[1], m[0]*n[2]+m[2]*n[3], m[1]*n[2]+m[3]*n[3], m[0]*n[4]+m[2]*n[5]+m[4], m[1]*n[4]+m[3]*n[5]+m[5]];
+  let m=[1,0,0,1,0,0], area=0; const stack=[];
+  for(let i=0;i<ops.fnArray.length;i++){
+    const fn=ops.fnArray[i];
+    if(fn===OPS.save) stack.push(m);
+    else if(fn===OPS.restore) m=stack.pop()||m;
+    else if(fn===OPS.transform) m=mul(m,ops.argsArray[i]);
+    else if(fn===OPS.paintImageXObject||fn===OPS.paintInlineImageXObject||fn===OPS.paintImageXObjectRepeat) area+=Math.abs(m[0]*m[3]-m[1]*m[2]);
+  }
+  return Math.min(1, area/(w*h));
+}
+
+/* PDF → { text, images, pages, upTo }
+   Każda strona osobno: tekst z warstwy tekstowej, a strony bez tekstu (skany, zdjęcia kartek, slajdy-obrazki)
+   i strony zdominowane przez obraz (wykresy, schematy) idą do AI jako obrazy.
+   upTo = ostatnia strona, którą AI dostało (limit tekstu albo obrazów na jedno generowanie). */
+async function extractPdf(file, onStep){
   let pdfjsLib;
   try{ pdfjsLib = await window.ucLoadPdfjs(); }
   catch(e){ throw new Error("nie udało się uruchomić czytnika PDF. Odśwież stronę albo zaktualizuj przeglądarkę. Możesz też zrobić zdjęcia stron (zakładka „Zdjęcia notatek”) lub wkleić tekst."); }
   const buf = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({data:buf, isEvalSupported:false}).promise; // isEvalSupported:false — dodatkowa ochrona, jak przy CVE-2024-4367
-  let text="";
-  for(let p=1;p<=pdf.numPages;p++){
+  let pdf, task;
+  try{ task = pdfjsLib.getDocument({data:buf, isEvalSupported:false, wasmUrl:window.ucPdfjsWasmUrl}); pdf = await task.promise; } // isEvalSupported:false — dodatkowa ochrona, jak przy CVE-2024-4367
+  catch(e){
+    if(e && e.name==="PasswordException") throw new Error("ten PDF jest zabezpieczony hasłem. Otwórz go, wydrukuj „do PDF” bez hasła i wgraj nową kopię.");
+    throw new Error("nie da się otworzyć tego pliku — jest uszkodzony albo to nie jest PDF.");
+  }
+  const N = pdf.numPages;
+
+  // 1) przegląd stron: tekst + udział obrazów
+  const pages=[];
+  for(let p=1;p<=N;p++){
+    onStep("Czytam stronę "+p+" z "+N);
     const page=await pdf.getPage(p);
     const content=await page.getTextContent();
-    text += content.items.map(i=>i.str).join(" ")+"\n";
-    if(text.length>MAX_CHARS+2000) break;
+    // hasEOL = koniec linii; spacje między słowami pdf.js dokłada sam (sklejanie spacją rozbijało np. „In fl acja”)
+    const t=content.items.map(i=>i.str+(i.hasEOL?"\n":"")).join("").replace(/[ \t]+\n/g,"\n").replace(/\n{3,}/g,"\n\n").trim();
+    const chars=t.replace(/\s/g,"").length;
+    const vp=page.getViewport({scale:1});
+    let share=0;
+    if(chars<800){ try{ share=imageShare(await page.getOperatorList(), pdfjsLib.OPS, vp.width, vp.height); }catch{} }
+    pages.push({ p, t, chars, share });
   }
-  return text.replace(/\s+\n/g,"\n").trim();
+  // cały plik prawie bez tekstu (np. skan z kilkoma literkami z OCR) — czytamy wszystko z obrazów
+  const allText = pages.reduce((s,x)=>s+x.chars,0) < MIN_CHARS;
+
+  // 2) wybór: kolejne strony aż do limitu tekstu albo obrazów
+  let text="", upTo=0; const toRender=[];
+  for(const x of pages){
+    const must = allText || x.chars<40;            // bez tekstu: tylko obraz
+    const nice = !must && x.share>=0.25;           // tekst + duży obraz/wykres: dorzucamy obraz, jeśli jest miejsce
+    if(must && toRender.length>=MAX_PDF_IMAGES) break;
+    if((must||nice) && toRender.length<MAX_PDF_IMAGES) toRender.push(x.p);
+    if(!allText && x.t){
+      const add=(text?"\n\n":"")+"[Strona "+x.p+"]\n"+x.t;
+      if(text.length+add.length>MAX_CHARS){ text+=add.slice(0, MAX_CHARS-text.length); upTo=x.p; break; }
+      text+=add;
+    }
+    upTo=x.p;
+  }
+
+  // 3) wybrane strony → JPEG
+  const images=[];
+  for(let i=0;i<toRender.length;i++){
+    onStep("Zamieniam stronę "+toRender[i]+" na obraz ("+(i+1)+" z "+toRender.length+")");
+    const page=await pdf.getPage(toRender[i]);
+    const vp1=page.getViewport({scale:1});
+    const scale=Math.min(3, PDF_IMG_SIDE/Math.max(vp1.width,vp1.height));
+    const vp=page.getViewport({scale});
+    const c=document.createElement("canvas");
+    c.width=Math.max(1,Math.floor(vp.width)); c.height=Math.max(1,Math.floor(vp.height));
+    const ctx=c.getContext("2d"); ctx.fillStyle="#fff"; ctx.fillRect(0,0,c.width,c.height);
+    await page.render({ canvasContext:ctx, viewport:vp }).promise;
+    if(!isBlank(c)) images.push({ media_type:"image/jpeg", data: await canvasToJpeg(c, PDF_IMG_BYTES), page: toRender[i] });
+    c.width=c.height=0; // zwalnia pamięć (ważne na telefonach)
+  }
+  try{ task.destroy(); }catch{} // zwalnia pamięć workera
+  return { text, images, pages:N, upTo };
 }
 
 resetBtn.addEventListener("click", ()=>{
@@ -326,6 +419,7 @@ function fail(msg){ clearInterval(stepTimer); progress(-1); setStatus(msg,"err")
 genBtn.addEventListener("click", async ()=>{
   if(!me) return;
   genBtn.disabled=true; clearStatus(); progress(0);
+  let coverage="";
   try{
     const instruction = instr.value.trim().slice(0,MAX_INSTR);
     let payload;
@@ -337,21 +431,26 @@ genBtn.addEventListener("click", async ()=>{
       }
       payload={ images, instruction, source:"img", mode:"both" };
       lastSourceText = "";
+    } else if(mode==="pdf"){
+      const pdf = await extractPdf(pickedPdf, prepDetail);
+      if(pdf.text.length<MIN_CHARS && !pdf.images.length) return fail("W tym PDF-ie nie ma nic do odczytania — strony są puste. Sprawdź, czy to właściwy plik.");
+      payload={ text:pdf.text, images:pdf.images, instruction, source:"pdf", mode:"both" };
+      lastSourceText = pdf.text;
+      if(pdf.upTo<pdf.pages) coverage = "Fiszki powstały ze stron 1–"+pdf.upTo+" z "+pdf.pages+" (tyle mieści jedno generowanie). Na dalsze strony wgraj drugą część pliku.";
     } else {
-      let text = mode==="pdf" ? await extractText(pickedPdf) : pasted.value.trim();
-      if(text.length<MIN_CHARS) return fail(mode==="pdf"
-        ? "Za mało tekstu w pliku — to pewnie skan. Zrób zdjęcia stron i wybierz „Zdjęcia notatek”, generator je odczyta."
-        : "Za mało tekstu — wklej co najmniej ok. 300 znaków.");
+      const text = pasted.value.trim();
+      if(text.length<MIN_CHARS) return fail("Za mało tekstu — wklej co najmniej ok. 300 znaków.");
       payload={ text:text.slice(0,MAX_CHARS), instruction, source:mode, mode:"both" };
       lastSourceText = payload.text;
     }
+    prepDetail("");
     progress(1);
     stepTimer=setTimeout(()=>progress(2), 6000);
     const r=await api("/generate", { method:"POST", body:payload });
     clearTimeout(stepTimer);
     const data=r.data;
     if(r.status===401) return fail("Sesja wygasła — zaloguj się ponownie.");
-    if(r.status===413) return fail("Zdjęcia za duże — usuń któreś albo zrób mniej stron naraz.");
+    if(r.status===413) return fail(mode==="pdf" ? "Plik za duży na jedno generowanie — podziel PDF na mniejsze części." : "Zdjęcia za duże — usuń któreś albo zrób mniej stron naraz.");
     if(r.status===429){ setUsage(data.usage); return fail(data.error || "Limit wykorzystany — spróbuj później."); }
     if(!r.ok) return fail((data.error || "Coś poszło nie tak") + " ("+r.status+")");
     if(!data.flashcards && !data.quiz) return fail("AI nie zwróciło poprawnych danych. Spróbuj z innym albo krótszym fragmentem.");
@@ -363,7 +462,9 @@ genBtn.addEventListener("click", async ()=>{
     answers = {}; quizMode = "all"; reviews = {};
     render(lastResult, true, !!data.deck);
     if(data.save_error) setStatus(data.save_error+" — pobierz plik, żeby go nie stracić.","err");
+    else if(coverage) setStatus(coverage,"info");
   }catch(err){
+    prepDetail("");
     fail("Błąd: "+(err.message||err));
     return;
   }
