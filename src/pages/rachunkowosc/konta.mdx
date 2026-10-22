@@ -1,0 +1,750 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: rachunkowosc
+slug: konta
+title: Operacje i konta bilansowe
+podtytul: konto teowe, Wn i Ma, cztery typy operacji, podwójny zapis
+description: Operacje gospodarcze i konta bilansowe od zera – zdarzenie a operacja, cztery typy operacji bilansowych, konto teowe, strony Wn i Ma, obroty i saldo, podwójny zapis i bilans zamknięcia. Zadania z zajęć krok po kroku i ćwiczenia.
+lede: Bilans to zdjęcie firmy z jednego dnia. Konta to film — zapisują każdą zmianę między jednym zdjęciem a drugim. Tu nauczysz się rozpoznawać operacje, zapisywać je po właściwej stronie konta i zamykać konta tak, jak na kolokwium.
+wymaga: Wiedza, co to aktywa i pasywa. Najważniejsze przypominamy na miejscu.
+umiesz:
+  - odróżnić zdarzenie gospodarcze od operacji gospodarczej
+  - określić typ operacji bilansowej (A, P, AP+, AP−)
+  - zapisać zmianę po właściwej stronie konta aktywnego i pasywnego
+  - policzyć obroty i saldo końcowe i zamknąć konto
+  - zaksięgować operacje podwójnym zapisem i sporządzić bilans zamknięcia
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import Legenda from '../../components/kurs/Legenda.astro';
+import KontoT from '../../components/kurs/konta/KontoT.astro';
+import Konta from '../../components/kurs/konta/Konta.astro';
+import Rzad from '../../components/kurs/konta/Rzad.astro';
+import Typy from '../../components/kurs/konta/Typy.astro';
+import CwiczenieKonto from '../../components/kurs/konta/CwiczenieKonto.astro';
+import CwiczenieKsiegowanie from '../../components/kurs/konta/CwiczenieKsiegowanie.astro';
+import { krokiJednegoKonta, ksieguj, typOperacji, opisOperacji, indeksTypu, KATEGORIE_TYPOW, KATEGORIE_ZDARZEN, zl } from '../../lib/konta.js';
+
+export const KASA = { id: 'kasa', nazwa: 'Kasa', typ: 'A', sp: 1300 };
+export const ZM52 = [
+  { nr: 1, kwota: 4000, zmiana: '+', opis: 'czekiem gotówkowym podjęto pieniądze z rachunku bankowego do kasy' },
+  { nr: 2, kwota: 2500, zmiana: '−', opis: 'z kasy wypłacono pracownikowi działu zaopatrzenia zaliczkę na materiały eksploatacyjne' },
+  { nr: 3, kwota: 1100, zmiana: '−', opis: 'gotówką zapłacono grudniową fakturę za usługi telekomunikacyjne' },
+];
+export const R52 = krokiJednegoKonta(KASA, ZM52);
+export const W52 = R52.wpisy;
+export const Z52 = R52.zam;
+
+export const ZOB = { id: 'zob', nazwa: 'Zobowiązania z tytułu dostaw i usług', typ: 'P', sp: 8900 };
+export const ZM53 = [
+  { nr: 1, kwota: 1700, zmiana: '−', opis: 'z rachunku bankowego spłacono część długu wobec dostawców' },
+  { nr: 2, kwota: 2500, zmiana: '+', opis: 'przyszła faktura za usługę księgową, zapłata za 14 dni' },
+  { nr: 3, kwota: 1400, zmiana: '−', opis: 'dostawca X uznał reklamację i obniżył cenę towarów fakturą korygującą' },
+];
+export const Z53 = krokiJednegoKonta(ZOB, ZM53).zam;
+
+export const K53 = [
+  { id: 'zob', nazwa: 'Zobowiązania z tytułu dostaw i usług', typ: 'P', sp: 8900 },
+  { id: 'rb', nazwa: 'Rachunek bankowy', typ: 'A', sp: 50000 },
+  { id: 'us', nazwa: 'Koszt — usługi obce', typ: 'K' },
+  { id: 'tow', nazwa: 'Towary', typ: 'A', sp: 20000 },
+];
+export const O53 = [
+  { nr: 1, kwota: 1700, wn: 'zob', ma: 'rb', opis: 'spłata części długu wobec dostawców z rachunku' },
+  { nr: 2, kwota: 2500, wn: 'us', ma: 'zob', opis: 'faktura za usługę księgową, zapłata za 14 dni' },
+  { nr: 3, kwota: 1400, wn: 'zob', ma: 'tow', opis: 'reklamacja uznana — niższa cena towarów' },
+];
+
+export const KX = [
+  { id: 'st', nazwa: 'Środki trwałe', typ: 'A', sp: 70000 },
+  { id: 'mat', nazwa: 'Materiały', typ: 'A' },
+  { id: 'nal', nazwa: 'Należności', typ: 'A', sp: 20000 },
+  { id: 'rb', nazwa: 'Rachunek bieżący', typ: 'A', sp: 25000 },
+  { id: 'kw', nazwa: 'Kapitał własny', typ: 'P', sp: 90000 },
+  { id: 'kred', nazwa: 'Kredyt', typ: 'P', sp: 21000 },
+  { id: 'zob', nazwa: 'Zobowiązania', typ: 'P', sp: 4000 },
+];
+export const OX = [
+  { nr: 1, kwota: 2500, wn: 'zob', ma: 'rb', opis: 'z rachunku bieżącego spłacono zobowiązania wobec dostawcy' },
+  { nr: 2, kwota: 8000, wn: 'mat', ma: 'zob', opis: 'kupiono materiały i przyjęto je do magazynu' },
+  { nr: 3, kwota: 3000, wn: 'rb', ma: 'nal', opis: 'odbiorca wpłacił należność na rachunek bieżący' },
+  { nr: 4, kwota: 5000, wn: 'st', ma: 'zob', opis: 'kupiono meble biurowe, zapłata w terminie późniejszym' },
+  { nr: 5, kwota: 6000, wn: 'kred', ma: 'rb', opis: 'przelewem z rachunku bieżącego spłacono część kredytu' },
+];
+export const RX = ksieguj(KX, OX, { pelny: true });
+export const typX = (nr) => typOperacji(OX.find((o) => o.nr === nr), KX);
+
+export const TYPY_PRZYKLADY = [
+  { opis: 'pobranie gotówki z banku do kasy', kwota: 5000, wn: { nazwa: 'Kasa', typ: 'A' }, ma: { nazwa: 'Rachunek bankowy', typ: 'A' } },
+  { opis: 'przeniesienie części kapitału zapasowego na kapitał podstawowy', kwota: 10000, wn: { nazwa: 'Kapitał zapasowy', typ: 'P' }, ma: { nazwa: 'Kapitał podstawowy', typ: 'P' } },
+  { opis: 'zakup materiałów z zapłatą później', kwota: 20000, wn: { nazwa: 'Materiały', typ: 'A' }, ma: { nazwa: 'Rozrachunki z dostawcami', typ: 'P' } },
+  { opis: 'spłata zobowiązania wobec dostawcy przelewem', kwota: 15000, wn: { nazwa: 'Rozrachunki z dostawcami', typ: 'P' }, ma: { nazwa: 'Rachunek bankowy', typ: 'A' } },
+];
+
+export const KONTA_CW = [
+  { id: 'kasa', nazwa: 'Kasa', typ: 'A' }, { id: 'rb', nazwa: 'Rachunek bankowy', typ: 'A' }, { id: 'tow', nazwa: 'Towary', typ: 'A' },
+  { id: 'st', nazwa: 'Środki trwałe', typ: 'A' }, { id: 'nal', nazwa: 'Należności od odbiorców', typ: 'A' },
+  { id: 'kp', nazwa: 'Kapitał podstawowy', typ: 'P' }, { id: 'kz', nazwa: 'Kapitał zapasowy', typ: 'P' }, { id: 'kred', nazwa: 'Kredyt bankowy', typ: 'P' },
+  { id: 'zob', nazwa: 'Zobowiązania wobec dostawców', typ: 'P' }, { id: 'koszt', nazwa: 'Koszty usług obcych', typ: 'K' },
+];
+export const OPS_TYP = [
+  { nr: 1, kwota: 3000, wn: 'rb', ma: 'kasa', opis: 'Gotówkę z kasy wpłacono na rachunek bankowy, 3 000 zł.' },
+  { nr: 2, kwota: 12000, wn: 'tow', ma: 'zob', opis: 'Kupiono towary, zapłata za 30 dni, 12 000 zł.' },
+  { nr: 3, kwota: 10000, wn: 'kred', ma: 'rb', opis: 'Z rachunku bankowego spłacono ratę kredytu, 10 000 zł.' },
+  { nr: 4, kwota: 50000, wn: 'kz', ma: 'kp', opis: 'Część kapitału zapasowego przeniesiono na kapitał podstawowy, 50 000 zł.' },
+  { nr: 5, kwota: 8000, wn: 'zob', ma: 'kred', opis: 'Bank z przyznanego kredytu zapłacił za firmę dług wobec dostawcy, 8 000 zł.' },
+  { nr: 6, kwota: 900, wn: 'koszt', ma: 'zob', opis: 'Przyszła faktura za naprawę maszyny, zapłata za 14 dni, 900 zł.' },
+  { nr: 7, kwota: 40000, wn: 'rb', ma: 'kred', opis: 'Bank udzielił kredytu — pieniądze wpłynęły na rachunek, 40 000 zł.' },
+  { nr: 8, kwota: 700, wn: 'zob', ma: 'kasa', opis: 'Gotówką z kasy zapłacono dostawcy zaległą fakturę, 700 zł.' },
+  { nr: 9, kwota: 6000, wn: 'rb', ma: 'nal', opis: 'Odbiorca zapłacił przelewem za wcześniejszą dostawę, 6 000 zł.' },
+  { nr: 10, kwota: 25000, wn: 'st', ma: 'rb', opis: 'Kupiono maszynę i od razu zapłacono przelewem, 25 000 zł.' },
+];
+export const KLAS_TYPY = OPS_TYP.map((o) => ({ tekst: o.opis, kat: indeksTypu(typOperacji(o, KONTA_CW)), dlaczego: opisOperacji(o, KONTA_CW) }));
+
+export const KONTA_KS = [
+  { id: 'kasa', nazwa: 'Kasa', typ: 'A' }, { id: 'rb', nazwa: 'Rachunek bankowy', typ: 'A' }, { id: 'tow', nazwa: 'Towary', typ: 'A' },
+  { id: 'kred', nazwa: 'Kredyt bankowy', typ: 'P' }, { id: 'zob', nazwa: 'Rozrachunki z dostawcami', typ: 'P' }, { id: 'koszt', nazwa: 'Koszty usług obcych', typ: 'K' },
+];
+export const OPS_KS = [
+  { nr: 1, kwota: 2000, wn: 'kasa', ma: 'rb', opis: 'Podjęto gotówkę z rachunku bankowego do kasy.' },
+  { nr: 2, kwota: 7000, wn: 'tow', ma: 'zob', opis: 'Kupiono towary, zapłata w terminie późniejszym.' },
+  { nr: 3, kwota: 4000, wn: 'zob', ma: 'rb', opis: 'Przelewem spłacono zobowiązanie wobec dostawcy.' },
+  { nr: 4, kwota: 3000, wn: 'zob', ma: 'kred', opis: 'Zobowiązanie wobec dostawcy spłacono z kredytu bankowego.' },
+  { nr: 5, kwota: 600, wn: 'koszt', ma: 'zob', opis: 'Przyszła faktura za usługę transportową, zapłata za 7 dni.' },
+  { nr: 6, kwota: 500, wn: 'zob', ma: 'tow', opis: 'Zwrócono dostawcy wadliwe towary — dług wobec niego maleje.' },
+];
+
+## Po co to jest
+
+Otwórz w aplikacji banku historię konta. Na górze stan na początek miesiąca. Pod spodem lista: wpływ wypłaty, zakupy, przelew za akademik. Na dole stan na koniec. To jest dokładnie **konto księgowe** — tylko że firma ma takich „historii” kilkadziesiąt: osobną dla gotówki w kasie, osobną dla towarów w magazynie, osobną dla długów wobec dostawców.
+
+Bilans pokazuje stan firmy w jednym dniu, na przykład 31 grudnia. Ale między dwoma bilansami firma kupuje, płaci, spłaca i sprzedaje. Każdą taką zmianę trzeba gdzieś zapisać, inaczej na koniec roku nikt nie odtworzy nowego bilansu. Do tego służą konta. Na kolokwium dostaniesz listę operacji i będziesz je zapisywać na kontach, zamykać konta i liczyć stan na koniec.
+
+## Co będzie na kolokwium
+
+<Polecenia items={[
+  { polecenie: 'Które zdarzenia są operacjami gospodarczymi?', jak: 'Przy każdym zdarzeniu zadajesz dwa pytania: czy zmienił się majątek albo źródła finansowania i czy jest na to dokument. Dwa razy „tak” → operacja.', przepis: 'polecenie-operacja', cwiczenia: 'cw-operacja', zrodlo: 'jak w Zad. 4.1, str. 49' },
+  { polecenie: 'Określ typ operacji bilansowej', jak: 'Sprawdzasz, po której stronie bilansu są oba zmieniane składniki i czy rosną, czy maleją: A, P, AP+ albo AP−.', przepis: 'polecenie-typ', cwiczenia: 'cw-typ', zrodlo: 'jak przy Zad. 5.2 i 5.3' },
+  { polecenie: 'Otwórz konto, przedstaw zmiany (bez podwójnego zapisu), zamknij konto i określ stan na koniec miesiąca', jak: 'Saldo początkowe, każda zmiana po właściwej stronie, obroty, saldo końcowe po stronie mniejszej.', przepis: 'polecenie-konto', cwiczenia: 'cw-konto', zrodlo: 'jak w Zad. 5.2, str. 64 i Zad. 5.3, str. 65' },
+  { polecenie: 'Otwórz konta, zaksięguj operacje i sporządź bilans zamknięcia', jak: 'Każda operacja na dwóch kontach, po przeciwnych stronach, w tej samej kwocie. Salda końcowe przepisujesz do bilansu.', przepis: 'polecenie-ksiegowanie', cwiczenia: 'cw-ksiegowanie', zrodlo: 'jak w przykładzie z wykładu' },
+]} />
+
+Polecenia mogą brzmieć trochę inaczej: „zaksięguj”, „ujmij na kontach”, „przedstaw zapis zmian”, „ustal saldo”. Liczy się to, o co pyta zadanie: czy coś jest operacją, jakiego jest typu, jak wygląda jedno konto, czy cały zestaw kont z bilansem.
+
+## Zdarzenie a operacja
+
+<Ramka kind="zapamietaj">
+**Zdarzenie gospodarcze** to wszystko, co dzieje się w firmie: wysłanie zamówienia, oferta od kontrahenta, podpisanie umowy, wpływ pieniędzy.
+
+**Operacja gospodarcza** to zdarzenie, które da się wyrazić w złotych i które **zmienia majątek firmy albo źródła jego finansowania**. Księgujemy tylko operacje — i tylko na podstawie dokumentu (dowodu księgowego), np. faktury albo wyciągu bankowego.
+</Ramka>
+
+Przykład z życia: piszesz do właściciela mieszkania, że chcesz wynająć pokój. To zdarzenie, ale twój portfel się nie zmienił. Podpisujesz umowę najmu. Dalej nic nie płacisz. Dopiero gdy przelewasz kaucję, pieniądze znikają z konta. Ten przelew jest jak operacja gospodarcza — po nim coś realnie się zmieniło.
+
+W firmie jest tak samo. Zamówienie materiałów niczego nie zmienia w bilansie. Zmienia go dopiero dostawa materiałów z fakturą: w magazynie przybywa materiałów, a firma ma dług wobec dostawcy.
+
+<a id="polecenie-operacja" class="k-anchor"></a>
+
+<Ramka kind="polecenie">
+„Które z poniższych zdarzeń są operacjami gospodarczymi?” (albo: „przyporządkuj zdarzenia do grupy a i b”).
+
+Przy każdym zdarzeniu zadaj po kolei dwa pytania:
+
+1. **Czy coś już się zmieniło w majątku albo w źródłach finansowania?** Czy przybyło lub ubyło pieniędzy, towarów, maszyn, długów, kapitału? Jeśli dopiero coś zaplanowano, zamówiono albo podpisano umowę na przyszłość — odpowiedź brzmi „nie”.
+2. **Czy jest dokument, który to potwierdza?** Faktura, wyciąg bankowy, raport kasowy, lista płac, protokół.
+
+Dwa razy „tak” → **operacja gospodarcza** (księgujemy). Choćby jedno „nie” → **tylko zdarzenie** (nie księgujemy).
+</Ramka>
+
+<Ramka kind="pulapka">
+- „Podpisano umowę” to prawie zawsze tylko zdarzenie.
+- Umowa kredytowa nie daje jeszcze pieniędzy. Operacją jest dopiero wpływ kredytu na rachunek albo zapłata z kredytu.
+- Kwota w treści zadania niczego nie przesądza. Przy decyzji o modernizacji też stoi kwota, a to dalej tylko plan.
+</Ramka>
+
+<Rozwiazanie tytul="Zdarzenia grupy a (tylko zdarzenia) i grupy b (operacje)" zrodlo="Zad. 4.1, str. 49, poz. 1–10">
+<div slot="tresc">
+
+W firmie w danym okresie zaszły zdarzenia (treść skrócona):
+
+1. Zdecydowano o modernizacji budynku produkcyjnego. Kosztorys: 130 000 zł.
+2. Przyszła i została zaakceptowana do zapłaty faktura wykonawcy modernizacji: 132 800 zł.
+3. Podpisano umowę o dzieło na badanie rynku: 25 800 zł.
+4. Odbiorcy A, B i C zapłacili należności przelewem: razem 11 200 zł.
+5. Sporządzono i zatwierdzono do wypłaty listę płac pracowników produkcyjnych: 210 000 zł.
+6. Protokół: zalanie magazynu zniszczyło nieubezpieczone towary warte 39 000 zł.
+7. Kupiono maszynę biurową za 2 570 zł, zapłata później.
+8. Podpisano z bankiem umowę kredytu inwestycyjnego do kwoty 180 000 zł.
+9. W postępowaniu wyjaśniającym ustalono, że rzeczywista wartość maszyny z poz. 7 to 2 750 zł, a nie 2 570 zł (różnica 180 zł).
+10. Wyciąg bankowy potwierdza zapłatę kredytem faktury za projekt chłodni: 9 750 zł.
+
+</div>
+
+<div slot="plan">
+
+1. Przy każdej pozycji pytamy: czy majątek albo jego źródła już się zmieniły? To odsiewa plany, decyzje i umowy.
+2. Przy pozycjach, które przeszły pierwsze pytanie, szukamy dokumentu: faktury, wyciągu, listy płac, protokołu.
+3. Grupa a — tylko zdarzenia. Grupa b — operacje.
+
+Innej drogi nie ma: każdą pozycję sprawdzamy osobno, tymi samymi dwoma pytaniami.
+
+</div>
+
+<Krok tytul="Poz. 1, 3 i 8 — plany i umowy">
+Decyzja o modernizacji (poz. 1) to plan. Budynek jeszcze się nie zmienił, nikt niczego nie zapłacił, nie ma długu. Umowa o dzieło (poz. 3) i umowa kredytowa (poz. 8) to obietnice na przyszłość. Po podpisaniu żadnej z nich w firmie nie przybyło ani nie ubyło pieniędzy, majątku ani długów.
+
+Pierwsze pytanie: „nie”. Wszystkie trzy to **grupa a — tylko zdarzenia**.
+
+<Dlaczego>
+Bilans pokazuje to, co firma **ma** i **skąd to ma**. Plan i umowa niczego jeszcze nie dają ani nie zabierają. Zmiana przyjdzie później, na przykład z fakturą za dzieło albo z wpływem kredytu — i wtedy to będzie operacja.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Poz. 2 i 7 — faktury do zapłaty">
+Zaakceptowana faktura za modernizację (poz. 2): przybywa nakładów na modernizację budynku — to majątek firmy. Jednocześnie firma ma dług wobec wykonawcy. Maszyna biurowa (poz. 7): w firmie jest nowa maszyna, a firma ma dług wobec sprzedawcy. W obu przypadkach dokumentem jest faktura.
+
+Dwa razy „tak” → **grupa b — operacje**.
+
+<Dlaczego>
+„Zapłata później” nie zmienia odpowiedzi. Zakup bez zapłaty też zmienia bilans: powstaje **zobowiązanie**, czyli dług. To jedno ze źródeł finansowania majątku.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Poz. 4 i 10 — ruch na rachunku bankowym">
+Wpłata od odbiorców (poz. 4): na rachunku przybyło 11 200 zł, a odbiorcy są winni firmie mniej. Ich długi wobec firmy to **należności** — pieniądze, które inni są winni firmie. Zapłata kredytem za projekt chłodni (poz. 10): przybywa długu wobec banku. Po drugiej stronie znika dług wobec projektanta (jeśli jego faktura była już zapisana) albo przybywa nakładów na budowę chłodni. W obu wersjach to zmiana w bilansie. Dokumentem w obu przypadkach jest wyciąg bankowy.
+
+Dwa razy „tak” → **grupa b — operacje**.
+</Krok>
+
+<Krok tytul="Poz. 5 i 6 — lista płac i protokół szkody">
+Zatwierdzona lista płac (poz. 5): firma ma dług wobec pracowników na 210 000 zł. Dokumentem jest sama lista płac. Zalanie magazynu (poz. 6): ubyło towarów za 39 000 zł. Dokumentem jest protokół.
+
+Dwa razy „tak” → **grupa b — operacje**.
+
+<Dlaczego>
+Te dwie operacje zmieniają też wynik finansowy, czyli zysk albo stratę. **Koszt** to to, co firma zużywa, żeby działać: pensje, usługi, prąd. Wynagrodzenia to koszt. Zniszczone towary to tzw. pozostały koszt operacyjny. Operacje z kosztem albo przychodem (np. ze sprzedaży) nazywamy **wynikowymi**. Księgujemy je tak samo jak inne — wrócimy do nich w module o kontach wynikowych.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Poz. 9 — korekta wartości maszyny">
+Maszynę zapisano za 2 570 zł, a jej rzeczywista wartość to 2 750 zł. Cyfry zamieniły się miejscami. Maszyna i dług wobec sprzedawcy są w księgach o 180 zł za nisko: 2 750 − 2 570 = 180 zł. Trzeba dopisać różnicę. Dokumentem jest ustalenie z postępowania wyjaśniającego.
+
+<Dlaczego>
+To poprawka wcześniejszego zapisu. Mimo to zmienia stan majątku i długu w księgach, więc jest w grupie b. Jak technicznie poprawia się błędne zapisy (tzw. storno), pokazujemy w module „Konta w praktyce”.
+</Dlaczego>
+
+Dwa razy „tak” → **grupa b — operacja** na kwotę 180 zł.
+</Krok>
+
+<Krok tytul="Wynik">
+| Grupa | Pozycje |
+|---|---|
+| a — tylko zdarzenia | 1, 3, 8 |
+| b — operacje gospodarcze | 2, 4, 5, 6, 7, 9, 10 |
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="granica">
+- Dwa pytania działają dla typowych sytuacji z zadań.
+- Granica: zamówienie, oferta i umowa to zdarzenia **dziś**. Gdy za tydzień przyjdzie towar z fakturą, ta dostawa będzie już operacją.
+- W zadaniu rozstrzygasz tylko to, co opisano w danej pozycji.
+</Ramka>
+
+## Bilans w jednym zdaniu
+
+Zanim zaczniemy księgować, jedno przypomnienie. Bez niego dalsza część się nie złoży.
+
+<Ramka kind="zapamietaj">
+**Aktywa** to majątek firmy: co firma ma (pieniądze, towary, maszyny, należności).
+**Pasywa** to źródła finansowania tego majątku: skąd firma to ma (kapitał właścicieli, kredyty, długi wobec dostawców).
+
+**Suma aktywów = suma pasywów.** Zawsze. Każda złotówka majątku musi mieć swoje źródło.
+</Ramka>
+
+Bilans rysujemy jako tabelę: aktywa po **lewej**, pasywa po **prawej**. Zapamiętaj to ustawienie — zaraz się przyda przy kontach.
+
+<a id="polecenie-typ" class="k-anchor"></a>
+
+## Cztery typy operacji bilansowych
+
+Operacja zmienia **co najmniej dwa** składniki bilansu. Najczęściej dokładnie dwa — to tzw. operacja prosta. Wtedy oba zmieniają się **o tę samą kwotę**, więc równowaga aktywa = pasywa się nie psuje. Dla operacji prostej możliwe są tylko cztery układy zmian:
+
+<Typy przyklady={TYPY_PRZYKLADY} />
+<Legenda items={[['cyan', 'konto aktywne (majątek)'], ['roz', 'konto pasywne (źródło finansowania)']]} />
+
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> każdy kafelek to jeden typ. Strzałka ↑ przy składniku znaczy, że rośnie, ↓ — że maleje. Pod spodem ten sam przykład zapisany na dwóch kontach. Konta, strony Wn i Ma oraz znaki + i − wyjaśniamy w rozdziałach „Konto teowe” i „Po której stronie zapisać zmianę”. Na razie patrz tylko na strzałki.</p>
+
+<Ramka kind="polecenie">
+„Określ typ operacji bilansowej.”
+
+1. Wypisz dwa składniki, które zmienia operacja (np. kasa i rachunek bankowy).
+2. Przy każdym zapisz, czy to **aktywo** (majątek), czy **pasywo** (źródło finansowania).
+3. Przy każdym zapisz, czy **rośnie**, czy **maleje**.
+4. Odczytaj typ:
+   - oba w aktywach, jeden rośnie, drugi maleje → **A** (aktywna);
+   - oba w pasywach, jeden rośnie, drugi maleje → **P** (pasywna);
+   - jedno aktywo i jedno pasywo, oba rosną → **AP+** (aktywno-pasywna zwiększająca);
+   - jedno aktywo i jedno pasywo, oba maleją → **AP−** (aktywno-pasywna zmniejszająca).
+5. Jeśli jedną ze stron jest **koszt** albo **przychód**, to nie jest żaden z czterech typów. To operacja **wynikowa**.
+</Ramka>
+
+Przykłady od najprostszego:
+
+- Odbiorca wpłaca na rachunek 3 000 zł za wcześniejszą dostawę. Rachunek bankowy (aktywo) rośnie. Należności od odbiorców (aktywo — pieniądze, które odbiorcy są winni firmie) maleją. Oba w aktywach, jeden w górę, drugi w dół → **A**.
+- Firma kupuje towary za 12 000 zł z zapłatą za 30 dni. Towary (aktywo) rosną. Zobowiązania wobec dostawców (pasywo) rosną → **AP+**. Suma bilansowa rośnie o 12 000 zł.
+- Bank z kredytu płaci za firmę dług wobec dostawcy. Zobowiązania wobec dostawcy (pasywo) maleją. Kredyt (pasywo) rośnie → **P**. Majątek się nie zmienił — zmienił się tylko wierzyciel.
+
+<Ramka kind="pulapka">
+- „Zapłacono” nie zawsze znaczy AP−. Zapłata gotówką za maszynę to **A**: maszyn przybywa, pieniędzy ubywa, oba w aktywach.
+- AP− jest wtedy, gdy jednocześnie maleje aktywo i dług. Najczęściej to spłata długu. Ale też np. zwrot towaru dostawcy: towarów ubywa i długu wobec niego też.
+- Spośród czterech typów bilansowych suma bilansowa nie zmienia się przy A i P. Rośnie tylko przy AP+, maleje tylko przy AP−.
+</Ramka>
+
+<Ramka kind="granica">
+- Cztery typy opisują tylko operacje **bilansowe** — takie, w których obie strony to składniki bilansu.
+- Gdy jedną stroną jest koszt albo przychód, operacja jest **wynikowa**.
+- Tak na zajęciach opisano przy zad. 5.3 fakturę za usługę księgową. Usługa to koszt.
+</Ramka>
+
+<Pytania pytania={[
+  { q: 'Z kasy wpłacono 2 000 zł na rachunek bankowy. Jaki to typ operacji?', opcje: ['AP−', 'A', 'P'], dobra: 1, dlaczego: 'Kasa (aktywo) maleje, rachunek bankowy (aktywo) rośnie. Oba składniki są w aktywach, więc to operacja <b>A</b>. AP− byłoby wtedy, gdyby razem z pieniędzmi zmalał dług. P — gdyby oba składniki były w pasywach.' },
+]} />
+
+## Konto teowe — jak wygląda
+
+Konto to tabelka w kształcie litery **T**. Na górze nazwa składnika. Pionowa kreska dzieli konto na dwie strony:
+
+<div class="k-symbole">
+  <Znak t="\text{Wn}" nazwa="Winien (Dt)" czytamy="winien" znaczy="<b>Lewa</b> strona konta. W arkuszu z zajęć podpisana „Wn / Dt”. Dt to skrót od <i>debet</i>." pamiec="Wn — po lewej, jak W na początku zdania." />
+  <Znak t="\text{Ma}" nazwa="Ma (Ct)" czytamy="ma" znaczy="<b>Prawa</b> strona konta. W arkuszu „Ma / Ct”. Ct to skrót od <i>credit</i>." pamiec="Ma — po prawej, na końcu." />
+  <Znak t="\text{Sp.}" nazwa="Saldo początkowe" czytamy="saldo początkowe" znaczy="Stan składnika na start. Przepisujemy go z bilansu otwarcia (albo z treści zadania: „stan na 31 grudnia”)." />
+  <Znak t="\text{Obr.}" nazwa="Obroty" czytamy="obroty" znaczy="Suma jednej strony konta. Liczymy osobno obroty Wn i obroty Ma." />
+  <Znak t="\text{Sk Wn},\ \text{Sk Ma}" nazwa="Saldo końcowe" czytamy="saldo końcowe winien, saldo końcowe ma" znaczy="Stan składnika na koniec okresu. Różnica obrotów: większe minus mniejsze." />
+</div>
+
+<Ramka kind="pulapka">
+„Winien” i „Ma” to stare nazwy stron. Nie znaczą, że ktoś coś jest winien albo coś ma. Traktuj je jak „lewa” i „prawa”.
+</Ramka>
+
+<a id="polecenie-konto" class="k-anchor"></a>
+
+## Po której stronie zapisać zmianę
+
+To najważniejsza reguła całego modułu. Zależy od tego, czy konto jest **aktywne** (majątek), czy **pasywne** (źródło finansowania):
+
+<Rzad>
+  <KontoT konto={{ nazwa: 'Konto aktywne', typ: 'A' }} zamkniete={false} />
+  <KontoT konto={{ nazwa: 'Konto pasywne', typ: 'P' }} zamkniete={false} />
+</Rzad>
+<Legenda items={[['cyan', 'konto aktywne: kasa, rachunek bankowy, towary, materiały, środki trwałe, należności'], ['roz', 'konto pasywne: kapitał podstawowy, kredyty, zobowiązania wobec dostawców']]} />
+
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> znak nad stroną konta mówi, co po niej zapisujesz. Plus — zwiększenia. Minus — zmniejszenia. W tabeli niżej to samo słowami. „Sp.” to strona salda początkowego. „Saldo” to jakie saldo końcowe zwykle wychodzi (Sk Wn albo Sk Ma). To nazwa salda — wpisujesz je po stronie przeciwnej.</p>
+
+| Konto | Sp. | Rośnie (+) | Maleje (−) | Saldo |
+|---|---|---|---|---|
+| aktywne | Wn | Wn | Ma | Wn |
+| pasywne | Ma | Ma | Wn | Ma |
+
+<Ramka kind="botak">
+Taka jest umowa w rachunkowości. Da się ją zapamiętać z bilansu:
+- aktywa stoją w bilansie **po lewej** → stan konta aktywnego zapisujemy **po lewej** (Wn), i tam też to, co go zwiększa;
+- pasywa stoją **po prawej** → stan konta pasywnego zapisujemy **po prawej** (Ma), i tam też zwiększenia;
+- zmniejszenie zawsze idzie na stronę przeciwną do stanu.
+</Ramka>
+
+<Ramka kind="botak" tytul="jak zapisujemy numer operacji">
+Na zajęciach numer operacji stoi przy kwocie, od strony zewnętrznej konta:
+- po Wn — numer przed kwotą: „1) 1 700”;
+- po Ma — numer za kwotą: „1 700 (1”.
+
+Dzięki numerom po zamknięciu konta widać, skąd wziął się każdy wpis.
+</Ramka>
+
+<Ramka kind="polecenie">
+„Otwórz konto, przedstaw zapis zmian (nie stosując zasady podwójnego zapisu), zamknij konto, określ stan na koniec miesiąca.”
+
+1. **Otwórz konto.** Narysuj T, wpisz nazwę i podpisz strony: Wn po lewej, Ma po prawej.
+2. **Ustal, czy konto jest aktywne, czy pasywne.** Kasa, rachunek, towary → aktywne. Zobowiązania, kredyty, kapitał → pasywne.
+3. **Wpisz saldo początkowe** „Sp.”: konto aktywne — po Wn, pasywne — po Ma.
+4. **Każdą operację zapisz po jednej stronie:**
+   - przeczytaj operację i zdecyduj, czy składnik rośnie, czy maleje;
+   - aktywne: rośnie → Wn, maleje → Ma; pasywne: rośnie → Ma, maleje → Wn;
+   - wpisz kwotę z numerem operacji.
+5. **Policz obroty** każdej strony: dodaj wszystkie kwoty po Wn (razem z Sp., jeśli tam stoi), potem wszystkie po Ma.
+6. **Policz saldo końcowe:** większe obroty minus mniejsze. Saldo nazywasz od strony, która przeważa („Sk Wn” albo „Sk Ma”).
+7. **Wpisz saldo po stronie mniejszej** i zsumuj obie strony — muszą wyjść równe.
+8. **Stan na koniec** = saldo końcowe.
+</Ramka>
+
+<Ramka kind="botak" tytul="obroty razem z saldem początkowym">
+Na zajęciach w wierszu „Obr.” sumujemy całą stronę **razem z Sp.** Część podręczników liczy obroty bez salda początkowego i dodaje je osobno. Oba sposoby dają to samo saldo końcowe. Na kolokwium licz tak, jak na zajęciach.
+</Ramka>
+
+<Rozwiazanie tytul="Konto „Kasa” — zapis zmian i zamknięcie" zrodlo="Zad. 5.2, str. 64">
+<div slot="tresc">
+
+Stan gotówki w kasie firmy OMEGA na 31 grudnia: 1 300 zł. W styczniu:
+
+1. Czekiem gotówkowym podjęto z rachunku bankowego do kasy 4 000 zł.
+2. Z kasy wypłacono pracownikowi zaopatrzenia zaliczkę na materiały eksploatacyjne: 2 500 zł.
+3. Gotówką zapłacono grudniową fakturę za usługi telekomunikacyjne: 1 100 zł.
+
+Otwórz konto „Kasa”, zapisz zmiany bez podwójnego zapisu, zamknij konto i podaj stan kasy na koniec stycznia.
+
+</div>
+
+<div slot="plan">
+
+1. Otwieramy konto i ustalamy, że jest aktywne. Od tego zależy, po której stronie zapiszemy każdą zmianę.
+2. Wpisujemy saldo początkowe — stan kasy na start.
+3. Każdą operację zamieniamy na pytanie: kasy przybywa czy ubywa? Odpowiedź wskazuje stronę.
+4. Sumujemy obie strony (obroty), liczymy saldo i wpisujemy je po stronie mniejszej.
+5. Saldo końcowe to odpowiedź na pytanie o stan kasy.
+
+Tak zamyka się każde konto — kolejność kroków jest zawsze ta sama.
+
+</div>
+
+<Krok tytul="Otwórz konto i wpisz saldo początkowe">
+Kasa to gotówka, którą firma **ma**. To majątek, więc konto „Kasa” jest **aktywne**. Saldo początkowe konta aktywnego stoi po Wn: wpisujemy „Sp. 1 300” po lewej.
+
+<Rzad jedno><KontoT konto={KASA} zamkniete={false} /></Rzad>
+
+<Dlaczego>
+Stan na start to „ile firma ma”. Aktywa stoją w bilansie po lewej, więc stan konta aktywnego też zapisujemy po lewej, po stronie Wn.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zapisz trzy operacje">
+Przy każdej operacji pytamy: **gotówki w kasie przybywa czy ubywa?**
+
+- Operacja 1: pieniądze z banku trafiają **do** kasy. Kasy przybywa o 4 000 zł. Zwiększenie konta aktywnego zapisujemy po Wn → „1) 4 000”.
+- Operacja 2: zaliczkę wypłacamy **z** kasy. Kasy ubywa o 2 500 zł. Zmniejszenie konta aktywnego zapisujemy po Ma → „2 500 (2”.
+- Operacja 3: fakturę płacimy gotówką **z** kasy. Kasy ubywa o 1 100 zł → „1 100 (3” po Ma.
+
+<Rzad jedno><KontoT konto={KASA} wpisy={W52} zamkniete={false} /></Rzad>
+
+<Dlaczego>
+Treść operacji opisuje też drugą stronę: rachunek bankowy, pracownika, dostawcę. W tym zadaniu polecenie mówi „bez podwójnego zapisu”, więc patrzymy tylko na kasę. Drugą stronę dopiszemy za chwilę.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz obroty">
+Obroty Wn — dodajemy wszystko po lewej, razem z Sp.: 1 300 + 4 000 = **5 300**.
+
+Obroty Ma — dodajemy wszystko po prawej: 2 500 + 1 100 = **3 600**.
+
+<Dlaczego>
+Obroty mówią, ile w sumie „weszło” na stronę zwiększeń (razem ze stanem na start) i ile „wyszło” stroną zmniejszeń. Różnica pokazuje, ile zostało.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Policz saldo i zamknij konto">
+Większe obroty są po Wn (5 300 > 3 600). Saldo: 5 300 − 3 600 = **1 700**. Przeważa Wn, więc to **saldo Wn** — „Sk Wn”.
+
+Wpisujemy je po stronie **mniejszej**, czyli po Ma. Sprawdzenie: po Ma 3 600 + 1 700 = 5 300. Po Wn też 5 300. Obie strony równe — konto zamknięte.
+
+<Rzad jedno><KontoT konto={KASA} wpisy={W52} /></Rzad>
+<Legenda items={[['zloto', 'saldo końcowe — wpisane po stronie mniejszej']]} />
+
+<Dlaczego typ="umowa">
+Saldo **nazywamy** od strony, która przeważa (tu Wn), a **wpisujemy** po stronie mniejszej (tu Ma). Wpis po stronie mniejszej „dopełnia” ją do tej samej sumy. Dlatego w arkuszu z zajęć napis „Sk Wn” stoi po prawej stronie konta, a „Sk Ma” — po lewej.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odpowiedź">
+Stan środków pieniężnych w kasie na koniec stycznia: **1 700 zł** (saldo Wn konta „Kasa”).
+
+<Dlaczego>
+Konto aktywne ma saldo po Wn — tak jak powinno. Gdyby wyszło saldo Ma, kasa miałaby mniej niż zero złotych. To niemożliwe, więc to sygnał, że gdzieś jest błąd strony.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+Ten sam rachunek możesz obejrzeć w ruchu: konto wypełnia się wpis po wpisie, a pod spodem widać, skąd każda liczba.
+
+<Konta jedno={{ konto: KASA, zmiany: ZM52 }}>
+lista operacji na górze, pod nią konto „Kasa”. Saldo końcowe jest na złoto, a sumy pod podwójną kreską muszą być równe.
+</Konta>
+
+<Ramka kind="podobny" tytul="konto pasywne — Zad. 5.3, str. 65">
+Konto „Zobowiązania z tytułu dostaw i usług” jest **pasywne**: to dług, czyli źródło finansowania. Strony są odwrotnie niż przy kasie. Sp. 8 900 stoi po **Ma**. Spłata długu (op. 1) i obniżka ceny po reklamacji (op. 3) zmniejszają dług → po **Wn**. Nowa faktura do zapłaty (op. 2) zwiększa dług → po **Ma**.
+
+Obroty Wn: 1 700 + 1 400 = 3 100. Obroty Ma: 8 900 + 2 500 = 11 400. Przeważa Ma, więc saldo Ma: 11 400 − 3 100 = **8 300**. Wpisujemy je po Wn. Zadłużenie na koniec stycznia: 8 300 zł.
+
+<Konta jedno={{ konto: ZOB, zmiany: ZM53 }} />
+</Ramka>
+
+<Ramka kind="pulapka">
+- Najczęstszy błąd: Sp. konta pasywnego wpisane po Wn. Stan długu stoi po Ma.
+- Drugi błąd: saldo wpisane po stronie **większej**. Wtedy sumy się rozjeżdżają.
+- Trzeci: obroty policzone bez Sp. Wtedy saldo końcowe wychodzi błędne, bo pomijasz stan na start.
+</Ramka>
+
+## Druga strona każdej operacji
+
+Przy zadaniu 5.2 zapisano tylko kasę. Ale pieniądze do kasy skądś przyszły: z rachunku bankowego. Zaliczka nie zniknęła: pracownik jest ją winien firmie. Zapłata grudniowej faktury za telefon zmniejszyła dług wobec dostawcy. Każda operacja dotyka **dwóch** składników — tak, jak przy czterech typach operacji.
+
+Na zajęciach dopisano więc drugie konta. Te same trzy operacje po drugiej stronie:
+
+<Rzad>
+  <KontoT konto={{ nazwa: 'Rachunek bankowy', typ: 'A' }} wpisy={[{ nr: 1, strona: 'ma', kwota: 4000 }]} zamkniete={false} />
+  <KontoT konto={{ nazwa: 'Pozostałe należności od pracowników', typ: 'A' }} wpisy={[{ nr: 2, strona: 'wn', kwota: 2500 }]} zamkniete={false} />
+  <KontoT konto={{ nazwa: 'Zobowiązania wobec dostawców', typ: 'P', sp: 1100 }} wpisy={[{ nr: 3, strona: 'wn', kwota: 1100 }]} zamkniete={false} />
+</Rzad>
+<Legenda items={[['cyan', 'konto aktywne'], ['roz', 'konto pasywne']]} />
+
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> numer przy kwocie to numer operacji z zad. 5.2. Na koncie „Kasa” operacja 1 stoi po Wn, a tu, na rachunku bankowym, po Ma. Operacje 2 i 3 stoją na kasie po Ma, a tu po Wn. Sp. 1 100 to grudniowa faktura za telefon.</p>
+
+Zobacz, że każda operacja stoi na kasie po jednej stronie, a na drugim koncie — **po przeciwnej**. I zawsze w tej samej kwocie. To nie przypadek, tylko reguła.
+
+<Ramka kind="zapamietaj" tytul="zasada podwójnego zapisu">
+Każdą operację księgujemy:
+1. na **co najmniej dwóch** kontach,
+2. po **przeciwnych stronach** (raz po Wn, raz po Ma),
+3. w **tej samej kwocie**.
+
+Gdy kont jest więcej niż dwa, suma zapisów po Wn równa się sumie zapisów po Ma.
+</Ramka>
+
+<Ramka kind="skad">
+Skąd pewność, że wyjdzie przeciwna strona? Policzmy dla operacji 1 z zad. 5.2. Kasa (aktywo) rośnie → aktywa rosną po Wn. Rachunek bankowy (aktywo) maleje → aktywa maleją po Ma. Dla AP+ (np. zakup towarów z zapłatą później): towary (aktywo) rosną po Wn, zobowiązania (pasywo) rosną po Ma. Dla każdego z czterech typów jedna zmiana wypada po Wn, a druga po Ma. Dlatego suma wszystkich zapisów po Wn zawsze równa się sumie zapisów po Ma.
+</Ramka>
+
+Tak samo z zadaniem 5.3. Na zajęciach do konta zobowiązań dopisano rachunek bankowy, konto kosztów i towary. Stan rachunku przyjęto 50 000 zł, a towarów 20 000 zł. Kliknij „Zobacz krok po kroku”, żeby zobaczyć, jak kwota każdej operacji trafia na dwa konta:
+
+<Konta konta={K53} operacje={O53} typy>
+przy operacji jest jej typ. Druga operacja to faktura za usługę księgową. Po drugiej stronie stoi koszt, a nie składnik bilansu, więc to operacja wynikowa. Konto kosztów ma fioletową kreskę.
+</Konta>
+
+<a id="polecenie-ksiegowanie" class="k-anchor"></a>
+
+## Podwójny zapis i bilans zamknięcia
+
+Teraz pełne zadanie: cały bilans, kilka operacji, wszystkie konta i nowy bilans na końcu. Zanim zaczniesz, przyda się słowniczek „który składnik kryje się za słowami z treści”.
+
+<Ramka kind="kiedy" tytul="jakie konto podpowiada treść operacji">
+- „gotówką”, „z kasy”, „do kasy” → **Kasa**;
+- „przelewem”, „z rachunku”, „na rachunek”, „wyciąg bankowy” → **Rachunek bieżący** (bankowy);
+- „zapłata w terminie późniejszym”, „za 14 dni” przy zakupie → **Rozrachunki z dostawcami** (zobowiązanie);
+- „zapłata w terminie późniejszym” przy sprzedaży → **Rozrachunki z odbiorcami** (należność).
+
+„Rozrachunki z dostawcami”, „Zobowiązania wobec dostawców” i „Zobowiązania z tytułu dostaw i usług” to na zajęciach to samo konto.
+</Ramka>
+
+<Ramka kind="polecenie">
+„Otwórz konta, zaksięguj operacje gospodarcze, sporządź bilans zamknięcia.” Czasem dochodzi: „określ typ operacji”.
+
+1. **Otwórz konta.** Każdy składnik z bilansu otwarcia dostaje konto z Sp. (aktywa po Wn, pasywa po Ma). Konto dla składnika, którego w bilansie nie było (np. materiały), otwierasz bez Sp.
+2. **Każdą operację rozpisz na dwa składniki:** który rośnie, który maleje — i czy to aktywo, czy pasywo.
+3. **Ustal strony** regułą z tabeli: aktywa + → Wn, − → Ma; pasywa + → Ma, − → Wn. Sprawdź, że wyszły przeciwne strony.
+4. **Zapisz kwotę na obu kontach** z numerem operacji. Jeśli polecenie tego chce — dopisz typ operacji.
+5. **Zamknij każde konto:** obroty, saldo końcowe, sumy.
+6. **Sporządź bilans zamknięcia:** salda końcowe kont aktywnych → aktywa, kont pasywnych → pasywa. Zsumuj obie strony — muszą być równe.
+</Ramka>
+
+<Rozwiazanie tytul="Spółka X — księgowanie i bilans zamknięcia" zrodlo="przykład z wykładu (konspekt „operacje bilansowe…”)">
+<div slot="tresc">
+
+Bilans spółki X na 1 stycznia: środki trwałe 70 000, należności 20 000, rachunek bieżący 25 000 (razem aktywa 115 000); kapitał własny 90 000, kredyt 21 000, zobowiązania 4 000 (razem pasywa 115 000). W okresie:
+
+1. Z rachunku bieżącego spłacono zobowiązania wobec dostawcy: 2 500 zł.
+2. Kupiono materiały i przyjęto je do magazynu: 8 000 zł.
+3. Jeden z odbiorców wpłacił na rachunek bieżący: 3 000 zł.
+4. Kupiono meble biurowe, zapłata w terminie późniejszym: 5 000 zł.
+5. Przelewem z rachunku bieżącego spłacono część kredytu: 6 000 zł.
+
+Otwórz konta, zaksięguj operacje i sporządź bilans zamknięcia.
+
+</div>
+
+<div slot="plan">
+
+1. Otwieramy siedem kont: sześć składników z bilansu i jedno nowe na materiały. Bez kont nie ma gdzie księgować.
+2. Każdą operację rozkładamy na dwa składniki i ustalamy strony. Tu jest cała praca — reszta to rachunki.
+3. Zamykamy każde konto. Salda końcowe to nowe stany składników.
+4. Z sald budujemy bilans zamknięcia i sprawdzamy, że aktywa = pasywa. Jeśli nie — gdzieś jest błąd strony albo kwoty.
+
+</div>
+
+<Krok tytul="Otwórz konta">
+Aktywa: środki trwałe, należności, rachunek bieżący → Sp. po Wn. Pasywa: kapitał własny, kredyt, zobowiązania → Sp. po Ma. Materiałów w bilansie nie było, ale operacja 2 ich dotyczy — otwieramy konto „Materiały” bez Sp.
+
+<Dlaczego>
+Konto zakładamy dla każdego składnika, który pojawi się w operacjach. Składnik bez stanu na start ma konto z pustym Sp.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacje 1 i 5 — spłaty długów z rachunku (AP−)">
+Operacja 1: zobowiązania (pasywo) **maleją** o 2 500 → Wn „Zobowiązania”. Rachunek (aktywo) **maleje** o 2 500 → Ma „Rachunek bieżący”.
+
+Operacja 5: kredyt (pasywo) maleje o 6 000 → Wn „Kredyt”. Rachunek maleje o 6 000 → Ma „Rachunek bieżący”.
+
+Obie operacje to **AP−**: aktywo i pasywo maleją. Suma bilansowa spada.
+
+<Dlaczego>
+Płacimy dług, więc ubywa i pieniędzy, i długu. Zmniejszenie pasywów zapisujemy po Wn, zmniejszenie aktywów — po Ma. Wyszły przeciwne strony, czyli dobrze.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacje 2 i 4 — zakupy z zapłatą później (AP+)">
+Operacja 2: materiały rosną o 8 000 → Wn „Materiały”. Po drugiej stronie — zobowiązania rosną o 8 000 → Ma „Zobowiązania”.
+
+Operacja 4: meble biurowe to **środki trwałe** — rosną o 5 000 → Wn „Środki trwałe”. Zapłata później → zobowiązania rosną o 5 000 → Ma „Zobowiązania”.
+
+Obie operacje to **AP+**: aktywo i pasywo rosną.
+
+<Dlaczego typ="umowa">
+W operacji 2 nie napisano, jak zapłacono. Przyjmujemy zakup z zapłatą później (zobowiązanie wobec dostawcy), bo przy zakupie materiałów to typowa sytuacja. Gdyby w treści było „zapłacono przelewem”, po Ma stanąłby „Rachunek bieżący” i byłaby to operacja **A**. Zmieniłaby się tylko druga strona zapisu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 3 — wpłata od odbiorcy (A)">
+Rachunek (aktywo) rośnie o 3 000 → Wn „Rachunek bieżący”. Należności (aktywo) maleją o 3 000 → Ma „Należności”. Oba składniki w aktywach → **A**. Suma bilansowa bez zmian.
+
+Wszystkie pięć operacji na kontach — obejrzyj je po kolei:
+
+<Konta konta={KX} operacje={OX} bilans typy>
+na górze bilans otwarcia i lista operacji z typem. Pod nimi siedem kont. Kwota każdej operacji trafia na dwa konta, po przeciwnych stronach. Na końcu zamykamy konta i przepisujemy salda do bilansu zamknięcia.
+</Konta>
+</Krok>
+
+<Krok tytul="Zamknij konta">
+Przykład dla rachunku bieżącego. Obroty Wn: 25 000 + 3 000 = 28 000. Obroty Ma: 2 500 + 6 000 = 8 500. Saldo Wn: 28 000 − 8 500 = **19 500**.
+
+Przykład dla zobowiązań. Obroty Wn: 2 500. Obroty Ma: 4 000 + 8 000 + 5 000 = 17 000. Saldo Ma: 17 000 − 2 500 = **14 500**.
+
+Pozostałe konta — w rysunku wyżej (kroki „zamknięcie”). Konta bez ruchu, jak kapitał własny, mają saldo równe Sp.
+
+<Dlaczego>
+Każde konto aktywne wyszło z saldem Wn, a pasywne — z saldem Ma. Tak powinno być. Saldo po „złej” stronie to zwykle znak, że któraś operacja trafiła na złą stronę.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Bilans zamknięcia i sprawdzenie">
+Aktywa: środki trwałe 75 000 + materiały 8 000 + należności 17 000 + rachunek bieżący 19 500 = **119 500**.
+
+Pasywa: kapitał własny 90 000 + kredyt 15 000 + zobowiązania 14 500 = **119 500**.
+
+Sprawdzenie przez typy operacji: na start 115 000. AP− (op. 1): −2 500. AP+ (op. 2): +8 000. A (op. 3): bez zmian. AP+ (op. 4): +5 000. AP− (op. 5): −6 000. Razem: 115 000 − 2 500 + 8 000 + 5 000 − 6 000 = **119 500**. Zgadza się.
+
+<Dlaczego>
+Drugie sprawdzenie jest niezależne od kont. Jeśli obie drogi dają tę samą sumę, a aktywa równają się pasywom, księgowanie jest spójne.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="granica">
+- Bilans zamknięcia z samych sald działa, gdy wszystkie operacje są bilansowe.
+- Gdy pojawią się koszty i przychody, najpierw trzeba ustalić wynik finansowy. To temat modułu o kontach wynikowych.
+- Tak jest np. z fakturą za usługę księgową w zad. 5.3.
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Operacja czy zdarzenie</b>Zmiana w majątku lub źródłach + dokument → operacja. Plan, oferta, zamówienie, umowa → zwykle tylko zdarzenie.</div>
+  <div><b>Cztery typy</b>A: aktywa ↑↓. P: pasywa ↑↓. AP+: oba rosną. AP−: oba maleją. Koszt lub przychód po jednej stronie → wynikowa.</div>
+  <div><b>Suma bilansowa</b>A i P — bez zmian. AP+ — rośnie. AP− — maleje.</div>
+  <div><b>Konto aktywne</b>Sp. po Wn. Zwiększenia Wn, zmniejszenia Ma. Saldo zwykle Wn.</div>
+  <div><b>Konto pasywne</b>Sp. po Ma. Zwiększenia Ma, zmniejszenia Wn. Saldo zwykle Ma.</div>
+  <div><b>Numery</b>Po Wn „1) 1 700”, po Ma „1 700 (1”.</div>
+  <div><b>Obroty</b>Suma strony razem z Sp. (jak na zajęciach).</div>
+  <div><b>Saldo końcowe</b>Większe obroty − mniejsze. Nazwa od strony większej, wpis po stronie mniejszej. Potem obie sumy równe.</div>
+  <div><b>Podwójny zapis</b>Co najmniej dwa konta, przeciwne strony, ta sama kwota.</div>
+  <div><b>Bilans zamknięcia</b>Salda kont aktywnych → aktywa, pasywnych → pasywa. Aktywa = pasywa.</div>
+</div>
+
+<Ramka kind="gdzie">
+Konta teowe i podwójny zapis są w każdym kolejnym temacie: przy kasie i rachunku bankowym, rozrachunkach z odbiorcami i pracownikami, środkach trwałych i materiałach. Zmieniają się tylko nazwy kont. Zasady stron i zamykania kont zostają te same.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — także dobrej — jest wyjaśnienie.
+
+<a id="cw-operacja" class="k-anchor"></a>
+
+### Zdarzenie czy operacja
+
+<Klasyfikator pytanie="Czy to operacja gospodarcza?" kategorie={KATEGORIE_ZDARZEN} elementy={[
+  { tekst: 'Podpisano z hurtownią umowę na dostawy papieru przez cały rok.', kat: 0, dlaczego: 'Umowa to obietnica na przyszłość. Papieru jeszcze nie ma, długu też nie. <b>Tylko zdarzenie.</b>' },
+  { tekst: 'Wypłacono z kasy pracownikowi zaliczkę 800 zł.', kat: 1, dlaczego: 'Kasy ubyło, a pracownik jest winien firmie rozliczenie zaliczki. Dokument: dowód wypłaty (raport kasowy). <b>Operacja.</b>' },
+  { tekst: 'Hurtownia przysłała ofertę cenową na nowe towary.', kat: 0, dlaczego: 'Oferta niczego nie zmienia w majątku ani w długach. <b>Tylko zdarzenie.</b>' },
+  { tekst: 'Bank przyznał kredyt i przelał 50 000 zł na rachunek firmy.', kat: 1, dlaczego: 'Na rachunku przybyło 50 000 zł, a firma ma dług wobec banku. Dokument: wyciąg bankowy. <b>Operacja</b> (AP+).' },
+  { tekst: 'Złożono zamówienie na 50 laptopów.', kat: 0, dlaczego: 'Zamówienie to dopiero prośba do dostawcy. Laptopów nie ma, faktury nie ma. <b>Tylko zdarzenie.</b>' },
+  { tekst: 'Przyszła faktura za energię elektryczną, płatna za 21 dni.', kat: 1, dlaczego: 'Powstał dług wobec dostawcy prądu, a dokumentem jest faktura. <b>Operacja</b> (wynikowa — energia to koszt).' },
+  { tekst: 'Zatrudniono nowego księgowego — podpisano umowę o pracę.', kat: 0, dlaczego: 'Sama umowa o pracę nie zmienia majątku ani długów. Dług wobec pracownika powstanie dopiero z listą płac. <b>Tylko zdarzenie.</b>' },
+  { tekst: 'Dostawca napisał, że wysłał materiały. Jeszcze nie dotarły, faktury też nie ma.', kat: 0, dlaczego: 'W firmie nic się jeszcze nie zmieniło i nie ma dokumentu. <b>Tylko zdarzenie</b> — tak jak w przykładzie z zajęć.' },
+]} />
+
+<a id="cw-typ" class="k-anchor"></a>
+
+### Typ operacji
+
+<Klasyfikator pytanie="Jaki to typ operacji?" kategorie={KATEGORIE_TYPOW} elementy={KLAS_TYPY} />
+
+<a id="cw-konto" class="k-anchor"></a>
+
+### Jedno konto: zapis zmian i zamknięcie
+
+<CwiczenieKonto tytul="Rachunek bankowy (konto aktywne)" konto={{ nazwa: 'Rachunek bankowy', typ: 'A', sp: 18000 }} zmiany={[
+  { nr: 1, kwota: 4500, zmiana: '+', opis: 'odbiorca zapłacił przelewem za towary' },
+  { nr: 2, kwota: 6000, zmiana: '−', opis: 'przelewem spłacono zobowiązanie wobec dostawcy' },
+  { nr: 3, kwota: 2000, zmiana: '−', opis: 'podjęto gotówkę z rachunku do kasy' },
+  { nr: 4, kwota: 10000, zmiana: '+', opis: 'wpłynął kredyt z banku' },
+]}>
+Stan rachunku na początek miesiąca: 18 000 zł.
+</CwiczenieKonto>
+
+<CwiczenieKonto tytul="Kredyty bankowe (konto pasywne)" konto={{ nazwa: 'Kredyty bankowe', typ: 'P', sp: 30000 }} zmiany={[
+  { nr: 1, kwota: 5000, zmiana: '−', opis: 'z rachunku spłacono ratę kredytu' },
+  { nr: 2, kwota: 20000, zmiana: '+', opis: 'bank udzielił nowego kredytu' },
+  { nr: 3, kwota: 3000, zmiana: '−', opis: 'spłacono kolejną ratę kredytu' },
+]}>
+Zadłużenie z tytułu kredytów na początek miesiąca: 30 000 zł.
+</CwiczenieKonto>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'Konto „Towary”: Sp. 9 000, zakup towarów 3 500, zwrot wadliwych towarów do dostawcy 1 200. Ile wynosi saldo końcowe i po której stronie?', opcje: ['11 300, saldo Wn', '13 700, saldo Wn', '11 300, saldo Ma'], dobra: 0, dlaczego: 'Towary to konto aktywne. Wn: 9 000 + 3 500 = 12 500. Ma: 1 200. Saldo Wn: 12 500 − 1 200 = 11 300. Odpowiedź 13 700 powstaje, gdy zwrot dopisze się po Wn jak zakup. Saldo Ma przy koncie aktywnym oznaczałoby ujemne towary.' },
+  { q: 'Konto „Zobowiązania wobec dostawców”: Sp. 12 000, spłata 7 000, nowa faktura za materiały 4 000. Po której stronie wpiszesz spłatę 7 000?', opcje: ['Ma, bo pieniądze wychodzą z firmy', 'Wn, bo dług maleje', 'Wn, bo to pierwsza operacja'], dobra: 1, dlaczego: 'Zobowiązania to konto pasywne. Spłata zmniejsza dług, a zmniejszenie pasywów idzie na Wn. Odpowiedź „Ma, bo pieniądze wychodzą” opisuje konto rachunku bankowego, nie zobowiązań. Kolejność operacji nie ma wpływu na stronę.' },
+  { q: 'To samo konto zobowiązań: Sp. 12 000, spłata 7 000, nowa faktura 4 000. Jaki jest stan zadłużenia na koniec?', opcje: ['1 000', '23 000', '9 000'], dobra: 2, dlaczego: 'Ma: 12 000 + 4 000 = 16 000. Wn: 7 000. Saldo Ma: 16 000 − 7 000 = 9 000. Wynik 1 000 wychodzi, gdy faktura trafi na Wn razem ze spłatą. 23 000 — gdy spłata trafi na Ma.' },
+  { q: 'Obroty Wn konta wynoszą 5 300, a obroty Ma 3 600. Gdzie wpisujesz saldo końcowe?', opcje: ['Po Ma — to saldo Wn, wpisane po stronie mniejszej', 'Po Wn — to saldo Wn, więc stoi po Wn', 'Po Ma — to saldo Ma'], dobra: 0, dlaczego: 'Przeważa Wn, więc to saldo Wn (1 700). Wpisujemy je po stronie mniejszej, czyli Ma, żeby obie strony dały po 5 300. Saldo wpisane po Wn, czyli po stronie większej, rozjeżdża sumy: 7 000 kontra 3 600. Saldo „Ma” byłoby przy przewadze strony Ma.' },
+  { q: 'Konto aktywne po zamknięciu wyszło z saldem Ma. Co to najpewniej znaczy?', opcje: ['Wszystko w porządku — saldo może być po obu stronach', 'Firma ma więcej tego składnika niż na początku', 'Któraś operacja trafiła na złą stronę'], dobra: 2, dlaczego: 'Saldo Ma na koncie aktywnym znaczyłoby, że kasy albo towarów jest mniej niż zero. To niemożliwe, więc najpewniej jest błąd strony. Sprawdź, czy zwiększenia stoją po Wn. Więcej składnika niż na początku dałoby większe saldo Wn, a nie saldo Ma.' },
+]} />
+
+<a id="cw-ksiegowanie" class="k-anchor"></a>
+
+### Podwójny zapis
+
+<CwiczenieKsiegowanie tytul="Zaksięguj sześć operacji" konta={KONTA_KS} operacje={OPS_KS} />
+
+<Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
+  { q: 'Bilans otwarcia: suma 115 000. W okresie: AP+ na 8 000, A na 3 000, AP− na 2 500. Ile wynosi suma bilansu zamknięcia?', opcje: ['123 500', '120 500', '117 500'], dobra: 1, dlaczego: '115 000 + 8 000 − 2 500 = 120 500. Operacja A nie zmienia sumy bilansowej. Odpowiedź 123 500 powstaje, gdy dolicza się operację A. 117 500 — gdy operację A odejmuje się jak AP−.' },
+  { q: 'Suma obrotów Wn wszystkich kont po zaksięgowaniu operacji (bez Sp.) wynosi 24 500. Ile wynosi suma obrotów Ma (bez Sp.)?', opcje: ['Nie da się tego ustalić', '49 000', '24 500'], dobra: 2, dlaczego: 'Przy każdej operacji suma zapisów po Wn równa się sumie zapisów po Ma. Dlatego dla wszystkich operacji razem też wychodzi 24 500. 49 000 wychodzi, gdy liczy się każdą operację dwa razy. „Nie da się” — da się, bo wynika to z podwójnego zapisu.' },
+  { q: 'Kupiono maszynę za 25 000 zł i od razu zapłacono przelewem. Jaki jest zapis?', opcje: ['Wn „Środki trwałe”, Ma „Rachunek bankowy”', 'Wn „Rachunek bankowy”, Ma „Środki trwałe”', 'Wn „Środki trwałe”, Ma „Rozrachunki z dostawcami”'], dobra: 0, dlaczego: 'Maszyny przybywa (aktywo rośnie → Wn), pieniędzy ubywa (aktywo maleje → Ma). Typ A. Odwrócony zapis znaczyłby, że sprzedano maszynę. Rozrachunki z dostawcami byłyby przy zapłacie później.' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Sprawdź, czy rozumiesz zasady" pytania={[
+  { q: 'Czym operacja gospodarcza różni się od zdarzenia gospodarczego?', opcje: ['Operacja zmienia majątek lub źródła jego finansowania i jest wyrażona w złotych', 'Operacja to zdarzenie, przy którym jest podana kwota', 'Operacja to każde zdarzenie potwierdzone umową'], dobra: 0, dlaczego: 'Liczy się zmiana w bilansie. Kwota w treści nic nie przesądza — decyzja o modernizacji też ma kwotę. Umowa sama niczego nie zmienia.' },
+  { q: 'Ile składników bilansu zmienia każda operacja bilansowa?', opcje: ['Jeden', 'Co najmniej dwa', 'Wszystkie po jednej stronie bilansu'], dobra: 1, dlaczego: 'Każda operacja dotyka co najmniej dwóch składników. Przy dwóch zmieniają się o tę samą kwotę. Dzięki temu aktywa dalej równają się pasywom.' },
+  { q: 'Przy którym typie operacji suma bilansowa maleje?', opcje: ['A', 'AP+', 'AP−'], dobra: 2, dlaczego: 'AP− zmniejsza jednocześnie aktywa i pasywa, np. spłata długu z rachunku. Przy A i P suma się nie zmienia, przy AP+ rośnie.' },
+  { q: 'Po której stronie konta pasywnego zapisujemy zwiększenia?', opcje: ['Ma', 'Wn', 'Po tej, po której stoi saldo końcowe'], dobra: 0, dlaczego: 'Pasywa stoją w bilansie po prawej, więc stan i zwiększenia konta pasywnego są po prawej — po Ma. Saldo końcowe wpisujemy po stronie mniejszej, więc nie wskazuje strony zwiększeń.' },
+  { q: 'Gdzie stoi saldo początkowe konta „Kasa”?', opcje: ['Po Ma', 'Po Wn', 'Zależy od tego, czy kasy przybywa'], dobra: 1, dlaczego: 'Kasa to konto aktywne. Saldo początkowe konta aktywnego zawsze stoi po Wn.' },
+  { q: 'Co znaczy zapis „2 500 (2” po stronie Ma?', opcje: ['Saldo 2 500 po drugim miesiącu', 'Operacja numer 2 na kwotę 2 500, zapisana po Ma', 'Dwie operacje po 2 500'], dobra: 1, dlaczego: 'Na zajęciach numer operacji stoi przy kwocie od strony zewnętrznej konta: po Ma za kwotą, po Wn przed kwotą („2) 2 500”).' },
+  { q: 'Jak liczymy obroty strony Wn konta aktywnego na zajęciach?', opcje: ['Tylko zapisy operacji, bez Sp.', 'Saldo końcowe plus zapisy', 'Wszystkie kwoty po Wn razem z saldem początkowym'], dobra: 2, dlaczego: 'Na zajęciach „Obr.” to suma całej strony razem z Sp. Część podręczników liczy bez Sp. — saldo końcowe wychodzi to samo, ale licz jak na zajęciach.' },
+  { q: 'Saldo końcowe nazywamy „saldem Wn”, gdy…', opcje: ['…obroty Wn są większe niż obroty Ma', '…wpisujemy je po stronie Wn', '…konto jest pasywne'], dobra: 0, dlaczego: 'Nazwa salda pochodzi od strony, która przeważa. Wpisujemy je po przeciwnej, mniejszej stronie. Konto pasywne ma zwykle saldo Ma.' },
+  { q: 'Bank z kredytu spłacił za firmę zobowiązanie wobec dostawcy. Jaki to typ operacji?', opcje: ['AP+', 'P', 'A'], dobra: 1, dlaczego: 'Zobowiązanie wobec dostawcy (pasywo) maleje, kredyt (pasywo) rośnie. Oba w pasywach → P. Majątek się nie zmienił, zmienił się tylko wierzyciel.' },
+  { q: 'Przyszła faktura za usługę księgową, płatna za 14 dni. Jak opisano tę operację na zajęciach?', opcje: ['Jako operację wynikową', 'Jako AP+', 'Jako zdarzenie, bo nie ma zapłaty'], dobra: 0, dlaczego: 'Zobowiązanie rośnie, ale po drugiej stronie stoi koszt usług obcych, a nie składnik bilansu. Dlatego to operacja wynikowa. Brak zapłaty nie robi z niej zdarzenia: powstał dług i jest faktura.' },
+]} />

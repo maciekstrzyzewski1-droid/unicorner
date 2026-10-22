@@ -1,7 +1,7 @@
 # Unicorner
 
 Studencka platforma do nauki na egzaminy (UEP): fiszki, zadania krok po kroku, quizy
-z natychmiastową informacją zwrotną, kurs matematyki od zera, sekcja artykułów (Wiedza)
+z natychmiastową informacją zwrotną, kursy matematyki i rachunkowości od zera, sekcja artykułów (Wiedza)
 i generator AI robiący fiszki oraz quiz z własnych notatek. Działa na telefonie.
 Strony z materiałami nie wymagają logowania; logowanie (Google) potrzebne jest tylko w generatorze.
 
@@ -39,6 +39,7 @@ przechodzący `npm run build`, więc przed pushem zawsze go uruchom. Na pull req
 | `src/pages/matematyka/*.mdx` | Moduły kursu matematyki (`logika`, `zbiory`, `relacje`, `macierze`, `uklady-rownan`, `matematyka-finansowa`, `pochodne`, `badanie-funkcji`, `funkcje-wielu-zmiennych`, `ekstrema-warunkowe`). |
 | `src/pages/wiedza/[slug].astro` | Jeden szablon wszystkich artykułów. |
 | `src/layouts/Base.astro` | Wspólny `<head>`: fonty, meta description, Cloudflare Web Analytics (bez ciasteczek). |
+| `src/pages/rachunkowosc/*.mdx` | Moduły kursu rachunkowości (`konta`) + słowniczek pojęć (`pojecia.astro`). |
 | `src/layouts/Kurs.astro` | Szablon modułu kursu: nagłówek, spis treści, poprzedni/następny. |
 | `src/components/` | Komponenty React/Astro: efekty wizualne (`*.jsx`), ramki i ćwiczenia kursów (`kurs/`), karty artykułów (`wiedza/`). |
 | `src/lib/` | Logika w czystym JS (tabele prawdy, macierze, relacje, układy równań, matematyka finansowa, pochodne, wykresy, KaTeX) i wtyczki rehype (`rehype-interpunkcja`, `rehype-tabele`). |
@@ -56,6 +57,7 @@ przechodzący `npm run build`, więc przed pushem zawsze go uruchom. Na pull req
 - **Przedmioty** (każdy z fiszkami/kompendium i quizem): `makroekonomia`, `marketing`, `mitz`, `zarzadzanie-jakoscia`, `etir`, `ort`, `geografia`.
 - **Statystyka** (hub): `statystyka`, `dynamika`, `trend`, `sezonowosc`, `korelacja`, `korelacja-wieloraka`, `regresja`, `Statystyka_Navoica_Egzamin`.
 - **Matematyka** (kurs krok po kroku): `matematyka.html` + 11 gotowych modułów z 13 zaplanowanych (1–5, 7–12; brakuje 6 i 13) + słowniczek symboli.
+- **Rachunkowość** (kurs krok po kroku): `rachunkowosc.html` + 1 gotowy moduł z 10 zaplanowanych (3. Operacje i konta bilansowe) + słowniczek pojęć. Konta teowe: `src/components/kurs/konta/`, rachunki: `src/lib/konta.js`, sprawdzanie: `narzedzia/mat-check/rachunkowosc/`.
 - **Wiedza**: `wiedza.html` + 28 artykułów w czterech kategoriach (krypto, polityka, zdrowie i umysł, świat i technika).
 - **Generator AI**: `generator.html` (wymaga logowania Google), `talia.html` (podgląd udostępnionej talii, `noindex`).
 - **Pozostałe**: `kontakt`, `prywatnosc`, `regulamin`, `recenzje.html` (formularz opinii), `moderacja.html` (panel, `noindex`, nielinkowany, wymaga `ADMIN_CODE`).

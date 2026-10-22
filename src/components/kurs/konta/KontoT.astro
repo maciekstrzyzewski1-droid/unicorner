@@ -1,0 +1,89 @@
+---
+// Jedno konto w układzie teowym — dokładnie jak arkusz z zajęć: Wn / nazwa / Ma, wpisy z numerami operacji
+// („1) 1 700” po Wn, „1 700 (1” po Ma), „Sp.” przy saldzie początkowym, wiersz „Obr.”, wiersz salda
+// („Sk Ma” po lewej, „Sk Wn” po prawej — liczba stoi tylko w jednym) i sumy obu stron.
+// Bez skryptu. Animację robi pudełko nadrzędne (Konta.astro) po atrybutach data-k / data-el / data-od.
+// od: { sp, wpis: { [nr]: krok }, obrWn, obrMa, sk, razem } — od którego kroku element jest widoczny.
+import { zamknij, zl, NBSP, NAZWA_TYPU, stronaZmiany } from '../../../lib/konta.js';
+interface Konto { id?: string; nazwa: string; typ: 'A' | 'P' | 'K'; sp?: number }
+interface Wpis { nr: number | string; strona: 'wn' | 'ma'; kwota: number }
+interface Props {
+  konto: Konto; wpisy?: Wpis[]; zamkniete?: boolean; znaki?: boolean; od?: any;
+  oznacz?: (number | string)[]; maly?: boolean;
+}
+const { konto, wpisy = [], zamkniete = true, znaki = true, od, oznacz = [], maly = false } = Astro.props;
+const z = zamknij(konto, wpisy);
+const id = konto.id ?? konto.nazwa;
+type Kom = { el: string; lbl: string; kw: string; od?: number; zl?: boolean };
+const kol = (s: 'wn' | 'ma'): Kom[] => [
+  ...(z.sp && z.spStrona === s ? [{ el: 'sp', lbl: 'Sp.', kw: zl(z.sp), od: od?.sp }] : []),
+  ...wpisy.filter((w) => w.strona === s).map((w) => ({ el: `w-${w.nr}`, lbl: s === 'wn' ? `${w.nr})` : `(${w.nr}`, kw: zl(w.kwota), od: od?.wpis?.[w.nr], zl: oznacz.includes(w.nr) })),
+];
+const wn = kol('wn'), ma = kol('ma');
+const n = Math.max(wn.length, ma.length, 2);
+const wiersze = Array.from({ length: n }, (_, i) => [wn[i], ma[i]]);
+const plus = stronaZmiany(konto.typ, '+');
+const znak = (s: string) => (s === plus ? '+' : '−');
+const typTxt = konto.typ === 'K' ? 'konto kosztów' : `konto ${NAZWA_TYPU[konto.typ]}`;
+// lewa kolumna ma napis „Sk Ma” (saldo Ma wpisane po Wn), prawa — „Sk Wn” (saldo Wn wpisane po Ma), jak w arkuszu z zajęć
+const skMa = z.wpisSalda === 'wn' ? zl(z.saldo) : '';
+const skWn = z.wpisSalda === 'ma' ? zl(z.saldo) : '';
+const pusto = (o?: number) => (o === undefined ? undefined : o);
+---
+<div class:list={['k-t', `is-${konto.typ}`, { 'is-maly': maly }]} data-k={id}>
+  {znaki && <div class="k-t-zn" aria-hidden="true"><span>{znak('wn')}</span><span>{znak('ma')}</span></div>}
+  <div class="k-t-head">
+    <span class="k-t-s">Wn</span>
+    <span class="k-t-nazwa">{konto.nazwa}<small>{typTxt}</small></span>
+    <span class="k-t-s">Ma</span>
+  </div>
+  <div class="k-t-body">
+    {wiersze.map(([a, b]) => (
+      <>
+        <div class:list={['k-t-c is-wn', { 'is-zl': a?.zl }]} data-el={a?.el} data-od={pusto(a?.od)}>{a && <><span class="k-t-l">{a.lbl}</span><span class="k-t-kw" data-v>{a.kw}</span></>}</div>
+        <div class:list={['k-t-c is-ma', { 'is-zl': b?.zl }]} data-el={b?.el} data-od={pusto(b?.od)}>{b && <><span class="k-t-kw" data-v>{b.kw}</span><span class="k-t-l">{b.lbl}</span></>}</div>
+      </>
+    ))}
+  </div>
+  {zamkniete && (
+    <div class="k-t-foot">
+      <div class="k-t-c is-wn is-obr" data-el="obr-wn" data-od={od?.obrWn}><span class="k-t-l">Obr.</span><span class="k-t-kw" data-v>{zl(z.obrWn)}</span></div>
+      <div class="k-t-c is-ma is-obr" data-el="obr-ma" data-od={od?.obrMa}><span class="k-t-kw" data-v>{zl(z.obrMa)}</span><span class="k-t-l">Obr.</span></div>
+      <div class:list={['k-t-c is-wn is-sk', { 'is-nic': !skMa }]} data-el={skMa ? 'sk' : undefined} data-od={skMa ? od?.sk : undefined}><span class="k-t-l">Sk{NBSP}Ma</span><span class="k-t-kw" data-v>{skMa}</span></div>
+      <div class:list={['k-t-c is-ma is-sk', { 'is-nic': !skWn }]} data-el={skWn ? 'sk' : undefined} data-od={skWn ? od?.sk : undefined}><span class="k-t-kw" data-v>{skWn}</span><span class="k-t-l">Sk{NBSP}Wn</span></div>
+      <div class="k-t-c is-wn is-razem" data-el="razem-wn" data-od={od?.razem}><span class="k-t-l"></span><span class="k-t-kw" data-v>{zl(z.razem)}</span></div>
+      <div class="k-t-c is-ma is-razem" data-el="razem-ma" data-od={od?.razem}><span class="k-t-kw" data-v>{zl(z.razem)}</span><span class="k-t-l"></span></div>
+    </div>
+  )}
+</div>
+
+<style>
+  .k-t{--kt:var(--cyan);display:inline-block;vertical-align:top;width:100%;max-width:330px;min-width:0;font-variant-numeric:tabular-nums;}
+  .k-t.is-P{--kt:var(--magenta);}
+  .k-t.is-K{--kt:var(--accent);}
+  .k-t-zn{display:grid;grid-template-columns:1fr 1fr;text-align:center;font-family:var(--mono);font-weight:700;font-size:1.05rem;color:var(--kt);line-height:1.2;}
+  .k-t-head{display:grid;grid-template-columns:auto 1fr auto;align-items:end;gap:6px;padding:0 4px 4px;border-bottom:2px solid var(--kt);}
+  .k-t-s{font-family:var(--mono);font-size:.8rem;color:var(--muted);}
+  .k-t-nazwa{text-align:center;font-weight:700;color:#fff;line-height:1.25;font-size:.98rem;}
+  .k-t-nazwa small{display:block;font-family:var(--mono);font-size:.62rem;font-weight:500;letter-spacing:.6px;text-transform:uppercase;color:var(--kt);}
+  .k-t-body,.k-t-foot{display:grid;grid-template-columns:1fr 1fr;}
+  .k-t-c{display:flex;align-items:baseline;justify-content:space-between;gap:6px;min-height:1.95em;padding:3px 8px;font-size:.98rem;transition:background .2s,box-shadow .2s;}
+  .k-t-c.is-ma{border-left:2px solid var(--kt);}
+  .k-t-c.is-wn .k-t-kw{margin-left:auto;}
+  .k-t-c.is-ma .k-t-kw{margin-right:auto;}
+  .k-t-l{font-family:var(--mono);font-size:.78rem;color:var(--muted);white-space:nowrap;}
+  .k-t-kw{color:#fff;white-space:nowrap;}
+  .k-t-c.is-zl{background:rgba(255,216,74,.18);}
+  .k-t-foot .k-t-c.is-obr{border-top:1px solid var(--line2);}
+  .k-t-foot .k-t-c.is-obr .k-t-kw{font-weight:600;}
+  .k-t-foot .k-t-c.is-sk .k-t-kw{color:var(--gold);font-weight:700;}
+  .k-t-foot .k-t-c.is-nic .k-t-l{opacity:.45;}
+  .k-t-foot .k-t-c.is-razem{border-top:1px solid var(--muted);border-bottom:3px double var(--muted);}
+  .k-t-foot .k-t-c.is-razem .k-t-kw{color:var(--muted);}
+  .k-t.is-maly .k-t-c{font-size:.9rem;min-height:1.8em;padding:2px 6px;}
+  /* stany z animacji (Konta.astro) */
+  .k-t-c.is-pusta > *{visibility:hidden;}
+  .k-t-c.is-teraz{box-shadow:inset 0 0 0 2px var(--gold);background:rgba(255,216,74,.12);}
+  .k-t-c.is-zrodlo{box-shadow:inset 0 0 0 2px var(--cyan);}
+  @media(max-width:560px){ .k-t{max-width:none;} .k-t-c{font-size:.95rem;padding:3px 6px;} }
+</style>

@@ -1,0 +1,180 @@
+---
+// Księgowanie krok po kroku na kontach teowych.
+// Dwa tryby:
+//  1) operacje={[{ nr, opis, kwota, wn, ma }]} — podwójny zapis na wielu kontach (konta={[…]}); opcjonalnie bilans otwarcia i zamknięcia;
+//  2) jedno={{ konto, zmiany: [{ nr, kwota, zmiana: '+'|'−', opis }] }} — jedno konto bez podwójnego zapisu (jak zad. 5.2 i 5.3).
+// Bez JS widać gotowy wynik (wszystkie wpisy, obroty, salda). „▶ Zobacz krok po kroku” odsłania wszystko od pustych kont:
+// kwota operacji przelatuje z listy na konto, a podpis mówi, które konto rośnie, które maleje i dlaczego ta strona.
+import { krokiKsiegowania, krokiJednegoKonta, typOperacji, OPIS_TYPU, zl } from '../../../lib/konta.js';
+import { texInline } from '../../../lib/tex.js';
+import KontoT from './KontoT.astro';
+import BilansStrona from './BilansStrona.astro';
+import Legenda from '../Legenda.astro';
+import Sterowanie from '../Sterowanie.astro';
+interface Props { konta?: any[]; operacje?: any[]; jedno?: { konto: any; zmiany: any[] }; bilans?: boolean; typy?: boolean; lista?: boolean; znaki?: boolean }
+const { konta = [], operacje = [], jedno, bilans = false, typy = false, lista = true, znaki = true } = Astro.props;
+
+let kroki: any[], kontaR: { konto: any; wpisy: any[]; od: any }[], k: any = null;
+const listaOp: { nr: any; opis: string; kwota: number; typ?: string }[] = [];
+if (jedno) {
+  const r = krokiJednegoKonta(jedno.konto, jedno.zmiany);
+  kroki = r.kroki;
+  const od: any = { sp: 0, wpis: {} };
+  kroki.forEach((s: any, i: number) => {
+    if (s.a === 'op') od.wpis[s.nr] = i;
+    if (s.a === 'obr') od[s.strona === 'wn' ? 'obrWn' : 'obrMa'] = i;
+    if (s.a === 'sk') od.sk = i;
+    if (s.a === 'razem') od.razem = i;
+  });
+  od.razem ??= od.sk;
+  kontaR = [{ konto: jedno.konto, wpisy: r.wpisy, od }];
+  jedno.zmiany.forEach((z: any) => listaOp.push({ nr: z.nr, opis: z.opis, kwota: z.kwota }));
+} else {
+  const r = krokiKsiegowania(konta, operacje, { bilans });
+  k = r;
+  kroki = r.kroki;
+  const krokOp: Record<string, number> = {}, krokZ: Record<string, number> = {};
+  kroki.forEach((s: any, i: number) => { if (s.a === 'op') krokOp[s.nr] = i; if (s.a === 'zamk') krokZ[s.konto] = i; });
+  kontaR = konta.map((x: any) => {
+    const wpisy = r.wpisy[x.id];
+    const wpis = Object.fromEntries(wpisy.map((w: any) => [w.nr, krokOp[w.nr]]));
+    const zk = krokZ[x.id];
+    return { konto: x, wpisy, od: { sp: 0, wpis, obrWn: zk, obrMa: zk, sk: zk, razem: zk } };
+  });
+  operacje.forEach((o: any) => listaOp.push({ nr: o.nr, opis: o.opis, kwota: o.kwota, typ: typy ? OPIS_TYPU[typOperacji(o, konta)].skrot : undefined }));
+}
+const odBilans = kroki.findIndex((s: any) => s.a === 'bilans');
+const legenda: [string, string][] = [['cyan', 'konto aktywne (majątek)'], ['roz', 'konto pasywne (źródło finansowania)']];
+if (konta.some((x: any) => x.typ === 'K')) legenda.push(['fiolet', 'konto kosztów (wynikowe)']);
+const bilansOtw = k && bilans ? { a: konta.filter((x: any) => x.typ === 'A' && x.sp), p: konta.filter((x: any) => x.typ === 'P' && x.sp) } : null;
+---
+<figure class="k-fig k-ks" data-kbox data-ks>
+  <div class="k-fig-box">
+    {bilansOtw && (
+      <div class="k-ks-bil">
+        <div class="k-ks-bil-t">Bilans otwarcia</div>
+        <div class="k-ks-bt2">
+          <BilansStrona tytul="Aktywa" klasa="is-A" pozycje={bilansOtw.a.map((x: any) => ({ nazwa: x.nazwa, kwota: x.sp }))} suma={k.sumaA0} />
+          <BilansStrona tytul="Pasywa" klasa="is-P" pozycje={bilansOtw.p.map((x: any) => ({ nazwa: x.nazwa, kwota: x.sp }))} suma={k.sumaP0} />
+        </div>
+      </div>
+    )}
+    {lista && (
+      <ol class="k-ks-ops">
+        {listaOp.map((o) => (
+          <li data-nr={o.nr}>
+            <span class="k-ks-nr">{o.nr}.</span>
+            <span class="k-ks-opis" set:html={texInline(o.opis)} />
+            <span class="k-ks-kw" data-kw>{zl(o.kwota)}</span>
+            {o.typ && <span class="k-ks-typ" data-od={kroki.findIndex((s: any) => s.a === 'op' && s.nr === o.nr)}>{o.typ}</span>}
+          </li>
+        ))}
+      </ol>
+    )}
+    <div class:list={['k-ks-konta', { 'is-jedno': !!jedno }]}>
+      {kontaR.map((x) => <KontoT konto={x.konto} wpisy={x.wpisy} od={x.od} znaki={znaki} />)}
+    </div>
+    {k && bilans && (
+      <div class="k-ks-bil" data-el="bilans" data-od={odBilans}>
+        <div class="k-ks-bil-t">Bilans zamknięcia</div>
+        <div class="k-ks-bt2">
+          <BilansStrona tytul="Aktywa" klasa="is-A" pozycje={k.aktywa} suma={k.sumaA} />
+          <BilansStrona tytul="Pasywa" klasa="is-P" pozycje={k.pasywa} suma={k.sumaP} />
+        </div>
+      </div>
+    )}
+    <Legenda items={legenda} />
+  </div>
+  <Sterowanie opis={jedno ? 'konto wypełni się wpis po wpisie, potem obroty i saldo' : 'kwota każdej operacji przeleci na dwa konta, potem zamkniemy konta'} legenda={[['ramka-zloto', 'wpisujemy teraz'], ['ramka-cyan', 'z tych liczymy'], ['pusta', 'jeszcze pusta']]} />
+  <ol hidden data-kroki>
+    {kroki.map((s: any) => <li data-a={s.a} data-nr={s.nr} data-strona={s.strona} data-konto={s.konto} set:html={texInline(s.html)} />)}
+  </ol>
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<script>
+  import { krokowka, own, lot, blysk, widok } from '../../../lib/krokowka';
+  document.querySelectorAll<HTMLElement>('[data-ks]').forEach((box) => {
+    const els = own<HTMLElement>(box, '[data-od]');
+    const ops = own<HTMLElement>(box, '.k-ks-ops > li');
+    const komorki = own<HTMLElement>(box, '.k-t-c');
+    const konto = (id?: string) => own<HTMLElement>(box, '[data-k]').find((t) => t.dataset.k === id);
+    const czysc = () => {
+      els.forEach((e) => e.classList.remove('is-pusta', 'is-teraz', 'is-zrodlo'));
+      komorki.forEach((e) => e.classList.remove('is-zrodlo'));
+      ops.forEach((o) => o.classList.remove('is-teraz', 'is-zrobiona'));
+    };
+    // wpisy danej operacji (na wszystkich kontach)
+    const wpisy = (nr?: string) => own<HTMLElement>(box, `.k-t-c[data-el="w-${nr}"]`);
+    krokowka(box, {
+      render: (st, li) => {
+        czysc();
+        els.forEach((e) => {
+          const o = Number(e.dataset.od);
+          e.classList.toggle('is-pusta', o > st);
+          if (o === st) e.classList.add('is-teraz');
+        });
+        const a = li.dataset.a;
+        // operacje już zaksięgowane — wyszarzone, bieżąca podświetlona
+        const nrTeraz = a === 'op' ? li.dataset.nr : null;
+        const kroki = own<HTMLElement>(box, '[data-kroki] > li');
+        const zrobione = new Set(kroki.slice(0, st + 1).filter((x) => x.dataset.a === 'op').map((x) => x.dataset.nr));
+        ops.forEach((o) => {
+          if (o.dataset.nr === nrTeraz) o.classList.add('is-teraz');
+          else if (zrobione.has(o.dataset.nr)) o.classList.add('is-zrobiona');
+        });
+        if (a === 'op') widok(box, wpisy(li.dataset.nr)[0]);
+        // obroty: źródłem są wpisy tej strony; saldo i sumy: źródłem są obroty
+        const t = li.dataset.konto ? konto(li.dataset.konto) : own<HTMLElement>(box, '[data-k]')[0];
+        if (a === 'obr' && t) {
+          own<HTMLElement>(box, `.k-t-c.is-${li.dataset.strona}`).filter((c) => t.contains(c) && !c.classList.contains('is-obr') && !c.closest('.k-t-foot') && c.dataset.el).forEach((c) => c.classList.add('is-zrodlo'));
+          widok(box, t);
+        }
+        if ((a === 'sk' || a === 'zamk') && t) { t.querySelectorAll<HTMLElement>('.is-obr').forEach((c) => c.classList.add('is-zrodlo')); widok(box, t); }
+        if (a === 'bilans') widok(box, own<HTMLElement>(box, '[data-el="bilans"]')[0]);
+      },
+      animuj: async (_st, li) => {
+        const a = li.dataset.a;
+        if (a === 'op') {
+          const src = ops.find((o) => o.dataset.nr === li.dataset.nr)?.querySelector('[data-kw]');
+          for (const dst of wpisy(li.dataset.nr)) {
+            dst.classList.add('is-pusta');
+            await lot(box, src, dst.querySelector('[data-v]'), { kolor: 'zloto', html: src?.innerHTML });
+            dst.classList.remove('is-pusta');
+            blysk(dst);
+          }
+          return;
+        }
+        own<HTMLElement>(box, '.is-teraz').forEach((e) => blysk(e));
+      },
+      zamknij: czysc,
+    });
+  });
+</script>
+
+<style>
+  .k-ks{position:relative;scroll-margin-top:84px;}
+  .k-ks-ops{list-style:none;margin:0 0 14px!important;padding:0!important;display:grid;gap:4px;counter-reset:none;}
+  .k-ks-ops li{display:grid;grid-template-columns:auto 1fr auto auto;gap:4px 10px;align-items:baseline;padding:5px 8px;border-left:2px solid var(--line2);font-size:.93rem;line-height:1.45;margin:0!important;transition:background .2s,opacity .2s;}
+  .k-ks-ops li::before{content:none!important;}
+  .k-ks-nr{font-family:var(--mono);color:var(--muted);}
+  .k-ks-kw{font-variant-numeric:tabular-nums;white-space:nowrap;color:#fff;font-weight:600;}
+  .k-ks-typ{font-family:var(--mono);font-size:.72rem;padding:1px 6px;border:1px solid var(--line2);color:var(--gold);white-space:nowrap;}
+  .k-ks-typ.is-pusta{visibility:hidden;}
+  .k-ks-ops li.is-teraz{border-left-color:var(--gold);background:rgba(255,216,74,.1);}
+  .k-ks-ops li.is-zrobiona{opacity:.55;}
+  .k-ks-konta{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px 26px;align-items:start;}
+  .k-ks-konta.is-jedno{grid-template-columns:minmax(0,330px);justify-content:center;}
+  .k-ks-bil{margin:0 0 16px;}
+  .k-ks-bil[data-el="bilans"]{margin:22px 0 6px;}
+  .k-ks-bil.is-pusta{visibility:hidden;}
+  .k-ks-bil.is-teraz .k-ks-bt2{box-shadow:0 0 0 2px var(--gold);}
+  .k-ks-bt2{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));max-width:600px;}
+  .k-ks-bil-t{font-family:var(--mono);font-size:.72rem;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:0 0 4px;}
+  @media(max-width:560px){
+    .k-ks .k-fig-box{padding:12px 8px;}
+    .k-ks-ops li{grid-template-columns:auto 1fr auto;font-size:.9rem;}
+    .k-ks-typ{grid-column:2/-1;justify-self:start;}
+    .k-ks-konta{grid-template-columns:minmax(0,1fr);}
+  }
+</style>

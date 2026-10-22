@@ -451,3 +451,5 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
 .k-ch{color:#c3b1ff;}
 .k-ck{color:#5ad1a0;}
 .k-cr{color:#ff6fb5;}
+/* podpis „Jak czytać” pod rysunkiem, który nie jest w <figure> (np. rząd kont teowych w rachunkowości) */
+.k-prose .k-fig-cap{margin:-.4em 0 1.4em!important;font-size:.88rem;line-height:1.6;color:var(--muted);}

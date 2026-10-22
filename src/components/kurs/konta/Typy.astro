@@ -1,0 +1,53 @@
+---
+// Cztery typy operacji bilansowych obok siebie: co się dzieje z aktywami i pasywami, suma bilansowa,
+// przykład i jego zapis na dwóch kontach teowych. Typ liczony z kont (lib/konta.js), nie wpisywany ręcznie.
+import { typOperacji, OPIS_TYPU, zl } from '../../../lib/konta.js';
+import { texInline } from '../../../lib/tex.js';
+import KontoT from './KontoT.astro';
+interface P { opis: string; kwota: number; wn: any; ma: any }
+interface Props { przyklady: P[] }
+const { przyklady } = Astro.props;
+const dane = przyklady.map((p) => {
+  const konta = [{ ...p.wn, id: 'wn' }, { ...p.ma, id: 'ma' }];
+  const op = { nr: 1, kwota: p.kwota, wn: 'wn', ma: 'ma' };
+  const t = typOperacji(op, konta);
+  const zA = konta.filter((k) => k.typ === 'A').map((k) => `${k.nazwa} ${k.id === 'wn' ? '↑' : '↓'}`);
+  const zP = konta.filter((k) => k.typ === 'P').map((k) => `${k.nazwa} ${k.id === 'wn' ? '↓' : '↑'}`);
+  return { p, t, o: OPIS_TYPU[t], konta, zA, zP };
+});
+---
+<div class="k-typy">
+  {dane.map((d) => (
+    <div class="k-typ">
+      <div class="k-typ-h"><span class="k-typ-sk">{d.o.skrot}</span> operacja {d.o.nazwa}</div>
+      <p class="k-typ-z">{d.o.zdanie[0].toUpperCase() + d.o.zdanie.slice(1)}.</p>
+      <dl class="k-typ-dl">
+        <dt>Aktywa</dt><dd>{d.zA.length ? d.zA.join(', ') : 'bez zmian'}</dd>
+        <dt>Pasywa</dt><dd>{d.zP.length ? d.zP.join(', ') : 'bez zmian'}</dd>
+        <dt>Suma bilansowa</dt><dd><b>{d.o.suma}</b></dd>
+      </dl>
+      <p class="k-typ-prz"><span>Przykład:</span> <span set:html={texInline(d.p.opis)} />, {zl(d.p.kwota)} zł</p>
+      <div class="k-typ-konta">
+        <KontoT konto={d.konta[0]} wpisy={[{ nr: 1, strona: 'wn', kwota: d.p.kwota }]} zamkniete={false} znaki={true} maly />
+        <KontoT konto={d.konta[1]} wpisy={[{ nr: 1, strona: 'ma', kwota: d.p.kwota }]} zamkniete={false} znaki={true} maly />
+      </div>
+      <p class="k-typ-zap">Zapis: <b>Wn</b> „{d.p.wn.nazwa}” / <b>Ma</b> „{d.p.ma.nazwa}”</p>
+    </div>
+  ))}
+</div>
+
+<style>
+  .k-typy{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;margin:1.3em 0 1.6em;}
+  .k-typ{border:1px solid var(--line2);background:var(--ink2);padding:12px 14px;min-width:0;}
+  .k-typ-h{font-weight:700;color:#fff;margin-bottom:4px;}
+  .k-typ-sk{display:inline-block;font-family:var(--mono);font-size:.8rem;padding:1px 7px;margin-right:6px;border:1px solid var(--gold);color:var(--gold);}
+  .k-typ-z{font-size:.9rem;margin:0 0 8px!important;line-height:1.5;}
+  .k-typ-dl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:.86rem;margin:0 0 8px;}
+  .k-typ-dl dt{font-family:var(--mono);font-size:.7rem;letter-spacing:.5px;text-transform:uppercase;color:var(--muted);padding-top:2px;}
+  .k-typ-dl dd{margin:0;}
+  .k-typ-prz{font-size:.88rem;margin:0 0 6px!important;line-height:1.5;}
+  .k-typ-prz > span:first-child{font-family:var(--mono);font-size:.7rem;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+  .k-typ-konta{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:end;}
+  .k-typ-zap{font-size:.84rem;color:var(--muted);margin:6px 0 0!important;}
+  @media(max-width:560px){ .k-typy{grid-template-columns:minmax(0,1fr);} .k-typ{padding:10px 8px;} .k-typ-konta{gap:6px;} }
+</style>
