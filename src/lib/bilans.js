@@ -14,24 +14,24 @@ export { zl };
 export const POZYCJE = [
   { id: 'AA1', strona: 'A', sekcja: 'AA', rz: 'I', nazwa: 'Wartości niematerialne i prawne', co: 'Prawa i wiedza, których nie da się dotknąć, używane dłużej niż rok.', przyklady: 'licencje, oprogramowanie, patenty, prawo do znaku, know-how, wartość firmy' },
   { id: 'AA2', strona: 'A', sekcja: 'AA', rz: 'II', nazwa: 'Rzeczowe aktywa trwałe', co: 'Rzeczy używane w firmie dłużej niż rok — także te jeszcze w budowie.', przyklady: 'grunty (z prawem wieczystego użytkowania), budynki, maszyny, samochody, komputery, meble, środki trwałe w budowie' },
-  { id: 'AA3', strona: 'A', sekcja: 'AA', rz: 'III', nazwa: 'Należności długoterminowe', co: 'Pieniądze, które inni oddadzą firmie za więcej niż 12 miesięcy — ale nie za dostawy i usługi.', przyklady: 'pożyczka dla pracownika spłacana przez 3 lata, kaucja zwracana po 2 latach' },
-  { id: 'AA4', strona: 'A', sekcja: 'AA', rz: 'IV', nazwa: 'Inwestycje długoterminowe', co: 'Pieniądze ulokowane na dłużej niż rok, żeby zarabiały.', przyklady: 'udziały i akcje na dłużej niż rok, obligacje z wykupem za ponad 12 miesięcy, nieruchomości na wynajem' },
-  { id: 'AA5', strona: 'A', sekcja: 'AA', rz: 'V', nazwa: 'Długoterminowe rozliczenia międzyokresowe', co: 'Koszty zapłacone z góry na okres dłuższy niż rok i aktywa z tytułu odroczonego podatku.', przyklady: 'część czynszu zapłaconego z góry za 3 lata, która dotyczy lat po najbliższych 12 miesiącach' },
-  { id: 'AB1', strona: 'A', sekcja: 'AB', rz: 'I', nazwa: 'Zapasy', co: 'Rzeczy do zużycia w produkcji albo do sprzedaży.', przyklady: 'materiały (też części zamienne, ulotki, środki czystości), produkty w toku, produkty gotowe, towary' },
+  { id: 'AA3', strona: 'A', sekcja: 'AA', rz: 'III', nazwa: 'Należności długoterminowe', co: 'Pieniądze, które inni oddadzą firmie za więcej niż 12 miesięcy — ale nie za dostawy i usługi.', przyklady: 'pożyczka dla pracownika spłacana przez 3 lata (bez celu zarobkowego), kaucja zwracana po 2 latach' },
+  { id: 'AA4', strona: 'A', sekcja: 'AA', rz: 'IV', nazwa: 'Inwestycje długoterminowe', co: 'Pieniądze ulokowane na ponad 12 miesięcy od dnia bilansowego, żeby zarabiały.', przyklady: 'udziały i akcje na dłużej niż rok, obligacje z wykupem za ponad 12 miesięcy, nieruchomości na wynajem, pożyczki udzielone dla zysku z odsetek' },
+  { id: 'AA5', strona: 'A', sekcja: 'AA', rz: 'V', nazwa: 'Długoterminowe rozliczenia międzyokresowe', co: 'Koszty zapłacone z góry na okres dłuższy niż rok.', przyklady: 'część czynszu zapłaconego z góry za 3 lata, która dotyczy lat po najbliższych 12 miesiącach' },
+  { id: 'AB1', strona: 'A', sekcja: 'AB', rz: 'I', nazwa: 'Zapasy', co: 'Rzeczy do zużycia w produkcji albo do sprzedaży.', przyklady: 'materiały (też części zamienne, ulotki, środki czystości), produkty w toku, produkty gotowe, towary, zaliczki wpłacone na dostawy' },
   { id: 'AB2', strona: 'A', sekcja: 'AB', rz: 'II', nazwa: 'Należności krótkoterminowe', co: 'Pieniądze, które inni są winni firmie. Należności za dostawy i usługi są tu zawsze, nawet z terminem ponad 12 miesięcy.', przyklady: 'od odbiorców, od pracowników, nadpłacony podatek, należności dochodzone w sądzie' },
   { id: 'AB3', strona: 'A', sekcja: 'AB', rz: 'III', nazwa: 'Inwestycje krótkoterminowe', co: 'Pieniądze i to, co da się szybko na nie zamienić (do 12 miesięcy).', przyklady: 'gotówka w kasie, rachunek bankowy (też walutowy), lokata 3-miesięczna, obligacje z wykupem do 12 miesięcy' },
   { id: 'AB4', strona: 'A', sekcja: 'AB', rz: 'IV', nazwa: 'Krótkoterminowe rozliczenia międzyokresowe', co: 'Koszty zapłacone z góry na najbliższe miesiące.', przyklady: 'ubezpieczenie samochodu zapłacone z góry na rok' },
   { id: 'AC', strona: 'A', sekcja: 'AC', rz: '', nazwa: 'Należne wpłaty na kapitał (fundusz) podstawowy', co: 'Kapitał, który wspólnicy obiecali wpłacić, ale jeszcze nie wpłacili.', przyklady: '' },
   { id: 'AD', strona: 'A', sekcja: 'AD', rz: '', nazwa: 'Udziały (akcje) własne', co: 'Własne udziały albo akcje, które spółka odkupiła od wspólników.', przyklady: '' },
-  { id: 'PA1', strona: 'P', sekcja: 'PA', rz: 'I', nazwa: 'Kapitał (fundusz) podstawowy', co: 'To, co wspólnicy wnieśli do spółki przy jej zakładaniu (zapisane w umowie spółki).', przyklady: 'kapitał zakładowy sp. z o.o., kapitał akcyjny S.A.' },
-  { id: 'PA2', strona: 'P', sekcja: 'PA', rz: 'II', nazwa: 'Kapitał (fundusz) zapasowy', co: 'Odłożone zyski z poprzednich lat i nadwyżka z emisji udziałów.', przyklady: '' },
+  { id: 'PA1', strona: 'P', sekcja: 'PA', rz: 'I', nazwa: 'Kapitał (fundusz) podstawowy', co: 'Kwota wkładów wspólników z umowy spółki albo statutu, wpisana do KRS. Część jeszcze niewpłacona stoi w aktywach C.', przyklady: 'kapitał zakładowy sp. z o.o. albo S.A.' },
+  { id: 'PA2', strona: 'P', sekcja: 'PA', rz: 'II', nazwa: 'Kapitał (fundusz) zapasowy', co: 'Zysk z poprzednich lat, który wspólnicy uchwałą zostawili w spółce na stałe. Do tego nadwyżka ceny udziałów lub akcji ponad ich wartość nominalną.', przyklady: '' },
   { id: 'PA3', strona: 'P', sekcja: 'PA', rz: 'III', nazwa: 'Kapitał (fundusz) z aktualizacji wyceny', co: 'Wzrost wartości majątku po przeszacowaniu.', przyklady: '' },
   { id: 'PA5', strona: 'P', sekcja: 'PA', rz: 'V', nazwa: 'Zysk (strata) z lat ubiegłych', co: 'Wynik z poprzednich lat, jeszcze nierozliczony. Strata to liczba ujemna.', przyklady: 'nierozliczony zysk z lat ubiegłych, niepokryta strata z lat ubiegłych' },
   { id: 'PA6', strona: 'P', sekcja: 'PA', rz: 'VI', nazwa: 'Zysk (strata) netto', co: 'Wynik bieżącego roku. W zadaniach zwykle wychodzi jako różnica, „na domknięcie” bilansu.', przyklady: '' },
-  { id: 'PB1', strona: 'P', sekcja: 'PB', rz: 'I', nazwa: 'Rezerwy na zobowiązania', co: 'Pewne albo prawie pewne przyszłe wydatki, których dokładna kwota albo termin nie są znane.', przyklady: 'rezerwy na odprawy emerytalne, na reklamacje i zażalenia klientów, na odroczony podatek' },
-  { id: 'PB2', strona: 'P', sekcja: 'PB', rz: 'II', nazwa: 'Zobowiązania długoterminowe', co: 'Długi do spłaty za więcej niż 12 miesięcy — ale nie za dostawy i usługi.', przyklady: 'kredyt na 5 lat, wyemitowane obligacje na 3 lata' },
+  { id: 'PB1', strona: 'P', sekcja: 'PB', rz: 'I', nazwa: 'Rezerwy na zobowiązania', co: 'Pewne albo prawie pewne przyszłe wydatki, których dokładna kwota albo termin nie są znane.', przyklady: 'rezerwy na odprawy emerytalne, na reklamacje i zażalenia klientów' },
+  { id: 'PB2', strona: 'P', sekcja: 'PB', rz: 'II', nazwa: 'Zobowiązania długoterminowe', co: 'Długi do spłaty za ponad 12 miesięcy od dnia bilansowego — ale nie za dostawy i usługi.', przyklady: 'kredyt na 5 lat, wyemitowane obligacje na 3 lata' },
   { id: 'PB3', strona: 'P', sekcja: 'PB', rz: 'III', nazwa: 'Zobowiązania krótkoterminowe', co: 'Długi do spłaty w ciągu 12 miesięcy oraz wszystkie zobowiązania za dostawy i usługi.', przyklady: 'wobec dostawców, niewypłacone wynagrodzenia, podatki i ZUS do zapłaty, kredyt na 6 miesięcy' },
-  { id: 'PB4', strona: 'P', sekcja: 'PB', rz: 'IV', nazwa: 'Rozliczenia międzyokresowe', co: 'Przychody otrzymane z góry i koszty, które trzeba będzie jeszcze ponieść.', przyklady: 'otrzymane dotacje (np. na zakup maszyny), ujemna wartość firmy' },
+  { id: 'PB4', strona: 'P', sekcja: 'PB', rz: 'IV', nazwa: 'Rozliczenia międzyokresowe', co: 'Przychody, które firma już dostała, a które dotyczą przyszłych okresów. Zaliczka od klienta na dostawę tu nie trafia — to zobowiązanie krótkoterminowe.', przyklady: 'dotacja do maszyny rozliczana przez lata' },
 ];
 export const SEKCJE = {
   AA: { strona: 'A', lit: 'A', nazwa: 'Aktywa trwałe' },
@@ -51,6 +51,8 @@ export function etykieta(id, { strona = true } = {}) {
   const kod = p.rz ? `${s.lit}.${p.rz}` : s.lit;
   return strona ? `${p.strona === 'A' ? 'aktywa' : 'pasywa'} ${kod}` : kod;
 }
+// nazwa pozycji bez dopisków w nawiasach („Kapitał (fundusz) zapasowy” → „Kapitał zapasowy”) — do podpisów kroków
+export const krotka = (id) => POZ[id].nazwa.replace(' (fundusz)', '').replace(' (strata)', '').replace(' (akcje)', '');
 export const pelnaNazwa = (id) => (id === 'X' ? 'nie ujmujemy w bilansie' : `${etykieta(id)} ${POZ[id].nazwa}`);
 
 const suma = (a) => a.reduce((x, y) => x + y, 0);
@@ -99,7 +101,7 @@ export function krokiBilansu(skladniki, opcje = {}) {
   const r = uzupelnij(skladniki, opcje);
   const kroki = [];
   for (const s of skladniki) {
-    const gdzie = s.poz === 'X' ? '<b>nie ujmujemy w bilansie</b>' : `<b>${etykieta(s.poz)}</b> (${POZ[s.poz].nazwa})`;
+    const gdzie = s.poz === 'X' ? '<b>nie ujmuje się w bilansie</b>' : `<b>${etykieta(s.poz)}</b> — ${krotka(s.poz)}`;
     const kw = s.kwota == null ? 'kwota do wyliczenia' : zl(s.kwota);
     kroki.push({ a: 'skl', nr: s.nr, poz: s.poz, html: `<b>${s.nr}. ${s.nazwa}</b> (${kw}) → ${gdzie}. ${s.dlaczego ?? ''}` });
   }
@@ -109,12 +111,12 @@ export function krokiBilansu(skladniki, opcje = {}) {
   kroki.push({ a: 'razemA', html: `<b>Aktywa trwałe (A)</b>: ${dodawanie(kA[0])}. <b>Aktywa obrotowe (B)</b>: ${dodawanie(kA[1])}. <b>Aktywa razem</b>: ${zl(r.sekcje.AA)} + ${zl(r.sekcje.AB)} = <b>${zl(r.sumaA)}</b>.` });
   const kPB = POZYCJE.filter((p) => p.sekcja === 'PB' && r.poz[p.id].suma).map((p) => r.poz[p.id].suma);
   kroki.push({ a: 'sumyPB', html: `<b>Pasywa.</b> Pozycje kapitału własnego, które podaje treść, przepisujemy. Potem kapitał obcy (B): ${opisSek('PB')}. Razem B: ${dodawanie(kPB)}.` });
-  kroki.push({ a: 'kw', html: `<b>Kapitał własny (A) jako różnica.</b> Pasywa razem muszą się równać aktywom: ${zl(r.sumaA)}. Kapitał obcy już znamy, więc kapitał własny = ${zl(r.sumaA)} − ${zl(r.sumaPB)} = <b>${zl(r.KW)}</b>.` });
+  kroki.push({ a: 'kw', html: `<b>Kapitał własny (A) jako różnica.</b> Pasywa razem muszą się równać aktywom: ${zl(r.sumaA)}. Kapitał obcy jest już policzony, więc kapitał własny = ${zl(r.sumaA)} − ${zl(r.sumaPB)} = <b>${zl(r.KW)}</b>.` });
   for (const w of r.wyliczone) {
     const czy = w.poz === opcje.reszta;
     kroki.push({ a: 'wyl', poz: w.poz, html: czy
-      ? `<b>${POZ[w.poz].nazwa}</b> domyka kapitał własny: kapitał własny minus pozostałe jego pozycje. ${w.rachunek}.${w.kwota < 0 ? ' Wynik ujemny — to <b>strata</b>.' : ''}`
-      : `<b>${POZ[w.poz].nazwa}</b> z treści zadania to procent kapitału własnego: ${w.rachunek}.` });
+      ? `<b>${krotka(w.poz)}</b> domyka kapitał własny: kapitał własny minus pozostałe jego pozycje. ${w.rachunek}.${w.kwota < 0 ? ' Wynik ujemny — to <b>strata</b>.' : ' Wynik dodatni — to <b>zysk</b>.'}`
+      : `<b>${krotka(w.poz)}</b> to według treści zadania procent kapitału własnego: ${w.rachunek}.` });
   }
   kroki.push({ a: 'razemP', html: `<b>Sprawdzenie.</b> Pasywa razem: ${zl(r.sekcje.PA)} + ${zl(r.sekcje.PB)} = <b>${zl(r.sumaP)}</b>. Aktywa razem: <b>${zl(r.sumaA)}</b>. Równe — bilans się zgadza.` });
   return { ...r, kroki };

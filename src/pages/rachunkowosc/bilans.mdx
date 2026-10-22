@@ -34,7 +34,7 @@ export const Z216 = [
   { nr: 5, nazwa: 'należność dochodzona na drodze sądowej', kwota: 12000, poz: 'AB2', dlaczego: 'Ktoś jest winien firmie pieniądze. Ustawa umieszcza należności dochodzone w sądzie wśród należności krótkoterminowych.' },
   { nr: 6, nazwa: 'niepokryta strata z lat ubiegłych', kwota: -9000, poz: 'PA5', dlaczego: 'Wynik z poprzednich lat należy do kapitału własnego. Strata wchodzi ze znakiem minus.' },
   { nr: 7, nazwa: 'kapitał podstawowy', kwota: 1500000, poz: 'PA1', dlaczego: 'Wkład wspólników przy zakładaniu spółki.' },
-  { nr: 8, nazwa: 'kapitał zapasowy', kwota: 121000, poz: 'PA2', dlaczego: 'Osobna pozycja kapitału własnego.' },
+  { nr: 8, nazwa: 'kapitał zapasowy', kwota: 121000, poz: 'PA2', dlaczego: 'Zyski, które wspólnicy zostawili w spółce na stałe — kapitał własny, pozycja II.' },
   { nr: 9, nazwa: 'należności od odbiorców (spłata do 12 miesięcy)', kwota: 200000, poz: 'AB2', dlaczego: 'Odbiorcy są winni firmie pieniądze — należności krótkoterminowe.' },
   { nr: 10, nazwa: 'środki w kasie', kwota: 19500, poz: 'AB3', dlaczego: 'Gotówka to środki pieniężne, a te stoją w inwestycjach krótkoterminowych.' },
   { nr: 11, nazwa: 'nadpłacony podatek dochodowy', kwota: 18900, poz: 'AB2', dlaczego: 'Urząd skarbowy musi oddać firmie nadpłatę. To należność od państwa — należności krótkoterminowe.' },
@@ -54,7 +54,7 @@ export const Z216 = [
 
 export const Z217 = [
   { nr: 1, nazwa: 'autokary — własność firmy', kwota: 1400000, poz: 'AA2', dlaczego: 'Środki transportu firmy, używane latami — rzeczowe aktywa trwałe.' },
-  { nr: 2, nazwa: 'autokary wzięte w leasing operacyjny', kwota: 1500000, poz: 'X', dlaczego: 'Pułapka: w leasingu operacyjnym autokary należą do leasingodawcy. Firma tylko z nich korzysta i płaci raty, więc nie są jej aktywem.' },
+  { nr: 2, nazwa: 'autokary wzięte w leasing operacyjny', kwota: 1500000, poz: 'X', dlaczego: 'Pułapka: leasing operacyjny to wynajem na raty. Autokary zostają w bilansie leasingodawcy, a firma tylko z nich korzysta.' },
   { nr: 3, nazwa: 'dwa minibusy — własność firmy', kwota: 410000, poz: 'AA2', dlaczego: 'Własne środki transportu — rzeczowe aktywa trwałe.' },
   { nr: 4, nazwa: 'oprogramowanie do sprzedaży biletów on-line', kwota: 32000, poz: 'AA1', dlaczego: 'Programu nie da się dotknąć, a służy latami — wartości niematerialne i prawne.' },
   { nr: 5, nazwa: 'program finansowo-księgowy', kwota: 18000, poz: 'AA1', dlaczego: 'Jak wyżej — wartości niematerialne i prawne.' },
@@ -68,11 +68,11 @@ export const Z217 = [
   { nr: 13, nazwa: 'środki pieniężne w kasie i na rachunku złotówkowym', kwota: 55000, poz: 'AB3', dlaczego: 'Środki pieniężne — inwestycje krótkoterminowe.' },
   { nr: 14, nazwa: 'środki pieniężne na rachunku walutowym', kwota: 2000, poz: 'AB3', dlaczego: 'Waluta to też środki pieniężne — inwestycje krótkoterminowe.' },
   { nr: 15, nazwa: 'należność za sprzedane usługi', kwota: 22000, poz: 'AB2', dlaczego: 'Klient jest winien firmie za usługę — należności krótkoterminowe.' },
-  { nr: 16, nazwa: 'kapitał podstawowy', kwota: null, poz: 'PA1', dlaczego: 'Kwoty nie ma w treści. Policzymy ją na końcu z procentu.' },
-  { nr: 17, nazwa: 'kapitał zapasowy', kwota: 600000, poz: 'PA2', dlaczego: 'Pozycja kapitału własnego.' },
+  { nr: 16, nazwa: 'kapitał podstawowy', kwota: null, poz: 'PA1', dlaczego: 'Kwoty nie ma w treści. Liczy się ją na końcu z procentu.' },
+  { nr: 17, nazwa: 'kapitał zapasowy', kwota: 600000, poz: 'PA2', dlaczego: 'Zyski, które wspólnicy zostawili w spółce na stałe — kapitał własny, pozycja II.' },
   { nr: 18, nazwa: 'nierozliczony zysk z lat ubiegłych', kwota: 150000, poz: 'PA5', dlaczego: 'Wynik z poprzednich lat — kapitał własny, pozycja V.' },
   { nr: 19, nazwa: 'rezerwy na zażalenia turystów', kwota: 8000, poz: 'PB1', dlaczego: 'Przyszły wydatek o niepewnej kwocie — rezerwy.' },
-  { nr: 20, nazwa: 'rezerwy na odprawy emerytalne', kwota: 18000, poz: 'PB1', dlaczego: 'Rezerwy.' },
+  { nr: 20, nazwa: 'rezerwy na odprawy emerytalne', kwota: 18000, poz: 'PB1', dlaczego: 'Przyszły wydatek na odprawy, kwota jeszcze niepewna — rezerwy.' },
   { nr: 21, nazwa: 'bieżące zobowiązania wobec dostawców', kwota: 47000, poz: 'PB3', dlaczego: 'Dług za dostawy — zobowiązania krótkoterminowe.' },
   { nr: 22, nazwa: 'niewypłacone wynagrodzenia kierowców i pilotów', kwota: 17000, poz: 'PB3', dlaczego: 'Bieżący dług wobec pracowników — zobowiązania krótkoterminowe.' },
 ];
@@ -86,7 +86,7 @@ export const DOD = [
   { nazwa: 'stoły do ping-ponga', kwota: 1000, poz: 'AB1', dlaczego: 'Pułapka: stół brzmi jak wyposażenie, ale ta spółka handluje sprzętem sportowym. Stoły czekają na sprzedaż — towary.' },
   { nazwa: 'grunt zabudowany (magazyn, szwalnia, administracja)', kwota: 400000, poz: 'AA2', dlaczego: 'Grunt — rzeczowe aktywa trwałe.' },
   { nazwa: 'zaległe wynagrodzenia pracowników', kwota: 135000, poz: 'PB3', dlaczego: 'Dług wobec pracowników — zobowiązania krótkoterminowe.' },
-  { nazwa: 'rezerwy na odprawy emerytalne', kwota: 19000, poz: 'PB1', dlaczego: 'Rezerwy.' },
+  { nazwa: 'rezerwy na odprawy emerytalne', kwota: 19000, poz: 'PB1', dlaczego: 'Przyszły wydatek na odprawy, kwota jeszcze niepewna — rezerwy.' },
   { nazwa: 'lokata bankowa 3-miesięczna', kwota: 50000, poz: 'AB3', dlaczego: 'Pieniądze wrócą za 3 miesiące — inwestycje krótkoterminowe.' },
   { nazwa: 'stoły szwalnicze w trakcie montażu', kwota: 24000, poz: 'AA2', dlaczego: 'Pułapka: jeszcze nie działają, ale to środki trwałe w budowie. Ustawa wpisuje je do rzeczowych aktywów trwałych.' },
   { nazwa: 'obligacje Skarbu Państwa z wykupem za 8 miesięcy', kwota: 18000, poz: 'AB3', dlaczego: 'Pieniądze wrócą w ciągu 12 miesięcy — inwestycje krótkoterminowe.' },
@@ -98,10 +98,10 @@ export const PULAPKI = [
   { nazwa: 'kredyt bankowy spłacany przez 4 lata', poz: 'PB2', dlaczego: 'Dług wobec banku na ponad 12 miesięcy — zobowiązania długoterminowe.' },
   { nazwa: 'kredyt bankowy na 6 miesięcy', poz: 'PB3', dlaczego: 'Do spłaty w ciągu roku — zobowiązania krótkoterminowe.' },
   { nazwa: 'zobowiązanie wobec dostawcy płatne za 18 miesięcy', poz: 'PB3', dlaczego: 'Pułapka: zobowiązania za dostawy i usługi są zawsze krótkoterminowe, nawet z terminem ponad rok.' },
-  { nazwa: 'pożyczka udzielona pracownikowi na 3 lata', poz: 'AA3', dlaczego: 'Pracownik odda pieniądze za ponad rok, a to nie jest należność za dostawę — należności długoterminowe.' },
+  { nazwa: 'pożyczka udzielona pracownikowi na 3 lata (nieoprocentowana, z funduszu socjalnego)', poz: 'AA3', dlaczego: 'Pracownik odda pieniądze za ponad rok, a to nie jest należność za dostawę — należności długoterminowe. Pożyczka udzielona dla zysku z odsetek byłaby inwestycją (A.IV).' },
   { nazwa: 'akcje kupione, żeby sprzedać je za 2 miesiące', poz: 'AB3', dlaczego: 'Lokata na krótko — inwestycje krótkoterminowe.' },
-  { nazwa: 'samochód w leasingu operacyjnym', poz: 'X', dlaczego: 'Samochód należy do leasingodawcy. Firma płaci tylko raty za korzystanie.' },
-  { nazwa: 'laptop do biura księgowości (w sklepie RTV)', poz: 'AA2', dlaczego: 'Laptop służy firmie latami — inne środki trwałe w rzeczowych aktywach trwałych.' },
+  { nazwa: 'samochód w leasingu operacyjnym', poz: 'X', dlaczego: 'Leasing operacyjny to wynajem na raty — samochód zostaje w bilansie leasingodawcy.' },
+  { nazwa: 'laptop, na którym pracuje księgowość sklepu RTV', poz: 'AA2', dlaczego: 'Laptop służy firmie latami — środek trwały, czyli rzeczowe aktywa trwałe.' },
   { nazwa: 'laptopy na półce sklepu RTV, czekające na klientów', poz: 'AB1', dlaczego: 'Te same laptopy, ale na sprzedaż — towary, czyli zapasy. Decyduje cel, nie rzecz.' },
   { nazwa: 'ubezpieczenie floty zapłacone z góry na najbliższe 12 miesięcy', poz: 'AB4', dlaczego: 'Koszt zapłacony z góry, rozliczany w najbliższych miesiącach — krótkoterminowe rozliczenia międzyokresowe.' },
   { nazwa: 'zaliczka wpłacona dostawcy na materiały', poz: 'AB1', dlaczego: 'Ustawa wpisuje zaliczki na dostawy do zapasów (pozycja „zaliczki na dostawy”).' },
@@ -111,7 +111,7 @@ export const PULAPKI = [
 
 ## Po co to jest
 
-Wyobraź sobie, że kupujesz laptopa za 4 000 zł. Masz 1 500 zł oszczędności, a 2 500 zł pożyczają Ci rodzice. Masz teraz laptopa wartego 4 000 zł. Ale ten laptop ma dwa źródła: 1 500 zł Twoje i 2 500 zł cudze, do oddania. Zapisz to w dwóch kolumnach i masz pierwszy bilans:
+Wyobraź sobie, że kupujesz laptopa za 4 000 zł. Masz 1 500 zł oszczędności, a 2 500 zł pożyczają ci rodzice. Masz teraz laptopa wartego 4 000 zł. Ale ten laptop ma dwa źródła: 1 500 zł twoje i 2 500 zł cudze, do oddania. Zapisz to w dwóch kolumnach i masz pierwszy bilans:
 
 | Co masz | zł | Skąd to masz | zł |
 |---|---|---|---|
@@ -119,7 +119,7 @@ Wyobraź sobie, że kupujesz laptopa za 4 000 zł. Masz 1 500 zł oszczędnoś
 | | | pożyczka od rodziców | 2 500 |
 | **Razem** | **4 000** | **Razem** | **4 000** |
 
-Firma robi dokładnie to samo, tylko pozycji ma kilkadziesiąt. Lewa kolumna to **aktywa**, prawa — **pasywa**. Na kolokwium dostaniesz listę składników firmy, trzeba je rozstawić po właściwych pozycjach, policzyć sumy i często wyliczyć jedną pozycję, której brakuje.
+Firma robi dokładnie to samo, tylko pozycji ma kilkadziesiąt. Lewa kolumna to **aktywa**, prawa — **pasywa**. Na kolokwium dostaniesz listę składników firmy. Trzeba je rozstawić po właściwych pozycjach, policzyć sumy i często wyliczyć jedną pozycję, której brakuje.
 
 ## Co będzie na kolokwium
 
@@ -130,7 +130,7 @@ Firma robi dokładnie to samo, tylko pozycji ma kilkadziesiąt. Lewa kolumna to 
   { polecenie: 'Ustal brakującą pozycję (zysk lub stratę netto, kapitał podstawowy jako procent)', jak: 'Kapitał własny = aktywa − zobowiązania i rezerwy. Brakująca pozycja domyka kapitał własny.', przepis: 'polecenie-brak', cwiczenia: 'cw-brak', zrodlo: 'jak w Zad. 2.17' },
 ]} />
 
-Polecenie najczęściej łączy wszystko w jedno zadanie: „Na podstawie informacji uzupełnij uproszczony bilans”. Ten moduł rozbiera je na kroki.
+Polecenie najczęściej łączy wszystko w jedno zadanie: „Na podstawie informacji uzupełnij uproszczony bilans”. Niżej to zadanie jest rozłożone na kroki.
 
 ## Aktywa i pasywa od podstaw
 
@@ -147,7 +147,7 @@ Skąd ta równość? Każda złotówka majątku musi skądś pochodzić. W przyk
 <Ramka kind="pulapka">
 - **Należności** to aktywa: ktoś jest winien firmie. Firma „ma” prawo do tych pieniędzy.
 - **Zobowiązania** to pasywa: firma jest winna komuś.
-- Podpowiedź: należność — „należy mi się”. Zobowiązanie — „zobowiązałem się zapłacić”.
+- Podpowiedź: należność — „należy się firmie”. Zobowiązanie — „firma musi zapłacić”.
 </Ramka>
 
 <a id="polecenie-strona" class="k-anchor"></a>
@@ -161,7 +161,7 @@ Każda strona bilansu dzieli się na dwie duże części:
 
 **Aktywa**
 
-- **A. Aktywa trwałe** — majątek używany **dłużej niż rok**: budynki, maszyny, licencje, inwestycje na lata.
+- **A. Aktywa trwałe** — majątek, który zostanie w firmie (albo zamieni się na gotówkę) dopiero **po ponad roku**: budynki, maszyny, licencje, inwestycje na lata.
 - **B. Aktywa obrotowe** — majątek, który w ciągu roku zużyjesz, sprzedasz albo zamienisz na gotówkę: materiały, towary, należności, pieniądze.
 
 </div>
@@ -179,14 +179,14 @@ Każda strona bilansu dzieli się na dwie duże części:
 „Czy składnik jest aktywem, czy pasywem? Trwałym czy obrotowym?”
 
 1. Zapytaj: **firma to ma** (albo ktoś jest jej winien)? → aktywa. **Firma jest komuś winna** albo to wkład właścicieli? → pasywa.
-2. Przy aktywach zapytaj: **służy dłużej niż rok?** Tak → A. Aktywa trwałe. Nie → B. Aktywa obrotowe.
-3. Przy pasywach zapytaj: **trzeba to komuś oddać?** Nie → A. Kapitał własny. Tak (albo spodziewany wydatek) → B. Zobowiązania i rezerwy.
+2. Przy aktywach zapytaj: **zostanie w firmie albo zamieni się na gotówkę dopiero po ponad roku?** Tak → A. Aktywa trwałe. Nie → B. Aktywa obrotowe.
+3. Przy pasywach zapytaj: **trzeba to komuś oddać?** Nie → A. Kapitał własny. Tak → B. Zobowiązania i rezerwy. Spodziewany przyszły wydatek też idzie do B, jako rezerwa.
 </Ramka>
 
 Przykłady:
 
 - Samochód dostawczy: firma go ma → aktywa. Jeździ latami → **aktywa trwałe**.
-- Towary na półce sklepu: firma je ma → aktywa. Sprzeda je w tym roku → **aktywa obrotowe**.
+- Towary na półce sklepu: firma je ma → aktywa. Sprzeda je w ciągu roku → **aktywa obrotowe**.
 - Kredyt na 5 lat: firma jest winna bankowi → pasywa. Trzeba oddać → **zobowiązania** (kapitał obcy).
 
 <Ramka kind="pulapka" tytul="decyduje cel, nie rzecz">
@@ -201,16 +201,16 @@ Przykłady:
 
 ## Układ bilansu z ustawy
 
-Bilans ma ustawowy wzór: **załącznik nr 1 do ustawy o rachunkowości**. Na zajęciach używamy wersji uproszczonej — do poziomu cyfr rzymskich. Tak wygląda cały formularz:
+Bilans ma ustawowy wzór: **załącznik nr 1 do ustawy o rachunkowości**. Na zajęciach używa się wersji uproszczonej — do poziomu cyfr rzymskich. Tak wygląda cały formularz:
 
 <Uklad />
 
-<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> lewa karta to aktywa, prawa — pasywa. Duże litery (A, B, C, D) to sekcje, cyfry rzymskie to pozycje. Pod nazwą pozycji: co tam trafia i typowe przykłady. Strzałka z boku pokazuje kolejność pozycji: w aktywach od najtrudniej zamienialnych na gotówkę do samej gotówki, w pasywach od kapitału, którego nie trzeba oddawać, do długów do spłaty najszybciej.</p>
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> lewa karta to aktywa, prawa — pasywa. Duże litery (A, B, C, D) to sekcje, cyfry rzymskie to pozycje. Pod nazwą pozycji: co tam trafia i typowe przykłady. Strzałka z boku pokazuje kolejność pozycji według płynności, czyli tego, jak szybko coś da się zamienić na gotówkę: w aktywach od najtrudniej zamienialnych do samej gotówki, w pasywach od kapitału, którego nie trzeba oddawać, do długów do spłaty najszybciej.</p>
 
 <Ramka kind="botak">
 - Kolejność pozycji ustala ustawa. Aktywa idą od najmniej płynnych (aktywa trwałe) do najbardziej płynnych (pieniądze w inwestycjach krótkoterminowych). Pasywa — od kapitału własnego do zobowiązań krótkoterminowych.
 - Formularz z zajęć pomija w pasywach pozycje IV (pozostałe kapitały rezerwowe) i VII (odpisy z zysku netto). W zadaniach się nie pojawiają.
-- Pieniądze (kasa, rachunek bankowy) stoją w **B.III Inwestycje krótkoterminowe**, a nie w osobnej pozycji „środki pieniężne”. Tak jest w ustawie.
+- Pieniądze (kasa, rachunek bankowy) stoją w **B.III Inwestycje krótkoterminowe**. Na poziomie cyfr rzymskich nie ma osobnej pozycji „środki pieniężne”.
 </Ramka>
 
 <a id="polecenie-pozycja" class="k-anchor"></a>
@@ -224,19 +224,24 @@ Przy każdym składniku zadaj cztery pytania po kolei:
 
 1. **Strona:** firma to ma (aktywa) czy jest to źródło finansowania (pasywa)?
 2. **Sekcja:** aktywa — trwałe (dłużej niż rok) czy obrotowe? Pasywa — kapitał własny czy obcy?
-3. **Pozycja:** dopasuj do karty z układu wyżej. Aktywa trwałe: niematerialne (I), rzeczy (II), należności (III), inwestycje (IV). Aktywa obrotowe: zapasy (I), należności (II), pieniądze i krótkie inwestycje (III). Kapitał obcy: rezerwy (I), długi na ponad rok (II), długi do roku (III).
+3. **Pozycja:** dopasuj do karty z układu wyżej. Aktywa trwałe: niematerialne (I), rzeczy (II), należności (III), inwestycje (IV), koszty zapłacone z góry na ponad rok (V). Aktywa obrotowe: zapasy (I), należności (II), pieniądze i krótkie inwestycje (III), koszty zapłacone z góry na najbliższe miesiące (IV). Kapitał obcy: rezerwy (I), długi na ponad rok (II), długi do roku (III), rozliczenia międzyokresowe (IV).
 4. **Pułapka:** sprawdź listę niżej, zanim wpiszesz.
 </Ramka>
 
 <Ramka kind="pulapka" tytul="pułapki, które wracają w każdym zestawie">
-- **Leasing operacyjny** — rzecz należy do leasingodawcy. W bilansie firmy jej **nie ma**.
+- **Leasing operacyjny** to wynajem rzeczy na raty. Rzecz zostaje w bilansie leasingodawcy, czyli firmy, która ją wynajmuje. W bilansie korzystającego jej **nie ma**.
 - **Należności i zobowiązania z tytułu dostaw i usług** — zawsze **krótkoterminowe**, nawet z terminem ponad 12 miesięcy.
-- **Prawo wieczystego użytkowania gruntu** — to prawo, ale stoi w **A.II Rzeczowe aktywa trwałe**, razem z gruntami.
+- **Prawo wieczystego użytkowania gruntu** (prawo do korzystania z gruntu państwa albo gminy, zwykle przez 99 lat, prawie jak z własnego) — to prawo, ale stoi w **A.II Rzeczowe aktywa trwałe**, razem z gruntami.
 - **Środki trwałe w budowie** (np. maszyny w trakcie montażu) — też **A.II**.
-- **Lokata 3-miesięczna, obligacje z wykupem do 12 miesięcy** — **B.III Inwestycje krótkoterminowe**. Obligacje na 2–3 lata — **A.IV Inwestycje długoterminowe**.
+- **Lokata 3-miesięczna, obligacje z wykupem do 12 miesięcy** — **B.III Inwestycje krótkoterminowe**. Obligacje (papiery dłużne, za które wystawca odda pieniądze z odsetkami w dniu wykupu) z wykupem za ponad 12 miesięcy — **A.IV Inwestycje długoterminowe**.
 - **Części zamienne do maszyn** — materiały, czyli **B.I Zapasy**, a nie maszyny.
 - **Nadpłacony podatek**, należność **dochodzona w sądzie** — **B.II Należności krótkoterminowe**.
 - **Strata** (z lat ubiegłych albo netto) — w kapitale własnym ze **znakiem minus**.
+</Ramka>
+
+<Ramka kind="granica">
+- Termin 12 miesięcy liczy się od dnia bilansowego. Ściśle: rata kredytu płatna w najbliższych 12 miesiącach to zobowiązanie krótkoterminowe. W zadaniach z zajęć cały kredyt idzie do jednej pozycji według okresu spłaty.
+- W **leasingu finansowym** jest odwrotnie niż w operacyjnym: firma wykazuje rzecz w swoim bilansie, choć formalnie nie jest jej właścicielem. W zadaniach zwykle pada „operacyjny” — czytaj uważnie.
 </Ramka>
 
 <a id="polecenie-uzupelnij" class="k-anchor"></a>
@@ -273,7 +278,7 @@ Spółka produkuje akcesoria z logo klubu FC Barcelona. Na ostatni dzień roku m
 </div>
 
 <Krok tytul="Aktywa trwałe">
-- **A.I WNiP:** prawo do znaku FCB 90 000, know-how 55 000.
+- **A.I WNiP** (wartości niematerialne i prawne)**:** prawo do znaku FCB 90 000, know-how 55 000.
 - **A.II Rzeczowe aktywa trwałe:** maszyny do koszulek 240 000, maszyna do zgrzewania 73 000, samochody 200 000, prawo wieczystego użytkowania gruntu 33 000, grunty 340 000.
 - **A.IV Inwestycje długoterminowe:** 2-letnie obligacje 66 000.
 
@@ -355,14 +360,14 @@ Gdy znasz kapitał własny, każdą jego brakującą pozycję liczysz jako róż
 
 <Ramka kind="pulapka">
 - Kapitał podstawowy liczysz od **kapitału własnego**, a nie od sumy bilansowej.
-- Najpierw kapitał podstawowy, dopiero potem wynik netto. W odwrotnej kolejności nie ma czego odjąć.
-- Strata z lat ubiegłych wchodzi do rachunku z minusem: odjęcie straty zwiększa wynik.
+- Najpierw kapitał podstawowy, dopiero potem wynik netto. Wynik netto to kapitał własny minus wszystkie inne jego pozycje. Bez kapitału podstawowego tego nie policzysz.
+- Strata z lat ubiegłych wchodzi do rachunku z minusem. Odjęcie liczby ujemnej to dodawanie: 600 000 − (−30 000) = 630 000.
 </Ramka>
 
 <Rozwiazanie tytul="DerbiTravel sp. z o.o. — bilans z kapitałem podstawowym z procentu" zrodlo="Zad. 2.17">
 <div slot="tresc">
 
-Biuro podróży organizuje wyjazdy autokarowe na mecze FC Barcelona — Real Madryt. Na koniec roku ma 22 składniki (lista w rysunku pod rozwiązaniem). Kwoty kapitału podstawowego w treści nie ma. Wiadomo, że kapitał podstawowy stanowi **31,39%** kapitału własnego. Uzupełnij uproszczony bilans.
+Biuro podróży organizuje wyjazdy autokarowe na mecze FC Barcelona z Realem Madryt. Na koniec roku ma 22 składniki (lista w rysunku pod rozwiązaniem). Kwoty kapitału podstawowego w treści nie ma. Wiadomo, że kapitał podstawowy stanowi **31,39%** kapitału własnego. Uzupełnij uproszczony bilans.
 
 </div>
 
@@ -372,7 +377,7 @@ Biuro podróży organizuje wyjazdy autokarowe na mecze FC Barcelona — Real Mad
 2. Sumujemy aktywa. To jedyna strona, którą znamy w całości.
 3. Kapitał własny jako różnica, z niego kapitał podstawowy, a na końcu wynik netto.
 
-Kolejność kroku 3 jest ważna: kapitał podstawowy zależy od kapitału własnego, a wynik netto — od kapitału podstawowego.
+Kolejność w kroku 3 jest ważna: kapitał podstawowy zależy od kapitału własnego, a wynik netto — od kapitału podstawowego.
 
 </div>
 
@@ -423,7 +428,7 @@ lista 22 składników z zadania i formularz. Złote kwoty w pasywach to kapitał
 
 <Ramka kind="granica">
 - Wynik netto jako różnica działa, gdy brakuje **tylko** jego.
-- Gdy brakuje dwóch pozycji, potrzebna jest druga informacja z treści — jak procent w zad. 2.17. Bez niej zadania nie da się rozwiązać.
+- Gdy brakuje dwóch pozycji, potrzebna jest druga informacja z treści — jak procent w Zad. 2.17. Bez niej zadania nie da się rozwiązać.
 - W prawdziwej firmie wynik netto liczy się z rachunku zysków i strat. W zadaniach „na bilans” wychodzi z różnicy.
 </Ramka>
 
@@ -443,7 +448,7 @@ lista 22 składników z zadania i formularz. Złote kwoty w pasywach to kapitał
 </div>
 
 <Ramka kind="gdzie">
-Bilans to punkt startu księgowania. Z bilansu otwarcia otwierasz konta (saldo początkowe), a salda końcowe kont układasz z powrotem w bilans zamknięcia. Pokazujemy to w module „Operacje i konta bilansowe”.
+Bilans to punkt startu księgowania. Każdy składnik bilansu na początek roku (bilansu otwarcia) dostaje swoje konto, a jego kwota to stan na start. Stany kont na koniec okresu układasz z powrotem w bilans zamknięcia. Ten temat rozwija moduł „Operacje i konta bilansowe”.
 </Ramka>
 
 ## Ćwiczenia przed kolokwium
@@ -478,9 +483,9 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
 <CwiczenieBilans tytul="Pułapki" elementy={PULAPKI} />
 
 <Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
-  { q: 'Spółka ABC (zadanie dodatkowe): aktywa trwałe 1 884 200, aktywa obrotowe 206 900. Ile wynoszą razem aktywa?', opcje: ['2 091 100', '1 677 300', '2 081 100'], dobra: 0, dlaczego: '1 884 200 + 206 900 = 2 091 100. Odpowiedź 1 677 300 to różnica zamiast sumy. 2 081 100 to błąd w dodawaniu tysięcy.' },
-  { q: 'W ABC zobowiązania i rezerwy to 179 000. Ile wynosi kapitał własny?', opcje: ['2 270 100', '1 912 100', '179 000'], dobra: 1, dlaczego: 'Kapitał własny = aktywa − zobowiązania i rezerwy = 2 091 100 − 179 000 = 1 912 100. 2 270 100 wychodzi przy dodaniu zamiast odjęcia.' },
-  { q: 'W ABC kapitał podstawowy to 1 800 000, a zapasowy 250 000. Ile wynosi wynik netto?', opcje: ['+137 900 (zysk)', '−137 900 (strata)', '1 912 100'], dobra: 1, dlaczego: '1 912 100 − (1 800 000 + 250 000) = 1 912 100 − 2 050 000 = −137 900. Kapitał własny jest mniejszy od sumy znanych pozycji, więc wynik musi być ujemny — to strata.' },
+  { q: 'Spółka ABC — pełne zadanie dodatkowe z 26 składnikami (w ćwiczeniu wyżej jest tylko część). Aktywa trwałe 1 884 200, aktywa obrotowe 206 900. Ile wynoszą razem aktywa?', opcje: ['2 091 100', '1 677 300', '2 081 100'], dobra: 0, dlaczego: '1 884 200 + 206 900 = 2 091 100. Odpowiedź 1 677 300 to różnica zamiast sumy. 2 081 100 to pomyłka o 10 000 przy dodawaniu.' },
+  { q: 'W ABC zobowiązania i rezerwy to 179 000. Ile wynosi kapitał własny?', opcje: ['2 270 100', '1 912 100', '179 000'], dobra: 1, dlaczego: 'Kapitał własny = aktywa − zobowiązania i rezerwy = 2 091 100 − 179 000 = 1 912 100. 2 270 100 wychodzi przy dodaniu zamiast odjęcia. 179 000 to same zobowiązania i rezerwy, a nie kapitał własny.' },
+  { q: 'W ABC kapitał podstawowy to 1 800 000, a zapasowy 250 000. Ile wynosi wynik netto?', opcje: ['+137 900 (zysk)', '−137 900 (strata)', '1 912 100'], dobra: 1, dlaczego: '1 912 100 − (1 800 000 + 250 000) = 1 912 100 − 2 050 000 = −137 900. Kapitał własny jest mniejszy od sumy znanych pozycji, więc wynik musi być ujemny — to strata. +137 900 to dobry rachunek ze złym znakiem. 1 912 100 to cały kapitał własny, a nie wynik.' },
 ]} />
 
 <a id="cw-brak" class="k-anchor"></a>
@@ -488,16 +493,16 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
 ### Brakująca pozycja
 
 <Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
-  { q: 'Razem aktywa 500 000. Zobowiązania i rezerwy 180 000. Kapitał podstawowy 250 000, zapasowy 40 000. Ile wynosi wynik netto?', opcje: ['30 000', '70 000', '−180 000'], dobra: 0, dlaczego: 'Kapitał własny = 500 000 − 180 000 = 320 000. Wynik = 320 000 − (250 000 + 40 000) = 30 000. 70 000 wychodzi bez odjęcia kapitału zapasowego.' },
-  { q: 'Razem aktywa 400 000. Zobowiązania i rezerwy 150 000. Kapitał podstawowy 300 000. Ile wynosi wynik netto?', opcje: ['50 000', '−50 000', '250 000'], dobra: 1, dlaczego: 'Kapitał własny = 400 000 − 150 000 = 250 000. Wynik = 250 000 − 300 000 = −50 000, czyli strata. 250 000 to sam kapitał własny, a nie wynik.' },
+  { q: 'Razem aktywa 500 000. Zobowiązania i rezerwy 180 000. Kapitał podstawowy 250 000, zapasowy 40 000. Ile wynosi wynik netto?', opcje: ['30 000', '70 000', '210 000'], dobra: 0, dlaczego: 'Kapitał własny = 500 000 − 180 000 = 320 000. Wynik = 320 000 − (250 000 + 40 000) = 30 000. 70 000 wychodzi bez odjęcia kapitału zapasowego. 210 000 — gdy zapomni się odjąć zobowiązania: 500 000 − 250 000 − 40 000.' },
+  { q: 'Razem aktywa 400 000. Zobowiązania i rezerwy 150 000. Kapitał podstawowy 300 000. Ile wynosi wynik netto?', opcje: ['50 000', '−50 000', '250 000'], dobra: 1, dlaczego: 'Kapitał własny = 400 000 − 150 000 = 250 000. Wynik = 250 000 − 300 000 = −50 000, czyli strata. 50 000 to dobra kwota ze złym znakiem. 250 000 to sam kapitał własny, a nie wynik.' },
   { q: 'Razem aktywa 900 000. Zobowiązania i rezerwy 400 000. Kapitał podstawowy stanowi 40% kapitału własnego. Ile wynosi kapitał podstawowy?', opcje: ['360 000', '160 000', '200 000'], dobra: 2, dlaczego: 'Kapitał własny = 900 000 − 400 000 = 500 000. 40% z 500 000 = 200 000. 360 000 to 40% sumy bilansowej, a 160 000 — 40% zobowiązań. Procent liczysz od kapitału własnego.' },
-  { q: 'Kapitał własny 600 000. Kapitał podstawowy 500 000, zapasowy 80 000, niepokryta strata z lat ubiegłych −30 000. Ile wynosi wynik netto?', opcje: ['50 000', '−10 000', '20 000'], dobra: 0, dlaczego: '600 000 − (500 000 + 80 000 + (−30 000)) = 600 000 − 550 000 = 50 000. Wynik 20 000 wychodzi, gdy stratę doda się jak liczbę dodatnią. Odjęcie straty zwiększa wynik.' },
+  { q: 'Kapitał własny 600 000. Kapitał podstawowy 500 000, zapasowy 80 000, niepokryta strata z lat ubiegłych −30 000. Ile wynosi wynik netto?', opcje: ['50 000', '−10 000', '20 000'], dobra: 0, dlaczego: '600 000 − (500 000 + 80 000 + (−30 000)) = 600 000 − 550 000 = 50 000. −10 000 wychodzi, gdy stratę wpisze się jako liczbę dodatnią: 600 000 − 610 000. 20 000 — gdy stratę się pominie: 600 000 − 580 000.' },
 ]} />
 
 ## Quiz z teorii
 
 <Pytania licznik tytul="Sprawdź, czy rozumiesz bilans" pytania={[
-  { q: 'Co pokazują pasywa?', opcje: ['Źródła finansowania majątku', 'Długi firmy', 'Koszty firmy'], dobra: 0, dlaczego: 'Pasywa to wszystkie źródła: kapitał własny i obcy. Długi to tylko część pasywów (kapitał obcy). Koszty nie są w bilansie — są w rachunku zysków i strat.' },
+  { q: 'Co pokazują pasywa?', opcje: ['Źródła finansowania majątku', 'Długi firmy', 'Koszty firmy'], dobra: 0, dlaczego: 'Pasywa to wszystkie źródła: kapitał własny i obcy. Długi to tylko część pasywów (kapitał obcy). Koszty pokazuje rachunek zysków i strat, a nie bilans.' },
   { q: 'Dlaczego suma aktywów zawsze równa się sumie pasywów?', opcje: ['Bo tak każe ustawa, choć w praktyce bywa różnie', 'Bo firma zawsze ma zysk', 'Bo każda złotówka majątku ma swoje źródło'], dobra: 2, dlaczego: 'To dwa spojrzenia na te same pieniądze: co firma ma i skąd to ma. Ustawa tylko to zapisuje, a zysk nie ma tu nic do rzeczy — firma ze stratą też ma bilans w równowadze.' },
   { q: 'Po której stronie bilansu są należności od odbiorców?', opcje: ['Pasywa — zobowiązania krótkoterminowe', 'Aktywa — należności krótkoterminowe', 'Aktywa — inwestycje krótkoterminowe'], dobra: 1, dlaczego: 'Odbiorca jest winien firmie, więc firma „ma” prawo do pieniędzy — aktywa. Pomylenie należności ze zobowiązaniami to najczęstszy błąd. Inwestycje krótkoterminowe to pieniądze i lokaty, a nie cudze długi.' },
   { q: 'Gdzie są środki trwałe w budowie?', opcje: ['W rzeczowych aktywach trwałych', 'W zapasach', 'Poza bilansem, bo jeszcze nie działają'], dobra: 0, dlaczego: 'Ustawa wpisuje środki trwałe w budowie do A.II. Firma już je ma (poniosła nakłady), choć jeszcze nie używa.' },
