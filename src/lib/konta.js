@@ -24,6 +24,7 @@ export function zl(n) {
 }
 
 export const NAZWA_TYPU = { A: 'aktywne', P: 'pasywne', K: 'kosztowe (wynikowe)' };
+export const TYP_DOP = { A: 'aktywnego', P: 'pasywnego', K: 'kosztów' };
 export const STRONA = { wn: 'Wn', ma: 'Ma' };
 
 // po której stronie konta zapisujemy zwiększenie / zmniejszenie
@@ -199,7 +200,7 @@ export function krokiJednegoKonta(konto, zmiany) {
   kroki.push({ a: 'otwarcie', html: `<b>Otwieramy konto „${konto.nazwa}”.</b> To konto ${typ}: zwiększenia zapisujemy po <b>${plus}</b>, zmniejszenia po <b>${minus}</b>. Saldo początkowe ${zl(z.sp)} to stan na start, więc stoi po stronie zwiększeń: „Sp. ${zl(z.sp)}” po ${plus}.` });
   zmiany.forEach((zm, i) => {
     const w = wpisy[i];
-    kroki.push({ a: 'op', nr: zm.nr, html: `<b>Operacja ${zm.nr}</b>: ${zm.opis}. „${konto.nazwa}” <b>${ZMIANA_SLOWO[zm.zmiana]}</b> o ${zl(zm.kwota)}. ${zm.zmiana === '+' ? 'Zwiększenie' : 'Zmniejszenie'} konta ${NAZWA_TYPU[konto.typ] === 'aktywne' ? 'aktywnego' : 'pasywnego'} idzie na <b>${STRONA[w.strona]}</b> → wpisujemy „${zapis(w.strona, zm.nr, zm.kwota)}”.` });
+    kroki.push({ a: 'op', nr: zm.nr, html: `<b>Operacja ${zm.nr}</b>: ${zm.opis}. Konto „${konto.nazwa}” <b>${ZMIANA_SLOWO[zm.zmiana]}</b> o ${zl(zm.kwota)}. ${zm.zmiana === '+' ? 'Zwiększenie' : 'Zmniejszenie'} konta ${TYP_DOP[konto.typ]} zapisujemy po stronie <b>${STRONA[w.strona]}</b> → „${zapis(w.strona, zm.nr, zm.kwota)}”.` });
   });
   const obr = (s, skl) => `<b>Obroty ${STRONA[s]}</b> — dodajemy wszystko po stronie ${STRONA[s]}${skl.length && z.sp && z.spStrona === s ? ' (razem z Sp.)' : ''}: ${suma(skl)}.`;
   kroki.push({ a: 'obr', strona: 'wn', html: obr('wn', z.sklWn) });

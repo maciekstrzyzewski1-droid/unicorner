@@ -9,7 +9,7 @@ const dane = operacje.map((o: any) => ({ ...o, typ: indeksTypu(typOperacji(o, ko
 ---
 <section class="k-ct k-cks" data-cks>
   <div class="k-pyt-head">
-    <span class="k-pyt-tag k-ct-tag">Zaksięguj sam</span>
+    <span class="k-pyt-tag k-ct-tag">Zaksięguj</span>
     <h3 class="k-pyt-h">{tytul}</h3>
     {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
   </div>
@@ -79,7 +79,7 @@ const dane = operacje.map((o: any) => ({ ...o, typ: indeksTypu(typOperacji(o, ko
 <style>
   .k-cks-konta,.k-cks-leg{font-size:.86rem;color:var(--muted);margin:0 0 10px!important;line-height:2;}
   .k-cks-k{display:inline-block;padding:0 7px;margin:0 2px;border:1px solid currentColor;line-height:1.6;white-space:nowrap;}
-  .k-cks-k.is-A{color:var(--cyan);} .k-cks-k.is-P{color:var(--magenta);} .k-cks-k.is-K{color:var(--gold);}
+  .k-cks-k.is-A{color:var(--cyan);} .k-cks-k.is-P{color:var(--magenta);} .k-cks-k.is-K{color:var(--accent);}
   .k-cks-ops{list-style:none;margin:0 0 12px!important;padding:0!important;display:grid;gap:10px;}
   .k-cks-op{margin:0!important;padding:8px 10px;border-left:2px solid var(--line2);}
   .k-cks-op::before{content:none!important;}

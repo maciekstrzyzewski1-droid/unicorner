@@ -14,7 +14,7 @@ const skl = (s: string, a: number[]) => (a.length > 1 ? `${a.map(zl).join(' + ')
 const pola = [
   ...zmiany.map((zm: any, i: number) => ({
     id: `op-${zm.nr}`, rodzaj: 'strona', ok: wpisy[i].strona,
-    h: `<b>Operacja ${zm.nr}</b>: „${konto.nazwa}” ${zm.zmiana === '+' ? 'rośnie' : 'maleje'}. To konto ${typ}: zwiększenia po ${plus}, zmniejszenia po ${minus} → <b>${STRONA[wpisy[i].strona]}</b>, zapis „${zapis(wpisy[i].strona, zm.nr, zm.kwota)}”.`,
+    h: `<b>Operacja ${zm.nr}</b>: konto „${konto.nazwa}” ${zm.zmiana === '+' ? 'rośnie' : 'maleje'}. To konto ${typ}: zwiększenia po ${plus}, zmniejszenia po ${minus} → <b>${STRONA[wpisy[i].strona]}</b>, zapis „${zapis(wpisy[i].strona, zm.nr, zm.kwota)}”.`,
   })),
   { id: 'obrWn', rodzaj: 'liczba', ok: String(z.obrWn), h: `<b>Obroty Wn</b>: dodaj wszystko po stronie Wn${z.sp && z.spStrona === 'wn' ? ', razem z Sp.' : ''}: ${skl('wn', z.sklWn)}.` },
   { id: 'obrMa', rodzaj: 'liczba', ok: String(z.obrMa), h: `<b>Obroty Ma</b>: dodaj wszystko po stronie Ma${z.sp && z.spStrona === 'ma' ? ', razem z Sp.' : ''}: ${skl('ma', z.sklMa)}.` },
@@ -24,7 +24,7 @@ const pola = [
 ---
 <section class="k-ct k-ck" data-ck>
   <div class="k-pyt-head">
-    <span class="k-pyt-tag k-ct-tag">Zaksięguj sam</span>
+    <span class="k-pyt-tag k-ct-tag">Zaksięguj</span>
     <h3 class="k-pyt-h">{tytul}</h3>
     {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
   </div>

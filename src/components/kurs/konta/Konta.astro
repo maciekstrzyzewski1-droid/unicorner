@@ -45,7 +45,7 @@ if (jedno) {
 }
 const odBilans = kroki.findIndex((s: any) => s.a === 'bilans');
 const legenda: [string, string][] = [['cyan', 'konto aktywne (majątek)'], ['roz', 'konto pasywne (źródło finansowania)']];
-if (konta.some((x: any) => x.typ === 'K')) legenda.push(['zloto', 'konto kosztów (wynikowe)']);
+if (konta.some((x: any) => x.typ === 'K')) legenda.push(['fiolet', 'konto kosztów (wynikowe)']);
 const bilansOtw = k && bilans ? { a: konta.filter((x: any) => x.typ === 'A' && x.sp), p: konta.filter((x: any) => x.typ === 'P' && x.sp) } : null;
 ---
 <figure class="k-fig k-ks" data-kbox data-ks>
