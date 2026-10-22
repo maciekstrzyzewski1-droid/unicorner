@@ -2,6 +2,17 @@
 // t = skrót w LaTeX-u (opcjonalnie), czytamy = jak powiedzieć na głos, znaczy = jedno-dwa zdania prostym językiem.
 
 export const SLOWNICZEK = [
+  // --- Bilans ---
+  { nazwa: 'Bilans', znaczy: 'Zestawienie majątku firmy (aktywa) i źródeł jego finansowania (pasywa) na jeden dzień. Aktywa = pasywa.', modul: 'bilans' },
+  { nazwa: 'Aktywa', znaczy: 'Majątek firmy: co firma ma, także pieniądze, które inni są jej winni (należności).', modul: 'bilans' },
+  { nazwa: 'Pasywa', znaczy: 'Źródła finansowania majątku: kapitał własny (właścicieli) i kapitał obcy (zobowiązania i rezerwy).', modul: 'bilans' },
+  { nazwa: 'Aktywa trwałe', znaczy: 'Majątek używany dłużej niż rok: WNiP, rzeczowe aktywa trwałe, należności i inwestycje długoterminowe.', modul: 'bilans' },
+  { nazwa: 'Aktywa obrotowe', znaczy: 'Majątek zużywany, sprzedawany albo zamieniany na gotówkę w ciągu roku: zapasy, należności krótkoterminowe, pieniądze.', modul: 'bilans' },
+  { nazwa: 'Należności', znaczy: 'Pieniądze, które inni są winni firmie. Aktywa.', modul: 'bilans' },
+  { nazwa: 'Zobowiązania', znaczy: 'Pieniądze, które firma jest winna innym. Pasywa (kapitał obcy).', modul: 'bilans' },
+  { nazwa: 'Rezerwy na zobowiązania', znaczy: 'Pewne albo prawie pewne przyszłe wydatki o niepewnej kwocie lub terminie, np. odprawy emerytalne.', modul: 'bilans' },
+  { nazwa: 'Kapitał własny', znaczy: 'Pieniądze właścicieli i zyski zostawione w firmie. Kapitał własny = aktywa − zobowiązania i rezerwy.', modul: 'bilans' },
+  { nazwa: 'Leasing operacyjny', znaczy: 'Korzystanie z cudzej rzeczy za raty. Rzecz zostaje w bilansie leasingodawcy, nie użytkownika.', modul: 'bilans' },
   // --- Operacje i konta bilansowe ---
   { nazwa: 'Zdarzenie gospodarcze', znaczy: 'Wszystko, co dzieje się w firmie: zamówienie, oferta, podpisanie umowy, wpływ pieniędzy. Nie każde zdarzenie się księguje.', modul: 'konta' },
   { nazwa: 'Operacja gospodarcza', znaczy: 'Zdarzenie wyrażone w złotych, które zmienia majątek albo źródła jego finansowania i ma potwierdzenie w dokumencie. Tylko operacje się księguje.', modul: 'konta' },

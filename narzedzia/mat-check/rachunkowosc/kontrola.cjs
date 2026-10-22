@@ -1,4 +1,4 @@
-// Kontrola modułu „Operacje i konta bilansowe” w przeglądarce: błędy JS, szerokości na 1440/390/360 px (po „Pokaż wszystko”),
+// Kontrola modułów kursu „Rachunkowość” w przeglądarce (URL=…/konta.html albo …/bilans.html): błędy JS, szerokości na 1440/390/360 px (po „Pokaż wszystko”),
 // animacje kont krok po kroku do końca, ćwiczenia (Pokaż → Sprawdź = wszystko dobrze), klasyfikatory, quizy, kotwice, zrzuty.
 // Użycie: npx astro preview (osobno), potem NODE_PATH=<katalog z playwright>/node_modules URL=… OUT=… node kontrola.cjs
 const { chromium } = require('playwright');
@@ -19,7 +19,7 @@ require('fs').mkdirSync(OUT, { recursive: true });
     await p.waitForTimeout(300);
     const szer = await p.evaluate(() => {
       const zle = [];
-      document.querySelectorAll('.k-ramka, .k-tab, .k-t, .k-ks-konta, .k-typy, .k-typ, .k-kr, .k-pol, .k-klas, .k-ct, .k-ks-bt, .k-fig-box, .k-sciaga, .k-symbole').forEach((el) => {
+      document.querySelectorAll('.k-ramka, .k-tab, .k-t, .k-ks-konta, .k-typy, .k-typ, .k-kr, .k-pol, .k-klas, .k-ct, .k-fig-box, .k-sciaga, .k-symbole, .k-ub, .k-ub-s, .k-bt-t, .k-dwa').forEach((el) => {
         if (el.offsetParent === null) return;
         if (el.scrollWidth > el.clientWidth + 1) zle.push({ cls: el.className.slice(0, 40), sw: el.scrollWidth, cw: el.clientWidth, ov: getComputedStyle(el).overflowX, txt: (el.textContent || '').slice(0, 50) });
       });
@@ -39,7 +39,7 @@ require('fs').mkdirSync(OUT, { recursive: true });
     });
     // animacje kont: start → Dalej do końca, sprawdź, że na końcu nic nie jest puste
     const anim = [];
-    const boxy = await p.locator('[data-ks]').all();
+    const boxy = await p.locator('[data-ks], [data-bt]').all();
     for (let i = 0; i < boxy.length; i++) {
       const box = boxy[i];
       const start = box.locator('[data-kk-start]');
@@ -49,7 +49,7 @@ require('fs').mkdirSync(OUT, { recursive: true });
       let tekst = await licz.textContent();
       const ile = Number(tekst.match(/z (\d+)/)[1]);
       const puste0 = await box.locator('.is-pusta').count();
-      for (let k = 1; k < ile; k++) { await box.locator('[data-kk-next]').click(); await p.waitForTimeout(w === 1440 ? 2000 : 1500); }
+      for (let k = 1; k < ile; k++) { await box.locator('[data-kk-next]').click(); await p.waitForTimeout(w === 1440 ? 1600 : 1200); }
       tekst = await licz.textContent();
       const puste = await box.locator('.is-pusta').count();
       if (w === 390 && i === 0) await box.screenshot({ path: OUT + `anim${i}-koniec-390.png` });
@@ -59,19 +59,29 @@ require('fs').mkdirSync(OUT, { recursive: true });
     }
     // ćwiczenia „zaksięguj sam”: Pokaż odpowiedzi → Sprawdź → „Wszystko dobrze”
     const cw = [];
-    for (const box of await p.locator('[data-ck], [data-cks]').all()) {
+    for (const box of await p.locator('[data-ck], [data-cks], [data-cb]').all()) {
       await box.locator('[data-pokaz]').click();
       await box.locator('[data-check]').click();
       cw.push(((await box.locator('[data-sum]').textContent()) || '').slice(0, 40));
       await box.locator('[data-clear]').click();
     }
     // jedno złe pole → wyjaśnienie
+    let zleWyj = -1;
     const ck = p.locator('[data-ck]').first();
-    await ck.locator('[data-pole="obrWn"]').fill('123');
-    await ck.locator('[data-check]').click();
-    const zleWyj = await ck.locator('[data-bledy] li').count();
-    if (w === 390) await ck.screenshot({ path: OUT + 'cw-konto-blad-390.png' });
-    await ck.locator('[data-clear]').click();
+    if (await ck.count()) {
+      await ck.locator('[data-pole="obrWn"]').fill('123');
+      await ck.locator('[data-check]').click();
+      zleWyj = await ck.locator('[data-bledy] li').count();
+      await ck.locator('[data-clear]').click();
+    }
+    const cb = p.locator('[data-cb]').first();
+    if (await cb.count()) {
+      await cb.locator('select').first().selectOption('PB4');
+      await cb.locator('[data-check]').click();
+      zleWyj = await cb.locator('.k-cb-wyj:not([hidden])').count();
+      if (w === 390) await cb.screenshot({ path: OUT + 'cw-bilans-blad-390.png' });
+      await cb.locator('[data-clear]').click();
+    }
     // klasyfikatory: klik w dobrą kategorię wszędzie
     let klasOk = 0, klasIle = 0;
     for (const it of await p.locator('.k-klas-item').all()) {

@@ -1,0 +1,54 @@
+---
+// Układ uproszczonego bilansu (cyfry rzymskie) — dwie kolumny jak w formularzu z zajęć.
+// Przy każdej pozycji: co tam trafia i przykłady. Strzałki z boku: płynność (aktywa) i wymagalność (pasywa).
+import { POZYCJE, SEKCJE, etykieta } from '../../../lib/bilans.js';
+const strony = [
+  { s: 'A', tytul: 'Aktywa — co firma ma', sekcje: ['AA', 'AB', 'AC', 'AD'], strz: 'coraz łatwiej zamienić na gotówkę' },
+  { s: 'P', tytul: 'Pasywa — skąd to ma', sekcje: ['PA', 'PB'], strz: 'coraz szybciej trzeba oddać' },
+];
+---
+<div class="k-ub">
+  {strony.map((st) => (
+    <div class:list={['k-ub-s', `is-${st.s}`]}>
+      <div class="k-ub-h">{st.tytul}</div>
+      <div class="k-ub-body">
+        <div class="k-ub-strz" aria-hidden="true"><span>{st.strz}</span></div>
+        <div class="k-ub-lista">
+          {st.sekcje.map((k) => (
+            <>
+              <div class="k-ub-sek">{SEKCJE[k].lit}. {SEKCJE[k].nazwa}</div>
+              {POZYCJE.filter((p) => p.sekcja === k && p.rz).map((p) => (
+                <div class="k-ub-poz">
+                  <div class="k-ub-n"><span class="k-ub-kod">{etykieta(p.id, { strona: false })}</span> {p.nazwa}</div>
+                  <div class="k-ub-co">{p.co}</div>
+                  {p.przyklady && <div class="k-ub-prz">np. {p.przyklady}</div>}
+                </div>
+              ))}
+              {!POZYCJE.some((p) => p.sekcja === k && p.rz) && <div class="k-ub-poz is-sama"><div class="k-ub-co">{POZYCJE.find((p) => p.sekcja === k)!.co}</div></div>}
+            </>
+          ))}
+        </div>
+      </div>
+    </div>
+  ))}
+</div>
+
+<style>
+  .k-ub{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px;margin:1.3em 0 .6em;}
+  .k-ub-s{--ub:var(--cyan);border:1px solid var(--line2);background:var(--ink2);min-width:0;}
+  .k-ub-s.is-P{--ub:var(--magenta);}
+  .k-ub-h{padding:8px 12px;font-family:var(--mono);font-size:.74rem;letter-spacing:.8px;text-transform:uppercase;color:var(--ub);border-bottom:2px solid var(--ub);}
+  .k-ub-body{display:grid;grid-template-columns:22px 1fr;}
+  .k-ub-strz{position:relative;border-right:1px solid var(--line);}
+  .k-ub-strz::after{content:'';position:absolute;left:50%;top:10px;bottom:14px;width:2px;transform:translateX(-50%);background:linear-gradient(var(--line2),var(--ub));}
+  .k-ub-strz::before{content:'';position:absolute;left:50%;bottom:6px;transform:translateX(-50%);border:6px solid transparent;border-top-color:var(--ub);border-bottom:0;}
+  .k-ub-strz span{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-90deg);white-space:nowrap;font-family:var(--mono);font-size:.62rem;letter-spacing:.5px;color:var(--muted);background:var(--ink2);padding:0 6px;z-index:1;}
+  .k-ub-lista{padding:6px 10px 10px;min-width:0;}
+  .k-ub-sek{margin:8px 0 4px;font-weight:700;color:#fff;font-size:.95rem;}
+  .k-ub-poz{padding:5px 0 6px 10px;border-left:2px solid var(--line2);margin:0 0 4px;}
+  .k-ub-n{font-size:.9rem;color:#fff;line-height:1.35;}
+  .k-ub-kod{font-family:var(--mono);font-size:.78rem;color:var(--ub);}
+  .k-ub-co{font-size:.84rem;line-height:1.45;margin-top:2px;}
+  .k-ub-prz{font-size:.8rem;color:var(--muted);line-height:1.45;margin-top:2px;}
+  @media(max-width:560px){ .k-ub{grid-template-columns:minmax(0,1fr);} }
+</style>
