@@ -1,0 +1,89 @@
+---
+// Ćwiczenie „gdzie w bilansie?”: przy każdym składniku uczeń wybiera pozycję (A.I … D po stronie aktywów,
+// A.I … B.IV po stronie pasywów) albo „nie ujmujemy w bilansie”. „Sprawdź” koloruje wybory, przy złych pokazuje dlaczego.
+import { POZYCJE, SEKCJE, etykieta, pelnaNazwa, zl } from '../../../lib/bilans.js';
+import { texInline } from '../../../lib/tex.js';
+interface E { nazwa: string; kwota?: number; poz: string; dlaczego: string }
+interface Props { tytul: string; elementy: E[]; firma?: string; zrodlo?: string }
+const { tytul, elementy, firma, zrodlo } = Astro.props;
+for (const e of elementy) if (e.poz !== 'X') etykieta(e.poz);
+const opcje = (s: string) => POZYCJE.filter((p) => p.strona === s).map((p) => ({ v: p.id, t: `${etykieta(p.id, { strona: false })} ${p.nazwa}` }));
+---
+<section class="k-ct k-cb" data-cb>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Gdzie w bilansie?</span>
+    <h3 class="k-pyt-h">{tytul}</h3>
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </div>
+  {firma && <p class="k-cb-firma" set:html={texInline(firma)} />}
+  <p class="k-ct-how">Przy każdym składniku wybierz pozycję bilansu. Kliknij „Sprawdź”.</p>
+  <ol class="k-cb-lista">
+    {elementy.map((e, i) => (
+      <li class="k-cb-el">
+        <p class="k-cb-t"><span class="k-cb-nr">{i + 1}.</span> <span set:html={texInline(e.nazwa)} />{e.kwota != null && <b> {zl(e.kwota)}</b>}</p>
+        <select data-ok={e.poz} aria-label={`Pozycja bilansu: ${e.nazwa.replace(/<[^>]+>/g, '')}`}>
+          <option value="">— wybierz pozycję —</option>
+          <optgroup label="Aktywa">{opcje('A').map((o) => <option value={o.v}>{o.t}</option>)}</optgroup>
+          <optgroup label="Pasywa">{opcje('P').map((o) => <option value={o.v}>{o.t}</option>)}</optgroup>
+          <optgroup label="—"><option value="X">Nie ujmujemy w bilansie</option></optgroup>
+        </select>
+        <p class="k-cb-wyj" hidden><b>{pelnaNazwa(e.poz)}.</b> <span set:html={texInline(e.dlaczego)} /></p>
+      </li>
+    ))}
+  </ol>
+  <div class="k-ct-ctl" data-js-only hidden>
+    <button type="button" class="k-btn" data-check>Sprawdź</button>
+    <button type="button" class="k-btn k-btn-ghost" data-pokaz>Pokaż odpowiedzi</button>
+    <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
+  </div>
+  <div class="k-ct-wynik" hidden aria-live="polite"><p class="k-ct-sum" data-sum></p></div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cb]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => (el.hidden = false));
+    const els = Array.from(box.querySelectorAll<HTMLElement>('.k-cb-el'));
+    const wynik = box.querySelector<HTMLElement>('.k-ct-wynik')!;
+    const sum = box.querySelector<HTMLElement>('[data-sum]')!;
+    const stan = (s: HTMLSelectElement, c?: string) => { s.classList.remove('is-good', 'is-bad', 'is-empty', 'is-shown'); if (c) s.classList.add(c); };
+    els.forEach((el) => el.querySelector('select')!.addEventListener('change', (e) => stan(e.target as HTMLSelectElement)));
+    box.querySelector('[data-check]')!.addEventListener('click', () => {
+      let good = 0, bad = 0, empty = 0;
+      els.forEach((el) => {
+        const s = el.querySelector('select')!;
+        const w = el.querySelector<HTMLElement>('.k-cb-wyj')!;
+        if (!s.value) { empty++; stan(s, 'is-empty'); w.hidden = true; }
+        else if (s.value === s.dataset.ok) { good++; stan(s, 'is-good'); w.hidden = true; }
+        else { bad++; stan(s, 'is-bad'); w.hidden = false; }
+      });
+      sum.innerHTML = !bad && !empty ? '<b class="k-ct-ok">Wszystko dobrze!</b> Każdy składnik na właściwej pozycji.'
+        : `Dobrze: <b>${good}</b> · Źle: <b>${bad}</b> · Puste: <b>${empty}</b>` + (bad ? ' — pod błędnymi jest wyjaśnienie.' : ' — uzupełnij puste pola.');
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-pokaz]')!.addEventListener('click', () => {
+      els.forEach((el) => { const s = el.querySelector('select')!; s.value = s.dataset.ok!; stan(s, 'is-shown'); el.querySelector<HTMLElement>('.k-cb-wyj')!.hidden = false; });
+      sum.innerHTML = 'Tak wygląda poprawne przyporządkowanie — pod każdym składnikiem jest wyjaśnienie. „Wyczyść” opróżnia pola.';
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-clear]')!.addEventListener('click', () => {
+      els.forEach((el) => { const s = el.querySelector('select')!; s.value = ''; stan(s); el.querySelector<HTMLElement>('.k-cb-wyj')!.hidden = true; });
+      wynik.hidden = true;
+    });
+  });
+</script>
+
+<style>
+  .k-cb-firma{font-size:.92rem;margin:0 0 8px!important;}
+  .k-cb-lista{list-style:none;margin:0 0 12px!important;padding:0!important;display:grid;gap:8px;}
+  .k-cb-el{margin:0!important;padding:6px 10px;border-left:2px solid var(--line2);}
+  .k-cb-el::before{content:none!important;}
+  .k-cb-t{margin:0 0 6px!important;font-size:.93rem;line-height:1.5;}
+  .k-cb-nr{font-family:var(--mono);color:var(--muted);}
+  .k-cb-el select{height:38px;width:100%;max-width:440px;font-family:inherit;font-size:16px;color:var(--text);background:#15131d;border:1px dashed var(--line2);border-radius:0;padding:0 6px;}
+  .k-cb-el select:focus{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-cb-el select.is-good{background:#173329;border:1px solid var(--ok);}
+  .k-cb-el select.is-bad{background:#3a1328;border:1px solid var(--magenta);}
+  .k-cb-el select.is-empty{border-color:rgba(255,216,74,.6);}
+  .k-cb-el select.is-shown{background:#221d36;border:1px solid rgba(167,139,250,.6);}
+  .k-cb-wyj{margin:6px 0 0!important;padding:6px 10px;border-left:2px solid var(--accent);background:rgba(167,139,250,.06);font-size:.88rem;line-height:1.6;}
+</style>

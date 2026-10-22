@@ -1,0 +1,163 @@
+---
+// Uproszczony bilans jak formularz z zajęć: pozycje z cyframi rzymskimi, kolumna „Obliczenia” i „Kwoty”.
+// Bez JS widać wypełniony bilans. „▶ Zobacz krok po kroku” odsłania go od pustego formularza:
+// każdy składnik przelatuje z listy na swoją pozycję (podpis mówi dlaczego), potem sumy, kapitał własny jako różnica
+// i pozycje do wyliczenia (np. zysk netto). Liczby i podpisy z lib/bilans.js.
+import { krokiBilansu, POZYCJE, SEKCJE, zl } from '../../../lib/bilans.js';
+import { texInline } from '../../../lib/tex.js';
+import Legenda from '../Legenda.astro';
+import Sterowanie from '../Sterowanie.astro';
+interface Props { skladniki: any[]; procenty?: any[]; reszta?: string; lista?: boolean }
+const { skladniki, procenty = [], reszta, lista = true } = Astro.props;
+const r = krokiBilansu(skladniki, { procenty, reszta });
+const kroki = r.kroki;
+const ks = (a: string) => kroki.findIndex((s: any) => s.a === a);
+const odSkl: Record<string, number> = {};
+kroki.forEach((s: any, i: number) => { if (s.a === 'skl') odSkl[s.nr] = i; });
+const odWyl: Record<string, number> = {};
+kroki.forEach((s: any, i: number) => { if (s.a === 'wyl') odWyl[s.poz] = i; });
+// od którego kroku widać sumę pozycji / sekcji
+const odSumy = (id: string) => {
+  if (odWyl[id] !== undefined) return odWyl[id];
+  const p = POZYCJE.find((x) => x.id === id)!;
+  return p.strona === 'A' ? ks('sumyA') : ks('sumyPB');
+};
+const odSek: Record<string, number> = { AA: ks('razemA'), AB: ks('razemA'), AC: ks('razemA'), AD: ks('razemA'), PB: ks('sumyPB'), PA: ks('kw') };
+const strony = [
+  { s: 'A', tytul: 'Aktywa', sekcje: ['AA', 'AB', 'AC', 'AD'], razem: r.sumaA, odRazem: ks('razemA') },
+  { s: 'P', tytul: 'Pasywa', sekcje: ['PA', 'PB'], razem: r.sumaP, odRazem: ks('razemP') },
+];
+const kwotyPoz = (id: string) => {
+  const w = r.wyliczone.find((x: any) => x.poz === id);
+  const skl = r.poz[id].skl.map((s: any) => ({ k: s.kwota, od: odSkl[s.nr], nr: s.nr }));
+  return w ? [...skl, { k: w.kwota, od: odWyl[id], nr: `w-${id}`, wyl: true }] : skl;
+};
+---
+<figure class="k-fig k-bt" data-kbox data-bt>
+  <div class="k-fig-box">
+    {lista && (
+      <ol class="k-bt-lista">
+        {skladniki.map((s: any) => (
+          <li data-nr={s.nr}>
+            <span class="k-bt-nr">{s.nr}.</span>
+            <span class="k-bt-n" set:html={texInline(s.nazwa)} />
+            <span class="k-bt-kw" data-kw>{s.kwota == null ? '…' : zl(s.kwota)}</span>
+          </li>
+        ))}
+      </ol>
+    )}
+    <div class="k-bt-strony">
+      {strony.map((st) => (
+        <table class:list={['k-bt-t', `is-${st.s}`]}>
+          <thead><tr><th>{st.tytul}</th><th>Obliczenia</th><th>Kwoty</th></tr></thead>
+          <tbody>
+            {st.sekcje.map((k) => {
+              const sek = SEKCJE[k];
+              const poz = POZYCJE.filter((p) => p.sekcja === k && p.rz);
+              return (
+                <>
+                  <tr class="is-sek">
+                    <th scope="row">{sek.lit}. {sek.nazwa}</th>
+                    <td></td>
+                    <td class="k-bt-suma" data-od={r.sekcje[k] || poz.length ? odSek[k] : undefined}>{r.sekcje[k] || poz.length ? zl(r.sekcje[k]) : ''}</td>
+                  </tr>
+                  {poz.map((p) => (
+                    <tr data-poz={p.id}>
+                      <th scope="row"><span class="k-bt-rz">{p.rz}.</span> {p.nazwa}</th>
+                      <td class="k-bt-obl">{kwotyPoz(p.id).map((x: any) => <span class:list={['k-bt-o', { 'is-wyl': x.wyl }]} data-od={x.od} data-o={x.nr}>{zl(x.k)}</span>)}</td>
+                      <td class="k-bt-suma" data-od={r.poz[p.id].kwoty.length ? odSumy(p.id) : undefined}>{r.poz[p.id].kwoty.length ? zl(r.poz[p.id].suma) : ''}</td>
+                    </tr>
+                  ))}
+                </>
+              );
+            })}
+            <tr class="is-razem"><th scope="row">{st.s === 'A' ? 'Razem aktywa' : 'Razem pasywa'}</th><td></td><td class="k-bt-suma" data-od={st.odRazem}>{zl(st.razem)}</td></tr>
+          </tbody>
+        </table>
+      ))}
+    </div>
+    {r.poza.length > 0 && (
+      <p class="k-bt-poza">Poza bilansem: {r.poza.map((s: any, i: number) => <span data-od={odSkl[s.nr]}>{s.nr}. {s.nazwa}{i < r.poza.length - 1 ? '; ' : ''}</span>)}</p>
+    )}
+    <Legenda items={[['zloto', 'kwota wyliczona — nie było jej w treści zadania']]} />
+  </div>
+  <Sterowanie opis="każdy składnik trafi na swoją pozycję, potem policzymy sumy" legenda={[['ramka-zloto', 'wpisujemy teraz'], ['pusta', 'jeszcze pusta']]} />
+  <ol hidden data-kroki>
+    {kroki.map((s: any) => <li data-a={s.a} data-nr={s.nr} data-poz={s.poz} set:html={texInline(s.html)} />)}
+  </ol>
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<script>
+  import { krokowka, own, lot, blysk, widok } from '../../../lib/krokowka';
+  document.querySelectorAll<HTMLElement>('[data-bt]').forEach((box) => {
+    const els = own<HTMLElement>(box, '[data-od]');
+    const lis = own<HTMLElement>(box, '.k-bt-lista > li');
+    const czysc = () => {
+      els.forEach((e) => e.classList.remove('is-pusta', 'is-teraz'));
+      lis.forEach((l) => l.classList.remove('is-teraz', 'is-zrobiona'));
+    };
+    krokowka(box, {
+      render: (st, li) => {
+        czysc();
+        let pierwszy: HTMLElement | null = null;
+        els.forEach((e) => {
+          const o = Number(e.dataset.od);
+          e.classList.toggle('is-pusta', o > st);
+          if (o === st) { e.classList.add('is-teraz'); pierwszy ??= e; }
+        });
+        const kroki = own<HTMLElement>(box, '[data-kroki] > li');
+        const zrobione = new Set(kroki.slice(0, st + 1).filter((x) => x.dataset.a === 'skl').map((x) => x.dataset.nr));
+        lis.forEach((l) => {
+          if (li.dataset.a === 'skl' && l.dataset.nr === li.dataset.nr) l.classList.add('is-teraz');
+          else if (zrobione.has(l.dataset.nr)) l.classList.add('is-zrobiona');
+        });
+        widok(box, pierwszy ?? own<HTMLElement>(box, '.k-bt-strony')[0]);
+      },
+      animuj: async (_st, li) => {
+        if (li.dataset.a === 'skl') {
+          const src = lis.find((l) => l.dataset.nr === li.dataset.nr)?.querySelector('[data-kw]');
+          const dst = own<HTMLElement>(box, `[data-o="${li.dataset.nr}"]`)[0];
+          if (dst) { dst.classList.add('is-pusta'); await lot(box, src, dst, { kolor: 'zloto', html: src?.innerHTML }); dst.classList.remove('is-pusta'); blysk(dst); }
+          return;
+        }
+        own<HTMLElement>(box, '.is-teraz').forEach((e) => blysk(e));
+      },
+      zamknij: czysc,
+    });
+  });
+</script>
+
+<style>
+  .k-bt{position:relative;scroll-margin-top:84px;}
+  .k-bt-lista{list-style:none;margin:0 0 16px!important;padding:0!important;display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:2px 18px;}
+  .k-bt-lista li{display:grid;grid-template-columns:2.2em 1fr auto;gap:8px;align-items:baseline;margin:0!important;padding:3px 6px;border-left:2px solid var(--line2);font-size:.88rem;line-height:1.4;transition:background .2s,opacity .2s;}
+  .k-bt-lista li::before{content:none!important;}
+  .k-bt-lista li.is-teraz{border-left-color:var(--gold);background:rgba(255,216,74,.1);}
+  .k-bt-lista li.is-zrobiona{opacity:.45;}
+  .k-bt-nr{font-family:var(--mono);color:var(--muted);text-align:right;}
+  .k-bt-kw{white-space:nowrap;font-variant-numeric:tabular-nums;color:#fff;}
+  .k-bt-strony{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px;align-items:start;}
+  .k-bt-t{border-collapse:collapse;width:100%;font-size:.88rem;font-variant-numeric:tabular-nums;}
+  .k-bt-t th,.k-bt-t td{border:1px solid var(--line2);padding:4px 7px;vertical-align:top;text-align:left;}
+  .k-bt-t thead th{font-family:var(--mono);font-size:.68rem;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);}
+  .k-bt-t.is-A thead th:first-child{color:var(--cyan);} .k-bt-t.is-P thead th:first-child{color:var(--magenta);}
+  .k-bt-t tbody th{font-weight:500;line-height:1.35;}
+  .k-bt-rz{font-family:var(--mono);color:var(--muted);}
+  .k-bt-t tr.is-sek th,.k-bt-t tr.is-sek td{background:rgba(255,255,255,.035);font-weight:700;color:#fff;}
+  .k-bt-t tr.is-razem th,.k-bt-t tr.is-razem td{font-weight:700;color:#fff;border-top:2px solid var(--muted);}
+  .k-bt-obl{white-space:nowrap;}
+  .k-bt-o{display:block;text-align:right;color:var(--muted);transition:background .2s,box-shadow .2s;}
+  .k-bt-o.is-wyl{color:var(--gold);background:rgba(255,216,74,.12);}
+  .k-bt-suma{text-align:right!important;white-space:nowrap;color:#fff;font-weight:600;transition:background .2s,box-shadow .2s;}
+  .k-bt-poza{margin:12px 0 0!important;font-size:.86rem;color:var(--muted);}
+  .k-bt-o.is-pusta,.k-bt-suma.is-pusta,.k-bt-poza .is-pusta{color:transparent!important;background:none!important;}
+  .k-bt-o.is-teraz,.k-bt-suma.is-teraz{box-shadow:inset 0 0 0 2px var(--gold);background:rgba(255,216,74,.12);}
+  @media(max-width:560px){
+    .k-bt .k-fig-box{padding:12px 8px;}
+    .k-bt-lista{grid-template-columns:minmax(0,1fr);}
+    .k-bt-strony{grid-template-columns:minmax(0,1fr);}
+    .k-bt-t{font-size:.8rem;}
+    .k-bt-t th,.k-bt-t td{padding:3px 4px;}
+  }
+</style>
