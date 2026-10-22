@@ -23,6 +23,7 @@ Priorytet: **1 → 2** na pierwszym planie, **3** lekko w tle, **4 z twardym bud
 - Cookieless analytics (Cloudflare Web Analytics w `Base.astro`).
 - Pliki TEMP (`morph-moment.html` itd.) usunięte.
 - **Przedmioty live:** makroekonomia, marketing, MiTZ, zarządzanie jakością, ETiR, ORT, geografia atrakcji, hub Statystyka (8 stron).
+- **Kurs Rachunkowość:** 1 z 10 modułów (3. Operacje i konta bilansowe — pilot). Rachunki z zajęć i ćwiczeń sprawdzone skryptem, tekst po niezależnym przeglądzie.
 - **Kurs Matematyka:** 11 z 13 modułów (logika, zbiory, relacje, macierze, układy równań, matematyka finansowa, pochodne, badanie zmienności funkcji, funkcje wielu zmiennych, ekstrema warunkowe, całka nieoznaczona).
 - **Sekcja WIEDZA:** `/wiedza` z jednym szablonem i metadanymi w `wiedza.js`, 28 artykułów w 4 kategoriach.
 - **Generator AI + konta:** logowanie Google, zapisane talie, udostępnianie linkiem, powtórki fiszek, kredyty miesięczne (Worker v9).
