@@ -18,7 +18,7 @@ export const COURSE = {
 
 export const MODULES = [
   { nr: 1, slug: 'istota', title: 'Istota i zasady rachunkowości', short: 'Po co jest rachunkowość, kto z niej korzysta, zasady i księgi rachunkowe.', status: 'soon' },
-  { nr: 2, slug: 'bilans', title: 'Bilans', short: 'Aktywa i pasywa, układ bilansu z ustawy, pułapki przy przypisywaniu składników i brakująca pozycja.', status: 'soon', minutes: 70, cwiczenia: 'cwiczenia' },
+  { nr: 2, slug: 'bilans', title: 'Bilans', short: 'Aktywa i pasywa, układ bilansu z ustawy, pułapki przy przypisywaniu składników i brakująca pozycja.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
   { nr: 3, slug: 'konta', title: 'Operacje i konta bilansowe', short: 'Zdarzenie a operacja, cztery typy operacji, konto teowe, Wn i Ma, saldo i podwójny zapis.', status: 'live', minutes: 75, cwiczenia: 'cwiczenia' },
   { nr: 4, slug: 'konta-w-praktyce', title: 'Konta w praktyce', short: 'Konta wynikowe, storno czarne i czerwone, konta syntetyczne i analityczne.', status: 'soon' },
   { nr: 5, slug: 'srodki-pieniezne', title: 'Środki pieniężne', short: 'Kasa, rachunek bankowy, czeki, weksle i dyskonto.', status: 'soon' },
