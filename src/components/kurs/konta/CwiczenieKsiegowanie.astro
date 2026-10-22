@@ -1,0 +1,98 @@
+---
+// Ćwiczenie „podwójny zapis”: przy każdej operacji uczeń wybiera konto po Wn, konto po Ma i (opcjonalnie) typ operacji.
+// „Sprawdź” koloruje wybory i dla błędnych pokazuje rozumowanie (które konto rośnie, które maleje, po której stronie).
+import { opisOperacji, typOperacji, zl, NAZWA_TYPU, KATEGORIE_TYPOW, indeksTypu } from '../../../lib/konta.js';
+import { texInline } from '../../../lib/tex.js';
+interface Props { tytul: string; konta: any[]; operacje: any[]; typy?: boolean; zrodlo?: string }
+const { tytul, konta, operacje, typy = true, zrodlo } = Astro.props;
+const dane = operacje.map((o: any) => ({ ...o, typ: indeksTypu(typOperacji(o, konta)), h: opisOperacji(o, konta) }));
+---
+<section class="k-ct k-cks" data-cks>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Zaksięguj sam</span>
+    <h3 class="k-pyt-h">{tytul}</h3>
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </div>
+  <div class="k-ct-tresc"><slot /></div>
+  <p class="k-ct-how">Przy każdej operacji wybierz konto zapisywane po stronie Wn i konto zapisywane po stronie Ma{typy ? ', a potem typ operacji' : ''}. Kliknij „Sprawdź”.</p>
+  <p class="k-cks-konta">Konta: {konta.map((k: any, i: number) => <><span class:list={['k-cks-k', `is-${k.typ}`]}>{k.nazwa}</span>{i < konta.length - 1 ? ' ' : ''}</>)}</p>
+  <ol class="k-cks-ops">
+    {dane.map((o: any) => (
+      <li class="k-cks-op" data-nr={o.nr}>
+        <p class="k-cks-t"><span class="k-cks-nr">{o.nr}.</span> <span set:html={texInline(o.opis)} /> <b>{zl(o.kwota)}</b></p>
+        <div class="k-cks-sel">
+          <label><span>Wn</span><select data-pole="wn" data-ok={o.wn}><option value="">— konto —</option>{konta.map((k: any) => <option value={k.id}>{k.nazwa}</option>)}</select></label>
+          <label><span>Ma</span><select data-pole="ma" data-ok={o.ma}><option value="">— konto —</option>{konta.map((k: any) => <option value={k.id}>{k.nazwa}</option>)}</select></label>
+          {typy && <label><span>Typ</span><select data-pole="typ" data-ok={String(o.typ)}><option value="">— typ —</option>{KATEGORIE_TYPOW.map((t, i) => <option value={String(i)}>{t}</option>)}</select></label>}
+        </div>
+        <p class="k-cks-wyj" hidden set:html={texInline(o.h)} />
+      </li>
+    ))}
+  </ol>
+  <div class="k-ct-ctl" data-js-only hidden>
+    <button type="button" class="k-btn" data-check>Sprawdź</button>
+    <button type="button" class="k-btn k-btn-ghost" data-pokaz>Pokaż odpowiedzi</button>
+    <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
+  </div>
+  <div class="k-ct-wynik" hidden aria-live="polite"><p class="k-ct-sum" data-sum></p></div>
+  <p class="k-cks-leg">Kolor nazwy konta: <span class="k-cks-k is-A">aktywne</span> <span class="k-cks-k is-P">pasywne</span>{konta.some((k: any) => k.typ === 'K') && <> <span class="k-cks-k is-K">kosztów</span></>}</p>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cks]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => (el.hidden = false));
+    const ops = Array.from(box.querySelectorAll<HTMLElement>('.k-cks-op'));
+    const sels = Array.from(box.querySelectorAll<HTMLSelectElement>('select[data-pole]'));
+    const wynik = box.querySelector<HTMLElement>('.k-ct-wynik')!;
+    const sum = box.querySelector<HTMLElement>('[data-sum]')!;
+    const stan = (s: HTMLSelectElement, c?: string) => { s.classList.remove('is-good', 'is-bad', 'is-empty', 'is-shown'); if (c) s.classList.add(c); };
+    sels.forEach((s) => s.addEventListener('change', () => stan(s)));
+    box.querySelector('[data-check]')!.addEventListener('click', () => {
+      let good = 0, bad = 0, empty = 0;
+      ops.forEach((op) => {
+        let zle = false;
+        op.querySelectorAll<HTMLSelectElement>('select').forEach((s) => {
+          if (!s.value) { empty++; stan(s, 'is-empty'); }
+          else if (s.value === s.dataset.ok) { good++; stan(s, 'is-good'); }
+          else { bad++; zle = true; stan(s, 'is-bad'); }
+        });
+        op.querySelector<HTMLElement>('.k-cks-wyj')!.hidden = !zle;
+      });
+      sum.innerHTML = !bad && !empty ? '<b class="k-ct-ok">Wszystko dobrze!</b> Każda operacja zaksięgowana na właściwych kontach.'
+        : `Dobrze: <b>${good}</b> · Źle: <b>${bad}</b> · Puste: <b>${empty}</b>` + (bad ? ' — pod operacjami z błędem jest rozumowanie krok po kroku.' : ' — uzupełnij puste pola.');
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-pokaz]')!.addEventListener('click', () => {
+      sels.forEach((s) => { s.value = s.dataset.ok!; stan(s, 'is-shown'); });
+      ops.forEach((op) => (op.querySelector<HTMLElement>('.k-cks-wyj')!.hidden = false));
+      sum.innerHTML = 'Tak wygląda poprawne księgowanie — pod każdą operacją jest wyjaśnienie. „Wyczyść” opróżnia pola.';
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-clear]')!.addEventListener('click', () => {
+      sels.forEach((s) => { s.value = ''; stan(s); });
+      ops.forEach((op) => (op.querySelector<HTMLElement>('.k-cks-wyj')!.hidden = true));
+      wynik.hidden = true;
+    });
+  });
+</script>
+
+<style>
+  .k-cks-konta,.k-cks-leg{font-size:.86rem;color:var(--muted);margin:0 0 10px!important;line-height:2;}
+  .k-cks-k{display:inline-block;padding:0 7px;margin:0 2px;border:1px solid currentColor;line-height:1.6;white-space:nowrap;}
+  .k-cks-k.is-A{color:var(--cyan);} .k-cks-k.is-P{color:var(--magenta);} .k-cks-k.is-K{color:var(--gold);}
+  .k-cks-ops{list-style:none;margin:0 0 12px!important;padding:0!important;display:grid;gap:10px;}
+  .k-cks-op{margin:0!important;padding:8px 10px;border-left:2px solid var(--line2);}
+  .k-cks-op::before{content:none!important;}
+  .k-cks-t{margin:0 0 6px!important;font-size:.93rem;line-height:1.5;}
+  .k-cks-nr{font-family:var(--mono);color:var(--muted);}
+  .k-cks-sel{display:flex;flex-wrap:wrap;gap:8px 12px;}
+  .k-cks-sel label{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:.8rem;color:var(--muted);}
+  .k-cks-sel select{height:38px;max-width:100%;font-family:inherit;font-size:16px;color:var(--text);background:#15131d;border:1px dashed var(--line2);border-radius:0;padding:0 6px;}
+  .k-cks-sel select:focus{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-cks-sel select.is-good{background:#173329;border:1px solid var(--ok);}
+  .k-cks-sel select.is-bad{background:#3a1328;border:1px solid var(--magenta);}
+  .k-cks-sel select.is-empty{border-color:rgba(255,216,74,.6);}
+  .k-cks-sel select.is-shown{background:#221d36;border:1px solid rgba(167,139,250,.6);}
+  .k-cks-wyj{margin:8px 0 0!important;padding:6px 10px;border-left:2px solid var(--accent);background:rgba(167,139,250,.06);font-size:.88rem;line-height:1.6;}
+  @media(max-width:560px){ .k-cks-sel{flex-direction:column;align-items:stretch;} .k-cks-sel label{justify-content:space-between;} .k-cks-sel select{flex:1;max-width:240px;} }
+</style>

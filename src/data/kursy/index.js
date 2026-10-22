@@ -1,8 +1,9 @@
 // Rejestr kursów (przedmiotów prowadzonych jako kurs krok po kroku).
 // Nowy kurs: dodaj plik src/data/kursy/<slug>.js (COURSE, MODULES, opcjonalnie SLOWNICZEK) i dopisz go tutaj.
 import * as matematyka from './matematyka.js';
+import * as rachunkowosc from './rachunkowosc.js';
 
-export const KURSY = { matematyka };
+export const KURSY = { matematyka, rachunkowosc };
 
 export function getKurs(slug) {
   const k = KURSY[slug];

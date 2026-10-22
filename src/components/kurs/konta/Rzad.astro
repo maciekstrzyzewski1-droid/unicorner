@@ -1,0 +1,12 @@
+---
+// Kilka kont teowych obok siebie (na telefonie jedno pod drugim). W środku <KontoT … />.
+interface Props { jedno?: boolean }
+const { jedno = false } = Astro.props;
+---
+<div class:list={['k-kr', { 'is-jedno': jedno }]}><slot /></div>
+
+<style>
+  .k-kr{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:18px 24px;align-items:start;margin:1em 0 1.3em;}
+  .k-kr.is-jedno{grid-template-columns:minmax(0,330px);}
+  @media(max-width:560px){ .k-kr{grid-template-columns:minmax(0,1fr);} }
+</style>

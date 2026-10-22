@@ -1,0 +1,23 @@
+---
+// Jedna strona bilansu (aktywa albo pasywa) jako tabelka: pozycje i „Razem”. Dwie obok siebie w Konta.astro.
+import { zl } from '../../../lib/konta.js';
+interface Props { tytul: string; klasa: string; pozycje: { nazwa: string; kwota: number }[]; suma: number }
+const { tytul, klasa, pozycje, suma } = Astro.props;
+---
+<table class:list={['k-bs', klasa]}>
+  <thead><tr><th colspan="2">{tytul}</th></tr></thead>
+  <tbody>
+    {pozycje.map((x) => <tr><td>{x.nazwa}</td><td class="is-kw">{zl(x.kwota)}</td></tr>)}
+    <tr class="is-suma"><td>Razem</td><td class="is-kw">{zl(suma)}</td></tr>
+  </tbody>
+</table>
+
+<style>
+  .k-bs{border-collapse:collapse;font-size:.92rem;width:100%;}
+  .k-bs th,.k-bs td{border:1px solid var(--line2);padding:4px 8px;text-align:left;vertical-align:top;}
+  .k-bs th{font-family:var(--mono);font-size:.7rem;letter-spacing:.6px;text-transform:uppercase;}
+  .k-bs.is-A th{color:var(--cyan);} .k-bs.is-P th{color:var(--magenta);}
+  .k-bs td.is-kw{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;width:1%;}
+  .k-bs tr.is-suma td{font-weight:700;border-top:2px solid var(--muted);}
+  @media(max-width:560px){ .k-bs{font-size:.86rem;} }
+</style>
