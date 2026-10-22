@@ -1,0 +1,40 @@
+---
+// Sprawozdanie finansowe ⊂ sprawozdawczość finansowa ⊂ raport roczny — pudełka w pudełkach, jak na slajdzie z wykładu.
+---
+<div class="k-ws" role="img" aria-label="Raport roczny zawiera sprawozdawczość finansową i inne informacje niefinansowe. Sprawozdawczość finansowa to sprawozdanie finansowe plus sprawozdanie z działalności.">
+  <div class="k-ws-l is-3">
+    <div class="k-ws-t">Raport roczny</div>
+    <div class="k-ws-l is-2">
+      <div class="k-ws-t">Sprawozdawczość finansowa <small>informacje finansowe i niefinansowe</small></div>
+      <div class="k-ws-row">
+        <div class="k-ws-l is-1">
+          <div class="k-ws-t">Sprawozdanie finansowe <small>informacje finansowe</small></div>
+          <ol class="k-ws-li"><li>bilans</li><li>rachunek zysków i strat</li><li>informacja dodatkowa</li><li class="is-opc">rachunek przepływów pieniężnych*</li><li class="is-opc">zestawienie zmian w kapitale własnym*</li></ol>
+        </div>
+        <span class="k-ws-plus" aria-hidden="true">+</span>
+        <div class="k-ws-l is-1b">
+          <div class="k-ws-t">Sprawozdanie z działalności jednostki <small>informacje niefinansowe</small></div>
+        </div>
+      </div>
+    </div>
+    <div class="k-ws-inne">+ inne informacje niefinansowe</div>
+  </div>
+</div>
+
+<style>
+  .k-ws{margin:1.3em 0 .6em;}
+  .k-ws-l{border:1px solid var(--line2);padding:10px 12px 12px;min-width:0;}
+  .k-ws-l.is-3{background:var(--ink2);border-color:var(--muted2);}
+  .k-ws-l.is-2{background:rgba(167,139,250,.06);border-color:rgba(167,139,250,.5);margin-top:8px;}
+  .k-ws-l.is-1{background:rgba(39,232,255,.06);border-color:rgba(39,232,255,.55);flex:1 1 230px;}
+  .k-ws-l.is-1b{background:rgba(255,216,74,.05);border-color:rgba(255,216,74,.45);flex:1 1 180px;}
+  .k-ws-t{font-weight:700;color:#fff;font-size:.95rem;line-height:1.35;}
+  .k-ws-t small{display:block;font-family:var(--mono);font-weight:400;font-size:.68rem;letter-spacing:.4px;color:var(--muted);text-transform:uppercase;}
+  .k-ws-row{display:flex;flex-wrap:wrap;align-items:stretch;gap:8px;margin-top:8px;}
+  .k-ws-plus{align-self:center;font-family:var(--mono);font-size:1.3rem;color:var(--muted);}
+  .k-ws-li{margin:6px 0 0!important;padding-left:1.2em!important;font-size:.88rem;line-height:1.5;}
+  .k-ws-li li{margin:0!important;}
+  .k-ws-li li.is-opc{color:var(--muted);}
+  .k-ws-inne{margin-top:8px;font-size:.88rem;color:var(--muted);}
+  @media(max-width:560px){ .k-ws-row{flex-direction:column;} .k-ws-l.is-1,.k-ws-l.is-1b{flex:none;} .k-ws-plus{align-self:flex-start;} }
+</style>

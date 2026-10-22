@@ -2,6 +2,20 @@
 // t = skrót w LaTeX-u (opcjonalnie), czytamy = jak powiedzieć na głos, znaczy = jedno-dwa zdania prostym językiem.
 
 export const SLOWNICZEK = [
+  // --- Istota i zasady ---
+  { nazwa: 'Rachunkowość', znaczy: 'System informacyjny: zbiera i porządkuje dane o firmie, żeby można było podejmować decyzje i rozliczać kierownictwo.', modul: 'istota' },
+  { nazwa: 'Cechy fundamentalne informacji', znaczy: 'Przydatność (z istotnością) i wierna prezentacja (kompletna, neutralna, wolna od błędów). Bez nich informacja jest nieużyteczna.', modul: 'istota' },
+  { nazwa: 'Cechy wzbogacające informacji', znaczy: 'Porównywalność, sprawdzalność, terminowość, zrozumiałość. Zwiększają użyteczność.', modul: 'istota' },
+  { nazwa: 'Zasada ostrożności', znaczy: 'Uwzględnia się znane ryzyka, straty i utratę wartości, a nie dopisuje niepewnych zysków (art. 7 ust. 1).', modul: 'istota' },
+  { nazwa: 'Zakaz kompensat', znaczy: 'Różnych pozycji (np. przychodów i kosztów) nie łączy się w jedną różnicę (art. 7 ust. 3).', modul: 'istota' },
+  { nazwa: 'Zasada istotności', znaczy: 'Pokazuje się wszystko, co ważne dla oceny firmy; drobiazgi można uprościć (art. 8 ust. 1).', modul: 'istota' },
+  { nazwa: 'Zasada ciągłości', znaczy: 'Te same reguły rok po roku; stan na koniec roku = stan na początek następnego (art. 5 ust. 1).', modul: 'istota' },
+  { nazwa: 'Sprawozdanie finansowe', znaczy: 'Bilans, rachunek zysków i strat, informacja dodatkowa; u niektórych jednostek także przepływy pieniężne i zmiany w kapitale własnym.', modul: 'istota' },
+  { nazwa: 'Dziennik', znaczy: 'Księga z operacjami zapisanymi po kolei, data po dacie (porządek chronologiczny).', modul: 'istota' },
+  { nazwa: 'Księga główna', znaczy: 'Operacje zapisane na kontach, konto po koncie (porządek systematyczny).', modul: 'istota' },
+  { nazwa: 'Dowód księgowy', znaczy: 'Dokument, który potwierdza operację i jest podstawą zapisu w księgach, np. faktura, wyciąg bankowy.', modul: 'istota' },
+  { nazwa: 'Cena zakupu', znaczy: 'Kwota należna sprzedającemu bez odliczanego VAT, minus rabaty, plus cło przy imporcie.', modul: 'istota' },
+  { nazwa: 'Cena nabycia', znaczy: 'Cena zakupu plus koszty dostarczenia i przystosowania do używania (transport, montaż, ubezpieczenie w drodze).', modul: 'istota' },
   // --- Bilans ---
   { nazwa: 'Bilans', znaczy: 'Zestawienie majątku firmy (aktywa) i źródeł jego finansowania (pasywa) na jeden dzień. Aktywa = pasywa.', modul: 'bilans' },
   { nazwa: 'Aktywa', znaczy: 'Majątek firmy: co firma ma, także pieniądze, które inni są jej winni (należności).', modul: 'bilans' },

@@ -1,0 +1,496 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: rachunkowosc
+slug: istota
+title: Istota i zasady rachunkowości
+podtytul: użytkownicy, cechy użytecznej informacji, zasady, sprawozdanie, księgi, dowody i wycena
+description: Podstawy rachunkowości od zera – czym jest rachunkowość finansowa, kto korzysta ze sprawozdań, cechy użytecznej informacji, zasady (ostrożność, zakaz kompensat, istotność, ciągłość), sprawozdanie finansowe, księgi rachunkowe, plan kont, dowody księgowe oraz cena zakupu, cena nabycia i koszt wytworzenia.
+lede: Zanim zaczniesz księgować, warto wiedzieć, po co to wszystko. Tu jest mapa całego przedmiotu — kto czyta liczby firmy, jakie reguły muszą spełniać, gdzie się je zapisuje i jak się wycenia to, co firma kupuje. Na kolokwium to pytania „wymień i opisz” oraz krótki rachunek ceny nabycia.
+wymaga: Nic. Zaczynamy od zera.
+umiesz:
+  - wyjaśnić, czym jest rachunkowość finansowa i czym się wyróżnia
+  - wymienić użytkowników sprawozdań i to, czego każdy z nich szuka
+  - odróżnić cechy fundamentalne użytecznej informacji od wzbogacających
+  - rozpoznać zasadę ostrożności, zakazu kompensat, istotności i ciągłości w konkretnej sytuacji
+  - wymienić elementy sprawozdania finansowego i ksiąg rachunkowych
+  - policzyć cenę zakupu i cenę nabycia oraz ustalić, co wchodzi do kosztu wytworzenia
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import Uzytecznosc from '../../components/kurs/istota/Uzytecznosc.astro';
+import Warstwy from '../../components/kurs/istota/Warstwy.astro';
+
+## Po co to jest
+
+Wyobraź sobie, że chcesz kupić udziały w kawiarni koleżanki. Pytasz: „ile zarabiacie?”. Słyszysz: „dobrze!”. To nic nie znaczy. Chcesz zobaczyć liczby: ile kawiarnia ma, ile jest winna, ile zarobiła w zeszłym roku. I chcesz mieć pewność, że te liczby nie są wymyślone na twoją prośbę.
+
+Właśnie po to jest rachunkowość. To system, który zapisuje wszystko, co dzieje się w firmie, według tych samych reguł w każdej firmie w Polsce. Dzięki temu bank, inwestor czy urząd mogą przeczytać liczby i im ufać. Ten moduł to mapa przedmiotu: reguły, dokumenty i księgi, na których stoją wszystkie kolejne tematy.
+
+## Co będzie na kolokwium
+
+<Polecenia items={[
+  { polecenie: 'Czym jest rachunkowość? Wymień cechy rachunkowości finansowej', jak: 'Definicja w jednym zdaniu i sześć cech: wartościowo, metoda bilansowa i podwójny zapis, konto, dokumenty, inwentaryzacja, ciągłość.', przepis: 'polecenie-cechy', cwiczenia: 'cw-teoria' },
+  { polecenie: 'Kto korzysta ze sprawozdań finansowych i po co?', jak: 'Siedem grup — przy każdej jedno pytanie, na które szuka odpowiedzi.', przepis: 'polecenie-uzytkownicy', cwiczenia: 'cw-teoria' },
+  { polecenie: 'Wymień cechy użytecznej informacji finansowej', jak: 'Dwie fundamentalne (przydatność, wierna prezentacja) i cztery wzbogacające (porównywalność, sprawdzalność, terminowość, zrozumiałość).', przepis: 'polecenie-uzytecznosc', cwiczenia: 'cw-uzytecznosc' },
+  { polecenie: 'Jaka zasada rachunkowości jest stosowana w tej sytuacji?', jak: 'Szukasz słowa-klucza: „ryzyko, strata, ostrożnie” — ostrożność; „osobno, nie per saldo” — zakaz kompensat; „drobne, bez wpływu” — istotność; „tak samo jak rok temu” — ciągłość.', przepis: 'polecenie-zasady', cwiczenia: 'cw-zasady' },
+  { polecenie: 'Z czego składa się sprawozdanie finansowe?', jak: 'Bilans, rachunek zysków i strat, informacja dodatkowa. Niektóre jednostki dokładają przepływy pieniężne i zmiany w kapitale.', przepis: 'polecenie-sprawozdanie', cwiczenia: 'cw-teoria' },
+  { polecenie: 'Co obejmują księgi rachunkowe? Do którego zespołu planu kont należy konto?', jak: 'Pięć elementów (dziennik, księga główna, księgi pomocnicze, zestawienia obrotów i sald, inwentarz) i dziewięć zespołów kont od 0 do 8.', przepis: 'polecenie-ksiegi', cwiczenia: 'cw-ksiegi' },
+  { polecenie: 'Jakie elementy musi zawierać dowód księgowy?', jak: 'Rodzaj i numer, strony, opis i wartość, data, podpis wystawcy, stwierdzenie sprawdzenia i zakwalifikowania do ksiąg.', przepis: 'polecenie-dowody', cwiczenia: 'cw-teoria' },
+  { polecenie: 'Ustal cenę zakupu i cenę nabycia. Co wchodzi do kosztu wytworzenia?', jak: 'Cena zakupu = cena bez odliczanego VAT, minus rabaty (plus cło przy imporcie). Cena nabycia = cena zakupu + koszty dostarczenia i przystosowania.', przepis: 'polecenie-wycena', cwiczenia: 'cw-wycena' },
+]} />
+
+Większość poleceń to „wymień i scharakteryzuj”. Wystarczy pamiętać listę i umieć powiedzieć jedno zdanie o każdym punkcie. Jedyny rachunek to cena nabycia — tu łatwo stracić punkty na VAT-cie i rabacie.
+
+<a id="polecenie-cechy" class="k-anchor"></a>
+
+## Czym jest rachunkowość
+
+<Ramka kind="zapamietaj">
+**Rachunkowość** to system informacyjny. Służy użytkownikom do podejmowania decyzji gospodarczych, zwłaszcza finansowych. Pozwala też rozliczyć kierownictwo z tego, jak zarządza powierzonym majątkiem.
+</Ramka>
+
+„System informacyjny” znaczy tyle: rachunkowość zbiera dane o firmie, porządkuje je i podaje w formie, z której ktoś może skorzystać. Kierownik sprawdza, czy firma zarabia. Właściciel sprawdza, czy kierownik dobrze nią zarządza.
+
+<Ramka kind="polecenie">
+„Wymień cechy wyróżniające rachunkowość finansową.”
+
+Sześć cech — każda w jednym zdaniu:
+
+1. **Opis głównie wartościowy** — wszystko wyrażamy w złotych, a nie w sztukach czy godzinach.
+2. **Metoda bilansowa i zasada podwójnego zapisu** — majątek i jego źródła zawsze się równoważą, a każdą operację zapisuje się dwa razy, po przeciwnych stronach kont.
+3. **Konto** — specjalne urządzenie do zapisywania zmian (tabelka w kształcie litery T, ze stronami Wn i Ma).
+4. **Obowiązek udokumentowania zapisów** — każdy zapis ma za sobą dokument, np. fakturę.
+5. **Weryfikacja przez inwentaryzację** — co jakiś czas porównuje się zapisy z tym, co naprawdę jest w firmie (liczy się towary, gotówkę, potwierdza salda).
+6. **Zasada ciągłości** — stan na koniec jednego roku jest stanem na początek następnego, a reguły nie zmieniają się z roku na rok.
+</Ramka>
+
+<Ramka kind="kiedy" tytul="jak zapamiętać sześć cech">
+Ułóż je w drogę jednej faktury. Kwota w złotych (1). Zapis podwójny w bilansie (2) na kontach (3). Na podstawie dokumentu (4). Sprawdzony na inwentaryzacji (5). A na koniec roku przeniesiony do nowego roku (6).
+</Ramka>
+
+Rachunkowością zarządza **ustawa z 29 września 1994 r. o rachunkowości**. Szczegóły dopowiadają **rozporządzenia** (np. Ministra Finansów) i **Krajowe Standardy Rachunkowości**. Na świecie działają też **Międzynarodowe Standardy Rachunkowości (MSR/MSSF)**. Rada, która je tworzy, chce jednego zestawu dobrych, zrozumiałych standardów dla całego świata, żeby sprawozdania z różnych krajów dało się porównać.
+
+<a id="polecenie-uzytkownicy" class="k-anchor"></a>
+
+## Kto korzysta ze sprawozdań
+
+<Ramka kind="polecenie">
+„Wymień użytkowników sprawozdań finansowych.”
+
+Siedem grup. Przy każdej zapamiętaj pytanie, na które szuka odpowiedzi:
+</Ramka>
+
+| Użytkownik | Czego szuka w sprawozdaniu |
+|---|---|
+| inwestorzy | czy warto kupić, zatrzymać albo sprzedać udziały |
+| pracownicy | czy firma przetrwa i czy będzie płacić pensje |
+| kredytodawcy (np. banki) | czy firma odda kredyt z odsetkami |
+| dostawcy i inni wierzyciele | czy firma zapłaci za dostawy w terminie |
+| klienci | czy firma będzie działać dalej (gwarancja, serwis, kolejne dostawy) |
+| rządy i ich agendy | ile podatków płaci firma, dane do statystyki |
+| społeczeństwo | jak firma wpływa na okolicę: miejsca pracy, środowisko |
+
+<Ramka kind="pulapka">
+- Kierownik firmy też korzysta z rachunkowości, ale ta lista dotyczy użytkowników **sprawozdań finansowych**, czyli głównie osób spoza firmy.
+- Pracownicy są na liście, choć są „w środku” — liczy się ich interes: pewność pracy.
+</Ramka>
+
+<a id="polecenie-uzytecznosc" class="k-anchor"></a>
+
+## Cechy użytecznej informacji
+
+Liczby w sprawozdaniu mają sens tylko wtedy, gdy da się na nich oprzeć decyzję. Założenia koncepcyjne sprawozdawczości finansowej (2010) mówią, jakie cechy musi mieć taka informacja:
+
+<Uzytecznosc />
+
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> na górze cel. Pod nim dwie cechy fundamentalne w turkusowych ramkach — każda z cechami, z których się składa. Na dole cztery cechy wzbogacające: poprawiają informację, ale same jej nie ratują.</p>
+
+<Ramka kind="zapamietaj" tytul="logika ze slajdu">
+- Przydatna **i** wiernie prezentuje → informacja **użyteczna**.
+- Przydatna **i** wiernie prezentuje **oraz** porównywalna, sprawdzalna, terminowa albo zrozumiała → **bardziej użyteczna**.
+- Nieprzydatna **albo** nie prezentuje wiernie → **nieużyteczna**. Żadna cecha wzbogacająca tego nie naprawi.
+</Ramka>
+
+<Ramka kind="polecenie">
+„Wymień i scharakteryzuj cechy użytecznej informacji finansowej.”
+
+1. Zacznij od podziału: **fundamentalne** (muszą być) i **wzbogacające** (zwiększają użyteczność).
+2. Fundamentalne: **przydatność** (z istotnością) i **wierna prezentacja** (kompletna, neutralna, wolna od błędów).
+3. Wzbogacające: **porównywalność, sprawdzalność, terminowość, zrozumiałość**.
+4. Do każdej cechy dopisz jedno zdanie z karty wyżej.
+</Ramka>
+
+<Ramka kind="pulapka">
+- **Istotność** to część przydatności — nie osobna, piąta cecha wzbogacająca.
+- **Terminowość** jest wzbogacająca. Spóźniona informacja dalej może być prawdziwa, tylko mniej się przyda.
+</Ramka>
+
+<a id="polecenie-zasady" class="k-anchor"></a>
+
+## Zasady rachunkowości
+
+Nad wszystkimi zasadami stoi jedna idea: **wierny i rzetelny obraz** firmy. Sprawozdanie ma pokazywać sytuację majątkową, finansową i wynik tak, jak naprawdę jest. Pozostałe zasady to narzędzia, które w tym pomagają. Na wykładzie padły trzy z nich, a w cechach rachunkowości — czwarta:
+
+| Zasada | Co mówi | Słowo-klucz w zadaniu |
+|---|---|---|
+| **ostrożności** (art. 7 ust. 1) | Lepiej pokazać firmę odrobinę za skromnie niż za dobrze. Uwzględnia się znane ryzyka, straty i utratę wartości, a nie dopisuje niepewnych zysków. | ryzyko, prawdopodobna strata, utrata wartości, rezerwa |
+| **zakazu kompensat** (art. 7 ust. 3) | Nie wolno łączyć różnych pozycji w jedną różnicę. Przychody i koszty, należności i zobowiązania pokazuje się osobno. | „per saldo”, „tylko różnicę”, „łącznie” |
+| **istotności** (art. 8 ust. 1) | Trzeba pokazać wszystko, co ważne dla oceny firmy. Drobiazgi bez wpływu na ocenę można uprościć. | drobna kwota, nieistotny wpływ, uproszczenie |
+| **ciągłości** (art. 5 ust. 1) | Te same reguły rok po roku. Stan na koniec roku = stan na początek następnego. | tak samo jak w zeszłym roku, porównywalność, bilans otwarcia |
+
+<Ramka kind="polecenie">
+„Jaka zasada rachunkowości została zastosowana w tej sytuacji?”
+
+1. Przeczytaj, co firma **zrobiła** albo czego **nie wolno** jej zrobić.
+2. Poszukaj słowa-klucza z ostatniej kolumny tabeli.
+3. Sprawdź jednym pytaniem:
+   - czy chodzi o niepewność i ryzyko? → ostrożność;
+   - czy ktoś chce pokazać różnicę zamiast dwóch kwot? → zakaz kompensat;
+   - czy chodzi o wielkość kwoty i jej wpływ na ocenę firmy? → istotność;
+   - czy chodzi o to, co było rok temu? → ciągłość.
+</Ramka>
+
+Przykłady:
+
+- Klient firmy ogłosił upadłość. Firma obniża wartość należności od niego, choć sąd jeszcze nie zakończył sprawy → **ostrożność**.
+- Przychody ze sprzedaży 100 000 zł i koszty 70 000 zł pokazuje się osobno, a nie sam zysk 30 000 zł → **zakaz kompensat**.
+- Firma od lat wycenia zapasy tą samą metodą, żeby sprawozdania z kolejnych lat dało się porównać → **ciągłość**.
+
+<Ramka kind="skad" tytul="zasady, które spotkasz w podręczniku">
+Ustawa ma też inne zasady. Na wykładzie ich nie wymieniono, ale warto znać nazwy:
+- **kontynuacji działalności** (art. 5 ust. 2) — zakłada się, że firma będzie działać dalej, bez likwidacji;
+- **memoriału** (art. 6 ust. 1) — przychody i koszty ujmuje się w roku, którego dotyczą, bez względu na termin zapłaty;
+- **współmierności** (art. 6 ust. 2) — koszty ujmuje się razem z przychodami, które pomogły osiągnąć.
+</Ramka>
+
+<a id="polecenie-sprawozdanie" class="k-anchor"></a>
+
+## Sprawozdanie finansowe
+
+Sprawozdanie finansowe to „produkt końcowy” rachunkowości. Sporządza się je **na dzień zamknięcia ksiąg** rachunkowych (najczęściej 31 grudnia) albo na inny dzień bilansowy (art. 45 ust. 1).
+
+<Warstwy />
+
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> pudełko w pudełku. W środku sprawozdanie finansowe — same liczby. Razem ze sprawozdaniem z działalności tworzy sprawozdawczość finansową. Raport roczny to wszystko to plus inne informacje niefinansowe. Gwiazdka oznacza elementy obowiązkowe tylko w części jednostek.</p>
+
+<Ramka kind="polecenie">
+„Z czego składa się sprawozdanie finansowe?”
+
+1. Podstawowe trzy elementy (art. 45 ust. 2): **bilans**, **rachunek zysków i strat**, **informacja dodatkowa** (wprowadzenie do sprawozdania oraz dodatkowe informacje i objaśnienia).
+2. Jednostki, których sprawozdania bada biegły rewident (art. 64, np. banki, ubezpieczyciele, spółki akcyjne), dokładają: **rachunek przepływów pieniężnych** i **zestawienie zmian w kapitale (funduszu) własnym**.
+3. Sprawozdanie z działalności jednostki (art. 49 ust. 1, np. spółki kapitałowe, spółdzielnie) to osobny dokument — **nie** jest częścią sprawozdania finansowego.
+</Ramka>
+
+<Ramka kind="pulapka">
+- Sprawozdanie **z działalności** to nie to samo co sprawozdanie **finansowe**. Pierwsze opisuje słowami, co firma robiła. Drugie to liczby.
+- Rachunek przepływów pieniężnych nie jest obowiązkowy dla każdej firmy.
+</Ramka>
+
+<a id="polecenie-ksiegi" class="k-anchor"></a>
+
+## Księgi rachunkowe i plan kont
+
+Rachunkowość jednostki to nie tylko księgowanie. Według ustawy (art. 4 ust. 2) obejmuje siedem rzeczy: przyjęte zasady rachunkowości, prowadzenie ksiąg, inwentaryzację, wycenę aktywów i pasywów oraz ustalanie wyniku, sporządzanie sprawozdań, przechowywanie dokumentacji oraz badanie i ogłaszanie sprawozdań.
+
+Zasady swojej rachunkowości firma spisuje w dokumentacji (art. 10 ust. 1). Musi tam być m.in. **rok obrotowy**, **metody wyceny** i sposób prowadzenia ksiąg — w tym **zakładowy plan kont**, czyli lista kont, których firma używa.
+
+<Ramka kind="polecenie">
+„Co obejmują księgi rachunkowe?” (art. 13 ust. 1)
+
+1. **Dziennik** — wszystkie operacje po kolei, w porządku **chronologicznym** (data po dacie).
+2. **Księga główna** — te same operacje na kontach, w porządku **systematycznym** (konto po koncie).
+3. **Księgi pomocnicze** — szczegóły do kont księgi głównej, np. osobno każdy dostawca, każdy środek trwały, operacje kasowe.
+4. **Zestawienia obrotów i sald** kont księgi głównej i ksiąg pomocniczych — robi się je **co najmniej na koniec każdego miesiąca**.
+5. **Inwentarz** — wykaz składników aktywów i pasywów.
+</Ramka>
+
+<Ramka kind="zapamietaj" tytul="cztery warunki prawidłowych ksiąg (art. 24)">
+Księgi muszą być prowadzone **rzetelnie** (zgodnie z rzeczywistością), **bezbłędnie**, **sprawdzalnie** (da się odtworzyć każdy zapis) i **bieżąco** (bez zaległości).
+</Ramka>
+
+Wzorcowy plan kont dzieli konta na dziewięć **zespołów**. Pierwsza cyfra numeru konta mówi, z którego zespołu ono jest:
+
+| Zespół | Czego dotyczy | Przykładowe konta |
+|---|---|---|
+| 0 | aktywa trwałe | środki trwałe, WNiP, środki trwałe w budowie, umorzenie |
+| 1 | środki pieniężne, rachunki bankowe | kasa, rachunek bieżący |
+| 2 | rozrachunki i roszczenia | rozrachunki z dostawcami, odbiorcami, pracownikami |
+| 3 | materiały i towary | materiały, towary |
+| 4 | koszty według rodzaju | zużycie materiałów, wynagrodzenia, usługi obce |
+| 5 | koszty według typów działalności | koszty działalności podstawowej, koszty zarządu |
+| 6 | produkty i rozliczenia międzyokresowe | produkty gotowe, rozliczenia międzyokresowe kosztów |
+| 7 | przychody i koszty ich osiągnięcia | przychody ze sprzedaży, pozostałe przychody operacyjne |
+| 8 | kapitały, fundusze specjalne, wynik | kapitał podstawowy, kapitał zapasowy, wynik finansowy |
+
+<Ramka kind="pulapka">
+- **Usługi obce** to koszt (zespół 4), a nie rozrachunek (zespół 2). Dług za usługę jest w zespole 2, sam koszt — w zespole 4.
+- **Kapitał podstawowy** to zespół 8, choć w bilansie stoi na samej górze pasywów.
+- Pieniądze w kasie i na rachunku to zespół 1, a nie „aktywa trwałe” czy „rozrachunki”.
+</Ramka>
+
+<a id="polecenie-dowody" class="k-anchor"></a>
+
+## Dowody księgowe
+
+Każdy zapis w księgach musi mieć za sobą **dowód księgowy** — dokument, który potwierdza operację. Najczęściej to faktura, wyciąg bankowy, raport kasowy, lista płac albo protokół.
+
+<Ramka kind="polecenie">
+„Jakie elementy musi zawierać dowód księgowy?” (art. 21 ust. 1)
+
+1. Rodzaj dowodu i jego **numer** identyfikacyjny.
+2. **Strony** operacji — kto z kim.
+3. **Opis** operacji i jej **wartość**.
+4. **Datę** dokonania operacji.
+5. **Podpis wystawcy**.
+6. **Stwierdzenie sprawdzenia** i zakwalifikowania dowodu do ujęcia w księgach (tzw. dekretacja — gdzie i kiedy to zaksięgować).
+</Ramka>
+
+Dowody dzieli się według tego, skąd pochodzą:
+
+- **obce** — przychodzą od kontrahenta, np. faktura od dostawcy;
+- **własne zewnętrzne** — firma je wystawia i przekazuje kontrahentowi, np. faktura dla klienta;
+- **własne wewnętrzne** — dotyczą operacji w środku firmy, np. wydanie materiałów z magazynu do produkcji.
+
+Wśród dowodów własnych są też: **pierwotne** (źródłowe, opisują jedną operację) i **wtórne** (zbiorcze, łączą wiele operacji), a do tego szczególne: **PK — polecenie księgowania**, **dowody zastępcze** i **rozliczeniowe**.
+
+<Ramka kind="pulapka">
+- **Dowód zastępczy** wystawia się, gdy dowodu obcego nie da się zdobyć. Wymaga zgody kierownika jednostki. Nie wolno go użyć przy zakupach z VAT-em.
+- Paragon i faktura dla klienta to dowody **własne zewnętrzne**, a nie obce — wystawia je sama firma.
+</Ramka>
+
+<a id="polecenie-wycena" class="k-anchor"></a>
+
+## Wycena: cena zakupu, cena nabycia, koszt wytworzenia
+
+Gdy firma coś kupuje albo produkuje, trzeba ustalić, za ile to zapisać w księgach. Ustawa (art. 28) daje do tego kilka miar:
+
+<div class="k-dwa">
+<div>
+
+**Cena zakupu** (art. 28 ust. 2)
+
+Kwota należna sprzedającemu:
+- **bez** VAT-u i akcyzy, które firma może odliczyć,
+- **minus** rabaty, opusty i podobne obniżki,
+- **plus** cło i inne opłaty publiczne przy imporcie.
+
+</div>
+<div>
+
+**Cena nabycia** (art. 28 ust. 2)
+
+Cena zakupu **plus** koszty bezpośrednio związane z zakupem i przystosowaniem do używania albo do sprzedaży:
+- transport, załadunek, wyładunek,
+- składowanie, montaż, ubezpieczenie w drodze.
+
+</div>
+</div>
+
+<Ramka kind="polecenie">
+„Ustal cenę zakupu i cenę nabycia składnika aktywów.”
+
+1. Weź cenę z faktury **netto** (bez VAT-u). Jeśli firma **nie** może odliczyć VAT-u, VAT zostaje w cenie.
+2. **Odejmij rabaty** i opusty. Wynik to **cena zakupu**. Przy imporcie dodaj jeszcze cło.
+3. Wypisz koszty **dostarczenia i przystosowania**: transport, ubezpieczenie transportu, montaż, rozruch, załadunek.
+4. **Dodaj je do ceny zakupu.** Wynik to **cena nabycia**.
+5. Sprawdź, czy nie wpisała się tam cena w złotych z VAT-em — to najczęstszy błąd.
+</Ramka>
+
+<Rozwiazanie tytul="Maszyna z rabatem, transportem i montażem">
+<div slot="tresc">
+
+Firma, która jest czynnym podatnikiem VAT, kupiła maszynę:
+
+- cena netto z cennika: 50 000 zł,
+- rabat od dostawcy: 2 000 zł,
+- VAT 23% od ceny po rabacie: 11 040 zł (firma odlicza VAT),
+- transport: 1 500 zł,
+- ubezpieczenie maszyny na czas transportu: 300 zł,
+- montaż i próbny rozruch: 3 000 zł.
+
+Ustal cenę zakupu i cenę nabycia maszyny.
+
+</div>
+
+<div slot="plan">
+
+1. Ustalamy cenę zakupu: cena netto minus rabat. VAT pomijamy, bo firma go odliczy.
+2. Wypisujemy koszty, bez których maszyna nie stanęłaby gotowa do pracy.
+3. Cena nabycia = cena zakupu + te koszty.
+
+</div>
+
+<Krok tytul="Cena zakupu">
+50 000 − 2 000 = **48 000 zł**.
+
+<Dlaczego>
+Cena zakupu to tyle, ile naprawdę należy się sprzedającemu za samą maszynę. Rabat obniża tę kwotę. VAT-u nie liczymy, bo firma odzyska go z urzędu skarbowego — to nie jest jej koszt.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Koszty dostarczenia i przystosowania">
+Transport 1 500, ubezpieczenie w transporcie 300, montaż i rozruch 3 000. Razem: 1 500 + 300 + 3 000 = **4 800 zł**.
+
+<Dlaczego>
+Bez tych kosztów maszyna nie stałaby w hali gotowa do pracy. Dlatego ustawa każe je doliczyć do wartości maszyny.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Cena nabycia">
+48 000 + 4 800 = **52 800 zł**. Tyle wynosi wartość maszyny w księgach.
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka">
+- **VAT odliczany** nigdy nie wchodzi do ceny. **VAT nieodliczany** (firma nie jest podatnikiem VAT) — wchodzi.
+- **Cło** przy imporcie wchodzi już do ceny **zakupu**, a nie dopiero do ceny nabycia.
+- Rabat odejmujesz, zanim dodasz koszty transportu.
+</Ramka>
+
+**Koszt wytworzenia** (art. 28 ust. 3) to wycena tego, co firma sama wyprodukowała. Wchodzą do niego koszty bezpośrednio związane z produktem (materiały, płace pracowników produkcji) i uzasadniona część kosztów pośrednich (np. energia i amortyzacja hali). **Nie** wchodzą:
+
+- koszty niewykorzystanych mocy produkcyjnych i straty produkcyjne,
+- koszty ogólnego zarządu (np. pensja zarządu, księgowość),
+- magazynowanie wyrobów gotowych, chyba że jest niezbędne w produkcji,
+- koszty sprzedaży (np. reklama, transport do klienta).
+
+Dwie miary przydają się przy wycenie na dzień bilansowy:
+
+- **cena sprzedaży netto** (art. 28 ust. 5) — za ile da się sprzedać składnik na dzień bilansowy, bez VAT-u, minus rabaty i koszty sprzedaży;
+- **wartość godziwa** (art. 28 ust. 6) — kwota, za jaką składnik mógłby zmienić właściciela między dobrze poinformowanymi, niezależnymi stronami, na zwykłych warunkach rynkowych.
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Rachunkowość</b>System informacyjny do decyzji gospodarczych i rozliczania kierownictwa z zarządzania majątkiem.</div>
+  <div><b>6 cech</b>Wartościowo · bilans i podwójny zapis · konto · dokumenty · inwentaryzacja · ciągłość.</div>
+  <div><b>Użytkownicy</b>Inwestorzy, pracownicy, kredytodawcy, dostawcy, klienci, rządy, społeczeństwo.</div>
+  <div><b>Cechy fundamentalne</b>Przydatność (istotność) i wierna prezentacja (kompletna, neutralna, bez błędów).</div>
+  <div><b>Cechy wzbogacające</b>Porównywalność, sprawdzalność, terminowość, zrozumiałość.</div>
+  <div><b>Zasady</b>Wierny obraz nad wszystkim. Ostrożność 7.1, zakaz kompensat 7.3, istotność 8.1, ciągłość 5.1.</div>
+  <div><b>Sprawozdanie</b>Bilans, RZiS, informacja dodatkowa (+ przepływy i zmiany w kapitale u niektórych).</div>
+  <div><b>Księgi</b>Dziennik (chronologicznie), księga główna (systematycznie), pomocnicze, zestawienia obrotów i sald, inwentarz.</div>
+  <div><b>Prawidłowe księgi</b>Rzetelnie, bezbłędnie, sprawdzalnie, bieżąco.</div>
+  <div><b>Plan kont</b>0 trwałe · 1 pieniądze · 2 rozrachunki · 3 materiały i towary · 4 koszty rodzajowe · 5 koszty typów działalności · 6 produkty, RMK · 7 przychody · 8 kapitały i wynik.</div>
+  <div><b>Cena nabycia</b>Netto bez odliczanego VAT − rabaty (+ cło) = cena zakupu; + transport, montaż, ubezpieczenie w drodze = cena nabycia.</div>
+</div>
+
+<Ramka kind="gdzie">
+Dowody i księgi wrócą przy każdym księgowaniu: konta teowe to właśnie księga główna. Cena nabycia wróci przy środkach trwałych i materiałach. Zasada ostrożności — przy rezerwach i odpisach aktualizujących. Bilans i jego układ ma osobny moduł.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — także dobrej — jest wyjaśnienie.
+
+<a id="cw-uzytecznosc" class="k-anchor"></a>
+
+### Cechy użytecznej informacji
+
+<Klasyfikator pytanie="Fundamentalna czy wzbogacająca?" kategorie={['Fundamentalna (lub jej część)', 'Wzbogacająca']} elementy={[
+  { tekst: 'Przydatność', kat: 0, dlaczego: 'Jedna z dwóch cech fundamentalnych.' },
+  { tekst: 'Porównywalność', kat: 1, dlaczego: 'Cecha wzbogacająca: pozwala zestawić dane z innymi latami i firmami.' },
+  { tekst: 'Istotność', kat: 0, dlaczego: 'Część przydatności, czyli cechy fundamentalnej.' },
+  { tekst: 'Terminowość', kat: 1, dlaczego: 'Wzbogacająca: spóźniona informacja może być prawdziwa, tylko mniej przydatna.' },
+  { tekst: 'Neutralność', kat: 0, dlaczego: 'Część wiernej prezentacji, czyli cechy fundamentalnej.' },
+  { tekst: 'Zrozumiałość', kat: 1, dlaczego: 'Cecha wzbogacająca.' },
+  { tekst: 'Wolność od błędów', kat: 0, dlaczego: 'Część wiernej prezentacji.' },
+  { tekst: 'Sprawdzalność', kat: 1, dlaczego: 'Cecha wzbogacająca: niezależne osoby doszłyby do tego samego.' },
+]} />
+
+<a id="cw-zasady" class="k-anchor"></a>
+
+### Zasady rachunkowości
+
+<Klasyfikator pytanie="Jaka zasada?" kategorie={['Ostrożność', 'Zakaz kompensat', 'Istotność', 'Ciągłość']} elementy={[
+  { tekst: 'Firma tworzy rezerwę na proces sądowy, który prawdopodobnie przegra, choć wyrok jeszcze nie zapadł.', kat: 0, dlaczego: 'Uwzględnienie znanego ryzyka i prawdopodobnej straty — ostrożność.' },
+  { tekst: 'Firma nie może pokazać w bilansie tylko różnicy między należnościami od odbiorców a zobowiązaniami wobec dostawców.', kat: 1, dlaczego: 'Różne pozycje pokazuje się osobno, a nie „per saldo” — zakaz kompensat.' },
+  { tekst: 'Stan kont na 31 grudnia przenosi się w tej samej kwocie na 1 stycznia nowego roku.', kat: 3, dlaczego: 'Bilans zamknięcia = bilans otwarcia następnego roku — ciągłość.' },
+  { tekst: 'Drobny wydatek na długopisy firma zalicza od razu w koszty, bez rozbijania go na kolejne miesiące.', kat: 2, dlaczego: 'Uproszczenie przy kwocie bez wpływu na ocenę firmy — istotność.' },
+  { tekst: 'Towary straciły na wartości po zmianie mody. Firma obniża ich wartość w księgach.', kat: 0, dlaczego: 'Uwzględnienie utraty wartości — ostrożność.' },
+  { tekst: 'Firma wycenia zapasy tą samą metodą co w poprzednich latach.', kat: 3, dlaczego: 'Te same reguły rok po roku, żeby sprawozdania były porównywalne — ciągłość.' },
+  { tekst: 'Przychody ze sprzedaży i koszty jej osiągnięcia pokazuje się w rachunku zysków i strat w osobnych pozycjach.', kat: 1, dlaczego: 'Nie wolno pokazać samej różnicy — zakaz kompensat.' },
+  { tekst: 'Firma nie opisuje w informacji dodatkowej drobnej sprawy, która nie zmienia oceny jej sytuacji.', kat: 2, dlaczego: 'Pokazuje się to, co ważne dla oceny firmy, a drobiazgi można pominąć — istotność.' },
+]} />
+
+<a id="cw-ksiegi" class="k-anchor"></a>
+
+### Księgi i plan kont
+
+<Klasyfikator pytanie="Do którego zespołu planu kont należy konto?" kategorie={['0', '1', '2', '3', '4', '5', '6', '7', '8']} elementy={[
+  { tekst: 'Kasa', kat: 1, dlaczego: 'Środki pieniężne — zespół 1.' },
+  { tekst: 'Środki trwałe', kat: 0, dlaczego: 'Aktywa trwałe — zespół 0.' },
+  { tekst: 'Rozrachunki z dostawcami', kat: 2, dlaczego: 'Rozrachunki — zespół 2.' },
+  { tekst: 'Usługi obce', kat: 4, dlaczego: 'Koszt według rodzaju — zespół 4. Pułapka: to nie rozrachunek.' },
+  { tekst: 'Kapitał podstawowy', kat: 8, dlaczego: 'Kapitały — zespół 8.' },
+  { tekst: 'Towary', kat: 3, dlaczego: 'Materiały i towary — zespół 3.' },
+  { tekst: 'Przychody ze sprzedaży produktów', kat: 7, dlaczego: 'Przychody — zespół 7.' },
+  { tekst: 'Produkty gotowe', kat: 6, dlaczego: 'Produkty — zespół 6.' },
+  { tekst: 'Koszty działalności podstawowej', kat: 5, dlaczego: 'Koszty według typów działalności — zespół 5.' },
+  { tekst: 'Wynik finansowy', kat: 8, dlaczego: 'Wynik finansowy jest w zespole 8, razem z kapitałami.' },
+]} />
+
+<Klasyfikator pytanie="Która księga?" kategorie={['Dziennik', 'Księga główna', 'Księgi pomocnicze', 'Zestawienie obrotów i sald']} elementy={[
+  { tekst: 'Operacje zapisane po kolei, data po dacie.', kat: 0, dlaczego: 'Porządek chronologiczny — dziennik.' },
+  { tekst: 'Operacje zapisane na kontach, konto po koncie.', kat: 1, dlaczego: 'Porządek systematyczny — księga główna.' },
+  { tekst: 'Osobna karta dla każdego dostawcy z jego fakturami i zapłatami.', kat: 2, dlaczego: 'Szczegóły do konta „Rozrachunki z dostawcami” — księgi pomocnicze.' },
+  { tekst: 'Lista wszystkich kont z obrotami i saldami na koniec miesiąca.', kat: 3, dlaczego: 'Robi się ją co najmniej na koniec każdego miesiąca — zestawienie obrotów i sald.' },
+  { tekst: 'Ewidencja każdego środka trwałego z jego umorzeniem.', kat: 2, dlaczego: 'Ustawa wymienia środki trwałe wśród kont ksiąg pomocniczych.' },
+]} />
+
+<a id="cw-teoria" class="k-anchor"></a>
+
+### Definicje i listy
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: 'Która z cech NIE jest cechą rachunkowości finansowej z wykładu?', opcje: ['Obowiązek udokumentowania zapisów', 'Opis wyłącznie w jednostkach naturalnych (sztuki, godziny)', 'Weryfikacja zapisów przez inwentaryzację'], dobra: 1, dlaczego: 'Rachunkowość finansowa opisuje działalność głównie wartościowo, w złotych. Dokumenty i inwentaryzacja to dwie z sześciu cech.' },
+  { q: 'Bank zastanawia się, czy udzielić firmie kredytu. Czego szuka w sprawozdaniu?', opcje: ['Czy firma odda kredyt z odsetkami', 'Czy firma płaci pensje w terminie', 'Ile miejsc pracy firma tworzy w regionie'], dobra: 0, dlaczego: 'Kredytodawca chce wiedzieć, czy odzyska pieniądze. Pensje interesują pracowników, a miejsca pracy — społeczeństwo.' },
+  { q: 'Z czego składa się sprawozdanie finansowe każdej jednostki (art. 45 ust. 2)?', opcje: ['Bilans, rachunek przepływów pieniężnych, sprawozdanie z działalności', 'Bilans, rachunek zysków i strat, zestawienie obrotów i sald', 'Bilans, rachunek zysków i strat, informacja dodatkowa'], dobra: 2, dlaczego: 'Trzy podstawowe elementy to bilans, RZiS i informacja dodatkowa. Przepływy dokładają tylko niektóre jednostki. Sprawozdanie z działalności to osobny dokument. Zestawienie obrotów i sald to część ksiąg, a nie sprawozdania.' },
+  { q: 'Jak często trzeba sporządzać zestawienie obrotów i sald kont księgi głównej?', opcje: ['Co najmniej na koniec każdego miesiąca', 'Raz w roku, na dzień bilansowy', 'Tylko na żądanie urzędu skarbowego'], dobra: 0, dlaczego: 'Art. 18: nie rzadziej niż na koniec miesiąca.' },
+  { q: 'Księgi mają być prowadzone rzetelnie, bezbłędnie, sprawdzalnie i…', opcje: ['…tanio', '…bieżąco', '…ręcznie'], dobra: 1, dlaczego: 'Cztery warunki z art. 24: rzetelnie, bezbłędnie, sprawdzalnie i bieżąco.' },
+  { q: 'Firma nie może zdobyć faktury od dostawcy, który zniknął. Za zgodą kierownika wystawia dokument zamiast niej. To dowód…', opcje: ['…zewnętrzny obcy', '…korygujący', '…zastępczy'], dobra: 2, dlaczego: 'Dowód zastępczy zastępuje dowód obcy, którego nie da się zdobyć. Nie wolno go użyć przy zakupach z VAT-em.' },
+]} />
+
+<a id="cw-wycena" class="k-anchor"></a>
+
+### Cena nabycia i koszt wytworzenia
+
+<Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
+  { q: 'Czynny podatnik VAT kupił towar: cena netto 20 000 zł, VAT 4 600 zł, transport 800 zł. Ile wynosi cena nabycia?', opcje: ['25 400 zł', '20 800 zł', '20 000 zł'], dobra: 1, dlaczego: 'Cena zakupu bez VAT-u: 20 000. Plus transport: 20 800. 25 400 zawiera VAT, który firma odliczy. 20 000 to sama cena zakupu, bez transportu.' },
+  { q: 'Ten sam zakup, ale firma nie jest podatnikiem VAT i nie odlicza podatku. Ile wynosi cena nabycia?', opcje: ['25 400 zł', '20 800 zł', '24 600 zł'], dobra: 0, dlaczego: 'VAT, którego nie da się odliczyć, jest kosztem firmy i wchodzi do ceny: 20 000 + 4 600 + 800 = 25 400. 24 600 to cena zakupu z VAT-em, ale bez transportu.' },
+  { q: 'Cena z cennika 12 000 zł, rabat 1 000 zł, transport 500 zł. Ile wynosi cena zakupu?', opcje: ['11 500 zł', '12 500 zł', '11 000 zł'], dobra: 2, dlaczego: 'Cena zakupu = 12 000 − 1 000 = 11 000. Transportu nie dodaje się do ceny zakupu — dopiero do ceny nabycia (11 500). 12 500 pomija rabat.' },
+  { q: 'Import: cena 8 000 zł, cło 640 zł, transport 360 zł. Ile wynosi cena nabycia?', opcje: ['9 000 zł', '8 360 zł', '8 640 zł'], dobra: 0, dlaczego: 'Cena zakupu przy imporcie obejmuje cło: 8 000 + 640 = 8 640. Cena nabycia = 8 640 + 360 = 9 000. 8 640 to sama cena zakupu, a 8 360 pomija cło.' },
+]} />
+
+<Klasyfikator pytanie="Czy wchodzi do kosztu wytworzenia produktu?" kategorie={['Wchodzi', 'Nie wchodzi']} elementy={[
+  { tekst: 'Materiały zużyte do produkcji', kat: 0, dlaczego: 'Koszt bezpośrednio związany z produktem.' },
+  { tekst: 'Pensja zarządu spółki', kat: 1, dlaczego: 'Koszt ogólnego zarządu — nie wchodzi.' },
+  { tekst: 'Płace pracowników na linii produkcyjnej', kat: 0, dlaczego: 'Koszt bezpośredni.' },
+  { tekst: 'Reklama produktu w internecie', kat: 1, dlaczego: 'Koszt sprzedaży — nie wchodzi.' },
+  { tekst: 'Uzasadniona część energii zużytej w hali produkcyjnej', kat: 0, dlaczego: 'Uzasadniona część kosztów pośrednich wchodzi.' },
+  { tekst: 'Koszt przestoju maszyn z powodu braku zamówień', kat: 1, dlaczego: 'Niewykorzystane moce produkcyjne — nie wchodzą.' },
+  { tekst: 'Magazynowanie gotowych wyrobów przed wysyłką do klienta', kat: 1, dlaczego: 'Magazynowanie wyrobów gotowych nie wchodzi, chyba że jest niezbędne w produkcji.' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Sprawdź, czy rozumiesz podstawy" pytania={[
+  { q: 'Czym jest rachunkowość w ujęciu z wykładu?', opcje: ['Systemem informacyjnym służącym do decyzji gospodarczych i rozliczania kierownictwa', 'Obowiązkiem wobec urzędu skarbowego', 'Sposobem liczenia podatków'], dobra: 0, dlaczego: 'Rachunkowość to system informacyjny. Podatki to tylko jedno z zastosowań danych, a nie jej istota.' },
+  { q: 'Które dwie cechy informacji są fundamentalne?', opcje: ['Porównywalność i terminowość', 'Przydatność i wierna prezentacja', 'Zrozumiałość i sprawdzalność'], dobra: 1, dlaczego: 'Fundamentalne są przydatność i wierna prezentacja. Pozostałe cztery to cechy wzbogacające.' },
+  { q: 'Informacja jest bardzo zrozumiała i terminowa, ale nie przedstawia wiernie rzeczywistości. Jaka jest?', opcje: ['Bardziej użyteczna', 'Użyteczna', 'Nieużyteczna'], dobra: 2, dlaczego: 'Brak cechy fundamentalnej przekreśla użyteczność. Cechy wzbogacające jej nie naprawią.' },
+  { q: 'Która zasada stoi nad wszystkimi pozostałymi?', opcje: ['Wiernego i rzetelnego obrazu', 'Ostrożności', 'Zakazu kompensat'], dobra: 0, dlaczego: 'Pozostałe zasady służą temu, żeby sprawozdanie wiernie i rzetelnie pokazywało firmę.' },
+  { q: 'Zasada zakazu kompensat zabrania…', opcje: ['…tworzenia rezerw', '…pokazywania samej różnicy zamiast osobnych kwot', '…zmiany metod wyceny'], dobra: 1, dlaczego: 'Nie wolno łączyć różnych pozycji w saldo. Rezerwy wynikają z ostrożności, a stałość metod — z ciągłości.' },
+  { q: 'Który dokument NIE jest częścią sprawozdania finansowego?', opcje: ['Informacja dodatkowa', 'Rachunek zysków i strat', 'Sprawozdanie z działalności jednostki'], dobra: 2, dlaczego: 'Sprawozdanie z działalności to osobny dokument w sprawozdawczości finansowej. Razem ze sprawozdaniem finansowym wchodzi do raportu rocznego.' },
+  { q: 'W jakim porządku prowadzi się dziennik?', opcje: ['Systematycznym — konto po koncie', 'Chronologicznym — data po dacie', 'Alfabetycznym — według kontrahentów'], dobra: 1, dlaczego: 'Dziennik — chronologicznie. Księga główna — systematycznie, na kontach.' },
+  { q: 'Do którego zespołu planu kont należą rozrachunki z pracownikami?', opcje: ['2', '4', '8'], dobra: 0, dlaczego: 'Wszystkie rozrachunki są w zespole 2. Wynagrodzenia jako koszt są w zespole 4, a kapitały w 8.' },
+  { q: 'Czym różni się cena nabycia od ceny zakupu?', opcje: ['Cena nabycia zawiera VAT', 'Cena nabycia jest pomniejszona o rabat, a cena zakupu nie', 'Cena nabycia zawiera też koszty dostarczenia i przystosowania'], dobra: 2, dlaczego: 'Cena nabycia = cena zakupu + transport, montaż i inne koszty przystosowania. Rabat obniża już cenę zakupu, a odliczany VAT nie wchodzi do żadnej z nich.' },
+  { q: 'Co NIE wchodzi do kosztu wytworzenia?', opcje: ['Koszty sprzedaży produktów', 'Materiały bezpośrednie', 'Płace pracowników produkcji'], dobra: 0, dlaczego: 'Koszty sprzedaży ustawa wyłącza z kosztu wytworzenia. Materiały i płace produkcyjne to koszty bezpośrednie — wchodzą.' },
+]} />
