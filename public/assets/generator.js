@@ -169,7 +169,7 @@ async function openDeck(id, quiet){
   const r=await api("/decks/"+id);
   if(!r.ok){ setStatus(r.data.error||"Nie udało się wczytać talii.","err"); return; }
   clearStatus(); currentDeckId=id; currentShareId=r.data.share_id||null; prevDeck=null; lastSourceText="";
-  lastResult={ title:r.data.title, flashcards:r.data.flashcards, quiz:r.data.quiz };
+  lastResult={ title:r.data.title, flashcards:r.data.flashcards, quiz:r.data.quiz, note:r.data.note||"" };
   answers = r.data.answers || {}; quizMode = "all";
   reviews = r.data.reviews || {}; clockSkew = (r.data.now || Date.now()) - Date.now();
   render(lastResult, !quiet, true); renderDecks();
@@ -459,7 +459,7 @@ genBtn.addEventListener("click", async ()=>{
     setUsage(data.usage);
     currentDeckId = data.deck ? data.deck.id : null; currentShareId=null; prevDeck=null;
     if(data.deck){ decks.unshift(data.deck); renderDecks(); }
-    lastResult={ title:data.title, flashcards:data.flashcards, quiz:data.quiz };
+    lastResult={ title:data.title, flashcards:data.flashcards, quiz:data.quiz, note:data.note||"" };
     answers = {}; quizMode = "all"; reviews = {};
     render(lastResult, true, !!data.deck);
     if(data.save_error) setStatus(data.save_error+" — pobierz plik, żeby go nie stracić.","err");
@@ -567,6 +567,7 @@ function recordAnswer(q, ok){
 function render(data, scroll, saved){
   $("deckTitle").textContent = data.title || "Twój materiał";
   $("deckMeta").textContent = saved ? "✓ zapisano na koncie" : "";
+  const nb=$("deckNote"); if(nb){ nb.textContent=data.note||""; nb.hidden=!data.note; } // ostrzeżenie „odpowiedzi od AI” (tekst z serwera)
   const fcs=Array.isArray(data.flashcards)?data.flashcards:[];
   const qz=Array.isArray(data.quiz)?data.quiz:[];
   const grid=$("fcGrid"); grid.innerHTML="";
@@ -716,7 +717,7 @@ async function runEdit(body, btn, busy){
   }
   prevDeck={ ...before, _deckId: deckId };
   const d=r.data.deck;
-  lastResult={ title:d.title, flashcards:d.flashcards, quiz:d.quiz };
+  lastResult={ title:d.title, flashcards:d.flashcards, quiz:d.quiz, note:d.note||"" };
   render(lastResult, false, true); syncDeckInList(d);
   return true;
 }
@@ -866,7 +867,7 @@ function importHint(){ setStatus("Zaloguj się w sekcji 03 Konto, a udostępnion
 try{
   const saved = JSON.parse(ls.get(STORE_KEY) || "null");
   if(saved && (saved.flashcards || saved.quiz)){
-    lastResult = { title:saved.title, flashcards:saved.flashcards, quiz:saved.quiz }; savedDeckId = saved.deckId || null; render(lastResult, false);
+    lastResult = { title:saved.title, flashcards:saved.flashcards, quiz:saved.quiz, note:saved.note||"" }; savedDeckId = saved.deckId || null; render(lastResult, false);
     setStatus("Poniżej Twój ostatni materiał z tej przeglądarki. Nowe generowanie go nadpisze.","info");
   }
 }catch{ /* uszkodzony zapis — ignorujemy */ }

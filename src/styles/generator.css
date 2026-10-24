@@ -162,6 +162,8 @@
 .g-editp .g-label span{color:var(--magenta);}
 .g-editrow{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px;}
 .g-note{font-size:.78rem;color:var(--muted2);}
+.g-aiwarn{margin:10px 0 14px;padding:10px 14px;font-size:.86rem;line-height:1.5;color:var(--text);background:rgba(255,216,74,.08);border:1px solid rgba(255,216,74,.4);border-left:3px solid var(--gold);border-radius:6px;}
+.g-aiwarn[hidden]{display:none;}
 .g-back{flex-direction:column;gap:10px;}
 .g-fcbtn{font-family:var(--mono);font-size:.7rem;font-weight:600;color:var(--accent);background:rgba(7,6,15,.55);border:1px solid rgba(167,139,250,.4);border-radius:999px;padding:4px 10px;cursor:pointer;flex-shrink:0;}
 .g-fcbtn:hover{color:var(--text);border-color:var(--accent);}
