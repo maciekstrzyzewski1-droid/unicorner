@@ -197,16 +197,23 @@ async function handleGenerate(request, env, cors) {
   const system =
     "Jesteś asystentem do nauki. Na podstawie WYŁĄCZNIE dostarczonego materiału " +
     "tworzysz fiszki i quiz po polsku. Bazuj tylko na treści materiału — nie dodawaj " +
-    "wiedzy spoza niego (jedyny wyjątek: materiał z pytaniami bez odpowiedzi, patrz pole ai_answers). " +
+    "wiedzy spoza niego. Jedyny wyjątek: gdy materiał to same pytania albo lista zagadnień bez odpowiedzi, " +
+    "odpowiedzi piszesz z własnej wiedzy — to dozwolone, ale musisz to uczciwie oznaczyć polem material_type. " +
     "Odpowiadasz CZYSTYM JSON-em, bez markdownu, bez komentarzy.";
 
   const rules =
-`ZWRÓĆ DOKŁADNIE taki JSON (bez nic poza nim):
+`KROK 1 — zanim napiszesz fiszki, oceń SAM MATERIAŁ i wpisz "material_type" (jedna z trzech wartości):
+- "questions_only" — materiał to głównie pytania, polecenia, lista zagadnień, tematów lub samych pojęć BEZ odpowiedzi, definicji i wyjaśnień (np. lista pytań na egzamin, spis zagadnień). Wtedy definicje i odpowiedzi musisz napisać z własnej wiedzy.
+- "with_answers" — pytania lub zagadnienia RAZEM z odpowiedziami albo wyjaśnieniami (np. opracowane pytania, klucz odpowiedzi).
+- "notes" — notatki, wykład, skrypt, artykuł: ciągła treść z wyjaśnieniami.
+To opis materiału, a nie ocena Twojej pracy. Oceniaj uczciwie: od tej wartości zależy, czy uczeń zobaczy ostrzeżenie, że odpowiedzi pochodzą od AI.
+
+KROK 2 — ZWRÓĆ DOKŁADNIE taki JSON (bez nic poza nim), z "material_type" jako PIERWSZYM polem:
 {
+  "material_type": "questions_only | with_answers | notes",
   "title": "krótki tytuł materiału, max 60 znaków, np. Inflacja i jej rodzaje",
   "flashcards": [ { "term": "pojęcie/krótkie hasło", "def": "zwięzła definicja lub wyjaśnienie" } ],
-  "quiz": [ { "q": "treść pytania", "options": ["A","B","C","D"], "correct": 0, "explain": "krótkie uzasadnienie poprawnej odpowiedzi" } ],
-  "ai_answers": false
+  "quiz": [ { "q": "treść pytania", "options": ["A","B","C","D"], "correct": 0, "explain": "krótkie uzasadnienie poprawnej odpowiedzi" } ]
 }
 
 Zasady:
@@ -219,7 +226,7 @@ Zasady:
 - Dystraktory mają być prawdopodobne, nie absurdalne.
 - Definicje fiszek krótkie (1–2 zdania).
 - Jeśli materiału jest mało, zrób mniej pozycji, ale poprawnych.
-- "ai_answers": true ustaw TYLKO wtedy, gdy materiał to głównie pytania, tematy lub zagadnienia BEZ odpowiedzi i odpowiedzi do fiszek i quizu musisz podać z własnej wiedzy (to jedyny wyjątek od zasady „tylko z materiału”). Gdy odpowiedzi są w materiale, zostaw false. Nie dopisuj żadnego tekstu ostrzeżenia — wystarczy ta jedna wartość true/false.`;
+- Nie dopisuj żadnego tekstu ostrzeżenia — wystarczy wartość "material_type".`;
 
   let userContent;
   if (imageBlocks.length && isPdf) {
@@ -417,7 +424,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 12, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 13, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { console.error("health: baza", e && e.stack || e); out.db_error = "błąd bazy (szczegóły w logach)"; }
@@ -631,7 +638,7 @@ function noteFor(d) { return d && d.ai_answers ? AI_ANSWERS_NOTE : ""; }
 
 function normalizeDeck(p) {
   return {
-    ai_answers: !!(p && p.ai_answers === true),
+    ai_answers: !!(p && (p.ai_answers === true || p.material_type === "questions_only")),
     title: cleanTitle(p && p.title),
     flashcards: (Array.isArray(p && p.flashcards) ? p.flashcards : []).map(normCard).filter(Boolean).slice(0, MAX_ITEMS),
     quiz: (Array.isArray(p && p.quiz) ? p.quiz : []).map(normQuestion).filter(Boolean).slice(0, MAX_ITEMS),
