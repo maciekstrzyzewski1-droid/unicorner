@@ -419,6 +419,7 @@ function fail(msg){ clearInterval(stepTimer); progress(-1); setStatus(msg,"err")
 genBtn.addEventListener("click", async ()=>{
   if(!me) return;
   genBtn.disabled=true; clearStatus(); progress(0);
+  closeDeckView(false); // stara talia znika z widoku: po błędzie widać tylko komunikat (talia zostaje w „Twoich taliach”)
   let coverage="";
   try{
     const instruction = instr.value.trim().slice(0,MAX_INSTR);
