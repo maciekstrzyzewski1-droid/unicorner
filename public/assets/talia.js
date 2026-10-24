@@ -20,6 +20,7 @@ async function load(){
   $("tTitle").textContent = deck.title || "Talia";
   const fc = deck.flashcards.length, qz = deck.quiz.length;
   $("tMeta").textContent = fc + " " + plural(fc,"fiszka","fiszki","fiszek") + " · " + qz + " " + plural(qz,"pytanie","pytania","pytań");
+  const nb = $("tNote"); if(nb){ nb.textContent = deck.note || ""; nb.hidden = !deck.note; }
   $("tSave").href = "/generator.html?zapisz=" + encodeURIComponent(sid);
   renderCards(); renderQuiz();
   $("tLoading").hidden = true; $("tDeck").hidden = false;

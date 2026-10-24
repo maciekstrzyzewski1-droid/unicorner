@@ -197,14 +197,16 @@ async function handleGenerate(request, env, cors) {
   const system =
     "Jesteś asystentem do nauki. Na podstawie WYŁĄCZNIE dostarczonego materiału " +
     "tworzysz fiszki i quiz po polsku. Bazuj tylko na treści materiału — nie dodawaj " +
-    "wiedzy spoza niego. Odpowiadasz CZYSTYM JSON-em, bez markdownu, bez komentarzy.";
+    "wiedzy spoza niego (jedyny wyjątek: materiał z pytaniami bez odpowiedzi, patrz pole ai_answers). " +
+    "Odpowiadasz CZYSTYM JSON-em, bez markdownu, bez komentarzy.";
 
   const rules =
 `ZWRÓĆ DOKŁADNIE taki JSON (bez nic poza nim):
 {
   "title": "krótki tytuł materiału, max 60 znaków, np. Inflacja i jej rodzaje",
   "flashcards": [ { "term": "pojęcie/krótkie hasło", "def": "zwięzła definicja lub wyjaśnienie" } ],
-  "quiz": [ { "q": "treść pytania", "options": ["A","B","C","D"], "correct": 0, "explain": "krótkie uzasadnienie poprawnej odpowiedzi" } ]
+  "quiz": [ { "q": "treść pytania", "options": ["A","B","C","D"], "correct": 0, "explain": "krótkie uzasadnienie poprawnej odpowiedzi" } ],
+  "ai_answers": false
 }
 
 Zasady:
@@ -216,7 +218,8 @@ Zasady:
   * mieszaj pozycję poprawnej (raz 0, raz 1, 2, 3 — nie zawsze ta sama).
 - Dystraktory mają być prawdopodobne, nie absurdalne.
 - Definicje fiszek krótkie (1–2 zdania).
-- Jeśli materiału jest mało, zrób mniej pozycji, ale poprawnych.`;
+- Jeśli materiału jest mało, zrób mniej pozycji, ale poprawnych.
+- "ai_answers": true ustaw TYLKO wtedy, gdy materiał to głównie pytania, tematy lub zagadnienia BEZ odpowiedzi i odpowiedzi do fiszek i quizu musisz podać z własnej wiedzy (to jedyny wyjątek od zasady „tylko z materiału”). Gdy odpowiedzi są w materiale, zostaw false. Nie dopisuj żadnego tekstu ostrzeżenia — wystarczy ta jedna wartość true/false.`;
 
   let userContent;
   if (imageBlocks.length && isPdf) {
@@ -258,7 +261,7 @@ ${rules}${instrBlock}` + (material ? `\n\nDODATKOWY MATERIAŁ TEKSTOWY:\n"""\n${
   }
 
   const title = deck.title || defaultTitle(source);
-  const out = { title, flashcards: deck.flashcards, quiz: deck.quiz };
+  const out = { title, flashcards: deck.flashcards, quiz: deck.quiz, note: noteFor(deck) };
 
   // zapis talii na koncie
   if (user) {
@@ -266,7 +269,7 @@ ${rules}${instrBlock}` + (material ? `\n\nDODATKOWY MATERIAŁ TEKSTOWY:\n"""\n${
       out.deck = await saveDeck(env, user, {
         title, source: ["pdf", "img", "txt"].includes(source) ? source : (hasImages ? "img" : "txt"),
         instruction: typeof instruction === "string" ? instruction.slice(0, MAX_INSTRUCTION_CHARS) : "",
-        flashcards: out.flashcards, quiz: out.quiz,
+        flashcards: out.flashcards, quiz: out.quiz, ai_answers: deck.ai_answers,
       });
     } catch (e) { out.save_error = "Nie udało się zapisać talii na koncie"; }
     out.usage = await getUsage(env, user);
@@ -414,7 +417,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 11, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 12, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { console.error("health: baza", e && e.stack || e); out.db_error = "błąd bazy (szczegóły w logach)"; }
@@ -622,8 +625,13 @@ function normCard(c) {
   return out;
 }
 /* wspólna normalizacja talii (z AI albo od przeglądarki) */
+/* ostrzeżenie pochodzi z serwera, nigdy z tekstu AI ani z materiału (tekst z PDF-a nie może trafić na stronę udostępnionej talii) */
+const AI_ANSWERS_NOTE = "Materiał zawierał pytania bez odpowiedzi — odpowiedzi w tej talii pochodzą z wiedzy ogólnej AI, a nie z Twojego materiału. Sprawdź je w swoich źródłach.";
+function noteFor(d) { return d && d.ai_answers ? AI_ANSWERS_NOTE : ""; }
+
 function normalizeDeck(p) {
   return {
+    ai_answers: !!(p && p.ai_answers === true),
     title: cleanTitle(p && p.title),
     flashcards: (Array.isArray(p && p.flashcards) ? p.flashcards : []).map(normCard).filter(Boolean).slice(0, MAX_ITEMS),
     quiz: (Array.isArray(p && p.quiz) ? p.quiz : []).map(normQuestion).filter(Boolean).slice(0, MAX_ITEMS),
@@ -694,11 +702,11 @@ async function loadOwnDeck(env, user, id) {
   const row = await env.DB.prepare("SELECT id, title, source, data FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id).first();
   if (!row) return null;
   const d = safeParse(row.data) || {};
-  return { id: row.id, title: row.title, source: row.source, flashcards: d.flashcards || [], quiz: d.quiz || [] };
+  return { id: row.id, title: row.title, source: row.source, flashcards: d.flashcards || [], quiz: d.quiz || [], ai_answers: d.ai_answers === true };
 }
 
 async function storeDeck(env, user, id, deck) {
-  const data = JSON.stringify({ flashcards: deck.flashcards, quiz: deck.quiz });
+  const data = JSON.stringify({ flashcards: deck.flashcards, quiz: deck.quiz, ai_answers: deck.ai_answers ? true : undefined });
   if (data.length > MAX_DECK_JSON) throw httpErr(413, "Talia za duża — usuń część fiszek lub pytań");
   await env.DB.batch([
     env.DB.prepare("UPDATE decks SET title = ?, data = ?, fc_count = ?, qz_count = ?, updated_at = ? WHERE id = ? AND user_id = ?")
@@ -791,9 +799,10 @@ async function handleDeckPut(request, env, cors, id) {
   const d = normalizeDeck(body);
   if (!d.flashcards.length && !d.quiz.length) return json({ error: "Pusta talia" }, 400, cors);
   d.title = d.title || old.title;
+  d.ai_answers = old.ai_answers; // flagę ustawia tylko generowanie; cofnięcie ani klient jej nie zmienia
   try { await storeDeck(env, user, id, d); }
   catch (e) { const pe = publicError(e, "Nie udało się zapisać talii — spróbuj ponownie.", 500); return json({ error: pe.error }, pe.status, cors); }
-  return json({ ok: true, deck: { id, ...d } }, 200, cors);
+  return json({ ok: true, deck: { id, ...d, note: noteFor(d) } }, 200, cors);
 }
 
 /* POST /decks/:id/edit {instruction, material?} — AI przerabia całą talię według polecenia */
@@ -850,8 +859,9 @@ ${OPTION_RULES}`;
     fresh.quiz.forEach(q => { if (q.more) qzMore[qkey(q.q)] = q.more; });
     d.flashcards.forEach(c => { const m = fcMore[qkey(c.term)]; if (m && !c.more) c.more = m; });
     d.quiz.forEach(q => { const m = qzMore[qkey(q.q)]; if (m && !q.more) q.more = m; });
+    d.ai_answers = fresh.ai_answers; // edycja AI nie może ani dodać, ani zgubić ostrzeżenia
     await storeDeck(env, user, id, d);
-    return { deck: { id, ...d } };
+    return { deck: { id, ...d, note: noteFor(d) } };
   });
 }
 
@@ -914,7 +924,7 @@ function defaultTitle(source) {
 async function saveDeck(env, user, d) {
   const cnt = await env.DB.prepare("SELECT COUNT(*) AS n FROM decks WHERE user_id = ?").bind(user.id).first();
   if (cnt && cnt.n >= MAX_DECKS_PER_USER) throw httpErr(409, `Masz już ${MAX_DECKS_PER_USER} talii — usuń starsze, żeby zapisać nową.`);
-  const data = JSON.stringify({ flashcards: d.flashcards, quiz: d.quiz });
+  const data = JSON.stringify({ flashcards: d.flashcards, quiz: d.quiz, ai_answers: d.ai_answers ? true : undefined });
   if (data.length > MAX_DECK_JSON) throw httpErr(413, "Talia za duża — usuń część fiszek lub pytań");
   const id = crypto.randomUUID(), now = Date.now();
   await env.DB.prepare(
@@ -945,7 +955,7 @@ async function handleDeckGet(request, env, cors, id) {
   if (!row) return json({ error: "Nie ma takiej talii" }, 404, cors);
   const data = safeParse(row.data) || {};
   return json({ id: row.id, title: row.title, source: row.source, instruction: row.instruction, created_at: row.created_at,
-    share_id: row.share_id || null, views: row.views || 0, flashcards: data.flashcards || [], quiz: data.quiz || [],
+    share_id: row.share_id || null, views: row.views || 0, flashcards: data.flashcards || [], quiz: data.quiz || [], note: noteFor({ ai_answers: data.ai_answers === true }),
     answers: await deckAnswers(env, user, id), reviews: await deckReviews(env, user, id), now: Date.now() }, 200, cors);
 }
 
@@ -1017,7 +1027,7 @@ async function handleSharedGet(env, cors, sid) {
   if (!row) return json({ error: "Ten link wygasł albo autor wyłączył udostępnianie." }, 404, cors);
   try { await env.DB.prepare("UPDATE shares SET views = views + 1 WHERE share_id = ?").bind(sid).run(); } catch {}
   const d = safeParse(row.data) || {};
-  return json({ title: row.title, updated_at: row.updated_at, flashcards: d.flashcards || [], quiz: d.quiz || [] },
+  return json({ title: row.title, updated_at: row.updated_at, flashcards: d.flashcards || [], quiz: d.quiz || [], note: noteFor({ ai_answers: d.ai_answers === true }) },
     200, { ...cors, "Cache-Control": "public, max-age=30" });
 }
 
@@ -1030,7 +1040,7 @@ async function handleSharedCopy(request, env, cors, sid) {
   if (row.user_id === user.id) return json({ deck: { id: row.deck_id, title: row.title }, own: true }, 200, cors);
   const d = normalizeDeck({ ...(safeParse(row.data) || {}), title: row.title });
   try {
-    const deck = await saveDeck(env, user, { title: d.title || "Talia od znajomego", source: "share", instruction: "", flashcards: d.flashcards, quiz: d.quiz });
+    const deck = await saveDeck(env, user, { title: d.title || "Talia od znajomego", source: "share", instruction: "", flashcards: d.flashcards, quiz: d.quiz, ai_answers: d.ai_answers });
     return json({ deck }, 200, cors);
   } catch (e) { const pe = publicError(e, "Nie udało się zapisać talii — spróbuj ponownie.", 500); return json({ error: pe.error }, pe.status, cors); }
 }
