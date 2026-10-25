@@ -37,8 +37,11 @@ const ld = {
     <meta property="og:description" content={a.lede} />
     <meta property="og:url" content={url} />
     <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content="https://unicorner.pl/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="article:section" content={a.categoryName} />
-    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:card" content="summary_large_image" />
     <script type="application/ld+json" set:html={JSON.stringify(ld)} />
     <style is:inline>
       /* przywrócenie domyślnych odstępów (Tailwind preflight je zeruje); :where = zero specyficzności, CSS artykułu wygrywa */

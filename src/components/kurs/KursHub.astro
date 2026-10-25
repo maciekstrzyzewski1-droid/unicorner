@@ -27,6 +27,10 @@ const url = `https://unicorner.pl${courseUrl(COURSE.slug)}`;
     <meta property="og:description" content={COURSE.seoDesc} />
     <meta property="og:url" content={url} />
     <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content="https://unicorner.pl/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
   </Fragment>
 
   <Bar crumbs={[{ label: COURSE.name }]} />
