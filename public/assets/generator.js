@@ -879,6 +879,8 @@ function buildStandaloneHtml(data){
   // dane wstrzykiwane jako JSON — zero zależności, działa offline
   // escape "<" chroni przed przedwczesnym zamknięciem bloku skryptu w pobranym pliku
   const payload = JSON.stringify({flashcards:fcs, quiz:qz}).replace(/</g,"\\u003c");
+  // ostrzeżenie R-15 („odpowiedzi od AI”) trafia do pliku jako gotowy, escapowany tekst — działa bez skryptu
+  const note = data.note ? '<div class="aiwarn" role="note">'+esc(data.note)+'</div>' : "";
   return `<!DOCTYPE html>
 <html lang="pl"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -914,11 +916,13 @@ h1{font-family:var(--mono);font-size:1.5rem;letter-spacing:.5px;}
 .opt.wrong{border-color:var(--bad-line);background:var(--bad-bg);color:#f7c9d1;}
 .exp{display:none;font-size:.88rem;color:var(--muted);margin-top:6px;border-left:3px solid var(--accent);background:var(--ink);border-radius:4px;padding:10px 12px;}
 .exp.show{display:block;}
+.aiwarn{margin:-8px 0 18px;padding:10px 14px;font-size:.88rem;line-height:1.5;color:var(--text);background:rgba(255,216,74,.08);border:1px solid rgba(255,216,74,.4);border-left:3px solid #ffd84a;border-radius:6px;}
 .foot{margin-top:26px;font-size:.76rem;color:var(--muted);border-top:1px solid var(--line);padding-top:16px;}
 </style></head>
 <body><div class="wrap">
 <div class="head"><span class="dot"></span><h1 class="h1">Uni<span class="g">corner</span> — Twój materiał</h1></div>
 <div class="sub">Wygenerowane fiszki i quiz. Ten plik działa offline — zapisz go u siebie.</div>
+${note}
 <div class="tabs"><button class="tab active" data-p="fc">Fiszki</button><button class="tab" data-p="qz">Quiz</button></div>
 <div class="pane active" id="fc"><div class="fc-grid" id="fcg"></div></div>
 <div class="pane" id="qz"><div id="qzl"></div></div>
