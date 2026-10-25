@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia muszli</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;color:#fff;}
+strong{font-weight:600;color:#fff;}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;}
+.box p{margin:0 0 10px;} .box p:last-child{margin-bottom:0;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 132px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .ev.crit:before{background:var(--red);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .ev.crit .yr{color:var(--red);}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.bars{margin:30px 0;} .bars .bt{font-family:'Fraunces',serif;color:#fff;margin-bottom:14px;font-size:1.05rem;}
+.bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.red{background:var(--red);} .bars .fill.blue{background:var(--blue);} .bars .fill.green{background:var(--green);}
+.bars .val{flex:0 0 64px;text-align:right;font-variant-numeric:tabular-nums;}
+.caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .st{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:10px;}
+.twocol .side.a .st{color:var(--red);} .twocol .side.b .st{color:var(--green);}
+.twocol .side p{margin:0 0 8px;} .twocol .side p:last-child{margin:0;}
+blockquote{margin:30px 0;padding:4px 0 4px 20px;border-left:2px solid var(--gold);font-family:'Fraunces',serif;font-size:1.15rem;line-height:1.5;color:#fff;}
+blockquote cite{display:block;font-family:'Work Sans',sans-serif;font-style:normal;font-size:.8rem;color:var(--muted);margin-top:8px;}
+/* karta ocen */
+.score{margin:34px 0;border:1px solid var(--line);}
+.score .srow{display:grid;grid-template-columns:150px 1fr;gap:14px;padding:13px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.score .srow:last-child{border-bottom:none;}
+.score .cat{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);font-weight:600;line-height:1.4;}
+.score .who{font-size:.92rem;line-height:1.5;}
+.score .who b{color:#fff;font-weight:600;}
+.score .hd{background:var(--card);}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+ul.sources{list-style:none;padding:0;font-size:.85rem;color:var(--muted);line-height:1.6;}
+ul.sources li{margin-bottom:10px;padding-left:14px;border-left:1px solid var(--line);}
+ul.sources a{color:var(--muted);word-break:break-word;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+footer.end p{margin:0 0 10px;}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 96px;font-size:1.08rem;} .bars .lab{flex:0 0 100px;font-size:.78rem;} .bars .val{flex:0 0 54px;font-size:.78rem;} .twocol{grid-template-columns:1fr;} .score .srow{grid-template-columns:1fr;gap:4px;}}
+</style>
+</head>
+<body><div class="wrap">
+<header class="top">
+  <div class="kicker">Artykuł badawczy</div>
+  <h1>Anatomia muszli</h1>
+  <p class="lede">Shell ma za sobą ropę w nigeryjskich wioskach, egzekucję działaczy, raport o klimacie schowany do szuflady i oszustwo na rezerwach. Sprawdzamy, czy to wystarcza, żeby nazwać go najgorszym koncernem naftowym świata. Odpowiedź jest mniej wygodna niż prosty ranking.</p>
+  <div class="meta">Październik 2026 · czas czytania ok. 32 minuty</div>
+</header>
+
+<p>W 2008 roku w nigeryjskiej wspólnocie Bodo pękł rurociąg Shella. Potem drugi raz. Według ekspertów strony pozywającej ropa płynęła przez nieszczelną rurę jeszcze około pięciu miesięcy po tym, jak firma wiedziała o wyciekach. Świadek powołany przez stronę Shella szacował, że do ziemi i wody trafiło około 600 tysięcy baryłek. To mniej więcej tyle, ile mieści się w 38 basenach olimpijskich.</p>
+
+<p>Dyrektor projektu sprzątania nazwał później te szkody największymi tego typu, jakie kiedykolwiek wyrządzono na świecie. Ponad piętnaście lat później obie strony wciąż spierają się w londyńskim sądzie o to, czy teren został naprawdę oczyszczony.</p>
+
+<p>Ta historia dobrze pasuje do obrazu Shella jako czarnego charakteru branży. Ale pojawia się pytanie, które łatwo przeoczyć. Czy Shell jest najgorszy? Czy może jest po prostu najlepiej opisany?</p>
+
+<p>Ten tekst rozkłada na części moralny dorobek Shella. Mowa o Nigerii, klimacie, aferach finansowych i holenderskich trzęsieniach ziemi. Potem stawiamy obok niego inne koncerny, których logo widzimy na polskich stacjach albo których ropa płynie do naszych baków. Są wśród nich BP, ExxonMobil, Chevron, TotalEnergies, saudyjski Aramco, rosyjski Lukoil, węgierski MOL i Orlen.</p>
+
+<div class="box">
+  <div class="bt">Zanim zaczniemy</div>
+  <p>Duża część spraw opisanych niżej to zarzuty, a nie wyroki. Wiele z nich zakończyło się ugodą, w której firma płaci, ale nie przyznaje się do winy. Tam, gdzie sąd orzekł, piszemy, co dokładnie orzekł. Tam, gdzie mamy tylko relację jednej strony, mówimy, czyja to relacja.</p>
+  <p>Ugoda nie jest przyznaniem się do winy. Ale nie jest też dowodem niewinności. Zwykle oznacza, że obu stronom bardziej opłacało się zakończyć sprawę niż czekać na wyrok.</p>
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Siedemdziesiąt lat w delcie</h2>
+
+<p>Delta Nigru to bagnisty obszar u ujścia rzeki Niger, w południowej Nigerii. Jest największym regionem wydobycia ropy w Afryce. Shell zaczął tam rozwijać przemysł naftowy w latach 50. XX wieku. Działał przez spółkę zależną Shell Petroleum Development Company of Nigeria, w skrócie SPDC.</p>
+
+<p>Spółka zależna to osobna firma, której właścicielem jest koncern. Ten szczegół jest kluczowy. Przez dekady Shell argumentował w sądach, że za wycieki w Nigerii odpowiada nigeryjska spółka, a nie brytyjska centrala. To trochę jak właściciel kamienicy, który mówi, że za cieknący dach odpowiada zarządca, a nie on.</p>
+
+<h3>Co znaleźli naukowcy ONZ</h3>
+
+<p>Najbardziej szczegółowy obraz zniszczeń dał raport Programu Środowiskowego ONZ (UNEP) z 2011 roku o Ogonilandzie. Ogoniland to część delty zamieszkana przez lud Ogoni. Badanie trwało 14 miesięcy. Naukowcy sprawdzili ponad 200 miejsc i 122 kilometry tras rurociągów. Pobrali ponad 4 tysiące próbek gleby i wody, przejrzeli ponad 5 tysięcy kart medycznych i rozmawiali z ponad 23 tysiącami ludzi.</p>
+
+<p>Najbardziej szokujący wynik dotyczył wsi Nisisioken Ogale. W tamtejszych studniach stężenie benzenu przekraczało normę Światowej Organizacji Zdrowia ponad 900 razy. Benzen to związek chemiczny obecny w ropie. Jest rakotwórczy, czyli zwiększa ryzyko nowotworów, zwłaszcza białaczki. W co najmniej dziesięciu społecznościach woda pitna zawierała wysokie stężenia węglowodorów, czyli związków, z których składa się ropa.</p>
+
+<p>Tu trzeba uczciwie dodać szczegół, który często ginie w opowieściach. Studnie w Nisisioken Ogale leżały przy rurociągu nigeryjskiej państwowej firmy naftowej, a nie Shella. Raport mówi o skutkach ponad 50 lat przemysłu naftowego w całym regionie. W tym przemyśle Shell był najważniejszym, ale nie jedynym graczem.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">900×</div><div class="d">tyle razy stężenie rakotwórczego benzenu w studniach Nisisioken Ogale przekraczało normę WHO (UNEP, 2011)</div></div>
+  <div class="nrow"><div class="n">25–30 lat</div><div class="d">szacowany czas pełnego oczyszczenia Ogonilandu według UNEP</div></div>
+  <div class="nrow"><div class="n">1 mld $</div><div class="d">kwota potrzebna na samo pierwsze pięć lat sprzątania, którą mieli wyłożyć przemysł naftowy i rząd</div></div>
+  <div class="nrow"><div class="n">ok. 1 mln</div><div class="d">mieszkańców Ogonilandu dotkniętych skutkami pół wieku wydobycia</div></div>
+</div>
+
+<p>Raport zauważył też coś, co dobrze oddaje naturę problemu. Niektóre tereny wyglądają z wierzchu na czyste. Pod powierzchnią są jednak mocno skażone. Ropa wsiąka w glebę jak kawa w kostkę cukru. Z zewnątrz kostka może wyglądać na białą, a w środku jest już przesiąknięta.</p>
+
+<p>Jeszcze jeden szczegół: badanie sfinansował sam Shell. UNEP podkreślał, że to zgodne z zasadą „zanieczyszczający płaci”, a samo badanie było niezależne.</p>
+
+<h3>Kto przebija rury</h3>
+
+<p>Najważniejszy spór o Nigerię nie dotyczy tego, czy ropa się wylewa. Dotyczy tego, dlaczego.</p>
+
+<div class="twocol">
+  <div class="side b"><div class="st">Stanowisko Shella</div>
+    <p>Zdecydowaną większość wycieków powodują przestępcy. Wiercą dziury w rurociągach, kradną ropę i przerabiają ją w nielegalnych, prymitywnych rafineriach. Do tego dochodzi sabotaż.</p>
+    <p>Spółka sprząta wycieki niezależnie od ich przyczyny. Procesy sądowe nie rozwiązują prawdziwego problemu, którym jest przestępczość.</p></div>
+  <div class="side a"><div class="st">Stanowisko krytyków</div>
+    <p>Kradzieże są faktem, ale rurociągi bywają stare, skorodowane i słabo pilnowane. Firma odpowiada za zabezpieczenie własnej infrastruktury.</p>
+    <p>Bez przejrzystych danych o stanie rur nie da się uczciwie ustalić, ile wycieków to kradzież, a ile zaniedbanie. Takich danych region nigdy nie miał.</p></div>
+</div>
+
+<p>W czerwcu 2025 roku londyński Sąd Wyższy (High Court) rozstrzygnął część tego sporu. Sprawę wniosły wspólnoty Ogale i Bille, które razem liczą około 50 tysięcy ludzi. Sędzia May orzekła, że Shell może odpowiadać nawet za szkody spowodowane kradzieżą ropy. Warunek: jeśli firma nie chroniła odpowiednio swoich rurociągów, a zwłaszcza jeśli w kradzieżach uczestniczyli jej pracownicy.</p>
+
+<p>Sędzia odrzuciła też argument Shella o sztywnym pięcioletnim terminie przedawnienia. Uznała, że niesprzątnięty wyciek może być naruszeniem trwającym każdego dnia, dopóki ropa leży na cudzej ziemi. Zgodziła się też, żeby pozew dotyczył spółki matki, a nie tylko nigeryjskiej córki. Główny proces ma ruszyć na początku 2027 roku.</p>
+
+<p>To nie jest wyrok skazujący. To rozstrzygnięcie, że sprawa w ogóle może się toczyć. Ale po dekadzie przepychanek proceduralnych to dla mieszkańców delty duża zmiana.</p>
+
+<h3>Bodo, Oruma i inne nazwy z akt</h3>
+
+<p>Wróćmy do Bodo. Shell przyjął odpowiedzialność za dwa wycieki z 2008 roku i w 2015 roku zgodził się zapłacić wspólnocie 55 milionów funtów, czyli wtedy około 70 milionów dolarów. Na tym jednak sprawa się nie skończyła.</p>
+
+<p>Mieszkańcy wrócili do sądu, bo ich zdaniem sprzątanie jest powolne i nieskuteczne. Według prawników wspólnoty z Leigh Day po 17 latach z ziemi usunięto zaledwie około 7 procent ropy. Shell i nowy właściciel nigeryjskiej spółki odpowiadają, że sprzątanie się udało i jest prawie ukończone. Twierdzą też, że pozostała ropa pochodzi z późniejszych wycieków i nielegalnych rafinerii. Proces zakończył się w 2025 roku, a sąd odłożył ogłoszenie wyroku.</p>
+
+<p>Trzeba pamiętać, że ten opis pochodzi głównie od prawników strony pozywającej. Ostateczne ustalenia przyniesie dopiero wyrok.</p>
+
+<p>Druga sprawa toczyła się w Holandii. Dotyczyła czterech wycieków z lat 2004–2007 we wsiach Oruma, Goi i Ikot Ada Udo. W styczniu 2021 roku sąd apelacyjny w Hadze wydał w niej wyroki. Kazał między innymi zainstalować system wykrywania wycieków na jednym z rurociągów. W grudniu 2022 roku Shell zawarł ugodę i zapłacił 15 milionów euro. Ugoda wprost zaznaczała, że firma nie przyznaje się do odpowiedzialności.</p>
+
+<p>Shell wygrywał jednak też w sądach. W 2023 roku brytyjski Sąd Najwyższy orzekł na jego korzyść w sprawie wycieku z morskiego pola Bonga z 2011 roku. Szacowano wtedy, że do morza trafiło około 40 tysięcy baryłek. Sąd nie badał dowodów. Rozstrzygnął tylko kwestię prawną: uznał, że nie było tam „trwającego naruszenia”, więc roszczenia przyszły za późno.</p>
+
+<h3>Wyjście z delty</h3>
+
+<p>13 marca 2025 roku Shell sprzedał SPDC. Kupiło ją konsorcjum Renaissance złożone z kilku firm nigeryjskich i jednej międzynarodowej. Nigeryjski rząd zatwierdził transakcję wartą do 2,4 miliarda dolarów. Spółka zmieniła nazwę na Renaissance Africa Energy Company.</p>
+
+<p>Z punktu widzenia biznesu to logiczny ruch. Lądowe wydobycie w delcie jest kosztowne, niebezpieczne i ciągle kończy się w sądzie. Z punktu widzenia mieszkańców wygląda to inaczej. Firma, która przez siedem dekad zarabiała na delcie, wychodzi z niej, zostawiając skażenie i nierozstrzygnięte procesy. Lokalny władca próbował zablokować tę sprzedaż w nigeryjskim sądzie, ale w lipcu 2026 roku przegrał. Jego prawnik zapowiedział apelację.</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">Lata 50.</div><div class="txt">Shell rozpoczyna rozwój przemysłu naftowego w delcie Nigru.</div></div>
+  <div class="ev crit"><div class="yr">1995</div><div class="txt">Wojskowy reżim wiesza Kena Saro-Wiwę i ośmiu innych działaczy Ogoni, protestujących przeciw skutkom wydobycia.</div></div>
+  <div class="ev crit"><div class="yr">2008</div><div class="txt">Dwa wielkie wycieki w Bodo. Ropa płynie miesiącami.</div></div>
+  <div class="ev"><div class="yr">2009</div><div class="txt">Ugoda w USA w sprawie Ogoni: 15,5 mln dolarów, bez przyznania się do winy.</div></div>
+  <div class="ev"><div class="yr">2011</div><div class="txt">Raport UNEP o Ogonilandzie: benzen ponad 900 razy powyżej normy WHO, sprzątanie na 25–30 lat.</div></div>
+  <div class="ev"><div class="yr">2015</div><div class="txt">Ugoda z Bodo: 55 mln funtów.</div></div>
+  <div class="ev"><div class="yr">2021–2022</div><div class="txt">Wyroki w Hadze w sprawie Orumy, Goi i Ikot Ada Udo, potem ugoda na 15 mln euro.</div></div>
+  <div class="ev"><div class="yr">Marzec 2025</div><div class="txt">Shell sprzedaje nigeryjską spółkę lądową konsorcjum Renaissance.</div></div>
+  <div class="ev"><div class="yr">Czerwiec 2025</div><div class="txt">Londyński sąd: Shell może odpowiadać za stare wycieki, a nawet za skutki kradzieży ropy.</div></div>
+  <div class="ev"><div class="yr">2027</div><div class="txt">Planowany główny proces wspólnot Ogale i Bille.</div></div>
+</div>
+
+<h2><span class="num">Rozdział drugi</span>Dziewięć szubienic</h2>
+
+<p>Na początku lat 90. lud Ogoni zaczął protestować przeciw skutkom wydobycia na swojej ziemi. Na czele ruchu stał Ken Saro-Wiwa, pisarz i producent telewizyjny. Współzałożony przez niego Ruch na rzecz Przetrwania Ludu Ogoni domagał się udziału w zyskach z ropy i pewnej autonomii politycznej. W styczniu 1993 roku Saro-Wiwa poprowadził pokojowy marsz około 300 tysięcy ludzi.</p>
+
+<p>Nigerią rządziła wtedy junta generała Saniego Abachy. Wojsko zajęło Ogoniland. Według relacji organizacji praw człowieka dochodziło do masowych aresztowań, gwałtów, egzekucji i palenia wsi. Saro-Wiwę oskarżono o udział w zabójstwie czterech lokalnych przywódców. Amnesty International uznała go za więźnia sumienia.</p>
+
+<p>Trybunał wojskowy skazał go w październiku 1995 roku. Rządy i organizacje na całym świecie uznały proces za sfingowany. 10 listopada 1995 roku Saro-Wiwę i ośmiu innych działaczy powieszono. Do historii przeszli jako „Dziewiątka z Ogoni”.</p>
+
+<h3>Co zarzuca się Shellowi</h3>
+
+<p>Shell nigdy nie został skazany w związku z tymi egzekucjami. Zarzuty są jednak poważne i dobrze udokumentowane po stronie oskarżycieli.</p>
+
+<p>W 2017 roku Amnesty International opublikowała raport oparty na tysiącach stron wewnętrznych dokumentów firmy, zeznań świadków i własnych archiwów. Organizacja twierdzi, że Shell wielokrotnie zachęcał nigeryjskie wojsko do rozprawienia się z protestami, wiedząc, czym to się może skończyć. Według Amnesty firma zapewniała wojsku wsparcie materialne, w tym transport. Miała też zapłacić co najmniej jednemu dowódcy znanemu z łamania praw człowieka. Shell zawsze zaprzeczał udziałowi w tych przestępstwach.</p>
+
+<p>W 2009 roku w Nowym Jorku miał ruszyć proces cywilny. Rodziny straconych oskarżały Shella o współudział w torturach i zabójstwach. Tuż przed rozprawą strony zawarły ugodę na 15,5 miliona dolarów. Shell nie przyznał się do winy. Mówił, że płaci w imię „procesu pojednania”, i podkreślał, że nie miał udziału w przemocy. Ugoda miała też efekt uboczny: zeznania świadków nigdy nie zostały upublicznione na sali sądowej.</p>
+
+<p>Druga próba odbyła się w Holandii. Cztery wdowy po straconych, w tym Esther Kiobel, zarzuciły Shellowi udział w przekupieniu świadków, których zeznania doprowadziły do wyroku śmierci. Kilku świadków zeznało, że przedstawiciele Shella płacili im za wyuczone, fałszywe zeznania. W marcu 2022 roku sąd w Hadze oddalił pozew. Uznał, że zeznania opierają się w dużej mierze na przypuszczeniach i nie dowodzą, że pieniądze pochodziły od Shella.</p>
+
+<div class="box">
+  <div class="bt">Co wiemy na pewno, a czego nie</div>
+  <p><strong>Fakt:</strong> dziewięciu działaczy protestujących przeciw skutkom wydobycia stracono po procesie, który świat uznał za nieuczciwy.</p>
+  <p><strong>Fakt:</strong> Shell zapłacił 15,5 miliona dolarów ugody, nie przyznając się do winy.</p>
+  <p><strong>Zarzut, nieprzesądzony sądownie:</strong> że firma zachęcała wojsko do represji, wspierała je logistycznie i opłacała świadków.</p>
+  <p><strong>Wyrok:</strong> holenderski sąd uznał w 2022 roku, że dowody na przekupienie świadków przez Shella są niewystarczające.</p>
+</div>
+
+<p>To rozróżnienie jest ważne. Prawnie Shell jest w tej sprawie czysty. Moralnie jego pozycja zależy od tego, ile wagi przyłożymy do dokumentów, które nigdy nie zostały zweryfikowane w pełnym procesie. Ta niejasność nie jest przypadkiem. Ugoda przed procesem to właśnie mechanizm, który sprawia, że takie pytania zostają bez odpowiedzi.</p>
+
+<h2><span class="num">Rozdział trzeci</span>Wiedzieli w 1988 roku</h2>
+
+<p>Nigeria to krzywda lokalna. Klimat to krzywda globalna. I tu Shell ma problem innego rodzaju: nie chodzi o to, co zrobił, ale o to, co wiedział.</p>
+
+<h3>Raport z pieczątką „poufne”</h3>
+
+<p>Shell zlecał poufne analizy efektu cieplarnianego już w 1981 roku. Efekt cieplarniany to zjawisko, w którym gazy takie jak dwutlenek węgla zatrzymują ciepło w atmosferze. Działa to podobnie jak szyba w szklarni: przepuszcza światło, ale nie wypuszcza ciepła.</p>
+
+<p>Wewnętrzna grupa robocza Shella badała ten temat w latach 1981–1986. W 1988 roku powstał z tego około 90-stronicowy raport „The Greenhouse Effect”, oznaczony jako poufny. Wynikało z niego, że spalanie paliw kopalnych może ocieplić Ziemię o 1,5 do 3,5 stopnia. Raport ostrzegał przed zmianami poziomu mórz, prądów oceanicznych i opadów. Wyliczał nawet, jaki udział w emisjach mają produkty samego Shella. Dokument ujawnił dopiero w 2018 roku holenderski dziennikarz Jelmer Mommers z serwisu De Correspondent.</p>
+
+<p>W 1991 roku Shell poszedł o krok dalej. Nakręcił 28-minutowy film edukacyjny „Climate of Concern”. Pokazywano go w szkołach i na uczelniach. Film ostrzegał przed ekstremalną pogodą, powodziami, głodem i uchodźcami klimatycznymi. Klimatolog Tom Wigley, który pomagał przy filmie, powiedział później, że jego prognozy trzymają się dziś „całkiem dobrze”. Dodał też, że późniejsze działania Shella absolutnie nie były zgodne z tym ostrzeżeniem.</p>
+
+<p>Potem nastąpił zwrot. W 1994 roku Shell zlecił aktualizację raportu. Nowa wersja zawierała długie rozważania o niepewności nauki. Według Union of Concerned Scientists, amerykańskiej organizacji zrzeszającej naukowców, od tego momentu Shell coraz mocniej akcentował wątpliwości. Działo się to rok przed pierwszą światową konferencją klimatyczną ONZ, na której państwa zaczęły negocjować ograniczenie emisji.</p>
+
+<h3>To nie jest wyłącznie historia Shella</h3>
+
+<p>Tu Shell przestaje być wyjątkiem. ExxonMobil wiedział tyle samo albo więcej i znacznie głośniej to ukrywał.</p>
+
+<p>W 2023 roku czasopismo Science opublikowało analizę Geoffreya Suprana, Naomi Oreskes i Stefana Rahmstorfa. Badacze sprawdzili prognozy ocieplenia, które naukowcy Exxona przygotowali w latach 1977–2003. Od 63 do 83 procent tych prognoz okazało się zgodnych z późniejszymi pomiarami temperatury. Przewidywały ocieplenie o około 0,2 stopnia na dekadę. Tak właśnie się stało.</p>
+
+<p>Mimo to ówczesny prezes Exxona Lee Raymond mówił w 1999 roku, że prognozy klimatyczne opierają się na niesprawdzonych modelach albo na czystej spekulacji. Supran podsumował to tak: Exxon nie tylko wiedział, ale wiedział precyzyjnie. Exxon odpowiada, że jego wiedza rozwijała się razem z nauką, a hasło „Exxon wiedział” to błędne uproszczenie.</p>
+
+<blockquote>Exxon nie tylko wiedział. Wiedział precyzyjnie.<cite>Geoffrey Supran, Uniwersytet w Miami, o wynikach analizy w Science (2023)</cite></blockquote>
+
+<p>Francuski Total ma podobną historię, tylko wcześniejszą. Historycy Christophe Bonneuil i Pierre-Louis Choquet oraz Benjamin Franta ze Stanfordu opisali ją w 2021 roku w czasopiśmie Global Environmental Change. Już w 1971 roku firmowy magazyn „Total Information” opublikował tekst geografa François Durand-Dastèsa. Przewidywał on wzrost stężenia CO2 do około 400 ppm około 2010 roku, ocieplenie i topnienie lodu polarnego. Ta prognoza też okazała się trafna. Pod koniec lat 80. firma zaczęła jednak podważać podstawy nauki. Pod koniec lat 90. publicznie ją przyjęła, ale jednocześnie zabiegała o odkładanie regulacji.</p>
+
+<p>BP poszło inną drogą. Zamiast podważać naukę, przesunęło odpowiedzialność. W latach 2004–2006 koncern wydawał ponad 100 milionów dolarów rocznie na kampanię wizerunkową „Beyond Petroleum”, prowadzoną przez agencję Ogilvy &amp; Mather. Umieścił na swojej stronie jeden z pierwszych kalkulatorów „śladu węglowego”. W reklamach pytał ludzi, jaki jest ich osobisty ślad. Według Suprana to właśnie BP spopularyzowało ten termin.</p>
+
+<p>Ślad węglowy to szacunek, ile gazów cieplarnianych powoduje życie jednej osoby. Sam pomysł nie jest zły. Problem w tym, kto go promował. Koncern, który wydobywa ropę, zachęcał każdego z nas do liczenia emisji z naszego czajnika i samochodu. BP odpowiada, że nie spopularyzowało ani kalkulatorów, ani samego pojęcia.</p>
+
+<h3>Obietnice, które wyparowały</h3>
+
+<p>Wiedza z przeszłości to jedno. Ważniejsze jest, co koncerny robią dziś.</p>
+
+<p>W maju 2021 roku sąd okręgowy w Hadze wydał przełomowy wyrok w sprawie wytoczonej przez holenderską organizację Milieudefensie. Nakazał Shellowi zmniejszyć emisje o 45 procent do 2030 roku w porównaniu z 2019 rokiem. Chodziło o emisje własne i o emisje z produktów sprzedawanych klientom. Pierwszy raz sąd nakazał konkretnej firmie konkretną redukcję.</p>
+
+<p>W listopadzie 2024 roku sąd apelacyjny uchylił ten nakaz. Potwierdził jednak, że Shell ma obowiązek ograniczać emisje, wynikający z prawa człowieka do ochrony przed groźną zmianą klimatu. Uznał tylko, że sąd cywilny nie może narzucić firmie konkretnego procentu. Sędziowie zauważyli też, że inwestycje Shella w nowe złoża ropy i gazu mogą być sprzeczne z tym obowiązkiem. Sprawa trafiła do holenderskiego Sądu Najwyższego. Opinia rzecznika generalnego ma się pojawić na przełomie 2026 i 2027 roku, a wyrok w 2027 roku.</p>
+
+<p>Tymczasem Shell zmienił plany. W marcu 2024 roku osłabił cel na 2030 rok. Zamiast obniżyć intensywność emisji sprzedawanej energii o 20 procent, obiecał obniżkę o 15–20 procent. Cel na 2035 rok, czyli obniżkę o 45 procent, porzucił całkowicie. Jako powód podał niepewne tempo transformacji energetycznej. Jednocześnie zapowiedział wzrost biznesu skroplonego gazu ziemnego (LNG) o 20–30 procent do 2030 roku.</p>
+
+<p>Intensywność emisji to ilość CO2 na jednostkę sprzedanej energii. To ważne, bo firma może obniżać intensywność, a jednocześnie zwiększać łączne emisje. Wystarczy, że sprzeda dużo więcej energii.</p>
+
+<p>W kwietniu 2026 roku Milieudefensie złożyło drugi pozew. Tym razem domaga się zakazu zagospodarowywania nowych złóż. Według pozwu Shell ma udziały w około 700 niezagospodarowanych złożach ropy i gazu. Między majem 2021 a kwietniem 2025 roku zatwierdził 32 nowe. Shell odpowiada, że ropa i gaz będą potrzebne przez kolejne dekady, a jeśli on nie zagospodaruje złóż, zrobi to ktoś inny.</p>
+
+<p>BP przeszło ten sam zwrot jeszcze ostrzej. W 2020 roku ówczesny prezes Bernard Looney obiecał dziesięciokrotny wzrost inwestycji niskoemisyjnych i spadek wydobycia ropy i gazu o 40 procent do 2030 roku. W lutym 2025 roku BP ogłosiło, że będzie wydawać 10 miliardów dolarów rocznie na ropę i gaz. Wydatki na odnawialne źródła energii ściął do 1–2 miliardów rocznie. Nowym celem jest wydobycie 2,5 miliona baryłek dziennie w 2030 roku.</p>
+
+<p>W tej kategorii Shell nie jest więc wyjątkiem. Jest typowy. Cała branża po rekordowych zyskach z 2022 roku uznała, że zielone obietnice były przedwczesne.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Afery w gabinetach</h2>
+
+<p>Nie wszystkie grzechy koncernów naftowych dzieją się na polach naftowych. Część dzieje się w księgowości, na salach zarządu i w biurach handlowych.</p>
+
+<h3>Ropa, której nie było</h3>
+
+<p>Rezerwy to ilość ropy i gazu, którą firma może opłacalnie wydobyć z posiadanych złóż. Dla inwestorów to jeden z najważniejszych wskaźników. Pokazuje, z czego koncern będzie żył za dziesięć czy dwadzieścia lat.</p>
+
+<p>W 2004 roku wyszło na jaw, że Shell przez lata zawyżał swoje rezerwy. Amerykańska Komisja Papierów Wartościowych i Giełd (SEC) ustaliła, że w sprawozdaniu za 2002 rok rezerwy były zawyżone o 4,47 miliarda baryłek ekwiwalentu ropy, czyli o około 23 procent. W szczytowym 2000 roku zawyżenie sięgało 25 procent. Proceder trwał od 1997 do 2002 roku.</p>
+
+<p>SEC opisała też, dlaczego do tego doszło. Shell chciał utrzymać dobry wskaźnik odnawiania rezerw. To miara, która pokazuje, czy firma odkrywa tyle nowej ropy, ile wydobywa. Przez pięć lat Shell podawał, że ten wskaźnik wynosi 100 procent. W rzeczywistości wynosił 80 procent. Firma dostawała wcześniej ostrzeżenia, że rezerwy są zawyżone, zwłaszcza w Nigerii i Omanie. Niektóre zlekceważyła, a korektę innych odwlekała.</p>
+
+<p>Shell zapłacił 120 milionów dolarów kary w USA i 17 milionów funtów brytyjskiemu nadzorcy finansowemu. Łącznie około 151 milionów dolarów. Ugoda z SEC odbyła się bez przyznania się do winy i bez zaprzeczenia.</p>
+
+<h3>Miliard dla pośredników?</h3>
+
+<p>W 2011 roku Shell i włoskie Eni kupiły licencję na morskie złoże OPL 245 u wybrzeży Nigerii. Złoże może zawierać około 9 miliardów baryłek ropy. Zapłaciły 1,3 miliarda dolarów. Licencja należała wcześniej do firmy byłego nigeryjskiego ministra ropy Dana Etete.</p>
+
+<p>Włoscy prokuratorzy twierdzili, że 1,1 miliarda z tej kwoty trafiło jako łapówki do pośredników i polityków. W marcu 2021 roku sąd w Mediolanie uniewinnił jednak obie firmy i 13 osób, w tym prezesa Eni. Nigeryjski rząd był rozczarowany i zapowiadał dalsze ściganie winnych. Z punktu widzenia prawa Shell jest w tej sprawie niewinny.</p>
+
+<h3>Tanio z Rosji</h3>
+
+<p>Na początku marca 2022 roku, kilka dni po rosyjskiej inwazji na Ukrainę, Shell kupił 100 tysięcy ton rosyjskiej ropy Urals. Kupił ją z rekordowym rabatem, bo inne firmy zaczęły jej unikać. Ukraiński minister spraw zagranicznych Dmytro Kułeba ostro to skrytykował.</p>
+
+<p>Kilka dni później prezes Ben van Beurden przeprosił i przyznał, że decyzja była błędem. Shell zapowiedział koniec zakupów rosyjskiej ropy na rynku natychmiastowym i zamknięcie stacji w Rosji. Zysk z tego ładunku obiecał przekazać na pomoc humanitarną dla Ukrainy. Ta historia pokazuje odruch, nie strategię. Pierwszą reakcją handlowców było skorzystanie z okazji.</p>
+
+<h3>Ziemia, która się trzęsie</h3>
+
+<p>Najmniej znana w Polsce afera Shella dotyczy Holandii. Pod prowincją Groningen leży jedno z największych złóż gazu w Europie. Od 1963 roku wydobywała go spółka NAM, której właścicielami po połowie są Shell i ExxonMobil.</p>
+
+<p>Wydobycie gazu sprawiło, że ziemia zaczęła osiadać i pękać. Od 1986 roku w regionie zanotowano ponad 1600 trzęsień ziemi o sile do 3,6 stopnia w skali Richtera. To niewiele w porównaniu z trzęsieniami w Japonii. Ale domy w Groningen nie były budowane na wstrząsy. Około 85 tysięcy budynków zostało uszkodzonych co najmniej raz.</p>
+
+<p>W lutym 2023 roku holenderska komisja parlamentarna opublikowała miażdżący raport. Nazwała wydobycie „bezprecedensową porażką systemu”. Ustaliła, że rząd i koncerny systematycznie ignorowały interesy mieszkańców. Gdy zaczęły się wstrząsy, dla Shella i Exxona dominującym kryterium pozostał zysk. Już w 2013 roku nadzór górniczy zalecał ograniczenie wydobycia, ale to zalecenie zignorowano.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">428 mld €</div><div class="d">łączne przychody z gazu z Groningen, w cenach skorygowanych o inflację</div></div>
+  <div class="nrow"><div class="n">ponad 360 mld €</div><div class="d">trafiło do państwa holenderskiego</div></div>
+  <div class="nrow"><div class="n">66 mld €</div><div class="d">zarobiły łącznie Shell i ExxonMobil przez spółkę NAM</div></div>
+  <div class="nrow"><div class="n">85 tys.</div><div class="d">budynków uszkodzonych przynajmniej raz; tylko około 30 proc. domów zabezpieczono</div></div>
+</div>
+
+<p>Ta tabela psuje prostą narrację o złym koncernie. Według danych komisji około 84 procent pieniędzy z Groningen trafiło do państwa, a około 15 procent do koncernów (obliczenie własne). Komisja winiła obie strony. To częsty wzór w tej branży: państwo nie jest ofiarą koncernu, tylko jego wspólnikiem.</p>
+
+<h3>Zielone etykiety</h3>
+
+<p>W 2022 roku Shell osiągnął rekordowy zysk w swojej 115-letniej historii: 39,9 miliarda dolarów. Był to mniej więcej dwukrotny wynik z roku poprzedniego. W tym samym czasie organizacja Global Witness złożyła skargę do amerykańskiego nadzorcy finansowego. Twierdziła, że tylko 1,5 procent wydatków, które Shell opisywał jako „odnawialne i rozwiązania energetyczne”, trafiło na energię wiatrową i słoneczną. Resztę stanowiły między innymi inwestycje w gaz. Shell odpowiedział, że jego sprawozdania są zgodne z przepisami.</p>
+
+<h2><span class="num">Rozdział piąty</span>Konkurencja z bliska: BP i ExxonMobil</h2>
+
+<p>Gdyby ranking ułożyć według liczby ofiar śmiertelnych, Shell nie byłby na pierwszym miejscu wśród zachodnich koncernów. Ten tytuł należy się BP.</p>
+
+<h3>Rafineria, w której oszczędzano</h3>
+
+<p>23 marca 2005 roku w rafinerii BP w Texas City wybuchł pożar. Zginęło 15 osób, a około 180 zostało rannych. Była to najgorsza katastrofa przemysłowa w USA od 1990 roku.</p>
+
+<p>Amerykańska Rada Bezpieczeństwa Chemicznego (CSB), czyli federalny urząd badający wypadki przemysłowe, dokładnie odtworzyła przyczyny. Wieżę destylacyjną przepełniono łatwopalną cieczą. Zawór był zamknięty przez ponad trzy godziny, wbrew procedurom. Ciecz wydostała się do atmosfery, a opary zapalił silnik pickupa stojącego obok na jałowym biegu. Wszyscy zabici byli w kontenerach biurowych lub przy nich. Kontenery postawiono zbyt blisko instalacji.</p>
+
+<p>Ważniejsze jest to, co CSB znalazła głębiej. Po przejęciu firmy Amoco w 1999 roku zarząd BP nakazał obciąć stałe wydatki rafinerii o 25 procent. W 2004 roku szefowie chcieli kolejnych 25 procent. Z powodu kosztów nie wymieniono przestarzałego zbiornika na pochodnię, która według CSB najpewniej zapobiegłaby tragedii. Operatorów pulpitu zredukowano z dwóch do jednego. Pracownicy mieli za sobą 29 lub więcej dni pracy po 12 godzin.</p>
+
+<p>CSB uznała, że katastrofę spowodowały braki organizacyjne i braki w bezpieczeństwie na wszystkich szczeblach korporacji BP. Firma ignorowała ostrzeżenia z własnych audytów z lat 2002–2005.</p>
+
+<h3>Deepwater Horizon</h3>
+
+<p>Pięć lat później zdarzyło się coś znacznie większego. 20 kwietnia 2010 roku w Zatoce Meksykańskiej wybuchła platforma wiertnicza Deepwater Horizon, pracująca dla BP. Zginęło 11 pracowników. Ropa wypływała z odwiertu przez 87 dni.</p>
+
+<p>Sędzia federalny ustalił, że do morza trafiło 3,19 miliona baryłek. Rząd szacował nawet 4,19 miliona. To największy morski wyciek w historii USA. BP przyznało się do 11 zarzutów nieumyślnego spowodowania śmierci. W 2015 roku zawarło ugodę z rządem i pięcioma stanami na ponad 20 miliardów dolarów. Do 2018 roku łączny koszt katastrofy dla BP wzrósł do około 65 miliardów dolarów.</p>
+
+<p>To ważny kontrapunkt. Shell w Nigerii płacił dziesiątki milionów. BP w USA zapłaciło dziesiątki miliardów. Różnica nie wynika tylko z rozmiaru szkód. Wynika z tego, gdzie do nich doszło i kto mógł skutecznie pozwać firmę.</p>
+
+<h3>Exxon: Alaska, Aceh i Groningen</h3>
+
+<p>W 1989 roku tankowiec Exxon Valdez wylał u wybrzeży Alaski około 11 milionów galonów ropy, czyli około 42 milionów litrów. Ława przysięgłych w 1994 roku przyznała poszkodowanym 5 miliardów dolarów odszkodowania karnego. Odszkodowanie karne to dodatkowa kwota, która ma ukarać sprawcę, a nie tylko pokryć szkody.</p>
+
+<p>Sądy stopniowo obniżały tę kwotę. W 2008 roku Sąd Najwyższy USA zmniejszył ją do około 507 milionów dolarów. Uznał, że kara powinna mniej więcej odpowiadać rzeczywistym stratom. Ostatecznie zostało więc około 10 procent pierwotnej kwoty (obliczenie własne).</p>
+
+<p>Exxon ma też własną sprawę dotyczącą praw człowieka. W 2001 roku jedenastu mieszkańców indonezyjskiej prowincji Aceh pozwało firmę. Zarzucali żołnierzom ochraniającym instalacje Exxona napaści seksualne, pobicia i bezprawne przetrzymywanie w latach 1999–2003. Sprawa ciągnęła się ponad 20 lat. W maju 2023 roku, tuż przed procesem, Exxon zawarł ugodę o nieujawnionych warunkach. Firma podkreśliła, że żaden jej pracownik nie był oskarżony o bezpośrednie krzywdzenie powodów.</p>
+
+<p>Do tego dochodzi wspomniane Groningen, gdzie Exxon był równorzędnym wspólnikiem Shella. I historia klimatyczna, w której Exxon jest najbardziej udokumentowanym przypadkiem świadomego podważania nauki.</p>
+
+<h2><span class="num">Rozdział szósty</span>Amazonia, Mozambik i Uganda</h2>
+
+<p>Dwie kolejne firmy pokazują, że najcięższe zarzuty dotyczące praw człowieka nie należą wyłącznie do Shella. Jedna z nich pokazuje też, że nie każdy głośny zarzut wytrzymuje zderzenie z sądem.</p>
+
+<h3>Chevron i spór, który obrócił się przeciw powodom</h3>
+
+<p>Od 1964 do 1992 roku amerykański Texaco wydobywał ropę w ekwadorskiej Amazonii, w regionie Lago Agrio. Działał w spółce z ekwadorską państwową firmą Petroecuador. Mieszkańcy oskarżali Texaco o zatrucie gleby i wody. W 1993 roku ponad 30 tysięcy rolników i przedstawicieli ludów rdzennych pozwało firmę w Nowym Jorku. W 2001 roku Texaco przejął Chevron, a wraz z nim cały spór.</p>
+
+<p>W 2011 roku sąd w Ekwadorze nakazał Chevronowi zapłacić 9,5 miliarda dolarów. Wydawało się, że to historyczne zwycięstwo. Potem sprawa się odwróciła.</p>
+
+<div class="twocol">
+  <div class="side a"><div class="st">Strona powodów</div>
+    <p>Texaco latami zrzucał toksyczne odpady do nieuszczelnionych dołów i strumieni. Mieszkańcy chorowali. Region nazywano „Czarnobylem Amazonii”.</p>
+    <p>Prawnik powodów Steven Donziger dostał w USA sześć miesięcy więzienia za obrazę sądu. Jego zwolennicy uważają to za zemstę korporacji.</p></div>
+  <div class="side b"><div class="st">Strona Chevronu i trybunałów</div>
+    <p>W 2014 roku amerykański sędzia Lewis Kaplan orzekł, że wyrok z Ekwadoru uzyskano oszustwem. Międzynarodowy trybunał arbitrażowy w 2018 roku ustalił, że zespół prawników powodów przekupił sędziego i napisał za niego wyrok.</p>
+    <p>Texaco przeprowadził program sprzątania nadzorowany przez Ekwador, a państwo zwolniło go z roszczeń. Za obecny stan terenu odpowiada Petroecuador, który nadal tam działa.</p></div>
+</div>
+
+<p>W 2020 roku sąd w Hadze utrzymał wyrok trybunału. Zauważył, że oszukańczy charakter ekwadorskiego wyroku nie był już nawet przedmiotem sporu między stronami. Sądy w Argentynie, Brazylii, Kanadzie i Gibraltarze odmówiły jego wykonania.</p>
+
+<p>Co z tego wynika? Skażenie Amazonii jest realne. Ale wyrok, który miał je ukarać, został uznany za kupiony. Spór o to, ile winy ponosi Texaco, a ile państwowy Petroecuador, nie został uczciwie rozstrzygnięty. Kto przedstawia Chevron jako bezspornego truciciela Amazonii, pomija połowę akt. Kto przedstawia go jako niewinną ofiarę, pomija drugą połowę.</p>
+
+<h3>TotalEnergies: tankowiec, gaz i rurociąg</h3>
+
+<p>W grudniu 1999 roku u wybrzeży Bretanii przełamał się tankowiec Erika wyczarterowany przez Total. Do morza trafiło ponad 20 tysięcy ton ropy, która zanieczyściła około 400 kilometrów wybrzeża. W 2012 roku francuski Sąd Kasacyjny utrzymał wyrok uznający Total za winny. Sprawa stworzyła ważny precedens: francuskie prawo uznało szkodę wyrządzoną samej przyrodzie, niezależnie od strat ludzi.</p>
+
+<p>Poważniejsze zarzuty dotyczą Afryki. Na półwyspie Afungi w Mozambiku TotalEnergies prowadzi wart około 20 miliardów dolarów projekt skraplania gazu ziemnego. Jest jego operatorem i największym udziałowcem z 26,5 procentami. W marcu 2021 roku islamistyczni rebelianci zaatakowali pobliskie miasto Palma. Według reportera Alexa Perry'ego zabili lub uprowadzili 1563 cywilów. Total wstrzymał prace i ewakuował personel.</p>
+
+<p>W listopadzie 2025 roku Europejskie Centrum Praw Konstytucyjnych i Praw Człowieka (ECCHR) złożyło we Francji zawiadomienie. Zarzuca TotalEnergies współudział w zbrodniach wojennych, torturach i wymuszonych zaginięciach. Chodzi o wydarzenia z połowy 2021 roku. Według skargi mozambiccy żołnierze ochraniający teren projektu przetrzymywali dziesiątki cywilów w kontenerach przy wejściu na teren zakładu, torturowali ich i zabijali. Skarga twierdzi, że Total finansował i wspierał materialnie tę jednostkę wojskową.</p>
+
+<p>TotalEnergies stanowczo zaprzecza, że wiedział lub mógł wiedzieć o tych aktach przemocy. Podkreśla, że cały personel ewakuowano z terenu w kwietniu 2021 roku. Prezydent Mozambiku również odrzucił zarzuty. Francuska prokuratura musi teraz zdecydować, czy wszcznie śledztwo. To osobna sprawa od skargi rodzin ofiar ataku na Palmę z 2023 roku, które zarzucały firmie, że nie ochroniła podwykonawców.</p>
+
+<p>Drugi afrykański projekt Totala to rurociąg EACOP z Ugandy do tanzańskiego portu Tanga i powiązane z nim złoże Tilenga. Rurociąg ma 1443 kilometry. Będzie najdłuższym podgrzewanym rurociągiem naftowym na świecie, bo gęstą ugandyjską ropę trzeba ogrzewać, żeby płynęła.</p>
+
+<p>W 2023 roku Human Rights Watch opisała skutki budowy. Według danych samej firmy utrata ziemi dotyka około 19 tysięcy gospodarstw domowych, w których żyje ponad 118 tysięcy osób. TotalEnergies twierdzi, że 93 procent poszkodowanych gospodarstw w Ugandzie dostało odszkodowania. HRW ustaliła jednak, że pieniądze przychodziły 3–5 lat po wycenie ziemi i często nie wystarczały na kupno nowej. Climate Accountability Institute szacuje, że w całym cyklu życia projekt wygeneruje 379 milionów ton CO2. To więcej niż roczne emisje Australii.</p>
+
+<p>Jeśli w kategorii „najcięższe obecnie toczące się zarzuty o prawa człowieka” trzeba wskazać jedną firmę, to dziś jest nią raczej TotalEnergies niż Shell.</p>
+
+<h2><span class="num">Rozdział siódmy</span>Prawdziwi giganci nie mają akcjonariuszy</h2>
+
+<p>Do tej pory porównywaliśmy koncerny prywatne, notowane na giełdach. To one najczęściej trafiają do sądów i na nagłówki. Ale gdy spojrzymy na skalę, obraz się odwraca.</p>
+
+<h3>Kto ile wyemitował</h3>
+
+<p>Baza Carbon Majors, prowadzona przez organizację InfluenceMap, przypisuje emisje konkretnym producentom paliw. Liczy emisje ze spalania sprzedanej ropy, gazu i węgla oraz emisje z samego wydobycia. Najnowsza aktualizacja, opublikowana w styczniu 2026 roku, obejmuje lata 1854–2024 i 178 podmiotów.</p>
+
+<div class="bars">
+  <div class="bt">Skumulowane emisje 1854–2024, w miliardach ton CO2e</div>
+  <div class="row"><div class="lab">Saudi Aramco</div><div class="track"><div class="fill red" style="width:100%"></div></div><div class="val">72,5</div></div>
+  <div class="row"><div class="lab">Chevron</div><div class="track"><div class="fill" style="width:86.3%"></div></div><div class="val">62,5</div></div>
+  <div class="row"><div class="lab">ExxonMobil</div><div class="track"><div class="fill" style="width:79.3%"></div></div><div class="val">57,5</div></div>
+  <div class="row"><div class="lab">Gazprom</div><div class="track"><div class="fill red" style="width:73.3%"></div></div><div class="val">53,1</div></div>
+  <div class="row"><div class="lab">BP</div><div class="track"><div class="fill" style="width:59.7%"></div></div><div class="val">43,2</div></div>
+  <div class="row"><div class="lab">Shell</div><div class="track"><div class="fill" style="width:57.3%"></div></div><div class="val">41,5</div></div>
+  <div class="row"><div class="lab">Polska (węgiel, 1913–2001)</div><div class="track"><div class="fill blue" style="width:31.3%"></div></div><div class="val">22,7</div></div>
+  <div class="row"><div class="lab">TotalEnergies</div><div class="track"><div class="fill" style="width:25.6%"></div></div><div class="val">18,6</div></div>
+  <div class="caption">Słupki w kolorze akcentu: firmy państwowe (Aramco, Gazprom). Wyróżniony osobno: polski węgiel, czyli państwo jako producent. Pozostałe to firmy prywatne. Źródło: Carbon Majors, aktualizacja danych za 2024 rok (styczeń 2026). Shell zajmuje 9. miejsce na liście wszech czasów, za m.in. Chevronem, Exxonem i BP.</div>
+</div>
+
+<p>Shell jest w tej tabeli dziewiąty. Wyprzedzają go trzy prywatne amerykańskie i brytyjskie firmy oraz państwowe Aramco, Gazprom i irański NIOC. Chevron ma na koncie o połowę więcej emisji niż Shell.</p>
+
+<p>W tej samej bazie widać coś, o czym w Polsce mówi się rzadko. Polskie górnictwo węgla z lat 1913–2001 zajmuje 15. miejsce na świecie. Jest wyżej niż TotalEnergies. Gdybyśmy oceniali moralność tylko po emisjach, sami siedzielibyśmy dość wysoko w tym rankingu.</p>
+
+<h3>Kto emituje dziś</h3>
+
+<p>Historia to jedno. W 2024 roku proporcje są jeszcze bardziej jednoznaczne.</p>
+
+<div class="bars">
+  <div class="bt">Udział w światowych emisjach CO2 z paliw kopalnych i cementu w 2024 roku</div>
+  <div class="row"><div class="lab">Saudi Aramco</div><div class="track"><div class="fill red" style="width:100%"></div></div><div class="val">4,28%</div></div>
+  <div class="row"><div class="lab">Gazprom</div><div class="track"><div class="fill red" style="width:64.5%"></div></div><div class="val">2,76%</div></div>
+  <div class="row"><div class="lab">Rosnieft</div><div class="track"><div class="fill red" style="width:41.8%"></div></div><div class="val">1,79%</div></div>
+  <div class="row"><div class="lab">ExxonMobil</div><div class="track"><div class="fill" style="width:36.9%"></div></div><div class="val">1,58%</div></div>
+  <div class="row"><div class="lab">Chevron</div><div class="track"><div class="fill" style="width:31.1%"></div></div><div class="val">1,33%</div></div>
+  <div class="row"><div class="lab">Shell</div><div class="track"><div class="fill" style="width:22.7%"></div></div><div class="val">0,97%</div></div>
+  <div class="row"><div class="lab">TotalEnergies</div><div class="track"><div class="fill" style="width:18.9%"></div></div><div class="val">0,81%</div></div>
+  <div class="row"><div class="lab">BP</div><div class="track"><div class="fill" style="width:18.7%"></div></div><div class="val">0,80%</div></div>
+  <div class="caption">Źródło: Carbon Majors, aktualizacja danych za 2024 rok. Słupki w kolorze akcentu: firmy państwowe (Aramco, Gazprom, Rosnieft).</div>
+</div>
+
+<p>Firmy państwowe odpowiadały w 2024 roku za około 54 procent światowych emisji z paliw kopalnych i cementu. Firmy prywatne za około 24 procent. Pięć największych firm państwowych wyemitowało 18 procent światowego CO2. Pięć największych prywatnych 5,5 procent. To ponad trzy razy mniej (obliczenie własne).</p>
+
+<p>Saudi Aramco wyemitował w 2024 roku prawie tyle, co Exxon, Chevron, Shell i BP razem wzięte: 4,28 wobec 4,68 procent światowych emisji (obliczenie własne). Aramco nie trafia jednak przed sądy w Hadze czy Londynie. Należy do państwa, które samo ustala, kto może je pozywać.</p>
+
+<h3>Co płynie do polskich baków</h3>
+
+<p>Polski rynek stacji paliw wygląda tak.</p>
+
+<div class="bars">
+  <div class="bt">Liczba stacji w Polsce, koniec stycznia 2026</div>
+  <div class="row"><div class="lab">Orlen</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">1963</div></div>
+  <div class="row"><div class="lab">BP</div><div class="track"><div class="fill" style="width:29.2%"></div></div><div class="val">574</div></div>
+  <div class="row"><div class="lab">Moya</div><div class="track"><div class="fill" style="width:27.4%"></div></div><div class="val">538</div></div>
+  <div class="row"><div class="lab">MOL</div><div class="track"><div class="fill" style="width:23.1%"></div></div><div class="val">453</div></div>
+  <div class="row"><div class="lab">Shell</div><div class="track"><div class="fill" style="width:22.5%"></div></div><div class="val">441</div></div>
+  <div class="row"><div class="lab">Circle K</div><div class="track"><div class="fill" style="width:20%"></div></div><div class="val">ok. 392</div></div>
+  <div class="row"><div class="lab">Avia</div><div class="track"><div class="fill" style="width:7.5%"></div></div><div class="val">148</div></div>
+  <div class="caption">Źródło: zestawienie ISBnews za inwestycje.pl. Dane Circle K z końca 2025 roku. Te sieci mają razem około 57 proc. wszystkich stacji w Polsce; reszta to stacje niezależne i mniejsze sieci.</div>
+</div>
+
+<p>Shell jest w Polsce dopiero piątą siecią. Sieci takie jak Moya, Circle K czy Avia same ropy nie wydobywają. Za ich logo nie stoją więc pola naftowe, tylko handel. Ciekawiej robi się przy trzech nazwach, które w rankingach moralności pojawiają się rzadko.</p>
+
+<p><strong>Lukoil.</strong> Rosyjski koncern sprzedał swoje stacje w Polsce, na Łotwie i Litwie, łącznie około 230, austriackiej firmie Amic Energy w 2016 roku. 22 października 2025 roku USA objęły Lukoil i państwowy Rosnieft sankcjami. Te dwie firmy odpowiadają za mniej więcej połowę rosyjskiego eksportu ropy, który finansuje wojnę z Ukrainą. W styczniu 2026 roku Lukoil zgodził się sprzedać większość zagranicznych aktywów amerykańskiemu funduszowi Carlyle, pod warunkiem zgody amerykańskiego urzędu do spraw sankcji.</p>
+
+<p><strong>MOL.</strong> Węgierski koncern przejął w Polsce 417 stacji Lotosu w ramach fuzji Orlenu z Lotosem. Na Węgrzech jego rafinerie przerabiają głównie rosyjską ropę z rurociągu Przyjaźń. W 2025 roku Rosja dostarczyła 92 procent ropy zużywanej na Węgrzech, wobec 61 procent w 2021 roku. Według analizy ośrodków CSD i CREA Węgry kupują ją z rabatem około 20 procent. Rosyjskie państwo zarabia na tych zakupach w podatkach dziesiątki milionów euro miesięcznie. MOL ma unijne zwolnienie z sankcji do 2028 roku i podkreśla, że w pełni przestrzega przepisów. Jego rafinerie zbudowano pod rosyjską ropę Urals, a przestawienie ich ma trwać lata.</p>
+
+<p><strong>Orlen.</strong> Polski koncern przestał kupować rosyjską ropę na początku 2023 roku. Kontrakt z Rosnieftem wygasł z końcem stycznia, a w lutym Tatnieft wstrzymał dostawy rurociągiem Przyjaźń. Orlen nie ma na koncie katastrofy ekologicznej na skalę Bodo czy Zatoki Meksykańskiej. Jego problemy dotyczą czego innego. Najwyższa Izba Kontroli ustaliła, że przy fuzji z Lotosem Orlen sprzedał aktywa co najmniej 5 miliardów złotych poniżej ich wartości. Saudyjski Aramco dostał 30 procent Rafinerii Gdańskiej i prawo weta w kluczowych decyzjach. Orlen uznał raport NIK za nierzetelny. Szwajcarska spółka Orlen Trading Switzerland musiała odnotować stratę 1,6 miliarda złotych na zakupach ropy, a jej były prezes usłyszał zarzut udziału w grupie wyłudzającej VAT.</p>
+
+<p>To nie są grzechy przeciw przyrodzie ani mieszkańcom delty. To grzechy przeciw właścicielowi, którym w dużej części jest polskie państwo, czyli my.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Ranking, którego nie da się ułożyć</h2>
+
+<p>Czy da się więc wskazać najgorszy koncern naftowy? Spróbujmy. Szybko okaże się, że odpowiedź zależy od tego, jakie pytanie zadamy.</p>
+
+<div class="score">
+  <div class="srow hd"><div class="cat">Kategoria</div><div class="who">Kto wypada najgorzej wśród opisanych firm</div></div>
+  <div class="srow"><div class="cat">Ofiary wypadków</div><div class="who"><b>BP.</b> Texas City (15 zabitych) i Deepwater Horizon (11 zabitych, 87 dni wycieku), w obu przypadkach z udokumentowanymi oszczędnościami na bezpieczeństwie.</div></div>
+  <div class="srow"><div class="cat">Okłamywanie o klimacie</div><div class="who"><b>ExxonMobil.</b> Najtrafniejsze wewnętrzne prognozy i najgłośniejsze publiczne podważanie nauki. Shell i Total wiedzieli wcześnie, ale ich zwrot był cichszy.</div></div>
+  <div class="srow"><div class="cat">Skala emisji</div><div class="who"><b>Saudi Aramco.</b> Największy emitent wśród firm, zarówno historycznie, jak i dziś. Wśród prywatnych: Chevron.</div></div>
+  <div class="srow"><div class="cat">Szkody lokalne i prawa człowieka</div><div class="who"><b>Shell</b> za najdłużej udokumentowaną krzywdę (Nigeria). <b>TotalEnergies</b> za najcięższe świeże zarzuty (Mozambik, Uganda).</div></div>
+  <div class="srow"><div class="cat">Finansowanie wojny</div><div class="who"><b>Lukoil</b> i, pośrednio, <b>MOL</b> przez zakupy rosyjskiej ropy z rabatem.</div></div>
+  <div class="srow"><div class="cat">Oszustwa wobec inwestorów</div><div class="who"><b>Shell</b> (zawyżone rezerwy). W Polsce pytania o zarządzanie majątkiem publicznym dotyczą <b>Orlenu</b>.</div></div>
+  <div class="caption" style="padding:10px 18px 14px">Ocena autorska na podstawie faktów opisanych w tekście, nie oficjalny ranking.</div>
+</div>
+
+<p>Shell pojawia się w tej tabeli dwa razy i w żadnej kategorii nie jest bezapelacyjnie pierwszy z całej branży. Jest za to jedyną firmą, która wypada źle niemal wszędzie. To prawdopodobnie najuczciwsze podsumowanie: Shell nie jest najgorszy w niczym konkretnym, ale jest wyjątkowo kompletny.</p>
+
+<h3>Dlaczego to akurat Shell ma taką opinię</h3>
+
+<p>Są trzy powody, dla których Shell wydaje się gorszy, niż wynika z twardych porównań.</p>
+
+<p><strong>Po pierwsze, gdzie można go pozwać.</strong> Shell ma korzenie w Holandii i siedzibę w Wielkiej Brytanii. Oba kraje mają sądy, które przyjmują pozwy od mieszkańców Nigerii i organizacji ekologicznych. To w Hadze zapadł pierwszy na świecie wyrok nakazujący firmie konkretną redukcję emisji. To w Londynie toczą się procesy wspólnot z delty. Saudyjskiego Aramco nikt w Hadze skutecznie nie pozwie.</p>
+
+<p><strong>Po drugie, ile o nim wiadomo.</strong> Każdy proces wyciąga na światło dzienne dokumenty. Im więcej procesów, tym więcej dokumentów, a im więcej dokumentów, tym gorzej firma wygląda. To trochę jak z badaniami lekarskimi. Osoba, która robi badania co roku, ma w karcie więcej wykrytych problemów niż osoba, która nie badała się nigdy. Nie znaczy to, że jest bardziej chora.</p>
+
+<p><strong>Po trzecie, rozpoznawalność.</strong> Żółta muszla wisi nad stacjami w kilkudziesięciu krajach. Mało kto rozpozna logo NIOC czy CHN Energy, choć emitują więcej.</p>
+
+<h3>Ile kosztuje zło</h3>
+
+<p>Zostaje jeszcze jedno pytanie: czy kary w ogóle coś zmieniają? Porównajmy kilka kwot z jednym punktem odniesienia: rekordowym zyskiem Shella z 2022 roku, czyli 39,9 miliarda dolarów. To około 109 milionów dolarów dziennie, czyli około 4,6 miliona na godzinę.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">ok. 3,4 godz.</div><div class="d">tyle zysku z 2022 roku odpowiada ugodzie w sprawie Ogoni (15,5 mln dolarów)</div></div>
+  <div class="nrow"><div class="n">ok. 15 godz.</div><div class="d">ugoda z Bodo (55 mln funtów, ok. 70 mln dolarów)</div></div>
+  <div class="nrow"><div class="n">ok. 33 godz.</div><div class="d">kary za zawyżenie rezerw (łącznie ok. 151 mln dolarów)</div></div>
+  <div class="nrow"><div class="n">ok. 65 mld $</div><div class="d">łączny koszt Deepwater Horizon dla BP. Dla porównania: więcej niż półtora rocznego rekordowego zysku Shella</div></div>
+</div>
+<p class="caption">Obliczenia własne. Ugody i kary zapadały w różnych latach, a zyski firm w tamtych latach były niższe niż w 2022 roku. Porównanie pokazuje skalę, a nie dokładny ciężar dla firmy w momencie płacenia.</p>
+
+<p>Ten zestaw pokazuje coś ważniejszego niż ranking. Szkody wyrządzone w biednych krajach wyceniano na godziny zysku. Szkody wyrządzone w USA wyceniono na lata. Różnica nie wynika z tego, że życie w delcie Nigru jest mniej warte. Wynika z tego, jak silne są lokalne sądy, jak bogaci są poszkodowani i jak drogo kosztuje ich prawnik. Firma reaguje na koszty, a nie na moralne oceny. Skoro zanieczyszczanie Nigerii przez dekady było tanie, to się działo.</p>
+
+<h2><span class="num">Zakończenie</span>Pytanie o adres, nie o charakter</h2>
+
+<p>Wróćmy do Bodo. Ropa płynęła tam miesiącami. Ugoda przyszła po siedmiu latach. Spór o sprzątanie trwa po siedemnastu. A Shell w tym czasie zdążył sprzedać spółkę, która była stroną sporu.</p>
+
+<p>Gdyby ten sam wyciek zdarzył się w Zatoce Meksykańskiej, pewnie kosztowałby miliardy, a sprawa skończyłaby się w kilka lat. Wiemy to, bo tak właśnie wyglądała historia BP. Koncerny naftowe nie różnią się aż tak bardzo charakterem. Różnią się adresem swoich szkód i siłą ludzi, którzy te szkody ponoszą.</p>
+
+<p>Shell nie jest więc czarnym charakterem, który wyrasta ponad resztę branży. Jest jej najlepiej opisanym przedstawicielem. Za nim stoją firmy, które wyemitowały więcej, zabiły więcej ludzi w wypadkach albo dziś mierzą się z cięższymi zarzutami. Wiele z nich nie trafi do sądu nigdy, bo należą do państw, które same piszą prawo.</p>
+
+<p>Dla nas, przy dystrybutorze, płynie z tego prosty wniosek. Zmiana stacji z Shella na inną nie przesuwa moralnej szali. Jedna sieć sprzedaje paliwo z rafinerii, które przerabiają ropę od Aramco. Druga ma za sobą rosyjskie rabaty. Trzecia ma na koncie Deepwater Horizon. Realny wpływ mają dwie rzeczy, które nie dzieją się na stacji: ile paliwa zużywamy i czy sądy, także te w krajach, z których płynie ropa, są w stanie wystawić rachunek temu, kto zanieczyszcza.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+<ul class="sources">
+  <li>UN News, „Cleaning up Nigerian oil pollution could take 30 years, cost billions – UN” (omówienie raportu UNEP „Environmental Assessment of Ogoniland”), 2011. <a href="https://news.un.org/en/story/2011/08/383512">news.un.org</a></li>
+  <li>Leigh Day, „High Court trial finds Shell plc and its former Nigerian subsidiary can be held legally responsible for legacy oil pollution in Nigeria”, czerwiec 2025. <a href="https://www.leighday.co.uk/news/press-releases/2025-news/high-court-trial-finds-shell-plc-and-its-former-nigerian-subsidiary-can-be-held-legally-responsible-for-legacy-oil-pollution-in-nigeria/">leighday.co.uk</a></li>
+  <li>Leigh Day, „High Court trial into Shell's massive oil spills concludes…” (sprawa Bodo), czerwiec 2025. <a href="https://www.leighday.co.uk/news/press-releases/2025-news/high-court-trial-into-shell-s-massive-oil-spills-concludes-after-hearing-evidence-the-oil-giant-failed-to-disclose-key-documents-and-failed-to-stop-oil-flowing-for-months/">leighday.co.uk</a></li>
+  <li>Al Jazeera, „UK court rules in favour of Shell in Nigerian oil spill case”, 2023. <a href="https://www.aljazeera.com/news/2023/5/10/uk-court-rules-in-favour-of-shell-in-nigerian-oil-spill-case">aljazeera.com</a></li>
+  <li>Milieudefensie i Shell, wspólne oświadczenie o ugodzie w sprawie wycieków w Orumie, Goi i Ikot Ada Udo, grudzień 2022. <a href="https://en.milieudefensie.nl/news/joint-statement-about-settlement-oil-spills-nigeria">milieudefensie.nl</a></li>
+  <li>S&amp;P Global Commodity Insights, „Shell officially quits Niger Delta as Renaissance oil deal closes”, marzec 2025. <a href="https://www.spglobal.com/energy/en/news-research/latest-news/crude-oil/031425-shell-officially-quits-niger-delta-as-renaissance-oil-deal-closes">spglobal.com</a></li>
+  <li>Africanews, „Nigerian court dismisses lawsuit seeking to halt Shell's divestment”, lipiec 2026. <a href="https://www.africanews.com/amp/2026/07/20/nigerian-court-dismisses-lawsuit-seeking-to-halt-shells-divestment/">africanews.com</a></li>
+  <li>Center for Constitutional Rights, „Settlement Reached in Human Rights Cases Against Royal Dutch/Shell” i fakty o sprawie Wiwa v. Shell, 2009. <a href="https://ccrjustice.org/node/595">ccrjustice.org</a></li>
+  <li>UNPO, „Ogoni: New Report on Wiwa vs. Shell” (raport Friends of the Earth Netherlands). <a href="https://unpo.org/article/12800">unpo.org</a></li>
+  <li>Irish Legal News, „Amnesty calls on UK and others to investigate Shell over Nigeria crimes” (omówienie raportu Amnesty International „A Criminal Enterprise?”), 2017. <a href="https://www.irishlegal.com/articles/amnesty-calls-on-uk-and-others-to-investigate-shell-over-nigeria-crimes">irishlegal.com</a></li>
+  <li>Al Jazeera, „Dutch court rejects suit of ‘Ogoni Nine’ widows against Shell”, marzec 2022. <a href="https://www.aljazeera.com/news/2022/3/23/dutch-court-rejects-suit-of-nigerian-widows-against-shell">aljazeera.com</a></li>
+  <li>DeSmog, „Shell Took 16 Years To Warn Shareholders of Climate Risks” (raport „The Greenhouse Effect”, 1988), 2018. <a href="https://www.desmog.com/2018/08/20/exclusive-company-docs-show-shell-secretly-studied-climate-risks-10-years-warning-investors/">desmog.com</a></li>
+  <li>Resilience.org, „Here is what Shell knew about climate change in the 1980s”, 2018. <a href="https://www.resilience.org/stories/2018-04-05/here-is-what-shellknew-about-climate-change-in-the-1980s/">resilience.org</a></li>
+  <li>Grist / The Guardian, „Shell's 1991 climate change film shows just how much it knew”, 2017. <a href="https://grist.org/article/shells-1991-climate-change-film-shows-just-how-much-it-knew/">grist.org</a></li>
+  <li>Union of Concerned Scientists, „Shell Knew About Climate Risks Since the 1980s, Will it Act Now?”, 2018. <a href="https://blog.ucs.org/kathy-mulvey/shell-knew-about-climate-risks-since-the-1980s-will-it-act-now/">ucs.org</a></li>
+  <li>G. Supran, S. Rahmstorf, N. Oreskes, „Assessing ExxonMobil's global warming projections”, Science, 2023; omówienie: CBC News (AP), „Exxon Mobil accurately predicted global warming since 1970s, study finds”. <a href="https://www.cbc.ca/1.6712899">cbc.ca</a></li>
+  <li>Axios, „Exxon's climate research accurately projected global warming, study finds”, 2023. <a href="https://www.axios.com/2023/01/12/exxon-climate-research-predicted-global-warming">axios.com</a></li>
+  <li>C. Bonneuil, P.-L. Choquet, B. Franta, „Early warnings and emerging accountability: Total's responses to global warming, 1971–2021”, Global Environmental Change, 2021; omówienie: CNRS Géographie-cités. <a href="https://geographie-cites.cnrs.fr/en/science-vs-lobbying-total-elf-and-climate-change/">geographie-cites.cnrs.fr</a></li>
+  <li>NPR / WBUR On Point, „How Big Oil helped push the idea of a carbon footprint”, 2023. <a href="https://www.nprillinois.org/2023-12-18/how-big-oil-helped-push-the-idea-of-a-carbon-footprint">nprillinois.org</a></li>
+  <li>Greenberg Traurig, „Shell Wins Appeal in Dutch Climate Ruling”, listopad 2024. <a href="https://www.gtlaw.com/en/insights/2024/11/shell-wins-appeal-in-dutch-climate-ruling">gtlaw.com</a></li>
+  <li>Chambers and Partners, „Climate Change Regulation 2026 — Netherlands” (stan sprawy przed Sądem Najwyższym). <a href="https://gpg-pdf.chambers.com/climate-change-regulation-2026/62/">chambers.com</a></li>
+  <li>Climate Case Chart (Sabin Center, Columbia University), „Milieudefensie et al. v. Shell plc (No New Oil and Gas Fields Case)”, 2026. <a href="https://www.climatecasechart.com/document/milieudefensie-et-al-v-shell-plc-no-new-oil-and-gas-fields-case_56e9">climatecasechart.com</a></li>
+  <li>NL Times, „New lawsuit against Shell as oil and gas giant takes step to increase fossil fuel mining”, kwiecień 2026. <a href="https://nltimes.nl/2026/04/21/new-lawsuit-shell-oil-gas-giant-takes-step-increase-fossil-fuel-mining">nltimes.nl</a></li>
+  <li>Carbon Brief, „Shell abandons 2035 emissions target and weakens 2030 goal”, marzec 2024. <a href="https://carbonbrief.org/shell-abandons-2035-emissions-target-and-weakens-2030-goal">carbonbrief.org</a></li>
+  <li>The Maritime Executive, „BP Rolls Back Renewables Investment to Refocus on Oil and Gas”, luty 2025. <a href="https://maritime-executive.com/article/bp-rolls-back-renewables-investment-to-refocus-on-oil-and-gas">maritime-executive.com</a></li>
+  <li>U.S. Securities and Exchange Commission, komunikat 2004-116 w sprawie zawyżenia rezerw przez Royal Dutch/Shell, 2004. <a href="https://www.sec.gov/news/press/2004-116.htm">sec.gov</a></li>
+  <li>Resilience.org (Reuters), „Shell Settles with SEC, UK for $151 Mln”, 2004. <a href="https://www.resilience.org/stories/2004-08-24/shell-settles-sec-uk-151-mln/">resilience.org</a></li>
+  <li>Africanews, „Nigeria ‘disappointed’ as Shell, Eni acquitted in oil corruption case”, marzec 2021. <a href="https://www.africanews.com/2021/03/17/nigeria-disappointed-as-shell-eni-acquitted-in-oil-corruption-case/">africanews.com</a></li>
+  <li>CNBC, „Shell apologizes for buying Russian oil, announces phased withdrawal”, marzec 2022. <a href="https://www.cnbc.com/2022/03/08/shell-apologizes-for-buying-russian-oil-announces-phased-withdrawal.html">cnbc.com</a></li>
+  <li>DutchNews.nl, „Damning report slams state, oil companies for Groningen gas failures” (raport parlamentarnej komisji śledczej), luty 2023. <a href="https://www.dutchnews.nl/news/2023/02/damning-report-slams-state-oil-companies-for-groningen-gas-failures/">dutchnews.nl</a></li>
+  <li>Euronews, „Shell profits almost double as company faces greenwashing complaint in US”, luty 2023. <a href="https://www.euronews.com/2023/02/02/shell-profits-almost-double-as-company-faces-greenwashing-complaint-in-us">euronews.com</a></li>
+  <li>U.S. Chemical Safety Board, raport końcowy w sprawie eksplozji w rafinerii BP Texas City, 2007. <a href="https://www.csb.gov/u-s-chemical-safety-board-concludes-organizational-and-safety-deficiencies-at-all-levels-of-the-bp-corporation-caused-march-2005-texas-city-disaster-that-killed-15-injured-180/">csb.gov</a></li>
+  <li>Rolling Stone, „BP ‘Got Off Cheaply’ With $18.7 Billion Settlement”, 2015 (wielkość wycieku według sędziego Barbiera). <a href="https://www.rollingstone.com/politics/politics-news/bp-got-off-cheaply-with-18-7-billion-settlement-42285/">rollingstone.com</a></li>
+  <li>Las Vegas Review-Journal (AP), „BP to pay out $20 billion in Deepwater Horizon settlement claims”, 2015. <a href="https://preview.reviewjournal.com/?p=246872">reviewjournal.com</a></li>
+  <li>The Maritime Executive, „BP's Deepwater Horizon Costs Reach $65 Billion”, styczeń 2018. <a href="https://maritime-executive.com/article/bp-s-deepwater-horizon-costs-reach-65-billion">maritime-executive.com</a></li>
+  <li>CNN Money, „High court reduces Exxon oil spill damages”, czerwiec 2008. <a href="https://money.cnn.com/2008/06/25/news/companies/SCOTUS_exxon/index.htm">money.cnn.com</a></li>
+  <li>The Jakarta Post, „ExxonMobil settles long-running Aceh torture lawsuit”, maj 2023. <a href="https://www.thejakartapost.com/indonesia/2023/05/16/exxonmobil-settles-long-running-aceh-torture-lawsuit">thejakartapost.com</a></li>
+  <li>Wikipedia, „Steven Donziger” (chronologia sporu Aguinda v. Texaco), dostęp październik 2026. <a href="https://en.wikipedia.org/wiki/Steven_Donziger">wikipedia.org</a></li>
+  <li>Fortune, „Chevron's RICO trial against Donziger begins”, 2013. <a href="https://fortune.com/2013/10/16/chevrons-rico-trial-against-donziger-begins">fortune.com</a></li>
+  <li>RTTNews via bilaterals.org, „Hague court rules in favor of Chevron in dispute with Republic of Ecuador”, wrzesień 2020. <a href="https://isds.bilaterals.org/hague-court-rules-in-favor-of">bilaterals.org</a></li>
+  <li>Al Jazeera, „US lawyer who sued Chevron over Ecuador pollution faces charges”, 2021. <a href="https://www.aljazeera.com/economy/2021/5/10/us-lawyer-who-sued-chevron-over-ecuador-pollution-faces-charges">aljazeera.com</a></li>
+  <li>Jurist, „Lawyer who sued Chevron sentenced to six months for contempt of court”, październik 2021. <a href="https://www.jurist.org/news/2021/10/lawyer-who-sued-chevron-is-sentenced-to-six-months-for-contempt-of-court-case">jurist.org</a></li>
+  <li>Jurist, „France high court upholds oil company liability for 1999 spill”, wrzesień 2012. <a href="https://www.jurist.org/news/2012/09/france-high-court-upholds-oil-company-liability-for-1999-spill/">jurist.org</a></li>
+  <li>World Oil, „TotalEnergies reaffirms stance on security, human rights amid Mozambique allegations”, listopad 2025. <a href="https://www.worldoil.com/news/2025/11/20/totalenergies-reaffirms-stance-on-security-human-rights-amid-mozambique-allegations/">worldoil.com</a></li>
+  <li>Ecofin Agency, „TotalEnergies Faces War Crimes Complaint Over Mozambique LNG”, listopad 2025. <a href="https://www.ecofinagency.com/news-industry/1811-50592-totalenergies-faces-war-crimes-complaint-over-mozambique-lng">ecofinagency.com</a></li>
+  <li>Ecofin Agency, „Mozambique's President Chapo Rejects War-Crime Allegations Around Mozambique LNG”, grudzień 2025. <a href="https://www.ecofinagency.com/news-industry/0112-51004-mozambique-s-president-chapo-rejects-war-crimes-allegations-around-mozambique-lng">ecofinagency.com</a></li>
+  <li>The Star (Kenia) / BBC, „Total faces war crimes allegations over Mozambique massacre”, listopad 2025. <a href="https://www.the-star.co.ke/news/africa/2025-11-18-total-faces-war-crimes-allegations-over-mozambique-massacre">the-star.co.ke</a></li>
+  <li>Human Rights Watch, „Our Trust is Broken: Loss of Land and Livelihoods for Oil Development in Uganda”, lipiec 2023. <a href="https://www.hrw.org/fr/report/2023/07/10/notre-confiance-est-brisee/perte-de-terres-et-de-moyens-de-subsistance-au-profit">hrw.org</a></li>
+  <li>Carbon Majors (InfluenceMap), „Carbon Majors: 2024 Data Update”, styczeń 2026. <a href="https://carbonmajors.org/briefing/Carbon-Majors-2024-Data-Update-35466">carbonmajors.org</a></li>
+  <li>Inwestycje.pl (ISBnews), „Orlen miał 1963 stacje paliw na koniec stycznia, bp – 574, Moya – 538”, 2026. <a href="https://inwestycje.pl/biznes/orlen-mial-1963-stacje-paliw-na-koniec-stycznia-bp-574-moya-538/">inwestycje.pl</a></li>
+  <li>bne IntelliNews, „Lukoil sells Baltic and Polish petrol station network to Austria's Amic”, luty 2016. <a href="https://www.intellinews.com/lukoil-sells-baltic-and-polish-petrol-station-network-to-austria-s-amic-90155/">intellinews.com</a></li>
+  <li>WTOP (AP), „Russia's Lukoil plans sale of international assets in response to planned US sanctions”, styczeń 2026. <a href="https://wtop.com/russia-ukraine-war-news/2026/01/russias-lukoil-plans-sale-of-international-assets-in-response-to-planned-us-sanctions/">wtop.com</a></li>
+  <li>Telex, „Russian oil too good a deal for Mol and Hungarian government to pass up” (omówienie analizy CSD i CREA), luty 2026. <a href="https://telex.hu/english/2026/02/18/russian-oil-too-good-a-deal-for-mol-and-hungarian-government-to-pass-up">telex.hu</a></li>
+  <li>Super Biznes, „Banaś uderza w fuzję Orlenu z Lotosem” (417 stacji Lotosu dla MOL-a). <a href="https://superbiz.se.pl/wiadomosci/banas-uderza-w-fuzje-orlenu-z-lotosem-kolejne-zawiadomienia-do-prokuratury-w-drodze-aa-pDbD-GTQg-f7BS.html">superbiz.se.pl</a></li>
+  <li>Notes from Poland, „State energy giant Orlen sold assets to Saudis for billions below value, finds Polish audit office”, luty 2024. <a href="https://notesfrompoland.com/2024/02/05/state-energy-giant-orlen-sold-assets-to-saudis-for-billions-below-value-finds-polish-audit-office/">notesfrompoland.com</a></li>
+  <li>Interia Biznes, „Najwyższa Izba Kontroli w Orlenie” (Orlen Trading Switzerland). <a href="https://biznes.interia.pl/gieldy/aktualnosci/news-najwyzsza-izba-kontroli-w-orlenie-urzednicy-zostali-wpuszcze,nId,7458830">interia.pl</a></li>
+  <li>Interia Biznes, „Orlen zerwał ostatni kontrakt na ropę z Rosji”, 2023. <a href="https://biznes.interia.pl/gieldy/aktualnosci/news-orlen-zerwal-ostatni-kontrakt-na-rope-z-rosji-obajtek-wypowi,nId,6697786">interia.pl</a></li>
+</ul>
+
+<footer class="end">
+  <p>Stan wiedzy na koniec października 2026 roku. Kilka opisanych spraw wciąż trwa: wyrok w sprawie Bodo, proces wspólnot Ogale i Bille, oba holenderskie pozwy klimatyczne przeciw Shellowi oraz skarga przeciw TotalEnergies we Francji.</p>
+  <p>Opisy spraw Bodo oraz Ogale i Bille opierają się w dużej mierze na komunikatach kancelarii reprezentującej mieszkańców. Opis sprawy Chevronu w Ekwadorze opiera się na wyrokach i relacjach obu stron, które do dziś interpretują ją zupełnie inaczej.</p>
+  <p>Dane o emisjach pochodzą z bazy Carbon Majors, która przypisuje firmom również emisje ze spalania sprzedanych przez nie paliw. To jedna z kilku możliwych metod liczenia i nie jest wolna od sporów.</p>
+</footer>
+</div>
+</body></html>
