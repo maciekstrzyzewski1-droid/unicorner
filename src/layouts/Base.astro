@@ -15,6 +15,8 @@ const {
 const ownHead = Astro.slots.has('head');
 // build.format 'file' -> /foo.html; Astro 7 podaje stronę główną jako /index.html — canonical ma być „/”
 const canonical = new URL(Astro.url.pathname.replace(/(^|\/)index\.html$/, '$1'), Astro.site).href;
+// Podgląd przy udostępnianiu linku (Messenger, Discord, LinkedIn…) — bez tego link wygląda jak goła ramka tekstu
+const ogImage = new URL('/og-image.jpg', Astro.site).href;
 ---
 
 <!doctype html>
@@ -34,6 +36,10 @@ const canonical = new URL(Astro.url.pathname.replace(/(^|\/)index\.html$/, '$1')
         <meta property="og:description" content={description} />
         <meta property="og:url" content={canonical} />
         <meta property="og:locale" content="pl_PL" />
+        <meta property="og:image" content={ogImage} />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta name="twitter:card" content="summary_large_image" />
       </>
     )}
     <link rel="preconnect" href="https://fonts.googleapis.com" />
