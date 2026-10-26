@@ -17,7 +17,9 @@ const EXTRA = {
   // logowanie Google + dekodery skanów pdf.js (WebAssembly)
   'generator.html': {
     script: ['https://accounts.google.com', "'wasm-unsafe-eval'"],
-    style: ['https://accounts.google.com'],
+    // blok <style>, który gsi/client wstawia sam (hash z komunikatu przeglądarki, 2026-10-26);
+    // jeśli Google zmieni ten CSS, w konsoli wróci jedno naruszenie — logowanie działa i bez niego
+    style: ['https://accounts.google.com', "'sha256-RU4sU0AaS8IBGZx8XrGt/pa9A5SLA3dQszGeqT5L3Kw='"],
   },
   // three.js z jsDelivr (importmap) + dekoder Draco (WebAssembly)
   'index.html': {
