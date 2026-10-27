@@ -569,8 +569,8 @@ fetch(REVIEWS_URL)
 
 <script is:inline type="importmap">
 { "imports": {
-  "three": "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js",
-  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/"
+  "three": "/vendor/three@0.161.0/build/three.module.min.js",
+  "three/addons/": "/vendor/three@0.161.0/examples/jsm/"
 }}
 
 </script>
@@ -628,7 +628,7 @@ if (canvas) {
       }`
   });
   const draco = new DRACOLoader();
-  draco.setDecoderPath('https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/libs/draco/');
+  draco.setDecoderPath('/vendor/three@0.161.0/examples/jsm/libs/draco/');
   const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
   loader.load('assets/skeleton.glb', (g)=>{
     const root=g.scene;
