@@ -45,7 +45,7 @@ export function policyFor(html, rel) {
 
   const extra = EXTRA[rel] || {};
   const script = ["'self'", 'https://static.cloudflareinsights.com', ...(extra.script || []), ...scripts];
-  const style = ["'self'", 'https://fonts.googleapis.com', ...(extra.style || []), ...styles];
+  const style = ["'self'", ...(extra.style || []), ...styles];
 
   return [
     `script-src ${script.join(' ')}`,
