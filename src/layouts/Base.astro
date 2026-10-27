@@ -48,5 +48,42 @@ const ogImage = new URL('/og-image.jpg', Astro.site).href;
   </head>
   <body>
     <slot />
+    <style is:inline>
+      /* klawiatura: widoczny fokus na elementach-przyciskach, które nie są <button> */
+      [data-kb-btn]:focus-visible{ outline:2px solid #27e8ff; outline-offset:3px; border-radius:4px; }
+    </style>
+    <script is:inline>
+      /* Dostępność z klawiatury: elementy z onclick, które nie są przyciskami ani linkami
+         (np. <span class="chip">, <div class="acc-head">), dostają rolę przycisku, Tab i obsługę Enter/Spacji.
+         Działa też na elementach tworzonych później przez skrypty strony (innerHTML). */
+      (function(){
+        var NATIVE = /^(A|BUTTON|INPUT|SELECT|TEXTAREA|LABEL|SUMMARY|OPTION)$/;
+        function fix(root){
+          var els = (root.querySelectorAll ? root.querySelectorAll('[onclick]') : []);
+          for (var i = 0; i < els.length; i++){
+            var el = els[i];
+            if (NATIVE.test(el.tagName) || el.hasAttribute('data-kb-btn')) continue;
+            el.setAttribute('data-kb-btn', '');
+            if (!el.hasAttribute('role')) el.setAttribute('role', 'button');
+            if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+          }
+        }
+        document.addEventListener('keydown', function(e){
+          var el = e.target;
+          if (!el || !el.hasAttribute || !el.hasAttribute('data-kb-btn')) return;
+          if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+        });
+        function start(){
+          fix(document);
+          new MutationObserver(function(ms){
+            for (var i = 0; i < ms.length; i++){
+              var n = ms[i].addedNodes;
+              for (var j = 0; j < n.length; j++){ if (n[j].nodeType === 1){ if (n[j].hasAttribute('onclick')) fix(n[j].parentNode || document); else fix(n[j]); } }
+            }
+          }).observe(document.body, { childList: true, subtree: true });
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
+      })();
+    </script>
   </body>
 </html>
