@@ -636,9 +636,18 @@
 .site-foot{ min-height:auto; margin-top:clamp(0px,2vh,18px); padding:0; overflow:hidden; position:relative;
   display:flex; flex-direction:column;
   background:linear-gradient(180deg,#060608 0%,#050505 100%); }
-/* GridScan (React Bits, zestripowany) jako tlo — widoczny az do gornej krawedzi, by laczyl sie z siatka tla */
-.foot-grid{ position:absolute; inset:0; z-index:0; pointer-events:none; -webkit-mask:none; mask:none; }
-.foot-grid .gridscan-container{ position:absolute; inset:0; }
+/* Neonowa podloga w stopce: te same oczka (38px), kolor i grubosc linii co siatka tla (.site-grid);
+   dluzsza i dalsza perspektywa niz podloga tla, zeby siegala pod napis; subtelnie (krycie .5), powoli plynie w strone widza. */
+.foot-floor{ position:absolute; left:-60%; right:-60%; bottom:0; height:290%; z-index:0; pointer-events:none;
+  background:
+    linear-gradient(rgba(168,85,255,.8) 1px, transparent 1px) 0 0/100% 38px,
+    linear-gradient(90deg, rgba(168,85,255,.65) 1px, transparent 1px) 50% 0/38px 100%;
+  transform:perspective(1000px) rotateX(60deg); transform-origin:bottom center; opacity:.5;
+  -webkit-mask-image:linear-gradient(to top,#000 0%,transparent 85%); mask-image:linear-gradient(to top,#000 0%,transparent 85%); }
+@media (prefers-reduced-motion: no-preference){
+  .foot-floor{ animation:footFloor 7s linear infinite; }
+  @keyframes footFloor{ to{ background-position:0 38px, 50% 0; } }
+}
 
 .foot-hero{ flex:0 0 auto; position:relative; z-index:2; display:flex; flex-direction:column;
   align-items:center; justify-content:center; text-align:center; padding:clamp(26px,4.5vh,48px) 20px 26px; }
@@ -648,9 +657,6 @@
 .foot-eyebrow .fe-dot{ width:7px; height:7px; border-radius:50%; background:var(--ok); box-shadow:0 0 10px var(--ok); }
 
 .foot-brandmark{ position:relative; display:inline-flex; align-items:center; justify-content:center; }
-.foot-brandmark .uf-clip{ position:absolute; left:50%; top:46%; transform:translate(-50%,-50%);
-  width:clamp(240px,28vw,460px); z-index:1; mix-blend-mode:screen; filter:brightness(.92); pointer-events:none; }
-.foot-brandmark .uf-clip video{ display:block; width:100%; height:auto; }
 .foot-brandmark .giant{ position:relative; z-index:2; text-align:center; }
 .foot-brandmark .giant span.gw{ font-size:clamp(2.7rem, var(--fw-vw, 9.4vw), var(--fw-max, 7.6rem)); letter-spacing:var(--fw-ls, .06em); }
 
