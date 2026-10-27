@@ -27,6 +27,8 @@
      POST /reviews           → nowa opinia (trafia do moderacji)
      POST /admin/list        → {code} → opinie oczekujące (moderacja.html)
      POST /admin/decide      → {code, id, action:"approve"|"reject"}
+     POST /admin/share-block → {code, share, reason} wyłącza cudzy link po zgłoszeniu naruszenia;
+                               autor nie może go włączyć ponownie dla tej talii (widzi powód)
 
    Błędy: użytkownik dostaje krótki komunikat; szczegóły trafiają tylko do logów
    Cloudflare (panel → Worker → Logs).
@@ -49,6 +51,7 @@
    ===================================================================== */
 
 const MODEL = "claude-haiku-4-5-20251001";
+const CONTACT_MAIL = "unicornernotatki@gmail.com";  // publiczny adres kontaktowy (jest w polityce prywatności)
 const DEFAULT_ORIGIN = "https://unicorner.pl"; // CORS, gdy w panelu nie ustawiono ALLOWED_ORIGIN
 const GOOGLE_CLIENT_ID = "243769752280-r6h2cj3pn9n47p020seuk58n9ijj9si7.apps.googleusercontent.com"; // publiczny identyfikator z Google Cloud
 const SESSION_DAYS = 60;                 // ile dni trwa zalogowanie
@@ -123,6 +126,9 @@ export default {
 
       if (path === "/admin/list" && request.method === "POST")
         return await handleAdminList(request, env, cors);
+
+      if (path === "/admin/share-block" && request.method === "POST")
+        return await handleAdminShareBlock(request, env, cors);
 
       if (path === "/admin/decide" && request.method === "POST")
         return await handleAdminDecide(request, env, cors);
@@ -384,6 +390,31 @@ async function handleAdminDecide(request, env, cors) {
   return json({ ok: true }, 200, cors);
 }
 
+/* wyłączenie cudzego linku po zgłoszeniu naruszenia (panel moderacji).
+   share = sam identyfikator albo cały link (…/talia.html?s=ID). Kopie, które ktoś już zapisał u siebie, zostają prywatne na jego koncie. */
+async function handleAdminShareBlock(request, env, cors) {
+  if (!(await rateLimit(env, "adm:" + clientIp(request), 60, 3600)).ok) return json({ error: "Za dużo prób" }, 429, cors);
+  let body;
+  try { body = await request.json(); }
+  catch { return json({ error: "Bad JSON" }, 400, cors); }
+  const { code, share, reason } = body || {};
+  if (!(await adminOk(env, code))) return json({ error: "Zły kod" }, 401, cors);
+  if (!env.DB) return json({ error: "Niedostępne" }, 503, cors);
+  const m = String(share || "").trim().match(/(?:[?&]s=|\/s\/)?([A-Za-z0-9]{6,20})\s*$/);
+  const why = String(reason || "").trim().replace(/\s+/g, " ");
+  if (!m) return json({ error: "Wklej link do talii albo jego identyfikator" }, 400, cors);
+  if (why.length < 3 || why.length > 300) return json({ error: "Podaj powód (3–300 znaków) — zobaczy go autor" }, 400, cors);
+  await ensureSchema(env);
+  const sh = await env.DB.prepare("SELECT s.deck_id, s.user_id, d.title FROM shares s JOIN decks d ON d.id = s.deck_id WHERE s.share_id = ?").bind(m[1]).first();
+  if (!sh) return json({ error: "Nie ma takiego linku (już wyłączony?)" }, 404, cors);
+  await env.DB.batch([
+    env.DB.prepare("INSERT INTO share_blocks (deck_id, user_id, reason, created_at) VALUES (?,?,?,?) ON CONFLICT(deck_id) DO UPDATE SET reason = excluded.reason, created_at = excluded.created_at")
+      .bind(sh.deck_id, sh.user_id, why, Date.now()),
+    env.DB.prepare("DELETE FROM shares WHERE share_id = ?").bind(m[1]),
+  ]);
+  return json({ ok: true, title: sh.title }, 200, cors);
+}
+
 /* ===================== BAZA (D1) ===================== */
 
 let schemaReady = false;
@@ -406,6 +437,8 @@ async function ensureSchema(env) {
       created_at INTEGER NOT NULL, views INTEGER NOT NULL DEFAULT 0)`),
     env.DB.prepare(`CREATE INDEX IF NOT EXISTS shares_user ON shares(user_id)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS rate (k TEXT PRIMARY KEY, n INTEGER NOT NULL, exp INTEGER NOT NULL)`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS share_blocks (
+      deck_id TEXT PRIMARY KEY, user_id TEXT NOT NULL, reason TEXT NOT NULL, created_at INTEGER NOT NULL)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS reviews (
       user_id TEXT NOT NULL, deck_id TEXT NOT NULL, ckey TEXT NOT NULL,
       box INTEGER NOT NULL DEFAULT 0, due INTEGER NOT NULL, updated_at INTEGER NOT NULL,
@@ -424,7 +457,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 13, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 14, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { console.error("health: baza", e && e.stack || e); out.db_error = "błąd bazy (szczegóły w logach)"; }
@@ -496,6 +529,7 @@ async function handleDeleteMe(request, env, cors) {
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   await env.DB.batch([
     env.DB.prepare("DELETE FROM shares WHERE user_id = ?").bind(user.id),
+    env.DB.prepare("DELETE FROM share_blocks WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM answers WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM reviews WHERE user_id = ?").bind(user.id),
     env.DB.prepare("DELETE FROM decks WHERE user_id = ?").bind(user.id),
@@ -957,12 +991,12 @@ async function handleDeckGet(request, env, cors, id) {
   const user = env.DB ? await authUser(request, env) : null;
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   const row = await env.DB.prepare(
-    "SELECT d.id, d.title, d.source, d.instruction, d.data, d.created_at, s.share_id, s.views FROM decks d LEFT JOIN shares s ON s.deck_id = d.id WHERE d.id = ? AND d.user_id = ?"
+    "SELECT d.id, d.title, d.source, d.instruction, d.data, d.created_at, s.share_id, s.views, b.reason AS share_blocked FROM decks d LEFT JOIN shares s ON s.deck_id = d.id LEFT JOIN share_blocks b ON b.deck_id = d.id WHERE d.id = ? AND d.user_id = ?"
   ).bind(id, user.id).first();
   if (!row) return json({ error: "Nie ma takiej talii" }, 404, cors);
   const data = safeParse(row.data) || {};
   return json({ id: row.id, title: row.title, source: row.source, instruction: row.instruction, created_at: row.created_at,
-    share_id: row.share_id || null, views: row.views || 0, flashcards: data.flashcards || [], quiz: data.quiz || [], note: noteFor({ ai_answers: data.ai_answers === true }),
+    share_id: row.share_id || null, views: row.views || 0, share_blocked: row.share_blocked || null, flashcards: data.flashcards || [], quiz: data.quiz || [], note: noteFor({ ai_answers: data.ai_answers === true }),
     answers: await deckAnswers(env, user, id), reviews: await deckReviews(env, user, id), now: Date.now() }, 200, cors);
 }
 
@@ -985,6 +1019,7 @@ async function handleDeckDelete(request, env, cors, id) {
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   await env.DB.batch([
     env.DB.prepare("DELETE FROM shares WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
+    env.DB.prepare("DELETE FROM share_blocks WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
     env.DB.prepare("DELETE FROM answers WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
     env.DB.prepare("DELETE FROM reviews WHERE deck_id = ? AND user_id = ?").bind(id, user.id),
     env.DB.prepare("DELETE FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id),
@@ -1005,6 +1040,8 @@ async function handleShareCreate(request, env, cors, id) {
   if (!user) return json({ error: "Niezalogowany" }, 401, cors);
   const deck = await env.DB.prepare("SELECT id FROM decks WHERE id = ? AND user_id = ?").bind(id, user.id).first();
   if (!deck) return json({ error: "Nie ma takiej talii" }, 404, cors);
+  const blk = await env.DB.prepare("SELECT reason FROM share_blocks WHERE deck_id = ? AND user_id = ?").bind(id, user.id).first();
+  if (blk) return json({ error: `Udostępnianie tej talii wyłączyliśmy po zgłoszeniu naruszenia. Powód: ${blk.reason}. Jeśli to pomyłka, napisz na ${CONTACT_MAIL}.`, blocked: true }, 403, cors);
   const ex = await env.DB.prepare("SELECT share_id, views FROM shares WHERE deck_id = ?").bind(id).first();
   if (ex) return json({ share_id: ex.share_id, views: ex.views }, 200, cors);
   await env.DB.prepare("INSERT INTO shares (share_id, deck_id, user_id, created_at) VALUES (?,?,?,?) ON CONFLICT(deck_id) DO NOTHING")

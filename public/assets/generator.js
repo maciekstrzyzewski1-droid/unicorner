@@ -649,7 +649,7 @@ $("shareBtn") && $("shareBtn").addEventListener("click", async ()=>{
   const btn=$("shareBtn"); btn.disabled=true;
   const r=await api("/decks/"+currentDeckId+"/share", { method:"POST" });
   btn.disabled=false;
-  if(!r.ok){ toast(r.data.error || "Nie udało się utworzyć linku.", true); return; }
+  if(!r.ok){ if(r.data && r.data.blocked){ openModal("Udostępnianie wyłączone", r.data.error); return; } toast(r.data.error || "Nie udało się utworzyć linku.", true); return; }
   currentShareId=r.data.share_id;
   const d=decks.find(z=>z.id===currentDeckId); if(d){ d.share_id=currentShareId; d.views=r.data.views||0; renderDecks(); }
   renderShare(true);

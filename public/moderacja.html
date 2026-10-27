@@ -48,6 +48,13 @@
   </div>
   <div class="msg" id="msg"></div>
   <div id="list"></div>
+
+  <h1 style="margin-top:40px">wyłącz udostępnioną talię</h1>
+  <p class="sub">Po zgłoszeniu naruszenia: wklej link do talii i podaj powód. Link przestanie działać od razu, a autor zobaczy powód, gdy spróbuje udostępnić talię ponownie. Kopie zapisane wcześniej przez innych zostają prywatne na ich kontach.</p>
+  <div class="row"><input type="text" id="blkShare" placeholder="link do talii (…/talia.html?s=…) albo identyfikator" autocomplete="off"></div>
+  <div class="row"><input type="text" id="blkReason" maxlength="300" placeholder="powód, np. materiały wykładowcy bez zgody (zgłoszenie z 27.10)" autocomplete="off"></div>
+  <div class="row"><button class="no" id="blkGo" type="button">Wyłącz link</button></div>
+  <div class="msg" id="blkMsg"></div>
 </div>
 <script>
 const WORKER_URL = "https://red-queen-3002.unicorner.workers.dev";
@@ -96,6 +103,23 @@ async function decide(id, action){
   }catch{ msg("Brak połączenia.", true); }
 }
 function msg(t, err){ const m=$('msg'); m.textContent=t; m.className="msg"+(err?" err":""); }
+async function blockShare(){
+  const m=$('blkMsg'); const share=$('blkShare').value.trim(), reason=$('blkReason').value.trim();
+  if(!$('code').value.trim()){ m.textContent="Najpierw wpisz kod administratora (u góry)."; m.className="msg err"; return; }
+  if(!share || reason.length<3){ m.textContent="Wklej link i podaj powód (min. 3 znaki)."; m.className="msg err"; return; }
+  m.textContent="Wyłączam…"; m.className="msg";
+  try{
+    const res = await fetch(WORKER_URL + "/admin/share-block", {
+      method:"POST", headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({ code: $('code').value.trim(), share, reason })
+    });
+    const d = await res.json().catch(()=>({}));
+    if(!res.ok){ m.textContent=d.error||"Błąd."; m.className="msg err"; return; }
+    m.textContent="Wyłączone: „"+(d.title||"talia")+"”. Odpisz zgłaszającemu, że link nie działa."; m.className="msg";
+    $('blkShare').value=""; $('blkReason').value="";
+  }catch{ m.textContent="Brak połączenia z workerem."; m.className="msg err"; }
+}
+$('blkGo').addEventListener('click', blockShare);
 $('load').addEventListener('click', load);
 $('code').addEventListener('keydown', e=>{ if(e.key==='Enter') load(); });
 </script>

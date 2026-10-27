@@ -22,6 +22,8 @@ async function load(){
   $("tMeta").textContent = fc + " " + plural(fc,"fiszka","fiszki","fiszek") + " · " + qz + " " + plural(qz,"pytanie","pytania","pytań");
   const nb = $("tNote"); if(nb){ nb.textContent = deck.note || ""; nb.hidden = !deck.note; }
   $("tSave").href = "/generator.html?zapisz=" + encodeURIComponent(sid);
+  const rep = $("tReport");
+  if(rep){ rep.href = "mailto:unicornernotatki@gmail.com?subject=" + encodeURIComponent("Zgłoszenie talii " + sid) + "&body=" + encodeURIComponent("Link: " + location.href + "\n\nCo narusza prawo lub Twoje prawa (np. czyje to materiały):\n\nTwoje imię i nazwisko oraz kontakt:\n"); }
   renderCards(); renderQuiz();
   $("tLoading").hidden = true; $("tDeck").hidden = false;
 }
