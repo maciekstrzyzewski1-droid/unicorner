@@ -21,7 +21,7 @@ const EXTRA = {
     // jeśli Google zmieni ten CSS, w konsoli wróci jedno naruszenie — logowanie działa i bez niego
     style: ['https://accounts.google.com', "'sha256-RU4sU0AaS8IBGZx8XrGt/pa9A5SLA3dQszGeqT5L3Kw='"],
   },
-  // three.js z naszej domeny (public/vendor, importmap) + dekoder Draco (WebAssembly)
+  // dekoder Draco (WebAssembly) dla szkieletu HeroSkull z public/vendor
   'index.html': {
     script: ["'wasm-unsafe-eval'"],
   },

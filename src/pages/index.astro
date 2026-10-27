@@ -1,13 +1,8 @@
 ---
 import Base from '../layouts/Base.astro';
 import '../styles/global.css';
-import Dither from '../components/Dither.jsx';
 import FaultyTerminal from '../components/FaultyTerminal.jsx';
-import Shuffle from '../components/Shuffle.jsx';
 import BorderGlow from '../components/BorderGlow.jsx';
-import Plasma from '../components/Plasma.jsx';
-import GridScan from '../components/GridScan.jsx';
-import TunnelGrid from '../components/TunnelGrid.jsx';
 import HeroSkull from '../components/HeroSkull.jsx';
 ---
 
@@ -28,9 +23,6 @@ import HeroSkull from '../components/HeroSkull.jsx';
 <!-- Model 3D szkieletu: "three-skull" (Cullen Webber) — licencja MIT. -->
 <div class="hero-screen" id="heroScreen">
   <div class="liquid-bg" id="liquidBars"><FaultyTerminal client:load tint="#bb1cfc" scale={1.7} curvature={0.22} mouseStrength={0.4} brightness={0.7} timeScale={0.4} scanlineIntensity={0.8} digitSize={1.5} dpr={1.5} /></div>
-  {/* Poprzednie tło (Dither) — odkomentuj, by wrócić:
-  <div class="liquid-bg" id="liquidBars"><Dither client:load waveColor={[0.74, 0.28, 1.0]} colorNum={20} pixelSize={1.5} waveAmplitude={0.3} waveFrequency={1.9} waveSpeed={0.04} enableMouseInteraction={true} mouseRadius={0.2} dpr={[1, 1.5]} /></div> */}
-  <canvas id="gl" aria-hidden="true"></canvas>
   <div class="hero-fx"><div class="scan"></div><div class="vig"></div></div>
   <div class="hero-skull" id="heroSkull"><HeroSkull client:load /></div>
   <div class="hero-hud" id="hudTitle">
@@ -53,35 +45,6 @@ import HeroSkull from '../components/HeroSkull.jsx';
   </div>
 
   <!-- WIDOK 2: kula + generator (wchodzi crossfadem przy scrollu, na tym samym tunelu) -->
-  <div class="gen-screen" id="genScreen">
-    <div class="gen-top">
-      <h2 class="aif-h gen-h">Twoje notatki.<br><span class="hl">Gotowa nauka.</span></h2>
-      <p class="gen-lead">Wrzuć notatki albo PDF, a sztuczna inteligencja rozbije materiał na <b>fiszki i quiz pod Twój egzamin</b> — bez przepisywania.</p>
-    </div>
-    <a class="aif-launch gen-launch" id="genLaunch" href="generator.html" aria-label="Uruchom Generator AI">
-      <span class="hexbtn" aria-hidden="true">
-        <svg class="rings" viewBox="0 0 100 100">
-          <defs><linearGradient id="hexRing" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#27e8ff"/><stop offset=".5" stop-color="#a78bfa"/><stop offset="1" stop-color="#ff2e97"/>
-          </linearGradient></defs>
-          <polygon class="ring" points="50,7 90,28.5 90,71.5 50,93 10,71.5 10,28.5"/>
-          <polygon class="ring ring2" points="50,22 77,37 77,63 50,78 23,63 23,37"/>
-        </svg>
-        <svg class="chip" viewBox="0 0 48 48" fill="none">
-          <rect x="16" y="16" width="16" height="16" rx="3" stroke="currentColor" stroke-width="2.4"/>
-          <rect x="21" y="21" width="6" height="6" rx="1.2" fill="currentColor"/>
-          <g stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
-            <path d="M19 16v-5M24 16v-6M29 16v-5"/><path d="M19 32v5M24 32v6M29 32v5"/>
-            <path d="M16 19h-5M16 24h-6M16 29h-5"/><path d="M32 19h5M32 24h6M32 29h5"/>
-          </g>
-        </svg>
-      </span>
-      <span class="lx-wrap">
-        <span class="lx-tx">Uruchom generator</span>
-        <span class="lx-sub">generator.html · faza beta</span>
-      </span>
-    </a>
-  </div>
 </div>
 <div class="hero-spacer"></div>
 
@@ -567,218 +530,30 @@ fetch(REVIEWS_URL)
 
 </script>
 
-<script is:inline type="importmap">
-{ "imports": {
-  "three": "/vendor/three@0.161.0/build/three.module.min.js",
-  "three/addons/": "/vendor/three@0.161.0/examples/jsm/"
-}}
-
-</script>
-
-<script is:inline type="module">
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/addons/loaders/DRACOLoader.js';
-import { LineSegments2 } from 'three/addons/lines/LineSegments2.js';
-import { LineSegmentsGeometry } from 'three/addons/lines/LineSegmentsGeometry.js';
-import { LineMaterial } from 'three/addons/lines/LineMaterial.js';
-import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
-import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
-import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
-import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
-
-const canvas = document.getElementById('gl');
-if (canvas) {
-  const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
-  renderer.setPixelRatio(Math.min(devicePixelRatio, 1.75));
-  renderer.setClearColor(0x000000, 0);
-  let W=innerWidth, H=innerHeight;
-  const wireMats=[]; let bloomComposer, finalComposer, bloomPass;
-
-  const scene = new THREE.Scene();
-  const cam = new THREE.PerspectiveCamera(42, W/H, 0.1, 100);
-  cam.position.set(0, 0.15, 5.2);
-  function size(){ W=innerWidth; H=innerHeight; renderer.setSize(W,H,false); cam.aspect=W/H; cam.updateProjectionMatrix();
-    wireMats.forEach(m=>m.resolution.set(W,H));
-    if(bloomComposer){ bloomComposer.setSize(W,H); finalComposer.setSize(W,H); bloomPass.setSize(W,H); } }
-  addEventListener('resize', size);
-
-  const ballGroup = new THREE.Group(); scene.add(ballGroup);
-  const cluster = new THREE.Group(); ballGroup.add(cluster);
-
-  // ---- WIDOK 1: SZKIELET (x-ray fresnel + additive), fade przez uOpacity ----
-  const skullGroup = new THREE.Group(); scene.add(skullGroup);
-  skullGroup.visible = false;   // TYMCZASOWO ukryty szkielet (ocena tla Dither) — usun te linie, by wrocic
-  const xrayMat = new THREE.ShaderMaterial({
-    uniforms:{ uRim:{value:new THREE.Color(0x27e8ff)}, uMid:{value:new THREE.Color(0xa78bfa)},
-      uBase:{value:new THREE.Color(0x181042)}, uPower:{value:2.2}, uOpacity:{value:1.0} },
-    transparent:true, blending:THREE.AdditiveBlending, depthWrite:false, side:THREE.DoubleSide,
-    vertexShader:`varying vec3 vN; varying vec3 vV;
-      void main(){ vec4 wp=modelMatrix*vec4(position,1.0);
-        vN=normalize(mat3(modelMatrix)*normal); vV=normalize(cameraPosition-wp.xyz);
-        gl_Position=projectionMatrix*viewMatrix*wp; }`,
-    fragmentShader:`uniform vec3 uRim,uMid,uBase; uniform float uPower,uOpacity;
-      varying vec3 vN; varying vec3 vV;
-      void main(){
-        float f=pow(1.0-abs(dot(normalize(vN),normalize(vV))),uPower);
-        vec3 col=mix(uBase,uMid,smoothstep(0.0,0.5,f));
-        col=mix(col,uRim,smoothstep(0.45,1.0,f));
-        col*=(0.5+f);
-        gl_FragColor=vec4(col*uOpacity,1.0);
-      }`
-  });
-  // ukryty szkielet „rentgen” pobieramy tylko wtedy, gdy jest włączony (oszczędza model i dekoder przy każdej wizycie)
-  if (skullGroup.visible) {
-    const draco = new DRACOLoader();
-    draco.setDecoderPath('/vendor/three@0.161.0/examples/jsm/libs/draco/');
-    const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
-    loader.load('assets/skeleton.glb', (g)=>{
-      const root=g.scene;
-      root.traverse(o=>{ if(o.isMesh) o.material=xrayMat; });
-      const box=new THREE.Box3().setFromObject(root);
-      const c=box.getCenter(new THREE.Vector3()), s=box.getSize(new THREE.Vector3());
-      root.position.sub(c);
-      const target=3.7, k=target/Math.max(s.x,s.y,s.z);
-      root.scale.setScalar(k);
-      root.position.y -= target*0.56;
-      skullGroup.add(root);
-    }, undefined, (e)=>console.error('skull load error', e));
+<script is:inline>
+/* Pierwszy ekran przy przewijaniu: jedzie w górę (paralaksa) i wygasza się od dołu maską; pojawia się siatka tła.
+   (Dawniej w scenie three.js z tunelem i kulą; scena nic nie rysowała, bo widok kuli był wyłączony.) */
+(function(){
+  var hero=document.getElementById('heroScreen'), grid=document.getElementById('siteGrid');
+  if(!hero) return;
+  var c=function(v,a,b){ return Math.min(Math.max(v,a),b); };
+  function alignGrid(){ if(!grid) return; var f=document.querySelector('.site-foot'); var r=f&&f.getBoundingClientRect();
+    var cx=r?(r.left+r.width/2):innerWidth/2; grid.style.setProperty('--gx', ((((cx%38)+38)%38)).toFixed(1)+'px'); }
+  function upd(){
+    var vh=innerHeight, s=scrollY;
+    var ep=c((s - vh*0.15)/(vh*1.05), 0, 1);
+    hero.style.opacity='1';
+    hero.style.transform='translateY(' + (-(s*0.4)).toFixed(1) + 'px)';
+    var fs=Math.max(0, 100 - Math.round(c(s/(vh*1.2), 0, 1)*100));
+    var mask='linear-gradient(to bottom, #000 ' + fs + '%, rgba(0,0,0,0) 100%)';
+    hero.style.webkitMaskImage=mask; hero.style.maskImage=mask;
+    hero.style.pointerEvents = ep>0.5 ? 'none' : 'auto';
+    if(grid) grid.style.opacity=(ep*0.9).toFixed(3);
   }
-
-  // RURA-tunel wzdluz osi patrzenia — fioletowa siatka, jasne brzegi, ciemny rdzen. Wartosci zablokowane.
-  const tun = { dens:30, thick:0.70, line:2.65, edge:1.0, fade:0.10, y:0.4, z:-15, par:0.15 };
-  const tunB1 = new THREE.Color(0x5a2fbf);   // WIDOK 1: niebiesko-fioletowy (jak bylo)
-  const tunB2 = new THREE.Color(0x8a4af0);   // WIDOK 2: fiolet kuli
-  const gridMat = new THREE.ShaderMaterial({
-    uniforms:{
-      uA:{value:new THREE.Color(0xa855ff)}, uB:{value:tunB1.clone()},
-      uDens:{value:tun.dens}, uThick:{value:tun.thick},
-      uLine:{value:tun.line}, uEdge:{value:tun.edge}, uFade:{value:tun.fade}, uFadeT:{value:0.0}
-    },
-    transparent:true, depthWrite:false, blending:THREE.AdditiveBlending, side:THREE.BackSide,
-    vertexShader:`varying float vDepth; varying vec2 vUv;
-      void main(){ vUv=uv; vec4 mv=modelViewMatrix*vec4(position,1.0); vDepth=-mv.z;
-        gl_Position=projectionMatrix*mv; }`,
-    fragmentShader:`uniform vec3 uA,uB; uniform float uDens,uThick,uLine,uEdge,uFade,uFadeT;
-      varying float vDepth; varying vec2 vUv;
-      float gl(float c, float w){ float l=abs(fract(c-0.5)-0.5)/fwidth(c); return 1.0-min(l/w,1.0); }
-      void main(){
-        float g   = max(gl(vUv.x*uDens, uThick), gl(vUv.y*uDens, uThick));
-        float fog = exp(-max(vDepth-3.0,0.0)*uFade);
-        vec3  col = mix(uA, uB, smoothstep(5.0, 20.0, vDepth));
-        float a   = g*fog*uLine + fog*fog*uEdge;
-        gl_FragColor = vec4(col, a*uFadeT);
-      }`
-  });
-  const tunnel = new THREE.Mesh(new THREE.CylinderGeometry(4.8, 4.8, 52, 64, 1, true), gridMat);
-  tunnel.rotation.x = Math.PI/2;
-  tunnel.position.set(0, tun.y, tun.z);
-  scene.add(tunnel);
-
-  // KULA-KLASTER (zamiast szkieletu): ikozaedr -> zewnetrzne trojkaty odlamkow, gruby jednolity fioletowy drut
-  function buildEdges(baseGeo,e){ const pos=baseGeo.getAttribute('position').array,out=[];
-    const c=new THREE.Vector3(),d=new THREE.Vector3(); const seg=(a,b)=>{out.push(a[0],a[1],a[2],b[0],b[1],b[2]);};
-    for(let i=0;i<pos.length;i+=9){
-      const p1=[pos[i],pos[i+1],pos[i+2]],p2=[pos[i+3],pos[i+4],pos[i+5]],p3=[pos[i+6],pos[i+7],pos[i+8]];
-      c.set(p1[0]+p2[0]+p3[0],p1[1]+p2[1]+p3[1],p1[2]+p2[2]+p3[2]).divideScalar(3); d.copy(c).normalize();
-      const p4=[p1[0]+d.x*e,p1[1]+d.y*e,p1[2]+d.z*e],p5=[p2[0]+d.x*e,p2[1]+d.y*e,p2[2]+d.z*e],p6=[p3[0]+d.x*e,p3[1]+d.y*e,p3[2]+d.z*e];
-      seg(p4,p5); seg(p5,p6); seg(p6,p4);
-    } return out; }
-  const baseIco=new THREE.IcosahedronGeometry(1,1);
-  const wireGeo=new LineSegmentsGeometry(); wireGeo.setPositions(buildEdges(baseIco,0.5));
-  function wireMat(color,lw,op){ const m=new LineMaterial({color,linewidth:lw,transparent:true,opacity:op||1.0,blending:THREE.NormalBlending,depthWrite:false,alphaToCoverage:false}); m.resolution.set(W,H);
-    m.onBeforeCompile=(sh)=>{ sh.fragmentShader=sh.fragmentShader.replace('if ( len2 > 1.0 ) discard;','discard;'); }; wireMats.push(m); return m; }
-  const ballMat = wireMat(0xa855ff, 4.0, 0.0);   // start ukryta (WIDOK 1)
-  const ballLine=new LineSegments2(wireGeo, ballMat);
-  ballLine.layers.enable(1);                 // warstwa dla selektywnego bloomu
-  cluster.add(ballLine);
-
-  // selektywny bloom: swieci TYLKO kula; tunel i tlo zostaja dokladnie takie jak byly (przezroczysty canvas)
-  const BLOOM_LAYER=1;
-  bloomComposer=new EffectComposer(renderer); bloomComposer.renderToScreen=false;
-  bloomComposer.addPass(new RenderPass(scene,cam));
-  bloomPass=new UnrealBloomPass(new THREE.Vector2(W,H), 0.95, 0.5, 0.05);
-  bloomComposer.addPass(bloomPass);
-  const mixPass=new ShaderPass(new THREE.ShaderMaterial({
-    uniforms:{ baseTexture:{value:null}, bloomTexture:{value:bloomComposer.renderTarget2.texture} },
-    vertexShader:`varying vec2 vUv; void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-    fragmentShader:`uniform sampler2D baseTexture; uniform sampler2D bloomTexture; varying vec2 vUv;
-      void main(){ vec4 b=texture2D(baseTexture,vUv); vec4 g=texture2D(bloomTexture,vUv); gl_FragColor=vec4(b.rgb+g.rgb, b.a + max(max(g.r,g.g),g.b)); }`
-  }), 'baseTexture');
-  finalComposer=new EffectComposer(renderer);
-  finalComposer.addPass(new RenderPass(scene,cam));
-  finalComposer.addPass(mixPass);
-
-  const mouse={x:0,y:0};
-  addEventListener('pointermove', e=>{ mouse.x=(e.clientX/innerWidth)*2-1; mouse.y=(e.clientY/innerHeight)*2-1; });
-  let tiltY=0, tiltX=0;   // wygladzony wplyw myszy (osobno od kolysania)
-
-  const clampf=(v,a,b)=>Math.min(Math.max(v,a),b);
-  const heroScreen=document.getElementById('heroScreen');
-  const liquidBars=document.getElementById('liquidBars');
-  const siteGrid=document.getElementById('siteGrid');
-  // Faza pionowych linii siatki tla -> linia dokladnie na osi tunelu (srodek stopki), by sufit laczyl sie z tlem
-  const alignGrid=()=>{ if(!siteGrid) return; const f=document.querySelector('.site-foot'); const r=f&&f.getBoundingClientRect(); const cx=r?(r.left+r.width/2):innerWidth/2; siteGrid.style.setProperty('--gx', ((((cx%38)+38)%38)).toFixed(1)+'px'); };
-  alignGrid(); addEventListener('resize', alignGrid);
-  const skullHud=['hudTitle','hudTelemBR','hudCap','hudHint'].map(id=>document.getElementById(id)).filter(Boolean);
-  const genScreen=document.getElementById('genScreen');
-  const genLaunch=document.getElementById('genLaunch');
-  const SHOW_GEN_VIEW = false;   // widok kuli + generatora — na razie WYLACZONY (ustaw true, by wrocic)
-  size();
-  renderer.setAnimationLoop((t)=>{
-    const vh=innerHeight, s=scrollY;
-    if (!SHOW_GEN_VIEW) {
-      // HERO zostaje JASNE (bez przyciemniania). Scroll -> jedzie w gore (parallax),
-      // a jego TLO nie ucina sie twardo: wygasza sie od dolu gradientem (maska), coraz mocniej ze scrollem.
-      const ep = clampf((s - vh*0.15)/(vh*1.05), 0, 1);
-      heroScreen.style.opacity = '1';
-      heroScreen.style.transform = 'translateY(' + (-(s*0.4)).toFixed(1) + 'px)';
-      const mfade = clampf(s/(vh*1.2), 0, 1);             // rusza od 1. piksela scrolla (bez opoznienia ep)
-      const fs = Math.max(0, 100 - Math.round(mfade*100)); // glebia wygaszenia (~0.83*s) zawsze > parallax (0.4*s) -> brak ucietej krawedzi
-      const mask = 'linear-gradient(to bottom, #000 ' + fs + '%, rgba(0,0,0,0) 100%)';
-      heroScreen.style.webkitMaskImage = mask;
-      heroScreen.style.maskImage = mask;
-      heroScreen.style.pointerEvents = ep>0.5 ? 'none' : 'auto';
-      if(siteGrid) siteGrid.style.opacity = (ep*0.9).toFixed(3);
-      return;
-    }
-    const tp = clampf((s - vh*0.30)/(vh*0.85), 0, 1);   // WIDOK1 (szkielet) -> WIDOK2 (kula)
-    const ep = clampf((s - vh*1.65)/(vh*0.70), 0, 1);   // wyjscie intro -> reszta strony
-    const skullFade = clampf((0.58 - tp)/0.46, 0, 1);   // szkielet + jego HUD (gasnie ~tp 0.58)
-    const ballFade  = clampf((tp - 0.42)/0.46, 0, 1);   // kula + generator HUD (od ~tp 0.42, lekkie zazebienie)
-    const en = ballFade*ballFade*(3.0-2.0*ballFade);    // wygladzone wejscie kuli+info OD DOLU
-    // wyjscie calego intro (po widoku kuli) -> normalna strona
-    heroScreen.style.opacity = (1-ep).toFixed(3);
-    heroScreen.style.transform = 'scale('+(1-0.05*ep).toFixed(4)+')';
-    heroScreen.style.pointerEvents = ep>0.5 ? 'none' : 'auto';
-    if(siteGrid) siteGrid.style.opacity = (ep*0.9).toFixed(3);
-    // crossfade tekstu i 3D: szkielet -> kula
-    skullHud.forEach(el=>{ el.style.opacity = skullFade.toFixed(3); });
-    if(genScreen){ genScreen.style.opacity = ballFade.toFixed(3); genScreen.style.transform = 'translateY('+(180*(1-en)).toFixed(1)+'px)'; }
-    if(genLaunch) genLaunch.style.pointerEvents = (ballFade>0.6 && ep<0.5) ? 'auto' : 'none';
-    xrayMat.uniforms.uOpacity.value = skullFade;
-    skullGroup.scale.setScalar(1 - 0.15*tp);
-    ballMat.opacity = ballFade;
-    ballGroup.position.y = -1.0*(1-en);                 // kula wjezdza OD DOLU do srodka
-    cluster.scale.setScalar(0.62*(0.94 + 0.06*tp));
-    gridMat.uniforms.uB.value.copy(tunB1).lerp(tunB2, tp);   // tunel przebarwia sie na kolor kuli
-    gridMat.uniforms.uFadeT.value = tp;                       // tunel gasnie pod szkieletem (tp=0) -> widoczne liquid-bars
-    if(liquidBars) liquidBars.style.opacity = (1 - tp).toFixed(3);   // liquid-bars pod szkieletem, znikaja przy kuli
-    if(ep>=1) return;                                        // intro poza kadrem -> nie renderuj
-    // kolysanie (~±18°) + wygladzony wplyw myszy (na szkielecie i kuli — widoczny i tak jeden)
-    tiltY += (mouse.x*0.4 - tiltY)*0.06;
-    tiltX += (mouse.y*0.22 - tiltX)*0.05;
-    const yaw = Math.sin(t*0.0004)*0.32 + tiltY;
-    skullGroup.rotation.y = yaw; skullGroup.rotation.x = tiltX;
-    cluster.rotation.y = yaw;    cluster.rotation.x = tiltX;
-    const tx=-mouse.x*tun.par, ty=tun.y - mouse.y*tun.par*0.6;
-    tunnel.position.x += (tx - tunnel.position.x)*0.05;
-    tunnel.position.y += (ty - tunnel.position.y)*0.05;
-    // selektywny bloom: 1) tylko kula -> bloom, 2) pelna scena + naklada glow
-    cam.layers.set(BLOOM_LAYER); bloomComposer.render();
-    cam.layers.set(0); finalComposer.render();
-  });
-}
-
+  var tick=false;
+  addEventListener('scroll', function(){ if(!tick){ tick=true; requestAnimationFrame(function(){ tick=false; upd(); }); } }, {passive:true});
+  addEventListener('resize', function(){ alignGrid(); upd(); });
+  alignGrid(); upd();
+})();
 </script>
 </Base>
