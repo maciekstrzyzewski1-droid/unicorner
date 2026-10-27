@@ -3,12 +3,14 @@ import * as THREE from 'three';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { useGLTF, Environment, Lightformer } from '@react-three/drei';
 
-useGLTF.preload('/assets/skeleton.glb', true);
+// dekoder Draco z naszej domeny (public/vendor), a nie z www.gstatic.com (domyślne w drei) — IP odwiedzających nie trafia do Google
+const DRACO = '/vendor/three@0.161.0/examples/jsm/libs/draco/';
+useGLTF.preload('/assets/skeleton.glb', DRACO);
 
 // Czaszka (assets/skeleton.glb, DRACO) w polerowanym chromie — odbija neonowe
 // swiatla na ciemnym tle jak product-shot. Kolysze sie + mozna ja zlapac i obracac.
 function Skull({ drag }) {
-  const { scene } = useGLTF('/assets/skeleton.glb', true);
+  const { scene } = useGLTF('/assets/skeleton.glb', DRACO);
 
   const { obj, k } = useMemo(() => {
     const s = scene.clone(true);

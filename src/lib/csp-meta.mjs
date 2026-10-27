@@ -21,9 +21,9 @@ const EXTRA = {
     // jeśli Google zmieni ten CSS, w konsoli wróci jedno naruszenie — logowanie działa i bez niego
     style: ['https://accounts.google.com', "'sha256-RU4sU0AaS8IBGZx8XrGt/pa9A5SLA3dQszGeqT5L3Kw='"],
   },
-  // three.js z jsDelivr (importmap) + dekoder Draco (WebAssembly)
+  // three.js z naszej domeny (public/vendor, importmap) + dekoder Draco (WebAssembly)
   'index.html': {
-    script: ['https://cdn.jsdelivr.net', "'wasm-unsafe-eval'"],
+    script: ["'wasm-unsafe-eval'"],
   },
 };
 
