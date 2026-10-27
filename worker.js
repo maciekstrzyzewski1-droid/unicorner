@@ -40,6 +40,7 @@
      ANTHROPIC_API_KEY — klucz do AI
      ADMIN_CODE        — kod do moderacji opinii
      ALLOWED_ORIGIN    — np. "https://unicorner.pl" (można kilka po przecinku)
+     IP_SALT           — opcjonalnie: sól do skrótów w licznikach limitów (domyślnie ADMIN_CODE)
      ADMIN_EMAILS      — opcjonalnie: Twoje maile (po przecinku) bez limitu generowań
      FREE_MONTHLY_CREDITS — opcjonalnie: darmowe kredyty na miesiąc (domyślnie 30)
      (ACCESS_CODE — stary wspólny kod; od wersji 9 nieużywany, można usunąć ze zmiennych)
@@ -457,7 +458,7 @@ async function ensureSchema(env) {
 
 /* szybki test po wdrożeniu: otwórz /health w przeglądarce */
 async function handleHealth(env, cors) {
-  const out = { ok: true, version: 14, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
+  const out = { ok: true, version: 15, ai_key: !!env.ANTHROPIC_API_KEY, kv: !!env.UC_KV, db: false };
   if (env.DB) {
     try { await ensureSchema(env); await env.DB.prepare("SELECT COUNT(*) AS n FROM users").first(); out.db = true; }
     catch (e) { console.error("health: baza", e && e.stack || e); out.db_error = "błąd bazy (szczegóły w logach)"; }
@@ -1145,16 +1146,24 @@ async function limitUserAndIp(env, request, user, kind, perUser) {
 
 /* licznik limitu w oknie ttl sekund.
    W bazie D1 (ok. 100 tys. zapisów/dzień za darmo, atomowo); KV tylko awaryjnie, bo darmowe KV ma ok. 1000 zapisów/dzień. */
+/* klucz licznika zapisujemy jako skrót (SHA-256 z solą), nie jawnie: w bazie nie ma adresów IP ani ID kont.
+   Sól: zmienna IP_SALT, a gdy jej brak — ADMIN_CODE (zmiana kodu tylko zeruje liczniki). */
+async function limitKey(env, key) {
+  const salt = String(env.IP_SALT || env.ADMIN_CODE || "unicorner");
+  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(salt + "|" + key));
+  return [...new Uint8Array(d)].slice(0, 12).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
 async function rateLimit(env, key, limit, ttl) {
   const bucket = Math.floor(Date.now() / (ttl * 1000));
-  const k = key + ":" + bucket;
+  const k = (await limitKey(env, key)) + ":" + bucket;
   if (env.DB) {
     try {
       await ensureSchema(env);
       const row = await env.DB.prepare(
         "INSERT INTO rate (k, n, exp) VALUES (?, 1, ?) ON CONFLICT(k) DO UPDATE SET n = n + 1 WHERE n < ? RETURNING n"
       ).bind(k, (bucket + 1) * ttl * 1000, limit).first();
-      if (Math.random() < 0.02) await env.DB.prepare("DELETE FROM rate WHERE exp < ?").bind(Date.now()).run(); // sprzątanie
+      if (Math.random() < 0.1) await env.DB.prepare("DELETE FROM rate WHERE exp < ?").bind(Date.now()).run(); // sprzątanie wygasłych liczników
       return { ok: !!row };
     } catch (e) {
       // awaria licznika = blokujemy (bez działającej bazy i tak nie działają sesje ani kredyty)
