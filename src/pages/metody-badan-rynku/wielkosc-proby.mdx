@@ -1,0 +1,634 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: metody-badan-rynku
+slug: wielkosc-proby
+title: Minimalna liczebność próby
+podtytul: wzory dla cechy jakościowej i ilościowej, WWP, dane GUS i kwoty dla ankieterów
+description: Minimalna liczebność próby krok po kroku – Z alfa, maksymalny błąd szacunku, najliczniejsza frakcja, współczynnik WWP dla populacji wielodzielnych, wzory ze znanym N, cecha ilościowa i współczynnik zmienności, kilka kryteriów naraz i dobór kwotowy.
+lede: Zanim ktokolwiek wypełni ankietę, trzeba wiedzieć, ile osób zapytać. Tu policzysz to wzorami z zajęć – dla konsumentów pokoleń X, Y i Z w Wielkopolsce (dane GUS) i dla klientów bankowości. Na końcu rozdzielisz próbę na grupy i ankieterów.
+wymaga: Nic. Każdy wzór rozbieramy od zera.
+umiesz:
+  - ustalić populację i jej strukturę z tabeli GUS
+  - policzyć minimalną liczebność próby dla cechy jakościowej (z WWP i ze znanym N)
+  - policzyć ją dla cechy ilościowej, także gdy błąd jest w procentach średniej
+  - wybrać wynik, gdy w badaniu jest kilka kryteriów naraz
+  - rozdzielić próbę na grupy i ułożyć kwoty dla ankieterów
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import { GUS, populacja, N, NM, NK, udzial, nJak, nIl, w_gore, alokuj, blad, fmt, proc } from '../../lib/proba.js';
+
+export const Zp = populacja[0];
+export const Yp = populacja[1];
+export const Xp = populacja[2];
+export const zapis = (p, i) => p.grupy.map((g) => fmt(GUS[g][i])).join(' + ');
+export const osoby1819 = GUS['18'][0] + GUS['18'][1] + GUS['19'][0] + GUS['19'][1];
+export const pY = udzial(Yp.razem);
+export const pM = NM / N;
+export const aY = 1.96 * 1.96 * pY * (1 - pY);
+export const genBez = nJak(95, pY, 0.05, N, 2);
+export const genBezN = nJak(95, pY, 0.05, null, 2);
+export const gen = nJak(95, pY, 0.05, N, 3);
+export const plec = nJak(95, pM, 0.05, N, 2);
+export const NPROBY = Math.max(w_gore(gen), w_gore(plec));
+export const wersjaArkusza = w_gore(nJak(95, 0.41, 0.05, N, 2));
+export const alPok = alokuj(NPROBY, populacja.map((p) => p.razem));
+export const kom = populacja.flatMap((p) => [
+  { id: p.id, plec: 'mężczyźni', N: p.m },
+  { id: p.id, plec: 'kobiety', N: p.k },
+]);
+export const alKom = alokuj(NPROBY, kom.map((k) => k.N));
+export const z1V = 3.91 / 7.81;
+export const z1 = nIl(95, z1V, 0.04);
+export const z2il = nIl(95, 0.58, 0.05);
+export const z2prod = nJak(95, 0.48, 0.05, null, 4);
+export const z2bank = nJak(95, 0.74, 0.05, null, 2);
+export const z2 = Math.max(w_gore(z2il), w_gore(z2prod), w_gore(z2bank));
+
+## Po co to jest
+
+Chcesz sprawdzić, jak kupują dorośli z pokoleń X, Y i Z w Wielkopolsce. To prawie dwa miliony osób. Nie zapytasz każdej. Zapytasz kilkaset i na tej podstawie powiesz coś o wszystkich.
+
+Ile to „kilkaset”? Za mała próba daje wynik, który jest zgadywaniem. Za duża to wyrzucone pieniądze. Odpowiedź daje wzór. Wkładasz do niego kilka decyzji badacza i kilka liczb o populacji. Wychodzi **minimalna liczebność próby**: najmniejsza liczba respondentów, przy której wynik ma założoną dokładność.
+
+## Co będzie na kolokwium
+
+<Polecenia items={[
+  { polecenie: 'Ustal populację i jej strukturę', jak: 'Zamieniasz pokolenia na wiek, sumujesz osoby z tabeli GUS i liczysz udziały grup.', przepis: 'polecenie-populacja', cwiczenia: 'cw-populacja', zrodlo: 'jak w zadaniu z danymi GUS dla Wielkopolski' },
+  { polecenie: 'Oszacuj minimalną liczebność próby — cecha jakościowa', jak: 'Bierzesz najliczniejszą frakcję $p$, podstawiasz do wzoru, mnożysz przez WWP, gdy grup są co najmniej trzy.', przepis: 'polecenie-jakosciowa', cwiczenia: 'cw-jakosciowa', zrodlo: 'jak w zadaniu z danymi GUS i w Zad. 2' },
+  { polecenie: 'Oszacuj minimalną liczebność próby — cecha ilościowa', jak: 'Podstawiasz odchylenie standardowe (albo współczynnik zmienności) i błąd do wzoru.', przepis: 'polecenie-ilosciowa', cwiczenia: 'cw-ilosciowa', zrodlo: 'jak w Zad. 1 i Zad. 2' },
+  { polecenie: 'Kilka kryteriów naraz — podaj jedną liczebność', jak: 'Liczysz próbę dla każdego kryterium osobno i bierzesz największą.', przepis: 'polecenie-kryteria', cwiczenia: 'cw-kryteria', zrodlo: 'jak w Zad. 2 i Zad. 3' },
+  { polecenie: 'Dobór kwotowy: struktura próby i kwoty dla ankieterów', jak: 'Udział grupy w populacji razy $n$, potem podział przez liczbę ankieterów.', przepis: 'polecenie-kwoty', cwiczenia: 'cw-kwoty', zrodlo: 'jak w schemacie doboru kwotowego' },
+]} />
+
+## Pojęcia od podstaw
+
+Każdy z tych symboli stoi we wzorach z zajęć. Najpierw sens, potem wzór.
+
+<div class="k-symbole">
+<Znak t="N" nazwa="Liczebność populacji" czytamy="en (duże)" znaczy="Liczba wszystkich osób, o których chcemy coś wiedzieć. Tu: dorośli z pokoleń X, Y i Z w Wielkopolsce." pamiec="Duże N to cały worek." />
+<Znak t="n" nazwa="Minimalna liczebność próby" czytamy="en (małe)" znaczy="Najmniejsza liczba osób, które trzeba zapytać. To ją liczymy." pamiec="Małe n to garstka wyjęta z worka." />
+<Znak t="Z_\alpha" nazwa="Z alfa" czytamy="zet alfa" znaczy="Wielokrotność standardowego błędu średniej. Odczytujesz ją z tablic dla wybranego poziomu ufności. Dla 95% to 1,96." pamiec="Nie liczysz jej. Bierzesz z tabeli niżej." />
+<Znak t="e" nazwa="Maksymalny dopuszczalny błąd szacunku" czytamy="e" znaczy="O ile wynik z próby może się różnić od prawdy w populacji, w górę lub w dół. Błąd 5% to zapis $e = 0{,}05$." pamiec="Mały błąd to duża próba." />
+<Znak t="p" nazwa="Najliczniejsza frakcja" czytamy="pe" znaczy="Odsetek jednostek w największej grupie według badanej cechy. Zapisujesz ułamkiem: 41% to 0,41." pamiec="Szukasz największego kawałka tortu." />
+<Znak t="\text{WWP}" nazwa="Współczynnik wielkości próby" czytamy="wu wu pe" znaczy="Mnożnik dla populacji wielodzielnych, czyli cech z co najmniej trzema grupami. Odczytujesz go z tabeli." pamiec="Trzy grupy lub więcej: mnożysz. Dwie: nie." />
+<Znak t="\sigma" nazwa="Odchylenie standardowe" czytamy="sigma" znaczy="O ile przeciętnie wartości cechy ilościowej (np. liczby transakcji) różnią się od średniej. Na części slajdów ten sam symbol to $\delta$ (delta)." pamiec="Duży rozrzut to duża próba." />
+</div>
+
+**Poziom ufności** ($1 - \alpha$, czytamy „jeden minus alfa”) mówi, jak pewni chcemy być wyniku. Najczęściej 95%. Każdy poziom ma swoje $Z_\alpha$:
+
+| Poziom ufności | $Z_\alpha$ |
+|---|---|
+| 90% | 1,645 |
+| **95%** | **1,960** |
+| 99% | 2,575 |
+| 99,99% | 5,000 |
+
+**Jak czytać:** wybierasz wiersz z poziomem ufności z treści zadania i bierzesz liczbę z prawej kolumny.
+
+## Wzory z zajęć
+
+Są dwa rodzaje cech. **Jakościowa** dzieli ludzi na grupy (płeć, pokolenie, liczba banków). **Ilościowa** to liczba (transakcje w miesiącu, lata posiadania konta). Każda ma swój wzór.
+
+<Rozbior t="n = \dfrac{Z_\alpha^2 \cdot p\,(1-p)}{e^2} \cdot \text{WWP}" czytamy="en równa się zet alfa do kwadratu razy pe razy jeden minus pe, przez e do kwadratu, razy wu wu pe" czesci={[
+  { t: 'Z_\\alpha^2', o: 'dla 95%: $1{,}96^2 = 3{,}8416$' },
+  { t: 'p\\,(1-p)', o: 'najliczniejsza frakcja razy reszta. Dla $p = 0{,}48$: $0{,}48 \\cdot 0{,}52 = 0{,}2496$' },
+  { t: 'e^2', o: 'błąd do kwadratu. Dla 5%: $0{,}05^2 = 0{,}0025$. Stoi w mianowniku, więc mały błąd daje dużą próbę' },
+  { t: '\\text{WWP}', o: 'tylko przy co najmniej trzech grupach. Przy dwóch grupach go pomijasz' },
+]} />
+
+Gdy znasz liczebność populacji $N$, używasz wersji ze znanym $N$:
+
+<Rozbior t="n = \dfrac{Z_\alpha^2\, p\,(1-p)\, N}{Z_\alpha^2\, p\,(1-p) + (N-1)\, e^2} \cdot \text{WWP}" czytamy="en równa się: zet alfa kwadrat razy pe razy jeden minus pe razy en, przez to samo bez en plus en minus jeden razy e kwadrat; całość razy wu wu pe" czesci={[
+  { t: 'N', o: 'liczebność populacji. Przy dużym $N$ wynik prawie nie różni się od wzoru bez $N$. Przy małym $N$ jest wyraźnie mniejszy' },
+]} />
+
+Dla cechy ilościowej zamiast $p(1-p)$ stoi $\sigma^2$:
+
+<Rozbior t="n = \dfrac{Z_\alpha^2\, \sigma^2}{e^2}" czytamy="en równa się zet alfa do kwadratu razy sigma do kwadratu, przez e do kwadratu" czesci={[
+  { t: '\\sigma', o: 'odchylenie standardowe cechy w populacji' },
+  { t: 'e', o: 'błąd w tych samych jednostkach co $\\sigma$ (np. w transakcjach)' },
+]} />
+
+Ze znanym $N$: $n = \dfrac{Z_\alpha^2 \sigma^2 N}{Z_\alpha^2 \sigma^2 + (N-1) e^2}$. Budowa jest ta sama jak przy cesze jakościowej.
+
+**Tabela WWP** (współczynniki wielkości próby dla populacji wielodzielnych):
+
+| Liczba grup (proporcji) | 95% | 90% |
+|---|---|---|
+| 3 | 1,53 | 1,71 |
+| 4 | 1,66 | 1,84 |
+| 5 | 1,73 | 2,04 |
+| 10 | 2,05 | 2,44 |
+
+**Jak czytać:** liczysz, na ile grup cecha dzieli populację (pokolenia X, Y, Z to 3 grupy). Wybierasz wiersz z tą liczbą i kolumnę z poziomem ufności.
+
+<Ramka kind="botak" tytul="po co WWP">
+Zasada: cecha ma trzy grupy lub więcej, więc wynik mnożysz przez WWP.
+
+Powód: wzór bez WWP pilnuje dokładności jednej proporcji. Przy kilku grupach chcemy dokładności dla wszystkich naraz, a to wymaga większej próby. Tabela mówi, o ile większej.
+</Ramka>
+
+<Pytania tag="Sprawdź się" pytania={[
+  { q: 'Badanie ma mieć błąd 5%. Jak wpisać to do wzoru?', opcje: ['5', '0,05', '0,5'], dobra: 1, dlaczego: 'Procenty zapisujemy ułamkiem: 5% = 0,05. Po wpisaniu 5 wynik wychodzi ułamkiem jednej osoby. 0,5 to pomylenie błędu z frakcją.' },
+]} />
+
+<a id="polecenie-populacja" class="k-anchor"></a>
+
+## Krok 1: kogo badamy i jaka jest struktura
+
+<Ramka kind="polecenie" tytul="Ustal populację i jej strukturę">
+**Polecenie:** określ populację w badaniu wśród konsumentów pokoleń X, Y i Z w województwie wielkopolskim.
+
+**Przepis:**
+
+1. Zapisz, kogo badasz: konsumenci, pokolenia X, Y, Z, Wielkopolska.
+2. Zamień każde pokolenie na wiek (tabela niżej).
+3. W tabeli GUS znajdź kolumny z tymi grupami wieku, osobno mężczyźni i kobiety.
+4. Dodaj osoby z grup jednego pokolenia. To liczebność pokolenia.
+5. Dodaj trzy pokolenia. To $N$.
+6. Policz udziały: liczebność grupy podzielona przez $N$. To struktura populacji.
+</Ramka>
+
+Tabela GUS dzieli ludzi na grupy 5-letnie, a pokolenia to zakresy roczników. Granice trzeba dopasować. W zadaniu przyjęto:
+
+| Pokolenie | Wiek w 2025 | Grupy z GUS |
+|---|---|---|
+| Z | 18–29 lat | 18, 19, 20–24, 25–29 |
+| Y | 30–44 lata | 30–34, 35–39, 40–44 |
+| X | 45–59 lat | 45–49, 50–54, 55–59 |
+
+**Jak czytać:** wiersz to pokolenie. Prawa kolumna mówi, które kolumny tabeli GUS dodajesz.
+
+<Ramka kind="botak" tytul="granice pokoleń są umowne">
+Źródła różnie wyznaczają roczniki pokoleń. Tu granice dopasowano do grup 5-letnich z GUS i do dorosłych konsumentów (od 18 lat). Zawsze zapisz w pracy przyjęte granice. Inne granice dadzą trochę inne $N$.
+</Ramka>
+
+<Rozwiazanie tytul="Populacja pokoleń X, Y i Z w Wielkopolsce" zrodlo="zadanie z danymi GUS, stan na 31.12.2025">
+<div slot="tresc">
+
+Tabela GUS podaje liczbę ludności Wielkopolski wg wieku i płci. Policz liczebność każdego pokolenia, całą populację i jej strukturę.
+
+</div>
+
+<div slot="plan">
+
+1. Dla każdego pokolenia dodajemy mężczyzn z właściwych grup wieku, potem kobiety.
+2. Mężczyzn i kobiety dodajemy do siebie. Wychodzi liczebność pokolenia.
+3. Dodajemy trzy pokolenia. To $N$.
+4. Liczymy udziały pokoleń i płci. Z nich weźmiemy najliczniejszą frakcję $p$ w kroku 2.
+
+</div>
+
+<Krok tytul="Pokolenie Z (18–29 lat)">
+- **Mężczyźni:** {zapis(Zp, 0)} = **{fmt(Zp.m)}**
+- **Kobiety:** {zapis(Zp, 1)} = **{fmt(Zp.k)}**
+- **Razem:** {fmt(Zp.m)} + {fmt(Zp.k)} = **{fmt(Zp.razem)}**
+
+<Dlaczego>
+Cztery składniki, bo GUS podaje osobno 18 lat, 19 lat, 20–24 i 25–29. Razem to wiek od 18 do 29 lat.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pokolenie Y (30–44 lata)">
+- **Mężczyźni:** {zapis(Yp, 0)} = **{fmt(Yp.m)}**
+- **Kobiety:** {zapis(Yp, 1)} = **{fmt(Yp.k)}**
+- **Razem:** {fmt(Yp.m)} + {fmt(Yp.k)} = **{fmt(Yp.razem)}**
+</Krok>
+
+<Krok tytul="Pokolenie X (45–59 lat)">
+- **Mężczyźni:** {zapis(Xp, 0)} = **{fmt(Xp.m)}**
+- **Kobiety:** {zapis(Xp, 1)} = **{fmt(Xp.k)}**
+- **Razem:** {fmt(Xp.m)} + {fmt(Xp.k)} = **{fmt(Xp.razem)}**
+</Krok>
+
+<Krok tytul="Cała populacja i struktura">
+$N$ = {fmt(Zp.razem)} + {fmt(Yp.razem)} + {fmt(Xp.razem)} = **{fmt(N)}**
+
+| Grupa | Osób | Udział w $N$ |
+|---|---|---|
+| pokolenie Z | {fmt(Zp.razem)} | {proc(udzial(Zp.razem))} |
+| pokolenie Y | {fmt(Yp.razem)} | **{proc(udzial(Yp.razem))}** |
+| pokolenie X | {fmt(Xp.razem)} | {proc(udzial(Xp.razem))} |
+| mężczyźni | {fmt(NM)} | **{proc(udzial(NM))}** |
+| kobiety | {fmt(NK)} | {proc(udzial(NK))} |
+
+**Jak czytać:** pogrubione są najliczniejsze frakcje: wśród pokoleń Y, wśród płci mężczyźni.
+
+<Dlaczego>
+Udział to liczebność grupy podzielona przez $N$. Np. dla Y: {fmt(Yp.razem)} : {fmt(N)} = {proc(pY)}. Udziały pokoleń dodają się do 100%. Udziały płci też.
+</Dlaczego>
+</Krok>
+
+</Rozwiazanie>
+
+<Ramka kind="pulapka">
+- **Pominięte 18 i 19 lat.** Są w osobnej tabeli. Pokolenie Z byłoby zaniżone o {fmt(osoby1819)} osób.
+- **Dodane naraz kolumny „ogółem”, „mężczyźni” i „kobiety”.** Każda osoba policzona dwa razy.
+- **Granice pokoleń niezapisane w pracy.** Nie da się wtedy sprawdzić wyniku.
+</Ramka>
+
+<a id="polecenie-jakosciowa" class="k-anchor"></a>
+
+## Krok 2: cecha jakościowa
+
+<Ramka kind="polecenie" tytul="Minimalna liczebność próby — cecha jakościowa">
+**Polecenie:** określ minimalną liczebność próby (poziom ufności 95%, błąd 5%).
+
+**Przepis:**
+
+1. Weź $Z_\alpha$ z tabeli: dla 95% to 1,96.
+2. Zapisz błąd ułamkiem: 5% to $e = 0{,}05$.
+3. Znajdź najliczniejszą frakcję i zapisz ją ułamkiem. To $p$.
+4. Policz grupy tej cechy. Co najmniej 3? Weź WWP z tabeli. Dwie? Pomiń WWP.
+5. Znasz $N$? Użyj wzoru ze znanym $N$. Nie znasz? Wzoru bez $N$.
+6. Policz, pomnóż przez WWP i zaokrąglij **w górę**.
+</Ramka>
+
+<Rozwiazanie tytul="Konsumenci pokoleń X, Y i Z — kryterium: pokolenie" zrodlo="zadanie z danymi GUS, stan na 31.12.2025">
+<div slot="tresc">
+
+Określ minimalną liczebność próby w badaniu wśród konsumentów pokoleń X, Y, Z w Wielkopolsce. Poziom ufności 95%, błąd 5%, populacja {fmt(N)} osób. Kryterium doboru: pokolenie.
+
+</div>
+
+<div slot="plan">
+
+1. Zbieramy liczby: $Z_\alpha$, $e$, $p$, $N$, WWP.
+2. Liczymy wspólny kawałek $Z_\alpha^2\, p\,(1-p)$, bo stoi we wzorze dwa razy.
+3. Podstawiamy do wzoru ze znanym $N$, bo $N$ znamy z GUS.
+4. Mnożymy przez WWP, bo pokolenia to trzy grupy.
+5. Zaokrąglamy w górę.
+
+</div>
+
+<Krok tytul="Liczby do wzoru">
+- $Z_\alpha = 1{,}96$ (95%)
+- $e = 0{,}05$
+- $p$ = {fmt(pY, 4)} (pokolenie Y, czyli {proc(pY)}), więc $1 - p$ = {fmt(1 - pY, 4)}
+- $N$ = {fmt(N)}
+- 3 grupy, 95%, więc WWP = 1,53
+
+<Dlaczego>
+$p$ to odsetek **najliczniejszej** frakcji. Największe pokolenie to Y. Przy trzech pokoleniach nie bierzemy 0,5, bo żadna grupa nie ma połowy populacji.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wspólny kawałek">
+$Z_\alpha^2 \cdot p\,(1-p)$ = 3,8416 · {fmt(pY, 4)} · {fmt(1 - pY, 4)} ≈ **{fmt(aY, 4)}**
+
+<Dlaczego>
+Ten iloczyn stoi i w liczniku, i w mianowniku. Liczymy go raz i dwa razy wstawiamy.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wzór ze znanym N">
+- Licznik: {fmt(aY, 4)} · {fmt(N)} ≈ {fmt(aY * N, 0)}
+- Mianownik: {fmt(aY, 4)} + {fmt(N - 1)} · 0,0025 = {fmt(aY, 4)} + {fmt((N - 1) * 0.0025, 2)} ≈ {fmt(aY + (N - 1) * 0.0025, 2)}
+- Iloraz: {fmt(aY * N, 0)} : {fmt(aY + (N - 1) * 0.0025, 2)} ≈ **{fmt(genBez, 2)}**
+
+<Dlaczego>
+Najpierw osobno licznik i mianownik, potem dzielenie. Każde działanie w osobnej linii, żeby łatwo znaleźć pomyłkę.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Wzór bez $N$ daje {fmt(genBezN, 2)}, prawie to samo. Przy prawie dwóch milionach osób $N$ niewiele zmienia.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="WWP i zaokrąglenie">
+{fmt(genBez, 2)} · 1,53 ≈ {fmt(gen, 2)} → **{w_gore(gen)} osób**
+
+<Dlaczego>
+„Minimalna” znaczy: wystarczająca, żeby błąd nie przekroczył 5%. Dlatego zawsze w górę. Liczba w dół dałaby błąd minimalnie większy od założonego.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Kalkulator online (kalkulator wielkości próby dla proporcji) policzy część bez WWP: wpisujesz $N$, 95%, błąd 5% i odsetek {proc(pY, 0)}. Kalkulatory zwykle nie mają WWP, więc wynik mnożysz przez 1,53 sam(a).
+</Dlaczego>
+</Krok>
+
+</Rozwiazanie>
+
+<Ramka kind="podobny" tytul="to samo dla płci">
+Druga cecha doboru to płeć. Najliczniejsza frakcja: mężczyźni, $p$ = {fmt(pM, 4)}. Płeć ma dwie grupy, więc **bez WWP**:
+
+$n$ ≈ {fmt(plec, 2)} → **{w_gore(plec)} osób**
+
+$p$ jest prawie równe 0,5, więc wynik jest prawie taki, jak przy $p = 0{,}5$.
+</Ramka>
+
+<Ramka kind="pulapka">
+- **Zaokrąglenie w dół.** Z {fmt(gen, 2)} robi się {Math.floor(gen)} zamiast {w_gore(gen)}.
+- **$p = 0{,}5$ przy trzech grupach.** We wzorze z zajęć $p$ to najliczniejsza frakcja.
+- **WWP przy dwóch grupach.** Tabela zaczyna się od trzech.
+- **Zaokrąglone $p$.** Z $p = 0{,}41$ zamiast {fmt(pY, 4)} wychodzi {wersjaArkusza} zamiast {fmt(genBez, 2)}. Różnica jest mała, ale trzymaj się jednej zasady w całym zadaniu.
+- **Brak kwadratu** przy $Z_\alpha$ albo $e$.
+</Ramka>
+
+<a id="polecenie-ilosciowa" class="k-anchor"></a>
+
+## Krok 3: cecha ilościowa
+
+<Ramka kind="polecenie" tytul="Minimalna liczebność próby — cecha ilościowa">
+**Polecenie:** oszacuj minimalną liczebność próby, gdy znasz średnią i odchylenie standardowe cechy.
+
+**Przepis:**
+
+1. Weź $Z_\alpha$ z tabeli.
+2. Sprawdź, w czym podano błąd:
+   - w jednostkach cechy (np. 0,3 transakcji): podstaw $\sigma$ i $e$ wprost;
+   - w procentach (np. 4%): to procent średniej. Policz współczynnik zmienności $V = \sigma : \text{średnia}$ i podstaw $V$ zamiast $\sigma$, a błąd jako ułamek.
+3. Policz $n = Z_\alpha^2 \sigma^2 / e^2$ i zaokrąglij w górę.
+</Ramka>
+
+<Ramka kind="botak" tytul="błąd w procentach przy średniej">
+Zasada: błąd w % przy cesze ilościowej to procent średniej.
+
+Dlatego dzielisz $\sigma$ przez średnią. Wychodzi to samo, co przy błędzie przeliczonym na jednostki (pokazuje to Zad. 1).
+</Ramka>
+
+<Rozwiazanie tytul="Klienci bankowości mobilnej" zrodlo="Zad. 1 z zestawu „Minimalna liczebność próby – zadania”">
+<div slot="tresc">
+
+Badanie klientów banków korzystających z aplikacji i stron mobilnych. Poziom ufności 95%, błąd 4%. Średnia liczba transakcji w miesiącu: 7,81. Odchylenie standardowe: 3,91.
+
+</div>
+
+<div slot="plan">
+
+1. Liczba transakcji to liczba, więc cecha ilościowa.
+2. Błąd podano w %, więc przeliczamy na współczynnik zmienności.
+3. Podstawiamy do wzoru i zaokrąglamy w górę.
+
+Inna droga: przeliczyć błąd na transakcje. Pokazujemy ją w kroku 2.
+
+</div>
+
+<Krok tytul="Współczynnik zmienności">
+$V = 3{,}91 : 7{,}81 \approx$ {fmt(z1V, 4)}
+
+<Dlaczego>
+Błąd 4% jest procentem średniej. Żeby porównywać procent z procentem, odchylenie też wyrażamy w procentach średniej.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wzór">
+$$
+\begin{aligned}
+n &= \dfrac{1{,}96^2 \cdot {fmt(z1V, 4)}^2}{0{,}04^2} \\
+&= \dfrac{3{,}8416 \cdot {fmt(z1V * z1V, 4)}}{0{,}0016} \\
+&\approx {fmt(z1, 2)}
+\end{aligned}
+$$
+
+<Dlaczego typ="inaczej">
+Błąd w transakcjach: 4% z 7,81 to $0{,}04 \cdot 7{,}81 = 0{,}3124$. Wtedy $n = 3{,}8416 \cdot 3{,}91^2 : 0{,}3124^2$ i wychodzi ten sam wynik.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zaokrąglenie">
+{fmt(z1, 2)} → **{w_gore(z1)} respondentów**
+</Krok>
+
+</Rozwiazanie>
+
+<a id="polecenie-kryteria" class="k-anchor"></a>
+
+## Krok 4: kilka kryteriów naraz
+
+<Ramka kind="polecenie" tytul="Kilka cech w jednym badaniu">
+**Polecenie:** treść podaje kilka cech (np. okres posiadania konta, liczbę produktów, liczbę banków). Podaj jedną minimalną liczebność próby.
+
+**Przepis:**
+
+1. Dla każdej cechy ustal, czy jest jakościowa, czy ilościowa.
+2. Policz $n$ dla każdej cechy osobno, jej wzorem.
+3. Weź **największe** $n$.
+</Ramka>
+
+<Ramka kind="intuicja">
+Próba musi wystarczyć dla każdej cechy. Największa liczba wystarcza wszystkim. Mniejsza nie wystarczy tej najbardziej wymagającej.
+</Ramka>
+
+Z tego wynika wynik zadania z danymi GUS: pokolenie wymaga {w_gore(gen)} osób, płeć {w_gore(plec)}. Minimalna liczebność próby to **{NPROBY}**.
+
+<Rozwiazanie tytul="Klienci bankowości internetowej" zrodlo="Zad. 2 z zestawu „Minimalna liczebność próby – zadania”">
+<div slot="tresc">
+
+Przeciętny okres posiadania konta internetowego to 6,5 roku, współczynnik zmienności 58%. Z jednego produktu bankowego korzysta 8,0% klientów, z dwóch 48,0%, z trzech 28,5%, z czterech i więcej reszta. 74% klientów korzysta tylko z jednego banku. Poziom ufności 95%, błąd 5%.
+
+</div>
+
+<div slot="plan">
+
+1. Rozpoznajemy trzy cechy: okres posiadania konta (ilościowa), liczba produktów (jakościowa, 4 grupy), liczba banków (jakościowa, 2 grupy).
+2. Dla każdej liczymy $n$. $N$ nie znamy, więc wzory bez $N$.
+3. Bierzemy największy wynik.
+
+</div>
+
+<Krok tytul="Okres posiadania konta (ilościowa)">
+Błąd w %, a współczynnik zmienności jest podany: $V = 0{,}58$.
+
+$n = 3{,}8416 \cdot 0{,}58^2 : 0{,}05^2 = 3{,}8416 \cdot 0{,}3364 : 0{,}0025 \approx$ {fmt(z2il, 2)} → **{w_gore(z2il)}**
+
+<Dlaczego>
+Średnia 6,5 roku nie jest potrzebna. Współczynnik zmienności już jest odchyleniem podzielonym przez średnią.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Liczba produktów (jakościowa, 4 grupy)">
+Reszta: 100 − 8 − 48 − 28,5 = 15,5%. Najliczniejsza frakcja: dwa produkty, $p = 0{,}48$. Cztery grupy, 95%, więc WWP = 1,66.
+
+$n = 3{,}8416 \cdot 0{,}48 \cdot 0{,}52 : 0{,}0025 \cdot 1{,}66 \approx$ {fmt(z2prod / 1.66, 2)} · 1,66 ≈ {fmt(z2prod, 2)} → **{w_gore(z2prod)}**
+
+<Dlaczego>
+„Reszta” to też grupa. Przed wyborem $p$ trzeba ją policzyć, bo mogłaby okazać się największa.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Liczba banków (jakościowa, 2 grupy)">
+Jeden bank: 74%, więcej banków: 26%. $p = 0{,}74$, bez WWP.
+
+$n = 3{,}8416 \cdot 0{,}74 \cdot 0{,}26 : 0{,}0025 \approx$ {fmt(z2bank, 2)} → **{w_gore(z2bank)}**
+</Krok>
+
+<Krok tytul="Wynik">
+{w_gore(z2il)}, {w_gore(z2prod)}, {w_gore(z2bank)} → największe: **{z2}**
+
+<Dlaczego>
+{z2} osób wystarczy dla każdej z trzech cech. Gdyby wziąć {w_gore(z2il)}, liczba produktów byłaby zbadana mniej dokładnie, niż założono.
+</Dlaczego>
+</Krok>
+
+</Rozwiazanie>
+
+<Ramka kind="granica" tytul="czego wynik nie gwarantuje">
+- Wzory pochodzą ze statystyki dla **prób losowych**. Przy doborze nielosowym (np. kwotowym) to orientacyjne minimum.
+- Dokładność dotyczy całej próby. Z {NPROBY} osób do pokolenia Z trafia tylko {alPok.wynik[0]}. Błąd dla samego Z to ok. {fmt(blad(alPok.wynik[0], Zp.razem) * 100, 1)}%, a nie 5%.
+- Chcesz 5% w każdej grupie osobno? Policz próbę dla każdej grupy jak dla osobnej populacji.
+</Ramka>
+
+<a id="polecenie-kwoty" class="k-anchor"></a>
+
+## Krok 5: dobór kwotowy
+
+Dobór kwotowy to najczęstsza **nielosowa** metoda doboru próby w badaniach rynku. Znamy strukturę populacji według kilku cech (wiek, płeć, wykształcenie, dochód) i przenosimy ją na skład próby.
+
+<Ramka kind="polecenie" tytul="Struktura próby i kwoty dla ankieterów">
+**Przepis (4 etapy):**
+
+1. Struktura populacji w liczbach (tabela: grupy × grupy).
+2. Struktura procentowa: każda kratka podzielona przez $N$.
+3. Struktura próby: procent kratki razy $n$. Zaokrąglij tak, żeby suma była dokładnie $n$.
+4. Kwoty dla ankieterów: każdą kratkę dzielisz przez liczbę ankieterów.
+</Ramka>
+
+<Rozwiazanie tytul={`Próba ${NPROBY} osób na pokolenie i płeć`} zrodlo="zadanie z danymi GUS, stan na 31.12.2025">
+<div slot="tresc">
+
+Rozdziel {NPROBY} respondentów proporcjonalnie na pokolenie i płeć.
+
+</div>
+
+<div slot="plan">
+
+1. Etapy 1 i 2 mamy z kroku 1: liczby osób i udziały.
+2. Etap 3: udział kratki razy {NPROBY}.
+3. Zaokrąglamy tak, żeby suma wyszła {NPROBY}.
+
+</div>
+
+<Krok tytul="Struktura próby">
+| Grupa | Osób | Udział | Razy {NPROBY} | W próbie |
+|---|---|---|---|---|
+| Z, M | {fmt(kom[0].N)} | {proc(udzial(kom[0].N))} | {fmt(alKom.dokladnie[0], 2)} | **{alKom.wynik[0]}** |
+| Z, K | {fmt(kom[1].N)} | {proc(udzial(kom[1].N))} | {fmt(alKom.dokladnie[1], 2)} | **{alKom.wynik[1]}** |
+| Y, M | {fmt(kom[2].N)} | {proc(udzial(kom[2].N))} | {fmt(alKom.dokladnie[2], 2)} | **{alKom.wynik[2]}** |
+| Y, K | {fmt(kom[3].N)} | {proc(udzial(kom[3].N))} | {fmt(alKom.dokladnie[3], 2)} | **{alKom.wynik[3]}** |
+| X, M | {fmt(kom[4].N)} | {proc(udzial(kom[4].N))} | {fmt(alKom.dokladnie[4], 2)} | **{alKom.wynik[4]}** |
+| X, K | {fmt(kom[5].N)} | {proc(udzial(kom[5].N))} | {fmt(alKom.dokladnie[5], 2)} | **{alKom.wynik[5]}** |
+| **Razem** | {fmt(N)} | 100% | {NPROBY} | **{alKom.wynik.reduce((a, b) => a + b, 0)}** |
+
+**Jak czytać:** M = mężczyźni, K = kobiety. Czwarta kolumna to wynik przed zaokrągleniem, ostatnia po nim.
+
+<Dlaczego>
+Np. Z, M: {proc(udzial(kom[0].N))} z {NPROBY} to {fmt(alKom.dokladnie[0], 2)}, czyli {alKom.wynik[0]} osoby. Próba ma być miniaturą populacji.
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+Gdy zwykłe zaokrąglenie nie daje sumy $n$, część osób dostają grupy z największą częścią po przecinku. Tu zwykłe zaokrąglenie od razu daje {NPROBY}.
+</Dlaczego>
+</Krok>
+
+</Rozwiazanie>
+
+**Kwoty dla ankieterów — przykład z zajęć.** Populacja 200 osób, próba $n = 100$, 10 ankieterów. Struktura próby według płci i wykształcenia:
+
+| | podst. zawodowe | średnie | wyższe | Razem |
+|---|---|---|---|---|
+| K | 20 | 10 | 20 | 50 |
+| M | 5 | 25 | 20 | 50 |
+
+Każdą kratkę dzielimy przez 10 ankieterów. Wychodzą ułamki: M z podstawowym 5 : 10 = 0,5, M ze średnim 25 : 10 = 2,5. Pół respondenta się nie da. Dlatego są dwa schematy:
+
+| Kratka | Schemat A | Schemat B |
+|---|---|---|
+| M, podst. zawodowe | 1 | 0 |
+| M, średnie | 2 | 3 |
+| pozostałe kratki | bez zmian | bez zmian |
+
+**Jak czytać:** połowa ankieterów (5) dostaje schemat A, druga połowa schemat B. Razem: 5 · 1 + 5 · 0 = 5 mężczyzn z podstawowym i 5 · 2 + 5 · 3 = 25 ze średnim. Zgadza się ze strukturą próby.
+
+<Ramka kind="pulapka">
+- **Udziały z próby zamiast z populacji.** Procenty bierzesz zawsze z populacji.
+- **Suma kratek różna od $n$.** Sprawdź na końcu.
+- **Ułamek w kwocie ankietera.** Nie zaokrąglaj wszystkim tak samo. Daj różne schematy, żeby suma się zgadzała.
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>$Z_\alpha$</b>90%: 1,645 · 95%: 1,96 · 99%: 2,575 · 99,99%: 5.</div>
+  <div><b>Jakościowa</b>$n = Z_\alpha^2 p(1-p)/e^2 \cdot \text{WWP}$, $p$ = najliczniejsza frakcja.</div>
+  <div><b>WWP (95%)</b>3 grupy: 1,53 · 4: 1,66 · 5: 1,73 · 10: 2,05. Dwie grupy: bez WWP.</div>
+  <div><b>Znane $N$</b>W mianowniku dochodzi $(N-1)e^2$. Przy dużym $N$ wynik prawie ten sam.</div>
+  <div><b>Ilościowa</b>$n = Z_\alpha^2 \sigma^2/e^2$. Błąd w %? Użyj $V = \sigma$ : średnia.</div>
+  <div><b>Kilka cech</b>Licz każdą osobno, bierz największe $n$.</div>
+  <div><b>Zaokrąglenie</b>Zawsze w górę.</div>
+  <div><b>Kwoty</b>Udział kratki w populacji razy $n$, potem przez liczbę ankieterów. Ułamki: schematy A i B.</div>
+</div>
+
+<Ramka kind="gdzie">
+Liczebność mówi, **ile** osób zapytać. **Kogo** i jak (losowo, kwotowo, przez internet) to temat doboru próby. Od tej decyzji zależy, czy wzory dają gwarancję, czy tylko orientacyjne minimum.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+<a id="cw-populacja" class="k-anchor"></a>
+
+### Populacja
+
+<Pytania licznik tag="Ćwiczenia · 2 zadania" tytul="" pytania={[
+  { q: 'Które grupy wieku z tabeli GUS tworzą pokolenie Z w tym zadaniu?', opcje: ['18, 19, 20–24, 25–29', '20–24 i 25–29', '15–19, 20–24, 25–29'], dobra: 0, dlaczego: 'Pokolenie Z to tu 18–29 lat: cztery grupy, w tym osobno 18 i 19. Odpowiedź „20–24 i 25–29” pomija 18 i 19 lat. Trzecia zaczyna od 15 lat, a badamy dorosłych.' },
+  { q: 'Ile osób (obu płci) liczy pokolenie Y?', opcje: [`${fmt(Yp.m)}`, `${fmt(Yp.k)}`, `${fmt(Yp.razem)}`], dobra: 2, dlaczego: `${fmt(Yp.m)} mężczyzn + ${fmt(Yp.k)} kobiet = ${fmt(Yp.razem)}. Pierwsza odpowiedź to sami mężczyźni, druga same kobiety.` },
+]} />
+
+<a id="cw-jakosciowa" class="k-anchor"></a>
+
+### Cecha jakościowa
+
+<Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
+  { q: 'Cecha dzieli klientów na 4 grupy: 10%, 35%, 30%, 25%. Jakie $p$ i jakie WWP (95%)?', opcje: ['$p = 0{,}5$, WWP = 1,53', '$p = 0{,}35$, WWP = 1,66', '$p = 0{,}25$, WWP = 1,66'], dobra: 1, dlaczego: 'Najliczniejsza frakcja to 35%, więc $p = 0{,}35$. Cztery grupy przy 95% dają WWP = 1,66. 0,5 to nie najliczniejsza frakcja, a 1,53 to WWP dla trzech grup. 0,25 to ostatnia grupa, nie największa.' },
+  { q: 'Płeć: 62% kobiet, 38% mężczyzn. Poziom ufności 95%, błąd 4,5%. Ile osób?', opcje: [`${w_gore(nJak(95, 0.62, 0.045))}`, `${w_gore(nJak(95, 0.62, 0.045) * 1.53)}`, `${w_gore(nJak(95, 0.5, 0.045))}`], dobra: 0, dlaczego: `$n = 3{,}8416 \\cdot 0{,}62 \\cdot 0{,}38 : 0{,}045^2 \\approx ${fmt(nJak(95, 0.62, 0.045), 2)}$, w górę ${w_gore(nJak(95, 0.62, 0.045))}. Płeć to dwie grupy, więc bez WWP (druga odpowiedź go dokłada). Trzecia liczy z $p = 0{,}5$ zamiast z najliczniejszej frakcji.` },
+  { q: 'Poziom ufności 99%, $p = 0{,}5$, błąd 5%, dwie grupy. Ile osób?', opcje: [`${w_gore(nJak(95, 0.5, 0.05))}`, `${w_gore(nJak(90, 0.5, 0.05))}`, `${w_gore(nJak(99, 0.5, 0.05))}`], dobra: 2, dlaczego: `Dla 99% $Z_\\alpha = 2{,}575$: $2{,}575^2 \\cdot 0{,}25 : 0{,}0025 \\approx ${fmt(nJak(99, 0.5, 0.05), 2)}$, w górę ${w_gore(nJak(99, 0.5, 0.05))}. ${w_gore(nJak(95, 0.5, 0.05))} to wynik dla 95%, a ${w_gore(nJak(90, 0.5, 0.05))} dla 90%.` },
+  { q: `Wynik przed zaokrągleniem: ${fmt(gen, 2)}. Co wpisujesz?`, opcje: [`${w_gore(gen)}`, `${Math.floor(gen)}`, `${fmt(gen, 2)}`], dobra: 0, dlaczego: `Osób nie ma ułamków, a minimalna próba ma wystarczyć. Zawsze w górę: ${w_gore(gen)}.` },
+]} />
+
+<a id="cw-ilosciowa" class="k-anchor"></a>
+
+### Cecha ilościowa
+
+<Pytania licznik tag="Ćwiczenia · 2 zadania" tytul="" pytania={[
+  { q: 'Współczynnik zmienności 40%, błąd 5%, poziom ufności 95%. Ile osób?', opcje: [`${w_gore(nIl(95, 0.4, 0.05) * 2.5)}`, `${w_gore(nIl(95, 0.4, 0.05))}`, `${w_gore(3.8416 * 0.16 / 0.05)}`], dobra: 1, dlaczego: `$3{,}8416 \\cdot 0{,}4^2 : 0{,}05^2 = 3{,}8416 \\cdot 0{,}16 : 0{,}0025 \\approx ${fmt(nIl(95, 0.4, 0.05), 2)}$, w górę ${w_gore(nIl(95, 0.4, 0.05))}. ${w_gore(nIl(95, 0.4, 0.05) * 2.5)} wychodzi bez kwadratu przy $V$ (0,4 zamiast 0,16). ${w_gore(3.8416 * 0.16 / 0.05)} wychodzi bez kwadratu przy błędzie.` },
+  { q: 'Średnia 10, odchylenie standardowe 2, błąd 5% średniej, poziom ufności 95%. Ile osób?', opcje: [`${w_gore(nIl(95, 2, 0.05))}`, `${w_gore(nIl(95, 2, 0.5) / 2)}`, `${w_gore(nIl(95, 2, 0.5))}`], dobra: 2, dlaczego: `Błąd 5% z 10 to 0,5. $n = 3{,}8416 \\cdot 4 : 0{,}25 \\approx ${fmt(nIl(95, 2, 0.5), 2)}$, w górę ${w_gore(nIl(95, 2, 0.5))}. To samo przez $V = 0{,}2$. ${w_gore(nIl(95, 2, 0.05))} to błąd 0,05 wpisany obok $\\sigma$ w jednostkach. ${w_gore(nIl(95, 2, 0.5) / 2)} to $\\sigma$ bez kwadratu.` },
+]} />
+
+<a id="cw-kryteria" class="k-anchor"></a>
+
+### Kilka kryteriów
+
+<Pytania licznik tag="Ćwiczenia · 1 zadanie" tytul="" pytania={[
+  { q: 'Trzy cechy dały $n$ równe 296, 517 i 637. Jaka jest minimalna liczebność próby?', opcje: ['296', '637', '1450 (suma)'], dobra: 1, dlaczego: 'Bierzemy największy wynik, bo musi wystarczyć dla każdej cechy. 296 nie wystarczy dwóm pozostałym. Sumy się nie liczy: ci sami ludzie odpowiadają na pytania o wszystkie cechy.' },
+]} />
+
+<a id="cw-kwoty" class="k-anchor"></a>
+
+### Dobór kwotowy
+
+<Pytania licznik tag="Ćwiczenia · 2 zadania" tytul="" pytania={[
+  { q: `Pokolenie Z ma ${proc(udzial(Zp.razem))} populacji. Ile osób z ${NPROBY} powinno należeć do Z?`, opcje: ['22', `${alPok.wynik[1]}`, `${alPok.wynik[0]}`], dobra: 2, dlaczego: `${proc(udzial(Zp.razem))} z ${NPROBY} to ${fmt(alPok.dokladnie[0], 2)}, czyli ${alPok.wynik[0]}. „22” to procent wzięty jako liczba osób. ${alPok.wynik[1]} to wynik dla pokolenia Y.` },
+  { q: 'Kratka w strukturze próby ma 15 osób, ankieterów jest 10. Co robisz?', opcje: ['Każdy ankieter dostaje 2 osoby', 'Połowa ankieterów dostaje 1 osobę, połowa 2', 'Każdy ankieter dostaje 1 osobę'], dobra: 1, dlaczego: '15 : 10 = 1,5. Połowa po 1 i połowa po 2 daje 5 · 1 + 5 · 2 = 15. Po 2 dla każdego daje 20, po 1 dla każdego tylko 10.' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Sprawdź, czy rozumiesz liczebność próby" pytania={[
+  { q: 'Co oznacza $p$ we wzorze dla cechy jakościowej?', opcje: ['Odsetek jednostek w najliczniejszej frakcji', 'Poziom ufności', 'Zawsze 0,5'], dobra: 0, dlaczego: 'Według wzoru z zajęć $p$ to odsetek najliczniejszej frakcji. Poziom ufności jest „w” $Z_\\alpha$. 0,5 to tylko szczególny przypadek, gdy dwie grupy są równe.' },
+  { q: 'Kiedy mnożysz przez WWP?', opcje: ['Zawsze', 'Gdy cecha ma co najmniej trzy grupy', 'Gdy znasz $N$'], dobra: 1, dlaczego: 'WWP to współczynnik dla populacji wielodzielnych. Tabela zaczyna się od trzech grup. Ze znanym $N$ nie ma związku.' },
+  { q: 'Jak zmieni się $n$, gdy błąd zmniejszysz o połowę?', opcje: ['Podwoi się', 'Nie zmieni się', 'Wzrośnie około czterokrotnie'], dobra: 2, dlaczego: 'Błąd jest w mianowniku do kwadratu. Połowa błędu to ćwierć mianownika, czyli cztery razy większy wynik.' },
+  { q: 'Kiedy wzór ze znanym $N$ daje wyraźnie mniejszą próbę?', opcje: ['Gdy populacja jest mała, np. kilkaset osób', 'Gdy populacja jest bardzo duża', 'Nigdy'], dobra: 0, dlaczego: `Dla $N = 1000$ i $p = 0{,}5$ wychodzi ${w_gore(nJak(95, 0.5, 0.05, 1000))} zamiast 385. Dla $N$ = ${fmt(N)} różnica to ułamek osoby.` },
+  { q: 'Błąd 4% przy cesze ilościowej (średnia transakcji) to:', opcje: ['4 transakcje', '4% średniej', '4% populacji'], dobra: 1, dlaczego: 'Przy cesze ilościowej procent błędu odnosi się do średniej. Dlatego używa się współczynnika zmienności.' },
+  { q: 'Badanie ma kilka cech doboru. Jaką liczebność podajesz?', opcje: ['Średnią z wyników', 'Sumę wyników', 'Największy wynik'], dobra: 2, dlaczego: 'Największa próba wystarcza dla każdej cechy. Średnia nie wystarczy najbardziej wymagającej. Suma liczy tych samych ludzi kilka razy.' },
+  { q: 'Dobór kwotowy to:', opcje: ['Losowanie z operatu', 'Nielosowy dobór, w którym strukturę populacji przenosi się na próbę', 'Badanie całej populacji'], dobra: 1, dlaczego: 'Kwoty odtwarzają strukturę populacji (np. wiek, płeć), ale respondentów nie losuje się. To najczęstsza nielosowa metoda w badaniach rynku.' },
+]} />
