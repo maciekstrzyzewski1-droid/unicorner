@@ -1,0 +1,14 @@
+{
+  "_opis": "Dozwolone zewnetrzne origin w zbudowanej stronie. Test narzedzia/siec-check/sprawdz.cjs konczy sie bledem przy kazdym innym. Zmieniaj tylko po swiadomej decyzji i opisz powod w PR.",
+  "global": [
+    "https://static.cloudflareinsights.com"
+  ],
+  "perPage": {
+    "generator.html": [
+      "https://accounts.google.com"
+    ],
+    "index.html": [
+      "https://red-queen-3002.unicorner.workers.dev"
+    ]
+  }
+}

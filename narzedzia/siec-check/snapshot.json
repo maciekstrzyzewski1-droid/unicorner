@@ -1,0 +1,117 @@
+{
+ "dynamika.html": [],
+ "etir.html": [],
+ "generator.html": [
+  "/assets/generator.js"
+ ],
+ "geografia.html": [],
+ "index.html": [
+  "/_astro/BorderGlow.js",
+  "/_astro/FaultyTerminal.js",
+  "/_astro/HeroSkull.js",
+  "/_astro/client.js",
+  "/_astro/jsx-runtime.js",
+  "/_astro/react.js",
+  "/assets/skeleton.glb",
+  "/reviews.json",
+  "/vendor/three@0.161.0/examples/jsm/libs/draco/draco_decoder.wasm",
+  "/vendor/three@0.161.0/examples/jsm/libs/draco/draco_wasm_wrapper.js"
+ ],
+ "kontakt.html": [],
+ "korelacja-wieloraka.html": [],
+ "korelacja.html": [],
+ "makroekonomia.html": [],
+ "marketing.html": [],
+ "matematyka.html": [],
+ "matematyka/badanie-funkcji.html": [
+  "/_astro/Rachunek.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
+ "matematyka/calka-nieoznaczona.html": [
+  "/_astro/Rachunek.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
+ "matematyka/ekstrema-warunkowe.html": [
+  "/_astro/Rachunek.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
+ "matematyka/funkcje-wielu-zmiennych.html": [
+  "/_astro/Rachunek.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
+ "matematyka/logika.html": [],
+ "matematyka/macierze.html": [
+  "/_astro/Operacja.astro_astro_type_script_index_0_lang.js"
+ ],
+ "matematyka/matematyka-finansowa.html": [
+  "/_astro/OsCzasu.astro_astro_type_script_index_0_lang.js",
+  "/_astro/PlanSplaty.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
+ "matematyka/pochodne.html": [
+  "/_astro/Rachunek.astro_astro_type_script_index_0_lang.js",
+  "/_astro/Sieczna.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
+ "matematyka/relacje.html": [],
+ "matematyka/symbole.html": [],
+ "matematyka/uklady-rownan.html": [
+  "/_astro/Operacja.astro_astro_type_script_index_0_lang.js"
+ ],
+ "matematyka/zbiory.html": [],
+ "mitz.html": [],
+ "moderacja.html": [],
+ "ort.html": [],
+ "prywatnosc.html": [],
+ "rachunkowosc.html": [],
+ "rachunkowosc/bilans.html": [
+  "/_astro/BilansTabela.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
+ "rachunkowosc/konta.html": [
+  "/_astro/Konta.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
+ "rachunkowosc/pojecia.html": [],
+ "recenzje.html": [],
+ "regresja.html": [],
+ "regulamin.html": [],
+ "sezonowosc.html": [],
+ "Statystyka_Navoica_Egzamin.html": [],
+ "statystyka.html": [],
+ "talia.html": [
+  "/assets/talia.js"
+ ],
+ "trend.html": [],
+ "wiedza.html": [],
+ "wiedza/anatomia-bariery.html": [],
+ "wiedza/anatomia-koncernu.html": [],
+ "wiedza/anatomia-konfliktu.html": [],
+ "wiedza/anatomia-liczby.html": [],
+ "wiedza/anatomia-litra.html": [],
+ "wiedza/anatomia-luki.html": [],
+ "wiedza/anatomia-lustra.html": [],
+ "wiedza/anatomia-muszli.html": [],
+ "wiedza/anatomia-narracji.html": [],
+ "wiedza/anatomia-obietnicy.html": [],
+ "wiedza/anatomia-odpornosci.html": [],
+ "wiedza/anatomia-podsluchu.html": [],
+ "wiedza/anatomia-pragnienia.html": [],
+ "wiedza/anatomia-predkosci.html": [],
+ "wiedza/anatomia-procesu.html": [],
+ "wiedza/anatomia-slodyczy.html": [],
+ "wiedza/anatomia-sporu.html": [],
+ "wiedza/anatomia-tlumu.html": [],
+ "wiedza/anatomia-wahadla.html": [],
+ "wiedza/anatomia-wartosci.html": [],
+ "wiedza/anatomia-weta.html": [],
+ "wiedza/anatomia-wladzy.html": [],
+ "wiedza/anatomia-wybranca.html": [],
+ "wiedza/anatomia-zakladu.html": [],
+ "wiedza/anatomia-zaniechania.html": [],
+ "wiedza/anatomia-zaufania.html": [],
+ "wiedza/anatomia-znikania.html": [],
+ "wiedza/mieso-czy-rosliny.html": [],
+ "wiedza/trening-umyslu.html": [],
+ "zarzadzanie-jakoscia.html": []
+}
