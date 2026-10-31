@@ -43,6 +43,7 @@ export const ARTICLES = [
   { slug: 'anatomia-liczby', topic: 'Afera wizowa i to, jak liczby stają się bronią w polityce',       category: 'polityka', series: 'polityka', part: 6, seoTitle: 'Anatomia liczby — afera wizowa i liczby jako broń' },
   { slug: 'anatomia-sporu', topic: 'Spór o praworządność: o co naprawdę kłócą się obie strony',        category: 'polityka', series: 'polityka', part: 7, seoTitle: 'Anatomia sporu — o co toczy się spór o praworządność' },
   { slug: 'anatomia-zakladu', topic: 'CPK: na co dokładnie stawia Polska, budując nowe lotnisko',      category: 'polityka', series: 'polityka', part: 8, seoTitle: 'Anatomia zakładu — CPK: na co dokładnie stawia Polska' },
+  { slug: 'anatomia-straznika', topic: 'Kto przejął Trybunał Konstytucyjny: spór o TK od 2015 roku do nocy z 30 na 31 października 2026', category: 'polityka', series: 'polityka', part: 9, seoTitle: 'Anatomia strażnika — kto przejął Trybunał Konstytucyjny? Spór o TK od 2015 do 2026' },
   { slug: 'anatomia-weta', topic: 'Karol Nawrocki: fakty, zarzuty i jego prezydenckie weta',         category: 'polityka', seoTitle: 'Anatomia weta — Karol Nawrocki: fakty, zarzuty i weta' },
 
   // --- Zdrowie i umysł ---
