@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia strażnika</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;}
+  :root:not([data-theme="light"]){color-scheme:dark;}
+  @media (prefers-color-scheme: light){:root:not([data-theme="light"]){color-scheme:dark;}}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+  header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+  .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+  .lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+  .meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+  h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;letter-spacing:-.01em;}
+  h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.22em;font-weight:600;color:var(--gold);margin-bottom:12px;text-transform:uppercase;}
+  h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:42px 0 12px;line-height:1.3;}
+  p{margin:0 0 20px;} strong{font-weight:600;color:#fff;} a{color:var(--gold);}
+  ul,ol{padding-left:22px;margin:0 0 22px;} li{margin-bottom:11px;}
+  .box{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold);padding:20px 22px;margin:32px 0;font-size:.96rem;line-height:1.62;}
+  .box .bt{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+  .box p:last-child{margin-bottom:0;}
+  .box.red{border-left-color:var(--red);} .box.red .bt{color:var(--red);}
+  .box.blue{border-left-color:var(--blue);} .box.blue .bt{color:var(--blue);}
+  .pull{font-family:'Fraunces',Georgia,serif;font-size:1.32rem;line-height:1.38;color:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0;margin:38px 0;font-weight:400;}
+  .case{border:1px solid var(--line);background:var(--card);padding:22px 24px;margin:26px 0;}
+  .case .ch{font-family:'Fraunces',serif;font-size:1.15rem;color:#fff;margin-bottom:6px;}
+  .case .cl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin-bottom:14px;}
+  .case.a{border-left:3px solid var(--blue);} .case.a .cl{color:var(--blue);}
+  .case.b{border-left:3px solid var(--red);} .case.b .cl{color:var(--red);}
+  .case ul{margin:14px 0 0;font-size:.94rem;} .case li{margin-bottom:10px;}
+  .case p{font-size:.95rem;margin-bottom:12px;}
+  .nums{margin:34px 0;border:1px solid var(--line);}
+  .nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+  .nums .nrow:last-child{border-bottom:none;}
+  .nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+  .nums .d{font-size:.92rem;line-height:1.5;}
+  .tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+  .tl .ev{margin-bottom:22px;position:relative;}
+  .tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+  .tl .ev.crit:before{background:var(--red);}
+  .tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+  .tl .ev.crit .yr{color:var(--red);}
+  .tl .txt{font-size:.94rem;line-height:1.55;}
+  .bars{margin:30px 0;} .bars .bt{font-family:'Fraunces',serif;color:#fff;margin-bottom:14px;font-size:1.05rem;}
+  .bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+  .bars .lab{flex:0 0 120px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+  .bars .fill{height:100%;background:var(--gold);} .bars .fill.red{background:var(--red);} .bars .fill.blue{background:var(--blue);} .bars .fill.green{background:var(--green);}
+  .bars .val{flex:0 0 52px;text-align:right;font-variant-numeric:tabular-nums;}
+  .caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+  .seats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:18px 0 8px;}
+  .seat{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--blue);padding:10px 10px 12px;font-size:.8rem;line-height:1.3;color:#fff;}
+  .seat small{display:block;margin-top:4px;color:var(--muted);font-size:.72rem;line-height:1.3;}
+  .seat.g{border-top-color:var(--green);} .seat.y{border-top-color:var(--gold);} .seat.r{border-top-color:var(--red);}
+  .legend{font-size:.82rem;color:var(--muted);line-height:1.7;margin:10px 0 0;}
+  .legend span{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:baseline;}
+  .vq{border:1px solid var(--line);background:var(--card);padding:20px 22px;margin:22px 0;}
+  .vq .q{font-family:'Fraunces',serif;color:#fff;font-size:1.12rem;line-height:1.35;margin-bottom:12px;}
+  .vq .lbl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--gold);margin:12px 0 4px;}
+  .vq p{font-size:.94rem;margin-bottom:8px;}
+  hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+  .sources{font-size:.85rem;color:var(--muted);line-height:1.6;list-style:none;padding-left:0;} .sources li{margin-bottom:10px;padding-left:14px;border-left:1px solid var(--line);} .sources a{color:var(--muted);word-break:break-word;}
+  footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+  @media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;} .bars .lab{flex:0 0 92px;font-size:.78rem;} .seats{grid-template-columns:repeat(3,1fr);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy · część dziewiąta</div>
+  <h1>Anatomia strażnika</h1>
+  <p class="lede">W nocy z 30 na 31 października 2026 roku w Trybunale Konstytucyjnym zmieniło się kierownictwo. Prezydent mówi o siłowym przejęciu, prezes PiS o zamachu, a dotychczasowy prezes Trybunału o zamachu stanu. Rząd odpowiada, że przywraca praworządność. Ten tekst rozbiera spór na cztery osobne pytania i sprawdza, kto na które ma lepsze argumenty.</p>
+  <div class="meta">Październik 2026 · czas czytania ok. 25 minut</div>
+</header>
+
+<p>Piątek, 30 października 2026, wieczór. Przed siedzibą Trybunału Konstytucyjnego w Warszawie stoi policja. Zbiera się tłum.</p>
+
+<p>Około godziny 18 na stronie internetowej Trybunału pojawia się komunikat. Sędzia Anna Korwin-Piotrowska zarządziła „natychmiastową przerwę w czynnościach” prezesa Bogdana Święczkowskiego i wiceprezesa Bartłomieja Sochańskiego. Chwilę później na koncie Trybunału na portalu X pojawia się komunikat odwrotny. Strona została bezprawnie przejęta. Prezesem jest nadal Święczkowski. Wszyscy, którzy w tym uczestniczą, popełniają przestępstwo zamachu stanu.</p>
+
+<p>Wieczorem Święczkowski dociera pod bramę. Według relacji „Rzeczpospolitej” ktoś przecina łańcuch piłą tarczową, prezes wchodzi na teren i staje przed kordonem policji. Po chwili odchodzi. W nocy z Senegalu wraca prezydent Karol Nawrocki. Wchodzi do budynku. Nad ranem jego współpracownik odczytuje oświadczenie: doszło do „siłowego przejęcia konstytucyjnego organu państwa”.</p>
+
+<p>Prezydent mówi o „siłowym przejęciu”. Prezes Prawa i Sprawiedliwości Jarosław Kaczyński mówi o zamachu na Trybunał. Prezes Trybunału Święczkowski mówi o zamachu stanu. Premier Donald Tusk napisał, że przywracanie praworządności po latach bezprawia jest trudne i wymaga zdecydowanych działań. Rząd i jego zwolennicy twierdzą, że to nie zamach, tylko naprawa Trybunału, który od 2015 roku był podporządkowany jednej partii.</p>
+
+<p>Skoro obie strony opisują te same zdarzenia przeciwnymi słowami, łatwo uwierzyć, że prawda leży pośrodku. Że obie strony przesadzają i obie trochę mają rację. To bywa prawdą. Tu jednak jest mylące. Spór o Trybunał nie jest jednym sporem. Składa się z <strong>czterech osobnych pytań</strong>. Na każde odpowiedź wygląda inaczej. I nie zawsze padają po tej samej stronie.</p>
+
+<div class="box">
+  <div class="bt">Zastrzeżenie o stanie wiedzy</div>
+  <p>Tekst opisuje sytuację z soboty 31 października 2026, popołudnie. Wydarzenia ostatniej nocy są relacjonowane sprzecznie. Tam, gdzie wersje się różnią, piszę, czyja jest która. Niektórych faktów nie da się dziś ustalić (na przykład treści zarzutów z nowych wniosków prokuratury) i zaznaczam to wprost. W ciągu kilku dni stan rzeczy może się zmienić.</p>
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Po co jest Trybunał i dlaczego jego skład to nie szczegół</h2>
+
+<p><strong>Trybunał Konstytucyjny</strong> to sąd, który sprawdza, czy ustawy są zgodne z Konstytucją. Jeśli orzeknie, że ustawa jej przeczy, przepis traci moc. Wyroki Trybunału są ostateczne i obowiązują wszystkich. To jedyny hamulec, który może zatrzymać zwykłą większość parlamentarną. Sejm może uchwalić niemal wszystko. Nie może uchwalić czegoś, co Trybunał uzna za sprzeczne z ustawą zasadniczą.</p>
+
+<p>Dlatego liczy się to, kto w nim zasiada. Zasady są proste. Sędziów jest <strong>piętnastu</strong>. Każdego wybiera osobno Sejm, bezwzględną większością głosów, na <strong>dziewięć lat</strong>. Ponowny wybór jest niedozwolony. Prezesa wybiera się na sześć lat spośród kandydatów przedstawionych przez sędziów. Mianuje go prezydent.</p>
+
+<p>Do tego dochodzą trzy rzeczy, które za chwilę okażą się kluczowe.</p>
+
+<ul>
+  <li><strong>Ślubowanie.</strong> Ustawa o statusie sędziów Trybunału, uchwalona w 2016 roku za rządów PiS, mówi, że wybrany sędzia składa ślubowanie „wobec Prezydenta”. Spór dotyczy tego, czy ślubowanie jest tylko uroczystością, czy warunkiem objęcia urzędu.</li>
+  <li><strong>Ogłoszenie wyroku.</strong> Wyrok Trybunału trzeba opublikować w Dzienniku Ustaw. Wydaje go premier za pomocą Rządowego Centrum Legislacji. Zdaniem większości prawników przepis traci moc dopiero po ogłoszeniu wyroku.</li>
+  <li><strong>Zgromadzenie Ogólne.</strong> To zebranie wszystkich sędziów. Uchwala między innymi budżet Trybunału i decyduje, czy wyrazić zgodę na pociągnięcie sędziego do odpowiedzialności karnej.</li>
+</ul>
+
+<div class="box blue">
+  <div class="bt">Słowniczek, który przyda się dalej</div>
+  <p><strong>Dubler</strong> — potoczna nazwa sędziego Trybunału wybranego w grudniu 2015 roku na miejsce, które według przeciwników tego wyboru było już zajęte przez kogoś innego. Uchwała Sejmu z 2024 roku obejmuje tą nazwą także ich następców.</p>
+  <p><strong>Sąd ustanowiony ustawą</strong> — wymóg z Europejskiej Konwencji Praw Człowieka. Sąd musi być obsadzony zgodnie z prawem. Jeśli ktoś zasiadł w składzie przez poważne naruszenie przepisów, orzeczenie takiego składu można podważyć.</p>
+  <p><strong>Komisja Wenecka</strong> — doradczy organ Rady Europy złożony z konstytucjonalistów. Jej opinie nie wiążą, ale są uznawane za miarę europejskich standardów.</p>
+  <p><strong>Środek tymczasowy</strong> — doraźna decyzja Europejskiego Trybunału Praw Człowieka w Strasburgu (ETPCz), która ma coś zabezpieczyć do czasu wyroku. Państwo ma obowiązek go przestrzegać.</p>
+</div>
+
+<h3>Strażnik, którego nie ma kto sprawdzić</h3>
+
+<p>Tu zaczyna się pułapka logiczna. Jeśli ktoś pyta, czy sędzia Trybunału jest prawdziwym sędzią, to kto ma odpowiedzieć? Zwykle odpowiada Trybunał. Ale to jego własny skład jest przedmiotem pytania.</p>
+
+<p>Prezes Święczkowski, zapytany w maju 2026 roku w Polsat News o starą zasadę, że nikt nie powinien być sędzią we własnej sprawie, odpowiedział, że ta reguła nie wiąże Trybunału. Argumentował, że Trybunał jest najwyższym sądem w tej dziedzinie. Zmianę widział w nowelizacji Konstytucji lub w nowej konstytucji. To spójne stanowisko. Wynika z niego jednak, że nikt wewnątrz państwa nie sprawdzi Trybunału, a Trybunał nie sprawdzi samego siebie bezstronnie.</p>
+
+<p>Dlatego w tym sporze obie strony sięgają po arbitrów z zewnątrz: sądy europejskie, Komisję Wenecką, tekst Konstytucji i zwykłą logikę. Tak też zrobię tutaj. Najpierw jednak trzeba wrócić do początku.</p>
+
+<h2><span class="num">Rozdział drugi</span>Jesień 2015: kto zaczął</h2>
+
+<p>Każda ze stron wskazuje inny początek. Dla koalicji zaczęło się w grudniu 2015 roku, gdy PiS obsadził Trybunał swoimi ludźmi. Dla PiS — w październiku 2015, gdy poprzednia większość wybrała sędziów na zapas. Obie daty są prawdziwe.</p>
+
+<div class="tl">
+  <div class="ev crit"><div class="yr">październik 2015</div><div class="txt">Sejm poprzedniej kadencji (PO–PSL) wybiera pięciu sędziów. Trzech na miejsca, które zwalniają się w listopadzie, w trakcie jego kadencji. Dwóch na miejsca, które zwolnią się w grudniu, już za nowego Sejmu. Prezydent Andrzej Duda nie odbiera od nich ślubowania.</div></div>
+  <div class="ev crit"><div class="yr">listopad–grudzień 2015</div><div class="txt">Nowy Sejm (PiS) nowelizuje ustawę o Trybunale i uchwałami uznaje październikowy wybór za pozbawiony mocy. 2 grudnia wybiera własną piątkę. Ślubowanie prezydent odbiera od czterech z nich 3 grudnia, w nocy, a od Julii Przyłębskiej tydzień później.</div></div>
+  <div class="ev"><div class="yr">3 i 9 grudnia 2015</div><div class="txt">Trybunał pod prezesem Andrzejem Rzeplińskim orzeka: poprzedni Sejm miał prawo wybrać trzech sędziów „listopadowych”, ale nie dwóch „grudniowych”. Trzy miejsca, na które Trybunał uznał wybór poprzedniego Sejmu za prawidłowy, zajęli jednak sędziowie wybrani przez nowy Sejm. To właśnie „dublerzy”. Prezydent nie zaprzysiągł tych pierwszych.</div></div>
+  <div class="ev crit"><div class="yr">9 marca 2016</div><div class="txt">Trybunał orzeka, że grudniowa nowelizacja ustawy o nim samym jest niekonstytucyjna w całości. Premier Beata Szydło nie publikuje wyroku. Według świadków przesłuchanych w umorzonym później śledztwie polecenie takie miała wydać osobiście premier.</div></div>
+  <div class="ev"><div class="yr">grudzień 2016</div><div class="txt">Julia Przyłębska zostaje prezesem Trybunału. Krytycy wskazują wady formalne tego wyboru. Trzy wyroki z 2016 roku trafiają do Dziennika Ustaw dopiero w czerwcu 2018.</div></div>
+</div>
+
+<p>Co mówi o tym Komisja Wenecka? W marcu 2016 roku skrytykowała nowelizacje PiS jako zagrożenie dla pracy Trybunału. Odmowę publikacji wyroku z 9 marca nazwała ruchem bez precedensu, który pogłębia kryzys. Jednocześnie opisała całą chronologię, od wyboru sędziów jesienią 2015 roku. Nie rozstrzygała, kto jest „winniejszy”.</p>
+
+<div class="pull">Pierwszy krok poza standard zrobiła strona, która dziś oskarża drugą o jego łamanie. Ale tylko drugi krok uznały za wadliwy sądy europejskie.</div>
+
+<p>Trzeba to powiedzieć uczciwie w obie strony. <strong>Argument PiS:</strong> w październiku 2015 poprzednia większość obsadziła na zapas dwa miejsca, a sam Trybunał uznał to za wadliwe. <strong>Argument koalicji:</strong> odpowiedzią było nie naprawienie błędu, tylko obsadzenie w ciągu jednej nocy pięciu miejsc, w tym trzech już zajętych, i niepublikowanie niewygodnego wyroku. Sądy europejskie oceniły tylko ten drugi krok i uznały go za wadliwy. Wcześniejszy błąd nie czyni późniejszego legalnym. O tym w następnym rozdziale.</p>
+
+<h2><span class="num">Rozdział trzeci</span>Osiem lat Trybunału, który orzekał mniej</h2>
+
+<p>Przez kolejne lata Trybunał działał, ale inaczej niż wcześniej. Pokazują to liczby.</p>
+
+<div class="bars">
+  <div class="bt">Średnia liczba wyroków Trybunału na rok</div>
+  <div class="row"><div class="lab">1997–2015</div><div class="track"><div class="fill"></div></div><div class="val">66</div></div>
+  <div class="row"><div class="lab">2016–2024</div><div class="track"><div class="fill red" style="width:41%"></div></div><div class="val">27</div></div>
+  <div class="caption">Źródło: Demagog, analiza z lutego 2025 na podstawie danych Trybunału.</div>
+</div>
+
+<div class="bars">
+  <div class="bt">Liczba spraw, które wpłynęły do Trybunału</div>
+  <div class="row"><div class="lab">2015</div><div class="track"><div class="fill blue"></div></div><div class="val">623</div></div>
+  <div class="row"><div class="lab">2016</div><div class="track"><div class="fill blue" style="width:58%"></div></div><div class="val">360</div></div>
+  <div class="row"><div class="lab">2017</div><div class="track"><div class="fill blue" style="width:45%"></div></div><div class="val">282</div></div>
+  <div class="caption">Dane przytoczone przez prezesa Rzeplińskiego („Rzeczpospolita”) i OKO.press. Rok 2015 był rekordowy w historii Trybunału. Szerokość słupków jest proporcjonalna do liczb.</div>
+</div>
+
+<p>Część prawników uważa, że sądy i obywatele przestali kierować sprawy do Trybunału, bo przestali mu ufać. Same liczby nie rozstrzygają, dlaczego tak się stało. Pokazują tylko skalę zmiany.</p>
+
+<h3>Co orzekły sądy europejskie</h3>
+
+<p>Dla sporu ważniejsze od statystyk są cztery orzeczenia.</p>
+
+<ul>
+  <li><strong>7 maja 2021, ETPCz: Xero Flor przeciwko Polsce.</strong> Strasburg uznał, że skład Trybunału z udziałem sędziego wybranego na miejsce już obsadzone nie jest sądem ustanowionym ustawą. Wyrok uprawomocnił się w sierpniu 2021 roku, bo polski rząd nie złożył wniosku o przekazanie sprawy Wielkiej Izbie. W kolejnych latach ETPCz powtórzył tę ocenę w sprawach M.L. przeciwko Polsce (2023) i A.R. przeciwko Polsce (13 listopada 2025).</li>
+  <li><strong>24 listopada 2021, polski Trybunał (K 6/21).</strong> Na wniosek Zbigniewa Ziobry Trybunał orzekł, że przepis Konwencji dający Strasburgowi prawo oceniania legalności wyboru sędziów Trybunału jest niezgodny z Konstytucją. Rzecznik Praw Obywatelskich uznał, że Trybunał nie ma kompetencji do kontrolowania jednego konkretnego wyroku Strasburga.</li>
+  <li><strong>14 lipca i 7 października 2021, polski Trybunał (P 7/20 i K 3/21).</strong> Trybunał orzekł, że wykładnia traktatów unijnych przyjęta przez Trybunał Sprawiedliwości UE jest w części niezgodna z polską Konstytucją. Dotyczyło to między innymi kontrolowania przez sądy, czy sędziów powołano prawidłowo.</li>
+  <li><strong>18 grudnia 2025, TSUE (C-448/23, Komisja przeciwko Polsce).</strong> Trybunał Sprawiedliwości UE uznał oba wyroki z 2021 roku za wykraczające poza kompetencje (po łacinie <em>ultra vires</em>). Uznał też, że wybór trzech sędziów w grudniu 2015 roku i wybór prezesa Trybunału w grudniu 2016 roku naruszyły podstawowe reguły. W rezultacie Trybunał w tym składzie nie spełnia unijnego wymogu niezawisłego sądu ustanowionego ustawą.</li>
+</ul>
+
+<h3>Najmocniejsza obrona drugiej strony</h3>
+
+<p>Zwolennicy dawnego Trybunału mają poważny argument i warto go przedstawić w pełnej wersji. Konstytucja jest najwyższym prawem w Polsce. Sądy ponadnarodowe — unijny i strasburski — nie mogą jednostronnie rozszerzać swoich kompetencji, a ktoś musi móc powiedzieć „to już poza traktatem”. Po wyroku TSUE z grudnia 2025 roku jeden z byłych premierów z PiS nazwał go uzurpacją i odbieraniem Polsce suwerenności.</p>
+
+<p>Ale na wąskie pytanie, czy w składzie Trybunału zasiadali sędziowie wybrani wadliwie, odpowiedź sądów europejskich jest jednoznaczna. Jest jednak ważne zastrzeżenie. Komisja Wenecka w grudniu 2024 roku zaznaczyła, że 12 z 15 ówczesnych sędziów wybrano zgodnie z procedurą konstytucyjną. Ostrzegła, że skrócenie kadencji wszystkich sędziów byłoby sprzeczne ze standardami. Problem dotyczył więc trzech osób i wyboru prezesa, nie całego Trybunału.</p>
+
+<div class="box">
+  <div class="bt">Ostrożność przy wnioskach</div>
+  <p>Zdarza się, że z tych orzeczeń wyciąga się wniosek: „każdy wyrok z udziałem dublera jest nieistniejący”. Tak twierdzą niektórzy prawnicy. W marcu 2026 roku TSUE przypomniał jednak, że sama nieprawidłowość przy powołaniu sędziego nie wystarcza, by stwierdzić, że sędzia nie jest niezawisły. Trzeba ocenić całość okoliczności. Ten wyrok dotyczył sędziów sądów powszechnych, nie Trybunału Konstytucyjnego. To moja ostrożna interpretacja: prawo europejskie nie zna prostego równania „dubler to wyrok nieistniejący”. Rozstrzygnięcie wymagałoby oceny każdej sprawy.</p>
+</div>
+
+<h2><span class="num">Rozdział czwarty</span>Rząd, który nie publikuje wyroków</h2>
+
+<p>W grudniu 2023 roku władzę przejęła koalicja pod kierunkiem Donalda Tuska. 6 marca 2024 roku Sejm przyjął uchwałę „w sprawie usunięcia skutków kryzysu konstytucyjnego lat 2015–2023”. Uznał w niej, że sędziowie dublerzy i ich następcy nie są sędziami Trybunału. Uznał też, że Julia Przyłębska nie ma prawa pełnić funkcji prezesa. Sam Trybunał orzekł później, że ta uchwała jest niekonstytucyjna.</p>
+
+<p>Od tego czasu Rządowe Centrum Legislacji nie publikuje wyroków Trybunału. 18 grudnia 2024 roku Rada Ministrów przyjęła uchwałę nr 162. Stwierdziła w niej, że Trybunał w obecnym składzie jest niezdolny do wykonywania swoich zadań. Uznała też, że ogłaszanie jego rozstrzygnięć mogłoby utrwalić stan kryzysu praworządności.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">od marca 2024</div><div class="d">Od tego miesiąca, według Sądu Apelacyjnego w Warszawie, premier nie publikuje żadnych wyroków Trybunału.</div></div>
+  <div class="nrow"><div class="n">67</div><div class="d">Tyle orzeczeń z lat 2024–2026 prezes Święczkowski zażądał opublikować w piśmie do premiera z 16 kwietnia 2026 roku.</div></div>
+  <div class="nrow"><div class="n">ponad 70</div><div class="d">Tyle wyroków według prezesa Trybunału (maj 2026) nie zostało wykonanych, w tym dotyczących praw obywateli.</div></div>
+  <div class="nrow"><div class="n">3 wyroki</div><div class="d">Tyle wyroków z 2016 roku rząd PiS trzymał nieopublikowanych do czerwca 2018 roku. To dla porównania.</div></div>
+</div>
+
+<h3>Argument rządu: wyrok z wadliwego składu to nie wyrok</h3>
+
+<p>Rząd tłumaczy to prosto. Skoro sędziowie dublerzy nie są sędziami, a prezes został wybrany wadliwie, to wyrok z ich udziałem nie jest prawdziwym wyrokiem. Publikacja nadawałaby mu moc, której nie powinien mieć. To argument poważny. Opiera się na wyrokach sądów europejskich.</p>
+
+<h3>Argument przeciw: Konstytucja nie przewiduje wyjątku</h3>
+
+<p>Konstytucja stanowi, że wyroki Trybunału podlegają niezwłocznemu ogłoszeniu. Nie ma w niej wyjątku „chyba że premier uzna skład za wadliwy”. Zwracali na to uwagę Rzecznik Praw Obywatelskich i konstytucjonaliści. Najważniejsza jest ocena Komisji Weneckiej. W opinii z 7 grudnia 2024 roku, mimo zastrzeżeń do składu Trybunału, uznała ona, że jego wyroki powinny być publikowane. Rzecznik Praw Obywatelskich przywołał tę opinię w piśmie do kancelarii premiera.</p>
+
+<p>Skutki są praktyczne. W marcu 2026 roku Sąd Okręgowy w Szczecinie nakazał ZUS przeliczyć emeryturę na podstawie nieopublikowanego wyroku Trybunału z 4 czerwca 2024 roku. W tej sprawie sądy musiały sięgać po wyroki, których urzędowo „nie ma”. Prof. Ryszard Piotrowski, konstytucjonalista, mówił w tym kontekście o „schizofrenii konstytucyjnej”.</p>
+
+<p>Warto zauważyć jedno. Ten sam zarzut padał w 2016 roku pod adresem rządu Szydło. Okoliczności były inne, bo wtedy rząd kwestionował ustawę, a dziś kwestionuje skład. Wspólna jest jednak zasada: rząd sam nie ocenia, które wyroki sądu konstytucyjnego ogłosić.</p>
+
+<p>Jest jeszcze ironia, którą trzeba odnotować. We wrześniu 2025 roku Trybunał orzekł, że jego wyroki obowiązują także wtedy, gdy rząd ich nie publikuje. Orzekał jednak o tym Trybunał, którego skład jest sporny, we własnej sprawie. Dlatego ten wyrok nie przekona nikogo, kto już wcześniej miał inne zdanie.</p>
+
+<h2><span class="num">Rozdział piąty</span>Sześcioro sędziów i jedna przysięga</h2>
+
+<p>Do marca 2026 roku Sejm obecnej kadencji nie wybrał żadnego sędziego Trybunału. Zwolennicy PiS twierdzą, że zwłoka miała utrudnić Trybunałowi pracę. Nawet publicyści życzliwi koalicji pisali, że opóźnianie zgłaszania kandydatów służyło właśnie temu. Ustawa wymaga do rozpoznania sprawy w pełnym składzie co najmniej jedenastu sędziów. W lutym 2026 roku minister sprawiedliwości Waldemar Żurek zaczął namawiać koalicję do wyboru „sześciu niezależnych prawników”.</p>
+
+<p>13 marca 2026 roku Sejm wybrał sześcioro sędziów: Magdalenę Bentkowską, Marcina Dziurdę, Annę Korwin-Piotrowską, Krystiana Markiewicza, Dariusza Szostka i Macieja Taborowskiego. Zgłoszono ośmioro kandydatów, sześcioro rekomendowało Prezydium Sejmu. Kancelaria Sejmu twierdzi, że procedura nie budziła wątpliwości również u opozycji, która zgłosiła swoich kandydatów i ich poparła. PiS odpowiada, że wybór był nadużyciem. Poseł Marcin Warchoł mówił, że koalicja kumulowała wakaty, by obsadzić je hurtem w ciągu 48 godzin, a przepisy o wyborze sędziów powinny być w ustawie, nie w regulaminie Sejmu. Posłowie PiS złożyli w tej sprawie wniosek do Trybunału jeszcze przed wyborem.</p>
+
+<h3>Prezydent wybiera dwoje z sześciorga</h3>
+
+<p>1 kwietnia 2026 roku prezydent Nawrocki odebrał ślubowanie od dwojga z sześciu: od Bentkowskiej (kandydatki PSL) i Szostka (kandydata Polski 2050). Nie zaprosił czworga pozostałych, zgłoszonych przez Koalicję Obywatelską i Lewicę. Kancelaria Prezydenta podała dwa powody. Po pierwsze, jej szef Zbigniew Bogucki wskazywał, że w Trybunale zasiadało wówczas dziewięciu sędziów, a do pełnego składu potrzeba jedenastu. Ślubowanie dwojga wystarczy więc, by Trybunał mógł orzekać. Po drugie, prezydent miał wątpliwości co do procedury wyboru.</p>
+
+<p>9 kwietnia czworo pominiętych sędziów złożyło ślubowanie w Sejmie, w obecności notariusza i byłych prezesów Trybunału, z formułą „wobec prezydenta”, ale bez jego obecności. Prezydent odmówił przybycia. Prezes Święczkowski uznał, że to nie jest ślubowanie wobec prezydenta, więc sędziowie nie objęli urzędu. Od tamtej pory ich nie dopuszcza do orzekania.</p>
+
+<p>Dwa stanowiska prawne wyglądają tak:</p>
+
+<div class="case a">
+  <div class="cl">Stanowisko Sejmu i koalicji</div>
+  <ul>
+    <li>Konstytucja mówi, że sędziów wybiera Sejm. Kadencja zaczyna się od wyboru, nie od ślubowania.</li>
+    <li>Ślubowanie to czynność formalna. Prezydent nie ma prawa weta wobec wyboru Sejmu.</li>
+    <li>Wybiórcze zaproszenie dwojga z sześciorga nie ma żadnego uzasadnienia w przepisach.</li>
+  </ul>
+</div>
+
+<div class="case b">
+  <div class="cl">Stanowisko prezydenta, prezesa Trybunału i PiS</div>
+  <ul>
+    <li>Ustawa wymaga ślubowania „wobec Prezydenta”, więc bez niego nie ma objęcia urzędu.</li>
+    <li>Tryb wyboru jest sporny konstytucyjnie, a koalicja zwlekała z obsadzaniem wakatów, by potem obsadzić je hurtem.</li>
+    <li>Ślubowanie w Sejmie przed innym organem to obejście ustawy.</li>
+  </ul>
+</div>
+
+<h3>Co mówią instytucje zewnętrzne</h3>
+
+<p>Zewnętrzni arbitrzy zajęli stanowisko dość jednoznacznie.</p>
+
+<ul>
+  <li><strong>Maj 2026, ETPCz.</strong> Na wniosek czworga pominiętych sędziów Strasburg wydał środek tymczasowy. Zakazał polskim władzom, w tym prezesowi Trybunału, utrudniania im podjęcia pracy. Prezes Święczkowski go nie uznał, bo wniosek podpisali sędziowie, których sam za sędziów nie uważa.</li>
+  <li><strong>12 maja 2026, polski Trybunał.</strong> W pięcioosobowym składzie, któremu przewodniczył Święczkowski, Trybunał orzekł, że część przepisów o wyborze sędziów jest niekonstytucyjna i że prezydent może w sytuacjach nadzwyczajnych nie przyjąć ślubowania. Zdania odrębne zgłosili sędziowie Rafał Wojciechowski i Jarosław Wyrembak. Ten drugi jest w uchwale Sejmu zaliczany do następców dublerów, a mimo to głosował przeciw większości.</li>
+  <li><strong>Czerwiec 2026, Komitet Ministrów Rady Europy.</strong> Wyraził zaniepokojenie podejściem prezydenta do sędziów wybranych w marcu. Ocenił, że odebranie ślubowania tylko od dwojga z sześciorga przypomina odmowę zaprzysiężenia sędziów, którą Strasburg skrytykował w sprawie Xero Flor.</li>
+  <li><strong>13 października 2026, Komisja Wenecka (opinia CDL-AD(2026)031).</strong> Uznała, że prezydent powinien odbierać ślubowanie bez zwłoki i nie ma prawa weryfikować wyboru Sejmu. Dodała, że gdy prezydent odmawia, powinna istnieć możliwość złożenia ślubowania bez jego fizycznej obecności, o ile zachowane są istotne elementy ślubowania. Zalecała też ustawowy mechanizm, który zapobiegnie takim impasom.</li>
+</ul>
+
+<p>Opinia Komisji Weneckiej jest doradcza. Nie zmienia prawa. Według relacji RMF24 komisja miała na myśli m.in. udokumentowanie ślubowania aktem notarialnym przedstawionym prezydentowi. To przypomina procedurę z 9 kwietnia, ale ocena, czy spełniła ona wszystkie istotne elementy, należy do sądów.</p>
+
+<h3>Rozkład sił: piętnaście miejsc</h3>
+
+<p>Kto zasiada w Trybunale i na jakiej podstawie? Oto stan na 31 października 2026 roku. Z dziewięciu sędziów starszej generacji dwóch skończyło już kadencję (Andrzej Zielonacki 28 czerwca, Justyn Piskorski 18 września). Na ich miejsca Sejm wybrał Sławomira Patyrę (czerwiec) i Macieja Berka (4 września).</p>
+
+<div class="seats">
+  <div class="seat">Święczkowski<small>prezes, wybrany w 2022</small></div>
+  <div class="seat">Sochański<small>wiceprezes</small></div>
+  <div class="seat">Stelina</div>
+  <div class="seat">Piotrowicz</div>
+  <div class="seat">Wojciechowski</div>
+  <div class="seat">Sych</div>
+  <div class="seat">Wyrembak<small>wg uchwały Sejmu: następca dublera</small></div>
+  <div class="seat g">Bentkowska<small>ślubowanie u prezydenta, orzeka</small></div>
+  <div class="seat g">Szostek<small>ślubowanie u prezydenta, orzeka</small></div>
+  <div class="seat y">Patyra<small>ślubowanie u prezydenta 28 lipca, odmówił orzekania</small></div>
+  <div class="seat r">Markiewicz<small>ślubowanie w Sejmie</small></div>
+  <div class="seat r">Taborowski<small>ślubowanie w Sejmie</small></div>
+  <div class="seat r">Dziurda<small>ślubowanie w Sejmie</small></div>
+  <div class="seat r">Korwin-Piotrowska<small>ślubowanie w Sejmie</small></div>
+  <div class="seat r">Berek<small>ślubowanie w Sejmie 14 października</small></div>
+</div>
+<p class="legend"><span style="background:#6f8fa8"></span>wybrani przez poprzednie Sejmy &nbsp; <span style="background:#7fa06a"></span>wybrani w 2026, zaprzysiężeni przez prezydenta, orzekają &nbsp; <span style="background:#d1a13f"></span>zaprzysiężony przez prezydenta, nie orzeka &nbsp; <span style="background:#c96a4e"></span>wybrani w 2026, tylko ślubowanie w Sejmie, nie dopuszczeni do orzekania</p>
+<p class="caption">Obliczenie własne na podstawie list kadencji (OKO.press), komunikatów Kancelarii Sejmu i relacji prasowych. Podział 7 do 8 zgadza się z rachunkiem, którym posługuje się rząd.</p>
+
+<p>Rachunek jest taki: siedmiu starszych sędziów i ośmiu wybranych przez obecny Sejm. Na papierze więc koalicja ma większość. W praktyce sześcioro z ośmiu nie orzeka. Bentkowska i Szostek oświadczyli, że nie będą orzekać w składach z dublerami i bez czworga pominiętych, więc w części spraw też się wyłączają.</p>
+
+<h3>Z rządu do Trybunału w trzy tygodnie</h3>
+
+<p>Osobna sprawa to Maciej Berek. Jeszcze w sierpniu 2026 roku był ministrem w rządzie Tuska, wcześniej przewodniczącym Komitetu Stałego Rady Ministrów. Media nazywały go „prawą ręką” premiera. 4 września Sejm wybrał go na sędziego Trybunału. Kancelaria Prezydenta wyraziła „gigantyczne wątpliwości”, czy ma on wymagany dziesięcioletni staż radcy prawnego. Berek odpowiada, że jest wpisany na listę od ponad 20 lat i wykonywał zawód przez 17 lat. Kancelaria Sejmu uznała, że kwestionowanie wyboru nie ma oparcia w przepisach.</p>
+
+<p>Sędziami Trybunału byli i dawniej politycy, także z różnych stron, między innymi senatorowie i posłowie. Nie jest to więc nowość. Nowością jest tempo: z rządu do sądu konstytucyjnego w kilka tygodni, w środku sporu o to, czy Trybunał jest niezależny. Krytycy podają to jako dowód upolitycznienia Trybunału.</p>
+
+<h2><span class="num">Rozdział szósty</span>Noc z 30 na 31 października</h2>
+
+<p>Tyle tło. Teraz sama noc. Przedstawiam ją według relacji, które się nawzajem uzupełniają i czasem sobie przeczą.</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">piątek, przed 18:00</div><div class="txt">Sędzia Korwin-Piotrowska zawiadamia policję o możliwym zagrożeniu i zakłóceniu porządku. Policja pojawia się przed ogrodzeniem. Zaczyna się demonstracja.</div></div>
+  <div class="ev"><div class="yr">piątek wieczór (godzina nieznana)</div><div class="txt">Według rzeczniczki Trybunału Weroniki Ścibor siedmioro sędziów wybranych przez Sejm weszło do budynku w asyście Służby Ochrony Państwa, bramą łączącą go z gmachem Kancelarii Prezesa Rady Ministrów. Dotychczasowych strażników poproszono o opuszczenie budynku.</div></div>
+  <div class="ev crit"><div class="yr">ok. 18:00</div><div class="txt">Na stronie Trybunału pojawia się zarządzenie Korwin-Piotrowskiej o miesięcznej przerwie w czynnościach prezesa i wiceprezesa. Sędzia powołuje się na przepis o sędzim z najdłuższym stażem, który kieruje pracami Trybunału, oraz na artykuł 130 ustawy o ustroju sądów powszechnych. Uzasadnia to blokowaniem Zgromadzenia Ogólnego potrzebnego do uchwalenia budżetu na 2027 rok, arbitralnym wyznaczaniem składów i niedopuszczaniem sędziów do orzekania od 9 kwietnia mimo decyzji Strasburga.</div></div>
+  <div class="ev"><div class="yr">ok. 18:25</div><div class="txt">Konto Trybunału na X: bezprawne przejęcie strony internetowej, prezesem jest nadal Święczkowski, a Korwin-Piotrowska nie jest sędzią. Wszyscy uczestniczący popełniają przestępstwo zamachu stanu.</div></div>
+  <div class="ev crit"><div class="yr">ok. 18:42</div><div class="txt">Minister sprawiedliwości i prokurator generalny Waldemar Żurek ogłasza pięć wniosków o uchylenie immunitetu: cztery wobec Święczkowskiego, jeden wobec Sochańskiego. Wnioski liczą 224 strony, do Trybunału trafiło 50 tomów akt. Treść zarzutów nie jest mi znana z dokumentów, które widziałem.</div></div>
+  <div class="ev"><div class="yr">wieczór</div><div class="txt">Policja oświadcza, że działała na zewnątrz i na al. Szucha, na wezwanie uprawnionej osoby, i że nie weszła do budynku. Sochański mówi o policjantach w rynsztunku antyzamieszkowym na terenie Trybunału. Inni sędziowie temu zaprzeczają. Przed budynkiem protestują politycy PiS, w tym Kaczyński.</div></div>
+  <div class="ev"><div class="yr">ok. 21:00–22:00</div><div class="txt">Według „Rzeczpospolitej” łańcuch na bramie zostaje przecięty piłą tarczową. Święczkowski wchodzi na teren, staje przed kordonem policji i opuszcza go przed 22:00.</div></div>
+  <div class="ev crit"><div class="yr">noc</div><div class="txt">Prezydent przerywa wizytę w Senegalu. Spotyka się w Pałacu z Pierwszym Prezesem Sądu Najwyższego Zbigniewem Kapińskim i ze Święczkowskim, potem jedzie do Trybunału. Przy wejściu dochodzi do przepychanek z grupą sędziów. Prezydent „umożliwia wejście” Sochańskiemu. Opuszcza budynek przed 5:00.</div></div>
+  <div class="ev"><div class="yr">ok. 5:00, sobota</div><div class="txt">Szef Gabinetu Prezydenta odczytuje oświadczenie: naruszenie porządku konstytucyjnego i siłowe przejęcie organu państwa; wezwanie do opuszczenia terenu przez siły przymusu skierowane tam przez rząd. Prezydent zwołuje na sobotę konsultacje z siłami parlamentarnymi.</div></div>
+</div>
+
+<p>Wersje wydarzeń o samym wejściu prezydenta są różne. Minister Berek opublikował nagranie i twierdzi, że nikt prezydenta nie szarpał, a to on przeciskał się przez grupę sędziów. Rzecznik prezydenta uważa to samo nagranie za dowód, że sędziowie naruszyli nietykalność głowy państwa. Żurek mówił, że na nagraniu widać, jak prezydent atakuje sędziów, i liczył na działania prokuratury. Z relacji prasowych nie da się tego rozstrzygnąć. To zadanie dla prokuratury i sądu.</p>
+
+<h3>Czy zarządzenie ma podstawę prawną?</h3>
+
+<p>To jest najważniejsze pytanie nocy i na nie prawnicy odpowiadają dość zgodnie. Odpowiedzi nie są korzystne dla zarządzenia.</p>
+
+<ul>
+  <li><strong>Prof. Jacek Zaleśny</strong>, konstytucjonalista z Uniwersytetu Warszawskiego, uważa, że prawo zna procedurę zawieszenia prezesa Trybunału i że może ją zastosować tylko Zgromadzenie Ogólne. Żaden pojedynczy sędzia nie może podjąć takiej decyzji, a tym bardziej osoba, która nie została powołana na sędziego. Konstrukcję użytą w zarządzeniu nazwał nieistniejącą w prawie.</li>
+  <li><strong>Prof. Marcin Matczak</strong> uważa Święczkowskiego za osobę nieodpowiednią do tej roli. Mimo to nie widzi podstawy prawnej do zawieszenia go i ostrzega, że to zaszkodzi praworządności na dwadzieścia lat.</li>
+  <li><strong>Jerzy Stępień</strong>, były prezes Trybunału, mówi, że teoretycznie widzi podstawy do takiego zarządzenia, ale sprawa wymaga analizy.</li>
+  <li><strong>Krytycy konstrukcji</strong> zwracają też uwagę na treść przepisu, na który powołuje się zarządzenie. Dla prezesów sądów decyzję o przerwie w czynnościach podejmuje według niego minister sprawiedliwości, nie sędzia z najdłuższym stażem. Wynikałoby z tego, że zawieszającym byłby Żurek.</li>
+</ul>
+
+<p>W relacjach, które przeczytałem, nie znalazłem konstytucjonalisty, który tę konstrukcję jednoznacznie poparłby. Nie znaczy to, że nikt jej nie poprze. Znaczy tylko, że w sobotę po południu to jest stan wiedzy.</p>
+
+<p>Pierwszy Prezes Sądu Najwyższego Zbigniew Kapiński mówił według relacji „Rzeczpospolitej” o niebezpiecznym precedensie. Prezydent oświadczył, że Kapiński również nie uznaje legalności działań osób, które według niego uzurpują sobie władzę w Trybunale.</p>
+
+<p>Dla porządku: to nie pierwszy taki wniosek. We wrześniu 2025 roku Żurek wystąpił o uchylenie immunitetu Święczkowskiego w sprawie kontroli czynności operacyjnych CBA. Zgromadzenie Ogólne odmówiło 16 października 2025 roku. Święczkowski odpowiedział prywatnym aktem oskarżenia o zniesławienie przeciwko Żurkowi.</p>
+
+<h3>Najmocniejsza obrona koalicji</h3>
+
+<p>Zasada uczciwości wymaga pokazania także drugiej strony. Korwin-Piotrowska nie wzięła się znikąd. Argumentuje tak: pięcioro sędziów wybranych przez Sejm nie może orzekać od pół roku, mimo środka tymczasowego Strasburga i opinii Komisji Weneckiej. W czerwcu Święczkowski zerwał Zgromadzenie, które sam zwołał. Bez uchwalenia budżetu Trybunał może zostać bez pieniędzy. Jeśli prezes lekceważy decyzje europejskich instytucji, to w ostatecznym rozrachunku ktoś musi móc go zatrzymać.</p>
+
+<p>Część prawników idzie dalej. Autorzy komentarzy na blogu Verfassungsblog krytykowali w grudniu 2024 roku Komisję Wenecką za to, że zbyt mocno broni stanu rzeczy z lat 2016–2023. Ich zdaniem rygorystyczna legalność wobec instytucji, które same złamały prawo, bywa pułapką.</p>
+
+<p>Ten argument ma siłę, bo opiera się na prawdziwych faktach. Odpowiedź krytyków jest prosta: istnieje droga ustawowa i droga przez Zgromadzenie Ogólne. Zarządzenie jednego sędziego to skrót. Prawnicy oceniają je surowo właśnie dlatego, że jest skrótem.</p>
+
+<h2><span class="num">Rozdział siódmy</span>Cztery pytania, cztery odpowiedzi</h2>
+
+<p>Czas na zestawienie. Każde z czterech pytań trzeba oceniać oddzielnie, bo mylenie ich daje fałszywe wnioski.</p>
+
+<div class="vq">
+  <div class="q">1. Czy Trybunał z lat 2016–2024 był prawidłowo obsadzony?</div>
+  <div class="lbl">Najlepiej poparta odpowiedź</div>
+  <p>W części nie. Wybór trzech sędziów w grudniu 2015 roku i wybór prezesa w grudniu 2016 roku uznały za wadliwe ETPCz (Xero Flor, 2021) i TSUE (grudzień 2025). Komisja Wenecka mówi jednak, że dotyczy to trzech osób, a pozostałych dwunastu wybrano prawidłowo.</p>
+  <div class="lbl">Kto ma mocniejszy grunt</div>
+  <p>Koalicja, ale w wąskim zakresie. PiS ma argument o suwerenności konstytucyjnej i o pierwszym kroku z 2015 roku, ale sądy europejskie go nie przyjęły.</p>
+</div>
+
+<div class="vq">
+  <div class="q">2. Czy rząd może nie publikować wyroków Trybunału?</div>
+  <div class="lbl">Najlepiej poparta odpowiedź</div>
+  <p>Nie. Konstytucja nie przewiduje wyjątku. Komisja Wenecka w 2016 i w grudniu 2024 roku mówiła, że wyroki trzeba publikować. Ten sam zarzut dotyczył rządu PiS w 2016 roku.</p>
+  <div class="lbl">Kto ma mocniejszy grunt</div>
+  <p>Opozycja i Komisja Wenecka. To najsłabszy punkt koalicji.</p>
+</div>
+
+<div class="vq">
+  <div class="q">3. Czy sędziowie wybrani w 2026 roku są sędziami?</div>
+  <div class="lbl">Najlepiej poparta odpowiedź</div>
+  <p>Według Komisji Weneckiej, Komitetu Ministrów Rady Europy i środka tymczasowego ETPCz: tak. Sejm wybiera sędziów, prezydent nie weryfikuje wyboru, a ślubowanie bez jego obecności jest dopuszczalne przy zachowaniu istotnych elementów. Częściowo inaczej orzekł polski Trybunał (12 maja 2026), ale w składzie, którego legalność jest sporna.</p>
+  <div class="lbl">Kto ma mocniejszy grunt</div>
+  <p>Koalicja. Z zastrzeżeniem, że wymóg ślubowania „wobec Prezydenta” to zapis ustawy z 2016 roku i można było zmienić ustawę zamiast szukać obejścia. Komisja Wenecka zaleca właśnie zmianę ustawy.</p>
+</div>
+
+<div class="vq">
+  <div class="q">4. Czy to, co się stało 30 października, było zgodne z prawem?</div>
+  <div class="lbl">Najlepiej poparta odpowiedź</div>
+  <p>Najprawdopodobniej nie albo przynajmniej bardzo wątpliwie. Zaleśny i Matczak nie widzą podstawy prawnej. Stępień widzi ją tylko teoretycznie. Sprawę może rozstrzygnąć Zgromadzenie Ogólne albo sąd.</p>
+  <div class="lbl">Kto ma mocniejszy grunt</div>
+  <p>Na pytanie o formę — prezydent i prezes Trybunału. Na pytanie o to, czy blokowanie pięciorga sędziów wbrew Strasburgowi jest legalne — koalicja. Te dwa pytania się zazębiają, ale nie są tym samym.</p>
+</div>
+
+<h3>Czy to „przejęcie”?</h3>
+
+<p>Teraz odpowiedź na pytanie z pierwszej strony. Słowo „przejęcie” można rozumieć dwojako.</p>
+
+<p>Jeśli znaczy, że kierownictwo Trybunału zmieniono z udziałem sędziów wybranych przez większość koalicji, przy wsparciu aparatu państwa (ochrona, policja przy bramie, wnioski prokuratora generalnego tego samego wieczoru) i na podstawie konstrukcji prawnej, której większość cytowanych prawników nie uznaje — to opis jest uczciwy. Tak to widzą prezydent, Kaczyński i Święczkowski. Większość tych elementów potwierdzają także relacje strony rządowej, choć o roli policji i Służby Ochrony Państwa wersje się różnią.</p>
+
+<p>Jeśli znaczy, że koalicja przez dwa lata obsadzała Trybunał swoimi ludźmi i sama kontroluje jego wyroki — to nie. Przez cały ten czas Trybunałem kierowali prezesi powołani za rządów PiS: Przyłębska do grudnia 2024, potem Święczkowski. Od kwietnia 2026 roku to prezes nie dopuszcza do pracy sędziów wybranych przez Sejm, wbrew środkowi tymczasowemu Strasburga. Koalicja nie obsadziła Trybunału. Przez dwa lata nie publikowała jego wyroków i nie wybierała sędziów, a dopiero od marca 2026 roku próbuje wprowadzić ich do środka.</p>
+
+<p>Dlatego „prawda leży pośrodku” to zła odpowiedź. Nie leży w jednym miejscu. Leży w czterech różnych. Koalicja ma rację w pytaniach 1 i 3. Jej przeciwnicy mają rację w pytaniach 2 i prawdopodobnie 4. Każda ze stron ma mocny argument w jednej sprawie i słaby w innej.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Co da się rozstrzygnąć, a czego nie</h2>
+
+<p>Czego możemy być pewni? Niewiele, ale to ważne rzeczy.</p>
+
+<ul>
+  <li>Trybunał w latach 2016–2024 miał w składzie sędziów wybranych wadliwie. Mówią to dwa sądy europejskie.</li>
+  <li>Niepublikowanie wyroków nie ma podstawy w Konstytucji. Mówi to Komisja Wenecka, także o obecnym rządzie.</li>
+  <li>Prezydent nie ma prawa weryfikować wyboru Sejmu. Mówi to Komisja Wenecka w opinii z 13 października 2026 roku.</li>
+  <li>Droga, którą wybrano 30 października, jest prawnie wątpliwa. Mówią to cytowani konstytucjonaliści, także tacy, którzy Święczkowskiego nie bronią.</li>
+</ul>
+
+<p>Czego nie wiemy? Co się stanie dalej. 31 października prezydent miał rozpocząć konsultacje z liderami sił parlamentarnych. Sędzia Korwin-Piotrowska zwołała Zgromadzenie Ogólne na 3 listopada, żeby rozpatrzyć projekt budżetu na 2027 rok i wnioski prokuratury. Powiedziała, że Święczkowski będzie mógł złożyć wyjaśnienia. Przerwa w czynnościach, jeśli jest skuteczna, trwa miesiąc. Przed Strasburgiem toczy się też sprawa czworga sędziów, którą ETPCz uznał za priorytetową.</p>
+
+<div class="box red">
+  <div class="bt">Czego dziś nie da się ustalić</div>
+  <p>Nie wiadomo, jakie dokładnie zarzuty zawierają nowe wnioski prokuratury i czy są mocne. Nie wiadomo, czy policja weszła do budynku. Nie wiadomo, jak zachowa się Zgromadzenie Ogólne i czyje uchwały uzna każda ze stron. Każdy z tych punktów może zmienić obraz. Dlatego lepiej traktować ten tekst jako mapę sporu na sobotę po południu niż jako wyrok.</p>
+</div>
+  <p>Czy poprzednia, zablokowana droga była jedyna? Koalicja mogła próbować zmiany ustawy o statusie sędziów (prezydent by ją pewnie zawetował). Mogła czekać na wybory prezydenckie. Mogła zrobić jedno i drugie. Nie wiemy, która ścieżka by się powiodła, bo żadna nie została doprowadzona do końca. Każda ze stron może więc powiedzieć „nie było innego wyjścia” i nie da się tego zweryfikować.</p>
+</div>
+
+<h2><span class="num">Zakończenie</span>Koszt, który płaci ktoś inny</h2>
+
+<p>Wróćmy do bramy z przeciętym łańcuchem i do dwóch dokumentów, z których każdy przedstawia się jako ten właściwy.</p>
+
+<p>Spór o Trybunał ma jedną cechę, która odróżnia go od większości politycznych kłótni. Rozstrzygnąć go miał organ, który jest jego przedmiotem. Skoro nie może, rozstrzygają go ludzie z kluczami do budynku, policjanci przy bramie, minister z teczką wniosków i prezydent przeciskający się przez wejście. To nie jest zdrowa sytuacja dla żadnej ze stron.</p>
+
+<p>Każda ze stron ma przy tym swoją słabość, której nie widzi albo woli nie widzieć. Dla zwolenników PiS taką słabością jest to, że przez osiem lat Trybunał orzekał w składzie, który sądy europejskie uznały za wadliwy, i że prezes dziś nie wykonuje środka tymczasowego Strasburga. Dla koalicji — że przez dwa lata nie publikowała wyroków, choć Komisja Wenecka mówiła, że trzeba, i że 30 października sięgnęła po konstrukcję prawną, której nie bronią nawet prawnicy krytyczni wobec Święczkowskiego.</p>
+
+<p>Pierwszy Prezes Sądu Najwyższego mówił o niebezpiecznym precedensie. Warto to rozwinąć. Gdy jedna większość zmienia kierownictwo sądu konstytucyjnego skrótem, następna większość będzie mogła powołać się na ten sam skrót. Strażnik, który ma chronić Konstytucję przed zmieniającymi się większościami, staje się łupem tej, która w danej chwili rządzi.</p>
+
+<div class="pull">Strażnik jest wart tyle, ile zaufania mają do niego ci, którzy przegrali dzisiejsze głosowanie.</div>
+
+<p>Ta uwaga nie jest pocieszeniem dla żadnej ze stron. Jest warunkiem, bez którego żaden sąd konstytucyjny nie działa. Dopóki obie strony nie uznają, że Trybunał może orzec także przeciw nim, nie ma znaczenia, kto stoi na jego czele.</p>
+
+<hr class="sep">
+
+<h2 style="margin-top:0"><span class="num">Aneks</span>Źródła</h2>
+
+<ul class="sources">
+  <li><strong>Orzeczenia i dokumenty europejskie</strong> — Trybunał Sprawiedliwości UE, wyrok z 18 grudnia 2025, C-448/23 Komisja przeciwko Polsce (komunikat prasowy nr 157/25): <a href="https://curia.europa.eu/jcms/upload/docs/application/pdf/2025-12/cp250157pl.pdf">curia.europa.eu</a>. TSUE, wyrok z 24 marca 2026, C-521/21 (komunikat nr 45/26): <a href="https://curia.europa.eu/site/upload/docs/application/pdf/2026-03/cp260045pl.pdf">curia.europa.eu</a>. ETPCz, Xero Flor w Polsce sp. z o.o. przeciwko Polsce, skarga nr 4907/18, wyrok z 7 maja 2021, w omówieniu Rzecznika Praw Obywatelskich: <a href="https://bip.brpo.gov.pl/pl/content/jak-rzad-zamierza-wykonac-strasburski-wyrok-ws-xero-flor-pyta-rpo-premiera-odpowiedz-szefa">bip.brpo.gov.pl</a>.</li>
+  <li><strong>Komisja Wenecka</strong> — opinia CDL-AD(2026)031 z 9–10 października 2026 (publikacja 13 października) w tłumaczeniu i omówieniu: <a href="https://monitorkonstytucyjny.eu/archiwa/35196">Monitor Konstytucyjny</a>, <a href="https://www.gazetaprawna.pl/prawnik/orzecznictwo/artykuly/11329756,prezydent-nie-moze-blokowac-sedziow-tk-komisja-wenecka-wskazala-rozwi.html">Dziennik Gazeta Prawna</a>. Opinia CDL-AD(2024)035 z 6–7 grudnia 2024: <a href="https://www.coe.int/en/web/venice-commission/-/cdl-ad-2024-035-e">coe.int</a>; jej omówienie w kontekście publikacji wyroków: <a href="https://bip.brpo.gov.pl/en/content/case-non-publication-constitutional-tribunals-judgment-favourable-pensioners-reply-minister">Rzecznik Praw Obywatelskich</a>. Opinia z marca 2016: <a href="https://tvn24.pl/polska/przeczytaj-cala-opinie-komisji-weneckiej-ra626862-ls3177719">pełny tekst (TVN24)</a>.</li>
+  <li><strong>Rada Europy</strong> — decyzja Komitetu Ministrów z posiedzenia 9–11 czerwca 2026 (nadzór nad wykonaniem wyroków ETPCz): <a href="https://www.gazetaprawna.pl/wiadomosci/kraj/artykuly/11261874,rada-europy-wzywa-polske-do-wykonania-wyrokow-etpcz-dotyczacych-sadownictwa.html">Dziennik Gazeta Prawna</a>.</li>
+  <li><strong>Akty prawne i dokumenty państwowe</strong> — uchwała Rady Ministrów nr 162 z 18 grudnia 2024, M.P. 2024 poz. 1068: <a href="https://eli.gov.pl/api/acts/MP/2024/1068/text/O/M20241068.pdf">eli.gov.pl</a>. Komunikat Kancelarii Sejmu o wyborze sześciorga sędziów (13 marca 2026): <a href="https://www.sejm.gov.pl/sejm10.nsf/komunikat.xsp?documentId=054B180D6A1A22A2C1258DCE00293F26">sejm.gov.pl</a>. Uchwała Sejmu z 6 marca 2024 w omówieniu: <a href="https://oko.press/trybunal-konstytucyjny-uchwala-konsekwencje">OKO.press</a>.</li>
+  <li><strong>Statystyki Trybunału</strong> — Demagog, „Czy politycy PiS czekają na wyrok TK krócej niż obywatele?” (luty 2025): <a href="https://demagog.org.pl/wypowiedzi/czy-politycy-pis-czekaja-na-wyrok-tk-krocej-niz-obywatele/">demagog.org.pl</a>. „Rzeczpospolita”, wywiad z prezesem Rzeplińskim o statystykach za 2015: <a href="https://www.rp.pl/sady-i-trybunaly/art3466521-rzeplinski-nie-biore-udzialu-w-zyciu-publicznym">rp.pl</a>. OKO.press o spadku liczby spraw: <a href="https://oko.press/przylebska-tk-do-normalnosci-mu-daleko">oko.press</a>.</li>
+  <li><strong>Chronologia sporu</strong> — „Rzeczpospolita”, <a href="https://www.rp.pl/sady-i-trybunaly/art45425241-konflikt-o-trybunal-konstytucyjny-krok-po-kroku-sciaga-dla-laika">„Konflikt o Trybunał Konstytucyjny krok po kroku”</a>; Dziennik Gazeta Prawna o niepublikowaniu wyroku z 9 marca 2016 i zeznaniach świadków: <a href="https://www.gazetaprawna.pl/twoje-prawo/artykuly/10882752,niepublikowanie-wyrokow-tk.html">gazetaprawna.pl</a>; prawo.pl o wyroku sądu w Szczecinie opartym na nieopublikowanym wyroku TK: <a href="https://www.prawo.pl/prawnicy-sady/trybunal-konstytucyjny-a-stanowisko-ministra-sprawiedliwosci-waldemara-zurka,1549572.html">prawo.pl</a>.</li>
+  <li><strong>Wydarzenia z 2026 roku</strong> — wypowiedzi prezesa TK w Polsat News (12 maja 2026): <a href="https://www.polsatnews.pl/gosc-wydarzen/2026-05-12/prezes-trybunalu-konstytucyjnego-bogdan-swieczkowski/">polsatnews.pl</a>; wyrok TK z 12 maja: <a href="https://wydarzenia.interia.pl/kraj/news-wybor-sedziow-przez-sejm-trybunal-konstytucyjny-podjal-decyz,nId,23476435">Interia</a>, <a href="https://www.rmf24.pl/fakty/polityka/news-zurek-skomentowal-decyzje-tk-polityczna-ustawka-z-udzialem-d,nId,8081649">RMF24</a>; ETPCz i środek tymczasowy: <a href="https://oko.press/etpcz-zakazuje-prezesowi-tk-swieczkowskiemu-blokowania-czterech-nowych-sedziow">OKO.press</a>, <a href="https://www.bankier.pl/wiadomosc/Decyzja-ETPC-uderza-w-TK-Sedziowie-zadaja-dopuszczenia-do-pracy-9129370.html">Bankier.pl</a>; pismo Święczkowskiego do premiera: <a href="https://www.tvp.info/92738943/tk-bogda-swieczkowski-napisal-do-premiera-donalda-tuska-chodzi-o-publikacje-orzeczen">TVP Info</a>; wybór Berka i spór o jego staż: <a href="https://xyz.pl/?p=252104">xyz.pl</a>, <a href="https://oko.press/na-zywo/na-zywo-relacja/czarzasty-odpowiedzial-nawrockiemu-w-sprawie-berka">OKO.press</a>.</li>
+  <li><strong>Noc z 30 na 31 października 2026</strong> — „Rzeczpospolita”: <a href="https://www.rp.pl/sady-i-trybunaly/art45423931-co-dzieje-sie-w-trybunale-konstytucyjnym-interwencja-policji-i-zamach-stanu-krok-po-kroku">relacja krok po kroku</a>, <a href="https://www.rp.pl/sady-i-trybunaly/art45424221-odsuniecie-prezesa-tk-bez-podstawy-prawnej-prawnicy-sa-podzieleni">oceny prawników</a>, <a href="https://www.rp.pl/polityka/art45424801-jest-oswiadczenie-prezydenta-ws-sytuacji-w-tk-wzywam-do-opuszczenia-terenu-trybunalu-przez-sily-przymusu">oświadczenie prezydenta</a>; Euronews: <a href="https://pl.euronews.com/2026/10/31/nocna-eskalacja-w-trybunale-konstytucyjnym-nawrocki-oskarza-rzad-o-silowe-przejecie-zurek-">relacja z nocy</a>; <a href="https://www.prawo.pl/prawnicy-sady/spor-o-trybunal-konstytucyjny-anna-korwin-piotrowska-zawiesza-w-czynnosciach-swieczkowskiego,1556200.html">prawo.pl</a>; <a href="https://www.polsatnews.pl/wiadomosc/2026-10-30/pilny-komunikat-na-stronie-tk-dotyczy-sedziego-bogdana-swieczkowskiego/">Polsat News</a>.</li>
+  <li><strong>Komentarz prawniczy</strong> — Verfassungsblog, debata „One Year Later: Rule of Law in Poland” (grudzień 2024) i tekst z marca 2025 o odbudowie niezależności sądownictwa: <a href="https://verfassungsblog.de/blinded-by-legality/">verfassungsblog.de</a>.</li>
+  <li>Materiały prezentujące stanowiska stron (OKO.press, TVP Info po jednej stronie; Do Rzeczy, wPolityce.pl, wypowiedzi polityków PiS po drugiej) cytowane z zastrzeżeniem, że są to źródła o stanowiskach, nie o faktach. Gdzie tylko to możliwe, opieram się na dokumentach, orzeczeniach i relacjach wielu redakcji.</li>
+</ul>
+
+<footer class="end">
+  <p>Stan wiedzy: sobota 31 października 2026, popołudnie. Spór jest w toku: Zgromadzenie Ogólne, konsultacje u prezydenta i kolejne decyzje mogą zmienić obraz w ciągu kilku dni. Liczby w rozdziale piątym (rozkład siedmiu i ośmiu sędziów) są obliczeniem własnym. Informacje o przebiegu nocy pochodzą z relacji prasowych, w których wersje stron się różnią.</p>
+</footer>
+
+</div>
+</body>
+</html>
