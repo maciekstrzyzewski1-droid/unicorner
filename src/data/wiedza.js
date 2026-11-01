@@ -44,6 +44,7 @@ export const ARTICLES = [
   { slug: 'anatomia-sporu', topic: 'Spór o praworządność: o co naprawdę kłócą się obie strony',        category: 'polityka', series: 'polityka', part: 7, seoTitle: 'Anatomia sporu — o co toczy się spór o praworządność' },
   { slug: 'anatomia-zakladu', topic: 'CPK: na co dokładnie stawia Polska, budując nowe lotnisko',      category: 'polityka', series: 'polityka', part: 8, seoTitle: 'Anatomia zakładu — CPK: na co dokładnie stawia Polska' },
   { slug: 'anatomia-weta', topic: 'Karol Nawrocki: fakty, zarzuty i jego prezydenckie weta',         category: 'polityka', seoTitle: 'Anatomia weta — Karol Nawrocki: fakty, zarzuty i weta' },
+  { slug: 'anatomia-dymu', topic: 'Protesty 2026: Francja, Hiszpania, Albania, Serbia i to, czemu jedne zamieszki widać, a inne nie', category: 'polityka', series: 'polityka', part: 10, seoTitle: 'Anatomia dymu — protesty we Francji, Hiszpanii, Albanii i Serbii: co jest prawdą' },
 
   // --- Zdrowie i umysł ---
   { slug: 'anatomia-znikania', topic: 'Narkolepsja z bliska: objawy, badania i codzienne życie z chorobą',  category: 'zdrowie', seoTitle: 'Anatomia znikania — narkolepsja poza sennością' },

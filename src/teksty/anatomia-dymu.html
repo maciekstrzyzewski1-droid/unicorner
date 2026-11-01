@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia dymu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;}
+  :root:not([data-theme="light"]){color-scheme:dark;}
+  @media (prefers-color-scheme: light){:root:not([data-theme="light"]){color-scheme:dark;}}
+  *{box-sizing:border-box;} html,body{margin:0;padding:0;}
+  body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+  header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+  .kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+  h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+  .lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+  .meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+  h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;letter-spacing:-.01em;}
+  h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.22em;font-weight:600;color:var(--gold);margin-bottom:12px;text-transform:uppercase;}
+  h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:42px 0 12px;line-height:1.3;}
+  p{margin:0 0 20px;} strong{font-weight:600;color:#fff;} a{color:var(--gold);}
+  ul,ol{padding-left:22px;margin:0 0 22px;} li{margin-bottom:11px;}
+  .box{background:var(--card);border:1px solid var(--line);border-left:3px solid var(--gold);padding:20px 22px;margin:32px 0;font-size:.96rem;line-height:1.62;}
+  .box .bt{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+  .box p:last-child{margin-bottom:0;}
+  .box.red{border-left-color:var(--red);} .box.red .bt{color:var(--red);}
+  .box.blue{border-left-color:var(--blue);} .box.blue .bt{color:var(--blue);}
+  .pull{font-family:'Fraunces',Georgia,serif;font-size:1.32rem;line-height:1.38;color:#fff;border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:26px 0;margin:38px 0;font-weight:400;}
+  .case{border:1px solid var(--line);background:var(--card);padding:22px 24px;margin:26px 0;}
+  .case .ch{font-family:'Fraunces',serif;font-size:1.15rem;color:#fff;margin-bottom:6px;}
+  .case .cl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;margin-bottom:14px;}
+  .case.a{border-left:3px solid var(--blue);} .case.a .cl{color:var(--blue);}
+  .case.b{border-left:3px solid var(--red);} .case.b .cl{color:var(--red);}
+  .case ul{margin:14px 0 0;font-size:.94rem;} .case li{margin-bottom:10px;}
+  .case p{font-size:.95rem;margin-bottom:12px;}
+  .nums{margin:34px 0;border:1px solid var(--line);}
+  .nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+  .nums .nrow:last-child{border-bottom:none;}
+  .nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 116px;line-height:1.1;font-variant-numeric:tabular-nums;}
+  .nums .d{font-size:.92rem;line-height:1.5;}
+  .tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+  .tl .ev{margin-bottom:22px;position:relative;}
+  .tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+  .tl .ev.crit:before{background:var(--red);}
+  .tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+  .tl .ev.crit .yr{color:var(--red);}
+  .tl .txt{font-size:.94rem;line-height:1.55;}
+  .bars{margin:30px 0;} .bars .bt{font-family:'Fraunces',serif;color:#fff;margin-bottom:14px;font-size:1.05rem;}
+  .bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+  .bars .lab{flex:0 0 120px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+  .bars .fill{height:100%;background:var(--gold);} .bars .fill.red{background:var(--red);} .bars .fill.blue{background:var(--blue);} .bars .fill.green{background:var(--green);}
+  .bars .val{flex:0 0 52px;text-align:right;font-variant-numeric:tabular-nums;}
+  .caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+  .seats{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:18px 0 8px;}
+  .seat{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--blue);padding:10px 10px 12px;font-size:.8rem;line-height:1.3;color:#fff;}
+  .seat small{display:block;margin-top:4px;color:var(--muted);font-size:.72rem;line-height:1.3;}
+  .seat.g{border-top-color:var(--green);} .seat.y{border-top-color:var(--gold);} .seat.r{border-top-color:var(--red);}
+  .legend{font-size:.82rem;color:var(--muted);line-height:1.7;margin:10px 0 0;}
+  .legend span{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:baseline;}
+  .vq{border:1px solid var(--line);background:var(--card);padding:20px 22px;margin:22px 0;}
+  .vq .q{font-family:'Fraunces',serif;color:#fff;font-size:1.12rem;line-height:1.35;margin-bottom:12px;}
+  .vq .lbl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--gold);margin:12px 0 4px;}
+  .vq p{font-size:.94rem;margin-bottom:8px;}
+  table.cmp{width:100%;border-collapse:collapse;margin:26px 0;font-size:.9rem;line-height:1.5;}
+  table.cmp th{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);}
+  table.cmp td{padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top;}
+  table.cmp td:first-child{color:#fff;white-space:nowrap;}
+  hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+  .sources{font-size:.85rem;color:var(--muted);line-height:1.6;list-style:none;padding-left:0;} .sources li{margin-bottom:10px;padding-left:14px;border-left:1px solid var(--line);} .sources a{color:var(--muted);word-break:break-word;}
+  footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+  @media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 92px;font-size:1.08rem;} .bars .lab{flex:0 0 92px;font-size:.78rem;} .seats{grid-template-columns:repeat(3,1fr);}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy · część dziesiąta</div>
+  <h1>Anatomia dymu</h1>
+  <p class="lede">Nagrania z Paryża, Marsylii i Tirany zalewają internet. Część jest prawdziwa, część wygenerowała sztuczna inteligencja, a część to stare materiały z innych lat. Ten tekst oddziela dym od ognia. Sprawdza, co naprawdę dzieje się we Francji, Hiszpanii, Albanii i Serbii, co te kraje łączy i dlaczego jedne kryzysy widzimy, a inne nie.</p>
+  <div class="meta">Październik 2026 · czas czytania ok. 25 minut</div>
+</header>
+
+<p>Siedem sekund. Wieża Eiffla pod zachmurzonym niebem, na szczycie powiewa flaga Palestyny. Podpis: „Francja płonie. Macron uciekł z kraju”. Nagranie krąży po X i Facebooku, jedni udostępniają je z przerażeniem, inni z triumfem.</p>
+
+<p>Jest fałszywe. Wygenerowała je sztuczna inteligencja, co potwierdziły redakcje sprawdzające fakty. Podobny los spotkał zdjęcia „starszej pary rozebranej i okradzionej podczas zamieszek”. Fact-checkerzy z organizacji Full Fact uznali je za wygenerowane przez AI. Dziennikarze „France 24” użyli narzędzia SynthID, które wykrywa niewidoczny znak wodny w obrazach tworzonych przez AI, i też potwierdzili fałszerstwo.</p>
+
+<p>Ale zdarzyło się też coś zupełnie prawdziwego. W Nantes ogień zajął wejście i fasadę liceum Nelson-Mandela. W Marsylii splądrowano dziesiątki sklepów, a grupa osób wdarła się do ratusza. Według francuskiego MSW tylko jednej soboty, 17 października, aresztowano od 1800 do 2400 osób.</p>
+
+<p>To jest sedno problemu. W tym samym tygodniu w sieci krążyły prawdziwe pożary i fałszywe pożary. Kto ogląda tylko nagrania, nie umie ich rozróżnić. Kto przeczyta tylko hasło „Francja się pali”, dostaje jedno zdanie zamiast obrazu.</p>
+
+<p>Ten tekst robi coś prostszego. Dla każdego kraju sprawdza kilka rzeczy: ile osób wyszło na ulice, ile trwało, ilu było rannych i zatrzymanych, czego ludzie żądali i co się stało potem. Potem pyta o drugą sprawę: dlaczego jedne wydarzenia robią się światowymi newsami, a inne, czasem poważniejsze, nikogo nie obchodzą.</p>
+
+<div class="box">
+  <div class="bt">Zastrzeżenie o stanie wiedzy</div>
+  <p>Stan wiedzy: sobota 31 października 2026, popołudnie. Tego dnia we Francji trwa kolejna fala protestów, więc część opisanych wydarzeń jest w toku. Liczby uczestników, rannych i aresztowanych pochodzą z różnych instytucji i często się różnią. Podaję wtedy przedziały i mówię, kto liczył.</p>
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Dwa pomiary: jak duże i jak głośne</h2>
+
+<p>Zacznijmy od rozróżnienia, które porządkuje resztę. Każde wydarzenie ma dwie cechy, które łatwo pomylić.</p>
+
+<p><strong>Skala</strong> to to, co da się policzyć: ilu ludzi protestowało, ile dni to trwało, ilu zginęło, ilu zatrzymano, jakie były straty i czy zmieniło się coś w polityce. <strong>Głośność</strong> to to, ile o tym mówią media i internet: ile artykułów, ile wyświetleń, ile udostępnień.</p>
+
+<p>Jedno nie wynika z drugiego. Można mieć dużą skalę przy małej głośności. Można mieć małą skalę i ogromną głośność. Najwięcej nieporozumień bierze się stąd, że nasz odruch każe traktować głośne jako duże.</p>
+
+<h3>Czym się to mierzy</h3>
+
+<p>Są dwie główne bazy danych o protestach. Warto wiedzieć, czym się różnią.</p>
+
+<div class="box blue">
+  <div class="bt">Słowniczek: skąd biorą się liczby</div>
+  <p><strong>ACLED</strong> (Armed Conflict Location and Event Data) to organizacja, która zbiera dane o demonstracjach, zamieszkach i przemocy polityczne na całym świecie. Według jej przeglądu w 2025 roku odnotowano ponad 148 tysięcy demonstracji w 197 krajach i terytoriach. Był to trzeci rok z rzędu wzrostu, ale rekordowy pozostaje rok 2021, z ponad 170 tysiącami.</p>
+  <p><strong>Global Protest Tracker</strong> to baza amerykańskiego think tanku Carnegie Endowment. Liczy tylko „znaczące protesty antyrządowe”, czyli wydarzenia dużo rzadsze niż w ACLED. Według stanu z 9 września 2026 roku w ostatnich dwunastu miesiącach było ich ponad 107 w ponad 57 krajach, a 33 trwały w tym momencie. Wcześniejsza wersja podawała wyższe liczby (według Wikipedii, powołującej się na Carnegie: co najmniej 120 w 73 krajach według stanu z marca), zapewne dlatego, że okno dwunastu miesięcy się przesuwa.</p>
+  <p><strong>„Protesty Gen Z”</strong> to potoczna nazwa ruchów kierowanych przez młodych, zwykle ludzi poniżej trzydziestki. Carnegie zauważa, że to nie jest nowe zjawisko: wskaźnik protestów prowadzonych przez młodych w latach 2017–2019 był podobny lub wyższy niż w 2025 roku.</p>
+</div>
+
+<p>Żadna z tych baz nie jest wyrocznią. Jedna z analiz podkreśla, że nie istnieje autorytatywny rejestr „dużych” protestów, bo różne rejestry mierzą różne rzeczy. Ale dają punkt odniesienia. Jeśli ktoś mówi, że „świat jeszcze nigdy nie widział takich protestów”, można to sprawdzić.</p>
+
+<p>Co mówią dane? Ogólny obraz jest taki: fala protestów jest realna. Carnegie opisuje rok 2025 jako rok protestów w ponad 70 krajach, a ACLED łączy je z młodzieżowymi powstaniami, które w 2025 roku obaliły rządy w Peru, na Madagaskarze, w Nepalu i Serbii oraz w Korei Południowej. Ale to jest <em>fala</em>, a nie koniec świata. I mieści się w skali, którą znamy z lat 2017–2019 i 2021.</p>
+
+<h2><span class="num">Rozdział drugi</span>Wspólny prąd i lokalne zapalniki</h2>
+
+<p>Czy protesty w Europie mają jedną przyczynę? Nie. Ale mają wspólne tło.</p>
+
+<p>28 lutego 2026 roku zaczęła się wojna USA i Izraela z Iranem. Jednym z jej skutków stało się zakłócenie żeglugi przez Cieśninę Ormuz, którędy w normalnych czasach płynie około jedna piąta światowej ropy. Po zawieszeniu broni 8 kwietnia ruch statków wciąż był znacznie poniżej poziomu sprzed wojny. Według przewodniczącej Komisji Europejskiej Ursuli von der Leyen unijny rachunek za importowane paliwa kopalne wzrósł o 106 miliardów euro, ceny gazu poszły w górę o około 140 proc. od końca lutego, a ceny diesla podwoiły się.</p>
+
+<p>To uderzyło w budżety domowe w całej Europie. Jak ujęto to w analizie „Al Jazeery”, protesty z powodu kosztów życia, mieszkań, płac i usług publicznych widać we Francji, Belgii, Włoszech, Hiszpanii, Portugalii, Grecji i Albanii. Ich przyczyny są różne i nie stanowią jednego skoordynowanego ruchu. Ale wspólnym wątkiem jest kryzys kosztów życia, pogłębiony przez wojnę.</p>
+
+<p>Na to nakłada się lokalny zapalnik. W każdym kraju jest inny.</p>
+
+<table class="cmp">
+  <tr><th>Kraj</th><th>Co zapaliło</th><th>Kto protestuje</th></tr>
+  <tr><td>Francja</td><td>Warunki w szkołach, potem koszty życia i paliwa, budżet na 2027 rok</td><td>Licealiści, studenci, żółte kamizelki, związki, rolnicy</td></tr>
+  <tr><td>Hiszpania</td><td>Eksmisja 87-letniej kobiety i odrzucenie przez parlament dekretów mieszkaniowych</td><td>Związki lokatorów, szerokie grupy</td></tr>
+  <tr><td>Albania</td><td>Luksusowy kompleks wakacyjny, potem czesne, uczelnie i korupcja</td><td>Studenci, ruch „Flamingo”, część opozycji</td></tr>
+  <tr><td>Serbia</td><td>Zawalenie się zadaszenia dworca w Nowym Sadzie w listopadzie 2024 roku</td><td>Studenci, szersze społeczeństwo</td></tr>
+</table>
+
+<p>Dlaczego akurat młodzi? Eseje w „Journal of Democracy” wskazują, że protesty młodych napędzają niepewność ekonomiczna, wykluczenie z władzy i przede wszystkim korupcja. W wielu krajach, w których wybuchły takie ruchy, mamy słabą gospodarkę, wysokie bezrobocie wśród młodych i starą elitę polityczną. Carnegie również wskazuje korupcję jako główny katalizator protestów, a nadużycia władzy i trudności gospodarcze jako dalsze powody.</p>
+
+<p>To ważne dla dalszej części. Jeśli przyczyny są podobne, to podobne będą mechanizmy. Ale każdy kraj ma własne instytucje, które decydują, co z gniewu wyniknie. I właśnie tu cztery omawiane państwa się rozchodzą.</p>
+
+<h2><span class="num">Rozdział trzeci</span>Francja: protest uczniów, który urósł</h2>
+
+<p>Zacznijmy od kraju, o którym jest najgłośniej. Co tu się wydarzyło?</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">koniec września</div><div class="txt">Uczniowie liceum Saint-Exupéry w Créteil pod Paryżem protestują przeciw brakom nauczycieli i zasobów. Blokady obejmują kolejne szkoły regionu paryskiego. Związek licealistów wzywa do ogólnokrajowego dnia protestów 29 września. Wymienia cztery żądania: brak nauczycieli i personelu, rozpadające się budynki, przeciążone plany lekcji i klasy oraz stres związany z systemem rekrutacji na studia Parcoursup.</div></div>
+  <div class="ev crit"><div class="yr">1–2 października</div><div class="txt">Protest staje się ogólnokrajowy. Według policji w ciągu jednego dnia odbywa się około 900 manifestacji. Zamknięto ponad 400 szkół. W Nantes ogień niszczy część liceum, w Auchel pocisk z fajerwerku rani dyrektora szkoły. Minister edukacji nazywa ruch „uzasadnionym na początku”, ale MSW stwierdza, że przemoc nie ma już nic wspólnego z uprawnionym wyrażaniem żądań uczniów. 2 października rząd ogłasza plan pięciu punktów reformy edukacji. Uczniowie uznają go za niewystarczający.</div></div>
+  <div class="ev"><div class="yr">6 października</div><div class="txt">Największa dotąd manifestacja: co najmniej 250 tysięcy osób, licealistów, nauczycieli i rodziców. Od początku protestów aresztowano od 5 do 6 tysięcy osób (zależnie od resortu i daty), a według „Al Jazeery” ponad 6 tysięcy, z czego 85 proc. to osoby poniżej 18 lat.</div></div>
+  <div class="ev crit"><div class="yr">17 października</div><div class="txt">Do uczniów dołączają żółte kamizelki, związki zawodowe i rolnicy. Protestują przeciw kosztom życia i cenom paliw w około 110 miastach. MSW liczy 550 tysięcy uczestników, organizatorzy około 800 tysięcy. Wieczorem w Paryżu, Marsylii, Bordeaux, Nicei i Strasburgu dochodzi do zamieszek, podpaleń i grabieży. Według „France 24” ucierpiało około 1500 firm, według portalu Interia co najmniej 3000. Aresztowano od 1800 do 2400 osób.</div></div>
+  <div class="ev"><div class="yr">19–25 października</div><div class="txt">Premier Sébastien Lecornu prosi prefektów o „częściowe” godziny policyjne w wybranych dzielnicach. W Paryżu obowiązują od 23.00 do 6.00, w Nicei od 21.00. Nie wyklucza stanu wyjątkowego. 24 października kolejna fala: MSW liczy 410 tysięcy uczestników, związkowcy około 800 tysięcy. Aresztowano 1314 osób, rannych zostało 53 funkcjonariuszy.</div></div>
+  <div class="ev"><div class="yr">31 października</div><div class="txt">Trzecia odsłona protestów żółtych kamizelek („Acte III”). Rząd zapowiada mobilizację 70 tysięcy policjantów i żandarmów i ostrzega przed „bardzo wysokim ryzykiem” zamieszek. Młodzież zapowiada dalsze protesty także na 5 listopada, uznając rządowe propozycje (między innymi reformę Parcoursup i 15 tysięcy dodatkowych miejsc na uczelniach) za półśrodki.</div></div>
+</div>
+
+<div class="bars">
+  <div class="bt">Uczestnicy ogólnokrajowych dni protestu według MSW (tys.)</div>
+  <div class="row"><div class="lab">6 października</div><div class="track"><div class="fill blue" style="width:45%"></div></div><div class="val">~250</div></div>
+  <div class="row"><div class="lab">17 października</div><div class="track"><div class="fill blue"></div></div><div class="val">550</div></div>
+  <div class="row"><div class="lab">24 października</div><div class="track"><div class="fill blue" style="width:75%"></div></div><div class="val">410</div></div>
+  <div class="caption">Organizatorzy (CGT i żółte kamizelki) podawali dla 17 i 24 października około 800 tysięcy. Różnica między liczeniem MSW a związków jest typowa dla francuskich manifestacji. Szerokość słupków jest proporcjonalna do liczb.</div>
+</div>
+
+<h3>Dwie opowieści o tym samym wieczorze</h3>
+
+<p>Rząd i jego krytycy opisują to inaczej, i oba opisy mają oparcie w faktach.</p>
+
+<div class="case a">
+  <div class="cl">Opowieść władz</div>
+  <ul>
+    <li>Pokojowe protesty przerodziły się w przemoc, grabieże i podpalenia. Straty idą w setki milionów euro.</li>
+    <li>MSW mówi, że przemoc przestała być wyrażaniem uprawnionych żądań uczniów.</li>
+    <li>Premier Lecornu powiedział, że służby wywiadowcze ostrzegły przed ryzykiem, iż skrajnie lewicowe ugrupowania spróbują zakłócić przyszłoroczne wybory prezydenckie.</li>
+    <li>Prezydent Macron zapowiedział, według relacji portalu Salon24, zaostrzenie przepisów o demonstracjach, między innymi możliwość zakazywania manifestacji zgłaszanych przez osoby nieuprawnione.</li>
+  </ul>
+</div>
+
+<div class="case b">
+  <div class="cl">Opowieść krytyków</div>
+  <ul>
+    <li>Aresztowano ponad 5 tysięcy młodych ludzi, w większości nieletnich. Krytycy widzą w tym zbyt twardą reakcję państwa na protest o warunki nauki.</li>
+    <li>Policyjny inspektorat IGPN otworzył od 24 do 36 postępowań w sprawie nadużyć policji, według różnych komunikatów. Minister spraw wewnętrznych potwierdził, że jeden z demonstrantów stracił dłoń.</li>
+    <li>Przedstawianie uczniów jako wandali sterowanych przez radykalną lewicę służy, jak argumentuje komentarz w portalu zero.pl, wygodnej polaryzacji przed wyborami.</li>
+    <li>Młodzi mają konkretne żądania: temperaturę w klasach, więcej nauczycieli, darmowe stołówki, wydatki na szkoły zamiast na wojsko.</li>
+  </ul>
+</div>
+
+<p>Obie opowieści pasują do tych samych liczb. To nie jest przypadek. Zwykle dzieje się tak, gdy w jednym wydarzeniu spotyka się duża liczba spokojnych ludzi i mała liczba agresywnych. Rządy skupiają się na drugiej grupie, krytycy na pierwszej. Badania nad relacjami o protestach to potwierdzają: dziennikarze często używają ram „zamieszek” i „konfrontacji”, które osłabiają wiarygodność przyczyn protestu. Zespół kierowany przez Summer Harlow przeanalizował ponad 1400 artykułów z 2015 roku i zauważył, że w Europie relacje o protestach społeczno-ekonomicznych skupiały się mniej na starciach, a bardziej na debacie niż w innych regionach.</p>
+
+<h3>Co jest prawdziwe, a co nie</h3>
+
+<p>Ofiary śmiertelne są w źródłach opisane niespójnie. W jednym zestawieniu wymieniono policjanta, który zginął potrącony przez pojazd w Nantes 17 października. Inna relacja, powołująca się na agencję Reuters, mówi o śmierci protestującego. Nie umiem rozstrzygnąć, czy to dwa różne zdarzenia, czy dwa opisy tego samego. Nie wypada podawać pewnej liczby.</p>
+
+<p>Pewniejsze są ustalenia o fałszach. Full Fact opisał zdjęcia „rozebranej pary” jako wygenerowane przez AI. Wideo z flagą na Wieży Eiffla jest sztuczne. Fotografia Macrona przed płomieniami to też AI. Wśród materiałów krążących jako francuskie były również stare nagrania z 2023 roku i wideo pożaru w Zjednoczonych Emiratach Arabskich. Prezydent Macron oskarżył zagranicznych przywódców o powtarzanie fałszywych treści generowanych przez AI. Media podały, że miał na myśli także Donalda Trumpa i Benjamina Netanjahu. To jego twierdzenie, nie ustalenie.</p>
+
+<p>Jedno zastrzeżenie dla uczciwości. Serwis IBTimes zauważył, że oznaczenie zdjęcia jako wygenerowanego przez AI nie dowodzi, że do opisanego rabunku nie doszło. Dowodzi tylko, że to zdjęcie nie może być jego dowodem.</p>
+
+<h3>Czy Francja kiedyś już tak wyglądała?</h3>
+
+<p>Tak, wielokrotnie. To pomaga ocenić skalę.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">2005</div><div class="d">Trzy tygodnie zamieszek na przedmieściach wielu miast. Aresztowano 2888 osób.</div></div>
+  <div class="nrow"><div class="n">2006</div><div class="d">Protesty studentów i związków przeciw umowie CPE. Ponad milion osób 7 marca. Prezydent Chirac wycofał przepis 10 kwietnia.</div></div>
+  <div class="nrow"><div class="n">2023</div><div class="d">Zamieszki po zastrzeleniu 17-letniego Nahela przez policjanta. 2400 aresztowanych w cztery noce, 45 tysięcy policjantów na ulicach.</div></div>
+  <div class="nrow"><div class="n">2025</div><div class="d">Ruch „Bloquons tout” przeciw cięciom budżetowym. Według Wikipedii zakończył się upadkiem rządu Bayrou i zawieszeniem reformy emerytalnej.</div></div>
+  <div class="nrow"><div class="n">2026</div><div class="d">Od 5 do 6 tysięcy aresztowanych do 6 października, od 1800 do 2400 w sobotę 17 października, 1314 tydzień później. Suma, bardzo orientacyjna (własne dodanie danych różnych resortów, które mogą się nakładać), to ponad 8 tysięcy.</div></div>
+</div>
+
+<p>Wniosek jest dwojaki. Po pierwsze, obecna fala jest poważna: „Rzeczpospolita” pisze o jednych z najpoważniejszych ulicznych zamieszek w kraju w ostatnich latach. Po drugie, Francja ma zwyczaj takich eksplozji, a one zwykle kończą się zmianą polityki albo rządu, nie rozpadem państwa. Na razie nie widać, żeby było inaczej. Szczególne są trzy rzeczy: wiek aresztowanych (około 85 proc. nieletnich), połączenie licealistów z żółtymi kamizelkami i związkami oraz termin, bo w kwietniu i maju 2027 roku odbędą się wybory prezydenckie, w których Macron nie może już kandydować.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Hiszpania: kłótnia o mieszkania i wybory jako zawór</h2>
+
+<p>W Hiszpanii wszystko zaczęło się od jednej sceny. 23 września w Madrycie eksmitowano 87-letnią Maricarmen Abascal z mieszkania, w którym mieszkała od około siedemdziesięciu lat. Wyniesiono ją na noszach. Nagranie obiegło kraj i przypomniało o głębokim kryzysie mieszkaniowym.</p>
+
+<p>Rząd Pedro Sáncheza wprowadził dekrety chroniące lokatorów. 2 października parlament niewielką przewagą je odrzucił. Związki lokatorów wezwały do protestów w ponad 50 miastach. 3 października na ulice wyszły dziesiątki tysięcy ludzi. Większość demonstracji była pokojowa. W Walencji policja użyła gumowych kul i gazu łzawiącego. W Madrycie wieczorem też padły gumowe kule, a policja zatrzymała trzech członków skrajnie prawicowej grupy, którzy próbowali dotrzeć do obozu protestujących na Puerta del Sol. Według rządu niektórzy wykonywali nazistowskie salutowanie.</p>
+
+<p>5 października Sánchez ogłosił <strong>przedterminowe wybory na 29 listopada</strong>, o osiem miesięcy wcześniej. Chciał przejąć inicjatywę i ustawić kampanię wokół mieszkań. W Barcelonie tego samego dnia dziesiątki tysięcy ludzi wyszły na ulice, doszło do starć i podpaleń śmietników. 7 października Sánchez ogłosił 21 pilnych środków mieszkaniowych, podobnych do tych, które parlament odrzucił. 24 października około 25 tysięcy ludzi demonstrowało w Madrycie w obronie systemu emerytalnego.</p>
+
+<p>Co z tego wynika? Hiszpania to najjaśniejszy przykład kraju, w którym instytucje <em>działają jak zawór</em>. Gniew ma konkretne żądanie (mieszkania), konkretny adres (parlament, rząd) i konkretny termin rozstrzygnięcia (wybory). Przemoc jest lokalna i ograniczona. Hasło „Hiszpania się rozpada” nie wynika z tych faktów. Wynika z nich co innego: rząd, który przegrał głosowanie, oddaje decyzję wyborcom. Czy wygra, to osobne pytanie.</p>
+
+<h2><span class="num">Rozdział piąty</span>Albania: protest bez zaufania do żadnej strony</h2>
+
+<p>Albania jest trudniejsza, bo ma kilka nałożonych na siebie wątków.</p>
+
+<p>Od grudnia 2025 roku opozycyjna Partia Demokratyczna Salego Berishy organizowała w Tiranie protesty przeciw rządowi premiera Ediego Ramy, powołując się na nieprawidłowości wyborcze w 2025 roku i skandale korupcyjne. W lutym 2026 roku Rama zdymisjonował Balluku, wobec której toczyło się śledztwo korupcyjne. W maju 2026 wybuchła druga fala: ruch obywatelski „Flamingo” zaczął protestować przeciw luksusowemu kompleksowi wakacyjnemu na wybrzeżu, powiązanemu z firmą Jareda Kushnera, zięcia prezydenta Donalda Trumpa. Rząd wstępnie zatwierdził projekt, co wywołało gniew. Przez lato protesty były w dużej mierze pokojowe.</p>
+
+<p>W październiku dołączyli studenci. Od 13 października codziennie wychodzą na ulice. Skarżą się na wysokie czesne, złe warunki na uczelniach, brak pracy i korupcję. Żądają dymisji Ramy. Starcia zaostrzały się z dnia na dzień:</p>
+
+<ul>
+  <li><strong>13 października:</strong> policja użyła gazu łzawiącego przed ministerstwem edukacji. 23 aresztowanych, ranni sześciu policjantów i jedna dziennikarka.</li>
+  <li><strong>16 października:</strong> Rama stwierdził, że to „nie zjawisko studenckie” i że w tle są „obce ręce”. W innych wystąpieniach, według mediów, mówił też o „wojnie hybrydowej” i o powiązaniach protestujących z antifą. Dodał, że protesty mogą zaszkodzić dążeniu Albanii do członkostwa w UE do 2030 roku.</li>
+  <li><strong>17–18 października:</strong> policja użyła gumowych kul i armatek wodnych. Protestujący rzucali kamienie, koktajle Mołotowa i fajerwerki. Podpalono komisariat. Według ministerstwa zdrowia od wtorku rannych było 272 osoby, w tym 169 policjantów. Rama mówił o 295 rannych i poparł policję bez zastrzeżeń.</li>
+  <li><strong>24–26 października:</strong> według NPR dziesiątki aresztowań i setki rannych policjantów i młodych demonstrantów. Rama oferuje rozmowy (symboliczne krzesła pod parlamentem), a policjantom premie. Protestujący podpalili krzesła.</li>
+  <li><strong>29 października:</strong> posłowie opozycji zablokowali mównicę i odpalili flary w sali parlamentu.</li>
+</ul>
+
+<p>„Al Jazeera” nazwała te protesty największymi w Albanii od dziesięcioleci. Jest w nich jednak coś, co odróżnia je od Serbii. Wśród haseł pada „Rama do więzienia, Berisha do więzienia”. Politolog cytowany przez AP ujął to tak, że panuje przekonanie, że jeśli Rama odejdzie, wróci Berisha. Protestujący nie ufają ani rządowi, ani opozycji. To znaczy, że nie mają oczywistego sposobu, żeby zmienić gniew w wynik wyborczy. Rama ma większość w parlamencie i odmawia dymisji.</p>
+
+<p>Czy Albania się rozpada? Nie. Ale to jest przypadek, w którym kanał polityczny jest najsłabszy, więc ryzyko przedłużania się starć jest największe. To wniosek ze zestawienia faktów, nie prognoza.</p>
+
+<h2><span class="num">Rozdział szósty</span>Serbia: jak protest zamienia się w wynik wyborczy</h2>
+
+<p>W Serbii nie obalono rządu na ulicy. To ważna poprawka do popularnej wersji.</p>
+
+<p>1 listopada 2024 roku w Nowym Sadzie zawaliło się zadaszenie dworca kolejowego. Zginęło 16 osób (wcześniejsze relacje mówiły o 15). Studenci uznali, że to skutek korupcji, i zaczęli protestować. Protesty trwały prawie dwa lata. W styczniu 2025 roku zrezygnował premier Miloš Vučević. Partia Vučicia (SNS) rządzi Serbią od 2012 roku, a on sam był premierem w latach 2014–2017, potem prezydentem. 9 września 2026 roku rozwiązał parlament i rozpisał wybory na 25 października. 27 września zrezygnował z prezydentury, żeby wystartować jako kandydat na premiera.</p>
+
+<p>Studenci nie tylko protestowali. Zarejestrowali własną listę wyborczą, „Lista Studencka”, z 250 kandydatami wskazanymi przez największe uczelnie. Lista unikała mocnych deklaracji w sprawach międzynarodowych, na przykład członkostwa w UE.</p>
+
+<p>25 października odbyły się wybory z frekwencją bliską 70 proc., najwyższą od ponad dwudziestu lat. Wieczorem Vučić uznał porażkę. Po przeliczeniu niemal wszystkich głosów Lista Studencka miała od 52,5 do 53,3 proc., a lista Vučicia od 39,3 do 39,7 proc. (różnice wynikają z różnych źródeł i momentu liczenia). To daje około 140 mandatów dla studentów i około 103 dla SNS w parlamencie liczącym 250 miejsc. Po ogłoszeniu wyników tłumy wyszły na ulice, trąbiły samochody, odpalano fajerwerki, ludzie tańczyli. Jeśli ktoś widział takie nagrania, to widział świętowanie wyniku wyborów, nie obalenie rządu.</p>
+
+<p>Dwie rzeczy zasługują na uwagę. Pierwsza: sondaże były rozbieżne. Badanie Ipsos z 20–22 października dawało obozowi Vučicia przewagę (47,4 do 40 proc.), a inne badanie pokazywało lekką przewagę studentów. Ostateczny wynik był korzystniejszy dla studentów niż w tym badaniu. Druga: sprawa się nie skończyła. Lista Studencka musi teraz wybrać premiera i utworzyć rząd. W grudniu odbędą się też wybory prezydenckie, żeby wybrać następcę Vučicia.</p>
+
+<p>Serbia pokazuje, że protest może się skończyć zmianą władzy bez rozlewu krwi, jeśli ruch ma wyraźny cel (wybory), organizację (listę) i kanał polityczny. To przypadek odwrotny do Albanii.</p>
+
+<h2><span class="num">Rozdział siódmy</span>A inne kraje? Co wiemy o tym, co przemilczane</h2>
+
+<p>Dochodzimy do pytania, które wymaga najwięcej ostrożności. Czy gdzieś na świecie dzieją się poważniejsze rzeczy, o których mało się mówi?</p>
+
+<p>Krótka odpowiedź: <strong>tak, w pewnym sensie, ale nie tak, jak sugeruje spiskowa wersja.</strong> Rozwinę to w trzech krokach.</p>
+
+<h3>Krok pierwszy: skala zdarzeń bywa większa niż głośność</h3>
+
+<div class="nums">
+  <div class="nrow"><div class="n">Iran, styczeń 2026</div><div class="d">Protesty tłumione przez siły bezpieczeństwa. Według organizacji śledzącej ofiary, cytowanej przez „Washington Post”, zginęło ponad 6800 osób, w większości protestujących. Amnesty International opisuje wyłączenie internetu przez władze od 8 stycznia.</div></div>
+  <div class="nrow"><div class="n">Kenia, maj 2026</div><div class="d">Protesty przeciw kolejnym podwyżkom paliw (w kwietniu o około 24 proc., w maju o kolejne 23,5 proc. dla diesla). Według koalicji Missing Voices podczas dwóch dni, 18–19 maja, zginęło 19 osób. Rząd w pierwszym komunikacie podał cztery ofiary.</div></div>
+  <div class="nrow"><div class="n">Indie, 2026</div><div class="d">Młodzieżowy ruch „Cockroach” żąda dymisji szefa komisji wyborczej po usunięciu z list około 130 milionów nazwisk. Zatrzymania liczone w tysiącach, szef ruchu zatrzymany. W lipcu protesty zmusiły do dymisji ministra edukacji.</div></div>
+</div>
+
+<p>Każdy z tych przykładów jest poważny, ale w innym sensie. Iran ma ofiary na skalę nieporównywalną z niczym w Europie. W Kenii protest przeciw cenom paliw skończył się kilkunastoma zabitymi w dwa dni. W Indiach policja zatrzymuje ludzi, ale w relacjach, które czytałem, nie ma informacji o zabitych na ulicach. Stawką jest tam co innego: prawo głosu setek milionów obywateli.</p>
+
+<h3>Krok drugi: te wydarzenia nie są ukryte</h3>
+
+<p>Sprawdziłem, jak je opisano. O Iranie pisały między innymi „Washington Post” i Amnesty International. O protestach w Kenii pisały agencje Reuters i AP, „Al Jazeera”, „Africanews”. O ruchu „Cockroach” pisały AP, NBC, „Foreign Policy”, Channel 4, „The Week”. W tych przypadkach nie widać cenzury ani zmowy milczenia. Wszystkie te zdarzenia są dostępne każdemu, kto umie szukać.</p>
+
+<p>Różnica polega na tym, że nie trafiają do nas same.</p>
+
+<h3>Krok trzeci: uwaga rozkłada się nierówno</h3>
+
+<p>Tu dane są wyraźne. Analiza Global Peace Index z 2025 roku, przygotowana przez Vision of Humanity, porównała ilość doniesień medialnych z liczbą ofiar w konfliktach. Mediana artykułów na jedną ofiarę cywilną wyniosła 1663 w krajach o wysokich dochodach i 17,4 w krajach o niskich dochodach. To prawie stukrotna różnica. Spośród pięciu krajów o najsłabszym pokryciu cztery leżą w Afryce.</p>
+
+<p>To nie jest odosobniony wynik. Badacze Robert West i Jürgen Pfeffer przeanalizowali w 2017 roku wielojęzyczne doniesienia o konfliktach zbrojnych i stwierdzili, że konflikty bliskowschodnie dostają więcej uwagi niż afrykańskie, także po uwzględnieniu poziomu przemocy. Instytut Reutersa podsumował to w ten sposób, że kryzysy w uboższych krajach, zwłaszcza w Afryce, dostają mniej uwagi, a pokrycie często zależy bardziej od znaczenia geopolitycznego niż od pilności humanitarnej.</p>
+
+<div class="box red">
+  <div class="bt">Ostrożność przy wnioskach</div>
+  <p>Te badania dotyczą głównie konfliktów zbrojnych, nie protestów. Nie znam podobnej analizy ilości doniesień o protestach z roku 2026, więc nie twierdzę, że relacje o protestach w Kenii czy Indiach mają dokładnie taki sam rozkład. Mechanizm jest jednak dobrze udokumentowany: uwaga nie rośnie proporcjonalnie do skali zdarzeń.</p>
+</div>
+
+<h3>Dlaczego tak jest?</h3>
+
+<p>Odpowiedź jest mniej sensacyjna niż spisek. Składa się z kilku zwykłych mechanizmów.</p>
+
+<ul>
+  <li><strong>Bliskość i znaczenie.</strong> Francja to duży kraj Unii, blisko nas, z bronią jądrową i wyborami w przyszłym roku. Protesty w Paryżu mają znaczenie dla polityki Polski. Protest w Nairobi ma je w mniejszym stopniu, choć może być bardziej krwawy.</li>
+  <li><strong>Obraz.</strong> Płonąca szkoła i splądrowany sklep to gotowe wideo. Dokument o decyzji komisji wyborczej już nie.</li>
+  <li><strong>Negatywność.</strong> Badanie, które opisuje Vision of Humanity, pokazuje, że negatywne słowa w nagłówkach zwiększają czytanie, a pozytywne je zmniejszają. Algorytmy to wzmacniają.</li>
+  <li><strong>Rama „zamieszek”.</strong> Jak wspomniałem w rozdziale o Francji, relacje o protestach często skupiają się na przemocy, nie na przyczynach. To skraca drogę od „ludzie protestują o czesne” do „kraj w płomieniach”.</li>
+  <li><strong>Język i algorytm.</strong> To, co widzimy, zależy od tego, kogo obserwujemy i w jakim języku. Mały eksperyment: kiedy szukałem po polsku tekstów o ruchu „Cockroach” i o protestach paliwowych w Kenii, wyszukiwarka zwróciła prawie wyłącznie materiały angielskie. To nie jest dowód, bo narzędzie ma własne ograniczenia, ale ilustruje, jak łatwo coś nie dotrzeć do polskiego czytelnika.</li>
+</ul>
+
+<p>A drugi człon pytania: dlaczego błahostki bywają traktowane jak najważniejsze wydarzenia świata? Z tych samych powodów. To, co jest wizualne, emocjonalne i łatwe do udostępnienia, wygrywa z tym, co ważne i nudne. Powiedzmy wprost: nie mam danych, które mierzyłyby to dla konkretnych „błahostek”. Ale mechanizm jest ten sam, który widać w liczbach o konfliktach.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Czy państwa się rozpadają? Sprawdzian dla nagłówków</h2>
+
+<p>Teraz wróćmy do lęku, od którego wszystko się zaczęło. Czy Francja, Hiszpania czy Albania mogą „przestać istnieć”?</p>
+
+<p>Dane o tym, jak kończą się protesty, są dość trzeźwiące. Carnegie wyliczył w 2022 roku, że mniej niż jeden na sześć głównych protestów antyrządowych kończył się istotną zmianą polityki albo wymianą przywódcy. W 2025 roku protesty młodych obaliły rządy w kilku krajach, a w 2026 mamy kolejne przykłady: w Serbii władza zmienia się wyborami, w Indiach zrezygnował minister, w Hiszpanii są przedterminowe wybory. Żaden z nich nie jest rozpadem państwa. To zmiany ludzi i polityki.</p>
+
+<p>Są też gorsze scenariusze. Arabska Wiosna zaczęła się od protestów gospodarczych w Tunezji i rozlała się na Egipt, Libię, Syrię i Jemen. W Libii, Syrii i Jemenie przerodziła się w wojny domowe, to szeroko znany fakt historyczny. Były to państwa o innych instytucjach niż Francja czy Hiszpania. To moja interpretacja, nie wynik badania: w czterech krajach opisanych w tym tekście nie znalazłem doniesień o utracie przez państwo kontroli nad armią czy terytorium.</p>
+
+<div class="box">
+  <div class="bt">Sześć pytań do każdego nagłówka o „chaosie”</div>
+  <ol>
+    <li><strong>Skąd jest nagranie?</strong> Czy ma datę i miejsce, które da się sprawdzić? Czy zrobiły je agencje lub media, które podpisują się pod materiałem? Czy narzędzia (na przykład SynthID) nie wykrywają w nim AI?</li>
+    <li><strong>Ile osób?</strong> I kto liczył? We Francji liczby organizatorów były o 45–95 proc. wyższe niż liczby MSW.</li>
+    <li><strong>Jak długo?</strong> Jeden wieczór to nie to samo, co trzy tygodnie.</li>
+    <li><strong>Ilu rannych, zatrzymanych i zabitych?</strong> Z podaniem źródła. Liczby z pierwszych godzin bywają później korygowane (Kenia: cztery, potem 19).</li>
+    <li><strong>Czego żądają i czy jest kanał polityczny?</strong> Wybory, dymisja, referendum, rozmowy. Brak kanału zwiększa ryzyko przedłużania się starć.</li>
+    <li><strong>Czy państwo traci kontrolę?</strong> Nad armią, policją, terytorium, finansami. Same płonące śmietniki o tym nie mówią.</li>
+  </ol>
+</div>
+
+<h2><span class="num">Zakończenie</span>Dym i ogień</h2>
+
+<p>Wróćmy do fałszywej Wieży Eiffla. Takie nagrania krążą obok prawdziwych materiałów z Paryża i łatwo się rozchodzą, bo pasują do odczucia, że świat się sypie. Dlatego sama ich obecność niczego nie mówi o skali wydarzeń.</p>
+
+<p>Prawda jest mniej efektowna. W 2026 roku kilka krajów przeżywa realną falę protestów. Ma wspólne tło (wojna i droższe paliwo) i różne lokalne zapalniki. We Francji jest poważnie i nierozstrzygnięte. W Hiszpanii instytucje przejęły gniew i oddają go wyborcom. W Albanii kanał polityczny jest najsłabszy, więc najtrudniej przewidzieć koniec. W Serbii protest zamienił się w wynik wyborczy.</p>
+
+<p>Czy gdzieś jest gorzej i mało się o tym mówi? Czasem tak. Najbardziej krwawe protesty tego roku, w Iranie i Kenii, nie leżą w Europie. Ale w źródłach, które przejrzałem, nie ma dowodów na to, że ktoś celowo to ukrywa. Tym, co decyduje o głośności, są bliskość, obraz, negatywność i algorytmy, nie zmowa.</p>
+
+<div class="pull">Dym widać z daleka. Ogień trzeba policzyć.</div>
+
+<p>Kto chce zrozumieć, co się dzieje na świecie, powinien robić dwie rzeczy naraz: dopuszczać do siebie, że głośne nie znaczy duże, i sprawdzać liczby, zanim zareaguje na obraz. To nudniejsze od paniki. Ale pozwala odróżnić prawdziwy kryzys od prawdziwie wyglądającego wideo.</p>
+
+<hr class="sep">
+
+<h2 style="margin-top:0"><span class="num">Aneks</span>Źródła</h2>
+
+<ul class="sources">
+  <li><strong>Francja — przebieg protestów</strong> — „Time”: <a href="https://time.com/article/2026/10/02/france-student-protests-arrests-injuries-school-closures/">Why Are Students Protesting Across France?</a> (2 X 2026); CNBC: <a href="https://www.cnbc.com/2026/10/02/france-student-protests-budget-debt.html">A violent classroom revolt is becoming France’s next big crisis</a>; „Al Jazeera”: <a href="https://www.aljazeera.com/news/2026/10/7/were-short-of-resources-frances-student-protesters-in-their-own-words">relacje uczniów</a> i <a href="https://www.aljazeera.com/news/2026/10/18/paris-left-reeling-as-student-led-protests-turn-chaotic">Paris left reeling</a>; „France 24”: <a href="https://www.france24.com/en/france/20261018-like-we-had-a-war-france-left-reeling-after-nationwide-violent-protests">‘Like we had a war’</a>, <a href="https://www.france24.com/en/live-news/20261025-police-made-1-314-arrests-in-france-s-protests-government">1,314 arrests</a>; CBS News: <a href="https://www.cbsnews.com/news/paris-france-new-protests-riots-museums-shops/">More than 1,000 arrested in France</a>; TVN24: <a href="https://tvn24.pl/swiat/francja-godziny-policyjne-po-serii-protestow-premier-zwrocil-sie-do-lokalnych-wladz-st9294380">godziny policyjne</a>; rp.pl: <a href="https://www.rp.pl/przestepczosc/art45360981-czesciowy-zakaz-protestow-w-paryzu-premier-francji-nie-wyklucza-stanu-wyjatkowego">częściowy zakaz protestów</a>; Polsat News: <a href="https://www.polsatnews.pl/wiadomosc/2026-10-01/plona-szkoly-uczniowie-walcza-z-policja-francja-pograzona-w-chaosie/">relacja z 1 października</a>; RMF24: <a href="https://www.rmf24.pl/fakty/swiat/news-beda-kolejne-protesty-we-francji-mlodziez-krytykuje-polsrodk,nIdn,1023650">kolejne protesty</a>; iFrancja: <a href="https://www.ifrancja.fr/">zapowiedzi na 30–31 października</a>; Sortiraparis: <a href="https://www.sortiraparis.com/en/news/in-paris/articles/355779-october-31-protest-in-paris-route-and-metro-le-point">31 października</a>. Wikipedia (źródło zbiorcze, używane pomocniczo dla liczb MSW): <a href="https://en.wikipedia.org/wiki/2026_French_student_protests">2026 French student protests</a>, <a href="https://en.wikipedia.org/wiki/2026_French_fuel_protests">2026 French fuel protests</a>.</li>
+  <li><strong>Francja — dezinformacja</strong> — Full Fact: <a href="https://fullfact.org/world/france-unrest-protests-fact-checks/">France protests: fact checked</a>, <a href="https://fullfact.org/world/photo-elderly-french-couple-stripped-ai/">zdjęcie pary</a>; Cybernews: <a href="https://cybernews.com/news/ai-deepfake-elderly-france-protests-riots/">Fake AI photos of elderly couple</a>; IBTimes: <a href="https://www.ibtimes.co.uk/viral-france-riots-image-flagged-ai-generated-altered-1826474">Viral France Riots Image</a>; SCMP: <a href="https://www.scmp.com/news/world/europe/article/3371667/macron-takes-veiled-shot-trump-netanyahu-over-stupid-france-riot-remarks">Macron o fałszywych materiałach</a>; zero.pl: <a href="https://zero.pl/news/protesty-mlodziezy-we-francji-o-co-walcza-uczniowie-blokujacy-licea">komentarz o żądaniach uczniów</a> (źródło o stanowiskach).</li>
+  <li><strong>Francja — historia</strong> — Wikipedia: <a href="https://en.wikipedia.org/wiki/2005_French_riots">2005 French riots</a>, <a href="https://en.wikipedia.org/wiki/2006_youth_protests_in_France">2006 youth protests</a>, <a href="https://en.wikipedia.org/wiki/Bloquons_tout">Bloquons tout</a>; CBS News: <a href="https://www.cbsnews.com/news/france-arrests-more-than-1300-people-after-fourth-night-of-rioting-over-teens-killing-by-police">zamieszki po śmierci Nahela (2023)</a>.</li>
+  <li><strong>Hiszpania</strong> — „Al Jazeera”: <a href="https://www.aljazeera.com/news/2026/10/3/tens-of-thousands-protest-in-spain-after-failed-housing-reforms">protesty po odrzuceniu reform</a>, <a href="https://www.aljazeera.com/news/2026/10/24/about-25000-rally-in-madrid-in-support-of-spains-state-pension-scheme">manifestacja emerytów</a>; CNBC: <a href="https://www.cnbc.com/2026/10/04/tens-of-thousands-protest-across-spain-over-housing-crisis.html">Tens of thousands protest</a>; ABC News: <a href="https://www.abc.net.au/news/2026-10-06/barcelona-protests-spain-election-pedro-sanchez/107232696">Barcelona i przedterminowe wybory</a>; Euronews: <a href="https://www.euronews.com/2026/10/07/sanchez-announces-21-urgent-housing-measures-after-nationwide-protests-ahead-of-snap-elect">21 środków mieszkaniowych</a>; „France 24”: <a href="https://www.france24.com/en/europe/20261003-fresh-protests-over-housing-flare-spain-after-lawmakers-reject-relief-measures">Fresh protests over housing</a>.</li>
+  <li><strong>Albania</strong> — „Al Jazeera”: <a href="https://www.aljazeera.com/news/2026/10/13/albanian-police-fire-tear-gas-at-protesters-as-education-ministry-attacked">13 X</a>, <a href="https://www.aljazeera.com/news/2026/10/16/albanian-pm-blames-foreign-hands-for-unrest-as-student-protests-intensify">16 X</a>, <a href="https://www.aljazeera.com/news/2026/10/17/albanian-police-fire-rubber-bullets-as-protests-against-rama-escalate">17 X</a>, <a href="https://www.aljazeera.com/news/2026/10/29/albanian-opposition-storms-parliament-sets-off-flares-and-smoke-bombs">29 X</a>; Balkan Insight: <a href="https://balkaninsight.com/2026/10/19/albanias-capital-rocked-by-chaotic-weekend-of-street-unrest/bi/">Chaotic Weekend of Street Unrest</a>; NPR: <a href="https://www.npr.org/2026/10/26/nx-s1-6016143/violent-anti-government-protests-rock-albania">Violent anti-government protests rock Albania</a>; Euronews: <a href="https://www.euronews.com/video/2026/10/19/albanian-police-clash-with-protesters-in-tirana-as-unrest-enters-sixth-day">szósty dzień protestów</a>; Democracy Now: <a href="https://www.democracynow.org/2026/10/21/albania_protests_edi_rama">Flamingo Revolution</a> (źródło o stanowiskach); Wikipedia: <a href="https://en.wikipedia.org/wiki/2025%E2%80%932026_Albanian_opposition_protests">2025–2026 Albanian opposition protests</a>.</li>
+  <li><strong>Serbia</strong> — CNBC: <a href="https://www.cnbc.com/2026/10/25/serbia-leader-vucic-concedes-defeat-to-student-led-movement.html">Vucic concedes defeat</a>; „Al Jazeera”: <a href="https://www.aljazeera.com/news/2026/9/27/serbian-president-aleksandar-vucic-resigns-amid-prolonged-protests">rezygnacja Vučicia</a>, <a href="https://www.aljazeera.com/news/2026/10/25/serbia-voter-turnout-highest-in-decades-as-students-oppose-longtime-leader">wybory</a>; Axios: <a href="https://www.axios.com/2026/10/25/serbia-election-2026-student-protests-vucic">Serbia election results</a>; ABC News: <a href="https://www.abc.net.au/news/2026-10-26/serbia-election-vucic-defeat-student-protest/107307808">Serbian president concedes defeat</a>; OKO.press: <a href="https://oko.press/na-zywo/na-zywo-relacja/wybory-w-serbii-vucic-przegralismy">wybory w Serbii</a>, <a href="https://oko.press/polityczne-trzesienie-ziemi-w-serbii-lista-studencka-pokonuje-vucicia-korespondencja-z-belgradu">korespondencja z Belgradu</a>; xyz.pl (analiza OSW): <a href="https://xyz.pl/?p=265733">Serbia na progu kryzysu</a>; defence24: <a href="https://defence24.pl/geopolityka/zmiana-wladzy-w-serbii-vucic-oglosil-przegrana-swojej-formacji">zmiana władzy w Serbii</a>.</li>
+  <li><strong>Tło: wojna z Iranem i kryzys paliwowy</strong> — „Al Jazeera”: <a href="https://www.aljazeera.com/news/2026/10/25/how-is-the-us-israeli-war-on-iran-causing-havoc-in-europe">How is the US-Israeli war on Iran causing havoc in Europe?</a>; Cyprus Mail: <a href="https://cyprus-mail.com/2026/10/20/soaring-fuel-prices-fuel-protests-and-far-right-gains-across-europe">Soaring fuel prices fuel protests</a>; Euronews: <a href="https://euronews.com/2026/03/22/europes-response-to-the-relentless-surge-in-energy-and-fuel-costs-from-the-war-in-iran">Europe’s response</a>; Wikipedia: <a href="https://en.wikipedia.org/wiki/2026_Iran_war_fuel_crisis">2026 Iran war fuel crisis</a>.</li>
+  <li><strong>Dane globalne o protestach</strong> — ACLED: <a href="https://acleddata.com/report/whats-driving-conflict-today-review-global-trends">What’s driving conflict today?</a>; Carnegie Endowment: <a href="https://carnegieendowment.org/publications/interactive/protest-tracker">Global Protest Tracker</a>, <a href="https://carnegieendowment.org/emissary/2025/12/global-protests-2025-genz-corruption-economy">Corruption, Overreach, and Hardship (2025)</a>, <a href="https://carnegieendowment.org/en/china/posts/2022/12/economic-anger-dominated-global-protests-in-2022">Economic anger dominated global protests in 2022</a>; „Journal of Democracy”: <a href="https://www.journalofdemocracy.org/articles/why-gen-z-is-rising/">Why Gen-Z Is Rising</a>; European Democracy Hub: <a href="https://europeandemocracyhub.epd.eu/the-2025-surge-in-global-protests-is-continuing-in-2026/">The 2025 Surge in Global Protests Is Continuing in 2026</a>; TBS News: <a href="https://www.tbsnews.net/features/big-picture/young-online-and-streets-1574391">Young, online and on the streets</a>.</li>
+  <li><strong>Inne kraje</strong> — Iran: <a href="https://www.washingtonpost.com/world/2026/02/03/iran-protests-deaths-crackdown/">„Washington Post”</a>, <a href="https://www.amnesty.org/en/latest/campaigns/2026/01/what-happened-at-the-protests-in-iran/">Amnesty International</a>. Kenia: <a href="https://www.aljazeera.com/news/2026/5/18/four-reported-killed-30-injured-in-kenyan-fuel-price-protests">„Al Jazeera”</a>, <a href="https://missingvoices.or.ke/node/1675">Missing Voices Coalition</a>. Indie: <a href="https://foreignpolicy.com/2026/10/13/india-cockroach-movement-protests-arrests-jantar-mantar-modi/">„Foreign Policy”</a>, <a href="https://www.nbcnews.com/world/asia/india-cockroach-protests-modi-voter-list-revision-rcna603149">NBC News</a>, <a href="https://theconversation.com/indian-gen-z-cockroach-protesters-aim-to-upend-assumptions-about-democracy-and-populism-in-modis-india-294730">The Conversation</a>.</li>
+  <li><strong>Uwaga mediów i relacje o protestach</strong> — Vision of Humanity (Global Peace Index 2025): <a href="https://www.visionofhumanity.org/unequal-attention-why-some-conflicts-make-headlines-and-others-dont/">Unequal attention</a>; Reuters Institute: <a href="https://reutersinstitute.politics.ox.ac.uk/news/why-some-wars-dont-make-headlines">Why some wars don’t make headlines</a>; R. West, J. Pfeffer, <a href="https://ojs.aaai.org/index.php/ICWSM/article/view/14889">Armed Conflicts in Online News: A Multilingual Study</a>, ICWSM 2017; S. Harlow i in., <a href="https://phys.org/news/2020-06-media-coverage-protests-worldwide.html">Journalism Studies 2020</a> (omówienie na phys.org).</li>
+</ul>
+
+<footer class="end">
+  <p>Stan wiedzy: sobota 31 października 2026, popołudnie. Protesty we Francji, Albanii i Hiszpanii trwają, a w Serbii formowany jest rząd. Liczby uczestników, rannych i aresztowanych pochodzą z różnych instytucji i bywają później korygowane. Suma aresztowań we Francji w tabeli historycznej jest orientacyjnym dodaniem własnym danych różnych resortów. Wikipedię wykorzystywałem pomocniczo jako zbiorcze źródło liczb, wszędzie tam, gdzie było to możliwe, sprawdzając je w relacjach agencji i mediów.</p>
+</footer>
+
+</div>
+</body>
+</html>
