@@ -1,0 +1,105 @@
+---
+// Zapis na powiadomienia o nowych materiałach (U8, 2026-11-02). Użycie: <Powiadom kurs="matematyka" nazwa="Matematyka" />
+// Formularz wysyła dane do naszego Workera (POST /newsletter), a Worker do EmailOctopus — na stronie nie ma
+// żadnego skryptu ani ciasteczka dostawcy (CSP 'self', test sieciowy z narzedzia/siec-check bez zmian).
+//
+// Prawo (scratchbook: narzedzia/radar/r25-u8-newsletter-2026-11-02.md):
+// - zgoda z art. 398 PKE w standardzie RODO (art. 400 PKE, art. 7 RODO): osobny, NIEZAZNACZONY checkbox,
+//   informacja o wypisie przed zapisem, potwierdzenie mailem (double opt-in w EmailOctopus);
+// - informacja z art. 13 RODO w skrócie pod formularzem + pełna w /prywatnosc.html;
+// - WIEK: świadomie bez deklaracji „mam ukończone 16 lat” (art. 8 RODO) — decyzja Maćka z 2026-11-02,
+//   bo kurs jest dla studentów. Wrócić do tematu, gdyby Unicorner kierował treści do szkół;
+// - tylko JEDNA zgoda: nowe materiały, BEZ ofert płatnych funkcji. Oferta przepustek = osobny checkbox
+//   i nowa wersja zgody później.
+// Zmiana treści zgody (ZGODA niżej) = nowa wersja: podbij NEWSLETTER_CONSENT w worker.js.
+interface Props { kurs: string; nazwa: string }
+const { kurs, nazwa } = Astro.props;
+const ZGODA = `Chcę dostawać e-mailem informacje o nowych modułach kursu ${nazwa} i o innych nowych materiałach na Unicornerze (bez ofert płatnych funkcji). Mogę się wypisać w każdej chwili jednym kliknięciem.`;
+---
+<section class="k-hub-sec pw" aria-labelledby="pw-h">
+  <h2 class="k-hub-h" id="pw-h">Daj znać, gdy będzie nowy moduł</h2>
+  <p class="k-hub-p">Kolejne moduły dochodzą co kilka tygodni. Zostaw adres, a napiszemy, gdy coś nowego będzie gotowe. Bez spamu: tylko informacja o nowych materiałach.</p>
+  <form class="pw-form" data-kurs={kurs} novalidate>
+    <div class="pw-row">
+      <label class="pw-sr" for="pw-email">Adres e-mail</label>
+      <input id="pw-email" name="email" type="email" inputmode="email" autocomplete="email" placeholder="twoj@adres.pl" required maxlength="254" />
+    </div>
+    <label class="pw-zgoda">
+      <input type="checkbox" name="zgoda" required />
+      <span>{ZGODA}</span>
+    </label>
+    <button class="pw-btn" type="submit">Powiadom mnie</button>
+    <div class="pw-hp" aria-hidden="true"><label>Strona www <input name="website" tabindex="-1" autocomplete="off" /></label></div>
+    <p class="pw-status" role="status" aria-live="polite"></p>
+    <p class="pw-info">Administratorem danych jest Maciej Strzyżewski. Adres zapisujemy u dostawcy wysyłki EmailOctopus (serwery w UE) tylko po to, żeby wysyłać te powiadomienia, i trzymamy go do czasu wypisu. Po zapisie dostaniesz mail z linkiem potwierdzającym — bez kliknięcia nic nie wyślemy. Szczegóły i Twoje prawa: <a class="k-link" href="/prywatnosc.html#powiadomienia">polityka prywatności</a>.</p>
+    <noscript><p class="pw-status is-err">Zapis działa z włączonym JavaScriptem.</p></noscript>
+  </form>
+</section>
+
+<style>
+  .pw-form{max-width:640px;}
+  .pw-row{display:flex;gap:10px;flex-wrap:wrap;margin:0 0 12px;}
+  .pw-row input{flex:1 1 220px;min-width:0;font:inherit;font-size:16px;color:var(--text);background:var(--surface);border:1px solid var(--line2);border-radius:10px;padding:11px 14px;}
+  .pw-row input:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .pw-btn{display:block;margin:14px 0 0;font:inherit;font-weight:600;color:#07060f;background:var(--cyan);border:0;border-radius:10px;padding:11px 18px;cursor:pointer;min-height:44px;}
+  .pw-btn:hover{filter:brightness(1.08);}
+  .pw-btn:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+  .pw-btn[disabled]{opacity:.6;cursor:progress;}
+  .pw-zgoda{display:flex;gap:10px;align-items:flex-start;color:#d6d2ea;font-size:.92rem;line-height:1.55;cursor:pointer;}
+  .pw-zgoda input{flex:0 0 auto;width:20px;height:20px;margin:2px 0 0;accent-color:var(--cyan);}
+  .pw-zgoda.is-err span{color:#ffb3d4;}
+  .pw-status{min-height:1.5em;margin:12px 0 4px;font-size:.95rem;line-height:1.5;color:var(--muted);}
+  .pw-status.is-ok{color:var(--ok);}
+  .pw-status.is-err{color:#ffb3d4;}
+  .pw-info{font-size:.8rem;line-height:1.6;color:var(--muted2);margin:6px 0 0;}
+  .pw-hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;}
+  .pw-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;}
+  .pw.is-done .pw-row,.pw.is-done .pw-zgoda,.pw.is-done .pw-btn{display:none;}
+</style>
+
+<script>
+  const API = 'https://red-queen-3002.unicorner.workers.dev/newsletter';
+  for (const form of document.querySelectorAll<HTMLFormElement>('.pw-form')) {
+    const start = Date.now();
+    const box = form.closest('.pw') as HTMLElement;
+    const status = form.querySelector('.pw-status') as HTMLElement;
+    const btn = form.querySelector('.pw-btn') as HTMLButtonElement;
+    const email = form.elements.namedItem('email') as HTMLInputElement;
+    const zgoda = form.elements.namedItem('zgoda') as HTMLInputElement;
+    const zgodaLbl = zgoda.closest('.pw-zgoda') as HTMLElement;
+    const show = (msg: string, kind: '' | 'ok' | 'err') => {
+      status.textContent = msg;
+      status.className = 'pw-status' + (kind ? ' is-' + kind : '');
+    };
+    zgoda.addEventListener('change', () => zgodaLbl.classList.remove('is-err'));
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const adres = email.value.trim();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(adres)) { show('Wpisz adres e-mail, np. jan@poczta.pl.', 'err'); email.focus(); return; }
+      if (!zgoda.checked) { zgodaLbl.classList.add('is-err'); show('Zaznacz zgodę — bez niej nie możemy wysłać powiadomienia.', 'err'); zgoda.focus(); return; }
+      btn.disabled = true;
+      show('Zapisuję…', '');
+      try {
+        const r = await fetch(API, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: adres, zgoda: true, kurs: form.dataset.kurs,
+            website: (form.elements.namedItem('website') as HTMLInputElement).value,
+            t: Date.now() - start,
+          }),
+        });
+        const d = await r.json().catch(() => ({}));
+        if (r.ok && d.ok) {
+          box.classList.add('is-done');
+          show('Prawie gotowe! Sprawdź skrzynkę (także Oferty i Spam) i kliknij link potwierdzający. Bez tego nic nie wyślemy.', 'ok');
+          return;
+        }
+        show(d.error || 'Nie udało się zapisać. Spróbuj za chwilę.', 'err');
+      } catch {
+        show('Brak połączenia z serwerem. Sprawdź internet i spróbuj jeszcze raz.', 'err');
+      }
+      btn.disabled = false;
+    });
+  }
+</script>

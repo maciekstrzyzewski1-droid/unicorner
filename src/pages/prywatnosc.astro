@@ -1,11 +1,13 @@
 ---
 import Base from '../layouts/Base.astro';
 const title = "Polityka prywatności · Unicorner";
-const description = "Jak Unicorner przetwarza dane: opinie, konto i generator AI, postęp nauki, udostępnianie talii. Bez ciasteczek śledzących.";
-const updated = "27 października 2026";
+const description = "Jak Unicorner przetwarza dane: opinie, konto i generator AI, postęp nauki, udostępnianie talii, powiadomienia e-mail. Bez ciasteczek śledzących.";
+const updated = "2 listopada 2026";
 // Administrator danych — przy kontach użytkowników musi to być konkretna osoba (imię i nazwisko).
 const admin = "Maciej Strzyżewski";
 const mail = "unicornernotatki@gmail.com";
+// Powiadomienia e-mail (U8, 2026-11-02): świadomie bez deklaracji wieku 16+ (art. 8 RODO) — decyzja Maćka,
+// kurs jest dla studentów. Formularz: src/components/kurs/Powiadom.astro, endpoint: worker.js POST /newsletter.
 ---
 
 <Base title={title} description={description}>
@@ -114,12 +116,15 @@ const mail = "unicornernotatki@gmail.com";
     <h3>Udostępnianie talii</h3>
     <p>Talię możesz udostępnić przyciskiem „Udostępnij”. Powstaje wtedy <b>publiczny link</b>: każdy, kto go ma, zobaczy tytuł, fiszki i quiz tej talii, bez logowania. Link <b>nie pokazuje Twojego imienia, adresu e-mail ani zdjęcia</b>. Liczymy tylko, ile razy go otwarto (widzisz to przy talii). Udostępnianie wyłączasz w każdej chwili jednym przyciskiem, a link przestaje działać także po usunięciu talii lub konta. Link możemy też wyłączyć po zgłoszeniu naruszenia (zasady w Regulaminie); powód blokady zapisujemy przy talii i kasujemy razem z nią. Podstawa: wykonanie usługi, o którą prosisz (art. 6 ust. 1 lit. b RODO).</p>
 
+    <h3 id="powiadomienia">Powiadomienia o nowych materiałach (e-mail)</h3>
+    <p>Na stronach kursów możesz zostawić <b>adres e-mail</b>, żeby dostać wiadomość, gdy pojawi się nowy moduł albo inny nowy materiał. Zapisujemy go tylko wtedy, gdy zaznaczysz zgodę, a wysyłać zaczynamy dopiero po kliknięciu linku w mailu potwierdzającym. Oprócz adresu zapisujemy, przy którym kursie się zapisałeś, wersję treści zgody oraz datę zapisu i potwierdzenia. Cel: wysyłanie powiadomień o nowych materiałach (bez ofert płatnych funkcji — na nie poprosimy o osobną zgodę). Podstawa: Twoja zgoda (art. 6 ust. 1 lit. a RODO) na otrzymywanie takich informacji e-mailem. Zgodę wycofasz w każdej chwili linkiem „wypisz się” w każdym mailu albo pisząc do nas — tak samo łatwo, jak ją wyrażasz. Wycofanie nie wpływa na wysyłki sprzed wypisu. Podanie adresu jest dobrowolne i nie jest warunkiem korzystania z kursów ani generatora.</p>
+
     <h3>Postęp w nauce</h3>
     <p><b>Na stronach przedmiotów i kursów</b> to, co odznaczysz jako „Umiem”, oraz wyniki quizów trzymane są <b>wyłącznie w Twojej przeglądarce</b> (localStorage) i nie trafiają na żaden serwer. Wyczyścisz dane przeglądarki lub otworzysz stronę w trybie prywatnym — zaczniesz od zera.</p>
     <p><b>W taliach z generatora</b> postęp zapisuje się na Twoim koncie (patrz „Konto” wyżej), żeby był dostępny po zalogowaniu na każdym urządzeniu.</p>
 
     <h3>Ochrona przed nadużyciami</h3>
-    <p>Żeby nikt nie zasypał strony automatycznymi zapytaniami, liczymy, ile próśb przychodzi z danego <b>adresu IP</b> (przy IPv6: z całej sieci, a nie pojedynczego urządzenia) w krótkim oknie czasu: godzinę dla generatora i panelu moderacji, dobę dla opinii. W bazie zapisujemy tylko jednokierunkowy skrót (nie sam adres). Licznik nie jest łączony z Twoim kontem, nie służy do śledzenia i przestaje być używany po zakończeniu okna; wygasłe wpisy usuwamy przy okresowym czyszczeniu bazy. Podstawa: uzasadniony interes, czyli bezpieczeństwo serwisu (art. 6 ust. 1 lit. f RODO).</p>
+    <p>Żeby nikt nie zasypał strony automatycznymi zapytaniami, liczymy, ile próśb przychodzi z danego <b>adresu IP</b> (przy IPv6: z całej sieci, a nie pojedynczego urządzenia) w krótkim oknie czasu: godzinę dla generatora i panelu moderacji, dobę dla opinii i zapisów na powiadomienia. Przy zapisie na powiadomienia w ten sam sposób liczymy też próby dla danego adresu e-mail, żeby nikt nie zasypał cudzej skrzynki mailami potwierdzającymi. W bazie zapisujemy tylko jednokierunkowy skrót (nie sam adres). Licznik nie jest łączony z Twoim kontem, nie służy do śledzenia i przestaje być używany po zakończeniu okna; wygasłe wpisy usuwamy przy okresowym czyszczeniu bazy. Podstawa: uzasadniony interes, czyli bezpieczeństwo serwisu (art. 6 ust. 1 lit. f RODO).</p>
 
     <h3>Logi i infrastruktura</h3>
     <p>Nasi dostawcy hostingu i sieci (GitHub Pages, Cloudflare) mogą — jak każdy serwer — zapisywać techniczne logi zawierające m.in. adres IP i typ przeglądarki. Służą one bezpieczeństwu i poprawnemu działaniu strony (uzasadniony interes, art. 6 ust. 1 lit. f RODO).</p>
@@ -140,6 +145,7 @@ const mail = "unicornernotatki@gmail.com";
       <li><b>GitHub (GitHub Pages)</b> — hosting strony.</li>
       <li><b>Cloudflare</b> — sieć CDN, analityka odwiedzin, serwer (Workers) obsługujący opinie i generator oraz baza danych kont, talii i postępu (D1).</li>
       <li><b>Google</b> — logowanie („Zaloguj przez Google”).</li>
+      <li><b>EmailOctopus</b> (Three Hearts Digital Ltd, Wielka Brytania) — przechowywanie listy adresów do powiadomień i wysyłka maili. Dane trzymane są na serwerach w Unii Europejskiej (Irlandia). Wielka Brytania ma decyzję Komisji Europejskiej stwierdzającą odpowiedni stopień ochrony danych.</li>
       <li><b>Anthropic</b> (model Claude, USA) — przetwarzanie plików i tekstu wgranych do generatora w celu wygenerowania materiałów. Według zasad Anthropic dla usług komercyjnych dane te nie są domyślnie używane do trenowania modeli i są usuwane z ich serwerów w ciągu 30 dni (dłużej tylko wtedy, gdy ich systemy bezpieczeństwa oznaczą treść jako naruszenie zasad korzystania).</li>
     </ul>
     <p>Część z tych dostawców może przetwarzać dane poza Europejskim Obszarem Gospodarczym (np. w USA) — w oparciu o standardowe klauzule umowne i zabezpieczenia wymagane przez RODO.</p>
@@ -152,8 +158,9 @@ const mail = "unicornernotatki@gmail.com";
       <li><b>Dane w przeglądarce</b> (localStorage) — do czasu, aż sam je wyczyścisz.</li>
       <li><b>Pliki w generatorze</b> — przetwarzane jednorazowo w celu wygenerowania materiałów; nie zapisujemy ich.</li>
       <li><b>Konto, talie i postęp w taliach</b> — do czasu, aż usuniesz konto. Zrobisz to sam jednym przyciskiem („Usuń konto i wszystkie talie” w generatorze) — kasujemy wtedy od razu konto, wszystkie talie, postęp nauki, udostępnione linki, liczniki i sesje. Pojedyncze talie (razem z ich postępem i linkiem) usuwasz w każdej chwili.</li>
+      <li><b>Adres do powiadomień</b> — do czasu, aż się wypiszesz. Po wypisaniu adres zostaje u dostawcy oznaczony jako wypisany, żeby nie wysłać do niego nic przez pomyłkę; na prośbę usuniemy go całkowicie. Niepotwierdzone zapisy usuwamy przy okresowym porządkowaniu listy.</li>
       <li><b>Udostępniony link</b> — do czasu, aż wyłączysz udostępnianie albo usuniesz talię lub konto.</li>
-      <li><b>Liczniki zapytań z adresów IP</b> — używane przez godzinę (generator, moderacja) lub dobę (opinie), potem usuwane przy czyszczeniu bazy.</li>
+      <li><b>Liczniki zapytań z adresów IP</b> (i skróty adresów e-mail przy zapisie na powiadomienia) — używane przez godzinę (generator, moderacja) lub dobę (opinie, powiadomienia), potem usuwane przy czyszczeniu bazy.</li>
       <li><b>Logi techniczne</b> — zgodnie z politykami dostawców (GitHub, Cloudflare).</li>
     </ul>
   </section>

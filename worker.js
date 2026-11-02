@@ -1,5 +1,5 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 11 (konta, kredyty, udostępnianie, błędy, powtórki, PDF-y ze skanami, dłuższe odpowiedzi AI)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 12 (konta, kredyty, udostępnianie, błędy, powtórki, PDF-y ze skanami, dłuższe odpowiedzi AI, zapis na powiadomienia)
    ---------------------------------------------------------------------
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)
@@ -29,6 +29,9 @@
      POST /admin/decide      → {code, id, action:"approve"|"reject"}
      POST /admin/share-block → {code, share, reason} wyłącza cudzy link po zgłoszeniu naruszenia;
                                autor nie może go włączyć ponownie dla tej talii (widzi powód)
+     POST /newsletter        → {email, zgoda: true, kurs, website, t} zapis na powiadomienia
+                               o nowych materiałach; adres trafia do EmailOctopus jako „pending”
+                               (EmailOctopus wysyła mail z linkiem potwierdzającym — double opt-in)
 
    Błędy: użytkownik dostaje krótki komunikat; szczegóły trafiają tylko do logów
    Cloudflare (panel → Worker → Logs).
@@ -43,6 +46,8 @@
      IP_SALT           — opcjonalnie: sól do skrótów w licznikach limitów (domyślnie ADMIN_CODE)
      ADMIN_EMAILS      — opcjonalnie: Twoje maile (po przecinku) bez limitu generowań
      FREE_MONTHLY_CREDITS — opcjonalnie: darmowe kredyty na miesiąc (domyślnie 30)
+     EO_API_KEY        — klucz API EmailOctopus (sekret; zapis na powiadomienia)
+     EO_LIST_ID        — ID listy w EmailOctopus (lista musi mieć włączone double opt-in)
      (ACCESS_CODE — stary wspólny kod; od wersji 9 nieużywany, można usunąć ze zmiennych)
 
    Bindingi (panel → Worker → Settings → Bindings):
@@ -74,6 +79,9 @@ const MAX_IMAGES_TOTAL_B64 = 3_600_000;  // łączny limit obrazów w jednym ż�
 const MAX_IMAGE_B64 = 400_000;           // ~300 KB pliku po kompresji na froncie
 const GEN_LIMIT_PER_HOUR = 12;           // generowań na użytkownika na godzinę
 const REVIEWS_LIMIT_PER_DAY = 5;         // opinii na IP na dobę
+const NEWSLETTER_IP_PER_DAY = 10;        // zapisów na powiadomienia z jednego IP na dobę
+const NEWSLETTER_MAIL_PER_DAY = 3;       // prób zapisu tego samego adresu na dobę (żeby nikt nie zasypał cudzej skrzynki mailami potwierdzającymi)
+const NEWSLETTER_CONSENT = "zgoda-v1";  // wersja treści zgody (src/components/kurs/Powiadom.astro); zmiana treści = nowa wersja
 const REVIEW_TEXT_MIN = 10;
 const REVIEW_TEXT_MAX = 600;
 const APPROVED_CAP = 60;                 // ile zatwierdzonych opinii trzymamy
@@ -124,6 +132,9 @@ export default {
 
       if (path === "/reviews" && request.method === "POST")
         return await handleReviewsPost(request, env, cors);
+
+      if (path === "/newsletter" && request.method === "POST")
+        return await handleNewsletter(request, env, cors);
 
       if (path === "/admin/list" && request.method === "POST")
         return await handleAdminList(request, env, cors);
@@ -298,6 +309,53 @@ async function handleReviewsGet(env, cors) {
   // publiczne pola only — bez timestampów itp.
   const pub = list.map(r => ({ stars: r.stars, text: r.text, name: r.name, subject: r.subject }));
   return json(pub, 200, { ...cors, "Cache-Control": "public, max-age=60" });
+}
+
+/* POST /newsletter {email, zgoda, kurs, website, t} — zapis na powiadomienia o nowych materiałach.
+   Prawo (2026-11-02, scratchbook r25-u8): zgoda z art. 398 PKE w standardzie RODO (art. 400 PKE, art. 7 RODO):
+   osobny, niezaznaczony checkbox, potwierdzenie mailem, wypis jednym kliknięciem (stopka EmailOctopus).
+   Dowód zgody: data zapisu i potwierdzenia w EmailOctopus + tag z wersją treści zgody (NEWSLETTER_CONSENT).
+   Wiek: świadomie BEZ deklaracji „mam ukończone 16 lat” (art. 8 RODO) — decyzja Maćka z 2026-11-02;
+   kurs jest dla studentów. Wrócić do tematu, gdyby Unicorner kierował treści do szkół.
+   Odpowiedź jest taka sama dla nowego i już zapisanego adresu — strona nie zdradza, kto jest na liście. */
+async function handleNewsletter(request, env, cors) {
+  let body;
+  try { body = await request.json(); }
+  catch { return json({ error: "Bad JSON" }, 400, cors); }
+  const { email, zgoda, kurs, website, t } = body || {};
+  if (website) return json({ ok: true }, 200, cors);                    // honeypot
+  if (typeof t === "number" && t < 2500) return json({ ok: true }, 200, cors); // za szybko = bot
+  if (zgoda !== true) return json({ error: "Zaznacz zgodę, żeby się zapisać." }, 400, cors);
+  const mail = String(email || "").trim().toLowerCase();
+  if (mail.length > 254 || !/^[^\s@<>"'(),;:]+@[^\s@<>"'(),;:]+\.[a-z]{2,}$/i.test(mail))
+    return json({ error: "To nie wygląda na adres e-mail." }, 400, cors);
+  if (!env.EO_API_KEY || !env.EO_LIST_ID) return json({ error: "Zapisy jeszcze nie działają. Spróbuj za kilka dni." }, 503, cors);
+  if (!(await rateLimit(env, "n:" + clientIp(request), NEWSLETTER_IP_PER_DAY, 86400)).ok)
+    return json({ error: "Za dużo zapisów z tej sieci. Spróbuj jutro." }, 429, cors);
+  if (!(await rateLimit(env, "nm:" + mail, NEWSLETTER_MAIL_PER_DAY, 86400)).ok)
+    return json({ ok: true }, 200, cors); // ten adres był już dziś zapisywany — nie wysyłamy kolejnego maila
+  const tags = [NEWSLETTER_CONSENT];
+  if (typeof kurs === "string" && /^[a-z0-9-]{2,32}$/.test(kurs)) tags.push("kurs-" + kurs);
+  const url = "https://api.emailoctopus.com/lists/" + encodeURIComponent(env.EO_LIST_ID) + "/contacts";
+  const send = (withTags) => fetch(url, {
+    method: "POST",
+    headers: { "Authorization": "Bearer " + env.EO_API_KEY, "Content-Type": "application/json" },
+    body: JSON.stringify(withTags ? { email_address: mail, tags, status: "pending" } : { email_address: mail, status: "pending" }),
+  });
+  try {
+    let r = await send(true);
+    // nieznany tag po stronie EmailOctopus nie może blokować zapisu: druga próba bez tagów
+    if (r.status === 400 || r.status === 422) {
+      console.error("newsletter: EmailOctopus odrzucił tagi", r.status, (await r.text()).slice(0, 300));
+      r = await send(false);
+    }
+    if (r.ok || r.status === 409) return json({ ok: true }, 200, cors); // 409 = adres już jest na liście
+    console.error("newsletter: EmailOctopus", r.status, (await r.text()).slice(0, 300));
+    return json({ error: "Nie udało się zapisać. Spróbuj za chwilę." }, 502, cors);
+  } catch (e) {
+    console.error("newsletter: błąd sieci", String(e && e.message || e));
+    return json({ error: "Nie udało się zapisać. Spróbuj za chwilę." }, 502, cors);
+  }
 }
 
 async function handleReviewsPost(request, env, cors) {

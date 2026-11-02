@@ -4,6 +4,7 @@ import Base from '../../layouts/Base.astro';
 import '../../styles/wiedza.css';
 import '../../styles/kurs.css';
 import Bar from '../wiedza/Bar.astro';
+import Powiadom from './Powiadom.astro';
 import { getKurs, moduleUrl, courseUrl } from '../../data/kursy/index.js';
 
 interface Props { kurs: string }
@@ -78,6 +79,8 @@ const url = `https://unicorner.pl${courseUrl(COURSE.slug)}`;
         ))}
       </ol>
     </section>
+
+    {live < MODULES.length && <Powiadom kurs={COURSE.slug} nazwa={COURSE.name} />}
 
     <section class="k-hub-sec">
       <h2 class="k-hub-h">Jak czytać ten kurs</h2>
