@@ -32,6 +32,7 @@ const ld = {
 <Base title={`${a.seoTitle} · Unicorner`} description={a.lede}>
   <Fragment slot="head">
     <link rel="canonical" href={url} />
+    <link rel="stylesheet" href="/fonts/fonty-artykul.css" />
     <meta property="og:type" content="article" />
     <meta property="og:title" content={a.seoTitle} />
     <meta property="og:description" content={a.lede} />
@@ -51,16 +52,26 @@ const ld = {
       :where(.art) li{margin-bottom:.35em;}
       :where(.art) h3{font-size:1.17em;font-weight:600;margin:1.6em 0 .6em;}
       :where(.art) h4{font-weight:600;margin:1.2em 0 .5em;}
-      :where(.art) blockquote{margin:1.4em 0;padding-left:1em;border-left:2px solid #a78bfa;}
+      :where(.art) blockquote{margin:1.4em 0;padding-left:1em;border-left:2px solid #d1a13f;}
       :where(.art) table{border-collapse:collapse;}
       :where(.art) sup{font-size:.7em;vertical-align:super;line-height:0;}
     </style>
     <style is:inline set:html={a.css}></style>
     <style is:inline>
-      .art{background:transparent;font-weight:400;}
-      .art strong{color:#fff;}
-      .art a{color:#9fe9ff;text-decoration-color:rgba(39,232,255,.35);text-underline-offset:3px;}
-      .art h1{background:linear-gradient(115deg,#ffffff 0%,#e6e3f2 55%,#c9b8ff 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+      /* strona artykułu w palecie i czcionkach pliku źródłowego (ciemna zieleń, złoto, Fraunces + Work Sans);
+         zmienne nadpisane na body, więc ramka (pasek, kafelki, nawigacja serii) też jest w tej palecie */
+      html body{--ink:#14150f;--ink2:#1b1c15;--surface:#1b1c15;--surface2:#22231a;--line:rgba(236,229,209,.1);--line2:rgba(236,229,209,.2);
+        --text:#ece5d1;--muted:#a9a292;--muted2:#8a8474;--accent:#d1a13f;--cyan:#d1a13f;--magenta:#c96a4e;--gold:#d1a13f;--ok:#7fa06a;
+        --iris:linear-gradient(115deg,#d1a13f,#e6c06a);--disp:'Fraunces',Georgia,serif;--mono:'Work Sans',-apple-system,'Segoe UI',sans-serif;
+        background:#14150f;font-family:'Work Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+      html body::before{display:none;}
+      .art{background:transparent;}
+      article.art .wz-topic{color:#d1a13f;}
+      article.art .wz-solo{background:rgba(209,161,63,.07);}
+      article.art sup.ex{color:#d1a13f;background:rgba(209,161,63,.14);}
+      article.art sup.ex:hover,article.art sup.ex[aria-expanded="true"]{background:rgba(209,161,63,.26);}
+      .wz-fn{background:#1b1c15;border-color:rgba(209,161,63,.5);box-shadow:0 18px 50px rgba(0,0,0,.6);}
+      .wz-fn a{color:#d1a13f;}
       .art .wrap{position:relative;}
       .art .caption{margin-bottom:30px;}
       .art table{display:block;overflow-x:auto;}
