@@ -1,7 +1,7 @@
 # UNICORNER — mapa drogowa
 
 > Kompas, nie spec. Wracaj tu, gdy poczujesz, że gubisz kierunek.
-> Stan na 2026-10-19.
+> Stan na 2026-11-02. Notatki robocze, decyzje i raporty: prywatne repo `scratchbook` (patrz `CLAUDE.md`).
 
 ## ⭐ Gwiazda polarna
 **UNICORNER ma sprawić, że student szybciej i mniej boleśnie zda egzamin.**
@@ -28,6 +28,19 @@ Priorytet: **1 → 2** na pierwszym planie, **3** lekko w tle, **4 z twardym bud
 - **Sekcja WIEDZA:** `/wiedza` z jednym szablonem i metadanymi w `wiedza.js`, 28 artykułów w 4 kategoriach.
 - **Generator AI + konta:** logowanie Google, zapisane talie, udostępnianie linkiem, powtórki fiszek, kredyty miesięczne (Worker v9).
 - Opinie z moderacją, polityka prywatności i regulamin.
+- **Test sieciowy w CI** (`narzedzia/siec-check`): każda strona z `dist/` w Chromium, błąd przy połączeniu z adresem spoza `allowlist.json` (PR #32).
+- **Lżejszy model 3D** szkieletu na stronie głównej (glTF-Transform: simplify + meshopt, −19,7% transferu; PR #35, opis w `narzedzia/model-3d/`).
+- **Moduł Całka nieoznaczona** poprawiony po przeglądzie zrozumiałości (skill `przeglad-ucznia`; PR #36).
+
+---
+
+## 🔧 W toku
+- **Powiadomienia e-mail o nowych materiałach (newsletter, U8)** — **PR #38, gałąź `u8-newsletter`, niescalony.**
+  - Decyzje Maćka (2026-11-02): dostawca **EmailOctopus** (darmowo 2 500 subskrybentów / 10 000 maili mies., dane w UE); **jedna zgoda** na start (nowe materiały, bez ofert płatnych funkcji — oferta przepustek = osobna zgoda później); **bez deklaracji 16+**.
+  - Jak działa: formularz `src/components/kurs/Powiadom.astro` na stronach kursów → Worker v12 `POST /newsletter` → API EmailOctopus jako `pending` (double opt-in). Na stronie żadnego skryptu dostawcy (CSP, test sieciowy).
+  - Następny krok (Maciek): konto i lista w EmailOctopus, klucz API, sekrety `EO_API_KEY` i `EO_LIST_ID` w Workerze, wdrożenie `worker.js` z gałęzi, merge, test własnym adresem. Instrukcja: `WDROZENIE.md` na gałęzi `u8-newsletter` (`git show origin/u8-newsletter:WDROZENIE.md`).
+  - Niepotwierdzone: czy API EmailOctopus jest na planie Free. Analiza prawna (art. 398 i 400 PKE, RODO) i porównanie dostawców: `scratchbook/narzedzia/radar/r25-u8-newsletter-2026-11-02.md`.
+- Dalej w kolejce potrzeb (U1–U10 w `scratchbook`): U4 (styl tekstów, potrzebne przykłady od Maćka), U7 (skill do analizy wyglądu i funkcji strony), U1 (czerpanie pomysłów z innych stron).
 
 ---
 
