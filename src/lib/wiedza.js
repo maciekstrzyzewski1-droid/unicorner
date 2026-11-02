@@ -1,39 +1,12 @@
 // Ładuje artykuły z src/teksty/*.html i przerabia je na fragmenty gotowe do osadzenia
-// w szablonie Unicornera: wycina <body>, zawęża CSS artykułu do .art i podmienia paletę
-// (złoto/brąz ze skilla -> neonowe akcenty Unicornera). Wszystko dzieje się przy buildzie,
+// w szablonie Unicornera: wycina <body> i zawęża CSS artykułu do .art. Paleta i czcionki
+// artykułu (ciemna zieleń, złoto, Fraunces + Work Sans) zostają takie, jak w pliku źródłowym.
+// Wszystko dzieje się przy buildzie,
 // więc gotowa strona to czysty, statyczny HTML — dobrze indeksowany przez Google.
 
 import { ARTICLES, CATEGORIES, SERIES } from '../data/wiedza.js';
 
 const RAW = import.meta.glob('../teksty/*.html', { query: '?raw', import: 'default', eager: true });
-
-// Paleta skilla -> paleta Unicornera (tekst spokojny, akcenty neonowe).
-const COLOR_MAP = [
-  ['#14150f', '#07060f'], // tło
-  ['#ece5d1', '#e6e3f2'], // tekst
-  ['#a9a292', '#a39cc9'], // muted
-  ['#d1a13f', '#a78bfa'], // akcent (złoty -> fiolet)
-  ['#2b2c23', '#26223a'], // linie
-  ['#1b1c15', '#100e1a'], // karty
-  ['#c96a4e', '#ff5c93'], // czerwony -> magenta
-  ['#7fa06a', '#5ad1a0'], // zielony
-  ['#6f8fa8', '#4fc3dc'], // niebieski -> cyjan
-];
-const RGB_MAP = [
-  [/rgba\(\s*209\s*,\s*161\s*,\s*63\s*,/g, 'rgba(167,139,250,'],
-  [/rgba\(\s*201\s*,\s*106\s*,\s*78\s*,/g, 'rgba(255,92,147,'],
-  [/rgba\(\s*127\s*,\s*160\s*,\s*106\s*,/g, 'rgba(90,209,160,'],
-];
-
-function recolor(s) {
-  for (const [from, to] of COLOR_MAP) s = s.replace(new RegExp(from, 'gi'), to);
-  for (const [re, to] of RGB_MAP) s = s.replace(re, to);
-  return s
-    .replace(/'Fraunces'/g, "'Chakra Petch'")
-    .replace(/"Fraunces"/g, '"Chakra Petch"')
-    .replace(/'Work Sans'/g, "'Inter'")
-    .replace(/"Work Sans"/g, '"Inter"');
-}
 
 // Zawęża arkusz stylów do kontenera .art (proste parsowanie po klamrach).
 function scopeSelector(sel) {
@@ -117,7 +90,7 @@ function parse(raw, file) {
   const metaTxt = pick(body, /class="[^"]*\bmeta\b[^"]*"[^>]*>([\s\S]*?)<\/(?:div|p)>/i);
   const m = metaTxt.match(/ok\.\s*(\d+)\s*min/);
   const minutes = m ? +m[1] : Math.max(5, Math.round(words / 200));
-  return { css: recolor(scopeCss(styles)), html: recolor(body), title, lede, minutes, words };
+  return { css: scopeCss(styles), html: body, title, lede, minutes, words };
 }
 
 let cache;
