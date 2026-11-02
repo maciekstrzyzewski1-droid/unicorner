@@ -22,7 +22,7 @@ const O = {
   wroc: 'Wróć do $x$: za $t$ wstaw środek z ramki. $C$ tylko przepisz.',
   cz: 'Policz $u\'$ (pochodna $u$) i $v$ (całka z $v\'$). Zapisz wszystkie cztery kawałki ramki.',
   wz: 'Wstaw do wzoru: $u \\cdot v$ minus całka z $u\' \\cdot v$.',
-  pom: 'Nową całkę liczoną z boku (pomocniczo) piszesz bez $C$ — stała pojawia się raz, w głównym rachunku, gdy znika w nim ostatni znak całki.',
+  pom: 'Nową całkę liczoną z boku (pomocniczo) piszesz bez $C$ — stała pojawia się raz, w głównym rachunku, gdy znika w nim ostatni znak całki. Dwie stałe i tak zlałyby się w jedną.',
   bok: 'Z boku przekształć samą funkcję podcałkową: ',
   wrocC: 'Wróć do całki z przekształconą funkcją. ',
   zb: 'Z boku (bez $C$): ',
@@ -37,6 +37,10 @@ const DT = (co) => `Zapisz ramkę: $t$ to środek, a $dt$ — pochodna środka r
 const BRAK = (poch, obok, ile) => `Pochodna środka to $${poch}$, a ${obok} — brakuje tylko liczby $${ile}$. Podstawienie zadziała.`;
 const LIN = (poch) => `Środek jest liniowy, czyli postaci $kx + b$, a poza nim nie ma innej funkcji z $x$. Pochodna środka to sama liczba $${poch}$, więc obok wystarczy samo $dx$. Po zamianie na $t$ zostanie sama funkcja z tabeli.`;
 const PS = 'podstawianie', PC = 'przez części', ZL = 'pochodna złożonej (moduł 8, reguła 5)';
+// Zad. 2, etap 3, gdy w tej samej linii pierwiastek albo ułamek z t zamienia się w potęgę
+const ZAM_POT = O.zam + ' Pierwiastek albo ułamek z $t$ zapisz od razu jako potęgę $t$ — wtedy zadziała wzór 3.';
+const DX_ZA = ' Zapis z $dx$ w liczniku to to samo co ułamek razy $dx$ — $dx$ można przenieść za ułamek.';
+const V_BEZ_C = 'W ramce $v$ piszesz bez $+ C$. Wystarczy jedna funkcja, której pochodna to $v\'$: stała dopisana do $v$ i tak skróciłaby się w wyniku. Jedno $+ C$ dopiszesz na końcu.';
 
 // ======================= Zad. 1 — całkowanie elementarne =======================
 const Z1 = {
@@ -148,7 +152,7 @@ const Z2 = {
     linie: [
       { e: 1, typ: 'x', t: R`\int \sqrt{\mG{s}{2x + 9}} \, dx`, r: PS, o: SR('wyrażenie pod pierwiastkiem'), d: LIN('2') },
       { e: 2, typ: 'p', ...rP([R`\mG{t}{t} = \mG{s}{2x + 9}`, R`dt = 2 \, dx \ \Rightarrow \ dx = \tfrac12 dt`]), r: PS, o: DT('$dx$'), k: [R`(2x + 9)' = 2`] },
-      { e: 3, typ: 't', t: R`\int \sqrt{2x + 9} \, dx = \int \sqrt{t} \cdot \frac12 \, dt = \frac12 \int t^{\frac12} \, dt`, r: 'reguła całkowa 1 · potęgi', o: O.zam },
+      { e: 3, typ: 't', t: R`\int \sqrt{2x + 9} \, dx = \int \sqrt{t} \cdot \frac12 \, dt = \frac12 \int t^{\frac12} \, dt`, r: 'reguła całkowa 1 · potęgi', o: ZAM_POT },
       { e: 4, typ: 't', t: R`= \frac12 \cdot \frac{t^{\frac32}}{\frac32} + C = \frac12 \cdot \frac23 t^{\frac32} + C = \frac13 t^{\frac32} + C`, r: E1, o: 'Wzór 3.' + C1, k: [R`\frac12 + 1 = \frac32`, R`\frac{1}{\frac32} = \frac23`, R`\frac12 \cdot \frac23 = \frac13`] },
       { e: 5, typ: 'x', t: R`= \frac13 (2x + 9)^{\frac32} + C = \frac13 \sqrt{(2x + 9)^3} + C`, o: O.wroc },
     ], wynik: R`\frac13 \sqrt{(2x + 9)^3} + C` },
@@ -164,7 +168,7 @@ const Z2 = {
     linie: [
       { e: 1, typ: 'x', t: R`\int \frac{x}{(\mG{s}{x^2 + 5})^5} \, dx`, r: PS, o: SR('wyrażenie w nawiasie z potęgą (w mianowniku)'), d: BRAK('2x', 'w liczniku stoi $x$', '2') },
       { e: 2, typ: 'p', ...rP([R`\mG{t}{t} = \mG{s}{x^2 + 5}`, R`dt = 2x \, dx \ \Rightarrow \ x \, dx = \tfrac12 dt`]), r: PS, o: DT('$x \\, dx$'), k: [R`(x^2 + 5)' = 2x`] },
-      { e: 3, typ: 't', t: R`\int \frac{x}{(x^2 + 5)^5} \, dx = \frac12 \int \frac{1}{t^5} \, dt = \frac12 \int t^{-5} \, dt`, r: 'reguła całkowa 1 · potęgi', o: O.zam },
+      { e: 3, typ: 't', t: R`\int \frac{x}{(x^2 + 5)^5} \, dx = \frac12 \int \frac{1}{t^5} \, dt = \frac12 \int t^{-5} \, dt`, r: 'reguła całkowa 1 · potęgi', o: ZAM_POT },
       { e: 4, typ: 't', t: R`= \frac12 \cdot \frac{t^{-4}}{-4} + C = -\frac18 t^{-4} + C`, r: E1, o: 'Wzór 3.' + C1, k: [R`-5 + 1 = -4`, R`\frac12 \cdot \frac{1}{-4} = -\frac18`] },
       { e: 5, typ: 'x', t: R`= -\frac{1}{8(x^2 + 5)^4} + C`, o: O.wroc, k: [R`-\frac18 t^{-4} = -\frac{1}{8t^4}`] },
     ], wynik: R`-\frac{1}{8(x^2 + 5)^4} + C` },
@@ -174,13 +178,13 @@ const Z2 = {
       { e: 2, typ: 'p', ...rP([R`\mG{t}{t} = \mG{s}{x^3 + 3}`, R`dt = 3x^2 \, dx \ \Rightarrow \ x^2 \, dx = \tfrac13 dt`]), r: PS, o: DT('$x^2 \\, dx$'), k: [R`(x^3 + 3)' = 3x^2`] },
       { e: 3, typ: 't', t: R`\int \frac{x^2}{x^3 + 3} \, dx = \frac13 \int \frac{1}{t} \, dt`, r: 'reguła całkowa 1', o: O.zam },
       { e: 4, typ: 't', t: R`= \frac13 \ln|t| + C`, r: 'wzór całkowy 6', o: 'Wzór 6.' + C1 },
-      { e: 5, typ: 'x', t: R`= \frac13 \ln|x^3 + 3| + C`, o: O.wroc },
+      { e: 5, typ: 'x', t: R`= \frac13 \ln|x^3 + 3| + C`, o: O.wroc, d: 'Tu wartość bezwzględna zostaje: $x^3 + 3$ bywa ujemne, np. dla $x = -2$ wychodzi $-8 + 3 = -5$. W d) i o) znikała, bo tam wyrażenie jest zawsze dodatnie.' },
     ], wynik: R`\frac13 \ln|x^3 + 3| + C` },
   g: { f: R`\int \frac{x \, dx}{\sqrt[3]{2x^2 - 1}}`, pod: '2x^2 - 1', leg: LEG.srodek,
     linie: [
-      { e: 1, typ: 'x', t: R`\int \frac{x}{\sqrt[3]{\mG{s}{2x^2 - 1}}} \, dx`, r: PS, o: SR('wyrażenie pod pierwiastkiem'), d: BRAK('4x', 'w liczniku stoi $x$', '4') },
+      { e: 1, typ: 'x', t: R`\int \frac{x}{\sqrt[3]{\mG{s}{2x^2 - 1}}} \, dx`, r: PS, o: SR('wyrażenie pod pierwiastkiem'), d: BRAK('4x', 'w liczniku stoi $x$', '4') + DX_ZA },
       { e: 2, typ: 'p', ...rP([R`\mG{t}{t} = \mG{s}{2x^2 - 1}`, R`dt = 4x \, dx \ \Rightarrow \ x \, dx = \tfrac14 dt`]), r: PS, o: DT('$x \\, dx$'), k: [R`(2x^2 - 1)' = 4x`] },
-      { e: 3, typ: 't', t: R`\int \frac{x}{\sqrt[3]{2x^2 - 1}} \, dx = \frac14 \int \frac{1}{\sqrt[3]{t}} \, dt = \frac14 \int t^{-\frac13} \, dt`, r: 'reguła całkowa 1 · potęgi', o: O.zam },
+      { e: 3, typ: 't', t: R`\int \frac{x}{\sqrt[3]{2x^2 - 1}} \, dx = \frac14 \int \frac{1}{\sqrt[3]{t}} \, dt = \frac14 \int t^{-\frac13} \, dt`, r: 'reguła całkowa 1 · potęgi', o: ZAM_POT },
       { e: 4, typ: 't', t: R`= \frac14 \cdot \frac{t^{\frac23}}{\frac23} + C = \frac14 \cdot \frac32 t^{\frac23} + C = \frac38 t^{\frac23} + C`, r: E1, o: 'Wzór 3.' + C1, k: [R`-\frac13 + 1 = \frac23`, R`\frac{1}{\frac23} = \frac32`, R`\frac14 \cdot \frac32 = \frac38`] },
       { e: 5, typ: 'x', t: R`= \frac38 \sqrt[3]{(2x^2 - 1)^2} + C`, o: O.wroc },
     ], wynik: R`\frac38 \sqrt[3]{(2x^2 - 1)^2} + C` },
@@ -188,7 +192,7 @@ const Z2 = {
     linie: [
       { e: 1, typ: 'x', t: R`\int x\sqrt{\mG{s}{2 + x^2}} \, dx`, r: PS, o: SR('wyrażenie pod pierwiastkiem'), d: BRAK('2x', 'przed pierwiastkiem stoi $x$', '2') },
       { e: 2, typ: 'p', ...rP([R`\mG{t}{t} = \mG{s}{2 + x^2}`, R`dt = 2x \, dx \ \Rightarrow \ x \, dx = \tfrac12 dt`]), r: PS, o: DT('$x \\, dx$'), k: [R`(2 + x^2)' = 2x`] },
-      { e: 3, typ: 't', t: R`\int x\sqrt{2 + x^2} \, dx = \frac12 \int t^{\frac12} \, dt`, r: 'reguła całkowa 1 · potęgi', o: O.zam },
+      { e: 3, typ: 't', t: R`\int x\sqrt{2 + x^2} \, dx = \frac12 \int t^{\frac12} \, dt`, r: 'reguła całkowa 1 · potęgi', o: ZAM_POT },
       { e: 4, typ: 't', t: R`= \frac12 \cdot \frac{t^{\frac32}}{\frac32} + C = \frac12 \cdot \frac23 t^{\frac32} + C = \frac13 t^{\frac32} + C`, r: E1, o: 'Wzór 3.' + C1, k: [R`\frac12 + 1 = \frac32`, R`\frac{1}{\frac32} = \frac23`, R`\frac12 \cdot \frac23 = \frac13`] },
       { e: 5, typ: 'x', t: R`= \frac13 \sqrt{(2 + x^2)^3} + C`, o: O.wroc },
     ], wynik: R`\frac13 \sqrt{(2 + x^2)^3} + C` },
@@ -197,7 +201,7 @@ const Z2 = {
       { e: 1, typ: 'x', t: R`\int \frac{x}{\sqrt{\mG{s}{3 - 5x^2}}} \, dx`, r: PS, o: SR('wyrażenie pod pierwiastkiem'), d: BRAK('-10x', 'w liczniku stoi $x$', '-10') },
       { e: 2, typ: 'p', ...rP([R`\mG{t}{t} = \mG{s}{3 - 5x^2}`, R`dt = -10x \, dx \ \Rightarrow \ x \, dx = -\tfrac{1}{10} dt`]), r: PS, o: DT('$x \\, dx$'), k: [R`(3 - 5x^2)' = -10x`],
         d: 'Minus zostaje: dzielisz przez $-10$, nie przez $10$. Stąd $x \\, dx = -\\frac{1}{10} dt$.' },
-      { e: 3, typ: 't', t: R`\int \frac{x}{\sqrt{3 - 5x^2}} \, dx = -\frac{1}{10} \int t^{-\frac12} \, dt`, r: 'reguła całkowa 1 · potęgi', o: O.zam },
+      { e: 3, typ: 't', t: R`\int \frac{x}{\sqrt{3 - 5x^2}} \, dx = -\frac{1}{10} \int t^{-\frac12} \, dt`, r: 'reguła całkowa 1 · potęgi', o: ZAM_POT },
       { e: 4, typ: 't', t: R`= -\frac{1}{10} \cdot \frac{t^{\frac12}}{\frac12} + C = -\frac{1}{10} \cdot 2t^{\frac12} + C = -\frac15 \sqrt{t} + C`, r: E1, o: 'Wzór 3.' + C1, k: [R`-\frac12 + 1 = \frac12`, R`\frac{1}{\frac12} = 2`, R`-\frac{1}{10} \cdot 2 = -\frac15`] },
       { e: 5, typ: 'x', t: R`= -\frac15 \sqrt{3 - 5x^2} + C`, o: O.wroc },
     ], wynik: R`-\frac15 \sqrt{3 - 5x^2} + C` },
@@ -228,7 +232,7 @@ const Z2 = {
         d: 'Pochodna środka to $3x^2$ — i dokładnie $3x^2$ stoi w liczniku. Nic nie trzeba dzielić.' },
       { e: 2, typ: 'p', ...rP([R`\mG{t}{t} = \mG{s}{x^3 + 5}`, R`dt = 3x^2 \, dx`]), r: PS, k: [R`(x^3 + 5)' = 3x^2`],
         o: 'Zapisz ramkę: $t$ to środek, a $dt$ — pochodna środka razy $dx$. Tu $dt$ to dokładnie licznik razy $dx$.' },
-      { e: 3, typ: 't', t: R`\int \frac{3x^2}{\sqrt[7]{x^3 + 5}} \, dx = \int \frac{1}{\sqrt[7]{t}} \, dt = \int t^{-\frac17} \, dt`, r: P, o: O.zam },
+      { e: 3, typ: 't', t: R`\int \frac{3x^2}{\sqrt[7]{x^3 + 5}} \, dx = \int \frac{1}{\sqrt[7]{t}} \, dt = \int t^{-\frac17} \, dt`, r: P, o: ZAM_POT },
       { e: 4, typ: 't', t: R`= \frac{t^{\frac67}}{\frac67} + C = \frac76 t^{\frac67} + C`, r: E1, o: 'Wzór 3.' + C1, k: [R`-\frac17 + 1 = \frac67`, R`\frac{1}{\frac67} = \frac76`] },
       { e: 5, typ: 'x', t: R`= \frac76 \sqrt[7]{(x^3 + 5)^6} + C`, o: O.wroc },
     ], wynik: R`\frac76 \sqrt[7]{(x^3 + 5)^6} + C` },
@@ -253,7 +257,7 @@ const Z2 = {
     ], wynik: R`-\frac12 e^{-x^2} + C` },
   o: { f: R`\int \frac{e^x \, dx}{2e^x + 1}`, pod: '2e^x + 1', leg: LEG.srodek,
     linie: [
-      { e: 1, typ: 'x', t: R`\int \frac{e^x}{\mG{s}{2e^x + 1}} \, dx`, r: PS, o: SR('mianownik'), d: BRAK('2e^x', 'w liczniku stoi $e^x$', '2') },
+      { e: 1, typ: 'x', t: R`\int \frac{e^x}{\mG{s}{2e^x + 1}} \, dx`, r: PS, o: SR('mianownik'), d: BRAK('2e^x', 'w liczniku stoi $e^x$', '2') + DX_ZA },
       { e: 2, typ: 'p', ...rP([R`\mG{t}{t} = \mG{s}{2e^x + 1}`, R`dt = 2e^x \, dx \ \Rightarrow \ e^x \, dx = \tfrac12 dt`]), r: PS, o: DT('$e^x \\, dx$'), k: [R`(2e^x + 1)' = 2e^x`] },
       { e: 3, typ: 't', t: R`\int \frac{e^x}{2e^x + 1} \, dx = \frac12 \int \frac{1}{t} \, dt`, r: 'reguła całkowa 1', o: O.zam },
       { e: 4, typ: 't', t: R`= \frac12 \ln|t| + C`, r: 'wzór całkowy 6', o: 'Wzór 6.' + C1 },
@@ -295,7 +299,7 @@ const Z3 = {
       { e: 1, typ: '-', ...wybC(R`\ln x`, '1'), r: PC, o: 'Za $u$ weź $\\ln x$, za $v\'$ — jedynkę: $\\ln x = \\ln x \\cdot 1$.',
         d: 'Całki z $\\ln x$ nie ma we wzorach, ale pochodną $\\ln x$ znasz: $\\frac1x$. Dlatego $\\ln x$ idzie do $u$.' },
       { e: 2, typ: 'p', ...rC(R`\ln x`, '1', R`\frac{1}{x}`, 'x'), r: `${PC} · wzór całkowy 2`, o: O.cz,
-        k: [R`u'(x) = (\ln x)' = \frac{1}{x}`, R`v(x) = \int 1 \, dx = x`] },
+        k: [R`u'(x) = (\ln x)' = \frac{1}{x}`, R`v(x) = \int 1 \, dx = x`], d: V_BEZ_C },
       { e: 3, typ: 'x', t: R`\int \ln x \, dx = x\ln x - \int \frac{1}{x} \cdot x \, dx = x\ln x - \int 1 \, dx`, r: PC, o: O.wz },
       { e: 4, typ: 'x', t: R`= x\ln x - x + C`, r: 'wzór całkowy 2', o: 'Nowa całka to $\\int 1 \\, dx = x$.' + C1 },
     ], wynik: R`x\ln x - x + C` },
@@ -385,7 +389,7 @@ const Z3 = {
   i: { f: R`\int x^4(1 + x)^3 \, dx`,
     linie: [
       { e: 1, typ: '-', ...wybC(R`(1 + x)^3`, R`x^4`), r: PC, o: 'Za $u$ weź $(1 + x)^3$, za $v\'$ — $x^4$.',
-        d: 'Oba czynniki to wielomiany. Do $u$ bierzesz ten, który szybciej zamieni się w liczbę: $(1 + x)^3$ po trzech pochodnych, $x^4$ dopiero po czterech. Każde przejście przez części obniża stopień $u$ o $1$.' },
+        d: 'Krótsza droga to wymnożenie nawiasu i wzór 3, ale polecenie w Zad. 3 każe liczyć przez części. Oba czynniki to wielomiany. Do $u$ bierzesz ten, który szybciej zamieni się w liczbę: $(1 + x)^3$ po trzech pochodnych, $x^4$ dopiero po czterech. Każde przejście przez części obniża stopień $u$ o $1$.' },
       { e: 2, typ: 'p', ...rC(R`(1 + x)^3`, R`x^4`, R`3(1 + x)^2`, R`\frac{x^5}{5}`), r: `${PC} · ${ZL} · wzór całkowy 3`, o: O.cz,
         k: [R`u'(x) = ((1 + x)^3)' = 3(1 + x)^2`, R`v(x) = \int x^4 \, dx = \frac{x^5}{5}`] },
       { e: 3, typ: 'x', t: R`\int x^4(1 + x)^3 \, dx = \frac{x^5}{5}(1 + x)^3 - \int 3(1 + x)^2 \cdot \frac{x^5}{5} \, dx = \frac{x^5}{5}(1 + x)^3 - \frac35 \int x^5(1 + x)^2 \, dx`, r: PC, o: O.wz, k: [R`3 \cdot \frac15 = \frac35`] },
@@ -442,7 +446,7 @@ const Z3 = {
         d: 'Całki z $\\ln(\\ln x)$ nie ma we wzorach, a pochodną policzysz. $\\frac1x$ scałkujesz wzorem 6. Pomaga też podstawienie $t = \\ln x$: zostaje $\\int \\ln t \\, dt$. Tej całki nie ma w tabeli — to Zad. 3 a), liczone przez części. Obie drogi dają ten sam wynik.' },
       { e: 2, typ: 'p', ...rC(R`\ln(\ln x)`, R`\frac{1}{x}`, R`\frac{1}{\ln x} \cdot \frac{1}{x}`, R`\ln x`), r: `${PC} · ${ZL} · wzór całkowy 6`, o: O.cz,
         k: [R`u'(x) = (\ln(\ln x))' = \frac{1}{\ln x} \cdot \frac{1}{x}`, R`v(x) = \int \frac{1}{x} \, dx = \ln x`],
-        d: '$v = \\ln x$ bez kresek wartości bezwzględnej, bo $\\ln(\\ln x)$ istnieje tylko dla $x > 1$, a wtedy $\\ln|x| = \\ln x$.' },
+        d: '$v = \\ln x$ bez kresek wartości bezwzględnej, bo $\\ln(\\ln x)$ istnieje tylko wtedy, gdy $\\ln x > 0$, czyli dla $x > 1$. A wtedy $\\ln|x| = \\ln x$.' },
       { e: 3, typ: 'x', t: R`\int \frac{\ln(\ln x)}{x} \, dx = \ln x \cdot \ln(\ln x) - \int \frac{1}{x\ln x} \cdot \ln x \, dx = \ln x \cdot \ln(\ln x) - \int \frac{1}{x} \, dx`, r: PC, o: O.wz, d: '$\\ln x$ w liczniku i mianowniku się skraca.' },
       { e: 4, typ: 'x', t: R`= \ln x \cdot \ln(\ln x) - \ln x + C`, r: 'wzór całkowy 6', o: 'Nowa całka wzorem 6.' + C1 },
     ], wynik: R`\ln x \cdot \ln(\ln x) - \ln x + C` },
@@ -471,7 +475,7 @@ const Z3 = {
         d: 'Po pochodnej $x$ zamienia się w $1$ — znika. A $4^x$ umiesz scałkować wzorem 4. Przy odwrotnym wyborze ($u = 4^x$, $v\' = x$) w nowej całce byłoby $x^2$ — trudniej niż na starcie.' },
       { e: 2, typ: 'p', ...rC(R`\mF{u}{x}`, R`\mG{vp}{4^x}`, R`\mF{up}{1}`, R`\mG{v}{\frac{4^x}{\ln 4}}`), r: `${PC} · wzór całkowy 4`,
         o: 'Policz $u\'$ (pochodna $u$) i $v$ (całka z $v\'$). Wszystkie cztery kawałki zapisz w ramce.', k: [R`u'(x) = (x)' = 1`, R`v(x) = \int 4^x \, dx = \frac{4^x}{\ln 4}`],
-        d: 'W ramce $v$ liczysz bez $+ C$. Stała pojawi się raz — w linii, w której zniknie ostatni znak całki.' },
+        d: 'W ramce $v$ liczysz bez $+ C$. Stała dopisana do $v$ i tak skróciłaby się w wyniku. Stała pojawi się raz — w linii, w której zniknie ostatni znak całki.' },
       { e: 3, typ: 'sz', ...SZ.czesci, r: PC },
       { e: 3, typ: 'x', wst: true, z: { v2: 'v' }, opisy: { u: 'u', v: 'v', up: 'u′', v2: 'v' },
         t: R`\int x4^x \, dx = \mF{u}{x} \cdot \mG{v}{\frac{4^x}{\ln 4}} - \int \mF{up}{1} \cdot \mG{v2}{\frac{4^x}{\ln 4}} \, dx`, r: PC, o: O.wz },
