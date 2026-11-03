@@ -1,7 +1,7 @@
 # Wdrożenie
 
 Dwa niezależne tory: **strona** (automatyczny deploy z GitHuba) i **Worker** (ręcznie w panelu Cloudflare).
-Stan na 2026-10-21, Worker w wersji 11 (konta, kredyty, udostępnianie, powtórki, PDF-y ze skanami, dłuższe odpowiedzi AI).
+Stan na 2026-11-02, Worker w wersji 12 (konta, kredyty, udostępnianie, powtórki, PDF-y ze skanami, dłuższe odpowiedzi AI, zapis na powiadomienia).
 
 ---
 
@@ -36,12 +36,23 @@ Zmienne i sekrety (Settings → Variables and Secrets):
 - opcjonalnie `ADMIN_EMAILS`: Twoje maile (po przecinku), konta bez limitu generowań.
 - opcjonalnie `FREE_MONTHLY_CREDITS`: darmowe kredyty na konto na miesiąc (domyślnie 30).
 - `ACCESS_CODE`: stary wspólny kod, od wersji 9 nieużywany. Można usunąć.
+- `EO_API_KEY` (sekret) i `EO_LIST_ID`: zapis na powiadomienia o nowych materiałach (EmailOctopus). Bez nich `POST /newsletter` odpowiada 503 „Zapisy jeszcze nie działają”, reszta Workera działa normalnie.
 
 Logowanie używa Google Identity Services. Identyfikator klienta (`GOOGLE_CLIENT_ID`) jest wpisany w `worker.js` i jest publiczny z założenia.
 
 ### Po wdrożeniu Workera
 
 - `GET https://red-queen-3002.unicorner.workers.dev/health` powinno zwrócić `{ok, db, kv, ai_key}`, wszystko na `true`.
+
+### Powiadomienia e-mail (EmailOctopus, od wersji 12)
+
+Konfiguracja jednorazowa, **przed** mergem PR z formularzem albo zaraz po nim (bez sekretów formularz pokazuje „Zapisy jeszcze nie działają”):
+1. Konto na emailoctopus.com (plan Free). Adres nadawcy na domenie `unicorner.pl` wymaga rekordów DNS w Cloudflare (SPF/DKIM), które EmailOctopus pokaże w panelu.
+2. Nowa lista, np. „Unicorner — nowe materiały”. W zakładce **Consent & customisation** włącz **Double opt-in** i przetłumacz mail potwierdzający oraz stronę po potwierdzeniu na polski.
+3. Integrations & API → utwórz klucz API. Jeśli na planie Free nie ma API, zatrzymaj się i daj znać (nie potwierdziliśmy tego przed wdrożeniem).
+4. W Workerze dodaj `EO_API_KEY` (jako **Secret**) i `EO_LIST_ID` (ID listy z jej ustawień), wklej `worker.js` w wersji 12, Deploy.
+5. Test: zapisz własny adres na stronie kursu. Ma przyjść mail z linkiem potwierdzającym, a kontakt ma mieć status „pending”, po kliknięciu „subscribed” i tagi `zgoda-v1` i `kurs-…`. Brak maila potwierdzającego = double opt-in nie działa, nie wysyłaj nic do tej listy.
+6. Raz na kilka miesięcy usuń z listy kontakty, które nie potwierdziły zapisu (obiecuje to polityka prywatności).
 
 ---
 
