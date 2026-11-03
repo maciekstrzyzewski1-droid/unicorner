@@ -13,9 +13,7 @@
   "/_astro/jsx-runtime.js",
   "/_astro/react.js",
   "/assets/skeleton.glb",
-  "/reviews.json",
-  "/vendor/three@0.161.0/examples/jsm/libs/draco/draco_decoder.wasm",
-  "/vendor/three@0.161.0/examples/jsm/libs/draco/draco_wasm_wrapper.js"
+  "/reviews.json"
  ],
  "kontakt.html": [],
  "korelacja-wieloraka.html": [],
@@ -85,6 +83,7 @@
  "trend.html": [],
  "wiedza.html": [],
  "wiedza/anatomia-bariery.html": [],
+ "wiedza/anatomia-dymu.html": [],
  "wiedza/anatomia-koncernu.html": [],
  "wiedza/anatomia-konfliktu.html": [],
  "wiedza/anatomia-liczby.html": [],
@@ -101,6 +100,7 @@
  "wiedza/anatomia-procesu.html": [],
  "wiedza/anatomia-slodyczy.html": [],
  "wiedza/anatomia-sporu.html": [],
+ "wiedza/anatomia-straznika.html": [],
  "wiedza/anatomia-tlumu.html": [],
  "wiedza/anatomia-wahadla.html": [],
  "wiedza/anatomia-wartosci.html": [],
