@@ -61,7 +61,7 @@ for (const p of pytania) if (p.dobra < 0 || p.dobra >= p.opcje.length) throw new
         it.querySelector<HTMLElement>('.k-pyt-wyj')!.hidden = true;
       });
       upd();
-      box.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      box.scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
     });
   });
 </script>

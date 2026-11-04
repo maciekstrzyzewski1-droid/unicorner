@@ -27,6 +27,7 @@ import jsDane from '../scripts/makroekonomia/dane.js?raw';
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
 body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;letter-spacing:.1px;color:var(--text);min-height:100vh;font-size:16px;line-height:1.55;overflow-x:hidden;position:relative;
   background:
     radial-gradient(900px 520px at 85% -8%, #1a1150 0%, transparent 58%),
@@ -329,7 +330,7 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
   </nav>
 </header>
 
-<main>
+<main id="main">
   <!-- ============ FISZKI ============ -->
   <section id="fiszki" class="view active">
     <h2 class="section-title">Fiszki — słownik pojęć</h2>
@@ -379,10 +380,10 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
       </div>
     </div>
 
-    <div id="fcDone" class="card fc-done" style="display:none;">
+    <div id="fcDone" class="card fc-done" style="display:none;" data-sr-watch>
       <div class="em">🎉</div>
-      <h3 id="fcDoneTitle">Koniec zestawu!</h3>
-      <p id="fcDoneMsg"></p>
+      <h3 id="fcDoneTitle" data-sr-say>Koniec zestawu!</h3>
+      <p id="fcDoneMsg" data-sr-say></p>
       <div class="fc-controls" style="max-width:460px;margin:0 auto;">
         <button class="btn btn-ghost" onclick="fcRestartAll()">🔁 Od początku</button>
         <button class="btn btn-know" onclick="fcSetMode(&#39;dont&#39;)">📌 Ćwicz tylko nieumiane</button>
@@ -859,17 +860,17 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
         <div class="q-meta"><span id="qProg"></span><span id="qTopic"></span></div>
         <div class="q-text" id="qText"></div>
         <div id="qOpts"></div>
-        <div class="q-exp" id="qExp"></div>
+        <div class="q-exp" id="qExp" data-sr-watch></div>
         <button class="btn btn-know q-next" id="qNext" onclick="quizNext()">Następne →</button>
       </div>
     </div>
 
-    <div id="quizResult" style="display:none;">
+    <div id="quizResult" style="display:none;" data-sr-watch="Wynik quizu">
       <div class="card result">
         <div class="em" id="rEm">🎯</div>
-        <div class="score" id="rScore"></div>
-        <div class="grade" id="rGrade"></div>
-        <div class="msg" id="rMsg"></div>
+        <div class="score" id="rScore" data-sr-say></div>
+        <div class="grade" id="rGrade" data-sr-say></div>
+        <div class="msg" id="rMsg" data-sr-say></div>
         <div class="bd" id="rBreak"></div>
         <button class="btn btn-know" style="width:100%;max-width:420px;margin:22px auto 0;" onclick="quizReset()">🔁 Jeszcze raz</button>
       </div>
@@ -907,7 +908,7 @@ document.querySelectorAll('.tab').forEach(t=>{
     document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
     t.classList.add('active');
     document.getElementById(t.dataset.view).classList.add('active');
-    window.scrollTo({top:0,behavior:'smooth'});
+    window.scrollTo({top:0,behavior:(window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth')});
   });
 });
 
@@ -1139,7 +1140,7 @@ function quizPick(pos){
   nx.classList.add('show');
 }
 function quizNext(){
-  if(qIdx<qList.length-1){qIdx++;renderQ();window.scrollTo({top:0,behavior:'smooth'});}
+  if(qIdx<qList.length-1){qIdx++;renderQ();window.scrollTo({top:0,behavior:(window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth')});}
   else quizShowResult();
 }
 function quizShowResult(){
@@ -1158,7 +1159,7 @@ function quizShowResult(){
   let bd='<h3 style="color:var(--green-bright);font-size:.95rem;margin-bottom:8px;">Wynik wg tematów</h3>';
   for(const t in qByTopic){const o=qByTopic[t];bd+=`<div class="bd-row"><span>${t}</span><span style="font-weight:700;color:${o.c===o.t?'var(--green-bright)':'var(--gold)'}">${o.c}/${o.t}</span></div>`;}
   document.getElementById('rBreak').innerHTML=bd;
-  window.scrollTo({top:0,behavior:'smooth'});
+  window.scrollTo({top:0,behavior:(window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth')});
 }
 function quizReset(){
   document.getElementById('quizResult').style.display='none';

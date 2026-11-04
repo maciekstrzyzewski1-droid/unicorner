@@ -22,6 +22,7 @@ const description = "Miary tendencji centralnej, pozycyjne, zróżnicowania i as
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
   body{
     font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
     background:
@@ -187,6 +188,7 @@ const description = "Miary tendencji centralnej, pozycyjne, zróżnicowania i as
     </div>
   </header>
 
+  <main id="main">
   <section class="hero">
     <span class="eyebrow"><span class="dot"></span>Statystyka opisowa · UEP</span>
     <h1>Miary średnie i <span class="grad">zróżnicowania</span></h1>
@@ -355,6 +357,8 @@ const description = "Miary tendencji centralnej, pozycyjne, zróżnicowania i as
       <div id="scoreMsg" style="color:var(--muted);margin-top:6px"></div>
     </div>
   </section>
+
+  </main>
 
   <div class="giant" aria-hidden="true"><span>STATYSTYKA</span></div>
 

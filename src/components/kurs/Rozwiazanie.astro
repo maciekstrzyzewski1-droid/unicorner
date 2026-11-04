@@ -37,7 +37,7 @@ const { tytul, zrodlo, odslaniaj = true } = Astro.props;
       if (shown >= steps.length) { ctl.hidden = true; return; }
       next.textContent = `Pokaż krok ${shown + 1} z ${steps.length}`;
     };
-    next.addEventListener('click', () => { shown++; render(); steps[shown - 1]?.scrollIntoView({ block: 'nearest', behavior: 'smooth' }); });
+    next.addEventListener('click', () => { shown++; render(); steps[shown - 1]?.scrollIntoView({ block: 'nearest', behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' }); });
     all.addEventListener('click', () => { shown = steps.length; render(); });
     render();
   });

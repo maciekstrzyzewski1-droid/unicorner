@@ -82,6 +82,7 @@ const ld = {
   <Bar crumbs={[{ label: 'Wiedza', href: '/wiedza.html' }, { label: a.categoryName, href: `/wiedza.html#${a.category}` }, { label: a.title }]}
        back={{ label: '← Wszystkie teksty', href: '/wiedza.html' }} progress={true} />
 
+  <main id="main">
   <article class="art art-shell" set:html={html} />
   <div class="wz-fn" id="wzFn" role="tooltip" hidden></div>
 
@@ -110,6 +111,7 @@ const ld = {
       <div class="wz-grid">{related.map((r) => <Card a={r} />)}</div>
     </section>
   )}
+  </main>
 
   <Foot />
 

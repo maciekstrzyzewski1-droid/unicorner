@@ -17,6 +17,7 @@ const mail = "unicornernotatki@gmail.com";
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
   body{
     font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
     background:#050505; color:var(--text); min-height:100vh; line-height:1.6; letter-spacing:.1px;
@@ -89,6 +90,7 @@ const mail = "unicornernotatki@gmail.com";
     <a class="back" href="index.html">← Strona główna</a>
   </header>
 
+  <main id="main">
   <div class="lhead">
     <span class="eyebrow">// Napisz do nas</span>
     <h1>Brakuje <span class="grad">przedmiotu?</span></h1>
@@ -121,6 +123,8 @@ const mail = "unicornernotatki@gmail.com";
     <a href={`mailto:${mail}`}>{mail}</a>
     <p>Notatki, skany, skrypty, opracowania — cokolwiek. Jeśli nie masz notatek, ale znasz przedmiot, który powinien tu być, też się odezwij.</p>
   </div>
+
+  </main>
 
   <div class="lfoot">
     <div class="fnav">

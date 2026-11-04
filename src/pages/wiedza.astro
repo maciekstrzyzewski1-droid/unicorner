@@ -35,7 +35,7 @@ const ld = {
 
   <Bar crumbs={[{ label: 'Wiedza' }]} />
 
-  <main class="wz-wrap">
+  <main class="wz-wrap" id="main">
     <section class="wz-hero">
       <span class="wz-eyebrow"><span class="dot"></span>// Wiedza · artykuły badawcze</span>
       <h1>Teksty, które <span class="grad">sprawdzają fakty.</span></h1>
@@ -81,7 +81,7 @@ const ld = {
         });
         if(push) history.replaceState(null,'', f==='all' ? location.pathname : '#'+f);
       }
-      chips.forEach(function(c){ c.addEventListener('click', function(){ apply(c.dataset.f, true); window.scrollTo({top: document.querySelector('.wz-filters').offsetTop - 70, behavior:'smooth'}); }); });
+      chips.forEach(function(c){ c.addEventListener('click', function(){ apply(c.dataset.f, true); window.scrollTo({top: document.querySelector('.wz-filters').offsetTop - 70, behavior:(window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth')}); }); });
       var h=location.hash.slice(1); if(h && document.querySelector('[data-group="'+h+'"]')) apply(h,false);
     })();
   </script>

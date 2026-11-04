@@ -19,7 +19,7 @@ const lede = Astro.props.lede ?? 'Wszystko, co pojawia się w kursie, w jednym m
 ---
 <Base title={`${sl.tytul} — ${COURSE.name} · Unicorner`} description={`${sl.tytul} z kursu „${COURSE.name}”: nazwa, sposób czytania i znaczenie każdej pozycji.`}>
   <Bar crumbs={[{ label: COURSE.name, href: courseUrl(COURSE.slug) }, { label: sl.tytul }]} back={{ label: '← Wszystkie moduły', href: courseUrl(COURSE.slug) }} />
-  <div class="k-shell">
+  <main id="main" class="k-shell">
     <header class="k-hero">
       <span class="wz-eyebrow"><span class="dot"></span>{COURSE.name} · ściąga</span>
       <h1>{sl.tytul} <span class="grad">— jak to przeczytać i co to znaczy</span></h1>
@@ -45,6 +45,6 @@ const lede = Astro.props.lede ?? 'Wszystko, co pojawia się w kursie, w jednym m
         </div>
       </section>
     ))}
-  </div>
+  </main>
   <footer class="wz-foot"><div class="wz-wrap"><span>unicorner · {COURSE.name.toLowerCase()}</span><nav aria-label="Stopka"><a href="/index.html">Strona główna</a><a href={courseUrl(COURSE.slug)}>Wszystkie moduły</a><a href="/kontakt.html">Kontakt</a></nav></div></footer>
 </Base>

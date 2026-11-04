@@ -36,7 +36,7 @@ const url = `https://unicorner.pl${courseUrl(COURSE.slug)}`;
 
   <Bar crumbs={[{ label: COURSE.name }]} />
 
-  <div class="k-shell">
+  <main id="main" class="k-shell">
     <header class="k-hero">
       <span class="wz-eyebrow"><span class="dot"></span>Kurs · {live} z {MODULES.length} modułów gotowe</span>
       <h1>{COURSE.h1} <span class="grad">{COURSE.h1Grad}</span></h1>
@@ -94,7 +94,7 @@ const url = `https://unicorner.pl${courseUrl(COURSE.slug)}`;
     </section>
 
     <p class="k-bug">Kurs to nasze własne opracowanie — nie kopiujemy slajdów ani skryptów i nie jesteśmy powiązani z uczelnią ani prowadzącymi. Zapis bywa różny w różnych grupach; gdy prowadzący zapisuje coś inaczej, liczy się jego wersja. Błąd albo niejasność? <a href="/kontakt.html">Napisz</a>.</p>
-  </div>
+  </main>
 
   <footer class="wz-foot">
     <div class="wz-wrap">
