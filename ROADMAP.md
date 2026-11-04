@@ -1,7 +1,7 @@
 # UNICORNER — mapa drogowa
 
 > Kompas, nie spec. Wracaj tu, gdy poczujesz, że gubisz kierunek.
-> Stan na 2026-11-02. Notatki robocze, decyzje i raporty: prywatne repo `scratchbook` (patrz `CLAUDE.md`).
+> Stan na 2026-11-03. Notatki robocze, decyzje i raporty: prywatne repo `scratchbook` (patrz `CLAUDE.md`).
 
 ## ⭐ Gwiazda polarna
 **UNICORNER ma sprawić, że student szybciej i mniej boleśnie zda egzamin.**
@@ -31,16 +31,18 @@ Priorytet: **1 → 2** na pierwszym planie, **3** lekko w tle, **4 z twardym bud
 - **Test sieciowy w CI** (`narzedzia/siec-check`): każda strona z `dist/` w Chromium, błąd przy połączeniu z adresem spoza `allowlist.json` (PR #32).
 - **Lżejszy model 3D** szkieletu na stronie głównej (glTF-Transform: simplify + meshopt, −19,7% transferu; PR #35, opis w `narzedzia/model-3d/`).
 - **Moduł Całka nieoznaczona** poprawiony po przeglądzie zrozumiałości (skill `przeglad-ucznia`; PR #36).
+- **Powiadomienia e-mail o nowych materiałach (U8)**: formularz na stronach kursów → Worker v12 `POST /newsletter` → EmailOctopus (Free, API v2) jako `pending`, double opt-in, mail potwierdzający i strona po polsku, tagi `zgoda-v1` i `kurs-<przedmiot>`. Test end-to-end własnym adresem OK (2026-11-03; PR #38, #39).
+- **Odświeżony snapshot testu sieciowego** (PR #40) i **porządki** (PR #41): usunięte 7 nieużywanych zależności, `public/vendor` (Draco) i Draco w `HeroSkull.jsx`; animacja rogu nie jest częścią tej strony (żyje w osobnym projekcie `live-experienceunicorn`).
 
 ---
 
 ## 🔧 W toku
-- **Powiadomienia e-mail o nowych materiałach (newsletter, U8)** — **PR #38, gałąź `u8-newsletter`, niescalony.**
-  - Decyzje Maćka (2026-11-02): dostawca **EmailOctopus** (darmowo 2 500 subskrybentów / 10 000 maili mies., dane w UE); **jedna zgoda** na start (nowe materiały, bez ofert płatnych funkcji — oferta przepustek = osobna zgoda później); **bez deklaracji 16+**.
-  - Jak działa: formularz `src/components/kurs/Powiadom.astro` na stronach kursów → Worker v12 `POST /newsletter` → API EmailOctopus jako `pending` (double opt-in). Na stronie żadnego skryptu dostawcy (CSP, test sieciowy).
-  - Następny krok (Maciek): konto i lista w EmailOctopus, klucz API, sekrety `EO_API_KEY` i `EO_LIST_ID` w Workerze, wdrożenie `worker.js` z gałęzi, merge, test własnym adresem. Instrukcja: `WDROZENIE.md` na gałęzi `u8-newsletter` (`git show origin/u8-newsletter:WDROZENIE.md`).
-  - Niepotwierdzone: czy API EmailOctopus jest na planie Free. Analiza prawna (art. 398 i 400 PKE, RODO) i porównanie dostawców: `scratchbook/narzedzia/radar/r25-u8-newsletter-2026-11-02.md`.
-- Dalej w kolejce potrzeb (U1–U10 w `scratchbook`): U4 (styl tekstów, potrzebne przykłady od Maćka), U7 (skill do analizy wyglądu i funkcji strony), U1 (czerpanie pomysłów z innych stron).
+- **U4 (ton tekstów)** — plan zatwierdzony 2026-11-03, niski priorytet. Zasada: luz w opakowaniu (strona główna, huby, wstępy modułów, komunikaty, newsletter, stopka), precyzja w treści merytorycznej (definicje, kroki, zadania, odpowiedzi). Bez przekleństw i przeciąganych liter, maks. jeden luźny element na ekran, zwroty typu „po ludzku”, „bez dziur”, „final boss” zostają. Kroki: przewodnik tonu → mapa miejsc → pilot na jednej stronie (PR do przeglądu) → rozszerzenie. Nie obiecywać „na telefonie wszystko lata” przed pomiarem.
+- **U7 (audyt strony)** — następny: skill „audyt strony” (wygląd, funkcje, wydajność, dostępność, plan z argumentami). Do pierwszego przebiegu: pomiar modułów matematyki na emulowanym telefonie (HTML 1,2–8,6 MB surowo, gzip ok. 280–380 KB; nieznany koszt parsowania) i sprawdzenie, czy KaTeX nie renderuje wzorów podwójnie (HTML + MathML).
+- **U1 (inspiracje z innych stron)** — po U7; potrzebne 3–5 stron, które Maciek lubi.
+- Do potwierdzenia przez Maćka: czy wysłane maile do wykładowców (zgoda na materiały, W-06); sprzątanie niepotwierdzonych zapisów w EmailOctopus (obiecuje to polityka prywatności); stopka z wypisem przy pierwszej kampanii.
+- Terminy: 15.11 przegląd bezpieczeństwa (U6, zadanie cykliczne, pierwszy przebieg niezweryfikowany) i przypomnienie o `unicorner-old`; 19.11 R-26.
+- Rejestr, dziennik i decyzje: `scratchbook/narzedzia/radar/` (`DO-WDROZENIA.md`, `ROADMAP.md`, `mapa-potrzeb.md`).
 
 ---
 
