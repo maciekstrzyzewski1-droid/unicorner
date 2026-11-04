@@ -322,6 +322,9 @@ export default function FaultyTerminal({
 
     const mesh = new Mesh(gl, { geometry, program });
 
+    // po zmianie rozmiaru bufor canvasa jest czyszczony; w trybie statycznym trzeba dorysowac klatke
+    let afterResize = null;
+
     function resize() {
       if (!ctn || !renderer) return;
       renderer.setSize(ctn.offsetWidth, ctn.offsetHeight);
@@ -330,32 +333,52 @@ export default function FaultyTerminal({
         gl.canvas.height,
         gl.canvas.width / gl.canvas.height
       );
+      if (afterResize) afterResize();
     }
 
     const resizeObserver = new ResizeObserver(() => resize());
     resizeObserver.observe(ctn);
     resize();
 
+    // Zegar animacji liczony z przyrostow klatek (a nie z surowego timestampu rAF), zeby po pauzie
+    // (poza ekranem / ukryta karta) animacja wznawiala sie bez skoku. Bez pauz = identyczny z t.
+    let clock = 0;
+    let lastT = null;
+    let inView = true;
+    let loadDone = !pageLoadAnimation;
+    const mq = typeof window.matchMedia === 'function' ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+    let reduced = !!(mq && mq.matches);
+    let mouseOn = false;
+
     const update = t => {
       rafRef.current = requestAnimationFrame(update);
 
-      if (pageLoadAnimation && loadAnimationStartRef.current === 0) {
-        loadAnimationStartRef.current = t;
+      if (lastT === null) {
+        // pierwsza klatka po starcie/wznowieniu: zegar nie przeskakuje
+        if (clock === 0) clock = t;
+      } else {
+        clock += t - lastT;
+      }
+      lastT = t;
+
+      if (pageLoadAnimation && !loadDone && loadAnimationStartRef.current === 0) {
+        loadAnimationStartRef.current = clock;
       }
 
       if (!pause) {
-        const elapsed = (t * 0.001 + timeOffsetRef.current) * timeScale;
+        const elapsed = (clock * 0.001 + timeOffsetRef.current) * timeScale;
         program.uniforms.iTime.value = elapsed;
         frozenTimeRef.current = elapsed;
       } else {
         program.uniforms.iTime.value = frozenTimeRef.current;
       }
 
-      if (pageLoadAnimation && loadAnimationStartRef.current > 0) {
+      if (pageLoadAnimation && !loadDone && loadAnimationStartRef.current > 0) {
         const animationDuration = 2000;
-        const animationElapsed = t - loadAnimationStartRef.current;
+        const animationElapsed = clock - loadAnimationStartRef.current;
         const progress = Math.min(animationElapsed / animationDuration, 1);
         program.uniforms.uPageLoadProgress.value = progress;
+        if (progress >= 1) loadDone = true;
       }
 
       if (mouseReact) {
@@ -372,16 +395,84 @@ export default function FaultyTerminal({
 
       renderer.render({ scene: mesh });
     };
-    rafRef.current = requestAnimationFrame(update);
-    ctn.appendChild(gl.canvas);
 
-    // kontener hero ma pointer-events:none -> sledzimy mysz globalnie (jak w Dither)
-    if (mouseReact) window.addEventListener('mousemove', handleMouseMove);
+    // prefers-reduced-motion: jedna statyczna klatka, bez petli rAF i bez animacji wejscia
+    const renderStatic = () => {
+      loadDone = true;
+      program.uniforms.uPageLoadProgress.value = 1;
+      program.uniforms.iTime.value = pause
+        ? frozenTimeRef.current
+        : (performance.now() * 0.001 + timeOffsetRef.current) * timeScale;
+      renderer.render({ scene: mesh });
+    };
+
+    // petla dziala tylko, gdy: kontener jest w viewporcie, karta jest widoczna i nie ma reduced-motion
+    const sync = () => {
+      const shouldRun = inView && !document.hidden && !reduced;
+      if (shouldRun && !rafRef.current) {
+        lastT = null;
+        rafRef.current = requestAnimationFrame(update);
+      } else if (!shouldRun && rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = 0;
+      }
+    };
+
+    // kontener hero ma pointer-events:none -> sledzimy mysz globalnie (jak w Dither); w reduced-motion nie
+    const syncMouse = () => {
+      const want = mouseReact && !reduced;
+      if (want && !mouseOn) window.addEventListener('mousemove', handleMouseMove);
+      else if (!want && mouseOn) window.removeEventListener('mousemove', handleMouseMove);
+      mouseOn = want;
+    };
+
+    const applyMode = () => {
+      syncMouse();
+      sync();
+      if (reduced) renderStatic();
+    };
+    afterResize = () => {
+      if (reduced) renderStatic();
+    };
+
+    ctn.appendChild(gl.canvas);
+    applyMode();
+
+    const io =
+      typeof IntersectionObserver !== 'undefined'
+        ? new IntersectionObserver(
+            entries => {
+              inView = entries[entries.length - 1].isIntersecting;
+              sync();
+            },
+            { threshold: 0 }
+          )
+        : null;
+    if (io) io.observe(ctn);
+
+    const onVisibility = () => sync();
+    document.addEventListener('visibilitychange', onVisibility);
+
+    const onMotionChange = e => {
+      reduced = e.matches;
+      applyMode();
+    };
+    if (mq) {
+      if (mq.addEventListener) mq.addEventListener('change', onMotionChange);
+      else if (mq.addListener) mq.addListener(onMotionChange);
+    }
 
     return () => {
       cancelAnimationFrame(rafRef.current);
+      rafRef.current = 0;
       resizeObserver.disconnect();
-      if (mouseReact) window.removeEventListener('mousemove', handleMouseMove);
+      if (io) io.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+      if (mq) {
+        if (mq.removeEventListener) mq.removeEventListener('change', onMotionChange);
+        else if (mq.removeListener) mq.removeListener(onMotionChange);
+      }
+      if (mouseOn) window.removeEventListener('mousemove', handleMouseMove);
       if (gl.canvas.parentElement === ctn) ctn.removeChild(gl.canvas);
       gl.getExtension('WEBGL_lose_context')?.loseContext();
       loadAnimationStartRef.current = 0;
