@@ -46,7 +46,7 @@ const ld = {
 
   <Bar crumbs={[{ label: COURSE.name, href: COURSE.url }, { label: `${mod.nr}. ${fm.title}` }]} back={{ label: '← Wszystkie moduły', href: COURSE.url }} progress />
 
-  <div class:list={['k-shell', { 'k-szeroki': szeroki }]}>
+  <main id="main" class:list={['k-shell', { 'k-szeroki': szeroki }]}>
     <header class="k-hero">
       <span class="wz-eyebrow"><span class="dot"></span>{COURSE.name} · moduł {mod.nr} z {MODULES.length}</span>
       <h1>{fm.title} <span class="grad">— {fm.podtytul}</span></h1>
@@ -87,7 +87,7 @@ const ld = {
       </div>
       <p class="k-bug">Widzisz błąd albo coś jest niejasne? <a href="/kontakt.html">Napisz do nas</a> — poprawiamy szybko.<br />Kurs to nasze własne opracowanie, niepowiązane z UEP ani prowadzącymi. Konwencje zapisu mogą się różnić między grupami — gdy prowadzący zapisuje coś inaczej, liczy się jego wersja.</p>
     </div>
-  </div>
+  </main>
 
   <footer class="wz-foot">
     <div class="wz-wrap">

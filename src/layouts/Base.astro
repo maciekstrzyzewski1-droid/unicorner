@@ -47,6 +47,16 @@ const ogImage = new URL('/og-image.jpg', Astro.site).href;
     <slot name="head" />
   </head>
   <body>
+    <a class="skip-link" href="#main">Przejdź do treści</a>
+    <style is:inline>
+      /* „Przejdź do treści”: niewidoczny, dopóki nie dostanie fokusu z klawiatury (Tab). position:fixed, więc nie rusza układu strony;
+         kolory z palety danej strony (zmienne), z zapasowymi wartościami gdyby jakiejś brakowało. */
+      .skip-link{position:fixed;top:8px;left:8px;z-index:2147483000;padding:10px 16px;
+        background:var(--surface,#15131d);color:var(--text,#eef0ff);border:2px solid var(--cyan,#27e8ff);border-radius:4px;
+        font:600 .95rem/1.2 system-ui,-apple-system,"Segoe UI",sans-serif;text-decoration:none;
+        transform:translateY(-300%);}
+      .skip-link:focus{transform:none;color:var(--text,#eef0ff);}
+    </style>
     <slot />
     <style is:inline>
       /* klawiatura: jeden widoczny fokus na wszystkich elementach. Obwódka do środka (offset ujemny),
@@ -57,6 +67,69 @@ const ogImage = new URL('/og-image.jpg', Astro.site).href;
         transition-property:none !important;
       }
     </style>
+    <script is:inline>
+      /* Skip-link: gdy główny cel (#main) jest ukryty (np. widok quizu w MiTZ), przeskocz do elementu [data-skip-alt]. */
+      (function(){
+        var a = document.querySelector('.skip-link');
+        if (!a) return;
+        a.addEventListener('click', function(e){
+          var t = document.getElementById('main');
+          if (t && t.getClientRects().length) return;
+          var f = document.querySelector('[data-skip-alt]');
+          if (!f || !f.getClientRects().length) return;
+          e.preventDefault();
+          f.setAttribute('tabindex', '-1'); f.style.outline = 'none';
+          f.focus(); f.scrollIntoView();
+        });
+      })();
+    </script>
+    <script is:inline>
+      /* Czytniki ekranu: komunikat o poprawnej/złej odpowiedzi i wyniku w quizach/fiszkach.
+         Elementy z informacją zwrotną są często ukrywane i podmieniane przez innerHTML, więc sam aria-live na nich nie jest
+         niezawodny. Dlatego strona oznacza kontener atrybutem data-sr-watch (wartość = opcjonalny przedrostek),
+         a tu powstaje jeden stały, niewidoczny region role="status" i trafia do niego tekst informacji zwrotnej.
+         Czyta się: .quiz-feedback / .feedback / .exp.show / .q-exp.show, karty z .score-big oraz elementy [data-sr-say].
+         Nie dotyka logiki quizów ani wyglądu (region jest wycięty z układu). */
+      (function(){
+        var roots = document.querySelectorAll('[data-sr-watch]');
+        if (!roots.length || !window.MutationObserver) return;
+        var live = document.createElement('div');
+        live.setAttribute('role', 'status'); live.setAttribute('aria-live', 'polite'); live.setAttribute('aria-atomic', 'true');
+        live.style.cssText = 'position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;';
+        document.body.appendChild(live);
+        var FB = '.quiz-feedback,.feedback,.exp.show,.q-exp.show';
+        function clean(s){ return s.replace(/[✓✔✗✘✅❌⚠️\u{1F300}-\u{1FAFF}]/gu, '').replace(/\s+/g, ' ').trim(); }
+        function vis(el){ return el.getClientRects().length > 0; }
+        function read(root){
+          var prefix = root.getAttribute('data-sr-watch') || '';
+          var sc = root.querySelector('.score-big');
+          if (sc && vis(sc)) {
+            var card = sc.closest('.card,.score-card') || sc.parentNode, cl = card.cloneNode(true);
+            [].forEach.call(cl.querySelectorAll('button,svg'), function(n){ n.remove(); });
+            return 'Koniec quizu. Wynik: ' + clean(cl.textContent);
+          }
+          var says = [].filter.call(root.querySelectorAll('[data-sr-say]'), vis);
+          if (says.length) return clean((prefix ? prefix + '. ' : '') + says.map(function(n){ return clean(n.textContent); }).join('. '));
+          var list = root.matches(FB) ? [root] : root.querySelectorAll(FB), fb = null;
+          for (var i = list.length - 1; i >= 0; i--) if (vis(list[i])) { fb = list[i]; break; }
+          if (!fb) return '';
+          var ok = fb.classList.contains('quiz-feedback') ? (fb.classList.contains('ok') ? 'Dobrze. ' : 'Niepoprawnie. ') : '';
+          return clean(ok + (fb.innerText || fb.textContent));
+        }
+        [].forEach.call(roots, function(root){
+          var timer;
+          new MutationObserver(function(){
+            clearTimeout(timer);
+            timer = setTimeout(function(){
+              var t = read(root);
+              if (!t) return;
+              live.textContent = '';
+              setTimeout(function(){ live.textContent = t; }, 50);
+            }, 120);
+          }).observe(root, { childList: true, subtree: true, characterData: true, attributes: true });
+        });
+      })();
+    </script>
     <script is:inline>
       /* Dostępność z klawiatury: elementy z onclick, które nie są przyciskami ani linkami
          (np. <span class="chip">, <div class="acc-head">), dostają rolę przycisku, Tab i obsługę Enter/Spacji.

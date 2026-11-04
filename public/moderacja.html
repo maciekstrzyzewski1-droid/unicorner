@@ -39,7 +39,7 @@
 </style>
 </head>
 <body>
-<div class="wrap">
+<main class="wrap" id="main">
   <h1>moderacja opinii</h1>
   <p class="sub">Strona robocza — nie jest nigdzie podlinkowana. Zatwierdzone opinie od razu pojawiają się na stronie głównej.</p>
   <div class="row">
@@ -55,7 +55,7 @@
   <div class="row"><input type="text" id="blkReason" maxlength="300" placeholder="powód, np. materiały wykładowcy bez zgody (zgłoszenie z 27.10)" autocomplete="off"></div>
   <div class="row"><button class="no" id="blkGo" type="button">Wyłącz link</button></div>
   <div class="msg" id="blkMsg"></div>
-</div>
+</main>
 <script>
 const WORKER_URL = "https://red-queen-3002.unicorner.workers.dev";
 const $ = id => document.getElementById(id);

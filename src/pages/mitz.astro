@@ -27,6 +27,7 @@ const description = "Metody i techniki zarządzania (MiTZ) do egzaminu: VUCA, na
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
 body{margin:0;font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
   color:var(--text);line-height:1.6;font-size:16px;letter-spacing:.1px;min-height:100vh;overflow-x:hidden;position:relative;
   background:
@@ -321,7 +322,7 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
   <a href="#" onclick="showTab('quiz');return false;" class="nav-quiz"><span class="tn">→</span><span class="tt">Przejdź do quizu</span></a>
 </nav>
 
-<main>
+<main id="main">
 <p class="lead-note">Kompletne kompendium opracowane z 5 wykładów. Pomarańczowe boxy <b style="color:var(--must)">MUST KNOW</b> to rzeczy, które najczęściej padają na teście; fioletowe boxy to dodatkowe wyjaśnienia i skojarzenia ułatwiające zapamiętanie. Źródło: UEP, Katedra Zarządzania Jakością · dr hab. inż. M. Kaźmierczak, prof. UEP.</p>
 
 <details class="mobnav">
@@ -594,7 +595,7 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
 </div>
 
 <!-- ===================== QUIZ ===================== -->
-<div id="quizView" class="hidden">
+<div id="quizView" class="hidden" data-skip-alt>
   <div id="home">
     <div class="qhero">
       <h2>🧠 Quiz egzaminacyjny — MiTZ</h2>
@@ -611,7 +612,7 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
       <span class="qtag" id="qtag"></span>
       <div class="qtext" id="qtext"></div>
       <div id="opts"></div>
-      <div class="exp" id="exp"></div>
+      <div class="exp" id="exp" data-sr-watch></div>
       <div class="actions">
         <button class="btn ghost" onclick="quit()">← Zakończ</button>
         <button class="btn hidden" id="nextBtn" onclick="next()">Dalej →</button>
@@ -619,12 +620,12 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
     </div>
   </div>
 
-  <div id="result" class="hidden">
+  <div id="result" class="hidden" data-sr-watch>
     <div class="result">
-      <div class="scorelbl">Twój wynik</div>
-      <div class="score" id="finalScore"></div>
-      <div class="ring" id="finalPct"></div>
-      <div id="verdict" class="ring"></div>
+      <div class="scorelbl" data-sr-say>Twój wynik</div>
+      <div class="score" id="finalScore" data-sr-say></div>
+      <div class="ring" id="finalPct" data-sr-say></div>
+      <div id="verdict" class="ring" data-sr-say></div>
       <div class="review" id="review"></div>
       <div class="actions" style="justify-content:center;margin-top:22px">
         <button class="btn ghost" onclick="goHome()">🏠 Wybór działu</button>

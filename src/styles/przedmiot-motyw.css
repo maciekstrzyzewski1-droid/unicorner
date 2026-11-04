@@ -22,6 +22,7 @@
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 html{scroll-behavior:smooth;}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
 body{font-family:'Inter',system-ui,sans-serif;color:var(--text);min-height:100vh;padding:0 0 3rem;overflow-x:hidden;position:relative;line-height:1.6;
   background:
     radial-gradient(900px 520px at 85% -8%, #1a1150 0%, transparent 58%),

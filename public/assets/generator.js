@@ -6,6 +6,8 @@ const API = window.UC_API || "https://red-queen-3002.unicorner.workers.dev";
 const GOOGLE_CLIENT_ID = window.UC_GCID || "243769752280-r6h2cj3pn9n47p020seuk58n9ijj9si7.apps.googleusercontent.com";
 const MAX_CHARS = 40000;   // limit długości tekstu wysyłanego do AI (kontrola kosztu); taki sam w Workerze
 const MIN_CHARS = 300;
+// płynne przewijanie tylko gdy użytkownik nie prosi system o ograniczenie ruchu
+const SCROLL_BEHAVIOR = () => (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth");
 const MAX_PDF_IMAGES = 12; // maks. stron PDF wysłanych jako obraz (skany, zdjęcia kartek, slajdy-obrazki); taki sam w Workerze
 const PDF_IMG_SIDE = 1400; // dłuższy bok obrazu strony w pikselach
 const PDF_IMG_BYTES = 220000; // docelowy rozmiar JPEG jednej strony
@@ -598,7 +600,7 @@ function render(data, scroll, saved){
   renderStudyBar();
   $("editUndo").hidden = !prevDeck;
   $("editNote").textContent = lastSourceText ? "AI widzi też Twój materiał źródłowy z tego generowania." : "AI pracuje na treści talii (plików źródłowych nie przechowujemy).";
-  if(scroll) $("result").scrollIntoView({behavior:"smooth",block:"start"});
+  if(scroll) $("result").scrollIntoView({behavior:SCROLL_BEHAVIOR(),block:"start"});
   saveLocal();
 }
 
@@ -790,7 +792,7 @@ function startStudy(){
   $("studyBar").hidden=true; $("fcGrid").hidden=true; $("fcHint").hidden=true;
   $("study").hidden=false; $("stDone").hidden=true; $("stCard").hidden=false; $("stActs").hidden=false;
   showStudyCard();
-  $("study").scrollIntoView({behavior:"smooth",block:"center"});
+  $("study").scrollIntoView({behavior:SCROLL_BEHAVIOR(),block:"center"});
 }
 function showStudyCard(){
   if(study.pos>=study.queue.length) return finishStudy();
@@ -830,7 +832,7 @@ if($("studyGo")){
   $("stYes").addEventListener("click", ()=>gradeStudy(true));
   $("stExit").addEventListener("click", exitStudy);
   $("stBack").addEventListener("click", exitStudy);
-  $("stQuiz").addEventListener("click", ()=>{ exitStudy(); showPane("qz"); $("result").scrollIntoView({behavior:"smooth",block:"start"}); });
+  $("stQuiz").addEventListener("click", ()=>{ exitStudy(); showPane("qz"); $("result").scrollIntoView({behavior:SCROLL_BEHAVIOR(),block:"start"}); });
   document.addEventListener("keydown", e=>{
     if(!study || !lastResult || $("study").hidden || !$("stDone").hidden || $("result").hidden || !$("pane-fc").classList.contains("on") || /INPUT|TEXTAREA/.test(document.activeElement.tagName)) return;
     if(!$("stShow").hidden && (e.key===" "||e.key==="Enter")){ e.preventDefault(); revealStudy(); }
@@ -863,7 +865,7 @@ initGoogle(0);
 if(token){
   api("/me").then(async r=>{ if(r.ok){ setSession(token, r.data.user, r.data.usage); await loadDecks(); if(pendingImport) runImport(); else reopenSaved(); } else if(pendingImport) importHint(); });
 } else if(pendingImport) importHint();
-function importHint(){ setStatus("Zaloguj się w sekcji 03 Konto, a udostępniona talia od razu zapisze się na Twoim koncie.","info"); $("acctOut").scrollIntoView({behavior:"smooth",block:"center"}); }
+function importHint(){ setStatus("Zaloguj się w sekcji 03 Konto, a udostępniona talia od razu zapisze się na Twoim koncie.","info"); $("acctOut").scrollIntoView({behavior:SCROLL_BEHAVIOR(),block:"center"}); }
 try{
   const saved = JSON.parse(ls.get(STORE_KEY) || "null");
   if(saved && (saved.flashcards || saved.quiz)){

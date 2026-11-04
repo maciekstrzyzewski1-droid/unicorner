@@ -25,6 +25,7 @@ const description = "Kompendium i quiz z zarządzania jakością: ewolucja QI→
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto;}}
   body{
     font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
     background:
@@ -265,7 +266,7 @@ const description = "Kompendium i quiz z zarządzania jakością: ewolucja QI→
   </div>
 </header>
 
-<main class="wrap">
+<main class="wrap" id="main">
 
   <section class="hero">
     <span class="brk tr" aria-hidden="true"></span>
@@ -300,7 +301,7 @@ const description = "Kompendium i quiz z zarządzania jakością: ewolucja QI→
       <h3>Jak to działa</h3>
       <p>Wybierz dział albo cały materiał. <b>Kolejność odpowiedzi jest losowana przy każdym podejściu</b>, a dystraktory są pisane tak, by były równie wiarygodne co poprawna — nie zgadniesz „po strukturze”, tylko wiedzą. Po każdym pytaniu zobaczysz wyjaśnienie.</p>
     </div>
-    <div id="quiz-container"></div>
+    <div id="quiz-container" data-sr-watch></div>
   </div>
 
 </main>
@@ -684,7 +685,7 @@ document.querySelectorAll('.tab').forEach(t=>{
     const id=t.dataset.tab;
     document.getElementById(id).classList.add('active');
     if(id==='quiz'&&activeSet===null) renderSetPicker();
-    window.scrollTo({top:0,behavior:'smooth'});
+    window.scrollTo({top:0,behavior:(window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth')});
   });
 });
 
@@ -757,7 +758,7 @@ function renderQuiz(){
         <button class="btn" onclick="renderSetPicker()">← Zmień dział</button>
       </div>
     </div>`;
-    window.scrollTo({top:0,behavior:'smooth'});
+    window.scrollTo({top:0,behavior:(window.matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth')});
     return;
   }
   const q=questions[current], sh=shuffled[current];
