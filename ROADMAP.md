@@ -25,7 +25,7 @@ Priorytet: **1 → 2** na pierwszym planie, **3** lekko w tle, **4 z twardym bud
 - **Przedmioty live:** makroekonomia, marketing, MiTZ, zarządzanie jakością, ETiR, ORT, geografia atrakcji, hub Statystyka (8 stron).
 - **Kurs Rachunkowość:** 2 z 10 modułów (2. Bilans, 3. Operacje i konta bilansowe). Rachunki z zajęć i ćwiczeń sprawdzone skryptem, tekst po niezależnym przeglądzie.
 - **Kurs Matematyka:** 11 z 13 modułów (logika, zbiory, relacje, macierze, układy równań, matematyka finansowa, pochodne, badanie zmienności funkcji, funkcje wielu zmiennych, ekstrema warunkowe, całka nieoznaczona).
-- **Sekcja WIEDZA:** `/wiedza` z jednym szablonem i metadanymi w `wiedza.js`, 28 artykułów w 4 kategoriach.
+- **Sekcja WIEDZA:** `/wiedza` z jednym szablonem i metadanymi w `wiedza.js`, 31 artykułów w 4 kategoriach.
 - **Generator AI + konta:** logowanie Google, zapisane talie, udostępnianie linkiem, powtórki fiszek, kredyty miesięczne (Worker v9).
 - Opinie z moderacją, polityka prywatności i regulamin.
 - **Test sieciowy w CI** (`narzedzia/siec-check`): każda strona z `dist/` w Chromium, błąd przy połączeniu z adresem spoza `allowlist.json` (PR #32).

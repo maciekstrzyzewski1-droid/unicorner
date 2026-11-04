@@ -9,7 +9,7 @@ Strony z materiałami nie wymagają logowania; logowanie (Google) potrzebne jest
 - **Frontend:** Astro 7 + React 18 (wyspy), Tailwind 4, MDX + KaTeX. Build do statycznych plików.
 - **Hosting:** GitHub Pages, wdrażane przez GitHub Actions (`.github/workflows/deploy.yml`) z katalogu `dist/`.
 - **Backend:** Cloudflare Worker (`worker.js`) + KV + baza D1. Generator AI, konta (Google), talie, kredyty, opinie, moderacja.
-- **Efekty 3D / animacje:** three + React Three Fiber, ogl, GSAP, framer-motion (komponenty w `src/components/*.jsx`).
+- **Efekty 3D / animacje:** three + React Three Fiber, ogl (komponenty w `src/components/*.jsx`).
 
 > Stan na 2026-10-19. Wcześniejsza wersja projektu (czysty HTML, każda strona jako samodzielny plik w roocie)
 > została usunięta z repo; jest w historii gita (przed commitem „usunięcie starej wersji z roota”).
@@ -21,7 +21,7 @@ Strony z materiałami nie wymagają logowania; logowanie (Google) potrzebne jest
 ```bash
 npm ci
 npm run dev       # podgląd na żywo
-npm run build     # build do dist/ (~35 s, 62 strony)
+npm run build     # build do dist/ (~35 s, 72 strony HTML w `dist/`: 70 z Astro + 2 statyczne z `public/`)
 npm run preview   # podgląd zbudowanej strony
 ```
 
@@ -45,7 +45,7 @@ przechodzący `npm run build`, więc przed pushem zawsze go uruchom. Na pull req
 | `src/lib/` | Logika w czystym JS (tabele prawdy, macierze, relacje, układy równań, matematyka finansowa, pochodne, wykresy, KaTeX) i wtyczki rehype (`rehype-interpunkcja`, `rehype-tabele`). |
 | `src/data/kursy/` | Opisy kursów, lista modułów (`status: 'live'` / `'soon'`), słowniczek. Rejestr w `index.js`. |
 | `src/data/wiedza.js` | Metadane artykułów: kategoria, seria, kolejność, tytuł SEO, opis. |
-| `src/teksty/*.html` | Treść artykułów (gotowy HTML, 28 plików). |
+| `src/teksty/*.html` | Treść artykułów (gotowy HTML, 31 plików). |
 | `src/styles/` | `tailwind.css`, `global.css`, `kurs.css`, `wiedza.css`, `generator.css`. |
 | `public/` | Pliki kopiowane 1:1 do `dist/`: `CNAME`, `robots.txt`, `assets/` (szkielet 3D, wideo, skrypty generatora i talii), `recenzje.html`, `moderacja.html`, `reviews.json`. |
 | `worker.js` | Źródło Cloudflare Workera (nie jest częścią builda Astro). Opis endpointów na górze pliku. |
@@ -58,7 +58,7 @@ przechodzący `npm run build`, więc przed pushem zawsze go uruchom. Na pull req
 - **Statystyka** (hub): `statystyka`, `dynamika`, `trend`, `sezonowosc`, `korelacja`, `korelacja-wieloraka`, `regresja`, `Statystyka_Navoica_Egzamin`.
 - **Matematyka** (kurs krok po kroku): `matematyka.html` + 11 gotowych modułów z 13 zaplanowanych (1–5, 7–12; brakuje 6 i 13) + słowniczek symboli.
 - **Rachunkowość** (kurs krok po kroku): `rachunkowosc.html` + 2 gotowe moduły z 10 zaplanowanych (2. Bilans, 3. Operacje i konta bilansowe) + słowniczek pojęć. Konta teowe: `src/components/kurs/konta/`, bilans: `src/components/kurs/bilans/`, rachunki: `src/lib/konta.js`, `src/lib/bilans.js`, sprawdzanie: `narzedzia/mat-check/rachunkowosc/`.
-- **Wiedza**: `wiedza.html` + 28 artykułów w czterech kategoriach (krypto, polityka, zdrowie i umysł, świat i technika).
+- **Wiedza**: `wiedza.html` + 31 artykułów w czterech kategoriach (krypto, polityka, zdrowie i umysł, świat i technika).
 - **Generator AI**: `generator.html` (wymaga logowania Google), `talia.html` (podgląd udostępnionej talii, `noindex`).
 - **Pozostałe**: `kontakt`, `prywatnosc`, `regulamin`, `recenzje.html` (formularz opinii), `moderacja.html` (panel, `noindex`, nielinkowany, wymaga `ADMIN_CODE`).
 - **Sitemap:** `src/pages/sitemap.xml.js`. Zbiera `src/pages/*.astro`, strony kursów (`src/pages/<kurs>/*.mdx|.astro`) i artykuły Wiedzy.
@@ -106,7 +106,7 @@ Instrukcja wdrożenia: `WDROZENIE.md`. W repo nie ma konfiguracji `wrangler`, wi
   Wyjątek historyczny: `Statystyka_Navoica_Egzamin` (istniejący adres, zostaje, żeby nie zepsuć linków).
 - **Cache 404:** jeśli linkujesz do pliku, którego jeszcze nie ma, CDN potrafi zapamiętać 404 dla tego adresu.
   Obejście: dopisz `?v=1` do linku.
-- **Fonty:** ładowane z Google Fonts w `Base.astro`.
+- **Fonty:** hostowane lokalnie w `public/fonts` (`fonty.css` ładowany w `Base.astro`, `fonty-artykul.css` na stronie artykułu), nie z Google Fonts: IP odwiedzających nie trafia do Google. Nowa rodzina = pliki woff2 + licencja w `public/fonts` i blok `@font-face`.
 - **Analityka:** Cloudflare Web Analytics, bez ciasteczek i bez banera zgody (`Base.astro`). Nie dodawaj tagów Google Analytics: `prywatnosc.astro` i `regulamin.astro` opisują serwis jako bez śledzenia.
 
 ---
