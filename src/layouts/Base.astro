@@ -48,7 +48,6 @@ const ogImage = new URL('/og-image.jpg', Astro.site).href;
   </head>
   <body>
     <a class="skip-link" href="#main">Przejdź do treści</a>
-    <slot />
     <style is:inline>
       /* „Przejdź do treści”: niewidoczny, dopóki nie dostanie fokusu z klawiatury (Tab). position:fixed, więc nie rusza układu strony;
          kolory z palety danej strony (zmienne), z zapasowymi wartościami gdyby jakiejś brakowało. */
@@ -58,6 +57,7 @@ const ogImage = new URL('/og-image.jpg', Astro.site).href;
         transform:translateY(-300%);}
       .skip-link:focus{transform:none;color:var(--text,#eef0ff);}
     </style>
+    <slot />
     <style is:inline>
       /* klawiatura: jeden widoczny fokus na wszystkich elementach. Obwódka do środka (offset ujemny),
          bo przyciski z wyciętymi rogami (clip-path) przycinają obwódkę rysowaną na zewnątrz;
