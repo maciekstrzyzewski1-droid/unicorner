@@ -1,2 +1,4 @@
 # Auto detect text files and perform LF normalization
-* text=auto
+# eol=lf: pliki tekstowe są też w katalogu roboczym z końcówkami LF (także na Windowsie).
+# Bez tego Windows (core.autocrlf) zamienia je na CRLF i lokalny build liczy inne sumy kontrolne CSP niż produkcja.
+* text=auto eol=lf
