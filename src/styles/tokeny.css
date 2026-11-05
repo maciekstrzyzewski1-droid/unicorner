@@ -1,0 +1,15 @@
+/* Tokeny designu: zmienne wspólne dla wszystkich stron z paletą cyberpunkową.
+   Ładowane raz, w src/layouts/Base.astro, więc trafiają na każdą stronę.
+   Tu są tylko zmienne o identycznej wartości we wszystkich plikach. Zmienne, których wartość
+   różni się między stronami (--ink2, --surface, --surface2, --line, --line2, --text, --mono,
+   --ok-bg, --shadow, --bad*), zostają w lokalnych blokach :root (global.css, wiedza.css,
+   przedmiot-motyw.css, stat-*-motyw.css i strony .astro).
+   Artykuły (src/pages/wiedza/[slug].astro) nadpisują te zmienne na `html body` własną paletą. */
+:root{
+  --ink:#07060f;
+  --muted:#9b93c4; --muted2:#6f679a;
+  --accent:#a78bfa;
+  --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
+  --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+  --disp:'Chakra Petch','Space Grotesk',sans-serif;
+}

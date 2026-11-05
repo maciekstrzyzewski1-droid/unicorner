@@ -1,11 +1,10 @@
 /* ===== Sekcja WIEDZA — rama w stylu Unicornera (pulpit + strona artykułu) ===== */
 :root{
-  --ink:#07060f; --ink2:#0d0c13; --surface:#15131d; --surface2:#1c1928;
+  /* wspólne tokeny (--ink, --muted, --muted2, --accent, --cyan, --magenta, --gold, --iris, --disp): src/styles/tokeny.css, ładowane w Base.astro */
+  --ink2:#0d0c13; --surface:#15131d; --surface2:#1c1928;
   --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
-  --text:#eef0ff; --muted:#9b93c4; --muted2:#6f679a;
-  --accent:#a78bfa; --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a; --ok:#5ad1a0;
-  --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
-  --disp:'Chakra Petch','Space Grotesk',sans-serif;
+  --text:#eef0ff;
+  --ok:#5ad1a0;
   --mono:'Chakra Petch',ui-monospace,monospace;
   --ease-out:cubic-bezier(.16,1,.3,1);
 }
