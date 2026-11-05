@@ -9,12 +9,10 @@ const mail = "unicornernotatki@gmail.com";
 <Base title={title} description={description}>
 <style is:inline>
   :root{
-    --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --line:#241d4a; --line2:#3a2e74;
-    --text:#ece9f7; --muted:#9b93c4; --muted2:#6f679a;
-    --accent:#a78bfa; --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
-    --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+    /* wspólne tokeny (--ink, --muted, --muted2, --accent, --cyan, --magenta, --gold, --iris, --disp): src/styles/tokeny.css, ładowane w Base.astro */
+    --ink2:#0b0918; --surface:#100d22; --line:#241d4a; --line2:#3a2e74;
+    --text:#ece9f7;
     --mono:'Chakra Petch','Space Grotesk',ui-monospace,monospace;
-    --disp:'Chakra Petch','Space Grotesk',sans-serif;
   }
   *{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
