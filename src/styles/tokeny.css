@@ -7,7 +7,9 @@
    Artykuły (src/pages/wiedza/[slug].astro) nadpisują te zmienne na `html body` własną paletą. */
 :root{
   --ink:#07060f;
-  --muted:#9b93c4; --muted2:#6f679a;
+  --muted:#9b93c4;
+  --muted2:#8b85ae;      /* tekst pomocniczy: 5,82:1 na tle --ink, 5,31:1 na --surface (WCAG AA ≥ 4,5); było #6f679a: 3,92:1 i 3,57:1 */
+  --muted2-deco:#6f679a; /* tylko linie i ramki dekoracyjne, nie tekst */
   --accent:#a78bfa;
   --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
   --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);

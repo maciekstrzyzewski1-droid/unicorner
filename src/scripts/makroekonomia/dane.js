@@ -95,7 +95,7 @@ function kcFig(o){
      +'<text class="ax-lbl" x="16" y="120" text-anchor="middle" transform="rotate(-90 16 120)">AE — planowane wydatki</text>'
      +'<text class="ax-lbl" x="185" y="236" text-anchor="middle">Y — produkcja, dochód</text>'
      +'<line class="curve c-45" x1="40" y1="210" x2="210" y2="40"/>'
-     +'<text class="curve-lbl" x="214" y="46" fill="#6f679a">45°</text>'
+     +'<text class="curve-lbl" x="214" y="46" fill="#8b85ae">45°</text>'
      +'<line class="curve ghost c-ae" x1="40" y1="150" x2="300" y2="80"/>'
      +'<text class="curve-lbl lbl-g1" x="305" y="82" fill="#27e8ff">AE₁</text>'
      +'<g class="mv mv-ae-down"><line class="curve c-ae" x1="40" y1="150" x2="300" y2="80"/>'
