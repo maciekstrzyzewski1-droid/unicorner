@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia głodu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 14px;letter-spacing:-.02em;}
+.sub{font-family:'Fraunces',Georgia,serif;font-weight:400;font-size:clamp(1.1rem,3.4vw,1.35rem);line-height:1.35;color:var(--text);margin:0 0 22px;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;color:#fff;}
+strong{font-weight:600;color:#fff;}
+em{font-style:italic;}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;font-size:1.05rem;}
+.box p{font-size:.95rem;margin:0 0 10px;} .box p:last-child{margin-bottom:0;}
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 132px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .ev.crit:before{background:var(--red);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .ev.crit .yr{color:var(--red);}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.bars{margin:30px 0;} .bars .bt{font-family:'Fraunces',serif;color:#fff;margin-bottom:14px;font-size:1.05rem;}
+.bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.red{background:var(--red);} .bars .fill.blue{background:var(--blue);} .bars .fill.green{background:var(--green);}
+.bars .val{flex:0 0 64px;text-align:right;font-variant-numeric:tabular-nums;}
+.caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .st{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:10px;}
+.twocol .side.a .st{color:var(--red);} .twocol .side.b .st{color:var(--green);}
+.twocol .side p{margin:0 0 8px;}
+figure.diag{margin:34px 0;border:1px solid var(--line);background:var(--card);padding:18px;}
+figure.diag svg{width:100%;height:auto;display:block;}
+figure.diag figcaption{font-size:.8rem;color:var(--muted);margin-top:12px;line-height:1.5;}
+blockquote{margin:30px 0;padding:4px 0 4px 20px;border-left:2px solid var(--gold);font-family:'Fraunces',serif;font-size:1.15rem;line-height:1.5;color:#fff;}
+blockquote cite{display:block;font-family:'Work Sans',sans-serif;font-style:normal;font-size:.8rem;color:var(--muted);margin-top:8px;}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+ul.sources{list-style:none;padding:0;font-size:.85rem;color:var(--muted);line-height:1.6;}
+ul.sources li{margin-bottom:10px;padding-left:14px;border-left:1px solid var(--line);}
+ul.sources a{color:var(--muted);word-break:break-word;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+.curio{border-left:2px solid var(--gold);background:var(--card);padding:16px 20px;margin:30px 0;font-size:.95rem;line-height:1.6;} .curio .ct{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:8px;} .curio p{margin:0;}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 96px;font-size:1.08rem;} .bars .lab{flex:0 0 100px;font-size:.78rem;} .bars .val{flex:0 0 54px;font-size:.78rem;} .twocol{grid-template-columns:1fr;}}
+</style>
+</head>
+<body><div class="wrap">
+
+<header class="top">
+  <div class="kicker">Artykuł badawczy</div>
+  <h1>Anatomia głodu</h1>
+  <p class="lede">Świat produkuje dziś ponad 3000 kilokalorii na osobę dziennie, czyli więcej, niż przeciętny człowiek potrzebuje. A mimo to w 2025 roku głodowało około 645 milionów ludzi. Popularne odpowiedzi — że jedzenie się marnuje, że winni są politycy, że Afryka sobie nie radzi — mają w sobie ziarno prawdy. Ten tekst sprawdza, ile go jest w każdej z nich.</p>
+  <div class="meta">Listopad 2026 · czas czytania ok. 30 minut</div>
+</header>
+
+<p>W 2023 roku światowa podaż żywności wyniosła 3016 kilokalorii na osobę dziennie. Tak wynika z bilansów FAO, agendy ONZ do spraw wyżywienia. W jej zestawieniu za lata 2010–2023 to pierwszy raz, kiedy średnia przekroczyła 3000. W 2010 roku było to 2825.</p>
+
+<p>Kilokaloria to po prostu miara energii zawartej w jedzeniu. Przeciętne zapotrzebowanie całej populacji to orientacyjnie 2100–2400 kilokalorii na dobę. To moje przybliżenie na potrzeby tego tekstu, nie liczba FAO. Ale rząd wielkości jest oczywisty: na papierze jedzenia starcza z zapasem.</p>
+
+<p>Tymczasem według raportu ONZ „The State of Food Security and Nutrition in the World 2026” w 2025 roku niedożywionych było około 645 milionów ludzi. Z innego raportu wynika, że ponad 266 milionów osób w 47 krajach doświadczało ostrej niepewności żywnościowej, czyli głodu, który zagraża życiu lub środkom do życia. W dwóch miejscach — w Sudanie i w Strefie Gazy — międzynarodowi eksperci potwierdzili w 2025 roku klęskę głodu.</p>
+
+<p>Jak to możliwe? Zwykle słyszymy kilka odpowiedzi. Że jedzenie się marnuje, więc wystarczyłoby je rozdać. Że głód to sprawka polityków, jak twierdzi historyk Yuval Noah Harari. Że w Afryce brakuje zaradności. Że winny jest kolonializm. Że Afrykanie mają po prostu za dużo dzieci.</p>
+
+<p>Każda z tych odpowiedzi jest w części prawdziwa, a w części myląca. Ten tekst bierze je po kolei i sprawdza na danych. Zaczyna jednak od rozróżnienia, bez którego reszty nie da się uczciwie ocenić. Słowo „głód” oznacza w statystyce kilka różnych rzeczy.</p>
+
+<h2><span class="num">Rozdział pierwszy</span>Cztery rzeczy, które nazywamy głodem</h2>
+
+<p>Gdy ktoś mówi „na świecie głoduje 645 milionów ludzi”, mówi o jednej mierze. Gdy ktoś inny mówi „w Sudanie jest klęska głodu”, mówi o zupełnie innej. Mylimy je, bo w języku potocznym to to samo słowo. W statystyce to cztery różne zjawiska.</p>
+
+<p><strong>Niedożywienie przewlekłe</strong> (w skrócie PoU, od angielskiego <em>prevalence of undernourishment</em>) to odsetek ludzi, których zwykłe spożycie kalorii nie pokrywa minimalnych potrzeb. Chodzi o głód, który trwa miesiącami i latami. To właśnie ten wskaźnik daje liczbę 645 milionów.</p>
+
+<p><strong>Niedobór mikroskładników</strong>, czyli „ukryty głód”, to sytuacja, w której kalorii jest dość, ale brakuje żelaza, witaminy A, jodu czy cynku. Człowiek się naje, a mimo to jego organizm dostaje za mało budulca. Ten rodzaj głodu widać u dzieci, które rosną za wolno.</p>
+
+<p><strong>Ostra niepewność żywnościowa</strong> mierzona jest skalą IPC (a w Afryce Zachodniej podobną skalą CH). Ma pięć faz. Faza 3 to „kryzys”, faza 4 to „stan nadzwyczajny”, faza 5 to „katastrofa lub klęska głodu”. To pomiar tego, czy ludziom grozi dziś utrata życia albo środków do życia.</p>
+
+<p><strong>Klęska głodu</strong> (po angielsku <em>famine</em>) to najwęższe pojęcie, ściśle zdefiniowane. Obszar może zostać tak oznaczony dopiero wtedy, gdy spełnione są jednocześnie trzy warunki: co najmniej 20% gospodarstw domowych ma skrajne braki żywności, co najmniej 30% dzieci jest ostro niedożywionych, a umiera ponad dwie osoby dziennie na każde 10 tysięcy mieszkańców. Klasyfikację weryfikuje niezależny Komitet do spraw Klęsk Głodu (Famine Review Committee), powołany w 2014 roku.</p>
+
+<p>Widać już, że „głód” z nagłówka gazety i „głód” z tabeli statystycznej to inne rzeczy. Zobaczmy, jak się mają do siebie liczby.</p>
+
+<div class="bars">
+  <div class="bt">Cztery miary głodu w 2025 roku (mln osób)</div>
+  <div class="row"><div class="lab">Niedożywienie przewlekłe (PoU)</div><div class="track"><div class="fill" style="width:100%"></div></div><div class="val">645</div></div>
+  <div class="row"><div class="lab">Ostry głód, faza 3 lub wyższa</div><div class="track"><div class="fill blue" style="width:41.2%"></div></div><div class="val">266</div></div>
+  <div class="row"><div class="lab">Faza 4 lub wyższa (ponad)</div><div class="track"><div class="fill red" style="width:6%"></div></div><div class="val">39</div></div>
+  <div class="row"><div class="lab">Faza 5 (katastrofa lub klęska)</div><div class="track"><div class="fill red" style="width:.22%"></div></div><div class="val">1,4</div></div>
+  <div class="caption">Szerokość słupka jest proporcjonalna do liczby osób. Miary nie są zagnieżdżone jedna w drugiej: PoU liczy się inaczej niż skale IPC i obejmuje inny zbiór krajów, więc nie wolno ich po prostu odejmować. Źródła: FAO i in., SOFI 2026; Global Report on Food Crises 2026.</div>
+</div>
+
+<p>Przyjrzyjmy się kolejnym rzędom tego wykresu. Pierwszy, najdłuższy, to głód przewlekły. Według SOFI 2026 dotyczył w 2025 roku 7,8% ludzkości. To mniej niż rok wcześniej (8,1%) i mniej niż w szczycie z 2022 roku (8,6%). W ciągu roku liczba niedożywionych spadła o około 14 milionów, a od 2022 roku o około 43 miliony.</p>
+
+<p>Ostatni słupek jest ledwo widoczny. To 1,4 miliona ludzi w fazie 5 w sześciu krajach. Wygląda na drobiazg, ale to właśnie tam mieszczą się głodowe zgony i klęski, o których piszą gazety. Dla porównania: w 2016 roku w fazie 5 było około 155 tysięcy osób w dwóch krajach.</p>
+
+<div class="curio">
+  <div class="ct">Ciekawostka</div>
+  <p>Według Action Against Hunger w 2025 roku po raz pierwszy więcej niedożywionych mieszkało w Afryce niż w Azji: około 309 milionów wobec około 292 milionów. Tymczasem Azja ma mniej więcej trzy razy więcej mieszkańców. Różnicę robi nie tylko wzrost w Afryce, ale też spadek w Azji Południowej, gdzie liczba niedożywionych zmalała w 2025 roku o ponad 16 milionów, głównie dzięki Indiom.</p>
+</div>
+
+<p>Trzeba dodać dwa zastrzeżenia. Po pierwsze, liczby różnych raportów nie zawsze da się porównać. Globalny raport o kryzysach żywnościowych (GRFC) odnotował spadek liczby osób w ostrym głodzie z 282 milionów w 2023 roku, ale część tego spadku wynika z tego, że przeanalizowano mniej krajów. Po drugie, różne indeksy pokazują różne kierunki. Globalny Indeks Głodu 2026 mówi o pogorszeniu względem 2018 roku (18,1 wobec 17,6) i o pierwszym od 2000 roku przerwaniu spadku. SOFI mówi o trzecim z rzędu roku poprawy. Nie ma tu sprzeczności: indeks bierze pod uwagę dzieci, ich wzrost i wagę oraz okno lat 2021–2025, a SOFI mierzy kalorie w kolejnych latach. Mierzą inne rzeczy i obie miary mogą być prawdziwe.</p>
+
+<p>Z tego wszystkiego wynika teza, na której oprę resztę tekstu. <strong>Mamy dwa różne problemy, które mają różne przyczyny.</strong> Przewlekły głód to głównie ubóstwo i niska produktywność. Klęska głodu to prawie zawsze wojna, blokada i polityka. Gdy je mylimy, dostajemy złe diagnozy i złe lekarstwa.</p>
+
+<h2><span class="num">Rozdział drugi</span>Jedzenia jest dość. Ale kalorie nie lądują same na talerzu</h2>
+
+<p>Mamy skłonność myśleć o głodzie jak o pustej spiżarni. Brakuje jedzenia, więc ludzie głodują. Intuicja jest naturalna, ale przez większość historii nowoczesnych klęsk głodu była błędna.</p>
+
+<p>Pokazał to indyjski ekonomista Amartya Sen. W książce „Poverty and Famines” z 1981 roku, za którą później dostał Nagrodę Nobla, argumentował, że klęska głodu wynika z załamania „uprawnień”. Chodzi o możliwości zdobycia jedzenia: przez własną produkcję, pracę, handel albo zasiłek. Człowiek może głodować w kraju, w którym jedzenia jest pod dostatkiem, jeśli nie ma za co go kupić. Spiżarnia może być pełna. Pytanie brzmi, kto ma klucz do drzwi.</p>
+
+<p>Analogia z kluczem dobrze oddaje mechanizm. Gdy ceny zbóż rosną, a pensje robotników rolnych nie, jedzenie fizycznie jest, ale dla biednych staje się niedostępne. Podaż się nie zmieniła. Zmienił się dostęp.</p>
+
+<h3>Bengal 1943: spór o suszę</h3>
+
+<p>Najbardziej znany przykład to Bengal w 1943 roku. Badanie opublikowane w 2019 roku w czasopiśmie <em>Geophysical Research Letters</em> przejrzało sześć wielkich klęsk głodu w Indiach między 1870 a 2016 rokiem. Pięć z nich wiązało się z głęboką suszą. Klęska z 1943 roku nie. Autorzy piszą, że wynikała z całkowitej porażki polityki, a nie z pogody.</p>
+
+<p>Nie wszyscy się zgadzają. Historyk Mark Tauger argumentował, że cyklon z 1942 roku i choroba ryżu faktycznie zmniejszyły zbiory. Dzisiejsze rozumienie jest więc raczej takie: szok po stronie podaży (cyklon, choroba, utrata importu ryżu z Birmy) zbiegł się z decyzjami politycznymi. Władze stosowały politykę „denial”, czyli niszczenia łodzi i zapasów na wypadek japońskiej inwazji. Priorytet dawano wojsku i Kalkucie. Nie ogłoszono klęski głodu, a pomoc spóźniono.</p>
+
+<p>Spór o rolę Winstona Churchilla jest osobną sprawą. Badanie z <em>GRL</em> nie analizuje jego decyzji, choć media często przypisywały mu ten wynik. Madhusree Mukerjee w książce „Churchill’s Secret War” dokumentuje odmowy przekierowania statków ze zbożem. Inni historycy kładą większy nacisk na władze prowincji i na rynek. Ja nie rozstrzygam tego sporu. Ważne jest co innego: nawet w wersji najbardziej łagodnej dla władz, polityka rozstrzygnęła o tym, czy szok stanie się klęską.</p>
+
+<div class="curio">
+  <div class="ct">Ciekawostka</div>
+  <p>Z sześciu wielkich klęsk głodu w Indiach w latach 1870–2016 pięć miało za tło głęboką suszę. Bengal 1943 jest jedynym wyjątkiem, a przy tym najbardziej znanym. Badanie wyklucza suszę, ale nie wyklucza innych szoków podażowych, takich jak cyklon czy choroba ryżu. Dlatego bezpieczniej jest powiedzieć „nie sama susza”, niż „nie było żadnego szoku”.</p>
+</div>
+
+<h3>Wzorzec, który się powtarza</h3>
+
+<p>Gdy przejrzymy inne wielkie klęski głodu, wzorzec jest podobny, choć za każdym razem inny. Liczb ofiar celowo tu nie podaję, bo są sporne i słabo ustalone.</p>
+
+<ul>
+  <li><strong>Irlandia 1845–1852.</strong> Zaraza ziemniaczana była realnym szokiem naturalnym. Skalę klęski wyznaczyły jednak polityka wolnego rynku, ograniczona pomoc i eksmisje. Historyk Cormac Ó Gráda pokazuje, że w szczycie kryzysu import zboża przewyższał eksport, więc popularne hasło „Irlandia eksportowała żywność” jest uproszczeniem.</li>
+  <li><strong>Ukraina 1932–1933.</strong> Historycy zgodnie uznają główną rolę polityki: rekwizycji, czarnych list i zakazu opuszczania Ukrainy. Spór dotyczy tego, czy była to intencjonalna zbrodnia na narodzie.</li>
+  <li><strong>Chiny 1958–1962.</strong> Głównie polityka: zawyżone raporty, eksport żywności i rekwizycje. Pogoda była drugorzędna.</li>
+  <li><strong>Etiopia 1983–1985.</strong> Susza, wojna domowa i polityka reżimu Dergu: przesiedlenia i blokowanie pomocy. Dokumentował to Alex de Waal.</li>
+  <li><strong>Korea Północna 1994–1998.</strong> Powódź, upadek pomocy z ZSRR, centralna dystrybucja i priorytet dla wojska.</li>
+</ul>
+
+<p>Wszędzie występuje kombinacja: szok naturalny lub gospodarczy plus decyzje, które sprawiają, że szok zamienia się w masowy głód. Sen dorzucił do tego drugą tezę: w demokracjach z wolną prasą nie było poważnych klęsk głodu, bo rządzący płacą za nie przy urnach. Do tej tezy wrócimy w rozdziale czwartym, bo właśnie ona tłumaczy, dlaczego to, co powiedział Harari, jest trafne tylko w połowie.</p>
+
+<h3>A kalorie? Tu „jedzenia jest dość” też wymaga ostrożności</h3>
+
+<p>Średnia światowa 3016 kilokalorii jest prawdziwa, ale to właśnie średnia. Rozkład wygląda tak.</p>
+
+<div class="bars">
+  <div class="bt">Podaż żywności na osobę dziennie, 2023 (kcal)</div>
+  <div class="row"><div class="lab">Europa</div><div class="track"><div class="fill green" style="width:100%"></div></div><div class="val">3490</div></div>
+  <div class="row"><div class="lab">Ameryki</div><div class="track"><div class="fill green" style="width:98.5%"></div></div><div class="val">3438</div></div>
+  <div class="row"><div class="lab">Świat</div><div class="track"><div class="fill" style="width:86.4%"></div></div><div class="val">3016</div></div>
+  <div class="row"><div class="lab">Azja</div><div class="track"><div class="fill blue" style="width:85.7%"></div></div><div class="val">2991</div></div>
+  <div class="row"><div class="lab">Afryka</div><div class="track"><div class="fill red" style="width:73.2%"></div></div><div class="val">2556</div></div>
+  <div class="caption">Podaż to to, co dostępne w bilansie żywnościowym kraju, a nie to, co zjadł konkretny człowiek. Słupki zaczynają się od zera. Źródło: FAO, Food Balance Sheets 2010–2023 (FAOSTAT Analytical Brief 112, 2025).</div>
+</div>
+
+<p>Afryka ma średnio o prawie 500 kilokalorii dziennie mniej niż średnia światowa. Ten rząd wielkości pasuje już do bardziej tradycyjnej wizji głodu: tam rzeczywiście produkuje się i importuje za mało. Dlatego hasło „jedzenia jest dość” prawdziwe jest w skali świata, a w skali Afryki wymaga dopisku. Do tego wrócimy w rozdziale piątym.</p>
+
+<h2><span class="num">Rozdział trzeci</span>Marnowanie żywności: dobre pytanie, mylące założenie</h2>
+
+<p>Najczęstsze pytanie brzmi mniej więcej tak: skoro co roku wyrzucamy tyle jedzenia, to dlaczego nie oddać go głodującym? Pytanie jest dobre, bo skala marnowania jest rzeczywiście ogromna. Założenie, na którym się opiera, jest jednak błędne.</p>
+
+<p>Zacznijmy od liczb. Według raportu UNEP i organizacji WRAP („Food Waste Index Report 2024”) w 2022 roku zmarnowano na świecie około 1,05 miliarda ton żywności. To 132 kilogramy na osobę, czyli około 19% jedzenia dostępnego dla konsumentów. UNEP szacuje, że to co najmniej miliard posiłków dziennie.</p>
+
+<div class="bars">
+  <div class="bt">Gdzie marnuje się żywność, 2022 (mln ton)</div>
+  <div class="row"><div class="lab">Gospodarstwa domowe</div><div class="track"><div class="fill red" style="width:100%"></div></div><div class="val">631</div></div>
+  <div class="row"><div class="lab">Gastronomia</div><div class="track"><div class="fill" style="width:46%"></div></div><div class="val">290</div></div>
+  <div class="row"><div class="lab">Handel detaliczny</div><div class="track"><div class="fill blue" style="width:20.8%"></div></div><div class="val">131</div></div>
+  <div class="caption">Domy to około 60% całości. Źródło: UNEP i WRAP, Food Waste Index Report 2024.</div>
+</div>
+
+<p>Zwróćmy uwagę na pierwszy słupek. Najwięcej marnuje się w domach, a nie w sklepach czy w restauracjach. I nie jest to wyłącznie problem bogatych. Różnica w marnowaniu per capita między krajami bogatymi a średnio i niskozarobkowymi wynosi według UNEP tylko około 7 kilogramów rocznie. Domy w biedniejszych krajach marnują prawie tyle samo, co domy w bogatych.</p>
+
+<h3>Dlaczego nadwyżki nie da się „wysłać”</h3>
+
+<p>Pierwszy powód jest oczywisty, a mimo to często pomijany: <strong>logistyka.</strong> Domowe resztki są rozproszone, nietrwałe i częściowo niejadalne. Nie da się zebrać obiadu z lodówek w Warszawie i przewieźć go do Darfuru. To nie jest kwestia dobrej woli, tylko fizyki: jedzenie psuje się szybciej, niż zdąży dotrzeć.</p>
+
+<p>Drugi powód jest ważniejszy: <strong>dostęp, nie podaż.</strong> Tam, gdzie głód jest ostry, jak w Sudanie czy w Gazie, jedzenia brakuje z powodu wojny i blokady. Tam, gdzie głód jest przewlekły, ludzie po prostu nie mają pieniędzy. Zgodnie z teorią Sena nie jest to problem spiżarni. To problem drzwi.</p>
+
+<p>Trzeci powód jest mniej oczywisty: <strong>lokalne rynki.</strong> Krytycy pomocy rzeczowej wskazują, że darmowe zboże z zewnątrz może obniżać ceny lokalnych rolników. Przestaje im się opłacać produkować, a to z czasem osłabia produkcję na miejscu. Dlatego Światowy Program Żywnościowy (WFP) coraz częściej kupuje żywność lokalnie albo wypłaca pieniądze zamiast zboża. Badań ilościowych nad tym efektem tu nie omawiam. To spór, a nie ustalony fakt.</p>
+
+<h3>Prawdziwy mechanizm: cena</h3>
+
+<p>Jest jednak jeden kanał, w którym marnowanie i głód są realnie połączone. Nie jest nim transport resztek, tylko cena. Wspólny rynek zbóż, nawozów i energii sprawia, że to, co dzieje się z popytem w bogatych krajach, wpływa na ceny dla biednych. Gdy rosną ceny energii i nawozów, rosną ceny jedzenia. Dla zamożnego domu to drobna zmiana budżetu. Dla biednego to różnica między jedzeniem a głodem. SOFI 2026 wiąże prognozy z inflacją żywności, a Globalny Indeks Głodu 2026 opisuje według swoich autorów skutki praktycznego zamknięcia Cieśniny Ormuz, przez którą przechodzi około jednej trzeciej morskiego handlu nawozami.</p>
+
+<p>Stąd wniosek z modelu OECD i FAO („Agricultural Outlook 2024–2033”): zmniejszenie strat i marnotrawstwa o połowę ograniczyłoby liczbę niedożywionych o około 153 miliony do 2030 roku, czyli o około 26%. To wynik modelu i działa on przez niższe ceny, nie przez przesyłanie resztek. Jeśli chcemy marnować mniej, warto to robić, ale z innego powodu niż „żeby nakarmić Afrykę”.</p>
+
+<h3>Straty a marnowanie: dwa różne problemy</h3>
+
+<p>Warto jeszcze odróżnić dwa pojęcia, które w dyskusjach często się zlewają. <em>Food loss</em>, czyli straty żywności, to jedzenie tracone od zbioru do sprzedaży: na polu, w magazynie, w transporcie, w przetwórstwie. <em>Food waste</em>, czyli marnowanie, to jedzenie wyrzucane w handlu, gastronomii i domach. FAO podaje, że straty od zbioru do handlu wyniosły w 2023 roku 13,3% (w 2015 roku 13,0%). Dominują w krajach biedniejszych.</p>
+
+<p>Dla głodu ważniejsze są właśnie straty pożniwne. Uderzają w dochód biednych rolników, bo zepsute plony to zmarnowana praca i pieniądze. Całość strat i marnowania odpowiada za około 8–10% globalnych emisji gazów cieplarnianych.</p>
+
+<div class="curio">
+  <div class="ct">Ciekawostka</div>
+  <p>Oszacowanie UNEP, że co najmniej miliard posiłków dziennie trafia do kosza, brzmi jak argument za tym, żeby je rozdać. W rzeczywistości pokazuje coś odwrotnego: zmarnowane jedzenie to w większości resztki z domowych talerzy i lodówek, a nie ładnie zapakowane nadwyżki czekające na transport. Nie ma „miliarda gotowych posiłków”, które wystarczy załadować na statek.</p>
+</div>
+
+<p>Podsumujmy ten rozdział jednym zdaniem. Marnowanie żywności jest realnym problemem klimatu i budżetów domowych. Jest też dobrym pytaniem z mylącym założeniem: nie leczy głodu przez przesyłanie resztek, tylko co najwyżej przez niższe ceny.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Harari miał rację. Połowicznie</h2>
+
+<p>W książce „Homo Deus” (2015) Yuval Noah Harari pisze w istocie, że na świecie nie ma już naturalnych klęsk głodu, są tylko polityczne. Jeśli ludzie umierają z głodu w Syrii, Sudanie czy Somalii, to dlatego, że jakiś polityk tego chce. Tezę powtórzył w wywiadzie dla podcastu Freakonomics w 2022 roku, w skróconej wersji: jedyna klęska głodu, która jeszcze istnieje, to klęska polityczna. Sens jest jasny.</p>
+
+<p>Czy to prawda? W dużej części tak, ale tylko dla jednego z dwóch głodów z rozdziału pierwszego.</p>
+
+<h3>Gdzie Harari ma rację</h3>
+
+<p>Harari mówi o klęskach głodu, nie o głodzie w ogóle. W tym sensie jego teza zgadza się z Senem, z Alexem de Waalem i z Cormakiem Ó Grádą, a także z danymi. Klęski potwierdzone przez system IPC w ostatnich latach wystąpiły w warunkach wojny, oblężenia lub blokady. W Sudanie klęskę głodu stwierdzono w obozie Zamzam w lipcu 2024 roku, a potem ponownie w El Fasher i Kadugli w październiku 2025 roku. W Gazie komitet FRC potwierdził ją 22 sierpnia 2025 roku w Gubernatorstwie Gazy, pierwszą na Bliskim Wschodzie. W grudniu 2025 roku IPC uznał, że warunki klęski ustąpiły, choć 77% ludności pozostawało w fazie 3 lub wyższej. Autorzy artykułu w „The Lancet” z 2026 roku wiążą ją z blokadą pomocy.</p>
+
+<p>Szersze dane idą w tę samą stronę. Według GRFC 2026 w 19 krajach, w których głównym czynnikiem ostrego głodu był konflikt, głodowało ponad 147 milionów osób. To około 55% z 266 milionów (obliczenie własne: 147 podzielone przez 266). Z kolei według Komisji Europejskiej 73% przesiedleńców wewnętrznych w tych krajach było przesiedlonych z powodu konfliktu. Dawniej było inaczej. De Waal, autor „Mass Starvation” (2018), pokazuje, że zgony głodowe w XX wieku wiązały się głównie z polityką i wojną, a po latach 80. dramatycznie spadły. Ostrzega przy tym przed odwróceniem trendu: Jemen, Tigraj, Sudan, Gaza.</p>
+
+<div class="curio">
+  <div class="ct">Ciekawostka</div>
+  <p>Rezolucja 2417 Rady Bezpieczeństwa ONZ z 24 maja 2018 roku, przyjęta jednogłośnie, potępia głodzenie cywilów jako metodę walki i bezprawne odmawianie dostępu humanitarnego. Głodzenie cywilów zakazuje I Protokół Dodatkowy do konwencji genewskich (art. 54), a w statucie Międzynarodowego Trybunału Karnego jest zbrodnią wojenną, od nowelizacji z 2019 roku także w konfliktach wewnętrznych. Prawo więc istnieje. Brakuje jego egzekwowania.</p>
+</div>
+
+<h3>Gdzie Harari upraszcza</h3>
+
+<p>Są trzy punkty, w których teza jest zbyt gładka.</p>
+
+<p><strong>Po pierwsze, intencja.</strong> Sformułowanie „bo jakiś polityk tego chce” zakłada złą wolę. Często chodzi o coś innego: o zaniechanie, niekompetencję, brak kontroli nad terytorium albo sankcje, które utrudniają pomoc. Somalia w 2011 roku jest dobrym przykładem. Pomoc blokowały tam wtedy bojówki Al-Szabab oraz przepisy antyterrorystyczne. Nikt nie musiał „chcieć” głodu. Wystarczyło, że nikt nie potrafił go zatrzymać.</p>
+
+<p><strong>Po drugie, przyroda.</strong> Susze, El Niño i szarańcza wciąż wywołują kryzysy. To polityka decyduje o tym, czy szok stanie się klęską. Tak było w Bengalu. Dziś susza w Somalii (2011, 2017, 2022) prawie zawsze działa przez słabe państwo i konflikt. Czysto pogodowe klęski głodu zdarzały się w przeszłości, ale dziś są trudne do wskazania.</p>
+
+<p><strong>Po trzecie, i najważniejsze: przewlekłe niedożywienie.</strong> Pytanie czytelnika często rozszerza tezę Harariego na wszystkich 645 milionów głodujących. Tymczasem 1,4 miliona osób w fazie 5 to mniej niż 0,25% tej liczby (obliczenie własne: 1,4 podzielone przez 645). Przewlekły głód to głównie ubóstwo i niska produktywność. Jest pośrednio skutkiem polityki, czyli inwestycji i instytucji, ale nie czyjejś woli zagładzania.</p>
+
+<div class="twocol">
+  <div class="side b">
+    <div class="st">Gdzie teza się broni</div>
+    <p>Klęski głodu potwierdzone przez IPC (Sudan, Gaza) wystąpiły w warunkach wojny, oblężenia lub blokady.</p>
+    <p>W krajach, gdzie głównym czynnikiem był konflikt, żyje około 55% osób w ostrym głodzie.</p>
+    <p>Historycznie klęski głodu to zwykle suma szoku i decyzji politycznych.</p>
+  </div>
+  <div class="side a">
+    <div class="st">Gdzie jest zbyt gładka</div>
+    <p>„Polityk tego chce” zakłada zamiar tam, gdzie bywa zaniechanie lub bezsilność.</p>
+    <p>Pogoda dalej uruchamia kryzysy. Polityka rozstrzyga, czy staną się klęską.</p>
+    <p>Teza nie tłumaczy głodu przewlekłego, który dotyczy setek milionów ludzi.</p>
+  </div>
+</div>
+
+<h3>A demokracja? Druga teza Sena</h3>
+
+<p>Pamiętamy z rozdziału drugiego drugą tezę Sena: w demokracjach z wolną prasą nie było poważnych klęsk głodu. Krytycy przypominają jednak Irlandię, Bengal (kolonie nie były demokracjami dla swoich mieszkańców) i wysokie niedożywienie przewlekłe w demokratycznych Indiach. Sam Sen przyznawał, że teza dotyczy ostrych klęsk głodu, nie przewlekłego niedożywienia. Ó Gráda, który w sprawie Bengalu polemizuje z Senem, zgadza się co do zasady: rząd, który odpowiada przed obywatelami, zapobiega klęsce głodu. De Waal dodaje niuans. Chroni nie sama demokracja, ale „kontrakt polityczny” przeciwko głodowi, czyli wzajemne zobowiązanie władzy i społeczeństwa, że takie klęski nie będą tolerowane.</p>
+
+<p>Wniosek jest więc taki. Harari ma rację, że klęski głodu to dziś niemal zawsze skutek ludzkich decyzji. Nie ma jednak racji, jeśli ktoś wyciąga z tego wniosek, że cały głód to czyjaś wina. W drugiej połowie tekstu zajmiemy się tym drugim, znacznie większym problemem.</p>
+
+<h2><span class="num">Rozdział piąty</span>Afryka: brak kapitału, nie brak zaradności</h2>
+
+<p>Częste pytanie o Afrykę brzmi: czy Afrykanie nie są po prostu mniej zaradni? Dane nie potwierdzają takiej hipotezy. Zaczniemy od zastrzeżenia, które dotyczy każdego zdania w tym rozdziale. Afryka to 54 państwa (55 członków Unii Afrykańskiej), od Mauritiusa po Czad. Każde uogólnienie ma wyjątki.</p>
+
+<h3>Rolnictwo: nawozy, woda i zielona rewolucja, której nie było</h3>
+
+<p>W latach 60. plony zbóż w Afryce Subsaharyjskiej i w Azji były podobne. Potem Azja ruszyła do przodu. Wzrost produkcji w Afryce pochodził głównie z powiększania areału, a nie z wyższych plonów z hektara. W 1995 roku średni plon zbóż wynosił według FAO 1041 kg na hektar w Afryce Subsaharyjskiej wobec 2561 kg na świecie. Nowszych wartości tu nie przytaczam.</p>
+
+<p>Jedną z przyczyn widać w nawozach. W 2023 roku w Afryce zużywano około 23 kilogramów nawozów na hektar. W Azji 186, w Oceanii 83.</p>
+
+<div class="bars">
+  <div class="bt">Zużycie nawozów na hektar, 2023 (kg/ha)</div>
+  <div class="row"><div class="lab">Azja</div><div class="track"><div class="fill green" style="width:100%"></div></div><div class="val">186</div></div>
+  <div class="row"><div class="lab">Oceania</div><div class="track"><div class="fill blue" style="width:44.6%"></div></div><div class="val">83</div></div>
+  <div class="row"><div class="lab">Afryka</div><div class="track"><div class="fill red" style="width:12.4%"></div></div><div class="val">23</div></div>
+  <div class="caption">Dla Afryki Subsaharyjskiej średnia wynosiła 22,3 kg/ha w 2018 roku, wobec światowej średniej 139 kg/ha w tym samym roku. Źródło: Odjo, Traoré, Zaki i in., AKADEMIYA2063/IFPRI, CGSpace 2025.</div>
+</div>
+
+<p>Drugi czynnik to woda. Według Banku Światowego („Unlocking Africa’s Agricultural Potential”, 2013) z 183 milionów hektarów upraw w Afryce Subsaharyjskiej aż 95% to uprawy deszczowe, a mniej niż 5% korzysta z gospodarki wodnej, czyli z nawadniania. To „zdecydowanie najniższy poziom” wśród regionów świata. Nowszych danych tu nie przytaczam. Rolnik, który zależy od deszczu, zależy od pogody. Susza lub spóźnione opady oznaczają dla niego utratę całego sezonu, a nie tylko gorszy plon.</p>
+
+<p>Dlaczego w Afryce nie było zielonej rewolucji, która w Azji podniosła plony? Powody są co najmniej cztery.</p>
+
+<ul>
+  <li><strong>Inne uprawy.</strong> Azjatycka rewolucja opierała się na nawadnianym ryżu i pszenicy. W Afryce dominują uprawy deszczowe i zróżnicowane: kukurydza, sorgo, proso, maniok. Odmiany wysokoplenne dla nich powstały później.</li>
+  <li><strong>Gleby.</strong> Są ubogie. Szacowano, że w latach 80. wymywanie wynosiło około 22 kg azotu, 2,5 kg fosforu i 15 kg potasu na hektar rocznie (Stoorvogel i in. 1993, za Dobermannem).</li>
+  <li><strong>Drogi.</strong> Słabe drogi czynią nawóz drogim, a sprzedaż nadwyżek trudną.</li>
+  <li><strong>Polityka.</strong> W Azji państwa masowo dotowały nawozy, kredyt, skup i nawadnianie, często przy wsparciu USA w logice zimnej wojny. W Afryce po latach 80. programy dostosowawcze ograniczały taką politykę.</li>
+</ul>
+
+<h3>Kraje bez morza i koszty transportu</h3>
+
+<p>Według agendy ONZ UN-OHRLLS 16 z 32 śródlądowych krajów rozwijających się leży w Afryce, między innymi Botswana, Burkina Faso, Czad, Etiopia, Malawi, Mali, Niger, Uganda, Zambia i Zimbabwe. Koszty transportu sprawiają, że rolnik w głębi lądu dostaje za plon mało, a za nawóz płaci dużo. Ekonomista Paul Collier opisał w książce „The Bottom Billion” (2007) cztery pułapki: konflikt, „klątwę surowcową”, położenie śródlądowe przy złych sąsiadach i złe rządy w małym kraju. Był krytykowany za porównywanie bardzo różnych przypadków w jednych analizach międzykrajowych.</p>
+
+<h3>Kapitał, nie „zaradność”</h3>
+
+<p>Dochód z pracy zależy od wydajności, a ta od kapitału: maszyn, pieca, prądu, transportu, technologii i rynku zbytu. Ręczny wytwórca cegieł w Malawi i pracownik zmechanizowanej cegielni w Polsce mogą pracować równie ciężko i umiejętnie. Ten drugi wytwarza wielokrotnie więcej cegieł na godzinę, więc i więcej zarabia. To standardowa rachunkowość wzrostu, a nie opinia.</p>
+
+<figure class="diag">
+<svg viewBox="0 0 640 300" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pętla ubóstwa: mało kapitału, niska wydajność, niski dochód, brak oszczędności, i z powrotem do mało kapitału">
+  <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="#d1a13f"/></marker></defs>
+  <rect x="20" y="20" width="180" height="56" fill="#14150f" stroke="#2b2c23"/>
+  <text x="110" y="53" text-anchor="middle" fill="#ece5d1" font-size="19" font-family="inherit">Mało kapitału</text>
+  <rect x="440" y="20" width="180" height="56" fill="#14150f" stroke="#2b2c23"/>
+  <text x="530" y="53" text-anchor="middle" fill="#ece5d1" font-size="19" font-family="inherit">Niska wydajność</text>
+  <rect x="440" y="224" width="180" height="56" fill="#14150f" stroke="#2b2c23"/>
+  <text x="530" y="257" text-anchor="middle" fill="#ece5d1" font-size="19" font-family="inherit">Niski dochód</text>
+  <rect x="20" y="224" width="180" height="56" fill="#14150f" stroke="#2b2c23"/>
+  <text x="110" y="257" text-anchor="middle" fill="#ece5d1" font-size="19" font-family="inherit">Brak oszczędności</text>
+  <line x1="204" y1="48" x2="434" y2="48" stroke="#d1a13f" stroke-width="2" marker-end="url(#ar)"/>
+  <line x1="530" y1="80" x2="530" y2="218" stroke="#d1a13f" stroke-width="2" marker-end="url(#ar)"/>
+  <line x1="436" y1="252" x2="206" y2="252" stroke="#d1a13f" stroke-width="2" marker-end="url(#ar)"/>
+  <line x1="110" y1="220" x2="110" y2="82" stroke="#d1a13f" stroke-width="2" marker-end="url(#ar)"/>
+  <text x="320" y="153" text-anchor="middle" fill="#a9a292" font-size="18" font-family="inherit">pętla ubóstwa</text>
+</svg>
+<figcaption>Uproszczony schemat „pułapki ubóstwa”. Badacze spierają się, jak mocna jest ta pętla: dowody na pułapki w skali całych krajów są słabe, częściej dotyczą lokalnych obszarów lub grup.</figcaption>
+</figure>
+
+<p>Jeffrey Sachs w książce „The End of Poverty” (2005) postulował „wielki impuls”: skoordynowaną inwestycję, która przerwałaby tę pętlę. Kraay i McKenzie w artykule „Do Poverty Traps Exist?” (<em>Journal of Economic Perspectives</em>, 2014) znaleźli jednak mało dowodów na pułapki w skali całej gospodarki. Częściej występują pułapki lokalne: w zdrowiu, żywieniu i w odciętych regionach. Bieda utrwala się przez brak kapitału i rynków, ale zwykle nie jest pułapką absolutną.</p>
+
+<h3>Wysokie samozatrudnienie to nie dowód przedsiębiorczości</h3>
+
+<p>Ekonomiści Abhijit Banerjee i Esther Duflo (Nobel 2019) w książce „Poor Economics” (2011) dokumentują, że biedni są aktywnymi przedsiębiorcami, ale z konieczności i bez kredytu, ubezpieczeń czy etatów. Wysoki odsetek samozatrudnionych w Afryce, wielokrotnie wyższy niż w Europie według danych ILO, a także wysokie wskaźniki w badaniu GEM, to w dużej mierze oznaka braku etatów, nie nadmiaru inicjatywy. Konkretnych wartości nie podaję. Kiedy nie ma fabryki, w której można dostać pensję, ludzie zakładają stragan. To przedsiębiorczość z konieczności.</p>
+
+<h3>Klimat, konflikty i wyjątki</h3>
+
+<p>Afryka, z blisko jedną piątą ludności świata, odpowiada według Międzynarodowej Agencji Energii za mniej niż 3% historycznych emisji CO2 z energii. Ma najniższe emisje na osobę. Przy ponad 95% upraw deszczowych susze, El Niño i La Niña oraz szarańcza uderzają w produkcję bezpośrednio. GRFC 2026 wskazuje ekstrema pogodowe jako drugi czynnik ostrego głodu.</p>
+
+<p>Konflikty to osobny, ciężki czynnik. Największe kryzysy żywnościowe w Afryce dotyczą krajów w stanie wojny: Sudanu, wschodniej Demokratycznej Republiki Konga, Sudanu Południowego, Sahelu i północnej Nigerii. W GHI 2026 Nigeria zanotowała największy wzrost wyniku, z 28,2 do 34,3, głównie z powodu niepewności na północy.</p>
+
+<p>Są też kontrprzykłady. Botswana przeszła od jednego z najbiedniejszych krajów w 1966 roku do kraju o wyższym średnim dochodzie, dzięki instytucjom i zarządzaniu dochodami z diamentów. Mauritius ma zdywersyfikowaną gospodarkę i demokrację. Etiopia rosła szybko od lat 2000. dzięki drogom, doradztwu i programowi sieci bezpieczeństwa (Productive Safety Net Programme), choć wojna w Tigraju w latach 2020–2022 przywróciła masowy głód. Chiny i Wietnam przeprowadziły reformy rolne (1978 i Đổi Mới 1986), a zielona rewolucja poprzedziła tam industrializację. Afryka ten „pierwszy stopień” w dużej mierze ominęła.</p>
+
+<div class="curio">
+  <div class="ct">Ciekawostka</div>
+  <p>Według badania Suri i Jacka z 2016 roku, opublikowanego w „Science”, dostęp do mobilnych pieniędzy M-Pesa w Kenii zwiększył konsumpcję na osobę i wydobył z ubóstwa około 194 tysięcy gospodarstw, czyli około 2% kenijskich gospodarstw domowych. Efekt był silniejszy w gospodarstwach prowadzonych przez kobiety. Technologia, która niczego nie sadzi, zmniejszyła ubóstwo, bo ułatwiła przesyłanie pieniędzy do rodziny na wsi.</p>
+</div>
+
+<p>Reasumując: dane wskazują na niedobór kapitału fizycznego, słabe instytucje, konflikty, szoki klimatyczne i ciężar historii. Hipoteza „braku umiejętności” nie znajduje w nich oparcia.</p>
+
+<h2><span class="num">Rozdział szósty</span>Kolonializm: istotny, udokumentowany, ale nie jedyny czynnik</h2>
+
+<p>Ciężar historii nie jest frazesem. W ekonomii historycznej od dwóch dekad toczy się spór o to, jak dużo z dzisiejszych różnic w dochodach tłumaczy przeszłość. Spór jest ciekawy, bo żadna ze stron nie jest ani karykaturą, ani oczywistością.</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">Przed 1884</div><div class="txt">Handel niewolnikami: z Afryki wywieziono blisko 20 milionów ludzi (Nunn 2008).</div></div>
+  <div class="ev"><div class="yr">1884–1885</div><div class="txt">Konferencja Berlińska i „wyścig o Afrykę” (1860–1905): granice wytyczone bez względu na grupy etniczne.</div></div>
+  <div class="ev crit"><div class="yr">1885–1908</div><div class="txt">Wolne Państwo Kongo Leopolda II: przymusowe uprawy, kwoty kauczukowe, podatki zmuszające do pracy.</div></div>
+  <div class="ev"><div class="yr">Zimna wojna</div><div class="txt">Wojny zastępcze (Angola, Mozambik, Róg Afryki) i wspieranie dyktatorów, jak Mobutu.</div></div>
+  <div class="ev"><div class="yr">Lata 80.–90.</div><div class="txt">Kryzys zadłużenia i programy dostosowania strukturalnego: likwidacja dopłat do nawozów, prywatyzacja skupu, cięcia wydatków. Skutki tej polityki są sporne.</div></div>
+  <div class="ev"><div class="yr">2005</div><div class="txt">Malawi, po katastrofalnych zbiorach, wprowadza program dopłat do nawozów wbrew donatorom.</div></div>
+</div>
+
+<h3>Instytucje: Acemoglu, Johnson i Robinson</h3>
+
+<p>Daron Acemoglu, Simon Johnson i James Robinson (zwani AJR) opublikowali w 2001 roku artykuł „The Colonial Origins of Comparative Development” w <em>American Economic Review</em>. Rozwinęli go w „Reversal of Fortune” (<em>QJE</em> 2002) i w książce „Why Nations Fail” (2012), a w 2024 roku dostali za te prace Nagrodę Nobla. Ich teza: kolonizatorzy tworzyli instytucje „inkluzywne” tam, gdzie się osiedlali, i „ekstrakcyjne” tam, gdzie umierali, czyli instytucje nastawione na wywóz bogactwa. Te drugie przetrwały dekolonizację.</p>
+
+<p>Krytyka jest poważna. Ekonomista David Albouy w <em>AER</em> z 2012 roku zakwestionował dane o śmiertelności osadników, na których opiera się argument. Edward Glaeser i współautorzy („Do Institutions Cause Growth?”, 2004) twierdzili, że osadnicy przywozili głównie kapitał ludzki, czyli wykształcenie i umiejętności. Gareth Austin krytykował też „kompresję historii” Afryki, czyli spłaszczanie wielu wieków do jednego momentu. Ocena jest taka: rola instytucji jest dziś w ekonomii głównym nurtem, ale identyfikacja przyczynowa z 2001 roku pozostaje sporna.</p>
+
+<div class="twocol">
+  <div class="side b">
+    <div class="st">AJR (2001, 2002)</div>
+    <p>Instytucje nadane przez kolonizatorów wyjaśniają dużą część dzisiejszych różnic w dochodach.</p>
+    <p>Chorobotwórczy klimat zniechęcał osadników, więc powstawały instytucje „ekstrakcyjne”.</p>
+  </div>
+  <div class="side a">
+    <div class="st">Krytyka (Albouy, Glaeser i in.)</div>
+    <p>Dane o śmiertelności osadników są wątpliwe, więc argument słabnie.</p>
+    <p>Osadnicy przywozili też kapitał ludzki, więc instytucje mogą nie być jedyną ani główną przyczyną.</p>
+  </div>
+</div>
+
+<h3>Handel niewolnikami</h3>
+
+<p>Nathan Nunn w artykule „The Long-Term Effects of Africa’s Slave Trades” (<em>QJE</em> 2008) wykazał silną ujemną zależność między liczbą wywiezionych niewolników z danego kraju a jego dzisiejszymi dochodami. Zmienne instrumentalne, czyli technika statystyczna służąca do oddzielenia przyczyny od zbiegu okoliczności, wspierają interpretację przyczynową. Z Afryki wywieziono blisko 20 milionów niewolników. Nunn i Leonard Wantchekon (<em>AER</em> 2011) pokazali ponadto, że grupy bardziej dotknięte handlem mają dziś niższe zaufanie do sąsiadów, krewnych i instytucji.</p>
+
+<p>Siła dowodów jest przyzwoita: wynik jest odporny i wspierany przez późniejsze prace, jak przegląd Whatleya w <em>Journal of Economic History</em>. Krytycy wskazują jednak na jakość danych etnicznych i na możliwość, że najbardziej dotknięte były regiony wcześniej rozwinięte, co mogłoby fałszować korelację.</p>
+
+<h3>Podział kontynentu i gospodarka wydobywcza</h3>
+
+<p>Stelios Michalopoulos i Elias Papaioannou („The Long-Run Effects of the Scramble for Africa”, <em>AER</em> 2016) porównali grupy etniczne podzielone granicami wytyczonymi przez Europejczyków. U takich grup częściej dochodzi do przemocy politycznej, a wskaźniki rozwoju są niższe. W Wolnym Państwie Kongo Leopolda II (1885–1908) udokumentowano przymusowe uprawy (bawełnę, orzeszki ziemne), kwoty kauczukowe, podatki zmuszające do pracy najemnej i infrastrukturę nastawioną na wywóz surowców. Liczby ofiar w Kongu są sporne, więc ich nie podaję.</p>
+
+<h3>Spór o „pozytywne” skutki</h3>
+
+<p>Szkolnictwo kolonialne było w dużej mierze misyjne i nierówno rozłożone. Leigh Gardner w książce „Taxing Colonial Africa” (2012) pokazała, że „tanie” państwa kolonialne cechowała słaba zdolność fiskalna. Teza „kolonializm przyniósł modernizację” jest zaś mniejszościowa i krytykowana za pomijanie kosztów oraz kontrfaktycznych założeń.</p>
+
+<h3>W jakim stopniu?</h3>
+
+<p>Nie da się podać procentu. Literatura (Nunn, Michalopoulos i Papaioannou, AJR) wskazuje na efekty istotne. Ale różnice między krajami o podobnej historii, takimi jak Botswana i Zimbabwe, pokazują, że historia nie determinuje wyniku. Do tego dochodzą geografia i choroby. Marcella Alsan w <em>AER</em> z 2015 roku wykazała, że obszary sprzyjające musze tse-tse miały przed kolonizacją mniej zwierząt pociągowych, rzadziej używały pługa, miały mniejszą gęstość zaludnienia i słabsze państwa. Szkoła Jeffreya Sachsa wskazuje na klimat tropikalny, malarię i ubogie gleby. Szkoła instytucjonalna odpowiada, że geografia działa głównie przez instytucje, bo Singapur czy Malezja się wzbogaciły. Konsensus jest taki, że geografia nie jest losem, ale podnosi koszty rozwoju.</p>
+
+<div class="curio">
+  <div class="ct">Ciekawostka</div>
+  <p>Malawi, po katastrofalnych zbiorach w 2005 roku, wprowadziło wbrew radom donatorów program dopłat do nawozów. Oficjalna produkcja kukurydzy wzrosła z około 1,2 do około 2,6 miliona ton, ale to dane urzędowe. Badania gospodarstw pokazują skromniejsze przyrosty, a rok 2006 miał dobrą pogodę, co zawyża wrażenie sukcesu. Ceny kukurydzy rosły, a Malawi nadal importowało zboże, program jest też kosztowny. Spór pokazuje, że o skutkach polityki rolnej rozstrzygają szczegóły, a nie hasła.</p>
+</div>
+
+<p>Kolonializm zostawił więc ślady, które udokumentowano, a częściowo także zmierzono. Nie jest jednak jedynym wyjaśnieniem i nie działa tak samo wszędzie.</p>
+
+<h2><span class="num">Rozdział siódmy</span>Dzieci i demografia: czy Afryka „ma najwięcej dzieci”?</h2>
+
+<p>Ostatnie z popularnych pytań brzmi: czy Afryka ma po prostu za dużo dzieci? Zanim spróbujemy na nie odpowiedzieć, sprawdźmy założenie. Czy Afryka rzeczywiście „ma najwięcej dzieci”? Odpowiedź zależy od tego, jak liczymy.</p>
+
+<div class="nums">
+  <div class="nrow"><div class="n">602 mln</div><div class="d"><strong>Dzieci poniżej 18 lat w Afryce Subsaharyjskiej (2023).</strong> W Azji Południowej (8 krajów w definicji UNICEF): 640,9 mln, w tym w Indiach 436,6 mln. Na świecie: 2415 mln.</div></div>
+  <div class="nrow"><div class="n">190 mln</div><div class="d"><strong>Dzieci poniżej 5 lat w Afryce Subsaharyjskiej (2023).</strong> W Azji Południowej: 174,1 mln.</div></div>
+  <div class="nrow"><div class="n">41,8 mln</div><div class="d"><strong>Urodzenia w Afryce Subsaharyjskiej (2023),</strong> czyli około 31,6% ze 132,1 mln urodzeń na świecie (obliczenie własne). W Azji Południowej: 36,0 mln.</div></div>
+  <div class="nrow"><div class="n">690,9 mln</div><div class="d"><strong>Dzieci poniżej 18 lat w 55 państwach Unii Afrykańskiej (2024).</strong> To 46% ludności Afryki i około 28,6% dzieci świata. Urodzeń: 46,6 mln, około 35% światowych (obliczenie własne).</div></div>
+</div>
+<p class="caption">Źródło: UNICEF, SOWC 2024 Statistical Compendium (dane WPP 2024) oraz UNICEF/UNECA/UA, Africa’s Children 2026. Definicje regionów się różnią: „Azja Południowa” w UNICEF to 8 krajów łącznie z Afganistanem, a nie „Southern Asia” z klasyfikacji ONZ, która obejmuje także Iran.</p>
+
+<p>Wynik jest taki. Pod względem <strong>urodzeń i dzieci poniżej 5 lat</strong> Afryka Subsaharyjska już wyprzedziła Azję Południową. Pod względem <strong>dzieci poniżej 18 lat</strong> Azja Południowa wciąż nieznacznie prowadzi. Jako kontynent Afryka ma mniej dzieci niż Azja jako całość. Udziałowo Afryka zdecydowanie przoduje: dzieci stanowią tam 46% populacji, a średni udział dzieci w populacji świata to około 30%. UNICEF pisze w 2026 roku, że Afryka jest na drodze do tego, by w ciągu dekady stać się regionem z największą populacją dzieci.</p>
+
+<p>Prognozy sięgają dalej, ale trzeba je czytać jak prognozy, czyli wyniki modeli ze starszych rewizji ONZ. Według Pew Research Center na danych WPP 2024 w Afryce żyje dziś 28% ludzi poniżej 25. roku życia. Afryka wyprzedzi Azję w tej grupie około 2073 roku, a w 2100 roku będzie miała 46% młodych świata wobec 39% w Azji.</p>
+
+<h3>Co to znaczy „wysoka dzietność”</h3>
+
+<p>Dzietność (TFR) to przeciętna liczba dzieci, które urodziłaby kobieta w ciągu życia, gdyby przez cały czas rodziła tak, jak kobiety w danym roku. Najwyższe wartości w 2024 roku według Banku Światowego miały kraje Afryki.</p>
+
+<div class="bars">
+  <div class="bt">Dzietność w 2024 roku (dzieci na kobietę)</div>
+  <div class="row"><div class="lab">Czad</div><div class="track"><div class="fill red" style="width:100%"></div></div><div class="val">6,03</div></div>
+  <div class="row"><div class="lab">Somalia</div><div class="track"><div class="fill red" style="width:99.7%"></div></div><div class="val">6,01</div></div>
+  <div class="row"><div class="lab">DR Konga</div><div class="track"><div class="fill red" style="width:99.2%"></div></div><div class="val">5,98</div></div>
+  <div class="row"><div class="lab">Rep. Środkowoafrykańska</div><div class="track"><div class="fill red" style="width:98.7%"></div></div><div class="val">5,95</div></div>
+  <div class="row"><div class="lab">Niger</div><div class="track"><div class="fill red" style="width:98.3%"></div></div><div class="val">5,93</div></div>
+  <div class="row"><div class="lab">Mali</div><div class="track"><div class="fill red" style="width:91.3%"></div></div><div class="val">5,51</div></div>
+  <div class="row"><div class="lab">Świat (ok. 2,2–2,4)</div><div class="track"><div class="fill" style="width:38.1%"></div></div><div class="val">ok. 2,3</div></div>
+  <div class="row"><div class="lab">Mauritius</div><div class="track"><div class="fill green" style="width:23.9%"></div></div><div class="val">1,44</div></div>
+  <div class="caption">Źródło: Bank Światowy, WDI SP.DYN.TFRT.IN (zestawienie theglobaleconomy.com). Poziom około 2,1 dzieci na kobietę to tak zwana zastępowalność pokoleń: tyle wystarcza, by populacja bez migracji przestała rosnąć.</div>
+</div>
+
+<p>Niger przez lata miał dzietność około 7, ale w serii WPP 2024 spadła poniżej 6. Mediana wieku, czyli wiek, który dzieli ludność na pół młodszych i starszych, wynosi tam około 15–16 lat. W Polsce około 43 lata. To znaczy, że w Nigrze połowa mieszkańców to dzieci i nastolatkowie.</p>
+
+<div class="curio">
+  <div class="ct">Ciekawostka</div>
+  <p>Najniższą dzietność w Afryce ma Mauritius: 1,44, czyli poziom zbliżony do wielu krajów Europy. Najwyższą Czad: 6,03. Oba kraje leżą na tym samym kontynencie. Wysoka dzietność nie jest więc „cechą Afryki”, tylko skutkiem określonych warunków.</p>
+</div>
+
+<h3>Dlaczego dzietność jest wysoka</h3>
+
+<p>Najważniejsze wyjaśnienie nazywa się <strong>przejściem demograficznym</strong>. Najpierw spada umieralność dzieci, bo działają szczepienia, czysta woda i podstawowa opieka. Dzietność spada dopiero po pokolenie lub dwa. Tak było w Europie w XIX wieku i w Azji Wschodniej w XX wieku. Dziś dzieje się to w Afryce, gdzie umieralność dzieci spadła później. Wysoka dzietność jest więc etapem, przez który przechodzą społeczeństwa, a nie stałą cechą kontynentu.</p>
+
+<p>Drugi czynnik to edukacja dziewcząt i wiek zawierania małżeństw. Dłuższa nauka wiąże się z późniejszym małżeństwem i mniejszą liczbą dzieci. Według WPP 2024 w 2024 roku 4,7 mln dzieci (3,5% urodzeń na świecie) urodziło się matkom poniżej 18. roku życia.</p>
+
+<p>Trzeci czynnik to dostęp do antykoncepcji. Organizacje Guttmacher Institute i UNFPA raportują wysokie niezaspokojone potrzeby w Afryce Subsaharyjskiej. Dostęp nie wyjaśnia jednak wszystkiego, bo w Sahelu także deklarowana pożądana liczba dzieci jest wysoka, na poziomie 5 lub więcej.</p>
+
+<p>Dalej jest ekonomia rodziny. W rolnictwie rodzinnym dzieci pracują i są zabezpieczeniem na starość, kiedy nie ma emerytur. W miastach dzieci są „droższe”: potrzebują szkoły i mieszkania, więc dzietność spada. Afryka urbanizuje się szybko, ale z niskiego poziomu.</p>
+
+<p>Dlaczego Azja przeszła to szybciej? Złożyły się na to szybszy wzrost dochodów, edukacji i urbanizacji, silne programy planowania rodziny (w Chinach także przymusowe) oraz wcześniejszy spadek umieralności. Nie ma tu prostego wzoru do skopiowania.</p>
+
+<p>Związek biegnie w obie strony. Bieda sprzyja wysokiej dzietności, a wysoka dzietność utrudnia inwestycje w dzieci. UNICEF w modelu „Generation 2030 Africa 2.0” szacuje, że przy odpowiednich inwestycjach w edukację dochód na osobę mógłby wzrosnąć nawet czterokrotnie. To scenariusz, nie prognoza.</p>
+
+<h3>Przeludnienie? Malthus kontra Boserup</h3>
+
+<p>Czy gęstość zaludnienia tłumaczy głód? Niekoniecznie. Wiele najgłodniejszych krajów, takich jak Czad czy Republika Środkowoafrykańska, jest zaludnionych rzadko. Głód nie wynika z prostego braku miejsca.</p>
+
+<p>Thomas Malthus twierdził w 1798 roku, że ludność rośnie szybciej niż żywność. Tam, gdzie gospodarstwa są małe, jak w Malawi, Rwandzie czy etiopskich wyżynach, podział ziemi między dzieci realnie zwiększa ryzyko. Ester Boserup odpowiedziała w książce „The Conditions of Agricultural Growth” (1965), że rosnąca gęstość wymusza intensyfikację uprawy. Przykładem są kenijskie wzgórza Machakos, opisane w pracy „More People, Less Erosion” (Tiffen, Mortimore, Gichuki 1994). Oba mechanizmy działają, a wynik zależy od dostępu do kapitału, rynków i technologii.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Co faktycznie działa. I co właśnie zniknęło</h2>
+
+<p>Po diagnozie czas na leczenie. Tu dowody są lepsze, niż można by sądzić po nagłówkach, choć nie wszystkie metody są równie dobrze przebadane.</p>
+
+<h3>Wzrost produktywności i sieć bezpieczeństwa</h3>
+
+<p>Azja Wschodnia i Południowo-Wschodnia oraz Ameryka Łacińska zredukowały głód najbardziej. Brazylijski program Fome Zero, uruchomiony w 2003 roku wraz z Bolsą Família, był chwalony przez FAO. Brazylia wyszła z mapy głodu FAO w 2014 roku, po 2018 roku na nią wróciła, a według SOFI 2025 znów z niej zeszła. To dobry przykład tego, że postęp można stracić, jeśli sieć bezpieczeństwa się rozpada.</p>
+
+<h3>Przelewy gotówkowe</h3>
+
+<p>Najlepiej zbadany przykład pochodzi z Kenii. W randomizowanym eksperymencie (RCT) organizacja GiveDirectly przekazała około 1000 dolarów amerykańskich ponad 10 500 gospodarstwom w 653 losowo wybranych wioskach. Ekonomiści (Egger, Haushofer, Miguel, Niehaus i Walker, <em>Econometrica</em> 2022) wyliczyli lokalny mnożnik około 2,5: każdy dolar przekazany wioskom zwiększał lokalną aktywność o około 2,5 dolara, przy „minimalnej” inflacji. Haushofer i Shapiro (<em>QJE</em> 2016) pokazali wcześniej wzrost konsumpcji, aktywów i bezpieczeństwa żywnościowego.</p>
+
+<p>Zastrzeżenie: to jeden region i jednorazowy transfer, a szeroki przedział ufności. W statystyce wyraża się to wartością p około 0,07 dla hipotezy, że mnożnik jest mniejszy niż 1. Wynik jest więc wyraźny, ale nie ponad wszelką wątpliwość.</p>
+
+<h3>Nawozy, drogi, magazyny i odmiany</h3>
+
+<p>Dopłaty do nawozów, jak w Malawi, działają krótkoterminowo, ale są drogie i słabo adresowane. Straty pożniwne wynoszą około 13%, więc magazyny, drogi i chłodnie mają sens. Ceres2030 proponuje przeznaczyć około 2 miliardów z 14 miliardów dolarów rocznie od donorów na przemieszczanie żywności na rynki. Odmiany odporne na suszę (CIMMYT) i biofortyfikacja, czyli hodowla roślin bogatszych w mikroskładniki (HarvestPlus), mają dobre dowody w literaturze, choć nie omawiam tu pojedynczych badań. Ubezpieczenia indeksowe, wypłacające pieniądze po suszy, są obiecujące, ale przy niskim popycie bez dopłat, a dowody są mieszane.</p>
+
+<h3>Wczesne ostrzeganie i pieniądze, które się skończyły</h3>
+
+<p>Wcześnie wiedzieć, gdzie rośnie głód, to połowa sukcesu. Amerykański system FEWS NET, finansowany przez USAID od 1985 roku, przestał działać w styczniu 2025 roku po wstrzymaniu pomocy USA (NPR i CNN, luty i marzec 2025). W 2025 roku wznowił działanie pod Departamentem Stanu. W 2026 roku wstrzymał publikacje o Afganistanie, Somalii i Jemenie, a ich wznowienie zapowiedziano na wrzesień (NPR, 1 września 2026). Pod koniec września 2026 roku czworo kongresmenów ostrzegło, że Departament Stanu rozważa zakończenie finansowania. FEWS NET miał środki do końca 2026 roku, ale grożono zwolnieniami. Nie mam potwierdzenia, jaki jest jego status po 30 września.</p>
+
+<div class="curio">
+  <div class="ct">Ciekawostka</div>
+  <p>System wczesnego ostrzegania przed klęskami głodu, działający nieprzerwanie od 1985 roku, zniknął z sieci na kilka miesięcy w 2025 roku. Nie z powodu awarii technicznej, tylko decyzji budżetowej. Informacje o głodzie nie mogą dotrzeć do decydentów, jeśli nikt nie płaci za ich zbieranie.</p>
+</div>
+
+<p>Osłabiona jest też pomoc humanitarna. Według agencji Devex Światowy Program Żywnościowy planował zwolnić do 30% personelu w 2026 roku. W listopadzie 2025 roku WFP prognozował, że w 2026 roku 318 milionów osób będzie w ostrym głodzie, a pomoc dotrze do około 110 milionów przy około 40% niższych wpływach (Al Jazeera, 18 listopada 2025). Finansowanie humanitarne cofnęło się do poziomu z 2016 roku.</p>
+
+<h3>Ile to kosztuje</h3>
+
+<p>Model Ceres2030 (IFPRI, IISD i Uniwersytet Cornella, 2020) szacował, że zakończenie głodu, podwojenie dochodów drobnych rolników i ograniczenie emisji do 2030 roku wymaga dodatkowych 33 miliardów dolarów rocznie. Z tego 14 miliardów od donorów, którzy wydawali wtedy około 12 miliardów rocznie, i 19 miliardów od krajów o niskich i średnich dochodach. To wynik modelu równowagi ogólnej, więc obarczony założeniami i niepewnością.</p>
+
+<p>Dla skali: według SIPRI (komunikat z 27 kwietnia 2026 roku) światowe wydatki wojskowe wyniosły w 2025 roku 2887 miliardów dolarów, realnie o 2,9% więcej niż w 2024 roku. 33 miliardy to około 1,1% tej kwoty (obliczenie własne). Pieniądze są ważne, ale nie rozwiążą wszystkiego. Wojny i blokady nie rozwiązują się przelewem.</p>
+
+<h2><span class="num">Na koniec</span>Spiżarnia i drzwi</h2>
+
+<p>Wróćmy do liczby z początku. 3016 kilokalorii na osobę dziennie. Spiżarnia świata jest pełna. Problem leży w drzwiach: w tym, kto ma klucz, jak daleko jest do magazynu i czy ktoś nie zamknął drogi.</p>
+
+<div class="box">
+  <div class="bt">Pięć odpowiedzi w skrócie</div>
+  <p><strong>Marnowanie żywności.</strong> Realny problem klimatu i domowych budżetów. Głodu nie leczy przez przesyłanie resztek, tylko co najwyżej przez niższe ceny.</p>
+  <p><strong>Harari.</strong> Ma rację co do klęsk głodu: to dziś niemal zawsze skutek wojny, oblężenia lub blokady. Nie tłumaczy za to przewlekłego niedożywienia 645 milionów ludzi.</p>
+  <p><strong>Zaradność Afryki.</strong> Dane wskazują na brak kapitału: nawozów, wody, dróg, prądu. Wysokie samozatrudnienie to w dużej mierze przedsiębiorczość z konieczności.</p>
+  <p><strong>Kolonializm.</strong> Istotny, udokumentowany, ale nie jedyny czynnik. Spór o to, w jakim stopniu, trwa, a różnice między krajami o podobnej historii są duże.</p>
+  <p><strong>Dzieci.</strong> Afryka wyprzedza już Azję Południową w urodzeniach i dzieciach poniżej 5 lat. Wysoka dzietność to etap, przez który przeszły wcześniej Europa i Azja Wschodnia.</p>
+</div>
+
+<p>Odpowiedź na pytanie, dlaczego wciąż nie rozwiązaliśmy problemu głodu, jest niewygodna. Nie rozwiązaliśmy go, bo to nie jest jeden problem. Klęski głodu to problem polityczny i wojenny. Przewlekły głód to problem ubóstwa, kapitału i produktywności. Pierwszy wymaga ochrony cywilów i dostępu dla pomocy. Drugi wymaga wieloletnich inwestycji w drogi, wodę, nawozy, instytucje i dochody biednych.</p>
+
+<p>Dobra wiadomość: znamy kilka metod, które działają, jak przelewy gotówkowe, sieci bezpieczeństwa, drogi i magazyny. Zła: wojny i blokady nie rozwiązują się przelewem, a część narzędzi, które pomagały, jak system wczesnego ostrzegania, w 2025 roku na kilka miesięcy zniknęła.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+
+<ul class="sources">
+  <li>FAO, IFAD, UNICEF, WFP, WHO, „The State of Food Security and Nutrition in the World 2026”, 21 lipca 2026. <a href="https://www.fao.org/newsroom/detail/sofi-2026--hunger-not-inevitable--fao-says-as-global-hunger-report-shows-progress/en">fao.org</a>; <a href="https://data.unicef.org/resources/sofi-2026/">data.unicef.org</a></li>
+  <li>Global Network Against Food Crises, „Global Report on Food Crises 2026”, 24 kwietnia 2026. <a href="https://www.fao.org/newsroom/detail/acute-food-insecurity-and-malnutrition-remain-alarmingly-high-as-crises-deepen--un--eu-and-partners-warn-in-new-report/en">fao.org</a>; <a href="https://news.un.org/en/story/2026/04/1167374">news.un.org</a>; <a href="https://knowledge-for-policy.ec.europa.eu/publication/global-report-food-crises-2026_en">Komisja Europejska, Knowledge4Policy</a></li>
+  <li>Welthungerhilfe, IFHV, Helvetas, „Global Hunger Index 2026: No Security Without Food Security”, 14 października 2026. <a href="https://www.globalhungerindex.org/">globalhungerindex.org</a>; <a href="https://www.helvetas.org/en/switzerland/how-you-can-help/follow-us/blog/agriculture-and-nutrition/2026-global-hunger-index-new-perspective-on-food-security">Helvetas</a></li>
+  <li>Action Against Hunger, komentarz do SOFI 2026. <a href="https://www.actionagainsthunger.org/story/action-against-hunger-statement-in-response-to-the-state-of-food-security-and-nutrition-in-the-world-report/">actionagainsthunger.org</a></li>
+  <li>Famine Review Committee, raport o Sudanie, październik 2025. <a href="https://www.ipcinfo.org/fileadmin/user_upload/ipcinfo/docs/IPC_Famine_Review_Committee_Report_Sudan_Oct_2025.pdf">ipcinfo.org</a>; opis Komitetu: <a href="https://www.ipcinfo.org/ipcinfo-website/frc/en/">ipcinfo.org</a></li>
+  <li>„The Lancet”, 2026, artykuł o klęsce głodu w Gazie. <a href="https://www.thelancet.com/journals/lancet/article/PIIS0140-6736(26)00214-X/fulltext">thelancet.com</a></li>
+  <li>„Food Policy”, 2026, przegląd klęsk głodu i protokołów klasyfikacji. <a href="https://www.sciencedirect.com/science/article/pii/S0306919226001016">sciencedirect.com</a></li>
+  <li>Better World Campaign, „Understanding Famine Declarations”. <a href="https://betterworldcampaign.org/peace-and-security/understanding-famine-declarations">betterworldcampaign.org</a></li>
+  <li>UNEP, WRAP, „Food Waste Index Report 2024”. <a href="https://www.stopfoodlosswaste.org/about/facts">stopfoodlosswaste.org</a>; <a href="https://sdg2advocacyhub.org/wp-content/uploads/2024/03/food_waste_index_report_2024.pdf">PDF</a></li>
+  <li>FAO, wskaźnik SDG 12.3.1a (straty żywności). <a href="https://www.fao.org/sustainable-development-goals-data-portal/data/indicators/1231-global-food-losses/en">fao.org</a></li>
+  <li>OECD, FAO, „Agricultural Outlook 2024–2033”, fragment o stratach i marnowaniu. <a href="https://www.fao.org/newsroom/detail/tackling-food-loss-and-waste-from-the-farm-to-the-table-and-beyond/en">fao.org</a></li>
+  <li>FAO, „Food Balance Sheets 2010–2023”, FAOSTAT Analytical Brief 112, 2025. <a href="https://openknowledge.fao.org/server/api/core/bitstreams/fac361c7-7af2-4918-a665-f6f5f1c4aaee/content">openknowledge.fao.org</a></li>
+  <li>Amartya Sen, „Poverty and Famines: An Essay on Entitlement and Deprivation”, Clarendon Press, 1981.</li>
+  <li>V. Mishra i in., „Drought and Famine in India, 1870–2016”, Geophysical Research Letters 46, 2019. <a href="https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2018GL081477">wiley.com</a></li>
+  <li>Madhusree Mukerjee, „Churchill’s Secret War”, 2010. Cormac Ó Gráda, „Famine: A Short History”, Princeton University Press, 2009. Alex de Waal, „Mass Starvation”, Polity, 2018.</li>
+  <li>Yuval Noah Harari, „Homo Deus”, 2015, rozdział 1; wywiad dla Freakonomics, 2022. <a href="https://freakonomics.com/podcast/yuval-noah-harari-thinks-life-is-meaningless-and-amazing/">freakonomics.com</a></li>
+  <li>Rada Bezpieczeństwa ONZ, rezolucja 2417 (2018).</li>
+  <li>UNICEF, „SOWC 2024 Statistical Compendium”. <a href="https://data.unicef.org/wp-content/uploads/2024/11/SOWC-2024-Statistical-Compendium-final.pdf">data.unicef.org</a>; UNICEF, UNECA, Unia Afrykańska, „Africa’s Children 2026”. <a href="https://data.unicef.org/wp-content/uploads/2026/04/AfCSC-2026.pdf">data.unicef.org</a></li>
+  <li>Pew Research Center, „5 facts about Africa’s population growth”, 19 maja 2026. <a href="https://www.pewresearch.org/short-reads/2026/05/19/5-facts-about-africas-population-growth/">pewresearch.org</a></li>
+  <li>UN DESA, „World Population Prospects 2024: Summary of Results”. <a href="https://population.un.org/wpp/assets/Files/WPP2024_Summary-of-Results.pdf">population.un.org</a></li>
+  <li>Bank Światowy, WDI, dzietność (SP.DYN.TFRT.IN), zestawienie. <a href="https://www.theglobaleconomy.com/rankings/Fertility_rate/Africa/">theglobaleconomy.com</a></li>
+  <li>S. Odjo, F. Traoré, C. Zaki, AKADEMIYA2063/IFPRI, raport o nawozach, CGSpace, 2025. <a href="https://cgspace.cgiar.org/server/api/core/bitstreams/6869edde-80fe-40e5-bc4c-5f387b04aa41/content">cgspace.cgiar.org</a></li>
+  <li>Bank Światowy, „Unlocking Africa’s Agricultural Potential”, 2013. <a href="https://openknowledge.worldbank.org/server/api/core/bitstreams/3cbc1ec4-8400-5971-8b0b-6ada9679cec5/content">openknowledge.worldbank.org</a></li>
+  <li>Achim Dobermann, „Growing Africa”, 2022. <a href="https://www.growingafrica.pub/wp-content/uploads/2022/05/Dobermann-GA-22-1.pdf">growingafrica.pub</a></li>
+  <li>FAO, dane o plonach zbóż, 1995. <a href="https://www.fao.org/4/y9447e/y9447e09.htm">fao.org</a></li>
+  <li>Paul Collier, „The Bottom Billion”, Oxford University Press, 2007. UN-OHRLLS, „Landlocked Developing Countries: Facts and Figures 2014”.</li>
+  <li>Marcella Alsan, „The Effect of the TseTse Fly on African Development”, American Economic Review 105(1), 2015.</li>
+  <li>Daron Acemoglu, Simon Johnson, James Robinson: „The Colonial Origins of Comparative Development”, AER 2001; „Reversal of Fortune”, QJE 2002; „Why Nations Fail”, 2012. David Albouy, komentarz w AER, 2012. Edward Glaeser i in., „Do Institutions Cause Growth?”, 2004.</li>
+  <li>Nathan Nunn, „The Long-Term Effects of Africa’s Slave Trades”, QJE 123(1), 2008. <a href="https://dash.harvard.edu/entities/publication/73120378-8489-6bd4-e053-0100007fdf3b">dash.harvard.edu</a>; Nathan Nunn, Leonard Wantchekon, AER 2011; Whatley, Journal of Economic History. <a href="https://www.cambridge.org/core/journals/journal-of-economic-history/article/how-the-international-slave-trades-underdeveloped-africa/FC95130D1559C153AC571F1A2CAE66AC">cambridge.org</a></li>
+  <li>Stelios Michalopoulos, Elias Papaioannou, „The Long-Run Effects of the Scramble for Africa”, AER 106(7), 2016. <a href="https://www.nber.org/system/files/working_papers/w17620/w17620.pdf">nber.org</a>; Leigh Gardner, „Taxing Colonial Africa”, 2012.</li>
+  <li>A. Dorward, E. Chirwa, „The Malawi agricultural input subsidy programme”, International Journal of Agricultural Sustainability 9(1), 2011. <a href="https://www.tandfonline.com/doi/pdf/10.3763/ijas.2010.0567">tandfonline.com</a></li>
+  <li>Abhijit Banerjee, Esther Duflo, „Poor Economics”, 2011. Jeffrey Sachs, „The End of Poverty”, 2005. Aart Kraay, David McKenzie, „Do Poverty Traps Exist?”, Journal of Economic Perspectives 28(3), 2014.</li>
+  <li>Tavneet Suri, William Jack, „The long-run poverty and gender impacts of mobile money”, Science 354(6317), 2016.</li>
+  <li>Międzynarodowa Agencja Energii, „Africa Energy Outlook 2022”. <a href="https://www.iea.org/reports/africa-energy-outlook-2022/key-findings">iea.org</a></li>
+  <li>Dennis Egger, Johannes Haushofer, Edward Miguel, Paul Niehaus, Michael Walker, „General Equilibrium Effects of Cash Transfers”, Econometrica 90(6), 2022. <a href="https://onlinelibrary.wiley.com/doi/full/10.3982/ECTA17945">wiley.com</a>; Haushofer, Shapiro, QJE 2016.</li>
+  <li>Ceres2030 (IFPRI, IISD, Cornell), „Ceres2030: Sustainable Solutions to End Hunger”, 2020. <a href="https://ceres2030.iisd.org/wp-content/uploads/2021/03/ceres2030_en-summary-report.pdf">ceres2030.iisd.org</a></li>
+  <li>SIPRI, komunikat o wydatkach wojskowych, 27 kwietnia 2026. Ester Boserup, „The Conditions of Agricultural Growth”, 1965; Tiffen, Mortimore, Gichuki, „More People, Less Erosion”, 1994.</li>
+  <li>NPR, 21 lutego 2025 i 1 września 2026. <a href="https://www.npr.org/2026/09/01/nx-s1-5944472/famine-usaid-fews-net">npr.org</a>; CNN, 9 marca 2025; Devex. <a href="https://www.devex.com/news/fews-net-once-usaid-s-flagship-famine-warning-system-is-back-online-110357">devex.com</a>; Donor Tracker. <a href="https://donortracker.org/policy_updates?policy=us-plans-terminations-of-all-usaid-overseas-positions">donortracker.org</a>; Al Jazeera, 18 listopada 2025. <a href="https://www.aljazeera.com/news/2025/11/18/wfp-warns-of-deepening-hunger-crisis-amid-funding-shortfall">aljazeera.com</a></li>
+</ul>
+
+<footer class="end">
+  <p>Czego tu nie ma i co jest niepewne. Liczby z raportów ONZ i FAO to szacunki, a nie spis; część z nich zmienia się przy kolejnych rewizjach. Odsetek niedożywionych z SOFI i wynik Globalnego Indeksu Głodu mierzą różne rzeczy, więc mogą wskazywać różne kierunki. Liczby GRFC z różnych lat nie są w pełni porównywalne. Prognozy SOFI, Ceres2030, UNICEF i Pew Research Center to wyniki modeli, nie fakty.</p>
+  <p>Własne obliczenia: udział krajów z konfliktem (147 z 266 mln, około 55%), udział fazy 5 wśród niedożywionych (1,4 z 645 mln, poniżej 0,25%), udział urodzeń Afryki Subsaharyjskiej (41,8 z 132,1 mln, około 31,6%) i Afryki (46,6 mln, około 35% światowych) oraz koszt Ceres2030 jako ułamek wydatków wojskowych (33 z 2887 mld USD, około 1,1%).</p>
+  <p>Nie zweryfikowałem u źródła: brzmienia cytatu Harariego w wydaniu książkowym (podaję sens, nie cytat); dokładnych wartości mediany wieku w Nigrze (serwisy podają około 15–16 lat) i w Polsce; roku, w którym Afryka Subsaharyjska wyprzedziła Azję Południową w urodzeniach; treści raportu FRC o Sudanie z maja 2026 roku i aktualnego statusu klęski; statusu FEWS NET po 30 września 2026 roku; globalnego odsetka dzieci z wasting; aktualnych plonów zbóż i danych AQUASTAT; wartości ILO i GEM o samozatrudnieniu; liczb ofiar historycznych klęsk głodu (celowo pominąłem); stanowisk Taugera, Mukerjee, Austina i Gardnera, które znam z opisów w literaturze. Definicje regionów w danych UNICEF i ONZ się różnią. Porównań liczby dzieci w Afryce i Azji Południowej nie potwierdziłem w pełnym tekście kompendium UNICEF, więc należy je traktować jako rząd wielkości.</p>
+  <p>Nie wykluczam błędów. Jeśli któraś liczba budzi wątpliwość, najlepiej sprawdzić ją w źródle z powyższej listy.</p>
+</footer>
+
+</div>
+</body>
+</html>
