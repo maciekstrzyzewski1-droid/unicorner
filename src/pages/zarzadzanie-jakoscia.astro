@@ -7,20 +7,18 @@ const description = "Kompendium i quiz z zarządzania jakością: ewolucja QI→
 <Base title={title} description={description}>
 <style is:inline>
   :root{
-    --ink:#07060f; --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
+    /* wspólne tokeny (--ink, --muted, --muted2, --accent, --cyan, --magenta, --gold, --iris, --disp): src/styles/tokeny.css, ładowane w Base.astro */
+    --ink2:#0b0918; --surface:#100d22; --surface2:#171132;
     --line:#241d4a; --line2:#3a2e74;
-    --text:#eef0ff; --muted:#9b93c4; --muted2:#6f679a;
-    --accent:#a78bfa; --accent-d:#8b5cf6;
-    --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
+    --text:#eef0ff;
+    --accent-d:#8b5cf6;
     --ok:#5ad1a0; --ok-bg:#0c241d; --ok-line:#1d4a3a;
     --bad:#ff6b8b; --bad-bg:#2a0d18; --bad-line:#5a2233;
-    --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
     --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
     --glow-cyan:0 0 16px rgba(39,232,255,.55);
     --glow-mag:0 0 16px rgba(255,46,151,.5);
     --glow-gold:0 0 18px rgba(255,216,74,.4);
     --shadow:0 18px 60px rgba(0,0,0,.6);
-    --disp:'Chakra Petch','Space Grotesk',sans-serif;
     --mono:'Chakra Petch',ui-monospace,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
