@@ -76,6 +76,47 @@ const ld = {
       .art .caption{margin-bottom:30px;}
       .art table{display:block;overflow-x:auto;}
       @media (min-width:561px){.art table{display:table;}}
+      /* spis treści (generowany przy buildzie w src/lib/wiedza.js) */
+      article.art .wz-toc{margin:0 0 30px;border:1px solid rgba(236,229,209,.1);background:#1b1c15;}
+      article.art .wz-toc summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:12px;padding:13px 16px;}
+      article.art .wz-toc summary::-webkit-details-marker{display:none;}
+      article.art .wz-toc summary .k{font:600 12px/1.2 'Work Sans',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:#d1a13f;}
+      article.art .wz-toc summary .m{font-size:.82rem;color:#a9a292;flex:1;}
+      article.art .wz-toc summary::after{content:"+";color:#d1a13f;font:400 1.2rem/1 'Work Sans',sans-serif;}
+      article.art .wz-toc details[open] summary::after{content:"–";}
+      article.art .wz-toc ol{list-style:none;margin:0;padding:0 16px 10px;}
+      article.art .wz-toc li{margin:0;}
+      article.art .wz-toc li a{display:grid;grid-template-columns:1fr auto;gap:2px 14px;padding:9px 0;border-top:1px solid rgba(236,229,209,.08);text-decoration:none;color:#ece5d1;}
+      article.art .wz-toc li a:hover .t{color:#d1a13f;}
+      article.art .wz-toc .n{grid-column:1/-1;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#a9a292;}
+      article.art .wz-toc .t{font-size:.95rem;line-height:1.35;}
+      article.art .wz-toc .min{font-size:.8rem;color:#a9a292;white-space:nowrap;align-self:end;}
+      article.art .wz-toc li.mk .t::after{content:"  · tu jest znacznik";color:#d1a13f;font-size:.8rem;white-space:nowrap;}
+      /* znacznik czytania */
+      article.art .wrap > *{scroll-margin-top:84px;}
+      article.art .wz-marked{position:relative;}
+      article.art .wz-marked::before{content:"";position:absolute;left:-14px;top:3px;bottom:3px;width:3px;background:#d1a13f;}
+      article.art .wz-flash{outline:2px solid transparent;outline-offset:8px;animation:wzflash 1.8s ease;}
+      @keyframes wzflash{0%{outline-color:rgba(209,161,63,.75);}100%{outline-color:rgba(209,161,63,0);}}
+      article.art .wz-bm-bar{display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap;margin:0 0 30px;padding:12px 16px;border:1px solid rgba(209,161,63,.4);background:rgba(209,161,63,.07);}
+      article.art .wz-bm-bar[hidden]{display:none;}
+      article.art .wz-bm-bar .tx{flex:1;min-width:180px;line-height:1.35;}
+      article.art .wz-bm-bar .k{display:block;font:600 11px/1.4 'Work Sans',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#d1a13f;}
+      article.art .wz-bm-bar .c{font-size:.9rem;color:#ece5d1;}
+      article.art .wz-bm-bar button,.wz-bm button,article.art .wz-bm-stop{font:500 13px/1 'Work Sans',-apple-system,'Segoe UI',sans-serif;color:#ece5d1;background:#1b1c15;border:1px solid rgba(209,161,63,.45);padding:9px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;}
+      article.art .wz-bm-bar button.go{background:#d1a13f;color:#14150f;border-color:#d1a13f;}
+      article.art .wz-bm-bar button.rm{border-color:rgba(236,229,209,.2);color:#a9a292;}
+      article.art .wz-bm-bar button:hover,.wz-bm button:hover,article.art .wz-bm-stop:hover{border-color:#d1a13f;}
+      article.art .wz-bm-stop{margin-top:12px;}
+      .wz-bm{position:fixed;right:18px;bottom:18px;z-index:30;display:flex;gap:8px;}
+      .wz-bm button{border-radius:999px;padding:11px 16px;box-shadow:0 10px 28px rgba(0,0,0,.5);}
+      .wz-bm button[hidden]{display:none;}
+      .wz-bm svg,article.art .wz-bm-bar svg,article.art .wz-bm-stop svg{width:15px;height:15px;fill:none;stroke:#d1a13f;stroke-width:1.8;stroke-linejoin:round;flex-shrink:0;}
+      article.art .wz-bm-bar button.go svg{stroke:#14150f;}
+      .wz-bm-toast{position:fixed;left:50%;bottom:78px;transform:translateX(-50%);z-index:31;max-width:min(92vw,420px);background:#1b1c15;border:1px solid rgba(209,161,63,.5);color:#ece5d1;font:400 .88rem/1.45 'Work Sans',sans-serif;padding:10px 14px;box-shadow:0 12px 30px rgba(0,0,0,.55);}
+      .wz-bm-toast[hidden]{display:none;}
+      @media (max-width:560px){.wz-bm{right:12px;bottom:12px;}.wz-bm .lbl{display:none;}.wz-bm button{padding:13px;}}
+      @media (prefers-reduced-motion:reduce){article.art .wz-flash{animation:none;}}
     </style>
   </Fragment>
 
@@ -156,6 +197,65 @@ const ld = {
       document.addEventListener('keydown',function(e){ if(e.key==='Escape') hide(); });
       window.addEventListener('scroll',function(){ if(!pop.hidden&&!pop.matches(':hover')) hide(); },{passive:true});
       window.addEventListener('resize',hide);
+    })();
+  </script>
+  <script is:inline>
+    // Znacznik czytania: czytelnik stawia znacznik w miejscu, w którym przerywa (pływający przycisk albo
+    // przycisk w ramce „Przystanek”). Znacznik zapisuje się w tej przeglądarce (localStorage). Po powrocie
+    // strona NIE przewija sama — u góry artykułu pojawia się pasek „Twój znacznik” z przyciskiem
+    // „Przejdź do znacznika”, żeby można było najpierw przypomnieć sobie początek.
+    (function(){
+      var art=document.querySelector('.art'); if(!art) return;
+      var wrap=art.querySelector('.wrap')||art;
+      var store; try{ store=window.localStorage; store.setItem('wz-t','1'); store.removeItem('wz-t'); }catch(e){ return; }
+      var KEY='wz-znacznik:'+location.pathname;
+      var head=wrap.querySelector('header.top'), toc=wrap.querySelector('nav.wz-toc');
+      var blocks=[].filter.call(wrap.children,function(el){ return el!==head && el!==toc && !/^(HR|STYLE|SCRIPT|FOOTER)$/.test(el.tagName); });
+      if(blocks.length<5) return;
+      var reduce=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var ICON='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2h8v12l-4-3-4 3z"/></svg>';
+      function snip(el){ return (el.textContent||'').replace(/\s+/g,' ').trim().slice(0,80); }
+      function headOf(el){ for(var i=blocks.indexOf(el);i>=0;i--){ if(blocks[i].tagName==='H2') return blocks[i]; } return null; }
+      function label(el){ var h=headOf(el); if(!h) return 'Początek tekstu'; var n=h.querySelector('.num'); var t=h.textContent.replace(n?n.textContent:'','').trim(); return (n?n.textContent.trim()+': ':'')+t; }
+      function load(){ try{ var d=JSON.parse(store.getItem(KEY)||'null'); if(!d) return null;
+        var el=blocks[d.i]; if(!el||snip(el)!==d.t){ el=null; for(var k=0;k<blocks.length;k++){ if(snip(blocks[k])===d.t){ el=blocks[k]; break; } } }
+        return el?{el:el,d:d}:null; }catch(e){ return null; } }
+      var mark=load();
+
+      var bar=document.createElement('div'); bar.className='wz-bm-bar'; bar.hidden=true; bar.setAttribute('role','region'); bar.setAttribute('aria-label','Twój znacznik');
+      bar.innerHTML=ICON+'<div class="tx"><span class="k">Twój znacznik</span><span class="c"></span></div><button type="button" class="go">Przejdź do znacznika</button><button type="button" class="rm">Usuń</button>';
+      (toc||head) ? (toc||head).insertAdjacentElement('afterend',bar) : wrap.insertBefore(bar,wrap.firstChild);
+      blocks=blocks.filter(function(b){ return b!==bar; });
+
+      var fab=document.createElement('div'); fab.className='wz-bm';
+      fab.innerHTML='<button type="button" class="go" hidden aria-label="Przejdź do znacznika">'+ICON+'<span class="lbl">Do znacznika</span></button><button type="button" class="set" aria-label="Postaw znacznik w tym miejscu">'+ICON+'<span class="lbl">Zaznacz miejsce</span></button>';
+      document.body.appendChild(fab);
+      var toast=document.createElement('div'); toast.className='wz-bm-toast'; toast.hidden=true; toast.setAttribute('role','status'); document.body.appendChild(toast);
+      var tt=0; function say(t){ toast.textContent=t; toast.hidden=false; clearTimeout(tt); tt=setTimeout(function(){ toast.hidden=true; },3200); }
+
+      function render(){
+        art.querySelectorAll('.wz-marked').forEach(function(b){ b.classList.remove('wz-marked'); });
+        art.querySelectorAll('.wz-toc li.mk').forEach(function(li){ li.classList.remove('mk'); });
+        var goF=fab.querySelector('.go'), setF=fab.querySelector('.set .lbl');
+        if(mark){ mark.el.classList.add('wz-marked'); bar.hidden=false; bar.querySelector('.c').textContent=mark.d.c; goF.hidden=false; setF.textContent='Przenieś znacznik';
+          var h=headOf(mark.el); if(h&&h.id){ var li=art.querySelector('.wz-toc li[data-sec="'+h.id+'"]'); if(li) li.classList.add('mk'); } }
+        else { bar.hidden=true; goF.hidden=true; setF.textContent='Zaznacz miejsce'; }
+      }
+      function topBlock(){ for(var i=0;i<blocks.length;i++){ if(blocks[i].getBoundingClientRect().bottom>110) return blocks[i]; } return blocks[blocks.length-1]; }
+      function put(el){ var d={i:blocks.indexOf(el),t:snip(el),c:label(el),ts:Date.now()};
+        try{ store.setItem(KEY,JSON.stringify(d)); }catch(e){ say('Nie udało się zapisać znacznika w tej przeglądarce.'); return; }
+        mark={el:el,d:d}; render(); say('Znacznik zapisany w tej przeglądarce. Po powrocie znajdziesz go na górze artykułu.'); }
+      function go(){ if(!mark) return; mark.el.scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'});
+        mark.el.classList.remove('wz-flash'); void mark.el.offsetWidth; mark.el.classList.add('wz-flash'); }
+      fab.querySelector('.set').addEventListener('click',function(){ put(topBlock()); });
+      fab.querySelector('.go').addEventListener('click',go);
+      bar.querySelector('.go').addEventListener('click',go);
+      bar.querySelector('.rm').addEventListener('click',function(){ try{ store.removeItem(KEY); }catch(e){} mark=null; render(); say('Znacznik usunięty.'); });
+      art.querySelectorAll('.stop').forEach(function(st){
+        var b=document.createElement('button'); b.type='button'; b.className='wz-bm-stop'; b.innerHTML=ICON+'Postaw tu znacznik';
+        b.addEventListener('click',function(){ put(st); }); st.appendChild(b);
+      });
+      render();
     })();
   </script>
 </Base>

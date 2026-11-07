@@ -61,4 +61,5 @@ export const ARTICLES = [
   { slug: 'anatomia-pragnienia', topic: 'Czy w Meksyku cola jest tańsza od wody i co naprawdę robią z wodą Coca-Cola i Nestlé', category: 'swiat', seoTitle: 'Anatomia pragnienia — Coca-Cola, Nestlé i woda: fakty kontra mity' },
   { slug: 'anatomia-muszli', topic: 'Czy Shell to najgorszy koncern naftowy? Nigeria, klimat, afery i porównanie z resztą branży', category: 'swiat', seoTitle: 'Anatomia muszli — afery Shella na tle BP, Exxona, Chevronu, Total i Orlenu' },
   { slug: 'anatomia-bariery', topic: 'Concorde: kto nim latał, dlaczego spadł i czemu dziś nikt nie lata szybciej niż dźwięk', category: 'swiat', seoTitle: 'Anatomia bariery — historia Concorde’a, katastrofa z 2000 roku i przyszłość lotów naddźwiękowych' },
+  { slug: 'anatomia-glosu', topic: 'Afery FIFA od Havelange’a do Infantino: łapówki, Katar, FIFAgate i co zostało po nich', category: 'swiat', seoTitle: 'Anatomia głosu — korupcja w FIFA od Havelange’a do Infantino, Katar, FIFAgate i mundial 2026' },
 ];

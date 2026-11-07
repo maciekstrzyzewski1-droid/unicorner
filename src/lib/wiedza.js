@@ -90,7 +90,38 @@ function parse(raw, file) {
   const metaTxt = pick(body, /class="[^"]*\bmeta\b[^"]*"[^>]*>([\s\S]*?)<\/(?:div|p)>/i);
   const m = metaTxt.match(/ok\.\s*(\d+)\s*min/);
   const minutes = m ? +m[1] : Math.max(5, Math.round(words / 200));
-  return { css: scopeCss(styles), html: body, title, lede, minutes, words };
+  return { css: scopeCss(styles), html: addToc(body, minutes), title, lede, minutes, words };
+}
+
+
+// Spis treści z czasem czytania każdej części. Liczony przy buildzie z nagłówków <h2> artykułu,
+// więc działa we wszystkich tekstach bez zmian w plikach. Nagłówki bez id dostają id="sekcja-N".
+// Czas części: słowa do następnego <h2> (bez SVG i ukrytych odpowiedzi w <details>) / 200 słów na minutę.
+function addToc(body, totalMinutes) {
+  const heads = [...body.matchAll(/<h2([^>]*)>([\s\S]*?)<\/h2>/gi)];
+  if (heads.length < 3) return body;
+  const words = (html) => text(html.replace(/<svg[\s\S]*?<\/svg>|<details[\s\S]*?<\/details>/gi, ' ')).split(' ').filter(Boolean).length;
+  const items = heads.map((m, i) => {
+    const idMatch = m[1].match(/\sid="([^"]+)"/);
+    const id = idMatch ? idMatch[1] : `sekcja-${i + 1}`;
+    const num = pick(m[2], /<span[^>]*class="[^"]*\bnum\b[^"]*"[^>]*>([\s\S]*?)<\/span>/i);
+    const title = text(m[2].replace(/<span[^>]*class="[^"]*\bnum\b[^"]*"[^>]*>[\s\S]*?<\/span>/i, ''));
+    const end = i + 1 < heads.length ? heads[i + 1].index : body.length;
+    const min = Math.max(1, Math.round(words(body.slice(m.index, end)) / 200));
+    return { m, id, num, title, min, hasId: !!idMatch, sources: /^źródła$/i.test(num) };
+  });
+  let out = '', last = 0;
+  for (const it of items) {
+    out += body.slice(last, it.m.index);
+    out += it.hasId ? it.m[0] : `<h2${it.m[1]} id="${it.id}">${it.m[2]}</h2>`;
+    last = it.m.index + it.m[0].length;
+  }
+  out += body.slice(last);
+  const esc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+  const parts = items.filter((it) => !it.sources).length;
+  const li = items.map((it) => `<li data-sec="${it.id}"><a href="#${it.id}">${it.num ? `<span class="n">${esc(it.num)}</span>` : ''}<span class="t">${esc(it.title)}</span>${it.sources ? '' : `<span class="min">${it.min} min</span>`}</a></li>`).join('');
+  const nav = `<nav class="wz-toc" aria-label="Spis treści"><details><summary><span class="k">Spis treści</span><span class="m">${parts} części · ok. ${totalMinutes} min</span></summary><ol>${li}</ol></details></nav>`;
+  return /<\/header>/i.test(out) ? out.replace(/<\/header>/i, (h) => h + nav) : nav + out;
 }
 
 let cache;
