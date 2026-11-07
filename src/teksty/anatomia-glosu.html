@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anatomia głosu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14150f;--text:#ece5d1;--muted:#a9a292;--gold:#d1a13f;--line:#2b2c23;--card:#1b1c15;--red:#c96a4e;--green:#7fa06a;--blue:#6f8fa8;color-scheme:dark;}
+*{box-sizing:border-box;} html,body{margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'Work Sans',-apple-system,'Segoe UI',sans-serif;font-weight:300;font-size:18px;line-height:1.72;-webkit-font-smoothing:antialiased;}
+.wrap{max-width:720px;margin:0 auto;padding:0 22px 120px;}
+header.top{padding:72px 0 36px;border-bottom:1px solid var(--line);margin-bottom:44px;}
+.kicker{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:22px;}
+h1{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(2.3rem,8vw,3.6rem);line-height:1.04;margin:0 0 20px;letter-spacing:-.02em;}
+.lede{font-size:1.14rem;color:var(--muted);line-height:1.68;margin:0;}
+.meta{margin-top:28px;font-size:13px;color:var(--muted);letter-spacing:.04em;}
+h2{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:clamp(1.5rem,4.6vw,2rem);line-height:1.18;margin:68px 0 20px;}
+h2 .num{display:block;font-family:'Work Sans',sans-serif;font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:10px;}
+h3{font-family:'Fraunces',Georgia,serif;font-weight:600;font-size:1.2rem;margin:40px 0 12px;color:#fff;}
+strong{font-weight:600;color:#fff;}
+a{color:var(--gold);}
+.box{border:1px solid var(--line);background:var(--card);padding:18px 20px;margin:30px 0;}
+.box .bt{font-family:'Fraunces',serif;color:var(--gold);margin-bottom:8px;}
+.box p{margin:0 0 10px;} .box p:last-child{margin-bottom:0;}
+.box ul{margin:0;padding-left:20px;} .box li{margin-bottom:6px;}
+/* statusy */
+.tags{display:grid;grid-template-columns:auto 1fr;gap:8px 14px;margin:12px 0 0;font-size:.92rem;line-height:1.5;}
+.tag{font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:600;padding:3px 8px;border:1px solid var(--line);white-space:nowrap;align-self:start;}
+.tag.w{color:var(--green);} .tag.u{color:var(--blue);} .tag.z{color:var(--gold);} .tag.s{color:var(--red);}
+/* liczby */
+.nums{margin:34px 0;border:1px solid var(--line);}
+.nums .nhead{padding:12px 18px;border-bottom:1px solid var(--line);font-family:'Fraunces',serif;color:#fff;font-size:1.05rem;}
+.nums .nrow{display:flex;gap:16px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:baseline;}
+.nums .nrow:last-child{border-bottom:none;}
+.nums .n{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--gold);flex:0 0 132px;line-height:1.1;font-variant-numeric:tabular-nums;}
+.nums .d{font-size:.92rem;line-height:1.5;}
+/* oś czasu */
+.tl{border-left:1px solid var(--line);padding-left:20px;margin:30px 0;}
+.tl .ev{margin-bottom:22px;position:relative;}
+.tl .ev:before{content:"";position:absolute;left:-25px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--gold);}
+.tl .ev.crit:before{background:var(--red);}
+.tl .ev.after:before{background:var(--blue);}
+.tl .yr{font-size:12px;letter-spacing:.14em;color:var(--gold);font-weight:600;text-transform:uppercase;}
+.tl .ev.crit .yr{color:var(--red);}
+.tl .ev.after .yr{color:var(--blue);}
+.tl .txt{font-size:.94rem;line-height:1.55;}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.8rem;color:var(--muted);margin:-10px 0 24px;}
+.legend span:before{content:"";display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:7px;vertical-align:1px;}
+.legend .lg:before{background:var(--gold);} .legend .lb:before{background:var(--blue);}
+/* wykres słupkowy poziomy */
+.bars{margin:30px 0;} .bars .bt{font-family:'Fraunces',serif;color:#fff;margin-bottom:14px;font-size:1.05rem;}
+.bars .row{display:flex;align-items:center;gap:10px;margin-bottom:9px;font-size:.85rem;}
+.bars .lab{flex:0 0 150px;color:var(--muted);line-height:1.3;} .bars .track{flex:1;background:var(--card);height:16px;}
+.bars .fill{height:100%;background:var(--gold);} .bars .fill.red{background:var(--red);} .bars .fill.blue{background:var(--blue);} .bars .fill.green{background:var(--green);}
+.bars .val{flex:0 0 64px;text-align:right;font-variant-numeric:tabular-nums;}
+.bars .grp{margin-bottom:16px;} .bars .gl{font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:6px;}
+.caption{font-size:.8rem;color:var(--muted);margin-top:10px;line-height:1.5;}
+/* dwie strony sporu */
+.twocol{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:30px 0;}
+.twocol .side{border:1px solid var(--line);background:var(--card);padding:16px 18px;font-size:.9rem;line-height:1.55;}
+.twocol .side .st{font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;margin-bottom:10px;}
+.twocol .side.a .st{color:var(--red);} .twocol .side.b .st{color:var(--green);}
+.twocol .side p{margin:0 0 8px;} .twocol .side p:last-child{margin-bottom:0;}
+/* schemat SVG */
+figure.diag{margin:34px 0;border:1px solid var(--line);background:var(--card);padding:18px;}
+figure.diag svg{width:100%;max-width:540px;height:auto;display:block;margin:0 auto;}
+figure.diag figcaption{font-size:.8rem;color:var(--muted);margin-top:12px;line-height:1.5;}
+blockquote{margin:30px 0;padding:4px 0 4px 20px;border-left:2px solid var(--gold);font-family:'Fraunces',serif;font-size:1.15rem;line-height:1.5;color:#fff;}
+blockquote cite{display:block;font-family:'Work Sans',sans-serif;font-style:normal;font-size:.8rem;color:var(--muted);margin-top:8px;}
+hr.sep{border:none;border-top:1px solid var(--line);margin:56px 0;}
+/* źródła — bez numeracji */
+ul.sources{list-style:none;padding:0;font-size:.85rem;color:var(--muted);line-height:1.6;}
+ul.sources li{margin-bottom:10px;padding-left:14px;border-left:1px solid var(--line);}
+ul.sources a{color:var(--muted);word-break:break-word;}
+.srch{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:600;margin:30px 0 12px;}
+footer.end{margin-top:70px;padding-top:30px;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted);}
+footer.end p{margin:0 0 10px;}
+@media (max-width:560px){body{font-size:17px;} .nums .n{flex:0 0 96px;font-size:1.08rem;} .bars .lab{flex:0 0 100px;font-size:.78rem;} .bars .val{flex:0 0 54px;font-size:.78rem;} .twocol{grid-template-columns:1fr;} .tags{grid-template-columns:1fr;gap:4px;} .tags .tag{justify-self:start;margin-top:8px;}}
+</style>
+</head>
+<body><div class="wrap">
+<header class="top">
+  <div class="kicker">Artykuł badawczy</div>
+  <h1>Anatomia głosu</h1>
+  <p class="lede">FIFA powstała, żeby piłka nożna miała wspólne zasady. W ciągu pół wieku stała się maszyną, w której głosy federacji kupowano kopertami, kontraktami telewizyjnymi i obietnicami. Sprawdzamy, co udowodniły sądy, co pokazał serial „Sekrety FIFA” i co wydarzyło się po Katarze. Kopert jest dziś mniej, ale mechanizm pracuje dalej.</p>
+  <div class="meta">Listopad 2026 · czas czytania ok. 37 minut</div>
+</header>
+
+<p>27 maja 2015 roku, tuż przed szóstą rano, do lobby pięciogwiazdkowego hotelu Baur au Lac w Zurychu weszło kilkunastu policjantów w cywilnych ubraniach. Wzięli z recepcji klucze do pokojów i pojechali na górę. Wkrótce potem bocznym wyjściem wyprowadzano do nieoznakowanych samochodów kolejnych działaczy FIFA. Hotelowi pracownicy zasłaniali ich prześcieradłami przed obiektywami.</p>
+
+<p>Szwajcarska policja działała na wniosek Amerykanów. Tego samego dnia prokuratura w Brooklynie ogłosiła akt oskarżenia przeciwko czternastu osobom. Opisano w nim łapówki warte ponad 150 milionów dolarów.</p>
+
+<p>Dwa dni później Sepp Blatter został ponownie wybrany na prezydenta FIFA. Cztery dni po tym wyborze ogłosił, że odchodzi.</p>
+
+<p>Kiedy oglądałem na Netfliksie „Sekrety FIFA”, ta scena wyglądała mi na finał całej historii. Serial urywa się mniej więcej tam, gdzie zaczyna się mundial w Katarze. Przy napisach końcowych miałem jednak przeczucie, że ciemne interesy nie skończyły się razem z nimi.</p>
+
+<p>Lubimy historie z wyraźnym końcem. Złoczyńców aresztują, organizacja się oczyszcza, lecą napisy. Tylko że instytucje rzadko działają jak scenariusz.</p>
+
+<p>Ten tekst sprawdza to przeczucie. Idziemy od założenia FIFA w 1904 roku przez epokę Havelange'a i Blattera, głosowanie, które dało mundial Rosji i Katarowi, oraz amerykańskie śledztwo zwane FIFAgate. Potem dochodzimy do rządów Gianniego Infantino i lata 2026 roku. Teza brzmi tak: <strong>korupcję w FIFA naprawdę udowodniono, ale głównie w amerykańskich sądach i głównie wobec ludzi z drugiego szeregu. Mechanizm, który ją rodził, przetrwał wszystkie reformy.</strong> Zmieniła się waluta. Zamiast kopert są wypłaty z centrali, przyjaźnie z głowami państw i coraz śmielszy handel samym turniejem.</p>
+
+<div class="box">
+  <div class="bt">Jak czytać ten tekst</div>
+  <p>W sprawach FIFA łatwo pomylić wyrok z plotką. Dlatego przy każdym ważnym twierdzeniu mówimy, skąd pochodzi:</p>
+  <div class="tags">
+    <span class="tag w">Wyrok</span><span>orzekł sąd: skazał, uniewinnił albo umorzył.</span>
+    <span class="tag u">Ustalenie</span><span>dokument prokuratury lub komisji, przyznanie się do winy albo raport instytucji.</span>
+    <span class="tag z">Zarzut</span><span>twierdzenie dziennikarzy, oskarżycieli lub świadków, którego sąd nie rozstrzygnął.</span>
+    <span class="tag s">Spór</span><span>dane albo interpretacje, co do których wiarygodne źródła się różnią.</span>
+  </div>
+</div>
+
+<h2><span class="num">Rozdział pierwszy</span>Serial, który kończy się za wcześnie</h2>
+
+<p>„Sekrety FIFA” (w oryginale „FIFA Uncovered”) to czteroodcinkowy dokument Netfliksa. Wszystkie odcinki trafiły na platformę 9 listopada 2022 roku, jedenaście dni przed meczem otwarcia mundialu w Katarze. Wyreżyserował go Daniel Gordon, a wyprodukowali Miles Coleman i John Battsek. Całość trwa niecałe cztery godziny.</p>
+
+<p>Serial zaczyna od narodzin FIFA w 1904 roku. Potem pokazuje, jak od 1974 roku Brazylijczyk João Havelange zamieniał federację w globalny biznes. Dalej mamy erę Blattera, przyznanie mundiali Rosji i Katarowi i wreszcie śledztwo amerykańskiego Departamentu Sprawiedliwości z 2015 roku.</p>
+
+<p>Mocną stroną serialu są rozmówcy. Przed kamerą siada sam Sepp Blatter. Są też ludzie z wnętrza FIFA, wśród nich wieloletni urzędnik Guido Tognoni, a także dziennikarze, którzy latami rozpracowywali tę organizację: David Conn z „Guardiana” i Ken Bensinger, autor książki „Red Card”. Pojawiają się również Mohamed bin Hammam, były szef azjatyckiej konfederacji, oraz Hassan Al Thawadi, który kierował katarskim komitetem organizacyjnym.</p>
+
+<p>Tezę serialu najlepiej streszcza zdanie Tognoniego, przytaczane przez recenzentów: „Katar to system, system to Katar”. Katar nie jest w tej opowieści wypadkiem przy pracy. Jest logicznym skutkiem tego, jak FIFA działała przez dekady.</p>
+
+<p>To dobra teza. Ale serial ma swoje ograniczenia, które warto znać, zanim potraktujemy go jak akt oskarżenia.</p>
+
+<p><strong>Po pierwsze, serial ma wyraźne stanowisko.</strong> Recenzenci zwracali uwagę, że prawie wprost sugeruje, że mundial w Katarze został kupiony. Tymczasem żaden sąd tego nie orzekł. Sporo wiemy o łapówkach wokół tego głosowania, o czym niżej. Ale „mundial kupiony łapówkami” to wciąż <span class="tag z">zarzut</span>, a nie <span class="tag w">wyrok</span>.</p>
+
+<p><strong>Po drugie, serial omija niewygodne dla Europy wątki.</strong> Prawie nie mówi o tym, jak Niemcy zdobyły mundial 2006. A tam sprawa skończyła się w 2025 roku wyrokiem niemieckiego sądu przeciwko własnej federacji. Recenzja w „Journal of Sport History” zauważa też, że serial nie pokazuje, jak ten system wpływał na zwykłą piłkę, poza wielkimi kontraktami.</p>
+
+<p><strong>Po trzecie, serial zatrzymuje się w momencie, w którym zaczyna się najciekawsze.</strong> Po jego premierze Blatter i Platini zostali prawomocnie uniewinnieni. Mundial 2034 trafił bez żadnej konkurencji do Arabii Saudyjskiej. Ostatnia wielka amerykańska sprawa korupcyjna upadła. A latem 2026 roku FIFA próbowała sprzedać prywatnym inwestorom udziały w mistrzostwach świata.</p>
+
+<p>Oś czasu poniżej pokazuje, gdzie kończy się serial i ile wydarzyło się później.</p>
+
+<div class="tl">
+  <div class="ev"><div class="yr">21 maja 1904</div><div class="txt">Siedem federacji zakłada w Paryżu FIFA.</div></div>
+  <div class="ev"><div class="yr">1974</div><div class="txt">João Havelange wygrywa wybory ze Stanleyem Rousem. Zaczyna się komercjalizacja.</div></div>
+  <div class="ev"><div class="yr">1998</div><div class="txt">Sepp Blatter zostaje prezydentem po 17 latach jako sekretarz generalny.</div></div>
+  <div class="ev"><div class="yr">2001</div><div class="txt">Upada ISL, agencja marketingowa FIFA. Kilka lat później prokuratura z Zug ustali, że płaciła łapówki.</div></div>
+  <div class="ev crit"><div class="yr">2 grudnia 2010</div><div class="txt">Komitet Wykonawczy jednego dnia przyznaje mundial 2018 Rosji, a 2022 Katarowi.</div></div>
+  <div class="ev"><div class="yr">Lipiec 2012</div><div class="txt">Szwajcarski Sąd Federalny pozwala ujawnić dokument z Zug. Havelange i Teixeira zostają nazwani z imienia.</div></div>
+  <div class="ev crit"><div class="yr">27 maja 2015</div><div class="txt">Aresztowania w Baur au Lac. Departament Sprawiedliwości USA oskarża 14 osób.</div></div>
+  <div class="ev"><div class="yr">26 lutego 2016</div><div class="txt">Gianni Infantino wygrywa wybory. Kongres przyjmuje pakiet reform.</div></div>
+  <div class="ev"><div class="yr">2017</div><div class="txt">FIFA publikuje pełny raport Garcii. W Brooklynie zapadają pierwsze wyroki po procesie.</div></div>
+  <div class="ev"><div class="yr">Listopad 2022</div><div class="txt">Premiera serialu i mundial w Katarze.</div></div>
+  <div class="ev after"><div class="yr">11 grudnia 2024</div><div class="txt">Mundial 2030 i 2034 przyznane przez aklamację, bez konkurencji.</div></div>
+  <div class="ev after"><div class="yr">2025</div><div class="txt">Prawomocne uniewinnienie Blattera i Platiniego. Wyrok wobec niemieckiej federacji. Sąd na Trynidadzie blokuje ekstradycję Jacka Warnera. Trump dostaje „Pokojową Nagrodę FIFA”.</div></div>
+  <div class="ev after"><div class="yr">27 maja 2026</div><div class="txt">Ostatnia duża sprawa z FIFAgate zostaje umorzona na wniosek samej prokuratury.</div></div>
+  <div class="ev after"><div class="yr">Lipiec 2026</div><div class="txt">Mundial w USA, Kanadzie i Meksyku. Sprawa czerwonej kartki Baloguna. Plan sprzedaży udziałów w mundialu upada po czterech dniach.</div></div>
+  <div class="ev after"><div class="yr">18 marca 2027</div><div class="txt">Wybory prezydenta FIFA w Rabacie.</div></div>
+</div>
+<div class="legend"><span class="lg">to, co obejmuje serial</span><span class="lb">to, co wydarzyło się po jego premierze</span></div>
+
+<h2><span class="num">Rozdział drugi</span>Siedem federacji i jeden głos</h2>
+
+<p>FIFA zaczęła się skromnie. 21 maja 1904 roku przedstawiciele siedmiu krajów spotkali się w tylnym pomieszczeniu budynku przy rue Saint-Honoré 229 w Paryżu. Byli to Francuzi, Belgowie, Duńczycy, Holendrzy, Szwedzi, Szwajcarzy i Hiszpanie. Hiszpanię reprezentował klub Madrid FC, czyli dzisiejszy Real Madryt, bo hiszpańskiej federacji jeszcze nie było. Pierwszym prezydentem został Francuz Robert Guérin.</p>
+
+<p>Cel był prosty: wspólne przepisy i porządek w meczach między krajami. Jeden z założycieli wspominał po latach, że nie chcieli budować wielkiego ruchu sportowego. Chcieli po prostu grać w piłkę.</p>
+
+<p>Dziś FIFA ma 211 członków. To więcej niż ONZ, która liczy 193 państwa. Różnica bierze się stąd, że osobne federacje mają na przykład Anglia, Szkocja, Walia i Irlandia Północna, a także terytoria zależne, takie jak Kajmany czy Wyspy Owcze.</p>
+
+<p>Najdłużej rządzącym prezydentem był Francuz Jules Rimet (1921–1954). To on doprowadził do pierwszych mistrzostw świata w 1930 roku w Urugwaju. Na jego cześć nazwano pierwsze trofeum. Jego dalsze losy dobrze pokazują, że wokół FIFA od dawna działy się rzeczy dziwniejsze niż w filmach.</p>
+
+<div class="box">
+  <div class="bt">Ciekawostka: puchar, który zniknął dwa razy</div>
+  <p>W marcu 1966 roku, cztery miesiące przed mundialem w Anglii, ktoś ukradł Puchar Rimeta z wystawy znaczków w londyńskim Westminster Central Hall. Po tygodniu znalazł go pies Pickles podczas spaceru z właścicielem na południu Londynu. Puchar leżał pod krzakiem.</p>
+  <p>Brazylia dostała trofeum na własność po trzecim tytule w 1970 roku. W grudniu 1983 roku złodzieje skradli je z kuloodpornej gabloty w siedzibie brazylijskiej federacji w Rio de Janeiro. Pucharu nigdy nie odnaleziono. Policja przypuszcza, że został przetopiony.</p>
+</div>
+
+<h3>Mechanizm, który wszystko tłumaczy</h3>
+
+<p>Żeby zrozumieć wszystkie afery z kolejnych rozdziałów, trzeba poznać jeden prosty przepis. Najwyższą władzą FIFA jest Kongres, czyli zgromadzenie wszystkich federacji. Każda federacja ma w nim <strong>dokładnie jeden głos</strong>. Niemcy, których federacja ma miliony członków, ważą tyle samo co Montserrat, wyspa na Karaibach z kilkoma tysiącami mieszkańców.</p>
+
+<p>Kongres wybiera prezydenta. A prezydent i jego otoczenie decydują, ile pieniędzy z centrali trafi do poszczególnych federacji. Dla bogatej federacji z Europy to drobne. Dla federacji z małej wyspy taka wypłata może być większa niż cały jej budżet.</p>
+
+<p>Dobrze oddaje to porównanie ze spółdzielnią mieszkaniową. Wyobraźmy sobie spółdzielnię, w której właściciel kawalerki i właściciel całego piętra mają po jednym głosie. Zarząd sam decyduje, czyj dach zostanie wyremontowany z funduszu remontowego. Ludzi z kawalerek jest najwięcej i najbardziej potrzebują pomocy. Przy wyborach nie pytają więc, kto zarządza najuczciwiej. Pytają, kto ostatnio załatał im dach. Zarząd, który rozdaje remonty, praktycznie nie przegrywa wyborów.</p>
+
+<figure class="diag">
+<svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" font-family="inherit">
+  <defs>
+    <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d1a13f"/></marker>
+    <marker id="ab" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#6f8fa8"/></marker>
+  </defs>
+  <rect x="110" y="10" width="240" height="78" fill="#14150f" stroke="#d1a13f"/>
+  <text x="230" y="42" text-anchor="middle" fill="#ece5d1" font-size="18" font-weight="600">Prezydent i centrala</text>
+  <text x="230" y="66" text-anchor="middle" fill="#a9a292" font-size="14">rozdzielają pieniądze rozwojowe</text>
+  <rect x="10" y="196" width="190" height="94" fill="#14150f" stroke="#2b2c23"/>
+  <text x="105" y="226" text-anchor="middle" fill="#ece5d1" font-size="18" font-weight="600">211 federacji</text>
+  <text x="105" y="250" text-anchor="middle" fill="#a9a292" font-size="14">każda ma jeden głos,</text>
+  <text x="105" y="270" text-anchor="middle" fill="#a9a292" font-size="14">bez względu na wielkość</text>
+  <rect x="260" y="196" width="190" height="94" fill="#14150f" stroke="#2b2c23"/>
+  <text x="355" y="226" text-anchor="middle" fill="#ece5d1" font-size="18" font-weight="600">Kongres</text>
+  <text x="355" y="250" text-anchor="middle" fill="#a9a292" font-size="14">zgromadzenie federacji</text>
+  <text x="355" y="270" text-anchor="middle" fill="#a9a292" font-size="14">wybiera prezydenta</text>
+  <path d="M150,90 L105,190" stroke="#d1a13f" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="62" y="134" text-anchor="middle" fill="#d1a13f" font-size="14">pieniądze</text>
+  <text x="62" y="152" text-anchor="middle" fill="#d1a13f" font-size="14">z centrali</text>
+  <path d="M202,243 L254,243" stroke="#6f8fa8" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <text x="230" y="232" text-anchor="middle" fill="#6f8fa8" font-size="14">głosy</text>
+  <path d="M355,190 L312,94" stroke="#6f8fa8" stroke-width="2" fill="none" marker-end="url(#ab)"/>
+  <text x="400" y="134" text-anchor="middle" fill="#6f8fa8" font-size="14">ponowny</text>
+  <text x="400" y="152" text-anchor="middle" fill="#6f8fa8" font-size="14">wybór</text>
+</svg>
+<figcaption>Pętla lojalności. Nikt w niej nie musi dawać łapówek, żeby układ się utrzymywał: wystarczy, że ten, kto rozdaje pieniądze, jest też wybierany przez ich odbiorców. Schemat uproszczony, opracowanie własne.</figcaption>
+</figure>
+
+<p>Ten układ nie jest z natury przestępczy. Pieniądze naprawdę budują boiska i szkolą trenerów w biednych krajach. Ale tworzy idealne warunki dla tak zwanego klientelizmu. To relacja, w której lojalność wyborców kupuje się korzyściami, a nie programem. Do tego do 2016 roku gospodarza mundialu wybierało nie 200 federacji, tylko ponad dwudziestu członków Komitetu Wykonawczego. Przekupić dwudziestu ludzi jest dużo łatwiej niż dwustu.</p>
+
+<p>Skala wypłat stale rośnie. Według rocznego raportu FIFA za 2025 rok, który relacjonował serwis Inside World Football, program rozwojowy FIFA Forward ma w latach 2027–2030 rozdać federacjom 2,7 miliarda dolarów. Zapamiętajmy ten mechanizm. Wróci w każdym kolejnym rozdziale.</p>
+
+<h2><span class="num">Rozdział trzeci</span>Havelange, czyli jak z federacji zrobić firmę</h2>
+
+<p>Do 1974 roku FIFA była klubem dżentelmenów z Europy. Rządził nią Anglik Stanley Rous. W 1974 roku do wyborów stanął brazylijski działacz João Havelange. Objeżdżał federacje z Afryki, Azji i Ameryki Łacińskiej i obiecywał im to, czego Europa nie dawała: pieniądze na rozwój i więcej miejsc na mundialu. Wygrał. Był to ostatni raz przed 2016 rokiem, kiedy wybory prezydenta FIFA rozstrzygnęły się dopiero w drugiej turze.</p>
+
+<p>Obietnice kosztowały. Havelange znalazł pieniądze u sponsorów. Kluczową postacią był Horst Dassler, szef Adidasa, który założył agencję marketingową ISL. ISL kupowała od FIFA prawa do mundiali, czyli prawa do transmisji i do umieszczania logo sponsorów, a potem odsprzedawała je stacjom telewizyjnym i firmom. Dzięki temu do FIFA płynęły pieniądze od takich koncernów jak Coca-Cola.</p>
+
+<p>Skala tych umów rosła lawinowo. Pod koniec lat 90. ISL zapłaciła FIFA 200 milionów franków szwajcarskich za prawa marketingowe i 1,4 miliarda franków za prawa telewizyjne do mundiali w 2002 i 2006 roku.</p>
+
+<h3>Co ustalił prokurator z Zug</h3>
+
+<p>W 2001 roku ISL zbankrutowała. Syndyk, czyli osoba, która porządkuje majątek upadłej firmy, zaczął pytać, gdzie podziały się pieniądze. Sprawą zajęła się prokuratura w szwajcarskim kantonie Zug.</p>
+
+<p>Prokurator Thomas Hildbrand prowadził śledztwo w sprawie sprzeniewierzenia, czyli przywłaszczenia cudzych pieniędzy. W 2010 roku je umorzył, bo FIFA, Havelange i jego były zięć Ricardo Teixeira zwrócili razem 5,5 miliona franków. Teixeira oddał 2,5 miliona, a Havelange 500 tysięcy. Warunek był jeden: ich nazwiska miały pozostać tajne.</p>
+
+<p>Dziennikarze walczyli o ujawnienie dokumentu przez dwa lata. W lipcu 2012 roku szwajcarski Sąd Federalny uznał, że opinia publiczna ma prawo go poznać. 41-stronicowe postanowienie wykazało, że Havelange i Teixeira dostali od ISL w latach 1992–2000 łącznie 41 milionów franków <span class="tag u">ustalenie</span>. W całym okresie 1989–2001 ISL miała wypłacić działaczom sportowym około 138 milionów franków łapówek.</p>
+
+<div class="box">
+  <div class="bt">Ciekawostka: łapówka na złe konto</div>
+  <p>W dokumencie z Zug jest szczegół, który brzmi jak żart. Według świadków jedna z płatności dla Havelange'a, około miliona franków, trafiła przez pomyłkę bezpośrednio na konto samej FIFA. Ludzie w centrali musieli więc wiedzieć, że pieniądze od ISL płyną do prezydenta.</p>
+</div>
+
+<p>Dlaczego nikt za to nie siedział? Odpowiedź jest zaskakująca. <strong>Łapówki w sektorze prywatnym nie były wtedy w Szwajcarii przestępstwem, które prokuratura ściga sama z siebie.</strong> Przepis o przekupstwie dotyczył urzędników. FIFA nie jest urzędem, tylko stowarzyszeniem, a jej działacze nie są urzędnikami. Przekupstwo prywatne było zakazane tylko w ustawie o nieuczciwej konkurencji i ścigano je wyłącznie na wniosek pokrzywdzonego. Według kancelarii Bär &amp; Karrer od 2006 roku, kiedy ten przepis wszedł w życie, nie zapadł na jego podstawie ani jeden wyrok skazujący. Do tego płatności sprzed 1995 roku zdążyły się przedawnić.</p>
+
+<p>Szwajcaria zmieniła prawo dopiero pod presją FIFAgate. Nowelizację, nazwaną potocznie „lex FIFA”, uchwalono 25 września 2015 roku. Od 1 lipca 2016 roku przekupstwo w sektorze prywatnym jest w kodeksie karnym, w artykułach 322octies i 322novies, i jest ścigane z urzędu, z wyjątkiem drobnych przypadków. Nie działa jednak wstecz.</p>
+
+<p>Później komisja etyki samej FIFA, opierając się na dochodzeniu Michaela Garcii, stwierdziła, że łapówki od ISL brali Havelange, Teixeira i Paragwajczyk Nicolás Leoz. Blattera oceniła łagodnie. Uznała, że jego zachowanie można nazwać niezdarnym, ale nie przestępczym. Prokuratura nie podejrzewała go o przyjmowanie pieniędzy.</p>
+
+<h2><span class="num">Rozdział czwarty</span>Imperium Blattera</h2>
+
+<p>Sepp Blatter przyszedł do FIFA w 1975 roku jako dyrektor techniczny. W 1981 roku został sekretarzem generalnym, czyli szefem całej administracji. Był prawą ręką Havelange'a i znał każdą federację i każdy kontrakt. W 1998 roku wygrał wybory na prezydenta ze Szwedem Lennartem Johanssonem.</p>
+
+<p>Te wybory od początku budziły wątpliwości. Dziennikarz śledczy Andrew Jennings opisywał w książce „Foul!” zarzuty, że w Paryżu kupowano głosy <span class="tag z">zarzut</span>. Blatter zawsze zaprzeczał i żaden sąd tego nie potwierdził. Cztery lata później pokonał Kameruńczyka Issę Hayatou. W 2007 roku nie miał kontrkandydata. W 2011 roku jego rywal, Katarczyk Mohamed bin Hammam, wycofał się dzień przed przesłuchaniem przed komisją etyki, więc Blatter znów startował sam.</p>
+
+<p>Blatter rzadko sam brał koperty. Był za to mistrzem pętli lojalności z poprzedniego rozdziału. Federacje dostawały pieniądze z programów rozwojowych, a w zamian prezydent dostawał głosy. Pod nim wyrosło pokolenie działaczy, którzy robili interesy na własny rachunek. Wiele z nich wyjdzie na jaw dopiero w 2015 roku.</p>
+
+<h3>Niemiecka „bajka lata”</h3>
+
+<p>Zanim przejdziemy do Kataru, warto zatrzymać się w Niemczech. Ten wątek dobrze obala przekonanie, że korupcja w FIFA była problemem tylko krajów z Południa.</p>
+
+<p>Mundial 2006 nazywano w Niemczech „Sommermärchen”, czyli „bajką lata”. Po latach okazało się, że bajka ma ciemne zaplecze. Według ustaleń śledczych i dziennikarzy w 2002 roku Franz Beckenbauer, szef niemieckiego komitetu organizacyjnego, dostał 10 milionów franków od Roberta Louis-Dreyfusa, ówczesnego szefa Adidasa. Pieniądze trafiły na konto firmy związanej z Mohamedem bin Hammamem. W 2005 roku niemiecka federacja DFB zwróciła tę kwotę, 6,7 miliona euro, przelewem przez FIFA. W księgach opisała ją jako koszt gali, która nigdy się nie odbyła.</p>
+
+<p>Do dziś nie wiadomo na pewno, za co były te pieniądze <span class="tag s">spór</span>. Pewne jest, jak skończyła się sprawa w sądzie. Proces przed Sądem Krajowym we Frankfurcie trwał od marca 2024 roku. Sprawy byłych szefów DFB umorzono w zamian za zapłatę. 25 czerwca 2025 roku sąd uznał samą federację za winną uchylania się od podatków. Wymierzył jej łącznie 130 tysięcy euro grzywny, z czego po zaliczeniu wcześniejszych wpłat do zapłaty zostało 110 tysięcy <span class="tag w">wyrok</span>. Przewodnicząca składu Eva-Marie Distler ostro skrytykowała DFB. Mówiła, że w federacji zegary chodzą inaczej, a odpowiedzialność zawsze zrzuca się na kogoś z zewnątrz. DFB odwołał się do Federalnego Trybunału Sprawiedliwości. Do chwili pisania nie znalazłem informacji o rozstrzygnięciu tej rewizji.</p>
+
+<h3>Dwa miliony dla Platiniego</h3>
+
+<p>Sprawa, która ostatecznie zakończyła karierę Blattera, dotyczyła przelewu z 2011 roku. FIFA wypłaciła wtedy Michelowi Platiniemu, szefowi UEFA, 2 miliony franków.</p>
+
+<p>Obie strony zgadzają się co do kilku faktów. Platini doradzał Blatterowi w latach 1998–2002. Na papierze dostawał za to 300 tysięcy franków rocznie. Spór dotyczy reszty.</p>
+
+<div class="twocol">
+  <div class="side a"><div class="st">Wersja prokuratury</div><p>Wypłata nie miała podstawy prawnej. Obaj mieli wprowadzić w błąd wewnętrzne kontrole FIFA. Do przelewu doszło w roku, w którym Blatter walczył o kolejną kadencję.</p><p>Prokuratura żądała dla obu 20 miesięcy więzienia w zawieszeniu i zwrotu 2,23 miliona franków.</p></div>
+  <div class="side b"><div class="st">Wersja obrony</div><p>To była zaległa pensja. Blatter i Platini mieli w 1998 roku ustną umowę dżentelmeńską na wyższe wynagrodzenie. Resztę Platini miał dostać później.</p><p>Platini: „Dziś moja cześć została przywrócona”.</p></div>
+</div>
+
+<p>Sądy przyznały rację obronie. Latem 2022 roku Federalny Sąd Karny w Bellinzonie uniewinnił obu mężczyzn. 25 marca 2025 roku Nadzwyczajna Izba Odwoławcza w Muttenz zrobiła to samo, powołując się na zasadę <em>in dubio pro reo</em>, czyli „wątpliwości rozstrzyga się na korzyść oskarżonego”. 28 sierpnia 2025 roku prokuratura zrezygnowała z dalszej skargi, więc uniewinnienie jest prawomocne <span class="tag w">wyrok</span>.</p>
+
+<p>To ważne, bo popularna narracja często mówi o „skazanym Blatterze”. Blatter nigdy nie został skazany przez sąd karny. Ukarała go za to sama FIFA. W grudniu 2015 roku komisja etyki zawiesiła obu na osiem lat. Kary skrócono później do sześciu lat, a Trybunał Arbitrażowy do spraw Sportu obniżył karę Platiniego do czterech lat. Platini wrócił do piłki w 2019 roku. Blatter w 2021 roku dostał od FIFA kolejną karę, w innej sprawie, i nadal jest odsunięty od futbolu.</p>
+
+<h2><span class="num">Rozdział piąty</span>Czwartek w Zurychu</h2>
+
+<p>2 grudnia 2010 roku Komitet Wykonawczy FIFA zrobił coś bez precedensu. Jednego popołudnia, w tajnym głosowaniu na papierowych kartkach, przyznał dwa mundiale naraz. Mistrzostwa w 2018 roku dostała Rosja, a w 2022 roku Katar.</p>
+
+<p>Głosowało 22 członków zamiast 24. Brakowało dwóch, bo kilka tygodni wcześniej dziennikarze brytyjskiego „Sunday Timesa” podali się za lobbystów i nagrali Nigeryjczyka Amosa Adamu i Reynalda Temariiego z Tahiti. Z nagrań wynikało, że obaj byli gotowi sprzedać swój głos. FIFA ich zawiesiła <span class="tag u">ustalenie</span>.</p>
+
+<p>Anglia, ojczyzna futbolu, dostała w pierwszej turze tylko dwa głosy i odpadła. Jeden z nich oddał jej własny przedstawiciel. Rosja wygrała w drugiej turze, zdobywając 13 głosów. Katar prowadził w każdej z czterech tur i w ostatniej pokonał USA 14 do 8.</p>
+
+<div class="bars">
+  <div class="bt">Głosowanie nad mundialem 2022: Katar kontra najsilniejszy rywal w każdej turze</div>
+  <div class="grp"><div class="gl">Tura 1</div>
+    <div class="row"><div class="lab">Katar</div><div class="track"><div class="fill" style="width:50%"></div></div><div class="val">11</div></div>
+    <div class="row"><div class="lab">Korea Płd.</div><div class="track"><div class="fill blue" style="width:18.2%"></div></div><div class="val">4</div></div>
+  </div>
+  <div class="grp"><div class="gl">Tura 2</div>
+    <div class="row"><div class="lab">Katar</div><div class="track"><div class="fill" style="width:45.5%"></div></div><div class="val">10</div></div>
+    <div class="row"><div class="lab">USA / Korea Płd.</div><div class="track"><div class="fill blue" style="width:22.7%"></div></div><div class="val">po 5</div></div>
+  </div>
+  <div class="grp"><div class="gl">Tura 3</div>
+    <div class="row"><div class="lab">Katar</div><div class="track"><div class="fill" style="width:50%"></div></div><div class="val">11</div></div>
+    <div class="row"><div class="lab">USA</div><div class="track"><div class="fill blue" style="width:27.3%"></div></div><div class="val">6</div></div>
+  </div>
+  <div class="grp"><div class="gl">Tura 4</div>
+    <div class="row"><div class="lab">Katar</div><div class="track"><div class="fill" style="width:63.6%"></div></div><div class="val">14</div></div>
+    <div class="row"><div class="lab">USA</div><div class="track"><div class="fill blue" style="width:36.4%"></div></div><div class="val">8</div></div>
+  </div>
+  <div class="caption">Na 22 głosujących do wygranej potrzeba było 12 głosów. W pierwszej turze Katarowi zabrakło do tego jednego głosu. Słupki pokazują udział w 22 głosach. Dane: oficjalne wyniki FIFA z 2 grudnia 2010 roku.</div>
+</div>
+
+<p>FIFA nie ujawnia, kto jak głosował. Serwis Inside World Football zrekonstruował jednak głosowanie na podstawie rozmów z uczestnikami. Według tej nieoficjalnej rekonstrukcji w ostatniej turze sam Blatter głosował na USA.</p>
+
+<h3>Lunch w Pałacu Elizejskim</h3>
+
+<p>Dziewięć dni przed głosowaniem, 23 listopada 2010 roku, prezydent Francji Nicolas Sarkozy zaprosił na lunch do Pałacu Elizejskiego Michela Platiniego i ówczesnego następcę tronu Kataru, szejka Tamima bin Hamada Al Thaniego. Platini był członkiem Komitetu Wykonawczego, więc miał głos w tej sprawie.</p>
+
+<p>Platini przyznał później, że zagłosował na Katar. Zaprzecza jednak, żeby ktokolwiek wywierał na niego nacisk. W czerwcu 2019 roku francuska policja zatrzymała go na przesłuchanie i zwolniła bez zarzutów. Pół roku po głosowaniu katarski fundusz Qatar Sports Investments kupił Paris Saint-Germain. To kontekst, a nie dowód <span class="tag z">zarzut</span>.</p>
+
+<h3>Bin Hammam i koperty</h3>
+
+<p>Najmocniej udokumentowany wątek dotyczy Mohameda bin Hammama, katarskiego szefa azjatyckiej konfederacji i członka Komitetu Wykonawczego. W maju 2011 roku, w kampanii przed wyborami na prezydenta FIFA, w Port of Spain na Trynidadzie spotkał się z działaczami federacji karaibskich. Wręczano im tam koperty z gotówką. FIFA dożywotnio wykluczyła go z futbolu. Pierwszą karę uchylił Trybunał Arbitrażowy do spraw Sportu, ale w 2012 roku bin Hammam dostał drugą dożywotnią karę za konflikty interesów w azjatyckiej konfederacji <span class="tag u">ustalenie</span>.</p>
+
+<p>W 2014 roku „Sunday Times” opublikował cykl „FIFA Files”. Na podstawie wycieku wewnętrznych dokumentów dziennikarze Heidi Blake i Jonathan Calvert opisali płatności bin Hammama dla działaczy z wielu krajów <span class="tag z">zarzut</span>. Katar odpowiadał, że bin Hammam nie był częścią oficjalnej kandydatury i działał na własny rachunek.</p>
+
+<h3>Raport, którego nie chciano pokazać</h3>
+
+<p>W 2012 roku FIFA powołała do zbadania sprawy Michaela Garcię, byłego amerykańskiego prokuratora federalnego. Garcia pracował dwa lata. W listopadzie 2014 roku Hans-Joachim Eckert, szef organu orzekającego w komisji etyki, opublikował około 40-stronicowe streszczenie jego ustaleń. Streszczenie w praktyce oczyszczało Rosję i Katar.</p>
+
+<p>Garcia zaprotestował. Stwierdził, że streszczenie zawiera wiele istotnie niepełnych i błędnych przedstawień faktów. W grudniu 2014 roku zrezygnował. Pełny raport, liczący 430 stron, FIFA opublikowała dopiero 27 czerwca 2017 roku. Zrobiła to dzień po tym, jak niemiecki „Bild” zaczął drukować fragmenty z wycieku.</p>
+
+<p>Co było w środku? Raport opisywał między innymi, że trzech członków Komitetu Wykonawczego poleciało przed głosowaniem na przyjęcie w Rio de Janeiro prywatnym odrzutowcem katarskiej federacji. Opisywał też przelew 2 milionów dolarów niewiadomego pochodzenia na konto dziesięcioletniej córki jednego z działaczy FIFA. Rosyjski komitet kandydacki tłumaczył z kolei, że jego komputery były wypożyczone, a potem zwrócone i zniszczone, więc korespondencji nie dało się sprawdzić.</p>
+
+<p>A teraz rzecz, którą łatwo przeoczyć. Pełny raport w ogólnych zarysach potwierdził wnioski streszczenia. Nie było w nim „dymiącego pistoletu”, czyli dowodu, że głosy na Katar albo Rosję zostały kupione. Reporter „Bilda”, który zdobył dokument, sam pisał, że wyciek nie dowodzi, że te mundiale kupiono.</p>
+
+<div class="twocol">
+  <div class="side a"><div class="st">Co obciąża</div><p>Zawieszenia Adamu i Temariiego, dożywotni zakaz dla bin Hammama, lot do Rio katarskim samolotem, przelew na konto dziecka działacza, zniszczone rosyjskie komputery, lunch w Pałacu Elizejskim.</p></div>
+  <div class="side b"><div class="st">Co odpowiada Katar</div><p>Bin Hammam działał na własny rachunek. Kandydatura była legalną kampanią, jaką prowadzili wszyscy. Ani streszczenie, ani pełny raport Garcii nie wykazały, że głosy zostały kupione. Nie ma wyroku, który by to stwierdzał.</p></div>
+</div>
+
+<p>Uczciwy wniosek brzmi więc tak: proces wyboru był przeżarty korupcją i konfliktami interesów. Nie mamy jednak dowodu sądowego, że to łapówki przesądziły o wygranej Kataru.</p>
+
+<h2><span class="num">Rozdział szósty</span>Świt w Baur au Lac</h2>
+
+<p>Dlaczego to Amerykanie, a nie Szwajcarzy, zrobili porządek w organizacji z siedzibą w Zurychu? Historia zaczyna się od podatków.</p>
+
+<p>Chuck Blazer był sekretarzem generalnym CONCACAF, czyli konfederacji Ameryki Północnej, Środkowej i Karaibów. Prowadził wystawne życie w Nowym Jorku. Śledczy amerykańskiego urzędu skarbowego IRS odkryli, że przez lata nie składał zeznań podatkowych. To dało im dźwignię. W listopadzie 2013 roku Blazer po cichu przyznał się do dziesięciu zarzutów, w tym zmowy przestępczej, oszustwa, prania pieniędzy i uchylania się od podatków. Zaczął współpracować z FBI i nagrywał rozmowy z innymi działaczami. Zmarł w lipcu 2017 roku, zanim zapadł jego wyrok.</p>
+
+<p>Żeby postawić zarzuty ludziom z Paragwaju czy Kajmanów, amerykańska prokuratura potrzebowała związku z USA. Znalazła go w pieniądzach. Łapówki często przechodziły przez amerykańskie banki, a część spotkań odbywała się na terenie USA. To wystarczyło, żeby użyć dwóch potężnych narzędzi.</p>
+
+<p>Pierwsze to <strong>ustawa RICO</strong>. Napisano ją w latach 70. przeciwko mafii. Pozwala oskarżyć ludzi o udział w zorganizowanym przedsięwzięciu przestępczym, nawet jeśli każdy z nich robił tylko kawałek całości. Drugie to <strong>wire fraud</strong>, czyli oszustwo z użyciem przelewu albo łączności elektronicznej. W tej sprawie chodziło o jego odmianę: działacz, który za łapówkę sprzedaje interes swojej organizacji, oszukuje ją, bo odbiera jej prawo do uczciwej służby.</p>
+
+<h3>Jak zarabiano na prawach telewizyjnych</h3>
+
+<p>Większość łapówek z FIFAgate nie dotyczyła mundialu. Dotyczyła kontynentalnych turniejów, takich jak Copa América, Copa Libertadores czy Złoty Puchar CONCACAF. Schemat był prosty.</p>
+
+<figure class="diag">
+<svg viewBox="0 0 460 372" xmlns="http://www.w3.org/2000/svg" font-family="inherit">
+  <defs>
+    <marker id="g2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#d1a13f"/></marker>
+    <marker id="r2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#c96a4e"/></marker>
+  </defs>
+  <rect x="10" y="10" width="250" height="72" fill="#14150f" stroke="#2b2c23"/>
+  <text x="135" y="40" text-anchor="middle" fill="#ece5d1" font-size="18" font-weight="600">Konfederacja</text>
+  <text x="135" y="63" text-anchor="middle" fill="#a9a292" font-size="14">właściciel praw do turnieju</text>
+  <rect x="300" y="10" width="150" height="72" fill="#14150f" stroke="#c96a4e"/>
+  <text x="375" y="40" text-anchor="middle" fill="#ece5d1" font-size="18" font-weight="600">Działacz</text>
+  <text x="375" y="63" text-anchor="middle" fill="#a9a292" font-size="14">podpisuje umowę</text>
+  <line x1="262" y1="46" x2="298" y2="46" stroke="#2b2c23" stroke-width="2"/>
+  <path d="M135,84 L135,144" stroke="#d1a13f" stroke-width="2" marker-end="url(#g2)"/>
+  <text x="145" y="120" fill="#d1a13f" font-size="14">tani kontrakt</text>
+  <rect x="10" y="148" width="250" height="72" fill="#14150f" stroke="#2b2c23"/>
+  <text x="135" y="178" text-anchor="middle" fill="#ece5d1" font-size="18" font-weight="600">Firma marketingowa</text>
+  <text x="135" y="201" text-anchor="middle" fill="#a9a292" font-size="14">kupuje prawa poniżej wartości</text>
+  <path d="M135,222 L135,282" stroke="#d1a13f" stroke-width="2" marker-end="url(#g2)"/>
+  <text x="145" y="258" fill="#d1a13f" font-size="14">odsprzedaż drogo</text>
+  <rect x="10" y="286" width="250" height="72" fill="#14150f" stroke="#2b2c23"/>
+  <text x="135" y="316" text-anchor="middle" fill="#ece5d1" font-size="18" font-weight="600">Telewizje i sponsorzy</text>
+  <text x="135" y="339" text-anchor="middle" fill="#a9a292" font-size="14">płacą cenę rynkową</text>
+  <path d="M262,184 C340,184 375,150 375,88" stroke="#c96a4e" stroke-width="2" stroke-dasharray="6 5" fill="none" marker-end="url(#r2)"/>
+  <text x="375" y="222" text-anchor="middle" fill="#c96a4e" font-size="14">łapówka:</text>
+  <text x="375" y="240" text-anchor="middle" fill="#c96a4e" font-size="14">część różnicy</text>
+  <text x="375" y="258" text-anchor="middle" fill="#c96a4e" font-size="14">między ceną zakupu</text>
+  <text x="375" y="276" text-anchor="middle" fill="#c96a4e" font-size="14">a odsprzedaży</text>
+</svg>
+<figcaption>Schemat łapówek za prawa medialne opisany w aktach oskarżenia FIFAgate. Pokrzywdzona jest konfederacja: dostaje mniej, niż jej prawa są warte. Opracowanie własne, uproszczone.</figcaption>
+</figure>
+
+<p>Dobrze oddaje to porównanie z nieuczciwym pełnomocnikiem. Ktoś daje znajomemu pełnomocnictwo do sprzedaży mieszkania. Pełnomocnik sprzedaje je swojemu wspólnikowi wyraźnie poniżej wartości i dostaje za to kopertę. Wspólnik odsprzedaje mieszkanie po cenie rynkowej i zgarnia różnicę. Właściciel traci, choć sam niczego nie podpisał. Tak samo traciły konfederacje i federacje, a zyskiwali działacze i firmy marketingowe, takie jak argentyńskie Torneos i Full Play czy brazylijski Traffic.</p>
+
+<h3>Akty oskarżenia</h3>
+
+<p>27 maja 2015 roku Departament Sprawiedliwości ogłosił zarzuty wobec dziewięciu działaczy i pięciu menedżerów firm marketingowych. Akt oskarżenia liczył 47 punktów. Tego samego dnia szwajcarska prokuratura federalna wszczęła własne postępowanie w sprawie przyznania mundiali 2018 i 2022.</p>
+
+<p>3 grudnia 2015 roku Amerykanie dołożyli kolejnych szesnastu oskarżonych. Akt oskarżenia urósł do 92 punktów, a opisane łapówki do ponad 200 milionów dolarów. W hotelu Baur au Lac znów zatrzymano dwóch działaczy.</p>
+
+<div class="nums">
+  <div class="nhead">FIFAgate w liczbach</div>
+  <div class="nrow"><div class="n">14 + 16</div><div class="d">osób oskarżonych w dwóch aktach oskarżenia: z maja i z grudnia 2015 roku</div></div>
+  <div class="nrow"><div class="n">50+</div><div class="d">osób i firm z ponad 20 krajów, wobec których do 2022 roku postawiono zarzuty</div></div>
+  <div class="nrow"><div class="n">150 → 200 mln $</div><div class="d">łapówki opisane w kolejnych aktach oskarżenia („ponad”)</div></div>
+  <div class="nrow"><div class="n">9 lat</div><div class="d">więzienia dla Juana Ángela Napouta, byłego szefa CONMEBOL, po procesie w Brooklynie</div></div>
+  <div class="nrow"><div class="n">201 mln $</div><div class="d">z przepadku mienia przyznane jako odszkodowanie FIFA, CONCACAF i CONMEBOL</div></div>
+</div>
+
+<p>Część oskarżonych przyznała się do winy i współpracowała. Inni poszli do sądu. W grudniu 2017 roku ława przysięgłych w Brooklynie skazała Paragwajczyka Juana Ángela Napouta, byłego szefa południowoamerykańskiej konfederacji CONMEBOL, i Brazylijczyka José Marię Marina, byłego szefa brazylijskiej federacji. Napout dostał 9 lat więzienia, a Marin 4 lata. Peruwiańczyk Manuel Burga został uniewinniony. W 2020 roku sąd apelacyjny utrzymał wyroki <span class="tag w">wyrok</span>.</p>
+
+<h3>Ci, którzy się wywinęli</h3>
+
+<p>Najbardziej znany oskarżony, Jack Warner z Trynidadu i Tobago, przez lata wiceprezydent FIFA i szef CONCACAF, nigdy nie stanął przed amerykańskim sądem. Dekadę walczył z ekstradycją. Jeszcze w 2022 roku przegrał przed Komitetem Sądowym Tajnej Rady w Londynie, który jest dla Trynidadu najwyższym sądem. A jednak 23 września 2025 roku sędzia High Court Trynidadu i Tobago Karen Reid na stałe wstrzymała ekstradycję. Okazało się, że między oboma krajami brakowało właściwej podstawy prawnej, której wymagała procedura. Prokurator generalny Trynidadu sam to przyznał w sądzie <span class="tag w">wyrok</span>.</p>
+
+<p>Ostatni rozdział FIFAgate jest jeszcze bardziej pouczający. W marcu 2023 roku ława przysięgłych skazała Hernána Lópeza, byłego szefa Fox International Channels, i argentyńską firmę Full Play. Chodziło o łapówki dla działaczy za prawa do Copa Libertadores i Copa Sudamericana. We wrześniu 2023 roku sędzia Pamela Chen uchyliła ten wyrok. Powołała się na nowe orzeczenie Sądu Najwyższego USA, które zawęziło stosowanie przepisu o oszustwie. W lipcu 2025 roku sąd apelacyjny przywrócił skazanie.</p>
+
+<p>Wtedy prokuratura sama zmieniła zdanie. W grudniu 2025 roku Departament Sprawiedliwości wniósł o umorzenie sprawy „w interesie wymiaru sprawiedliwości”. Tłumaczył, że sprawa nie pasuje do obecnych priorytetów, takich jak bezpieczeństwo wewnętrzne i walka z przemytem. 27 maja 2026 roku, dokładnie w 11. rocznicę aresztowań w Zurychu, sędzia Chen umorzyła sprawę <em>with prejudice</em>, czyli bez prawa do ponownego wniesienia oskarżenia. Przyznała, że w praktyce ma bardzo mało władzy, żeby taki wniosek odrzucić <span class="tag w">wyrok</span>. López mówił dziennikarzom, że skończyła się sprawa, która nigdy nie powinna była się zacząć.</p>
+
+<p>Prokuratura zastrzegła, że umorzenie nie dotyczy innych wyroków. Ale sygnał jest jasny. Narzędzie, którym USA rozbiły korupcję w światowej piłce, jest dziś słabsze. Działa też tylko wtedy, gdy Waszyngton uzna to za swój priorytet.</p>
+
+<h3>Ofiara, która siedziała przy stole</h3>
+
+<p>W sierpniu 2021 roku Departament Sprawiedliwości uznał FIFA, CONCACAF i CONMEBOL za pokrzywdzone. Przyznał im do 201 milionów dolarów z przepadku mienia, czyli z pieniędzy, które sąd odebrał skazanym. Podział wyglądał tak: 71 milionów dla CONMEBOL, 70 milionów dla CONCACAF i 60 milionów dla FIFA. Pieniądze trafiają do specjalnego funduszu przy Fundacji FIFA, z niezależnym audytem, i mają iść na programy dla młodzieży i lokalnych społeczności. Infantino mówił wtedy, że FIFA z toksycznej organizacji zmieniła się w szanowaną i godną zaufania instytucję.</p>
+
+<div class="twocol">
+  <div class="side b"><div class="st">Dlaczego to ma sens</div><p>Łapówki obniżały ceny praw, więc organizacje naprawdę traciły pieniądze. Prawo USA pozwala oddać pokrzywdzonym majątek odebrany przestępcom. Fundusz ma kontrolę i jasno określony cel.</p></div>
+  <div class="side a"><div class="st">Dlaczego to razi</div><p>Sprawcami byli członkowie najwyższych władz tych samych organizacji: prezydenci konfederacji i wiceprezydenci FIFA. Instytucja, która przez dekady ich wybierała i chroniła, dostaje odszkodowanie za ich czyny.</p></div>
+</div>
+
+<h2><span class="num">Rozdział siódmy</span>Katar: ile kosztował mundial i kto za niego zapłacił</h2>
+
+<p>Katar to mały kraj z niecałymi trzema milionami mieszkańców. W 2017 roku około 2,3 miliona z nich stanowili imigranci zarobkowi. Żeby zorganizować mundial, Katar zbudował siedem nowych stadionów, lotnisko, metro, drogi i całe miasto Lusail, postawione od zera. Budowali to głównie robotnicy z Indii, Nepalu, Bangladeszu, Pakistanu, Sri Lanki i Afryki.</p>
+
+<p>Przez większość tego okresu obowiązywał tam system <strong>kafala</strong>. To system sponsorski, w którym prawo pobytu robotnika zależy od pracodawcy. W praktyce oznaczało to, że pracownik nie mógł łatwo zmienić pracy ani wyjechać z kraju bez zgody firmy. Od 2017 roku Katar przeprowadzał reformy we współpracy z Międzynarodową Organizacją Pracy.</p>
+
+<h3>Skąd się wzięło 6500</h3>
+
+<p>W lutym 2021 roku „Guardian” opublikował śledztwo Pete'a Pattissona i Niamh McIntyre. Na podstawie danych rządowych ustalili, że od grudnia 2010 roku, gdy Katar dostał mundial, zmarło tam ponad 6500 migrantów z pięciu krajów Azji Południowej. To średnio dwunastu tygodniowo. Najwięcej było Hindusów (2711), Nepalczyków (1641) i Banglijczyków (1018).</p>
+
+<p>Ta liczba obiegła świat jako „6500 robotników zabitych przy budowie stadionów”. Tymczasem tyle nie mówi. „Guardian” od początku zaznaczał, że dane nie rozróżniają zawodu ani miejsca pracy. Liczba obejmuje wszystkie zgony we wszystkich grupach migrantów, z każdej przyczyny: wypadki, choroby, zawały, a także urzędników, którzy mieszkali w Katarze od lat. Redakcja doprecyzowała później nagłówek, że chodzi o zgony w całej dekadzie od przyznania mundialu.</p>
+
+<p>Z drugiej strony liczba nie obejmuje migrantów z innych krajów, na przykład z Filipin czy Kenii. Pod tym względem jest więc zaniżona. Różne instytucje liczyły różne rzeczy, i dlatego ich liczby tak bardzo się różnią.</p>
+
+<div class="nums">
+  <div class="nhead">Ta sama sprawa, różne pytania</div>
+  <div class="nrow"><div class="n">6500+</div><div class="d"><strong>„Guardian”:</strong> wszystkie zgony migrantów z pięciu krajów w Katarze w latach 2010–2020, z każdej przyczyny.</div></div>
+  <div class="nrow"><div class="n">37</div><div class="d"><strong>Komitet organizacyjny:</strong> zgony robotników przy budowie samych stadionów. Według komitetu 34 z nich nie miały związku z pracą.</div></div>
+  <div class="nrow"><div class="n">50</div><div class="d"><strong>Międzynarodowa Organizacja Pracy:</strong> zgony w wypadkach przy pracy w całym Katarze w 2020 roku, do tego ponad 500 ciężkich obrażeń. MOP zastrzega, że to dane niepełne.</div></div>
+  <div class="nrow"><div class="n">ok. 70%</div><div class="d"><strong>Amnesty International:</strong> odsetek zgonów migrantów w Katarze, których przyczyny nie wyjaśniono. W dobrze działającym systemie ochrony zdrowia to poniżej 1%.</div></div>
+  <div class="nrow"><div class="n">400–500</div><div class="d"><strong>Hassan Al Thawadi</strong>, szef katarskiego komitetu, w wywiadzie z listopada 2022 roku, o zgonach związanych z projektami mundialowymi. Nie podał, jak liczono te dane.</div></div>
+</div>
+
+<p>Najważniejszy jest wpis o 70 procentach. Raport Amnesty International „In the Prime of their Lives” z sierpnia 2021 roku pokazał, że katarskie władze masowo wystawiały akty zgonu bez prawdziwego badania. Jako przyczynę wpisywały „przyczyny naturalne” albo ogólnikową „niewydolność serca”. Według danych rządu Bangladeszu 71% zgonów Banglijczyków w Katarze w latach 2016–2020 opisano jako „naturalne”.</p>
+
+<p>Problem polega na tym, że robotnicy byli młodzi. Przed wyjazdem przechodzili obowiązkowe badania lekarskie. Wielu zmarło po długich zmianach w temperaturze przekraczającej 40 stopni. „Przyczyna naturalna” w akcie zgonu oznacza przy tym brak odszkodowania dla rodziny, bo katarskie prawo nakazuje je wypłacać tylko wtedy, gdy śmierć wynikła z pracy.</p>
+
+<p>Uczciwy wniosek jest taki: prawdziwej liczby ofiar nie znamy i pewnie nigdy nie poznamy, właśnie dlatego, że nikt nie badał przyczyn zgonów <span class="tag s">spór</span>. Wiemy, że w dekadzie przygotowań zmarły tysiące migrantów. Wiemy też, że duża część tych zgonów mogła mieć związek z warunkami pracy. Ale zdanie „6500 zabitych przy stadionach” jest nieprawdziwe. To zdanie łatwo obalić, a jego obalenie kusi, żeby zbagatelizować cały problem.</p>
+
+<p>Przed turniejem Amnesty i inne organizacje wzywały FIFA do utworzenia funduszu odszkodowań dla robotników wartego 440 milionów dolarów, czyli tyle, ile wynosiła pula nagród mundialu. Taki fundusz nie powstał.</p>
+
+<h3>Mundial w praktyce</h3>
+
+<p>Sam turniej zaczął się od serii decyzji, które dobrze pokazały, kto naprawdę rządzi. W piątek przed otwarciem, dwa dni przed pierwszym meczem, FIFA pod naciskiem katarskich władz zakazała sprzedaży piwa na stadionach. Zakaz złamał umowę z Budweiserem, wieloletnim sponsorem FIFA. Alkohol nadal podawano w lożach VIP.</p>
+
+<p>Dzień później Infantino otworzył konferencję prasową prawie godzinnym przemówieniem. Zaczął od słów: „Dziś czuję się Katarczykiem. Dziś czuję się Arabem. Dziś czuję się Afrykaninem. Dziś czuję się gejem. Dziś czuję się niepełnosprawny. Dziś czuję się robotnikiem migrantem”. Pouczał Europejczyków za krytykę Kataru. O zakazie piwa powiedział, że jeśli przez trzy godziny dziennie nie można się napić, to się przeżyje.</p>
+
+<p>Kilka godzin przed pierwszymi meczami europejskich drużyn FIFA zagroziła żółtymi kartkami kapitanom, którzy założą tęczowe opaski „One Love”. Siedem federacji, w tym angielska i niemiecka, wycofało się z tego pomysłu. Niemieccy piłkarze zasłonili usta na zdjęciu przed meczem.</p>
+
+<h2><span class="num">Rozdział ósmy</span>Infantino: reforma, która zmieniła meble</h2>
+
+<p>26 lutego 2016 roku nadzwyczajny Kongres FIFA najpierw przyjął pakiet reform, a potem wybrał nowego prezydenta. Za reformami głosowało 179 federacji, przeciw było 22. Prezydentem został Szwajcar Gianni Infantino, sekretarz generalny UEFA. W drugiej turze dostał 115 głosów, a faworyt, szejk Salman z Bahrajnu, 88.</p>
+
+<p>Reformy wyglądały dobrze na papierze:</p>
+<ul>
+  <li>Komitet Wykonawczy zastąpiła 37-osobowa Rada FIFA, z co najmniej jedną kobietą z każdej konfederacji.</li>
+  <li>Prezydent, członkowie Rady i członkowie niezależnych komisji mogą sprawować funkcję najwyżej przez 12 lat.</li>
+  <li>Kandydatów do władz sprawdza niezależna komisja.</li>
+  <li>FIFA co roku publikuje wynagrodzenia najważniejszych osób.</li>
+  <li>Gospodarza mundialu wybiera cały Kongres, a nie wąskie grono.</li>
+</ul>
+
+<p>Pierwsze takie głosowanie odbyło się w 2018 roku. Mundial 2026 dostała wspólna kandydatura USA, Kanady i Meksyku. Zdobyła 134 głosy, a Maroko 65.</p>
+
+<h3>Strażnicy na wylocie</h3>
+
+<p>Najważniejsze w każdej reformie antykorupcyjnej są niezależne organy kontroli. I właśnie tu zaczęły się kłopoty.</p>
+
+<p>W maju 2016 roku, trzy miesiące po wyborze Infantino, Kongres w Meksyku dał Radzie FIFA prawo do powoływania i odwoływania członków niezależnych komisji, w tym komisji etyki i komisji audytu. Szef komisji audytu i zgodności Domenico Scala od razu zrezygnował. Stwierdził, że FIFA odebrała niezależność swoim strażnikom. Infantino temu zaprzeczył.</p>
+
+<p>W maju 2017 roku, na Kongresie w Bahrajnie, Rada nie przedłużyła mandatów szefom obu izb komisji etyki: niemieckiemu sędziemu Hansowi-Joachimowi Eckertowi i szwajcarskiemu prawnikowi Cornelowi Borbély'emu. To oni zawiesili Blattera i Platiniego. Według ich relacji o swoim odwołaniu dowiedzieli się z telefonów po wylądowaniu w Bahrajnie. Borbély mówił, że w toku jest kilkaset spraw. Obaj nazwali tę decyzję faktycznym końcem reform. Rok wcześniej komisja etyki badała sprawę samego Infantino i oczyściła go w sierpniu 2016 roku. Krytycy wskazywali, że prezydent mógł mieć osobisty motyw. Tego samego dnia odsunięto Portugalczyka Miguela Maduro z komisji ds. zarządzania. Według „Financial Timesa” stało się to między innymi dlatego, że uznał rosyjskiego ministra sportu Witalija Mutkę za niezdolnego do zasiadania w Radzie.</p>
+
+<h3>Prokurator, który nie pamiętał</h3>
+
+<p>Jeszcze dziwniejsza jest sprawa Michaela Laubera, prokuratora generalnego Szwajcarii. Jego urząd prowadził śledztwa w sprawie korupcji w piłce, w tym wobec ludzi z FIFA. W 2016 i 2017 roku Lauber kilka razy spotkał się z Infantino. Ze spotkań nie było notatek. Obaj twierdzili, że nie pamiętają, o czym rozmawiali.</p>
+
+<p>Lauber w 2019 roku odsunął się od spraw FIFA. Federalny Sąd Administracyjny zganił jego nieujawnione spotkania. Ustalono też, że Lauber wprowadzał w błąd organ nadzorujący prokuraturę i utrudniał mu pracę. Parlament wszczął procedurę odwołania. Lauber odszedł w sierpniu 2020 roku.</p>
+
+<p>W lipcu 2020 roku specjalny prokurator wszczął postępowanie karne wobec Infantino. Podejrzewał między innymi nadużycie władzy i naruszenie tajemnicy. Po skardze Infantino sąd odsunął tego prokuratora za stronniczość. Jego następcy, Hans Maurer i Ulrich Weder, 26 października 2023 roku umorzyli sprawę bez zarzutów. Uznali, że nie potwierdziło się podejrzenie, że Infantino posłużył się prokuraturą generalną do swoich celów <span class="tag w">wyrok</span>. Wcześniej w tym samym roku umorzono też śledztwo w sprawie korzystania przez Infantino z prywatnego samolotu. FIFA przyjęła decyzję „z ogromną satysfakcją”, a Infantino zażądał przeprosin od „zazdrosnych i skorumpowanych” krytyków.</p>
+
+<h3>Mundiale bez rywali</h3>
+
+<p>W 2019 i 2023 roku Infantino nie miał kontrkandydatów. Wybierano go przez aklamację, czyli oklaskami, bez głosowania. Tak samo przyznano kolejne mundiale.</p>
+
+<p>11 grudnia 2024 roku nadzwyczajny Kongres zatwierdził dwie kandydatury, z których każda była jedyna w swoim turnieju. Mundial 2030 dostały Hiszpania, Portugalia i Maroko, a z okazji stulecia trzy mecze mają się odbyć w Urugwaju, Argentynie i Paragwaju. Mundial 2034 dostała Arabia Saudyjska. Wcześniej FIFA ogłosiła, że w 2034 roku mogą startować tylko kraje z Azji i Oceanii. Australia wycofała się tuż przed terminem w październiku 2023 roku. FIFA złagodziła też wymóg dotyczący liczby gotowych stadionów: z siedmiu do czterech.</p>
+
+<p>Raport oceniający FIFA dał saudyjskiej kandydaturze 419,8 punktu na 500, najwyższy wynik w historii. Ryzyko w obszarze praw człowieka uznał za „średnie”. Steve Cockburn z Amnesty International nazwał ten raport „zdumiewającym wybielaniem” fatalnych saudyjskich standardów praw człowieka.</p>
+
+<p>Pół roku wcześniej, w kwietniu 2024 roku, saudyjski koncern naftowy Aramco został jednym z głównych globalnych partnerów FIFA, z umową do końca 2027 roku. Wcześniejsze doniesienia mówiły o 100 milionach dolarów rocznie, choć oficjalnie kwoty nie podano. Warto zauważyć powtarzalny wzór. Na mundialu w Rosji sponsorem był państwowy Gazprom, na mundialu w Katarze Qatar Airways, a przed mundialem w Arabii Saudyjskiej do sponsorów dołącza państwowe Aramco.</p>
+
+<h3>Biznes, Trump i nagroda pokojowa</h3>
+
+<p>Za Infantino przychody FIFA wyraźnie urosły. W czteroletnim cyklu 2019–2022, zamkniętym mundialem w Katarze, wyniosły 7,57 miliarda dolarów. Na cykl 2023–2026 FIFA zakładała 11 miliardów, a przed mundialem w USA prognoza wzrosła do około 13 miliardów.</p>
+
+<div class="bars">
+  <div class="bt">Przychody FIFA w czteroletnich cyklach, mld USD</div>
+  <div class="row"><div class="lab">2019–2022 (wykonanie)</div><div class="track"><div class="fill blue" style="width:50.5%"></div></div><div class="val">7,57</div></div>
+  <div class="row"><div class="lab">2023–2026: pierwszy budżet</div><div class="track"><div class="fill" style="width:73.3%"></div></div><div class="val">11</div></div>
+  <div class="row"><div class="lab">2023–2026: prognoza przed mundialem</div><div class="track"><div class="fill" style="width:87.3%"></div></div><div class="val">13,1</div></div>
+  <div class="row"><div class="lab">2023–2026: wg doniesień po mundialu</div><div class="track"><div class="fill red" style="width:100%"></div></div><div class="val">ok. 15</div></div>
+  <div class="row"><div class="lab">2027–2030: plan FIFA</div><div class="track"><div class="fill green" style="width:93.3%"></div></div><div class="val">14</div></div>
+  <div class="caption">Wykonanie 2019–2022 według raportu finansowego FIFA. Prognoza przed mundialem według raportu FIFA cytowanego przez „Guardiana” i Sports Illustrated. Kwota 15 mld to informacja „Guardiana” z lipca 2026 roku, której FIFA jeszcze nie potwierdziła oficjalnym raportem. Plan na 2027–2030 według FIFA, za Inside World Football.</div>
+</div>
+
+<p>Dużą rolę zaczął odgrywać kapitał z Zatoki Perskiej. W grudniu 2024 roku platforma streamingowa DAZN kupiła prawa do pierwszych Klubowych Mistrzostw Świata z 32 drużynami za około miliard dolarów. Trudno było wcześniej znaleźć chętnych. W lutym 2025 roku SURJ, sportowe ramię saudyjskiego państwowego funduszu PIF, kupiło około 10% udziałów w DAZN, także za miliard dolarów. W czerwcu 2025 roku PIF został partnerem samego turnieju. Finał na MetLife Stadium w New Jersey Chelsea wygrała z PSG 3:0. Na podium, razem z piłkarzami, stał Donald Trump.</p>
+
+<p>Relacja Infantino z Trumpem to osobna historia. Prezydent FIFA siedział na honorowym miejscu podczas zaprzysiężenia Trumpa w styczniu 2025 roku. FIFA otworzyła biuro w Trump Tower na Manhattanie. W listopadzie 2025 roku, kilka tygodni po tym, jak Trump nie dostał Pokojowej Nagrody Nobla, FIFA ogłosiła stworzenie własnej „Pokojowej Nagrody FIFA”.</p>
+
+<p>5 grudnia 2025 roku, podczas losowania grup mundialu w waszyngtońskim Kennedy Center, któremu Trump sam przewodniczy, Infantino wręczył mu złote trofeum i medal. „To jest twoja nagroda, to jest twoja nagroda pokojowa” — mówił. FIFA nie ujawniła, jak wybrano laureata. Na tle tych wydarzeń zdanie o „nowej FIFA” zaczęło brzmieć inaczej. Organizacja, która przez dekady chroniła się dzięki przyjaźniom z głowami państw, znalazła nowego przyjaciela. Tym razem w kraju, którego prokuratura wcześniej rozbiła jej stary układ.</p>
+
+<h2><span class="num">Rozdział dziewiąty</span>Lato 2026: rekord, kartka i mundial na sprzedaż</h2>
+
+<p>Mundial 2026 był pierwszym rozgrywanym w trzech krajach i pierwszym z 48 drużynami. Między 11 czerwca a 19 lipca rozegrano 104 mecze. W finale na MetLife Stadium, przy 80 663 widzach, Hiszpania pokonała obrońców tytułu, Argentyńczyków, 1:0 po dogrywce. Gola strzelił Ferran Torres w 106. minucie. Hiszpanie zdobyli drugi tytuł, znowu tak samo jak w 2010 roku: 1:0 po dogrywce.</p>
+
+<p>Ale dla historii FIFA ważniejsze było to, co działo się poza boiskiem. Dwie sprawy z lipca 2026 roku pokazują, że stary mechanizm działa w nowej formie.</p>
+
+<h3>Czerwona kartka, która przestała obowiązywać</h3>
+
+<p>W meczu 1/16 finału Amerykanie grali z Bośnią i Hercegowiną. Ich najlepszy napastnik Folarin Balogun dostał w 64. minucie czerwoną kartkę. Brazylijski sędzia Raphael Claus podjął decyzję po analizie wideo, która pokazała, jak Balogun mocno trafia w kostkę bośniackiego obrońcy Tarika Muharemovicia. Na mundialu czerwona kartka oznacza automatyczną pauzę w następnym meczu.</p>
+
+<p>Amerykanie wygrali, a w 1/8 finału mieli zagrać z Belgią. W niedzielę przed meczem FIFA ogłosiła, że na podstawie artykułu 27 kodeksu dyscyplinarnego zawiesza karę Baloguna. Kartka zostaje w jego historii, ale zagrać może. Belgijska federacja napisała, że jest „zdumiona”. Takie decyzje zdarzają się bardzo rzadko.</p>
+
+<p>Następnego dnia w Gabinecie Owalnym Donald Trump przyznał, że prosił Infantino o ponowne przyjrzenie się „niesprawiedliwej” kartce. Decyzję FIFA nazwał „naprawdę genialną”. Infantino potwierdził na platformie X, że rozmawiał z Trumpem. Dodał, że dzwonią do niego też głowy państw, urzędnicy i biznesmeni z całego świata. Belgia i tak wygrała z USA 4:1.</p>
+
+<p>Ta historia jest drobna w porównaniu z łapówkami za miliony. Ale dotyka czegoś bardziej podstawowego. Korupcja z ery Blattera dotyczyła zwykle pieniędzy wokół boiska. Sprawa Baloguna dotyczyła samych przepisów na boisku i tego, czy obowiązują wszystkich tak samo.</p>
+
+<h3>Mundial jako produkt inwestycyjny</h3>
+
+<p>18 lipca, dzień przed finałem, „Guardian” napisał, że Infantino poinformował federacje o rekordowych przychodach rzędu 15 miliardów dolarów wobec zakładanych 11 miliardów. Według gazety głównymi źródłami wzrostu były loże i pakiety VIP oraz oficjalny rynek odsprzedaży biletów. FIFA nie ograniczała na nim cen i pobierała po 15% prowizji i od kupującego, i od sprzedającego. Do chwili pisania tego tekstu FIFA nie opublikowała oficjalnego raportu, który potwierdzałby tę kwotę.</p>
+
+<p>Dziesięć dni później wybuchła największa awantura od lat. 28 lipca „The Times” i „Financial Times” ujawniły plan Infantino. FIFA miała przenieść komercyjną stronę mundialu i innych turniejów do nowej spółki zależnej, FIFA Forward Enterprise. Spółka miała być wyceniona na 20 miliardów dolarów. Do 20% udziałów miało trafić do prywatnych inwestorów za maksymalnie 4,2 miliarda. Inwestorów miał prowadzić fundusz Thrive Eternal, należący do Thrive Capital, firmy założonej przez Joshuę Kushnera. To brat Jareda Kushnera, zięcia Donalda Trumpa.</p>
+
+<div class="nums">
+  <div class="nhead">Cztery dni FIFA Forward Enterprise</div>
+  <div class="nrow"><div class="n">20 mld $</div><div class="d">wycena nowej spółki, która miała prowadzić mundial i inne turnieje FIFA</div></div>
+  <div class="nrow"><div class="n">20%</div><div class="d">udziałów do sprzedania prywatnym inwestorom, za maksymalnie 4,2 mld $</div></div>
+  <div class="nrow"><div class="n">55 z 55</div><div class="d">federacji UEFA jednogłośnie za bojkotem wszystkich turniejów FIFA, dopóki plan nie zostanie wycofany</div></div>
+  <div class="nrow"><div class="n">28 → 31 lipca</div><div class="d">od ujawnienia planu do jego wycofania</div></div>
+</div>
+
+<p>FIFA przekonywała, że pieniądze z inwestorów pójdą na rozwój piłki w krajach, które najbardziej potrzebują wsparcia. Oskarżała media, że przekręcają sens propozycji. W oświadczeniu zapewniała, że „nikt nie sprzedaje futbolu”.</p>
+
+<p>Reakcja była natychmiastowa. W niecałe 48 godzin wszystkie 55 federacji UEFA ogłosiło, że nie zagra w żadnym turnieju FIFA, dopóki plan nie zniknie. „Mundialu nie można traktować jak produktu inwestycyjnego. Mundial nie jest na sprzedaż” — napisała UEFA. Pierwszą ofiarą bojkotu byłyby mistrzostwa świata kobiet do lat 20, zaplanowane na wrzesień w Polsce. Plan odrzuciły też CONCACAF i azjatycka konfederacja AFC.</p>
+
+<p>Potem pękła FIFA od środka. Starszy doradca Infantino Carlos Cordeiro, były szef amerykańskiej federacji, zrezygnował z funkcji. Oświadczył, że nie może stać z boku, gdy FIFA rozważa sprzedaż udziałów w mistrzostwach świata. Dyrektor operacyjny Kevin Lamour nazwał plan „projektem jednej osoby”. Brytyjski premier Andy Burnham powiedział, że Infantino to niewłaściwy człowiek na czele organizacji.</p>
+
+<p>31 lipca Infantino wycofał plan. UEFA zawiesiła groźbę bojkotu dopiero wtedy, gdy dostała na piśmie zapewnienie, że projekt został wycofany „nieodwołalnie i na stałe”. Zażądała też naprawdę niezależnej, zewnętrznej kontroli całej sprawy. W uzasadnieniu napisała, że FIFA nie może badać samej siebie i oczekiwać, że świat piłki po prostu przyjmie jej wnioski.</p>
+
+<h3>Wybory, których nie da się przegrać?</h3>
+
+<p>Jeszcze w kwietniu 2026 roku, na Kongresie w Vancouver, Infantino ogłosił, że będzie się ubiegał o czwartą kadencję. Według przepisów miałaby to być ostatnia. Wybory odbędą się 18 marca 2027 roku w Rabacie. Kandydaci muszą zgłosić się do 18 listopada 2026 roku i mieć poparcie co najmniej pięciu federacji. Do wygranej potrzeba zwykłej większości, czyli 106 głosów z 211.</p>
+
+<p>Po aferze z FIFA Forward Enterprise kilka europejskich federacji publicznie odwróciło się od Infantino. Holenderska KNVB ogłosiła, że nie ma już zaufania do jego przywództwa i że FIFA od 2027 roku potrzebuje nowego szefa. Wycofała się też francuska federacja. Szwajcar Ramon Vega, były obrońca Tottenhamu, ogłosił chęć startu. Media wymieniają też innych możliwych rywali, w tym szefa CONCACAF Victora Montaglianiego i Arsène'a Wengera. Szef UEFA Aleksander Čeferin wykluczył swój start.</p>
+
+<p>A jednak według rachunku wyborczego Infantino pozostaje faworytem. Afrykańska konfederacja CAF i jej 54 federacje ogłosiły, że go popierają. To ponad jedna czwarta wszystkich głosów z jednego kontynentu. Europa ma 55 głosów, a więc mniej więcej tyle samo. I tu wracamy do pętli lojalności z drugiego rozdziału. Głosy nie liczą się według pieniędzy, które dana federacja wnosi do systemu. Liczą się według pieniędzy, które z niego dostaje.</p>
+
+<h2><span class="num">Zakończenie</span>Co zawiodło i dokąd to zmierza</h2>
+
+<p>Wróćmy do przeczucia z początku. Czy ciemne interesy skończyły się w 2015 roku? Na podstawie tego, co ustaliły sądy i instytucje, odpowiedź brzmi: skończył się pewien ich styl. Mechanizm został.</p>
+
+<p>Zbierzmy, co konkretnie zawiodło:</p>
+
+<ul>
+  <li><strong>Forma prawna.</strong> FIFA to szwajcarskie stowarzyszenie. Nie ma akcjonariuszy ani rady nadzorczej z prawdziwego zdarzenia, która mogłaby odwołać zarząd. Kontrolują ją ci sami ludzie, których ona finansuje.</li>
+  <li><strong>Prawo karne kraju siedziby.</strong> Do 2016 roku łapówki w sektorze prywatnym były w Szwajcarii ścigane tylko na wniosek pokrzywdzonego i w praktyce nie istniały w statystyce wyroków. Dlatego sprawa ISL skończyła się zwrotem części pieniędzy, a nie więzieniem.</li>
+  <li><strong>Pętla lojalności.</strong> Jedna federacja, jeden głos, a do tego centrala, która rozdziela coraz większe pieniądze. To nie musi oznaczać łapówek, ale tworzy klientelizm, w którym prezydent praktycznie nie przegrywa wyborów.</li>
+  <li><strong>Monopol na prawa.</strong> Kontrakty telewizyjne i marketingowe podpisywano bez przejrzystych przetargów. To w nich ukryto większość łapówek z FIFAgate.</li>
+  <li><strong>Strażnicy zależni od strzeżonych.</strong> Od 2016 roku to Rada FIFA powołuje i odwołuje członków komisji etyki i audytu. Pierwsza wymiana nastąpiła już w 2017 roku.</li>
+  <li><strong>Szeryf z zewnątrz ma własne priorytety.</strong> Porządek zrobiła prokuratura USA, a nie Szwajcaria. Ale w 2026 roku ta sama prokuratura umorzyła własną sprawę, bo przestała być dla niej priorytetem. A prezydent USA dzwonił w sprawie czerwonej kartki.</li>
+  <li><strong>Polityka i państwowy kapitał.</strong> Od lunchu w Pałacu Elizejskim po Pokojową Nagrodę FIFA władza w FIFA szuka ochrony u przywódców państw. Państwowe koncerny gospodarzy, takie jak Gazprom, Qatar Airways i Aramco, zostają sponsorami.</li>
+</ul>
+
+<p>Dokąd to zmierza? Najbliższe miesiące rozstrzygną kilka rzeczy. 18 listopada 2026 roku zobaczymy, czy Infantino będzie miał prawdziwego rywala. 18 marca 2027 roku przekonamy się, czy pierwsze od lat zacięte wybory w ogóle się odbędą. Przed nami mundial na trzech kontynentach w 2030 roku i mundial w Arabii Saudyjskiej w 2034 roku, prawdopodobnie zimą. Przychody FIFA prawie na pewno dalej będą rosły.</p>
+
+<p>Największa zmiana jest jednak subtelniejsza. Za Havelange'a i Blattera problemem było to, że działacze sprzedawali za koperty rzeczy, które do nich nie należały. Dziś problem polega na tym, że sama organizacja coraz śmielej traktuje mundial jak towar: z drogimi pakietami VIP, prowizją od każdej odsprzedaży biletu i próbą sprzedaży udziałów inwestorom. Tego nie da się nazwać łapówką. Ale rodzi to samo pytanie co dawniej: komu właściwie służy FIFA?</p>
+
+<p>Łatwo nam myśleć o korupcji jak o pojedynczych złych ludziach, których wystarczy wyprowadzić z hotelu. Wtedy wszystko wraca do normy. Historia FIFA pokazuje, że to złudzenie. Złych ludzi można wymienić. System, który ich wynagradza, zostaje.</p>
+
+<p>W maju 2015 roku prześcieradła w Baur au Lac zasłoniły twarze kilku działaczy. Mechanizmu nie zasłoniły. On wcale się nie chował. Był zapisany w statucie.</p>
+
+<hr class="sep">
+
+<h2><span class="num">Źródła</span>Na czym opiera się ten tekst</h2>
+
+<div class="srch">Dokumenty sądowe i urzędowe</div>
+<ul class="sources">
+  <li>Departament Sprawiedliwości USA, „Nine FIFA Officials and Five Corporate Executives Indicted for Racketeering Conspiracy and Corruption”, 2015. <a href="https://www.justice.gov/archives/opa/pr/nine-fifa-officials-and-five-corporate-executives-indicted-racketeering-conspiracy-and">justice.gov</a></li>
+  <li>Departament Sprawiedliwości USA, „Justice Department Approves Remission of Over $32 Million in Forfeited Funds to Victims in the FIFA Corruption Case”, 2021. <a href="https://www.justice.gov/archives/opa/pr/justice-department-approves-remission-over-32-million-forfeited-funds-victims-fifa-corruption">justice.gov</a></li>
+  <li>Departament Sprawiedliwości USA, „Justice Department Announces Additional Distribution of Approximately $92 Million to Victims of FIFA Corruption”, 2022. <a href="https://www.justice.gov/archives/opa/pr/justice-department-announces-additional-distribution-approximately-92-million-victims-fifa">justice.gov</a></li>
+  <li>Prokuratura federalna EDNY, komunikaty o wyrokach dla J.Á. Napouta i J.M. Marina, 2018. <a href="https://www.justice.gov/usao-edny/pr/former-fifa-executive-president-conmebol-and-paraguayan-soccer-official-sentenced-nine">justice.gov (Napout)</a>, <a href="https://www.justice.gov/usao-edny/pr/former-brazilian-soccer-official-sentenced-four-years-imprisonment-racketeering-and">justice.gov (Marin)</a></li>
+  <li>Prokuratura federalna EDNY, wniosek o umorzenie sprawy United States v. Full Play Group S.A. i Hernán López (sygn. 15-CR-252). <a href="https://storage.courtlistener.com/recap/gov.uscourts.nyed.370520/gov.uscourts.nyed.370520.2070.0.pdf">courtlistener.com</a></li>
+  <li>FIFA, „Aramco and FIFA announce global partnership”, 25.04.2024. <a href="https://inside.fifa.com/media-releases/aramco-and-fifa-announce-global-partnership">inside.fifa.com</a></li>
+  <li>FIFA, „President Donald J. Trump awarded FIFA Peace Prize – Football Unites the World”, 6.12.2025. <a href="https://inside.fifa.com/en/news/president-trump-peace-prize-football-unites-the-world">inside.fifa.com</a></li>
+  <li>FIFA, „FIFA celebrates 120th anniversary of foundation in Paris”, 2024. <a href="https://inside.fifa.com/about-fifa/organisation/media-releases/fifa-celebrates-120th-anniversary-of-foundation-in-paris">inside.fifa.com</a></li>
+  <li>FIFA Museum, „1904 – The Foundation of FIFA”. <a href="https://editorial.fifamuseum.com/en/read/1904-the-foundation-of-fifa/">fifamuseum.com</a></li>
+  <li>FIFA, „US Department of Justice awards FIFA Foundation USD 201 million compensation”, 2021. <a href="https://inside.fifa.com/about-fifa/organisation/media-releases/us-department-of-justice-awards-fifa-foundation-usd-201-million-compensation">inside.fifa.com</a></li>
+</ul>
+
+<div class="srch">Analizy prawne i instytucje</div>
+<ul class="sources">
+  <li>Bär &amp; Karrer, „Reforms in the Criminal Law on Bribery”, briefing, 2016. <a href="https://media.baerkarrer.ch/karmarun/image/upload/baer-karrer/Briefing_Reforms-in-the-Criminal-Law-on-Bribery.pdf">baerkarrer.ch</a></li>
+  <li>Lenz &amp; Staehelin, „Bribery &amp; Corruption: Switzerland”, Global Legal Insights. <a href="https://www.lenzstaehelin.com/fileadmin/user_upload/publications/GLI_BC4_Switzerland.pdf">lenzstaehelin.com</a></li>
+  <li>Amnesty International, „Qatar: Failure to investigate migrant worker deaths leaves families in despair” (raport „In the Prime of their Lives”), 26.08.2021. <a href="https://www.amnesty.org/en/latest/news/2021/08/qatar-failure-to-investigate-migrant-worker-deaths-leaves-families-in-despair/">amnesty.org</a></li>
+  <li>PA Media, „FIFA’s Saudi Arabia evaluation ‘an astonishing whitewash’ – Amnesty”, 30.11.2024 (Irish Examiner). <a href="https://www.irishexaminer.com/sport/soccer/arid-41527502.html">irishexaminer.com</a></li>
+  <li>Play the Game, „Gianni Infantino is new president of FIFA”, 26.02.2016. <a href="https://www.playthegame.org/news/gianni-infantino-is-new-president-of-fifa/">playthegame.org</a></li>
+  <li>Play the Game, „FIFA ousts heads of ethics committee and governance”, 10.05.2017. <a href="https://www.playthegame.org/news/fifa-ousts-heads-of-ethics-committee-and-governance/">playthegame.org</a></li>
+  <li>Legal Tribune Online, „Landgericht verurteilt den DFB wegen Steuerhinterziehung”, 25.06.2025, oraz „DFB legt Revision gegen Sommermärchen-Urteil ein”, 9.07.2025. <a href="https://www.lto.de/recht/nachrichten/n/lg-frankfurt-52kls1118-7550s242375-dfb-steuerhinterziehung-geldbusse-sommermaerchen">lto.de</a>, <a href="https://www.lto.de/recht/nachrichten/n/52kls11187550s242375-lg-frankfurt-bgh-dfb-sommermaerchen-urteil-revision">lto.de</a></li>
+</ul>
+
+<div class="srch">Dziennikarstwo i agencje</div>
+<ul class="sources">
+  <li>D. Conn, „Former Fifa president João Havelange 'received millions in bribes'”, The Guardian, 11.07.2012. <a href="https://www.theguardian.com/football/2012/jul/11/fifa-joao-havelange-bribes-report">theguardian.com</a></li>
+  <li>Al Jazeera / AP, „FIFA name and shame ISL kickback culprits”, 2012. <a href="https://www.aljazeera.com/sports/2012/7/11/fifa-name-and-shame-isl-kickback-culprits">aljazeera.com</a></li>
+  <li>P. Pattisson, N. McIntyre, „Revealed: 6,500 migrant workers have died in Qatar since World Cup awarded”, The Guardian, 23.02.2021. <a href="https://www.theguardian.com/global-development/2021/feb/23/revealed-migrant-worker-deaths-qatar-fifa-world-cup-2022">theguardian.com</a></li>
+  <li>Reuters, „50 migrant workers died in Qatar in 2020, says ILO”, 2021 (przedruk The Financial Express). <a href="https://today.thefinancialexpress.com.bd/print/50-migrant-workers-died-in-qatar-in-2020-says-ilo-1637345399">thefinancialexpress.com.bd</a></li>
+  <li>Reuters, „World Cup 2022: How many migrant workers have died in Qatar?”, 2022 (przedruk TBS News). <a href="https://www.tbsnews.net/node/548146">tbsnews.net</a></li>
+  <li>D. Owen, „Exclusive: How the FIFA Executive Committee members voted”, Inside World Football, 2010. <a href="https://insideworldfootball.com/?p=8710">insideworldfootball.com</a></li>
+  <li>AP, „Russia, Qatar awarded next World Cups”, 2.12.2010 (Fox Sports). <a href="https://www.foxsports.com/stories/soccer/russia-qatar-awarded-next-world-cups">foxsports.com</a></li>
+  <li>The Washington Post / AP, „FIFA releases Garcia report outlining corruption, but no smoking gun in World Cup bids”, 2017 (Bangor Daily News). <a href="https://www.bangordailynews.com/2017/06/28/sports/fifa-releases-garcia-report-outlining-corruption-but-no-smoking-gun-in-world-cup-bids/">bangordailynews.com</a></li>
+  <li>AP, „Bild leaks Garcia report on WC corruption probe”, 2017 (Oman Observer). <a href="https://www.omanobserver.om/ampArticle/78726">omanobserver.om</a></li>
+  <li>FourFourTwo / Omnisport, „FIFA response expected after Bild reveal Qatar World Cup report leak”, 2017. <a href="https://fourfourtwo.com/news/fifa-response-expected-after-bild-reveal-qatar-world-cup-report-leak">fourfourtwo.com</a></li>
+  <li>The Guardian, relacja na żywo z aresztowań w Zurychu, 27.05.2015 (archiwum News Sniffer). <a href="https://www.newssniffer.co.uk/articles/961846/diff/3/4">newssniffer.co.uk</a></li>
+  <li>The Guardian, „Is this the beginning of the end for the Fifa that Blatter built?”, 2015 (inkl). <a href="https://www.inkl.com/news/is-this-the-beginning-of-the-end-for-the-fifa-that-blatter-built">inkl.com</a></li>
+  <li>Inside World Football, „FifaGate: DoJ grants $201m remission money to FIFA, Concacaf, Conmebol”, 2021. <a href="https://www.insideworldfootball.com/2021/08/25/fifagate-doj-grants-201m-remission-money-fifa-concacaf-conmebol/">insideworldfootball.com</a></li>
+  <li>Swissinfo, „Swiss prosecutors decline appeal against ex-football supremos”, 2025. <a href="https://www.swissinfo.ch/eng/various/waiver-of-appeal-against-acquittal-for-blatter-and-platini/89908916">swissinfo.ch</a></li>
+  <li>Swissinfo, „Prosecutors mull Blatter and Platini acquittal appeal”, 2022. <a href="https://swissinfo.ch/eng/identities/prosecutors-mull-blatter-and-platini-acquittal-appeal/47762246">swissinfo.ch</a></li>
+  <li>AFP, „Blatter and Platini cleared in FIFA graft case”, 2025 (Gulf Times). <a href="https://www.gulf-times.com/article/702534/sport/blatter-and-platini-cleared-in-fifa-graft-case">gulf-times.com</a></li>
+  <li>AP, „Swiss prosecutors close criminal proceedings against FIFA president”, 26.10.2023 (Washington Times). <a href="https://m.washingtontimes.com/news/2023/oct/26/switzerland-special-prosecutors-close-criminal-pro/">washingtontimes.com</a></li>
+  <li>Swissinfo, „FIFA case: investigation of former Swiss attorney general to close”, 2023. <a href="https://www.swissinfo.ch/eng/fifa-case-against-scandal-hit-attorney-general-to-close/48729470">swissinfo.ch</a></li>
+  <li>AP, „FIFA ethics judge and prosecutor being replaced”, 9.05.2017 (Washington Times). <a href="https://www.washingtontimes.com/news/2017/may/9/fifa-ethics-judge-and-prosecutor-being-replaced/">washingtontimes.com</a></li>
+  <li>Reuters, „FIFA ethics chiefs facing uncertain future”, 2017 (Morung Express). <a href="https://morungexpress.com/fifa-ethics-chiefs-facing-uncertain-future">morungexpress.com</a></li>
+  <li>AP, „A court in Trinidad blocks extradition of former FIFA vice president Jack Warner to the US”, 23.09.2025 (MyNorthwest). <a href="https://mynorthwest.com/?p=4135341">mynorthwest.com</a></li>
+  <li>Trinidad Express, „No legal ground for extradition”, 2025. <a href="https://trinidadexpress.com/news/local/no-legal-ground-for-extradition/article_326d4ec5-1804-4b9c-be05-0628f4f87e4d.html">trinidadexpress.com</a></li>
+  <li>Variety, „Hernan Lopez cleared: bribery indictment dismissed”, 2026. <a href="https://variety.com/2026/biz/news/hernan-lopez-cleared-bribery-indictment-dismissed-1236762482/">variety.com</a></li>
+  <li>Front Office Sports, „Judge Throws Out Conviction of Ex-Fox Exec in Soccer Bribery Case”, 2026. <a href="https://frontofficesports.com/fox-fifa-bribery-convictions-dismissed/">frontofficesports.com</a></li>
+  <li>ESPN, „Saudi Arabia set to host winter World Cup in 2034”, 2024. <a href="https://africa.espn.com/football/story/_/id/42691282/saudi-arabia-set-host-winter-world-cup-2034">espn.com</a></li>
+  <li>Sportcal, „No votes needed as FIFA acclaims through 2030 and 2034 World Cup hosts”, 11.12.2024. <a href="https://www.sportcal.com/newsletters/no-votes-needed-as-fifa-acclaims-through-2030-and-2034-world-cups-hosts">sportcal.com</a></li>
+  <li>Sportcal, „FIFA unveils Aramco as latest global partner”, 25.04.2024. <a href="https://www.sportcal.com/newsletters/fifa-unveils-aramco-as-latest-global-partner">sportcal.com</a></li>
+  <li>AGBI, „Saudi Aramco signs up with Fifa as World Cup sponsor”, 2024. <a href="https://www.agbi.com/business-of-sport/2024/04/saudi-aramco-signs-up-with-fifa-as-world-cup-sponsor">agbi.com</a></li>
+  <li>Bloomberg Línea, „FIFA Boss Defends Qatar World Cup, Says Fans Can Survive for Three Hours Without Beer”, 19.11.2022. <a href="https://www.bloomberglinea.com/english/fifa-boss-defends-qatar-world-cup-says-fans-can-survive-for-three-hours-without-beer/">bloomberglinea.com</a></li>
+  <li>AP, „FIFA threat makes World Cup teams nix 'One Love' armbands”, 2022 (MyNorthwest). <a href="https://sports.mynorthwest.com/?p=1698596">mynorthwest.com</a></li>
+  <li>The Independent / inkl, „DAZN targets rights for Champions League”, 2025. <a href="https://www.inkl.com/news/dazn-targets-rights-for-champions-league-in-latest-football-move-involving-saudi-arabia">inkl.com</a></li>
+  <li>Sportico, „PSG, Chelsea Club World Cup prize money”, 2025. <a href="https://www.sportico.com/leagues/soccer/2025/psg-chelsea-club-prize-money-1234861788/">sportico.com</a></li>
+  <li>AFP, „Saudi PIF becomes Club World Cup partner”, 2025 (Dawn). <a href="https://www.dawn.com/news/1915857">dawn.com</a></li>
+  <li>AP, „FIFA gives Trump a peace prize in a departure from its traditional focus on sport”, 5.12.2025 (KSAT). <a href="https://www.ksat.com/news/national/2025/12/05/fifa-gives-president-donald-trump-a-peace-prize-in-a-departure-from-its-traditional-focus-on-sport/">ksat.com</a></li>
+  <li>The Washington Times, „Donald Trump awarded inaugural FIFA Peace Prize”, 5.12.2025. <a href="https://m.washingtontimes.com/news/2025/dec/5/donald-trump-awarded-inaugural-fifa-peace-prize/">washingtontimes.com</a></li>
+  <li>AP, „Ferran Torres scores in extra time as Spain beats Argentina 1-0 to win the World Cup”, 19.07.2026 (Las Vegas Sun). <a href="https://lasvegassun.com/news/2026/jul/19/ferran-torres-scores-in-extra-time-as-spain-beats-/">lasvegassun.com</a></li>
+  <li>The National, „Trump asked Infantino to review Balogun red card”, 6.07.2026. <a href="https://www.thenationalnews.com/news/us/2026/07/06/trump-balogun-red-card-fifa/">thenationalnews.com</a></li>
+  <li>Reuters, „Belgium end US World Cup dreams with 4-1 rout amid Balogun row”, 2026 (The Star). <a href="https://www.thestar.com.my/sport/football/2026/07/07/soccer-de-ketelaere-double-puts-belgium-into-world-cup-last-eight-and-ends-home-interest">thestar.com.my</a></li>
+  <li>The Guardian, „Fifa to announce record $15bn World Cup revenue, smashing expectations”, 18.07.2026. <a href="https://www.theguardian.com/football/2026/jul/18/fifa-record-15bn-world-cup-revenue">theguardian.com</a></li>
+  <li>Sports Illustrated, „How Much Money FIFA 'Will Make' From 2026 World Cup”, 2026. <a href="https://www.si.com/soccer/how-much-money-fifa-will-make-2026-world-cup">si.com</a></li>
+  <li>Inside World Football, „FIFA reports $2.6bn revenue for 2025, projects $14bn for 2027-30 cycle”, 23.03.2026. <a href="https://www.insideworldfootball.com/2026/03/23/fifa-reports-2-6bn-revenue-2025-projects-14bn-2027-30-cycle/">insideworldfootball.com</a></li>
+  <li>Encyclopaedia Britannica, „Economics of the FIFA World Cup” (dane z raportów finansowych FIFA). <a href="https://www.britannica.com/money/economics-of-the-FIFA-World-Cup">britannica.com</a></li>
+  <li>PA Media, „FIFA says 'nobody is selling football' after UEFA threatens to boycott World Cup”, 31.07.2026 (Express &amp; Star). <a href="https://www.expressandstar.com/uk-sports/fifa-says-nobody-is-selling-football-after-uefa-threatens-to-boycott-world-cup-8831759">expressandstar.com</a></li>
+  <li>PA Media, ta sama sprawa (Echo Live). <a href="https://www.echolive.ie/nationalsport/arid-41888797.html">echolive.ie</a></li>
+  <li>USA Today, „FIFA scraps highly-criticized proposal to sell minority stake”, 31.07.2026 (Galveston County Daily News). <a href="https://www.galvnews.com/news_ap/nation/fifa-scraps-highly-criticized-proposal-to-sell-minority-stake/article_2f6025ad-dc7c-5fa2-a2b2-9e975b7925b1.html">galvnews.com</a></li>
+  <li>Reuters, „FIFA scraps World Cup sell-off plan after resistance from members”, 2026 (Nation Africa). <a href="https://www.nation.africa/kenya/sports/football/fifa-scraps-world-cup-sell-off-plan-after-resistance-from-members-5543294">nation.africa</a></li>
+  <li>Ground News, zestawienie relacji o wycofaniu FIFA Forward Enterprise, 2026. <a href="https://ground.news/article/005b5b90-0d17-4092-a626-a4d1d67ac0df">ground.news</a></li>
+  <li>Flashscore / Reuters, „UEFA provisionally suspends FIFA boycott threat after FIFA project abandoned”, 2026. <a href="https://www.flashscore.com/news/uefa-provisionally-suspends-fifa-boycott-threat-after-fifa-project-abandoned/QNVbvI53/">flashscore.com</a></li>
+  <li>Morocco World News, „FIFA Election Explained: Who Can Challenge Gianni Infantino in 2027?”, 6.08.2026. <a href="https://www.moroccoworldnews.com/2026/08/333479/fifa-election-explained-who-can-challenge-gianni-infantino-in-2027/">moroccoworldnews.com</a></li>
+  <li>Morocco World News, „Infantino Could Face Arsène Wenger Challenge in 2027 FIFA Election”, 12.10.2026. <a href="https://www.moroccoworldnews.com/2026/10/341667/infantino-could-face-arsene-wenger-challenge-in-2027-fifa-election/">moroccoworldnews.com</a></li>
+  <li>AFP, „Infantino to seek re-election as Fifa president despite World Cup controversy”, 6.09.2026 (Khaleej Times). <a href="https://www.khaleejtimes.com/fifa-world-cup/gianni-infantino-re-election-fifa-president-march-2027-world-cup-controversy">khaleejtimes.com</a></li>
+  <li>Flashscore, „FIFA president Gianni Infantino confirms re-election bid for 2027 race”, 2026. <a href="https://flashscore.com/news/fifa-president-gianni-infantino-confirms-re-election-bid-for-2027-race/2gY2TGve">flashscore.com</a></li>
+  <li>Channel 4 News / ITN, archiwum o kradzieży Pucharu Rimeta. <a href="https://channel4.com/news/world-cup-england-1966-pickles-the-dog-archive-itn">channel4.com</a></li>
+</ul>
+
+<div class="srch">Serial i jego recenzje</div>
+<ul class="sources">
+  <li>What to Watch, „FIFA Uncovered: everything we know about the four-part Netflix documentary”, 2022. <a href="https://whattowatch.com/watching-guides/fifa-uncovered-everything-we-know-about-the-four-part-netflix-documentary">whattowatch.com</a></li>
+  <li>Leisure Byte, „FIFA Uncovered Review”, 2022. <a href="https://leisurebyte.com/fifa-uncovered-review-netflix-series/">leisurebyte.com</a></li>
+  <li>But Why Tho?, „Review: FIFA Uncovered Exposes It All”, 2022. <a href="https://butwhytho.net/2022/11/review-fifa-uncovered/">butwhytho.net</a></li>
+  <li>„FIFA Uncovered (2022)”, recenzja, Journal of Sport History 49(3). <a href="https://scholarlypublishingcollective.org/uip/jsh/article-abstract/49/3/289/383017/FIFA-Uncovered-2022?redirectedFrom=fulltext">scholarlypublishingcollective.org</a></li>
+  <li>Książki, na które powołują się bohaterowie serialu i recenzenci: A. Jennings, „Foul!” (2006); H. Blake, J. Calvert, „The Ugly Game” (2015); K. Bensinger, „Red Card” (2018); D. Conn, „The Fall of the House of FIFA” (2017).</li>
+</ul>
+
+<footer class="end">
+  <p>Stan wiedzy na 6 listopada 2026 roku. Część wydarzeń z 2026 roku, takich jak przychody z mundialu i lista kandydatów na prezydenta FIFA, opiera się na relacjach prasowych, a nie na oficjalnych dokumentach. Termin zgłaszania kandydatów mija 18 listopada 2026 roku, a FIFA nie opublikowała jeszcze raportu finansowego za 2026 rok.</p>
+  <p>Liczby zgonów w Katarze mierzą różne rzeczy i nie należy ich ze sobą porównywać wprost. Prawdziwej liczby zgonów związanych z pracą przy mundialu nie zna nikt, bo większości przypadków nie zbadano.</p>
+  <p>Kwoty w frankach szwajcarskich podano tak, jak w dokumentach źródłowych, bez przeliczania na złote. Rekonstrukcja indywidualnych głosów z 2010 roku jest nieoficjalna.</p>
+</footer>
+</div>
+</body></html>
