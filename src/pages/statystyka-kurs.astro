@@ -1,0 +1,70 @@
+---
+// Strona główna statystyki („Final boss”): lista działów. Karta na stronie głównej prowadzi tutaj,
+// a poszczególne działy to osobne strony w katalogu głównym (statystyka.astro = statystyka opisowa).
+import Base from '../layouts/Base.astro';
+import '../styles/wiedza.css';
+import '../styles/kurs.css';
+import Bar from '../components/wiedza/Bar.astro';
+
+const title = 'Statystyka — działy, quizy i zadania · Unicorner';
+const description = 'Statystyka w jednym miejscu: miary opisowe, dynamika, trend, sezonowość, korelacja i regresja oraz kurs pod testy Navoica. Quizy i zadania krok po kroku.';
+const url = 'https://unicorner.pl/statystyka-kurs.html';
+
+const DZIALY = [
+  { ic: '📊', name: 'Statystyka opisowa', file: 'statystyka.html', desc: 'Miary średnie, pozycyjne i zróżnicowania, asymetria i koncentracja.' },
+  { ic: '📉', name: 'Analiza dynamiki', file: 'dynamika.html', desc: 'Przyrosty, indeksy indywidualne i agregatowe (Laspeyres, Paasche, Fisher).' },
+  { ic: '📐', name: 'Tendencja rozwojowa', file: 'trend.html', desc: 'Szeregi czasowe, trend liniowy (MNK), dopasowanie R²/φ², prognozowanie.' },
+  { ic: '🌊', name: 'Sezonowość', file: 'sezonowosc.html', desc: 'Wahania sezonowe, wskaźniki sezonowości i prognozowanie szeregów czasowych.' },
+  { ic: '🔗', name: 'Analiza korelacji', file: 'korelacja.html', desc: 'Współczynnik Pearsona i korelacja rang Spearmana, siła i kierunek zależności.' },
+  { ic: '📈', name: 'Analiza regresji', file: 'regresja.html', desc: 'Model Y=a+bX, metoda najmniejszych kwadratów, R² i φ², prognozowanie.' },
+  { ic: '🧮', name: 'Korelacja wieloraka', file: 'korelacja-wieloraka.html', desc: 'Korelacja cząstkowa i wieloraka, współczynnik R i determinacja R².' },
+  { ic: '📝', name: 'Statystyka — kurs Navoica + AI', file: 'Statystyka_Navoica_Egzamin.html', desc: 'Indeksy, trend, sezonowość, korelacja i regresja — pytania wprost z testów Navoica, quiz 70 pytań.' },
+];
+---
+<Base title={title} description={description}>
+  <Fragment slot="head">
+    <link rel="canonical" href={url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content="https://unicorner.pl/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </Fragment>
+
+  <Bar crumbs={[{ label: 'Statystyka' }]} />
+
+  <main id="main" class="k-shell">
+    <header class="k-hero">
+      <span class="wz-eyebrow"><span class="dot"></span>Przedmiot · {DZIALY.length} działów</span>
+      <h1>Statystyka <span class="grad">— final boss</span></h1>
+      <p class="k-lede">Powiązane działy w jednym miejscu — od miar opisowych, przez dynamikę i szeregi czasowe, po korelację i regresję. Wybierz dział, a w nim znajdziesz teorię, zadania i quiz.</p>
+    </header>
+
+    <section class="k-hub-sec">
+      <h2 class="k-hub-h">Działy</h2>
+      <ol class="k-mods">
+        {DZIALY.map((d, i) => (
+          <li class="k-mod is-live">
+            <a href={d.file}>
+              <span class="k-mod-nr">{String(i + 1).padStart(2, '0')}</span>
+              <span class="k-mod-t"><b>{d.ic} {d.name}</b><span>{d.desc}</span></span>
+              <span class="k-mod-go"><i>→</i></span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </section>
+
+    <p class="k-bug">Materiały to nasze własne opracowanie — nie jesteśmy powiązani z uczelnią ani prowadzącymi. Zapis bywa różny w różnych grupach; gdy prowadzący zapisuje coś inaczej, liczy się jego wersja. Błąd albo niejasność? <a href="/kontakt.html">Napisz</a>.</p>
+  </main>
+
+  <footer class="wz-foot">
+    <div class="wz-wrap">
+      <span>unicorner · statystyka</span>
+      <nav aria-label="Stopka"><a href="/index.html">Strona główna</a><a href="/kontakt.html">Kontakt</a></nav>
+    </div>
+  </footer>
+</Base>
