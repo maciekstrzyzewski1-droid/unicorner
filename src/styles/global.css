@@ -1,16 +1,15 @@
 /* ===== Design-system landingu (1:1 z index.html); Tailwind wczytuje Base.astro ===== */
   :root{
-    --ink:#07060f; --ink2:#0d0c13; --surface:#15131d; --surface2:#1c1928;
+    /* wspólne tokeny (--ink, --muted, --muted2, --accent, --cyan, --magenta, --gold, --iris, --disp): src/styles/tokeny.css, ładowane w Base.astro */
+    --ink2:#0d0c13; --surface:#15131d; --surface2:#1c1928;
     --line:rgba(255,255,255,0.09); --line2:rgba(255,255,255,0.16);
-    --text:#eef0ff; --muted:#9b93c4; --muted2:#6f679a;
-    --accent:#a78bfa; --accent-d:#8b5cf6;
-    --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a; --wmark:#bd8bff;
+    --text:#eef0ff;
+    --accent-d:#8b5cf6;
+    --wmark:#bd8bff;
     --ok:#5ad1a0; --ok-bg:#0c241d;
-    --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
     --glow-cyan:0 0 16px rgba(39,232,255,.55);
     --glow-mag:0 0 16px rgba(255,46,151,.5);
     --shadow:0 18px 60px rgba(0,0,0,.6);
-    --disp:'Chakra Petch','Space Grotesk',sans-serif;
     --mono:'Chakra Petch',ui-monospace,monospace;
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
