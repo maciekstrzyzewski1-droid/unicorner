@@ -194,7 +194,7 @@
 .k-opt.is-bad{opacity:1;border-color:var(--magenta);background:rgba(255,46,151,.1);}
 .k-opt-l{font-family:var(--mono);font-weight:700;font-size:.78rem;color:var(--muted);flex:0 0 auto;}
 .k-opt-sm{width:auto;font-size:.86rem;padding:7px 12px;}
-.k-pyt-wyj{margin:10px 0 0!important;padding:10px 12px;font-size:.92rem;line-height:1.6;background:rgba(255,255,255,.03);border-left:2px solid var(--muted2);}
+.k-pyt-wyj{margin:10px 0 0!important;padding:10px 12px;font-size:.92rem;line-height:1.6;background:rgba(255,255,255,.03);border-left:2px solid var(--muted2-deco);}
 .k-pyt-ok,.k-pyt-bad{display:none;}
 [data-done="ok"] .k-pyt-ok{display:inline;color:var(--ok);}
 [data-done="bad"] .k-pyt-bad{display:inline;color:var(--magenta);}
