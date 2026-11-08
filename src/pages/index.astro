@@ -268,34 +268,13 @@ const SUBJECTS = [
   { name:"Rachunkowość — kurs od zera", emoji:"⊤",
     desc:"Bilans, operacje gospodarcze, konto teowe, Wn i Ma, saldo i podwójny zapis. Zadania z zajęć krok po kroku, bilans i konta wypełniające się na oczach.",
     tags:["Kurs krok po kroku","Konta teowe","Ćwiczenia"], status:"live", badge:"w budowie", file:"rachunkowosc.html" },
+  { name:"Statystyka <span class=\"fb-tag\">— FINAL BOSS</span>", emoji:"📊",
+    desc:"Od miar opisowych, przez dynamikę i szeregi czasowe, po korelację i regresję. Teoria, zadania i quizy w ośmiu działach.",
+    tags:["8 działów","Quizy","Zadania"], status:"live", file:"statystyka-kurs.html" },
   { name:"Kolejne przedmioty", emoji:"✦",
     desc:"Dochodzą po kolei. Masz przedmiot, który chcesz tu zobaczyć następny? Daj znać.",
     tags:["Wkrótce"], status:"soon", file:null }
 ];
-
-const STAT_GROUP = {
-  name:"Statystyka",
-  emoji:"📊",
-  desc:"Powiązane działy w jednym miejscu — od miar opisowych, przez dynamikę i szeregi czasowe, po korelację i regresję. Kompletny materiał ze statystyki.",
-  parts:[
-    { ic:"📊", name:"Statystyka opisowa", file:"statystyka.html",
-      desc:"Miary średnie, pozycyjne i zróżnicowania, asymetria i koncentracja." },
-    { ic:"📉", name:"Analiza dynamiki", file:"dynamika.html",
-      desc:"Przyrosty, indeksy indywidualne i agregatowe (Laspeyres, Paasche, Fisher)." },
-    { ic:"📐", name:"Tendencja rozwojowa", file:"trend.html",
-      desc:"Szeregi czasowe, trend liniowy (MNK), dopasowanie R²/φ², prognozowanie." },
-    { ic:"🌊", name:"Sezonowość", file:"sezonowosc.html",
-      desc:"Wahania sezonowe, wskaźniki sezonowości i prognozowanie szeregów czasowych." },
-    { ic:"🔗", name:"Analiza korelacji", file:"korelacja.html",
-      desc:"Współczynnik Pearsona i korelacja rang Spearmana, siła i kierunek zależności." },
-    { ic:"📈", name:"Analiza regresji", file:"regresja.html",
-      desc:"Model Y=a+bX, metoda najmniejszych kwadratów, R² i φ², prognozowanie." },
-    { ic:"🧮", name:"Korelacja wieloraka", file:"korelacja-wieloraka.html",
-      desc:"Korelacja cząstkowa i wieloraka, współczynnik R i determinacja R²." },
-    { ic:"📝", name:"Statystyka — kurs Navoica + AI", file:"Statystyka_Navoica_Egzamin.html",
-      desc:"Indeksy, trend, sezonowość, korelacja i regresja — pytania wprost z testów Navoica, quiz 70 pytań." }
-  ]
-};
 
 const FAQS = [
   { q:"Co to jest Unicorner?",
@@ -311,8 +290,8 @@ const FAQS = [
 ];
 
 const grid = document.getElementById('grid');
-const statParts = STAT_GROUP.parts.length;
-const liveCount = SUBJECTS.filter(s=>s.status==='live').length + statParts;
+const STAT_DZIALY = 8; // działy statystyki liczą się osobno (lista: src/pages/statystyka-kurs.astro)
+const liveCount = SUBJECTS.filter(s=>s.status==='live').length - 1 + STAT_DZIALY;
 document.getElementById('count').textContent =
   liveCount + (liveCount===1?' gotowy':(liveCount>=2&&liveCount<=4?' gotowe':' gotowych'));
 
@@ -330,39 +309,10 @@ function cardHtml(s){
               : `<div class="card soon">${inner}</div>`;
 }
 
-function statHubHtml(g){
-  const links = g.parts.map(p=>`
-    <a class="stat-link" href="${p.file}">
-      <span class="sl-ic">${p.ic}</span>
-      <span class="sl-name">${p.name}</span>
-      <span class="sl-desc">${p.desc}</span>
-      <span class="sl-go">Otwórz <span class="arr">→</span></span>
-    </a>`).join('');
-  return `<div class="stat-hub">
-    <div class="stat-head">
-      <div class="emoji">${g.emoji}</div>
-      <div>
-        <h3>${g.name} <span class="fb-tag">— FINAL BOSS</span></h3>
-        <p class="desc">${g.desc}</p>
-      </div>
-      <span class="badge live">${g.parts.length} ${g.parts.length>=2&&g.parts.length<=4?'działy':'działów'}</span>
-    </div>
-    <div class="stat-divider">działy statystyki</div>
-    <div class="stat-links">
-      <div class="stat-shards" aria-hidden="true">
-        <span class="shard"></span><span class="shard"></span><span class="shard"></span><span class="shard"></span>
-        <span class="shard"></span><span class="shard"></span><span class="shard"></span><span class="shard"></span>
-      </div>
-      ${links}
-    </div>
-  </div>`;
-}
-
 const liveSubjects = SUBJECTS.filter(s=>s.status==='live');
 const soonSubjects = SUBJECTS.filter(s=>s.status!=='live');
 grid.innerHTML =
-  liveSubjects.map(cardHtml).join('') +
-  statHubHtml(STAT_GROUP);
+  liveSubjects.map(cardHtml).join('');
 const nextCard = document.getElementById('nextCard');
 if (nextCard) nextCard.innerHTML = soonSubjects.map(cardHtml).join('');
 
@@ -370,7 +320,7 @@ if (nextCard) nextCard.innerHTML = soonSubjects.map(cardHtml).join('');
 (function(){
   if (matchMedia('(hover: none)').matches) return;   // pomijaj na dotyku
   const R=380, prox=R*0.5, fade=R*0.75, GLOWR=R+'px';
-  const cardsSel='.card, .stat-hub';
+  const cardsSel='.card';
   let cards=[], gr=null, rects=[], measured=false, mx=0, my=0, raf=0;
   function measure(){
     cards=[...grid.querySelectorAll(cardsSel)];
@@ -417,7 +367,7 @@ faq.querySelectorAll('.faq-item').forEach(it=>{
 
 const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 (function(){
-  const targets=[...document.querySelectorAll('.card, .stat-hub, [data-rev]')];
+  const targets=[...document.querySelectorAll('.card, [data-rev]')];
   if(reduce){ targets.forEach(t=>t.classList.add('in')); return; }
   const groups=new Map();
   targets.forEach(t=>{
