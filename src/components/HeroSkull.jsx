@@ -9,7 +9,7 @@ useGLTF.preload('/assets/skeleton.glb', false);
 
 // Czaszka (assets/skeleton.glb, meshopt) w polerowanym chromie — odbija neonowe
 // swiatla na ciemnym tle jak product-shot. Kolysze sie + mozna ja zlapac i obracac.
-function Skull({ drag }) {
+function Skull({ drag, reduced }) {
   const { scene } = useGLTF('/assets/skeleton.glb', false);
 
   const { obj, k } = useMemo(() => {
@@ -33,6 +33,16 @@ function Skull({ drag }) {
   useFrame((state) => {
     const d = drag.current;
     const t = state.clock.elapsedTime;
+    if (reduced) {
+      // prefers-reduced-motion: statyczna poza (bez obrotu, wobble i kolysania); zostaje tylko reczne obracanie
+      d.vx = 0; d.vy = 0;
+      d.rx = Math.max(-0.7, Math.min(0.7, d.rx));
+      const g = grp.current;
+      if (!g) return;
+      g.rotation.set(d.rx, d.ry, 0);
+      g.position.set(0, 0, 0);
+      return;
+    }
     if (!d.active) {
       d.ry += d.vy; d.rx += d.vx;      // bezwladnosc po puszczeniu
       d.vy *= 0.86; d.vx *= 0.86;      // szybsze wygaszanie -> mniej "rozkrecania"
@@ -67,6 +77,22 @@ export default function HeroSkull() {
     return () => io.disconnect();
   }, []);
 
+  // prefers-reduced-motion (czytane dopiero w efekcie, bo komponent jest renderowany po stronie serwera)
+  const [reduced, setReduced] = useState(false);
+  const invalidateRef = useRef(null);
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    setReduced(mq.matches);
+    const onChange = (e) => setReduced(e.matches);
+    if (mq.addEventListener) mq.addEventListener('change', onChange);
+    else if (mq.addListener) mq.addListener(onChange);
+    return () => {
+      if (mq.removeEventListener) mq.removeEventListener('change', onChange);
+      else if (mq.removeListener) mq.removeListener(onChange);
+    };
+  }, []);
+
   const onDown = (e) => {
     // Na telefonie NIE przechwytujemy gestu — dotyk ma scrollowac strone, nie obracac szkielet.
     // Obrot-przeciaganie zostaje tylko dla myszy/pen (desktop).
@@ -85,6 +111,7 @@ export default function HeroSkull() {
     d.ry += dx * F; d.rx += dy * F;
     d.vy = cap(dx * F); d.vx = cap(dy * F);        // limit predkosci -> szybki flick nie rozkreca kilku obrotow
     d.px = e.clientX; d.py = e.clientY;
+    invalidateRef.current?.();                     // w trybie 'demand' (reduced-motion) dorysuj klatke po przeciagnieciu
   };
   const onUp = (e) => {
     drag.current.active = false;
@@ -105,7 +132,8 @@ export default function HeroSkull() {
         camera={{ position: [0, 0, 6.2], fov: 34 }}
         gl={{ alpha: true, antialias: true }}
         dpr={[1, 1.5]}
-        frameloop={onScreen ? 'always' : 'never'}
+        frameloop={onScreen ? (reduced ? 'demand' : 'always') : 'never'}
+        onCreated={(state) => { invalidateRef.current = state.invalidate; }}
       >
         <ambientLight intensity={0.25} />
         {/* neonowe listwy swiatla -> odbicia na chromie (studio look) */}
@@ -117,7 +145,7 @@ export default function HeroSkull() {
           <Lightformer form="rect" intensity={2.2} color="#a78bfa" position={[-2, -4, 4]} scale={[8, 3, 1]} />
         </Environment>
         <Suspense fallback={null}>
-          <Skull drag={drag} />
+          <Skull drag={drag} reduced={reduced} />
         </Suspense>
       </Canvas>
     </div>
