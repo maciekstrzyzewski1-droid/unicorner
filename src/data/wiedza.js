@@ -11,10 +11,11 @@
 //   3. commit + push.
 
 export const CATEGORIES = [
-  { id: 'krypto',   name: 'Krypto',          desc: 'Ripple, SEC, giełdy, stablecoiny i ludzie, którzy na tym zarabiają.' },
-  { id: 'polityka', name: 'Polityka',        desc: 'Polskie afery i spory rozłożone na fakty, zarzuty i mechanizmy.' },
-  { id: 'zdrowie',  name: 'Zdrowie i umysł', desc: 'Co nauka naprawdę mówi o jedzeniu, mózgu i uwadze.' },
+  // Kolejność = kolejność działów w czytelni i filtrów (najpierw tematy ogólne, potem polityka i krypto).
   { id: 'swiat',    name: 'Świat i technika', desc: 'Jak działają rzeczy, które mijamy codziennie.' },
+  { id: 'zdrowie',  name: 'Zdrowie i umysł', desc: 'Co nauka naprawdę mówi o jedzeniu, mózgu i uwadze.' },
+  { id: 'polityka', name: 'Polityka',        desc: 'Polskie afery i spory rozłożone na fakty, zarzuty i mechanizmy.' },
+  { id: 'krypto',   name: 'Krypto',          desc: 'Ripple, SEC, giełdy, stablecoiny i ludzie, którzy na tym zarabiają.' },
 ];
 
 export const SERIES = {

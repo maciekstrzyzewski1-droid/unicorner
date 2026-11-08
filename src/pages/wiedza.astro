@@ -11,7 +11,7 @@ const groups = CATEGORIES.map((c) => ({ ...c, items: articles.filter((a) => a.ca
 const totalMin = articles.reduce((s, a) => s + a.minutes, 0);
 const totalSrc = articles.length;
 const title = 'Wiedza · Unicorner — artykuły badawcze oparte na źródłach';
-const description = 'Długie, rzetelne teksty o krypto, polskiej polityce, zdrowiu i technice. Każda liczba ma źródło, fakty oddzielone od zarzutów i prognoz.';
+const description = 'Długie, rzetelne teksty o świecie i technice, zdrowiu, polskiej polityce i krypto. Każda liczba ma źródło, fakty oddzielone od zarzutów i prognoz.';
 const ld = {
   '@context': 'https://schema.org', '@type': 'CollectionPage', name: 'Wiedza · Unicorner', description,
   url: 'https://unicorner.pl/wiedza.html', inLanguage: 'pl',
