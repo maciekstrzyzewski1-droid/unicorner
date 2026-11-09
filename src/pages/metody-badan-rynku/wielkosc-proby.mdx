@@ -658,7 +658,7 @@ Na zajęciach to samo zadanie robisz w arkuszu. Dostajesz tabelę z GUS, liczysz
 6. **Kalkulator.** Wpisz poziom ufności, frakcję, maksymalny błąd i $N$. Osobno dla pokolenia i osobno dla płci.
 7. **WWP.** Wynik dla pokolenia (3 grupy) pomnóż przez 1,53. Płeć — bez WWP.
 8. **W górę i większy z dwóch.** Oba wyniki zaokrąglij w górę i weź większy. To $n$.
-9. **Kwoty.** Każda kratka pokolenie × płeć = $n$ · (osób w kratce) : $N$, zaokrąglona do całych osób. Suma kratek musi dać $n$.
+9. **Kwoty.** Każda kratka (pokolenie i płeć) = $n$ · (osób w kratce) : $N$, zaokrąglona do całych osób. Suma kratek musi dać $n$.
 </Ramka>
 
 <Ramka kind="botak" tytul="Excel po polsku — cztery rzeczy">
@@ -666,19 +666,43 @@ Na zajęciach to samo zadanie robisz w arkuszu. Dostajesz tabelę z GUS, liczysz
 - Dwukropek to zakres: `=SUMA(B2:B4)` dodaje B2, B3 i B4. Średnik oddziela osobne komórki: `=SUMA(B2;B5)` dodaje tylko B2 i B5.
 - Znak `$` przypina komórkę przy kopiowaniu formuły: `$D$16` po przeciągnięciu w dół dalej wskazuje D16.
 - `ZAOKR(liczba;0)` zaokrągla do całości.
+- **Przeciąganie formuły:** złap mały kwadracik w prawym dolnym rogu komórki i ciągnij w dół albo w bok. Excel skopiuje formułę i sam przesunie adresy (te bez `$`).
+- **Dolary szybciej:** kliknij adres w formule i naciśnij F4.
+- **Format procentowy:** przycisk % na pasku Narzędzia główne. Komórka pokazuje 39,05%, ale w środku dalej jest 0,3905 — i ten ułamek wpisujesz do kalkulatora.
 </Ramka>
 
-Arkusz poniżej to wariant z arkusza „liczebność próby 2026 -g3”: pokolenie Z liczone **od 16 lat** (GUS podaje grupę 16–19 w jednej kolumnie). W pozostałych krokach tego modułu Z zaczyna się od 18 lat — wyniki dla tej wersji są w ramce pod arkuszem.
+Arkusz poniżej to wariant arkusza „liczebność próby 2026 -g3”: pokolenie Z liczone **od 16 lat** (GUS podaje grupę 16–19 jedną liczbą). W krokach 1–5 tego modułu Z zaczyna się od 18 lat, bo tam badamy samych dorosłych. Wyniki dla tej wersji są w ramce pod arkuszem.
+
+<Ramka kind="botak" tytul="od 16 czy od 18 lat?">
+Tak, jak w arkuszu, który dostała Twoja grupa. Granice pokoleń to umowa przyjęta na zajęciach, a nie reguła ze wzoru. Zapisz w projekcie, jakie granice przyjęto.
+</Ramka>
 
 <ArkuszProby wariant="16">
-na górze pasek „fx” — tu w każdym kroku pojawia się formuła do wpisania. Pod nim kopia arkusza: litery kolumn, numery wierszy, dane GUS, tabela pokoleń, liczebność próby i kwoty. Turkusowe kratki to te, z których liczymy, złote — wynik albo liczba, którą przepisujesz do kalkulatora. Dwa panele „Kalkulator minimalnej próby” pokazują, co wpisać w każde pole. Przycisk „Zobacz krok po kroku” odsłania wszystko po kolei.
+na górze pasek „fx” — tu w każdym kroku pojawia się formuła do wpisania. Pod nim kopia arkusza: litery kolumn, numery wierszy, dane GUS, tabela pokoleń, liczebność próby i kwoty. Turkusowe kratki to te, z których liczymy, złote — wynik albo liczba, którą przepisujesz do kalkulatora, zielone — najliczniejsza frakcja. Dwa panele „Kalkulator minimalnej próby” pokazują, co wpisać w każde pole. Przycisk „Zobacz krok po kroku” odsłania wszystko po kolei.
 </ArkuszProby>
 
 <Ramka kind="pulapka" tytul="sprawdź sumy, zanim pójdziesz dalej">
 - W jednej z wersji arkusza kobiety z pokolenia X mają 363 644. Powinno być 140 061 + 121 999 + 100 584. Po kolei: 140 061 + 121 999 = 262 060, a 262 060 + 100 584 = **{fmt(A16.pok[2].k)}**.
 - Przez tę jedną liczbę $N$ wychodzi 2 029 969 zamiast **{fmt(A16.N)}**.
 - Tu $n$ akurat się nie zmienia, ale przy innych danych taka pomyłka potrafi zmienić wynik.
-- Sprawdzenie: suma mężczyzn + suma kobiet musi dać to samo co suma kolumny „razem”. {fmt(A16.NM)} + {fmt(A16.NK)} = {fmt(A16.N)}.
+- Sprawdzenie: zsumuj całą tabelę GUS jedną formułą, np. `=SUMA(B2:C10)`. Wynik musi być równy $N$ ({fmt(A16.N)}).
+- Suma „mężczyźni + kobiety” takiego błędu nie złapie. Liczy się z tych samych, już złych komórek, więc też wyjdzie 2 029 969. Złapie go tylko porównanie z danymi źródłowymi.
+</Ramka>
+
+<Ramka kind="kiedy" tytul="gdy w Twoim pliku grupy wieku leżą poziomo (eksport z BDL)">
+Plik z Banku Danych Lokalnych ma jeden wiersz z województwem, a grupy wieku w kolejnych kolumnach. Każda grupa zajmuje trzy kolumny: ogółem, mężczyźni, kobiety.
+
+| | C | D | E | F | G | H |
+|---|---|---|---|---|---|---|
+| 4 | 20–24 ogółem | 20–24 mężczyźni | 20–24 kobiety | 25–29 ogółem | 25–29 mężczyźni | 25–29 kobiety |
+| 5 | 168 391 | 86 493 | 81 898 | 188 025 | 95 346 | 92 679 |
+
+**Jak czytać:** litery to kolumny, liczby po lewej to wiersze. Wiersz 4 to nagłówki, wiersz 5 to dane.
+
+- Mężczyźni z grup 20–24 i 25–29 to co trzecia kolumna: `=D5+G5`. Kobiety: `=E5+H5`.
+- Zakresu z dwukropkiem tu nie używasz. `=SUMA(D5:G5)` dodałby też kobiety i „ogółem”.
+- Grupa 16–19 stoi w arkuszu w osobnej tabelce. Jej komórkę dodajesz plusem, np. `=D5+G5+B12` (adresy sprawdź w swoim pliku).
+- Nigdy nie dodawaj kolumny „ogółem” razem z „mężczyźni” i „kobiety” — każda osoba policzyłaby się dwa razy.
 </Ramka>
 
 <Ramka kind="podobny" tytul="ten sam projekt, gdy pokolenie Z zaczyna się od 18 lat">
@@ -692,7 +716,7 @@ Grupy 18 i 19 zamiast 16–19 (jak w krokach 1–5 wyżej i w arkuszu „Liczebn
 Granice pokoleń to umowa. Zapisz w projekcie, jakie przyjęto.
 </Ramka>
 
-### Kalkulator — policz sam
+### Kalkulator — policz samodzielnie
 
 To samo, co robi kalkulator online, ale z całym rachunkiem pod spodem. Wpisz liczby albo wstaw je z przykładu.
 
@@ -705,10 +729,10 @@ To samo, co robi kalkulator online, ale z całym rachunkiem pod spodem. Wpisz li
 ]} />
 
 <Ramka kind="granica" tytul="kalkulator online a wzór z zajęć">
-- Kalkulatory w internecie zwykle **nie mają WWP**. Przy cesze z 3 i więcej grupami mnożysz wynik sam.
+- Kalkulatory w internecie zwykle **nie mają WWP**. Przy cesze z 3 i więcej grupami mnożysz wynik ręcznie.
 - Niektóre liczą z $N \cdot e^2$ zamiast $(N-1) \cdot e^2$. Przy populacji rzędu milionów różnica jest niewidoczna.
 - Pole „frakcja” bywa w procentach (39,05), a bywa ułamkiem (0,3905). Sprawdź podpis pola.
-- Kalkulator nie wie, która frakcja jest najliczniejsza. Wybierasz ją sam z arkusza.
+- Kalkulator nie wie, która frakcja jest najliczniejsza. Wybierasz ją z arkusza.
 </Ramka>
 
 ## Ściąga przed kolokwium
@@ -723,7 +747,7 @@ To samo, co robi kalkulator online, ale z całym rachunkiem pod spodem. Wpisz li
   <div><b>$p = 0{,}5$</b>Tylko gdy treść nie podaje struktury. Podana struktura → najliczniejsza frakcja.</div>
   <div><b>Zaokrąglenie</b>Zawsze w górę, jeden raz, na końcu (po WWP).</div>
   <div><b>Jakościowa czy ilościowa?</b>Odsetki grup → jakościowa. Średnia i odchylenie albo $V$ → ilościowa.</div>
-  <div><b>Excel i kalkulator</b>Pokolenie: SUMA grup wieku. Udział: pokolenie : N (w formule N z dolarami). Do kalkulatora: ufność, frakcja jako ułamek, błąd, N. Potem sam razy WWP i w górę.</div>
+  <div><b>Excel i kalkulator</b>Pokolenie: SUMA grup wieku. Udział: pokolenie : N (w formule N z dolarami). Do kalkulatora: ufność, frakcja jako ułamek, błąd, N. Potem ręcznie razy WWP i w górę.</div>
   <div><b>Kwoty</b>Udział kratki w populacji razy $n$, potem przez liczbę ankieterów. Ułamki: schematy A i B.</div>
 </div>
 
@@ -782,8 +806,8 @@ Liczebność mówi, **ile** osób zapytać. **Kogo** i jak (losowo, kwotowo, prz
   { q: 'Arkusz pokazuje udział pokolenia Y: 39,05%. Co wpiszesz w polu „frakcja”, jeśli kalkulator przyjmuje ułamek?', opcje: ['0,3905', '39,05', '0,5'], dobra: 0, dlaczego: '39,05% to 39,05 : 100 = 0,3905. Liczba 39,05 w polu na ułamek to błąd — frakcja nie może być większa od 1. 0,5 bierze się tylko wtedy, gdy struktura nie jest znana.' },
   { q: 'Kalkulator dla kryterium „pokolenie” (3 grupy, 95%) pokazał 365,67. Ile wynosi minimalna próba dla tego kryterium?', opcje: ['366', '559', '560'], dobra: 2, dlaczego: 'Pokolenia to 3 grupy, więc razy WWP: 365,67 · 1,53 ≈ 559,48. W górę: 560. Wynik 366 pomija WWP, a 559 to zaokrąglenie w dół.' },
   { q: 'Dla kryterium „pokolenie” wyszło 560, dla płci 385. Jaką liczebność próby przyjmujesz?', opcje: ['945 — dodajemy oba wyniki', '560 — większy z dwóch', '385 — mniejszy z dwóch'], dobra: 1, dlaczego: 'Ta sama próba ma wystarczyć dla obu kryteriów, więc bierzesz większy wynik. 560 osób wystarczy też dla płci. Wyników się nie dodaje — to te same osoby opisane dwiema cechami.' },
-  { q: 'Po zaokrągleniu kwot suma kratek wynosi 559, a n = 560. Co robisz?', opcje: ['Dodajesz 1 osobę w kratce z największą resztą po przecinku', 'Zostawiasz 559 — to tylko jedna osoba', 'Zmieniasz n na 561'], dobra: 0, dlaczego: 'Suma kwot musi dać n. Brakującą osobę dostaje kratka, której wynik przed zaokrągleniem był najbliżej kolejnej liczby (największa reszta). Zmiana n psuje rachunek z kalkulatora.' },
-  { q: 'Suma mężczyzn: 1 023 128, suma kobiet: 1 005 841, a komórka „ogółem razem” pokazuje 2 029 969. Co to znaczy?', opcje: ['Wszystko się zgadza', 'W którejś sumie jest błąd: 1 023 128 + 1 005 841 = 2 028 969, czyli o 1 000 mniej', 'Excel zaokrąglił liczby'], dobra: 1, dlaczego: 'Dodaj: 1 023 128 + 1 005 841 = 2 028 969. Komórka pokazuje o 1 000 więcej, więc któraś liczba jest przepisana albo zsumowana źle. Excel nie zaokrągla liczb całkowitych.' },
+  { q: 'Po zaokrągleniu kwot suma kratek wynosi 559, a n = 560. Co robisz?', opcje: ['Dodajesz 1 osobę w kratce zaokrąglonej w dół, która miała największą część po przecinku', 'Zostawiasz 559 — to tylko jedna osoba', 'Zmieniasz n na 561'], dobra: 0, dlaczego: 'Suma kwot musi dać n. Brakującą osobę dostaje kratka, którą zaokrąglono w dół, a która była najbliżej kolejnej liczby (np. 108,46 → 108 dostaje 1 i ma 109). Kratki zaokrąglonej już w górę nie ruszasz. Zmiana n psuje rachunek z kalkulatora.' },
+  { q: 'Formuła =SUMA(B2:C10), czyli suma całej tabeli GUS, daje 2 028 969. Komórka N w tabeli pokoleń pokazuje 2 029 969. Co to znaczy?', opcje: ['Wszystko się zgadza', 'W tabeli pokoleń jest błąd o 1 000 — trzeba sprawdzić sumy pokoleń', 'Excel zaokrąglił liczby'], dobra: 1, dlaczego: 'Pokolenia składają się z tych samych osób co tabela GUS, więc obie sumy muszą być równe. 2 029 969 − 2 028 969 = 1 000, czyli któraś suma pokolenia jest przepisana albo policzona źle. Excel nie zaokrągla liczb całkowitych.' },
 ]} />
 
 <a id="cw-kwoty" class="k-anchor"></a>

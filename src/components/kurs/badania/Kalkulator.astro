@@ -66,7 +66,12 @@ const dane = JSON.stringify({ Z: Z_UFNOSCI, WWP });
       let p = liczba(pole('p').value);
       if (p > 1 && p <= 100) p = p / 100; // ktoś wpisał 39,05 bez znaku %
       let e = liczba(pole('e').value);
-      if (e >= 1) e = e / 100; // błąd wpisany w procentach (5 → 0,05)
+      // pole jest w procentach (5 → 5%); bardzo mała liczba bez % (np. 0,05) to raczej ułamek
+      const eRaw = pole('e').value.trim();
+      let eUwaga = '';
+      if (eRaw.endsWith('%')) { /* liczba() już podzieliła przez 100 */ }
+      else if (e >= 0.2) e = e / 100;
+      else eUwaga = ` (wpisano ${eRaw} — traktuję to jako ułamek, czyli ${f(e * 100, 1)}%)`;
       const Nraw = pole('N').value.trim();
       const N = Nraw === '' ? null : liczba(Nraw);
       const g = Number(pole('g').value);
@@ -77,12 +82,12 @@ const dane = JSON.stringify({ Z: Z_UFNOSCI, WWP });
       if (N !== null && !(N > 1)) return blad('Wielkość populacji musi być liczbą większą od 1 — albo zostaw pole puste.');
       const z = tab.Z[uf];
       const w = g <= 2 ? 1 : tab.WWP[uf]?.[g];
-      if (w === undefined) return blad(`Tabela WWP z zajęć ma tylko kolumny 90% i 95%. Dla ${uf}% wybierz 2 grupy albo inny poziom ufności.`);
+      if (w === undefined) return blad(`Tabela WWP z zajęć ma tylko kolumny 90% i 95%. Dla ${uf}% nie ma współczynnika — zapytaj na zajęciach, jaki przyjąć. Liczby grup nie zmieniaj, bo zmieni to wynik.`);
       const a = z * z * p * (1 - p);
       L.push(`Z dla ${uf}%: <b>${f(z, 3)}</b>, więc Z² = ${f(z, 3)} · ${f(z, 3)} = <b>${f(z * z, 4)}</b>.`);
       L.push(`p = ${f(p, 4)}, 1 − p = ${f(1 - p, 4)}, p · (1 − p) = <b>${f(p * (1 - p), 4)}</b>.`);
       L.push(`Wspólny kawałek: Z² · p(1 − p) = ${f(z * z, 4)} · ${f(p * (1 - p), 4)} ≈ <b>${f(a, 4)}</b>.`);
-      L.push(`e = ${f(e, 4)}, e² = ${f(e * e, 6)}.`);
+      L.push(`e = ${f(e, 4)}${eUwaga}, e² = ${f(e * e, 6)}.`);
       let n: number;
       if (N === null) {
         n = a / (e * e);
@@ -90,11 +95,11 @@ const dane = JSON.stringify({ Z: Z_UFNOSCI, WWP });
       } else {
         const licznik = a * N, mian = a + (N - 1) * e * e;
         n = licznik / mian;
-        L.push(`Licznik: ${f(a, 4)} · ${f(N, 0)} ≈ ${f(licznik, 0)}.`);
-        L.push(`Mianownik: ${f(a, 4)} + (${f(N, 0)} − 1) · ${f(e * e, 6)} ≈ ${f(mian, 2)}.`);
+        L.push(`Licznik: ${f(a, 6)} · ${f(N, 0)} ≈ ${f(licznik, 0)} (kawałek z 6 miejscami po przecinku, żeby wynik się zgadzał).`);
+        L.push(`Mianownik: ${f(a, 6)} + (${f(N, 0)} − 1) · ${f(e * e, 6)} ≈ ${f(mian, 2)}.`);
         L.push(`Ze znanym N: ${f(licznik, 0)} : ${f(mian, 2)} ≈ <b>${f(n, 2)}</b> — tyle pokaże kalkulator online.`);
       }
-      if (w > 1) L.push(`WWP (${g === 10 ? '6–10' : g} grup, ${uf}%) = ${f(w, 2)}: ${f(n, 2)} · ${f(w, 2)} ≈ <b>${f(n * w, 2)}</b>.`);
+      if (w > 1) L.push(`WWP (${g === 10 ? '6–10 grup' : g === 5 ? '5 grup' : g + ' grupy'}, ${uf}%) = ${f(w, 2)}: ${f(n, 2)} · ${f(w, 2)} ≈ <b>${f(n * w, 2)}</b>.`);
       else L.push('Dwie grupy — bez WWP.');
       const wyn = Math.ceil(n * w - 1e-9);
       out.innerHTML = L.map((t) => `<li>${t}</li>`).join('') + `<li class="is-wyn">Zaokrąglamy w górę: n = ${wyn}.</li>`;
