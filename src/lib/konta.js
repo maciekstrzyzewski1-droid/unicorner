@@ -6,6 +6,8 @@
 //        'P' — konto pasywne (źródło finansowania: kapitał, kredyt, zobowiązania…)
 //        'K' — konto kosztów (konto wynikowe; tu tylko jako „druga strona” operacji wynikowej)
 //   sp: saldo początkowe (liczba ≥ 0; strona wynika z typu: A → Wn, P → Ma)
+//   ujemne: true — pasywo „na minusie” (strata z lat ubiegłych): typ 'P', ale saldo stoi po Wn,
+//           strata rośnie po Wn, maleje po Ma, a w bilansie wchodzi do pasywów ze znakiem minus
 // Operacja: { nr, opis, kwota, wn: id konta, ma: id konta }
 //
 // Konwencje z zajęć (arkusz „Konta bilansowe”):
@@ -38,6 +40,10 @@ export function zmianaStrony(typ, strona) {
   return stronaZmiany(typ, '+') === strona ? '+' : '−';
 }
 export const stronaSp = (typ) => stronaZmiany(typ, '+');
+// to samo dla konkretnego konta (konto straty ma saldo po Wn, choć jest pasywne)
+export const spStrona = (k) => (k.ujemne ? 'wn' : stronaSp(k.typ));
+export const plusStrona = (k) => (k.ujemne ? 'wn' : stronaZmiany(k.typ, '+'));
+export const typKonta = (k) => (k.typ === 'K' ? 'konto kosztów' : k.ujemne ? 'pasywa na minusie' : `konto ${NAZWA_TYPU[k.typ]}`);
 
 function mapa(konta) {
   const m = new Map();
@@ -76,6 +82,10 @@ const ZMIANA_SLOWO = { '+': 'rośnie', '−': 'maleje' };
 
 // Jedno zdanie o koncie w operacji: „Kasa” — konto aktywne, rośnie o 4 000 → zapis po Wn.
 export function zdanieKonta(k, strona, kwota) {
+  if (k.ujemne) {
+    const rosnie = strona === 'wn';
+    return `<b>„${k.nazwa}”</b> — strata (pasywa na minusie) ${rosnie ? 'rośnie' : 'maleje'} o ${zl(kwota)}, więc pasywa ${rosnie ? 'maleją' : 'rosną'} → zapis po stronie <b>${STRONA[strona]}</b>`;
+  }
   const z = zmianaStrony(k.typ, strona);
   const czyje = k.typ === 'K' ? 'konto kosztów — koszt' : `konto ${NAZWA_TYPU[k.typ]},`;
   return `<b>„${k.nazwa}”</b> — ${czyje} ${ZMIANA_SLOWO[z]} o ${zl(kwota)} → zapis po stronie <b>${STRONA[strona]}</b>`;
@@ -93,7 +103,7 @@ export function opisOperacji(op, konta) {
 // wpisy: [{ nr, strona: 'wn'|'ma', kwota }]
 export function zamknij(konto, wpisy) {
   const sp = konto.sp ?? 0;
-  const sS = stronaSp(konto.typ);
+  const sS = spStrona(konto);
   const wn = wpisy.filter((w) => w.strona === 'wn');
   const ma = wpisy.filter((w) => w.strona === 'ma');
   const skl = (str, lista) => [...(sp && sS === str ? [sp] : []), ...lista.map((w) => w.kwota)];
@@ -140,13 +150,13 @@ export function ksieguj(konta, operacje, { pelny = false } = {}) {
   // saldo konta aktywnego musi wyjść po Wn, pasywnego po Ma (inaczej dane zadania są złe)
   for (const k of konta) {
     const z = zam[k.id];
-    if (k.typ !== 'K' && z.saldoStrona && z.saldoStrona !== stronaSp(k.typ)) throw new Error(`konta.js: konto „${k.nazwa}” ma saldo po złej stronie — sprawdź dane`);
+    if (k.typ !== 'K' && z.saldoStrona && z.saldoStrona !== spStrona(k)) throw new Error(`konta.js: konto „${k.nazwa}” ma saldo po złej stronie — sprawdź dane`);
   }
   const bilansowe = konta.filter((k) => k.typ !== 'K');
   const sumaA0 = bilansowe.filter((k) => k.typ === 'A').reduce((a, k) => a + (k.sp ?? 0), 0);
-  const sumaP0 = bilansowe.filter((k) => k.typ === 'P').reduce((a, k) => a + (k.sp ?? 0), 0);
+  const sumaP0 = bilansowe.filter((k) => k.typ === 'P').reduce((a, k) => a + (k.ujemne ? -1 : 1) * (k.sp ?? 0), 0);
   const aktywa = bilansowe.filter((k) => k.typ === 'A').map((k) => ({ nazwa: k.nazwa, id: k.id, kwota: zam[k.id].saldo }));
-  const pasywa = bilansowe.filter((k) => k.typ === 'P').map((k) => ({ nazwa: k.nazwa, id: k.id, kwota: zam[k.id].saldo }));
+  const pasywa = bilansowe.filter((k) => k.typ === 'P').map((k) => ({ nazwa: k.nazwa, id: k.id, kwota: (k.ujemne ? -1 : 1) * zam[k.id].saldo }));
   const sumaA = aktywa.reduce((a, x) => a + x.kwota, 0);
   const sumaP = pasywa.reduce((a, x) => a + x.kwota, 0);
   const tylkoBilansowe = pelny && konta.every((k) => k.typ !== 'K');
@@ -160,8 +170,10 @@ export function krokiKsiegowania(konta, operacje, { bilans = true } = {}) {
   const k = ksieguj(konta, operacje, { pelny: bilans });
   const kroki = [];
   const spA = konta.filter((x) => x.typ === 'A' && x.sp).map((x) => x.nazwa);
-  const spP = konta.filter((x) => x.typ === 'P' && x.sp).map((x) => x.nazwa);
-  kroki.push({ a: 'otwarcie', html: `<b>Otwieramy konta.</b> Każdy składnik z bilansu dostaje swoje konto, a jego kwota to <b>saldo początkowe (Sp.)</b>. Aktywa (${spA.join(', ')}) — Sp. po stronie <b>Wn</b>. Pasywa (${spP.join(', ')}) — Sp. po stronie <b>Ma</b>. Konta bez kwoty w bilansie otwieramy puste.` });
+  const spP = konta.filter((x) => x.typ === 'P' && !x.ujemne && x.sp).map((x) => x.nazwa);
+  const spU = konta.filter((x) => x.ujemne && x.sp).map((x) => x.nazwa);
+  const uTxt = spU.length ? ` ${spU.join(', ')} to pasywo ze znakiem minus — jego Sp. stoi po stronie <b>Wn</b>.` : '';
+  kroki.push({ a: 'otwarcie', html: `<b>Otwieramy konta.</b> Każdy składnik z bilansu dostaje swoje konto, a jego kwota to <b>saldo początkowe (Sp.)</b>. Aktywa (${spA.join(', ')}) — Sp. po stronie <b>Wn</b>. Pasywa (${spP.join(', ')}) — Sp. po stronie <b>Ma</b>.${uTxt} Konta bez kwoty w bilansie otwieramy puste.` });
   let sA = k.sumaA0;
   for (const op of operacje) {
     const t = typOperacji(op, konta);
@@ -173,7 +185,9 @@ export function krokiKsiegowania(konta, operacje, { bilans = true } = {}) {
   }
   for (const x of konta) kroki.push({ a: 'zamk', konto: x.id, html: opisZamkniecia(x, k.zam[x.id]) });
   if (bilans && konta.every((x) => x.typ !== 'K')) {
-    kroki.push({ a: 'bilans', html: `<b>Bilans zamknięcia.</b> Saldo końcowe każdego konta przenosimy do bilansu: konta aktywne → strona aktywów, konta pasywne → strona pasywów. Aktywa: ${k.aktywa.map((x) => zl(x.kwota)).join(' + ')} = <b>${zl(k.sumaA)}</b>. Pasywa: ${k.pasywa.map((x) => zl(x.kwota)).join(' + ')} = <b>${zl(k.sumaP)}</b>. Równe — bilans się zgadza.` });
+    const zlN = (n) => (n < 0 ? `(${zl(n)})` : zl(n));
+    const minus = konta.some((x) => x.ujemne) ? ' Strata wchodzi do pasywów z minusem.' : '';
+    kroki.push({ a: 'bilans', html: `<b>Bilans zamknięcia.</b> Saldo końcowe każdego konta przenosimy do bilansu: konta aktywne → strona aktywów, konta pasywne → strona pasywów.${minus} Aktywa: ${k.aktywa.map((x) => zlN(x.kwota)).join(' + ')} = <b>${zl(k.sumaA)}</b>. Pasywa: ${k.pasywa.map((x) => zlN(x.kwota)).join(' + ')} = <b>${zl(k.sumaP)}</b>. Równe — bilans się zgadza.` });
   }
   return { ...k, kroki };
 }
@@ -214,4 +228,63 @@ export function krokiJednegoKonta(konto, zmiany) {
     kroki.push({ a: 'sk', html: `<b>Saldo końcowe.</b> Obie strony mają po ${zl(z.obrWn)}, więc saldo wynosi 0.` });
   }
   return { wpisy, zam: z, kroki };
+}
+
+// Zestawienie obrotów i sald (ZOiS) — jak arkusz z zajęć (Zad. 5.5):
+// saldo początkowe (Wn, Ma) | obroty za okres (Wn, Ma) — same operacje, BEZ Sp. | obroty narastająco (Wn, Ma) — Sp. + obroty
+// okresu, czyli to samo co „Obr.” na koncie | saldo końcowe (Wn, Ma). Wiersz „Razem” — w każdej parze Wn = Ma.
+// Zwraca wiersze z liczbami i z wyjaśnieniem każdej kratki (do klikania i do ćwiczeń).
+export const KOLUMNY_ZOIS = [
+  { id: 'sp', nazwa: 'Saldo początkowe', skrot: 'Sp.' },
+  { id: 'ob', nazwa: 'Obroty za okres', skrot: 'Obroty' },
+  { id: 'na', nazwa: 'Obroty narastająco', skrot: 'Narast.' },
+  { id: 'sk', nazwa: 'Saldo końcowe', skrot: 'Sk' },
+];
+export function zestawienie(konta, operacje, { okres = 'okres' } = {}) {
+  const k = ksieguj(konta, operacje);
+  const dod = (l) => (l.length === 0 ? '0' : l.length === 1 ? zl(l[0]) : `${l.map(zl).join(' + ')} = ${zl(l.reduce((a, b) => a + b, 0))}`);
+  const wiersze = konta.map((x, i) => {
+    const z = k.zam[x.id];
+    const w = k.wpisy[x.id];
+    const v = { sp: { wn: 0, ma: 0 }, ob: { wn: 0, ma: 0 }, na: { wn: z.obrWn, ma: z.obrMa }, sk: { wn: 0, ma: 0 } };
+    v.sp[z.spStrona] = z.sp;
+    for (const s of ['wn', 'ma']) v.ob[s] = w.filter((e) => e.strona === s).reduce((a, e) => a + e.kwota, 0);
+    if (z.saldoStrona) v.sk[z.saldoStrona] = z.saldo;
+    if (v.na.wn !== v.sp.wn + v.ob.wn || v.na.ma !== v.sp.ma + v.ob.ma) throw new Error(`konta.js: ZOiS „${x.nazwa}” — narastająco ≠ Sp. + obroty`);
+    const nz = `<b>„${x.nazwa}”</b>`;
+    const czyje = x.ujemne ? 'Strata z lat ubiegłych to pasywo ze znakiem minus, więc jej saldo stoi po Wn.' : x.typ === 'A' ? 'To konto aktywne, więc saldo początkowe stoi po Wn.' : 'To konto pasywne, więc saldo początkowe stoi po Ma.';
+    const d = { sp: {}, ob: {}, na: {}, sk: {} };
+    for (const s of ['wn', 'ma']) {
+      const S = STRONA[s];
+      d.sp[s] = z.sp
+        ? (z.spStrona === s ? `${nz}, Sp. ${S}: przepisujemy saldo z bilansu otwarcia — <b>${zl(z.sp)}</b>. ${czyje}` : `${nz}, Sp. ${S}: <b>0</b>. ${czyje} Po ${S} nie ma nic.`)
+        : `${nz}, Sp. ${S}: <b>0</b>. Tego składnika nie było w bilansie otwarcia, konto otwieramy bez Sp.`;
+      const ws = w.filter((e) => e.strona === s);
+      d.ob[s] = ws.length
+        ? `${nz}, obroty ${S} za ${okres}: dodajemy wpisy po ${S} <b>bez Sp.</b> — ${ws.map((e) => zapis(s, e.nr, e.kwota)).join('; ')}. Razem: ${dod(ws.map((e) => e.kwota))}.`
+        : `${nz}, obroty ${S} za ${okres}: <b>0</b>. W tym okresie nic nie zapisano po ${S}.`;
+      d.na[s] = `${nz}, obroty ${S} narastająco: Sp. ${S} + obroty ${S} za ${okres} = ${zl(v.sp[s])} + ${zl(v.ob[s])} = <b>${zl(v.na[s])}</b>. To ta sama liczba co „Obr.” po ${S} na koncie.`;
+      if (!z.saldoStrona) d.sk[s] = `${nz}, saldo końcowe: narastająco Wn i Ma są równe (${zl(z.obrWn)} i ${zl(z.obrMa)}), więc saldo wynosi <b>0</b> w obu kolumnach.`;
+      else if (z.saldoStrona === s) {
+        const [wi, mn] = s === 'wn' ? [z.obrWn, z.obrMa] : [z.obrMa, z.obrWn];
+        d.sk[s] = `${nz}, saldo końcowe ${S}: większe narastająco minus mniejsze = ${zl(wi)} − ${zl(mn)} = <b>${zl(z.saldo)}</b>. Przeważa ${S}, więc liczba stoi w kolumnie ${S}. Na koncie to „Sk ${S}”.`;
+      } else d.sk[s] = `${nz}, saldo końcowe ${S}: <b>0</b>. Saldo wyszło po ${STRONA[z.saldoStrona]} (${zl(z.saldo)}), więc w kolumnie ${S} jest zero.`;
+    }
+    return { lp: i + 1, konto: x, v, d, wpisy: w };
+  });
+  const razem = {};
+  for (const c of KOLUMNY_ZOIS) {
+    razem[c.id] = {};
+    for (const s of ['wn', 'ma']) razem[c.id][s] = wiersze.reduce((a, r) => a + r.v[c.id][s], 0);
+    if (razem[c.id].wn !== razem[c.id].ma) throw new Error(`konta.js: ZOiS — „${c.nazwa}” Wn ${razem[c.id].wn} ≠ Ma ${razem[c.id].ma}`);
+  }
+  const dRazem = {};
+  for (const c of KOLUMNY_ZOIS) {
+    dRazem[c.id] = {};
+    for (const s of ['wn', 'ma']) {
+      const l = wiersze.map((r) => r.v[c.id][s]).filter((n) => n);
+      dRazem[c.id][s] = `<b>Razem, ${c.nazwa.toLowerCase()} ${STRONA[s]}</b>: dodajemy całą kolumnę — ${dod(l)}. Musi wyjść tyle samo co w kolumnie ${STRONA[s === 'wn' ? 'ma' : 'wn']} obok: ${zl(razem[c.id][s === 'wn' ? 'ma' : 'wn'])}.`;
+    }
+  }
+  return { ...k, wiersze, razem, dRazem };
 }

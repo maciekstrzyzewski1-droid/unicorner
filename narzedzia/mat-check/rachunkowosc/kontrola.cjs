@@ -1,7 +1,7 @@
 // Kontrola modułów kursu „Rachunkowość” w przeglądarce (URL=…/konta.html albo …/bilans.html): błędy JS, szerokości na 1440/390/360 px (po „Pokaż wszystko”),
 // animacje kont krok po kroku do końca, ćwiczenia (Pokaż → Sprawdź = wszystko dobrze), klasyfikatory, quizy, kotwice, zrzuty.
 // Użycie: npx astro preview (osobno), potem NODE_PATH=<katalog z playwright>/node_modules URL=… OUT=… node kontrola.cjs
-const { chromium } = require('playwright');
+const { chromium } = require(process.env.PW || 'playwright');
 const URL = process.env.URL || 'http://localhost:4321/rachunkowosc/konta.html';
 const OUT = (process.env.OUT || '/tmp/zrzuty') + '/';
 require('fs').mkdirSync(OUT, { recursive: true });
@@ -19,7 +19,7 @@ require('fs').mkdirSync(OUT, { recursive: true });
     await p.waitForTimeout(300);
     const szer = await p.evaluate(() => {
       const zle = [];
-      document.querySelectorAll('.k-ramka, .k-tab, .k-t, .k-ks-konta, .k-typy, .k-typ, .k-kr, .k-pol, .k-klas, .k-ct, .k-fig-box, .k-sciaga, .k-symbole, .k-ub, .k-ub-s, .k-bt-t, .k-dwa').forEach((el) => {
+      document.querySelectorAll('.k-zs-tp .k-tp-scroll, .k-zs-konta, .k-ramka, .k-tab, .k-t, .k-ks-konta, .k-typy, .k-typ, .k-kr, .k-pol, .k-klas, .k-ct, .k-fig-box, .k-sciaga, .k-symbole, .k-ub, .k-ub-s, .k-bt-t, .k-dwa').forEach((el) => {
         if (el.offsetParent === null) return;
         if (el.scrollWidth > el.clientWidth + 1) zle.push({ cls: el.className.slice(0, 40), sw: el.scrollWidth, cw: el.clientWidth, ov: getComputedStyle(el).overflowX, txt: (el.textContent || '').slice(0, 50) });
       });

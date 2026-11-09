@@ -55,7 +55,7 @@ const bilansOtw = k && bilans ? { a: konta.filter((x: any) => x.typ === 'A' && x
         <div class="k-ks-bil-t">Bilans otwarcia</div>
         <div class="k-ks-bt2">
           <BilansStrona tytul="Aktywa" klasa="is-A" pozycje={bilansOtw.a.map((x: any) => ({ nazwa: x.nazwa, kwota: x.sp }))} suma={k.sumaA0} />
-          <BilansStrona tytul="Pasywa" klasa="is-P" pozycje={bilansOtw.p.map((x: any) => ({ nazwa: x.nazwa, kwota: x.sp }))} suma={k.sumaP0} />
+          <BilansStrona tytul="Pasywa" klasa="is-P" pozycje={bilansOtw.p.map((x: any) => ({ nazwa: x.nazwa, kwota: x.ujemne ? -x.sp : x.sp }))} suma={k.sumaP0} />
         </div>
       </div>
     )}

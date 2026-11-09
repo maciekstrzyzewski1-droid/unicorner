@@ -43,4 +43,12 @@ export const SLOWNICZEK = [
   { t: '\\text{Sk Wn},\\ \\text{Sk Ma}', nazwa: 'Saldo końcowe', czytamy: 'saldo końcowe winien, saldo końcowe ma', znaczy: 'Różnica obrotów: większe minus mniejsze. Nazwa od strony, która przeważa. Wpisujemy je po stronie mniejszej.', modul: 'konta' },
   { nazwa: 'Podwójny zapis', znaczy: 'Każdą operację zapisujemy na co najmniej dwóch kontach, po przeciwnych stronach, w tej samej kwocie.', modul: 'konta' },
   { nazwa: 'Suma bilansowa', znaczy: 'Suma aktywów (zawsze równa sumie pasywów).', modul: 'konta' },
+  // --- Zestawienie obrotów i sald ---
+  { nazwa: 'Zestawienie obrotów i sald', znaczy: 'Tabela wszystkich kont: każde konto w jednym wierszu, a kolumny to saldo początkowe, obroty za okres, obroty narastająco i saldo końcowe (każde Wn i Ma).', modul: 'zestawienie' },
+  { nazwa: 'Obroty za okres', znaczy: 'Suma wpisów z operacji po jednej stronie konta w danym okresie, bez salda początkowego.', modul: 'zestawienie' },
+  { nazwa: 'Obroty narastająco', znaczy: 'Saldo początkowe plus obroty za okres. Na kontach z zajęć to „Obr.”.', modul: 'zestawienie' },
+  { nazwa: 'Trzy równości zestawienia', znaczy: 'W wierszu „Razem”: saldo początkowe Wn = Ma, obroty Wn = Ma, saldo końcowe Wn = Ma. Gdy któraś para się nie zgadza, w księgowaniu jest błąd.', modul: 'zestawienie' },
+  { nazwa: 'Strata z lat ubiegłych', znaczy: 'Niepokryta strata z poprzednich lat. W bilansie: pasywa A.V ze znakiem minus. Na koncie saldo po Wn, pokrycie straty po Ma.', modul: 'zestawienie' },
+  { nazwa: 'Wkład niepieniężny (aport)', znaczy: 'Wkład wspólnika w postaci rzeczy, np. maszyny. Zapis: Wn Środki trwałe, Ma Kapitał podstawowy.', modul: 'zestawienie' },
+  { nazwa: 'Zaliczka dla pracownika', znaczy: 'Pieniądze wypłacone pracownikowi do rozliczenia. Do czasu rozliczenia to należność: konto Pozostałe rozrachunki z pracownikami, w bilansie B.II.', modul: 'zestawienie' },
 ];
