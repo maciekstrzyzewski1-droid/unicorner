@@ -110,8 +110,16 @@ export function krokiBilansu(skladniki, opcje = {}) {
   const kA = ['AA', 'AB'].map((k) => POZYCJE.filter((p) => p.sekcja === k && r.poz[p.id].suma).map((p) => r.poz[p.id].suma));
   kroki.push({ a: 'razemA', html: `<b>Aktywa trwałe (A)</b>: ${dodawanie(kA[0])}. <b>Aktywa obrotowe (B)</b>: ${dodawanie(kA[1])}. <b>Aktywa razem</b>: ${zl(r.sekcje.AA)} + ${zl(r.sekcje.AB)} = <b>${zl(r.sumaA)}</b>.` });
   const kPB = POZYCJE.filter((p) => p.sekcja === 'PB' && r.poz[p.id].suma).map((p) => r.poz[p.id].suma);
+  if (opcje.zKont) {
+    // bilans zamknięcia z sald kont: wszystkie pozycje znane, kapitał własny = suma jego pozycji (różnica tylko sprawdza)
+    if (r.sekcje.PA !== r.KW) throw new Error(`bilans.js: kapitał własny z pozycji ${r.sekcje.PA} ≠ aktywa − kapitał obcy ${r.KW}`);
+    const kPA = POZYCJE.filter((p) => p.sekcja === 'PA' && r.poz[p.id].skl.length).map((p) => r.poz[p.id].suma);
+    kroki.push({ a: 'sumyPB', html: `<b>Pasywa — kapitał obcy (B).</b> ${opisSek('PB')}. Razem B: ${dodawanie(kPB)}.` });
+    kroki.push({ a: 'kw', html: `<b>Kapitał własny (A)</b> — dodajemy jego pozycje, strata wchodzi z minusem: ${dodawanie(kPA)}. Sprawdzenie różnicą: aktywa − kapitał obcy = ${zl(r.sumaA)} − ${zl(r.sumaPB)} = <b>${zl(r.KW)}</b>. Zgadza się.` });
+  } else {
   kroki.push({ a: 'sumyPB', html: `<b>Pasywa.</b> Pozycje kapitału własnego, które podaje treść, przepisujemy. Potem kapitał obcy (B): ${opisSek('PB')}. Razem B: ${dodawanie(kPB)}.` });
   kroki.push({ a: 'kw', html: `<b>Kapitał własny (A) jako różnica.</b> Pasywa razem muszą się równać aktywom: ${zl(r.sumaA)}. Kapitał obcy jest już policzony, więc kapitał własny = ${zl(r.sumaA)} − ${zl(r.sumaPB)} = <b>${zl(r.KW)}</b>.` });
+  }
   for (const w of r.wyliczone) {
     const czy = w.poz === opcje.reszta;
     kroki.push({ a: 'wyl', poz: w.poz, html: czy

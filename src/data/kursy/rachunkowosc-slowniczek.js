@@ -2,6 +2,20 @@
 // t = skrót w LaTeX-u (opcjonalnie), czytamy = jak powiedzieć na głos, znaczy = jedno-dwa zdania prostym językiem.
 
 export const SLOWNICZEK = [
+  // --- Istota i zasady ---
+  { nazwa: 'Rachunkowość', znaczy: 'System informacyjny: zbiera i porządkuje dane o firmie, żeby można było podejmować decyzje i rozliczać kierownictwo.', modul: 'istota' },
+  { nazwa: 'Cechy fundamentalne informacji', znaczy: 'Przydatność (z istotnością) i wierna prezentacja (kompletna, neutralna, wolna od błędów). Bez nich informacja jest nieużyteczna.', modul: 'istota' },
+  { nazwa: 'Cechy wzbogacające informacji', znaczy: 'Porównywalność, sprawdzalność, terminowość, zrozumiałość. Zwiększają użyteczność.', modul: 'istota' },
+  { nazwa: 'Zasada ostrożności', znaczy: 'Uwzględnia się znane ryzyka, straty i utratę wartości, a nie dopisuje niepewnych zysków (art. 7 ust. 1).', modul: 'istota' },
+  { nazwa: 'Zakaz kompensat', znaczy: 'Różnych pozycji (np. przychodów i kosztów) nie łączy się w jedną różnicę (art. 7 ust. 3).', modul: 'istota' },
+  { nazwa: 'Zasada istotności', znaczy: 'Pokazuje się wszystko, co ważne dla oceny firmy; drobiazgi można uprościć (art. 8 ust. 1).', modul: 'istota' },
+  { nazwa: 'Zasada ciągłości', znaczy: 'Te same reguły rok po roku; stan na koniec roku = stan na początek następnego (art. 5 ust. 1).', modul: 'istota' },
+  { nazwa: 'Sprawozdanie finansowe', znaczy: 'Bilans, rachunek zysków i strat, informacja dodatkowa; u niektórych jednostek także przepływy pieniężne i zmiany w kapitale własnym.', modul: 'istota' },
+  { nazwa: 'Dziennik', znaczy: 'Księga z operacjami zapisanymi po kolei, data po dacie (porządek chronologiczny).', modul: 'istota' },
+  { nazwa: 'Księga główna', znaczy: 'Operacje zapisane na kontach, konto po koncie (porządek systematyczny).', modul: 'istota' },
+  { nazwa: 'Dowód księgowy', znaczy: 'Dokument, który potwierdza operację i jest podstawą zapisu w księgach, np. faktura, wyciąg bankowy.', modul: 'istota' },
+  { nazwa: 'Cena zakupu', znaczy: 'Kwota należna sprzedającemu bez odliczanego VAT, minus rabaty, plus cło przy imporcie.', modul: 'istota' },
+  { nazwa: 'Cena nabycia', znaczy: 'Cena zakupu plus koszty dostarczenia i przystosowania do używania (transport, montaż, ubezpieczenie w drodze).', modul: 'istota' },
   // --- Bilans ---
   { nazwa: 'Bilans', znaczy: 'Zestawienie majątku firmy (aktywa) i źródeł jego finansowania (pasywa) na jeden dzień. Aktywa = pasywa.', modul: 'bilans' },
   { nazwa: 'Aktywa', znaczy: 'Majątek firmy: co firma ma, także pieniądze, które inni są jej winni (należności).', modul: 'bilans' },
@@ -29,4 +43,12 @@ export const SLOWNICZEK = [
   { t: '\\text{Sk Wn},\\ \\text{Sk Ma}', nazwa: 'Saldo końcowe', czytamy: 'saldo końcowe winien, saldo końcowe ma', znaczy: 'Różnica obrotów: większe minus mniejsze. Nazwa od strony, która przeważa. Wpisujemy je po stronie mniejszej.', modul: 'konta' },
   { nazwa: 'Podwójny zapis', znaczy: 'Każdą operację zapisujemy na co najmniej dwóch kontach, po przeciwnych stronach, w tej samej kwocie.', modul: 'konta' },
   { nazwa: 'Suma bilansowa', znaczy: 'Suma aktywów (zawsze równa sumie pasywów).', modul: 'konta' },
+  // --- Zestawienie obrotów i sald ---
+  { nazwa: 'Zestawienie obrotów i sald', znaczy: 'Tabela wszystkich kont: każde konto w jednym wierszu, a kolumny to saldo początkowe, obroty za okres, obroty narastająco i saldo końcowe (każde Wn i Ma).', modul: 'zestawienie' },
+  { nazwa: 'Obroty za okres', znaczy: 'Suma wpisów z operacji po jednej stronie konta w danym okresie, bez salda początkowego.', modul: 'zestawienie' },
+  { nazwa: 'Obroty narastająco', znaczy: 'Saldo początkowe plus obroty za okres. Na kontach z zajęć to „Obr.”.', modul: 'zestawienie' },
+  { nazwa: 'Trzy równości zestawienia', znaczy: 'W wierszu „Razem”: saldo początkowe Wn = Ma, obroty Wn = Ma, saldo końcowe Wn = Ma. Gdy któraś para się nie zgadza, w księgowaniu jest błąd.', modul: 'zestawienie' },
+  { nazwa: 'Strata z lat ubiegłych', znaczy: 'Niepokryta strata z poprzednich lat. W bilansie: pasywa A.V ze znakiem minus. Na koncie saldo po Wn, pokrycie straty po Ma.', modul: 'zestawienie' },
+  { nazwa: 'Wkład niepieniężny (aport)', znaczy: 'Wkład wspólnika w postaci rzeczy, np. maszyny. Zapis: Wn Środki trwałe, Ma Kapitał podstawowy.', modul: 'zestawienie' },
+  { nazwa: 'Zaliczka dla pracownika', znaczy: 'Pieniądze wypłacone pracownikowi do rozliczenia. Do czasu rozliczenia to należność: konto Pozostałe rozrachunki z pracownikami, w bilansie B.II.', modul: 'zestawienie' },
 ];
