@@ -1,0 +1,999 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: metody-badan-rynku
+slug: skale
+title: Skale, kafeteria i błędy w pytaniach
+podtytul: jak mierzyć odpowiedzi i jak budować warianty odpowiedzi w ankiecie
+description: Skale pomiarowe od zera – nominalna, porządkowa i stosunkowa, skale postaw (rang, sumowanych ocen, semantyczna, pozycyjna, Likerta, Stapela, Thurstone’a), cztery zasady budowy kafeterii i typowe błędy w pytaniach ankiety. Zadania z zajęć krok po kroku i ćwiczenia.
+lede: Badanie jest tak dobre, jak jego pytania. Tu nauczysz się rozpoznawać, jaką skalą mierzy pytanie, sprawdzać warianty odpowiedzi czterema zasadami i wyłapywać błędy, przez które ankieta zbiera śmieci zamiast danych.
+wymaga: Nic. Zaczynamy od zera.
+umiesz:
+  - rozpoznać skalę pomiarową pytania (nominalna, porządkowa, stosunkowa)
+  - rozpoznać skalę do pomiaru postaw (rang, sumowanych ocen, semantyczna, pozycyjna, Likerta)
+  - sprawdzić kafeterię czterema zasadami i zaznaczyć, którą zasadę łamie każde pytanie
+  - poprawić złą kafeterię tak, żeby była rozłączna, wyczerpująca, równomierna i adekwatna
+  - wskazać błędy w treści pytań (pytanie podwójne, przeczenie, sugerowanie, skrajne słowa, brak filtra)
+---
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import Legenda from '../../components/kurs/Legenda.astro';
+import Pytanie from '../../components/kurs/badania/Pytanie.astro';
+import CwiczenieKafeteria from '../../components/kurs/badania/CwiczenieKafeteria.astro';
+
+export const ZASADY = ['rozłączna', 'wyczerpująca', 'równomierna', 'adekwatna'];
+
+## Po co to jest
+
+Wypełniasz ankietę banku. Pytanie: „Przy ilu osobach w kolejce rezygnujesz z czekania?”. Do wyboru: „około 2”, „3–4”, „5 i więcej”. A ty wychodzisz, gdy przed tobą stoi jedna osoba. Albo nie wychodzisz nigdy. Co zaznaczasz? Coś na chybił trafił.
+
+Tak samo zrobi kilkaset innych osób. Bank dostanie wykres, który wygląda poważnie, a jest zbudowany na zgadywaniu. **Złe warianty odpowiedzi psują badanie, zanim ktokolwiek policzy pierwszą liczbę.**
+
+Ten moduł uczy dwóch rzeczy. Po pierwsze: jak nazwać sposób mierzenia, czyli **skalę**. Po drugie: jak sprawdzić warianty odpowiedzi, czyli **kafeterię**, i jak wyłapać błędy w samych pytaniach. Na kolokwium dostaniesz fragment ankiety i polecenie, żeby go ocenić.
+
+## Co będzie na kolokwium
+
+<Polecenia items={[
+  { polecenie: 'Wskaż zastosowaną skalę pomiarową', jak: 'Dwa pytania: czy odpowiedzi da się ułożyć po kolei? Czy odpowiedź to liczba, przy której można powiedzieć „dwa razy więcej”?', przepis: 'polecenie-skala', cwiczenia: 'cw-skala', zrodlo: 'jak w zadaniu z kwestionariuszem o AI' },
+  { polecenie: 'Nazwij skalę do pomiaru postaw', jak: 'Patrzysz, co robi respondent: układa w kolejności, dzieli punkty, wybiera między przeciwieństwami czy mówi, jak bardzo się zgadza.', przepis: 'polecenie-postawy', cwiczenia: 'cw-postawy', zrodlo: 'jak w zadaniu z kwestionariuszem o AI' },
+  { polecenie: 'W których pytaniach złamano zasady budowy kafeterii? (zaznacz krzyżykiem)', jak: 'Każde pytanie przepuszczasz przez cztery testy: rozłączna, wyczerpująca, równomierna, adekwatna. Krzyżyk tam, gdzie test nie przechodzi.', przepis: 'polecenie-kafeteria', cwiczenia: 'cw-kafeteria', zrodlo: 'jak w Zad. 1 z powtórki' },
+  { polecenie: 'Przedstaw prawidłową skalę dla pytania', jak: 'Ustalasz, o co naprawdę pytamy, wypisujesz odpowiedzi bez nakładania się, dopisujesz brakujące i sprawdzasz cztery zasady.', przepis: 'polecenie-popraw', cwiczenia: 'cw-popraw', zrodlo: 'jak w Zad. 2 z powtórki' },
+  { polecenie: 'Oceń kwestionariusz: wskaż błędy w budowie pytań i kafeterii', jak: 'Pytanie po pytaniu: skala, treść pytania (lista typowych błędów), kafeteria (cztery zasady).', przepis: 'polecenie-bledy', cwiczenia: 'cw-bledy', zrodlo: 'jak w zadaniu z kwestionariuszem o AI' },
+]} />
+
+Najczęściej wszystko jest w jednym zadaniu: „Proszę dokonać oceny kwestionariusza. Proszę wskazać zastosowane skale, błędy w budowie pytań oraz błędy w budowie kafeterii”. Niżej to zadanie jest rozłożone na części.
+
+## Pojęcia od podstaw
+
+<Ramka kind="zapamietaj">
+- **Kwestionariusz** — lista pytań w badaniu. Popularnie: ankieta.
+- **Respondent** — osoba, która odpowiada na pytania.
+- **Pytanie zamknięte** — pod pytaniem są gotowe odpowiedzi do wyboru. **Pytanie otwarte** — respondent wpisuje odpowiedź sam.
+- **Kafeteria** — zestaw gotowych odpowiedzi pod pytaniem zamkniętym. Respondent wybiera z tego, co podano, jak w bufecie (stąd nazwa).
+- **Skala** — sposób, w jaki odpowiedzi mierzą badaną rzecz: same nazwy, kolejność czy liczby.
+</Ramka>
+
+Zobacz to na jednym pytaniu. Pytanie to górna linijka. Kafeteria to wszystko pod nią.
+
+<Pytanie nr="P1" tresc="Czy korzysta Pan/i z BLIK-a?" opcje={[{ t: 'tak' }, { t: 'nie' }]}>
+pytanie zamknięte z kafeterią z dwóch odpowiedzi. Kółko przy odpowiedzi znaczy „zaznacz jedną”. Kwadrat (zobaczysz go dalej) znaczy „możesz zaznaczyć kilka”.
+</Pytanie>
+
+<Ramka kind="pulapka">
+- Kafeteria to nie pytanie. To odpowiedzi pod pytaniem.
+- „Błąd w budowie kafeterii” dotyczy odpowiedzi. „Błąd w budowie pytania” dotyczy treści pytania.
+- Na kolokwium to dwie osobne części oceny. Nie mieszaj ich.
+</Ramka>
+
+<a id="polecenie-skala" class="k-anchor"></a>
+
+## Trzy skale pomiarowe
+
+Każde pytanie coś mierzy. Pytanie o płeć mierzy inaczej niż pytanie o wiek. Na zajęciach poznajemy trzy rodzaje skal pomiarowych. Różnią się tym, co wolno zrobić z odpowiedziami.
+
+<div class="k-dwa">
+<div>
+
+**Skala nominalna** — odpowiedzi to same **nazwy**. Nie ma wśród nich lepszej i gorszej, mniejszej i większej. Można tylko policzyć, ile osób wybrało każdą.
+
+</div>
+<div>
+
+Przykład z życia: kolor twojego telefonu. „Czarny” nie jest „więcej” niż „biały”. Możesz tylko policzyć, ilu znajomych ma czarny.
+
+</div>
+</div>
+
+<Pytanie nr="P2" tresc="Jak loguje się Pan/i do bankowej aplikacji mobilnej?" opcje={[{ t: 'kod PIN' }, { t: 'odcisk palca (linie papilarne)' }, { t: 'rozpoznawanie twarzy (FACE ID)' }, { t: 'skanowanie tęczówki' }, { t: 'wzór geometryczny' }]}>
+skala nominalna. Kolejność odpowiedzi jest przypadkowa. Możesz je przetasować, a pytanie znaczy to samo.
+</Pytanie>
+
+<div class="k-dwa">
+<div>
+
+**Skala porządkowa** — odpowiedzi da się **ułożyć po kolei**, od najmniejszej do największej. Ale nie wiemy, **o ile** jedna jest większa od drugiej.
+
+</div>
+<div>
+
+Przykład z życia: miejsca na podium. Pierwszy jest przed drugim. Ale czy wygrał o sekundę, czy o minutę? Z samego miejsca tego nie wiesz.
+
+</div>
+</div>
+
+<Pytanie nr="P3" tresc="Jak często korzysta Pan/i z aplikacji mobilnej banku?" opcje={[{ t: 'wcale' }, { t: 'bardzo rzadko' }, { t: 'rzadko' }, { t: 'często' }, { t: 'bardzo często' }]}>
+skala porządkowa. Odpowiedzi idą od „wcale” do „bardzo często” i nie wolno ich przetasować. Ale „często” nie znaczy „dwa razy więcej niż rzadko”.
+</Pytanie>
+
+<Ramka kind="botak" tytul="ocena od 1 do 10">
+Pytanie „Jak ocenia Pan/i bezpieczeństwo w skali od 1 do 10?” na zajęciach to **skala porządkowa**. Odpowiedzi są liczbami, ale te liczby to tylko stopnie oceny. Ocena 8 nie znaczy „dwa razy bezpieczniej” niż ocena 4.
+
+**Zasada:** ocena w punktach (1–5, 1–10) = skala porządkowa.
+</Ramka>
+
+<div class="k-dwa">
+<div>
+
+**Skala stosunkowa (ilorazowa)** — odpowiedź to **liczba** czegoś: osób, złotówek, lat, razy. Zero znaczy „nic”. Dlatego można powiedzieć „dwa razy więcej”.
+
+</div>
+<div>
+
+Przykład z życia: kieszonkowe. 200 zł to dokładnie dwa razy więcej niż 100 zł, a 0 zł znaczy, że nie dostajesz nic.
+
+</div>
+</div>
+
+<Pytanie nr="P4" tresc="Z usług ilu banków Pan/i aktualnie korzysta?" opcje={[{ t: '1' }, { t: '2' }, { t: '3' }, { t: '4 i więcej' }]}>
+skala stosunkowa (ilorazowa). Pytamy o liczbę banków. Dwa banki to dwa razy więcej niż jeden.
+</Pytanie>
+
+<Ramka kind="polecenie" tytul="Wskaż zastosowaną skalę pomiarową">
+1. Przeczytaj pytanie i zapytaj: **czy pytamy o liczbę czegoś** (ile razy, ile osób, ile lat, ile złotych)? Jeśli tak — **stosunkowa**. Także wtedy, gdy liczby są zebrane w przedziały, np. „0–3 razy” albo „4 i więcej”.
+2. Jeśli nie — zapytaj: **czy odpowiedzi da się ułożyć od najmniejszej do największej** (rzadko → często, źle → dobrze, ocena 1 → 10)? Jeśli tak — **porządkowa**.
+3. Jeśli nie da się ich ułożyć — **nominalna** (same nazwy: tak/nie, nazwy banków, sposoby logowania).
+</Ramka>
+
+<Ramka kind="pulapka">
+- Numer przy odpowiedzi to nie liczba. W „1) rodzina 2) pieniądze 3) praca” numery to tylko kody. To nadal nazwy.
+- „Tak / nie” to skala nominalna. Nie ma tu kolejności.
+- „Ile razy w miesiącu: 0–3, 4–6, …” to skala stosunkowa. Pytamy o liczbę, choć podaną w przedziałach.
+</Ramka>
+
+<Ramka kind="botak" tytul="liczby w przedziałach">
+Slajd z zajęć („Z usług ilu banków: 1 / 2 / 3 / 4 i więcej”) nazywa takie pytanie skalą stosunkową. W części podręczników odpowiedzi w przedziałach traktuje się jako porządkowe, bo z „4 i więcej” nie policzysz dokładnej średniej.
+
+**Zasada na kolokwium:** pytanie o liczbę, także w przedziałach = skala stosunkowa, jak na slajdzie.
+</Ramka>
+
+<Ramka kind="skad" tytul="czwarta skala z podręczników">
+W podręcznikach pojawia się jeszcze **skala przedziałowa** (interwałowa). Liczby mają tam równe odstępy, ale zero nie znaczy „nic”. Typowy przykład to temperatura w stopniach Celsjusza: 0°C nie znaczy „brak temperatury”, a 20°C nie jest „dwa razy cieplej” niż 10°C. Na slajdach z zajęć tej skali nie ma, więc w zadaniach wybierasz z trzech powyższych.
+
+Uwaga na nazwę: skala **przedziałowa** to nie to samo co **odpowiedzi w przedziałach**. „0–3 razy, 4–6 razy” to nadal pytanie o liczbę, czyli skala stosunkowa.
+</Ramka>
+
+<Pytania pytania={[
+  { q: 'Pytanie: „Ile złotych miesięcznie wydaje Pan/i na zakupy przez internet?” z odpowiedziami „do 100 zł”, „101–300 zł”, „ponad 300 zł”. Jaka to skala?', opcje: ['Porządkowa, bo przedziały idą po kolei', 'Stosunkowa, bo pytamy o liczbę złotych', 'Nominalna, bo to trzy kategorie'], dobra: 1, dlaczego: 'Pytamy o kwotę, czyli liczbę złotych, choć podaną w przedziałach. Na zajęciach to skala stosunkowa, jak na slajdzie z liczbą banków („4 i więcej”). Odpowiedź „porządkowa” patrzy tylko na kolejność przedziałów — tak robi część podręczników, ale nie zajęcia. „Nominalna” pomija nawet kolejność.' },
+]} />
+
+<a id="polecenie-postawy" class="k-anchor"></a>
+
+## Skale do pomiaru postaw
+
+**Postawa** to stosunek człowieka do czegoś: lubi czy nie lubi, ufa czy nie ufa, co jest dla niego ważne. Postawy nie da się zważyć ani policzyć. Dlatego badacze wymyślili kilka sposobów, żeby zamienić ją na odpowiedzi w ankiecie. Na zajęciach dzielimy je tak:
+
+| Skale proste | Skale złożone |
+|---|---|
+| skala rang | skala pozycyjna |
+| skala Thurstone’a | skala semantyczna |
+| skala sumowanych ocen: **rangowa** i **porównawcza** | skala Stapela |
+| | skala Likerta |
+
+Jak czytać: lewa kolumna to skale proste, prawa — złożone. Skala sumowanych ocen ma dwie odmiany: rangową i porównawczą (na slajdzie są wcięte pod nią). Kolejność wierszy w tabeli nic nie znaczy.
+
+<Ramka kind="botak" tytul="proste i złożone">
+To podział z zajęć. W skali złożonej respondent ocenia **kilka pozycji naraz na tej samej podziałce** — tabelka z kółkami albo kratkami w każdym wierszu. (Podziałka to zestaw stopni odpowiedzi, np. od 1 do 5.) Skale proste to pojedyncze zadania: ułóż w kolejności, rozdziel punkty albo zaznacz stwierdzenia, z którymi się zgadzasz (Thurstone).
+
+**Zasada:** tabelka z kółkami w wierszach = najpewniej skala złożona.
+</Ramka>
+
+### Skala rang
+
+Respondent **układa rzeczy w kolejności ważności**. Zwykle wpisuje kody odpowiedzi do kratek: pierwsza kratka to najważniejsze.
+
+<Pytanie nr="P5" tryb="rang" kratki={4} tresc="Co jest dla Pana(i) najważniejsze w życiu? (proszę wybrać 4 i uszeregować, wpisując kod odpowiedzi do kratek; pierwsza kratka = najważniejsze)" opcje={[{ t: '1) rodzina' }, { t: '2) pieniądze' }, { t: '3) praca' }, { t: '4) samorealizacja' }, { t: '5) zdrowie' }, { t: '6) inne' }]}>
+respondent wpisuje kody, np. „5, 1, 3, 4”: zdrowie najważniejsze, potem rodzina, praca i samorealizacja. Wynik to kolejność, a nie liczba punktów.
+</Pytanie>
+
+### Skala sumowanych ocen — dwie odmiany
+
+Tu respondent **dzieli punkty**. Im ważniejsza rzecz, tym więcej punktów dostaje. Suma jest z góry ustalona, najczęściej 10 albo 100.
+
+**Rangowa skala sumowanych ocen** — jedna pula punktów (np. 100) na **kilka czynników naraz**. Pokazuje, co jest najważniejsze i o ile ważniejsze.
+
+<Pytanie nr="P6" tryb="punkty" suma="100 pkt" tresc="Jakie znaczenie przy wyborze lokaty terminowej miały dla Pana(i) poniższe czynniki? Proszę podzielić między nie 100 punktów: najwięcej najważniejszemu, nic nieważnemu." wiersze={[{ t: 'długoletnia obecność banku na rynku', p: '10' }, { t: 'wyższe oprocentowanie niż w innych bankach', p: '50' }, { t: 'możliwość założenia lokaty online', p: '20' }, { t: 'promocja i informacja', p: '0' }, { t: 'możliwość zerwania lokaty bez utraty odsetek', p: '20' }, { t: 'posiadanie innych produktów w banku (np. konta osobistego, czyli ROR-u)', p: '0' }]}>
+liczby w prawej kolumnie to przykładowe odpowiedzi jednej osoby. Razem: 10 + 50 + 20 + 0 + 20 + 0 = 100. Oprocentowanie jest dla niej najważniejsze, a promocja i inne produkty — nieważne.
+</Pytanie>
+
+**Porównawcza skala sumowanych cech** — punkty dzieli się **w parach**. Każda para dostaje osobne 100 punktów. Na liście skal ta odmiana nazywa się krótko „porównawcza” (pod skalą sumowanych ocen), a na slajdzie z przykładem — „porównawcza skala sumowanych cech”. To ta sama skala; obie nazwy są z zajęć.
+
+<Pytanie nr="P7" tryb="punkty" tresc="Proszę podzielić 100 punktów w każdej parze soków zgodnie z Pana(i) preferencjami." wiersze={[{ t: 'Tymbark + Tarczyn', p: '70 + 30' }, { t: 'Tymbark + Hortex', p: '60 + 40' }, { t: 'Hortex + Tarczyn', p: '55 + 45' }]}>
+każdy wiersz to jedna para i w każdym suma wynosi 100 (70 + 30 = 100, 60 + 40 = 100, 55 + 45 = 100). Z trzech par widać, że ta osoba najbardziej lubi Tymbark, potem Hortex, na końcu Tarczyn.
+</Pytanie>
+
+<Ramka kind="pulapka">
+- Jedna pula na wiele czynników — **rangowa** skala sumowanych ocen.
+- Osobne 100 punktów w każdej parze — **porównawcza** skala sumowanych cech.
+- Układanie w kolejności bez punktów — **skala rang**.
+</Ramka>
+
+### Skala Thurstone’a
+
+Badacz przygotowuje listę stwierdzeń, np. o banku. Najpierw grupa ekspertów nadaje każdemu stwierdzeniu wartość, np. od 1 (bardzo negatywne) do 11 (bardzo pozytywne). Respondent tych wartości nie widzi. Zaznacza tylko stwierdzenia, z którymi się zgadza. Jego wynik to przeciętna wartość zaznaczonych stwierdzeń. Na kartce wygląda jak lista stwierdzeń, przy których respondent zaznacza tylko „zgadzam się” — bez stopni. To odróżnia ją od skali Likerta, gdzie przy każdym stwierdzeniu jest kilka stopni zgody. Na slajdach z zajęć ta skala jest tylko wymieniona, bez przykładu.
+
+### Skala semantyczna
+
+Przy każdej cesze stoją **dwa przeciwne określenia**, a między nimi kratki. Respondent zaznacza kratkę bliżej tego końca, który lepiej pasuje.
+
+<Pytanie nr="P8" tryb="semantyczna" kratki={5} tresc="Proszę zaznaczyć oceny, które najlepiej oddają Pana(i) opinię o pracownikach banku (znak X)." wiersze={[{ t: 'uprzejmi', p: 'nieuprzejmi' }, { t: 'kulturalni', p: 'niekulturalni' }, { t: 'kompetentni', p: 'niekompetentni' }, { t: 'szybcy w obsłudze', p: 'wolni w obsłudze' }]}>
+w każdym wierszu lewe i prawe słowo to przeciwieństwa. Kratka tuż przy „uprzejmi” znaczy „bardzo uprzejmi”, środkowa — „ani tak, ani tak”.
+</Pytanie>
+
+### Skala Stapela
+
+Podobna do semantycznej, ale **z jednym określeniem** zamiast pary. Określenie stoi w środku, nad nim liczby na plus, pod nim na minus, bez zera, np. od +5 do −5. Respondent wybiera liczbę: +5 — określenie pasuje bardzo, −5 — w ogóle nie pasuje. Na slajdach ta skala jest tylko wymieniona.
+
+### Skala pozycyjna
+
+Lista cech, sposobów albo produktów (to część **nominalna** — same nazwy), a przy każdej pozycji **ta sama podziałka porządkowa**.
+
+<Pytanie nr="P9" tryb="siatka" tresc="Jak często korzysta Pan/i z podanych sposobów płatności?" kolumny={['bardzo często', 'często', 'rzadko', 'bardzo rzadko', 'w ogóle']} wiersze={[{ t: 'gotówka' }, { t: 'karta płatnicza / kredytowa' }, { t: 'kanał mobilny (smartfon)' }, { t: 'kanał internetowy (komputer)' }]}>
+wiersze to sposoby płatności (nazwy), kolumny to częstość (kolejność). W każdym wierszu respondent zaznacza jedno kółko.
+</Pytanie>
+
+### Skala Likerta
+
+Lista **stwierdzeń**, a przy każdym **stopień zgody**: od „całkowicie nie zgadzam się” do „całkowicie zgadzam się”, zwykle w pięciu stopniach.
+
+<Pytanie nr="P10" tryb="siatka" tresc="Co sądzi Pan/i o aplikacjach zakupowych? Proszę odnieść się do stwierdzeń w skali od 1 (całkowicie nie zgadzam się) do 5 (całkowicie zgadzam się)." kolumny={['1 całkowicie nie zgadzam się', '2 nie zgadzam się', '3 ani się nie zgadzam, ani zgadzam', '4 zgadzam się', '5 całkowicie zgadzam się']} wiersze={[{ t: 'Posiadanie aplikacji sprawia, że wydaję na zakupy więcej pieniędzy.' }, { t: 'Wolę kupować przez internet niż w sklepach stacjonarnych.' }]}>
+wiersze to stwierdzenia, kolumny to stopnie zgody od 1 do 5. Środek (3) to odpowiedź neutralna.
+</Pytanie>
+
+<Ramka kind="polecenie" tytul="Nazwij skalę do pomiaru postaw">
+Patrz na to, **co robi respondent**:
+
+1. **Układa w kolejności** albo wpisuje kody do kratek → skala rang.
+2. **Dzieli punkty**: jedna pula na kilka czynników → rangowa skala sumowanych ocen; osobne 100 punktów w każdej parze → porównawcza skala sumowanych cech.
+3. **Wybiera między dwoma przeciwnymi słowami** (uprzejmy — nieuprzejmy) → skala semantyczna.
+4. **Ocenia jedno słowo liczbą od minusa do plusa** → skala Stapela.
+5. **Mówi, jak bardzo się zgadza ze stwierdzeniem** → skala Likerta.
+6. **Ocenia każdą pozycję z listy tą samą podziałką** (np. częstości: bardzo często … w ogóle) → skala pozycyjna.
+7. **Zaznacza tylko te stwierdzenia, z którymi się zgadza** (bez stopni zgody) → skala Thurstone’a. Wartości stwierdzeń ustalili wcześniej eksperci; respondent ich nie widzi.
+</Ramka>
+
+<Ramka kind="pulapka" tytul="Likert czy pozycyjna?">
+- Obie wyglądają jak tabelka z kółkami.
+- Patrz na nagłówki kolumn.
+- Kolumny mówią o **zgodzie** („zgadzam się”) → Likert. W wierszach są wtedy zdania.
+- Kolumny mówią o czymś innym, np. o **częstości** („często”, „rzadko”) → pozycyjna. W wierszach są wtedy nazwy.
+</Ramka>
+
+<Ramka kind="intuicja" tytul="dwa pytania o tę samą skalę">
+Jedna skala może mieć dwie nazwy, bo odpowiada na dwa różne pytania. Skala Likerta to skala do pomiaru postaw, a jej odpowiedzi (1 → 5) da się ułożyć po kolei — jako skala pomiarowa to skala porządkowa. Tak samo skala rang, semantyczna, pozycyjna i Stapela: odpowiedzi idą po kolei, więc są porządkowe. Gdy polecenie mówi „wskaż zastosowane skale”, warto podać obie nazwy: „skala Likerta (porządkowa)”. Przy skalach z punktami (sumowanych ocen) wystarczy nazwa skali postaw.
+</Ramka>
+
+<a id="polecenie-kafeteria" class="k-anchor"></a>
+
+## Cztery zasady budowy kafeterii
+
+Dobra kafeteria spełnia cztery wymagania. Każde ma swój test, czyli jedno pytanie, które zadajesz sobie przy ocenie.
+
+<Ramka kind="zapamietaj">
+Kafeteria musi być:
+
+- **rozłączna** — żadne dwie odpowiedzi się nie pokrywają;
+- **wyczerpująca** — są wszystkie możliwe odpowiedzi;
+- **równomierna** — żadna odpowiedź nie ściąga do siebie zdecydowanej większości, a przy ocenach jest tyle samo stopni na plus i na minus;
+- **adekwatna** — wszystkie odpowiedzi pasują do tego pytania, które zadano.
+</Ramka>
+
+Przykłady w tej części pochodzą głównie z ankiety o AI (sztucznej inteligencji) w aplikacji bankowej. Całą tę ankietę ocenimy na końcu modułu.
+
+### Rozłączna
+
+**Test:** czy jest osoba, która pasuje do dwóch odpowiedzi naraz? Jeśli tak — kafeteria **nie jest rozłączna**.
+
+<div class="k-dwa">
+<div>
+
+**NIE — przedziały się zazębiają**
+
+<Pytanie tresc="Ile razy w miesiącu korzystasz z rekomendacji AI?" opcje={[{ t: '0–3 razy', kl: 'zloto' }, { t: '3–6 razy', kl: 'zloto', uw: 'osoba, która korzysta 3 razy, pasuje i tu, i wyżej' }, { t: '6–9 razy', kl: 'zloto', uw: 'osoba, która korzysta 6 razy, pasuje i tu, i wyżej' }, { t: 'powyżej 9 razy' }]} />
+
+</div>
+<div>
+
+**TAK — każda liczba ma jedno miejsce**
+
+<Pytanie tresc="Ile razy w miesiącu korzystasz z rekomendacji AI?" opcje={[{ t: '0–2 razy', kl: 'ok' }, { t: '3–5 razy', kl: 'ok' }, { t: '6–8 razy' }, { t: '9 razy i więcej' }]} />
+
+</div>
+</div>
+
+<Legenda items={[['zloto', 'odpowiedzi, które się pokrywają'], ['ok', 'poprawione granice: kończymy na 2, zaczynamy od 3']]} />
+
+<Ramka kind="pulapka">
+- Odpowiedź łącząca dwie inne („w dni robocze **i** weekend”, „kredytowe **i** inwestycyjne”) pokrywa się z obiema.
+- Wyjątek: gdy pozostałe odpowiedzi mówią „tylko…” albo „głównie…”. Wtedy odpowiedź łączona jest osobną możliwością.
+- Synonimy też się pokrywają: „rzadko” i „sporadycznie” znaczą prawie to samo.
+- Słowo „około” zamazuje granicę: „około 2” może znaczyć też 1 albo 3.
+</Ramka>
+
+### Wyczerpująca
+
+**Test:** wymyśl nietypową osobę **z grupy, do której jest pytanie** — kogoś, kto ma inny powód, korzysta z czegoś innego albo nie ma zdania. Czy znajdzie odpowiedź dla siebie? Jeśli nie — kafeteria **nie jest wyczerpująca**.
+
+<div class="k-dwa">
+<div>
+
+**NIE — brakuje części osób**
+
+<Pytanie tresc="Przy ilu osobach w kolejce rezygnuje Pan/i z czekania?" opcje={[{ t: 'około 2' }, { t: '3–4' }, { t: '5 i więcej' }, { t: '1 osoba', kl: 'brak' }, { t: 'nie rezygnuję, czekam zawsze', kl: 'brak' }]} />
+
+</div>
+<div>
+
+**Jak to naprawić**
+
+Dopisz odpowiedzi dla osób, które się nie mieszczą. Najczęstsze „łatki”:
+
+- „inne (jakie?)”,
+- „trudno powiedzieć”, „nie wiem” — przy opiniach i wiedzy,
+- „nie korzystam”, „nie dotyczy” — tylko gdy przed pytaniem nie ma filtra (ramka niżej).
+
+</div>
+</div>
+
+<Legenda items={[['pusta', 'odpowiedzi, których brakuje w kafeterii (przerywana ramka)']]} />
+
+<Ramka kind="botak" tytul="a co z osobami, które nie korzystają?">
+Osoby, których pytanie w ogóle nie dotyczy, odsiewa **pytanie filtrujące** przed nim. Na przykład: „Czy korzysta Pan/i z konta internetowego? Jeśli nie — proszę przejść do pytania 10”.
+
+**Zasada:** przy ocenie kafeterii sprawdzasz tylko osoby, których pytanie dotyczy. Brak „nie korzystam” to błąd kafeterii tylko wtedy, gdy filtra nie ma. Brak filtra zapisujesz osobno, jako błąd całego kwestionariusza.
+
+„Nie wiem” i „trudno powiedzieć” to co innego. Dopisujesz je, gdy pytanie dotyczy opinii albo wiedzy, której respondent może nie mieć.
+</Ramka>
+
+### Równomierna
+
+**Test:** czy któraś odpowiedź zbierze prawie wszystkich, bo pasuje do każdego? Albo: czy przy ocenach jest tyle samo stopni na plus i na minus? Jeśli nie — kafeteria **nie jest równomierna**.
+
+<div class="k-dwa">
+<div>
+
+**NIE — więcej pochwał niż krytyki**
+
+<Pytanie tresc="Jak ocenia Pan/i poziom bezpieczeństwa AI w aplikacji?" opcje={[{ t: 'bardzo wysoki', kl: 'cyan' }, { t: 'wysoki', kl: 'cyan' }, { t: 'raczej wysoki', kl: 'cyan' }, { t: 'średni' }, { t: 'niski', kl: 'roz' }, { t: 'bardzo niski', kl: 'roz' }]} />
+
+</div>
+<div>
+
+**TAK — po równo z obu stron środka**
+
+<Pytanie tresc="Jak ocenia Pan/i poziom bezpieczeństwa AI w aplikacji?" opcje={[{ t: 'bardzo wysoki', kl: 'cyan' }, { t: 'raczej wysoki', kl: 'cyan' }, { t: 'średni' }, { t: 'raczej niski', kl: 'roz' }, { t: 'bardzo niski', kl: 'roz' }]} />
+
+</div>
+</div>
+
+<Legenda items={[['cyan', 'oceny pozytywne'], ['roz', 'oceny negatywne']]} />
+
+W wersji NIE są trzy oceny pozytywne i dwie negatywne. Ktoś, kto ocenia bezpieczeństwo „raczej nisko”, nie ma swojej odpowiedzi i przesunie się wyżej. Wyniki wyjdą lepsze, niż są naprawdę.
+
+### Adekwatna
+
+**Test:** czy każda odpowiedź odpowiada na to pytanie, które zadano? Odpowiedź z innej bajki — kafeteria **nie jest adekwatna**.
+
+<Pytanie tresc="Kiedy najczęściej korzysta Pan/i z bankowego konta internetowego?" opcje={[{ t: 'w dni robocze' }, { t: 'w soboty i niedziele' }, { t: 'w dni robocze i weekend' }, { t: 'gdy potrzebuję, np. muszę wykonać przelew', kl: 'roz', uw: 'pytanie jest o dni tygodnia, a ta odpowiedź mówi o powodzie' }]}>
+trzy pierwsze odpowiedzi mówią, w jakie dni. Czwarta mówi, w jakiej sytuacji. To odpowiedź na inne pytanie.
+</Pytanie>
+
+<Legenda items={[['roz', 'odpowiedź nieadekwatna — nie pasuje do pytania']]} />
+
+<Ramka kind="polecenie" tytul="W których pytaniach złamano zasady budowy kafeterii?">
+1. Narysuj tabelę: wiersze to cztery zasady, kolumny to pytania. Zasady zawsze w tej samej kolejności: rozłączna, wyczerpująca, równomierna, adekwatna.
+2. Weź pierwsze pytanie. Przepuść je przez cztery testy po kolei:
+   - **rozłączna:** czy ktoś pasuje do dwóch odpowiedzi naraz?
+   - **wyczerpująca:** czy jakaś osoba nie ma swojej odpowiedzi?
+   - **równomierna:** czy jedna odpowiedź zgarnie prawie wszystkich? Czy plusów i minusów jest tyle samo?
+   - **adekwatna:** czy każda odpowiedź pasuje do pytania?
+3. Krzyżyk stawiasz tam, gdzie test **nie** przechodzi.
+4. Przy każdym krzyżyku zapisz pół zdania „dlaczego” — wskaż konkretne odpowiedzi.
+5. Powtórz dla każdego pytania.
+</Ramka>
+
+<Ramka kind="granica">
+- Jedno pytanie może łamać kilka zasad naraz. Wtedy w kolumnie jest kilka krzyżyków.
+- Pytanie może nie łamać żadnej zasady. Pusta kolumna to też odpowiedź.
+- Cały wiersz bywa pusty. To nie błąd w rozwiązaniu.
+- Przy pytaniu wielokrotnego wyboru („można zaznaczyć kilka”) nakładanie się odpowiedzi szkodzi mniej. Nadal jest błędem, bo z wyników nie da się ich rozdzielić.
+</Ramka>
+
+<Rozwiazanie tytul="Usługi bankowe — ocena czterech pytań" zrodlo="Zad. 1 z powtórki">
+<div slot="tresc">
+
+Fragment kwestionariusza o usługach bankowych ma cztery pytania (B1–B4, narysowane w krokach niżej). Zaznacz krzyżykiem, w których pytaniach złamano zasady budowy kafeterii: rozłączność, wyczerpanie, równomierność, adekwatność.
+
+</div>
+
+<div slot="plan">
+
+1. Bierzemy pytania po kolei, B1 → B4. Każde przepuszczamy przez cztery testy w stałej kolejności. Stała kolejność chroni przed pominięciem testu.
+2. Przy każdym krzyżyku wskazujemy konkretne odpowiedzi, które łamią zasadę. Samo „nie jest rozłączna” bez wskazania, gdzie, to słaba odpowiedź.
+3. Na końcu przepisujemy wyniki do tabeli z zadania.
+
+To rozwiązanie z uzasadnieniem, a nie oficjalny klucz prowadzącej. Na kolokwium liczy się to samo: krzyżyk plus powód.
+
+</div>
+
+<Krok tytul="B1 — co decyduje o bankowości przez internet">
+
+<Pytanie nr="B1" wiele tresc="Co w największym stopniu decyduje o tym, że korzysta Pan/i z usług bankowych przez internet? (można zaznaczyć kilka odpowiedzi)" opcje={[{ t: 'brak opłat za prowadzenie konta' }, { t: 'niższe opłaty za usługi (np. za przelew)' }, { t: 'lepsza kontrola stanu finansów' }, { t: 'wygoda', kl: 'zloto', uw: 'odpowiedź-parasol: pasuje prawie do każdego' }, { t: 'niezależność od czasu pracy placówki (dostęp 24h)', kl: 'zloto', uw: 'dostęp o każdej porze to rodzaj wygody — pokrywa się z odpowiedzią wyżej' }, { t: 'inne (jakie?)', kl: 'brak' }]} />
+
+<Legenda items={[['zloto', 'odpowiedzi, które się pokrywają'], ['pusta', 'odpowiedź, której brakuje']]} />
+
+- **rozłączna — NIE.** „Wygoda” i „dostęp 24h” się pokrywają.
+- **wyczerpująca — NIE.** Brakuje „inne (jakie?)”. Ktoś może korzystać z internetu, bo w pobliżu nie ma oddziału banku.
+- **równomierna — NIE.** „Wygoda” to odpowiedź-parasol. Prawie każdy, kto korzysta z banku przez internet, uważa to za wygodne. Przy „można zaznaczyć kilka” zaznaczy ją zdecydowana większość.
+- **adekwatna — TAK.** Wszystkie odpowiedzi to powody korzystania z bankowości przez internet.
+
+<Dlaczego>
+Dlaczego „wygoda” i „24h” się pokrywają? Bo dostęp o każdej porze to jeden z powodów, dla których coś jest wygodne. Osoba, która ceni 24h, ma do wyboru dwie odpowiedzi o tym samym. Z wyników nie da się potem rozdzielić, ile osób myślało o czym.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Przy B1 jest jeszcze błąd w treści pytania. „W największym stopniu” sugeruje jedną odpowiedź, a dopisek pozwala zaznaczyć kilka. To błąd pytania, nie kafeterii — w tabeli z zadania go nie zaznaczasz, ale warto o nim wspomnieć.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="B2 — kolejka w banku">
+
+<Pytanie nr="B2" tresc="Przy ilu osobach w kolejce w banku Pan/i rezygnuje z czekania i wychodzi nieobsłużony(a)?" opcje={[{ t: 'około 2', kl: 'zloto', uw: '„około” rozmywa granicę: może znaczyć też 1 albo 3' }, { t: '3–4', kl: 'zloto' }, { t: '5 i więcej' }, { t: '1 osoba', kl: 'brak' }, { t: 'nie rezygnuję, czekam zawsze', kl: 'brak' }]} />
+
+<Legenda items={[['zloto', 'odpowiedzi, które się pokrywają'], ['pusta', 'odpowiedzi, których brakuje']]} />
+
+- **rozłączna — NIE.** „Około 2” zachodzi na „3–4”. Osoba, która rezygnuje przy 3 osobach, może uznać, że to „około 2”.
+- **wyczerpująca — NIE.** Brakuje osób, które wychodzą już przy jednej osobie, i osób, które nie rezygnują nigdy.
+- **równomierna — TAK.** Żadna odpowiedź nie pasuje do każdego.
+- **adekwatna — TAK.** Wszystkie odpowiedzi to liczby osób w kolejce.
+
+<Dlaczego>
+Dlaczego „około” psuje rozłączność? Bo granica przedziału musi być ostra. „Około 2” każdy rozumie inaczej. Przy ostrych granicach („2 osoby”, „3–4 osoby”) każdy respondent trafia w dokładnie jedną odpowiedź.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="B3 — kiedy korzystasz z konta internetowego">
+
+<Pytanie nr="B3" tresc="Kiedy najczęściej korzysta Pan/i z bankowego konta internetowego?" opcje={[{ t: 'w dni robocze', kl: 'zloto' }, { t: 'w soboty i niedziele', kl: 'zloto' }, { t: 'w dni robocze i weekend', kl: 'zloto', uw: 'łączy dwie odpowiedzi powyżej' }, { t: 'gdy potrzebuję, np. muszę wykonać przelew', kl: 'roz', uw: 'pasuje do każdego i mówi o powodzie, nie o dniach' }]} />
+
+<Legenda items={[['zloto', 'odpowiedzi, które się pokrywają'], ['roz', 'odpowiedź nieadekwatna, która zgarnie większość']]} />
+
+- **rozłączna — NIE.** „W dni robocze i weekend” pokrywa się z dwiema pierwszymi. „Gdy potrzebuję” pokrywa się ze wszystkimi.
+- **wyczerpująca — TAK.** Każdy, kto korzysta z konta, korzysta w dni robocze, w weekend albo w oba. Wszystkie te warianty są. Osoby bez konta internetowego odsiewa filtr (pytanie jest w bloku o usługach przez internet).
+- **równomierna — NIE.** „Gdy potrzebuję” pasuje do prawie każdego. Ta odpowiedź zbierze zdecydowaną większość.
+- **adekwatna — NIE.** Pytanie jest o czas (dni tygodnia). „Gdy potrzebuję” odpowiada na inne pytanie: w jakiej sytuacji.
+
+<Dlaczego>
+Jedna zła odpowiedź łamie tu trzy zasady naraz. Odpowiedź „uniwersalna”, która pasuje do każdego, zwykle psuje rozłączność i równomierność. „Gdy potrzebuję” dodatkowo mówi o czym innym niż pytanie, więc jest też nieadekwatna.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="B4 — ocena serwisu internetowego">
+
+<Pytanie nr="B4" tryb="siatka" tresc="Proszę ocenić w skali od 1 do 5 jakość serwisu internetowego swojego banku, gdzie 1 – całkowicie nie zgadzam się, a 5 – całkowicie zgadzam się." kolumny={['1', '2', '3', '4', '5']} wiersze={[{ t: 'Sposób logowania do serwisu jest w pełni bezpieczny.' }, { t: 'Nawigacja po serwisie jest całkowicie intuicyjna.' }, { t: 'Operacje wykonuje się kilkoma „kliknięciami”.' }, { t: 'Serwis telefoniczny banku jest dostępny całą dobę.', kl: 'roz', uw: 'serwis telefoniczny to nie serwis internetowy' }]} />
+
+<Legenda items={[['roz', 'pozycja nieadekwatna — nie dotyczy pytania']]} />
+
+- **rozłączna — TAK.** Stopnie 1–5 się nie pokrywają.
+- **wyczerpująca — TAK.** Każdy znajdzie swój stopień zgody, a środek (3) to miejsce dla osób bez zdania.
+- **równomierna — TAK.** Po dwa stopnie na minus (1, 2) i na plus (4, 5), środek 3.
+- **adekwatna — NIE.** Pytanie dotyczy serwisu internetowego, a ostatnie stwierdzenie — serwisu telefonicznego.
+
+<Dlaczego>
+Przy tabelce (Likert) kafeterią jest podziałka 1–5 i lista pozycji do oceny. Podziałka jest dobra. Jedna pozycja jest nie na temat — i to wystarcza do krzyżyka przy „adekwatna”.
+
+Zapamiętaj podział: pozycja **nie na temat** → błąd kafeterii (adekwatność). Zdanie **na temat, ale źle napisane** (podwójne, z przeczeniem, ze „zawsze”) → błąd w treści pytania.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+B4 ma też błędy w treści, nie w kafeterii. „W pełni”, „całkowicie” to skrajne słowa. Instrukcja każe „ocenić jakość”, a podziałka mierzy zgodę ze stwierdzeniem. Wspomnij o nich osobno.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Tabela z zadania">
+
+| Kafeteria nie jest… | B1 | B2 | B3 | B4 |
+|---|:-:|:-:|:-:|:-:|
+| …rozłączna | ✕ | ✕ | ✕ | |
+| …wyczerpująca | ✕ | ✕ | | |
+| …równomierna | ✕ | | ✕ | |
+| …adekwatna | | | ✕ | ✕ |
+
+Jak czytać: kolumna to pytanie, wiersz to zasada. Krzyżyk znaczy „to pytanie łamie tę zasadę”. Najwięcej krzyżyków mają B1 i B3 — po trzy.
+
+<Dlaczego>
+Tabela z zadania pyta, czego kafeteria **nie** spełnia („Kafeteria nie jest…”). Dlatego krzyżyk stoi przy błędzie, a nie przy spełnionej zasadzie. Łatwo to odwrócić w pośpiechu.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+Teraz zrób to sam na tych samych czterech pytaniach. Jeśli coś postawisz inaczej, przy każdej kratce zobaczysz powód.
+
+<CwiczenieKafeteria tytul="Usługi bankowe: B1–B4" zrodlo="Zad. 1 z powtórki" pytania={['B1', 'B2', 'B3', 'B4']} zasady={ZASADY} zle={[
+  [true, true, true, false],
+  [true, true, false, false],
+  [true, false, true, false],
+  [false, false, true, true],
+]} dlaczego={[
+  ['„Wygoda” i „dostęp 24h” się pokrywają: dostęp o każdej porze to rodzaj wygody.', '„Około 2” zachodzi na „3–4”: ktoś, kto rezygnuje przy 3 osobach, pasuje do obu.', '„W dni robocze i weekend” pokrywa się z dwiema pierwszymi odpowiedziami.', 'Stopnie 1–5 się nie pokrywają.'],
+  ['Brakuje „inne (jakie?)”, np. dla kogoś, kto nie ma oddziału banku w pobliżu.', 'Brakuje „1 osoba” i „nie rezygnuję, czekam zawsze”.', 'Każdy, kto korzysta z konta, mieści się w dniach roboczych, weekendzie albo w obu — te warianty są. Osoby bez konta odsiewa filtr.', 'Każdy znajdzie swój stopień zgody od 1 do 5, a środek (3) to miejsce dla osób bez zdania.'],
+  ['„Wygoda” to odpowiedź-parasol: zaznaczy ją prawie każdy, więc zgarnie zdecydowaną większość.', 'Żadna odpowiedź nie zgarnie większości.', '„Gdy potrzebuję” pasuje do prawie każdego i zbierze zdecydowaną większość.', 'Po dwa stopnie na minus i na plus, środek 3.'],
+  ['Wszystkie odpowiedzi to powody korzystania z bankowości internetowej.', 'Wszystkie odpowiedzi to liczby osób w kolejce.', 'Pytanie jest o dni, a „gdy potrzebuję” mówi o sytuacji.', 'Serwis telefoniczny to nie serwis internetowy, o który pyta pytanie.'],
+]}>
+
+Zaznacz krzyżykiem, które zasady łamie każde z pytań B1–B4 (narysowane w rozwiązaniu wyżej).
+
+</CwiczenieKafeteria>
+
+<a id="polecenie-popraw" class="k-anchor"></a>
+
+## Poprawianie kafeterii
+
+Drugie polecenie z tego samego zadania: „Proszę przedstawić prawidłową skalę dla pytań B2 i B3”. Słowo „skala” znaczy tu kafeterię: poprawione odpowiedzi pod pytaniem. Nie wystarczy wskazać błędu. Trzeba napisać nową kafeterię, która przejdzie wszystkie cztery testy.
+
+<Ramka kind="polecenie" tytul="Przedstaw prawidłową skalę dla pytania">
+1. **Ustal, o co naprawdę pytamy.** O liczbę osób? O dni tygodnia? O ocenę? Od tego zależy rodzaj skali.
+2. **Wypisz odpowiedzi z ostrymi granicami.** Przy liczbach: „do 2”, „3–4”, „5 i więcej” — koniec jednego przedziału i początek następnego to sąsiednie liczby. Żadnego „około”.
+3. **Odpowiedzi łączone** („A i B”) usuń albo przeformułuj tak, żeby się nie pokrywały (np. „tak samo często w dni robocze i w weekendy” obok „głównie w dni robocze”). Usuń odpowiedzi „z innej bajki”.
+4. **Dopisz brakujące:** „inne (jakie?)”, „nie rezygnuję”, „nie wiem” — dla osób, które się nie mieszczą. „Nie korzystam” — gdy przed pytaniem nie ma filtra.
+5. **Przy ocenach wyrównaj strony:** tyle samo stopni na plus i na minus.
+6. **Sprawdź gotową kafeterię czterema testami.**
+</Ramka>
+
+<Rozwiazanie tytul="Poprawione B2 i B3" zrodlo="Zad. 2 z powtórki">
+<div slot="tresc">
+
+Przedstaw prawidłową skalę dla pytań B2 (kolejka w banku) i B3 (kiedy korzystasz z konta internetowego) z poprzedniego zadania.
+
+</div>
+
+<div slot="plan">
+
+1. Dla każdego pytania ustalamy, o co pyta. Od tego zależy, jak wyglądają odpowiedzi.
+2. Piszemy nową kafeterię, pilnując błędów znalezionych w Zad. 1.
+3. Sprawdzamy ją czterema testami.
+
+Inna droga przy B2: pytanie otwarte „Proszę wpisać liczbę osób: ___”. Ono też jest poprawne, bo każdy wpisuje swoją liczbę. Kafeteria z przedziałami jest jednak wygodniejsza do liczenia wyników.
+
+</div>
+
+<Krok tytul="B2 — liczba osób w kolejce">
+
+Pytamy o **liczbę osób**, więc odpowiedzi to liczby z ostrymi granicami. Dopisujemy osoby, które nie rezygnują wcale.
+
+<div class="k-dwa">
+<div>
+
+**Było**
+
+<Pytanie nr="B2" tresc="Przy ilu osobach w kolejce w banku Pan/i rezygnuje z czekania i wychodzi nieobsłużony(a)?" opcje={[{ t: 'około 2', kl: 'roz' }, { t: '3–4' }, { t: '5 i więcej' }]} />
+
+</div>
+<div>
+
+**Jest**
+
+<Pytanie nr="B2" tresc="Przy ilu osobach w kolejce rezygnuje Pan/i z czekania i wychodzi nieobsłużony(a)?" opcje={[{ t: '1 osoba', kl: 'ok' }, { t: '2 osoby', kl: 'ok' }, { t: '3–4 osoby' }, { t: '5 i więcej osób' }, { t: 'nie rezygnuję — czekam bez względu na kolejkę', kl: 'ok' }, { t: 'nie korzystam z obsługi w placówce banku', kl: 'ok' }]} />
+
+</div>
+</div>
+
+<Legenda items={[['roz', 'usunięte: nieostra granica'], ['ok', 'dopisane albo poprawione']]} />
+
+<Dlaczego>
+„Około 2” zamieniamy na dwie ostre odpowiedzi: „1 osoba” i „2 osoby”. Teraz każda liczba ma jedno miejsce: 1, 2, 3–4, 5 i więcej. „Nie rezygnuję” domyka kafeterię od drugiej strony — dla osób, które czekają zawsze. „Nie korzystam z obsługi w placówce” dopisujemy, bo przed tym pytaniem nie widać filtra.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="B3 — w jakie dni korzystasz">
+
+Pytamy o **dni tygodnia**. Usuwamy „gdy potrzebuję”, bo mówi o sytuacji, a nie o dniach. Odpowiedź łączoną zamieniamy na „tak samo często”, żeby się nie pokrywała z dwiema pierwszymi.
+
+<div class="k-dwa">
+<div>
+
+**Było**
+
+<Pytanie nr="B3" tresc="Kiedy najczęściej korzysta Pan/i z bankowego konta internetowego?" opcje={[{ t: 'w dni robocze' }, { t: 'w soboty i niedziele' }, { t: 'w dni robocze i weekend', kl: 'roz' }, { t: 'gdy potrzebuję, np. muszę wykonać przelew', kl: 'roz' }]} />
+
+</div>
+<div>
+
+**Jest**
+
+<Pytanie nr="B3" tresc="W jakie dni najczęściej korzysta Pan/i z bankowego konta internetowego?" opcje={[{ t: 'głównie w dni robocze (pon.–pt.)' }, { t: 'głównie w weekendy (sob.–niedz.)' }, { t: 'tak samo często w dni robocze i w weekendy', kl: 'ok' }, { t: 'nie korzystam z konta internetowego', kl: 'ok' }]} />
+
+</div>
+</div>
+
+<Legenda items={[['roz', 'usunięte: pokrywa się z innymi albo nie pasuje do pytania'], ['ok', 'dopisane albo poprawione']]} />
+
+<Dlaczego>
+„Głównie” i „tak samo często” to trzy rozłączne możliwości. Każdy, kto korzysta, wybiera dokładnie jedną. „Nie korzystam” dopisujemy, bo przed tym pytaniem nie widać filtra. Jeśli jest pytanie filtrujące („Czy korzysta Pan/i z konta internetowego?”), tej odpowiedzi nie potrzeba.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdzenie czterema testami">
+
+| Test | B2 (nowe) | B3 (nowe) |
+|---|---|---|
+| rozłączna | 1, 2, 3–4, 5+ — granice się nie stykają | „głównie”, „głównie”, „tak samo” — wykluczają się |
+| wyczerpująca | od 1 osoby do „nie rezygnuję” + „nie korzystam z placówki” | trzy możliwości + „nie korzystam” |
+| równomierna | żadna odpowiedź nie pasuje do każdego | żadna odpowiedź nie pasuje do każdego |
+| adekwatna | wszystko o kolejce: liczby osób albo „nie rezygnuję” | wszystko o dniach korzystania |
+
+Jak czytać: wiersz to test, kolumna to poprawione pytanie. W każdej kratce — dlaczego test przechodzi.
+
+</Krok>
+</Rozwiazanie>
+
+<a id="polecenie-bledy" class="k-anchor"></a>
+
+## Błędy w budowie pytań
+
+Kafeteria to połowa oceny. Druga połowa to **treść pytania**. Pytanie może mieć idealne odpowiedzi, a i tak zbierać złe dane, bo jest źle sformułowane.
+
+<Ramka kind="skad">
+Slajdy z zajęć wypisują zasady budowy kafeterii, ale nie wypisują błędów w treści pytań. Zadanie o nie pyta, więc poniżej jest lista najczęstszych błędów z podręczników metodologii badań. Przykłady pochodzą z kwestionariusza o AI z zajęć.
+</Ramka>
+
+**Błędy w treści pytania** (także w zdaniach do oceny w tabelce Likerta):
+
+| Błąd | Na czym polega | Przykład |
+|---|---|---|
+| pytanie podwójne | dwie rzeczy w jednym pytaniu | „AI jest szybka **i** wiarygodna” |
+| przeczenie, podwójne przeczenie | „nie” w pytaniu myli się z „nie zgadzam się” | „Nie jest prawdą, że nie ufam…” |
+| pytanie sugerujące | podpowiada „dobrą” odpowiedź | „Ponieważ większość ekspertów uważa AI za korzystną…” |
+| skrajne słowa | „zawsze”, „nigdy”, „w pełni” | „AI nigdy nie popełnia błędów” |
+| ukryte założenie | pytanie zakłada coś z góry | „AI jest nowoczesna, **dlatego** ufam bankowi” |
+| pytanie poza wiedzą | respondent nie ma jak odpowiedzieć | porównanie funkcji AI w bankach, w których nie ma konta |
+
+Jak czytać: każdy wiersz to jeden typ błędu. Ostatnia kolumna pokazuje, jak wygląda w kwestionariuszu o AI w aplikacji bankowej z zajęć.
+
+**Usterki odpowiedzi poza czterema zasadami** — wpisujesz je w część o kafeterii:
+
+| Usterka | Na czym polega | Przykład |
+|---|---|---|
+| nieostre słowa | każdy rozumie je inaczej; synonimy psują też rozłączność | „rzadko” czy „sporadycznie”? |
+| niejednolite jednostki | miesiące i lata w jednej kafeterii | „6–12 miesięcy”, „1–2 lata”, „24–36 miesięcy” |
+
+**Błędy całego kwestionariusza** — widać je dopiero, gdy spojrzysz na wszystkie pytania naraz:
+
+| Błąd | Na czym polega | Przykład |
+|---|---|---|
+| brak pytania filtrującego | pytania o korzystanie dostają też osoby, które nie korzystają | „Jak długo korzystasz…?” po „nie korzystam” |
+| niespójna forma | raz „ty”, raz „Pan/Pani” | pytania 1–9 na „ty”, pytanie 10 na „Pan/Pani” |
+
+Jak czytać: te same kolumny co wyżej. Podział na trzy tabele mówi, w którą część oceny wpisać błąd.
+
+<Ramka kind="pulapka" tytul="podwójne przeczenie">
+- Stwierdzenie: „Nie jest prawdą, że nie ufam rekomendacjom AI”.
+- Dwa „nie” znoszą się. Zdanie znaczy: „ufam rekomendacjom AI”.
+- Teraz dołóż odpowiedź „nie zgadzam się”. Wychodzą trzy przeczenia.
+- Respondent musi to liczyć w głowie. Część osób zaznaczy odwrotnie, niż myśli.
+</Ramka>
+
+<Ramka kind="polecenie" tytul="Oceń kwestionariusz: skale, błędy w pytaniach, błędy w kafeterii">
+Idź **pytanie po pytaniu** i przy każdym zapisz trzy rzeczy:
+
+1. **Skala** — pomiarowa (nominalna, porządkowa, stosunkowa), a przy skalach postaw także ich nazwa (rang, sumowanych ocen, semantyczna, pozycyjna, Likerta).
+2. **Treść pytania** — przejdź po pierwszej tabeli wyżej. Zapisz każdy znaleziony błąd z cytatem.
+3. **Kafeteria** — cztery testy (rozłączna, wyczerpująca, równomierna, adekwatna) i usterki z drugiej tabeli.
+
+Na końcu spójrz na całość (trzecia tabela): czy forma zwracania się jest ta sama wszędzie i czy jest pytanie filtrujące.
+</Ramka>
+
+<Rozwiazanie tytul="Kwestionariusz „AI w aplikacji bankowej w ocenie klientów banków”" zrodlo="zadanie ze skal z zajęć">
+<div slot="tresc">
+
+Oceń kwestionariusz z dziesięcioma pytaniami o AI (sztuczną inteligencję) w aplikacji bankowej. Wskaż zastosowane skale pomiarowe, błędy w budowie pytań i błędy w budowie kafeterii. Pytania 1–9 są narysowane w swoich krokach. Pytanie 10 ma 14 stwierdzeń — są w tabeli w kroku 10.
+
+</div>
+
+<div slot="plan">
+
+1. Pytania 1–8 bierzemy po kolei. Przy każdym: skala → treść → kafeteria (przepis wyżej). Stała kolejność chroni przed pominięciem czegoś.
+2. Pytania 9 i 10 to tabelki ze stwierdzeniami. Tu większość błędów siedzi w samych stwierdzeniach, więc oceniamy wiersz po wierszu.
+3. Na końcu uwagi o całości: forma zwracania się i pytanie filtrujące.
+
+To rozwiązanie z uzasadnieniem, a nie oficjalny klucz.
+
+</div>
+
+<Krok tytul="Pytanie 1 — najczęściej używana funkcja">
+
+<Pytanie nr="1" tresc="Której z poniższych funkcji AI w aplikacji bankowej używasz najczęściej?" opcje={[{ t: 'Chatbot AI w aplikacji bankowej', kl: 'zloto' }, { t: 'Analiza wydatków', kl: 'zloto' }, { t: 'Personalizowane rekomendacje' }, { t: 'Chatbot AI w aplikacji bankowej i analiza wydatków', kl: 'zloto', uw: 'łączy dwie odpowiedzi; a „najczęściej” każe wybrać jedną' }, { t: 'Nie korzystam z funkcji AI w aplikacji bankowej' }, { t: 'inna (jaka?)', kl: 'brak' }]} />
+
+<Legenda items={[['zloto', 'odpowiedzi, które się pokrywają'], ['pusta', 'odpowiedź, której brakuje']]} />
+
+- **Skala:** nominalna — nazwy funkcji, bez kolejności.
+- **Kafeteria:** nie jest **rozłączna** (odpowiedź łączona). Nie jest **wyczerpująca** — brakuje „inna (jaka?)”, np. dla asystenta głosowego.
+
+<Dlaczego>
+Pytanie brzmi „najczęściej”, czyli o jedną funkcję. Odpowiedź „chatbot i analiza wydatków” to dwie funkcje naraz. Pokrywa się z pierwszą i drugą odpowiedzią.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pytanie 2 — jak często">
+
+<Pytanie nr="2" tresc="Jak często korzystasz z funkcji AI w aplikacji bankowej?" opcje={[{ t: 'Nigdy' }, { t: 'Rzadko', kl: 'zloto' }, { t: 'Sporadycznie', kl: 'zloto', uw: 'prawie to samo co „rzadko”' }, { t: 'Często' }, { t: 'Bardzo często' }]} />
+
+<Legenda items={[['zloto', 'odpowiedzi, które się pokrywają']]} />
+
+- **Skala:** porządkowa — od „nigdy” do „bardzo często”.
+- **Kafeteria:** nie jest **rozłączna** — „rzadko” i „sporadycznie” to synonimy. Do tego nieostre słowa: nie wiadomo, czy „często” to raz w tygodniu, czy raz dziennie. Lepiej podać okres, np. „ile razy w tygodniu”.
+
+<Dlaczego>
+Dwa synonimy obok siebie to dwie kratki na tę samą odpowiedź. Respondent nie wie, którą wybrać, a badacz nie wie, która jest „niżej”.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pytanie 3 — ile razy w miesiącu">
+
+<Pytanie nr="3" tresc="Ile razy w miesiącu korzystasz z rekomendacji AI w aplikacji bankowej?" opcje={[{ t: '0–3 razy', kl: 'zloto' }, { t: '3–6 razy', kl: 'zloto' }, { t: '6–9 razy', kl: 'zloto' }, { t: '9–12 razy', kl: 'zloto' }, { t: 'Powyżej 12 razy' }]} />
+
+<Legenda items={[['zloto', 'przedziały, które dzielą granicę z sąsiadem']]} />
+
+- **Skala:** stosunkowa — liczba razy (w przedziałach).
+- **Kafeteria:** nie jest **rozłączna** — liczby 3, 6 i 9 są w dwóch przedziałach naraz. Poprawnie: 0–2, 3–5, 6–8, 9–11, 12 i więcej.
+
+<Dlaczego>
+Sprawdź granice po kolei. 3 jest w „0–3” i w „3–6”. 6 jest w „3–6” i „6–9”. 9 jest w „6–9” i „9–12”. 12 jest w „9–12”, a „powyżej 12” zaczyna się od 13 — tu akurat granica jest dobra. Trzy granice się powtarzają — jedna wystarczyłaby do krzyżyka.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pytanie 4 — uszereguj cechy">
+
+<Pytanie nr="4" tryb="rang" kratki={5} tresc="Uszereguj poniższe cechy AI w aplikacji bankowej od najważniejszej do najmniej ważnej:" opcje={[{ t: 'bezpieczeństwo' }, { t: 'wygoda' }, { t: 'trafność rekomendacji' }, { t: 'szybkość działania' }, { t: 'personalizacja' }]} />
+
+- **Skala:** skala rang (jako skala pomiarowa — porządkowa).
+- **Treść i kafeteria:** w porządku. Można dopisać „inne (jakie?)”, jak w przykładzie ze slajdu z rodziną i pieniędzmi.
+
+<Dlaczego>
+Nie każde pytanie musi mieć błąd. W ocenie kwestionariusza napisz wtedy wprost: „bez zastrzeżeń”. To też punkt.
+
+Czemu tu brak „inne” to nie krzyżyk, a w B1 i w pytaniu 1 tak? Bo tu respondent tylko układa cechy, które mu podano. W B1 i pytaniu 1 pytanie dotyczy jego własnego powodu albo funkcji, a ta może nie być na liście.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pytanie 5 — rodzaj rekomendacji">
+
+<Pytanie nr="5" tresc="Jakiego rodzaju rekomendacje AI w aplikacji bankowej otrzymujesz najczęściej?" opcje={[{ t: 'Kredytowe', kl: 'zloto' }, { t: 'Inwestycyjne', kl: 'zloto' }, { t: 'Kredytowe i inwestycyjne', kl: 'zloto' }, { t: 'Żadne' }, { t: 'Nie mam pojęcia' }, { t: 'inne, np. oszczędnościowe, ubezpieczeniowe', kl: 'brak' }]} />
+
+<Legenda items={[['zloto', 'odpowiedzi, które się pokrywają'], ['pusta', 'odpowiedź, której brakuje']]} />
+
+- **Skala:** nominalna.
+- **Kafeteria:** nie jest **rozłączna** (odpowiedź łączona). Nie jest **wyczerpująca** — banki dają też rekomendacje oszczędnościowe czy ubezpieczeniowe.
+
+<Dlaczego>
+To ten sam błąd co w pytaniu 1: odpowiedź „A i B” przy pytaniu o „najczęściej”. Gdy w kwestionariuszu widzisz jeden błąd, szukaj go też w podobnych pytaniach.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pytanie 6 — ocena bezpieczeństwa">
+
+<Pytanie nr="6" tresc="Jak oceniasz poziom bezpieczeństwa AI w aplikacji stosowanej przez bank?" opcje={[{ t: 'Bardzo wysoki', kl: 'cyan' }, { t: 'Wysoki', kl: 'cyan' }, { t: 'Raczej wysoki', kl: 'cyan' }, { t: 'Średni' }, { t: 'Niski', kl: 'roz' }, { t: 'Bardzo niski', kl: 'roz' }, { t: 'trudno powiedzieć', kl: 'brak' }]} />
+
+<Legenda items={[['cyan', 'oceny pozytywne (3)'], ['roz', 'oceny negatywne (2)'], ['pusta', 'odpowiedź, której brakuje']]} />
+
+- **Skala:** porządkowa.
+- **Treść:** częściowo poza wiedzą respondenta. Klient widzi aplikację, a nie zabezpieczenia AI od środka.
+- **Kafeteria:** nie jest **równomierna** — trzy oceny na plus i tylko dwie na minus (brak „raczej niski”). Nie jest **wyczerpująca** — klient zwykle nie wie, jak bezpieczna jest AI od środka. Brakuje „trudno powiedzieć”.
+
+<Dlaczego>
+Policz stopnie po obu stronach „średni”: na plus 3, na minus 2. Asymetria przesuwa wyniki w górę, bo osoba „raczej na nie” nie ma swojej odpowiedzi.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pytanie 7 — jak długo">
+
+<Pytanie nr="7" tresc="Jak długo korzystasz z funkcji AI w aplikacji bankowej?" opcje={[{ t: 'Do 6 miesięcy', kl: 'zloto' }, { t: '6–12 miesięcy', kl: 'zloto' }, { t: '1–2 lata', kl: 'zloto', uw: '12 miesięcy = 1 rok — ta sama granica co wyżej' }, { t: '24–36 miesięcy', kl: 'zloto', uw: 'raz lata, raz miesiące' }, { t: 'Powyżej 3 lat' }]} />
+
+<Legenda items={[['zloto', 'przedziały, które dzielą granicę z sąsiadem']]} />
+
+- **Skala:** stosunkowa — czas korzystania (w przedziałach).
+- **Kafeteria:** nie jest **rozłączna** — 6 miesięcy, 12 miesięcy (= 1 rok) i 24 miesiące (= 2 lata) są w dwóch przedziałach naraz. Do tego niejednolite jednostki — miesiące i lata na przemian, więc respondent musi przeliczać.
+
+<Dlaczego>
+Przelicz wszystko na miesiące, żeby zobaczyć granice: do 6, 6–12, 12–24, 24–36, ponad 36. Teraz widać, że 6, 12 i 24 powtarzają się na styku przedziałów.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pytanie 8 — który bank">
+
+<Pytanie nr="8" tresc="Który bank oferuje według Ciebie najbardziej przydatne funkcje AI w aplikacji bankowej?" opcje={[{ t: 'PKO BP' }, { t: 'Santander' }, { t: 'mBank' }, { t: 'ING' }, { t: 'Inny' }, { t: 'nie wiem, znam tylko aplikację swojego banku', kl: 'brak' }]} />
+
+<Legenda items={[['pusta', 'odpowiedź, której brakuje']]} />
+
+- **Skala:** nominalna.
+- **Treść:** pytanie poza wiedzą respondenta. Większość klientów zna tylko aplikację swojego banku i nie ma jak porównać.
+- **Kafeteria:** nie jest **wyczerpująca** — brakuje „nie wiem”.
+
+<Dlaczego>
+„Inny” łata brakujące banki, ale nie łata braku wiedzy. Bez „nie wiem” respondent zaznaczy swój bank, bo innego nie zna. Wynik pokaże popularność banków, a nie jakość ich AI.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pytanie 9 — tabela przeciwnych cech">
+
+<Pytanie nr="9" tryb="semantyczna" kratki={5} tresc="Jak oceniasz poniższe cechy AI wykorzystywanej w aplikacji bankowej?" wiersze={[{ t: 'Innowacyjna', p: 'Przestarzała', kl: 'zloto' }, { t: 'Przestarzała', p: 'Nowoczesna', kl: 'zloto', uw: 'wiersze 1 i 2: ta sama cecha dwa razy, w dodatku z odwróconymi końcami' }, { t: 'Wiarygodna', p: 'Niebezpieczna', kl: 'roz', uw: 'wiersz 3: to nie są przeciwieństwa — przeciwieństwo „wiarygodna” to „niewiarygodna”' }, { t: 'Szybka', p: 'Wolna' }, { t: 'Przyjazna', p: 'Toporna' }, { t: 'Przewidywalna', p: 'Nieprzewidywalna' }, { t: 'Pomocna', p: 'Niepomocna' }]} />
+
+<Legenda items={[['zloto', 'ta sama cecha powtórzona'], ['roz', 'para, która nie jest parą przeciwieństw']]} />
+
+- **Skala:** skala semantyczna (jako skala pomiarowa — porządkowa).
+- **Błędy:** cecha „innowacyjna/nowoczesna — przestarzała” jest dwa razy, raz z „przestarzała” po prawej, raz po lewej. Respondent, który czyta szybko, zaznaczy odwrotnie. Para „wiarygodna — niebezpieczna” to nie przeciwieństwa.
+
+<Dlaczego>
+Skala semantyczna działa tylko wtedy, gdy oba końce mówią o tej samej cesze z dwóch stron. „Wiarygodna” dotyczy zaufania, „niebezpieczna” — ryzyka. Środek takiej pary nic nie znaczy.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Pytanie 10 — stwierdzenia ze zgodą od 1 do 5">
+
+Pytanie 10: „W jakim stopniu zgadza się Pan/Pani z poniższymi stwierdzeniami dotyczącymi AI w aplikacji bankowej?”. Przy każdym stwierdzeniu podziałka od 1 (zdecydowanie się nie zgadzam) do 5 (zdecydowanie się zgadzam).
+
+Skala Likerta (jako skala pomiarowa — porządkowa). Podziałka 1–5 jest dobra. Wszystkie stwierdzenia są na temat, więc kafeteria jest adekwatna. Błędy siedzą w treści stwierdzeń. Oceniamy je wiersz po wierszu. Wielokropek zastępuje początek „AI w aplikacji bankowej”.
+
+| Stwierdzenie | Błąd |
+|---|---|
+| …jest przejrzysta **i** łatwa do zrozumienia **oraz** zwiększa moje poczucie bezpieczeństwa finansowego | podwójne (nawet potrójne) |
+| …**zawsze** podejmuje trafne rekomendacje finansowe | skrajne słowo |
+| **Nie** obawiam się, że AI mogłaby niewłaściwie wykorzystać moje dane osobowe | przeczenie |
+| **Nie** zgadzam się, że AI **nie** poprawia moich decyzji finansowych | podwójne przeczenie, a „nie zgadzam się” to też odpowiedź z podziałki |
+| …jest szybka **i** wiarygodna | podwójne |
+| **Ponieważ większość ekspertów** uważa AI za korzystną, również oceniam ją pozytywnie | sugerujące |
+| …mojego banku jest nowoczesna, **dlatego** ufam bankowi bardziej | podwójne i ukryte założenie |
+| …**nigdy** nie popełnia błędów **i** chroni moje dane | skrajne słowo i podwójne |
+| Jestem zadowolony(-a) z AI w aplikacji bankowej | bez zastrzeżeń |
+| **Nie** jest prawdą, że **nie** ufam rekomendacjom AI | podwójne przeczenie |
+| Korzystanie z AI zwiększa moją kontrolę nad finansami | bez zastrzeżeń |
+| Rekomendacje AI są dla mnie zrozumiałe | bez zastrzeżeń |
+| …pomaga mi oszczędzać czas podczas zarządzania finansami | bez zastrzeżeń |
+| …wspiera podejmowanie decyzji finansowych | bez zastrzeżeń |
+
+Jak czytać: lewa kolumna to stwierdzenie z kwestionariusza (pogrubione są słowa, które psują pytanie), prawa — rodzaj błędu z pierwszej tabeli wyżej.
+
+<Dlaczego>
+Dlaczego „dlatego ufam bankowi bardziej” to ukryte założenie? Bo zdanie z góry twierdzi, że nowoczesność **powoduje** zaufanie. Ktoś, kto uważa AI za nowoczesną, ale banku nie ufa bardziej, nie ma jak odpowiedzieć. Zgoda z połową zdania to jeszcze nie zgoda z całym.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Uwagi o całym kwestionariuszu">
+
+- **Brak pytania filtrującego.** Pytanie 1 ma „nie korzystam”, a pytanie 2 — „nigdy”. Mimo to pytania 2–10 dostają wszyscy, choć zakładają, że respondent korzysta z AI. Po „nie korzystam” powinno być „przejdź do metryczki” albo koniec ankiety. Metryczka to pytania o respondenta na końcu ankiety: płeć, wiek, miejsce zamieszkania.
+- **Niespójna forma zwracania się.** Pytania 1–9 są na „ty”, pytanie 10 — na „Pan/Pani”.
+
+<Dlaczego>
+Te błędy nie siedzą w żadnym jednym pytaniu, tylko w całości. Dlatego warto na końcu spojrzeć na kwestionariusz z góry. Łatwo je przeoczyć, jeśli patrzy się tylko pytanie po pytaniu.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Kafeteria</b>Zestaw gotowych odpowiedzi pod pytaniem. Ocena kafeterii to coś innego niż ocena treści pytania.</div>
+  <div><b>Nominalna</b>Same nazwy, bez kolejności: tak/nie, banki, sposoby logowania.</div>
+  <div><b>Porządkowa</b>Da się ułożyć po kolei: rzadko → często, ocena 1–10. Nie wiadomo, o ile więcej.</div>
+  <div><b>Stosunkowa</b>Liczba czegoś (razy, osób, lat, zł), także w przedziałach. „Dwa razy więcej” ma sens.</div>
+  <div><b>Rang / sumowanych ocen</b>Rang — układa w kolejności. Rangowa — dzieli jedną pulę punktów. Porównawcza — 100 punktów w każdej parze.</div>
+  <div><b>Semantyczna / Stapela</b>Para przeciwieństw z kratkami / jedno słowo i liczby od minusa do plusa.</div>
+  <div><b>Likert / pozycyjna</b>Kolumny o zgodzie i zdania w wierszach → Likert. Kolumny o częstości i nazwy w wierszach → pozycyjna.</div>
+  <div><b>Rozłączna</b>Nikt nie pasuje do dwóch odpowiedzi. Uwaga na „A i B”, synonimy, „około” i wspólne granice przedziałów.</div>
+  <div><b>Wyczerpująca</b>Każdy ma swoją odpowiedź. Łatki: „inne (jakie?)”, „nie korzystam”, „nie wiem”.</div>
+  <div><b>Równomierna</b>Żadna odpowiedź nie zgarnia większości. Przy ocenach tyle samo stopni na plus i minus.</div>
+  <div><b>Adekwatna</b>Każda odpowiedź odpowiada na to pytanie, a nie na inne.</div>
+  <div><b>Błędy w pytaniach</b>Podwójne, przeczenie, sugerujące, skrajne słowa, ukryte założenie, poza wiedzą respondenta.</div>
+  <div><b>Usterki odpowiedzi</b>Nieostre słowa, niejednolite jednostki. Wpisz je przy kafeterii.</div>
+  <div><b>Cały kwestionariusz</b>Brak pytania filtrującego, niespójna forma (raz „ty”, raz „Pan/Pani”).</div>
+  <div><b>Kto nie korzysta?</b>Odsiewa go filtr. „Nie korzystam” w kafeterii — tylko gdy filtra nie ma.</div>
+</div>
+
+<Ramka kind="gdzie">
+Rodzaj skali decyduje, co policzysz w analizie wyników: przy nominalnej — procenty odpowiedzi, przy porządkowej — także medianę (środkową odpowiedź), przy stosunkowej z dokładnymi liczbami — także średnią. Kafeteria wraca też przy liczeniu, ile osób trzeba zbadać. W module „Minimalna liczebność próby” liczy się, na ile grup dzielą respondentów odpowiedzi; taka grupa nazywa się tam frakcją.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — także dobrej — jest wyjaśnienie.
+
+<a id="cw-skala" class="k-anchor"></a>
+
+### Jaka skala pomiarowa?
+
+<Klasyfikator pytanie="Nominalna, porządkowa czy stosunkowa?" kategorie={['Nominalna', 'Porządkowa', 'Stosunkowa']} elementy={[
+  { tekst: '„Płeć: kobieta / mężczyzna”', kat: 0, dlaczego: 'Dwie nazwy bez kolejności — nominalna.' },
+  { tekst: '„Ile osób liczy Pana(i) gospodarstwo domowe? 1 / 2 / 3 / 4 i więcej”', kat: 2, dlaczego: 'Pytamy o liczbę osób — stosunkowa, także z „4 i więcej”.' },
+  { tekst: '„Jak oceniasz obsługę? bardzo źle / źle / dobrze / bardzo dobrze”', kat: 1, dlaczego: 'Odpowiedzi idą od najgorszej do najlepszej — porządkowa.' },
+  { tekst: '„W którym banku masz główne konto? PKO BP / mBank / ING / inny”', kat: 0, dlaczego: 'Nazwy banków, bez kolejności — nominalna.' },
+  { tekst: '„Oceń aplikację w skali od 1 do 10”', kat: 1, dlaczego: 'Ocena w punktach to na zajęciach skala porządkowa. Ocena 8 nie jest „dwa razy lepsza” od 4.' },
+  { tekst: '„Ile złotych wydałeś w zeszłym tygodniu na jedzenie na mieście? ___ zł”', kat: 2, dlaczego: 'Kwota w złotych z prawdziwym zerem — stosunkowa.' },
+  { tekst: '„Wykształcenie: podstawowe / średnie / wyższe”', kat: 1, dlaczego: 'Poziomy wykształcenia da się ułożyć od najniższego do najwyższego — porządkowa.' },
+  { tekst: '„Ulubiony sok: Tymbark / Hortex / Tarczyn”', kat: 0, dlaczego: 'Nazwy marek bez kolejności — nominalna.' },
+]} />
+
+<a id="cw-postawy" class="k-anchor"></a>
+
+### Jaka skala postaw?
+
+<Klasyfikator pytanie="Rozpoznaj skalę po tym, co robi respondent" kategorie={['Rang', 'Rangowa (pula punktów)', 'Porównawcza (pary)', 'Semantyczna', 'Pozycyjna', 'Likerta']} elementy={[
+  { tekst: 'Dzielisz 100 punktów między sześć czynników wyboru lokaty.', kat: 1, dlaczego: 'Jedna pula punktów na kilka czynników — rangowa skala sumowanych ocen.' },
+  { tekst: 'Przy stwierdzeniu „Wolę zakupy online” zaznaczasz od 1 (całkowicie nie zgadzam się) do 5 (całkowicie zgadzam się).', kat: 5, dlaczego: 'Stwierdzenie i stopień zgody — skala Likerta.' },
+  { tekst: 'Wpisujesz do czterech kratek kody: najważniejsze w życiu na pierwszym miejscu.', kat: 0, dlaczego: 'Układanie w kolejności bez punktów — skala rang.' },
+  { tekst: 'Między „uprzejmi” a „nieuprzejmi” stawiasz X w jednej z pięciu kratek.', kat: 3, dlaczego: 'Para przeciwnych określeń — skala semantyczna.' },
+  { tekst: 'Dla gotówki, karty i telefonu zaznaczasz: bardzo często / często / rzadko / w ogóle.', kat: 4, dlaczego: 'Lista sposobów płatności (nazwy) i ta sama podziałka częstości przy każdym — skala pozycyjna.' },
+  { tekst: 'Dzielisz 100 punktów osobno w parach: Tymbark–Tarczyn, Tymbark–Hortex, Hortex–Tarczyn.', kat: 2, dlaczego: 'Osobne 100 punktów w każdej parze — porównawcza skala sumowanych cech.' },
+  { tekst: 'Tabelka: w wierszach zdania o banku, w kolumnach „zdecydowanie się nie zgadzam” … „zdecydowanie się zgadzam”.', kat: 5, dlaczego: 'Kolumny mówią o zgodzie, wiersze to zdania — Likert, nie pozycyjna.' },
+]} />
+
+<a id="cw-kafeteria" class="k-anchor"></a>
+
+### Którą zasadę łamie kafeteria?
+
+<CwiczenieKafeteria tytul="Kwestionariusz o AI: pytania 1, 2, 3, 5, 6, 7" zrodlo="zadanie ze skal z zajęć" pytania={['pyt. 1', 'pyt. 2', 'pyt. 3', 'pyt. 5', 'pyt. 6', 'pyt. 7']} zasady={ZASADY} zle={[
+  [true, true, true, true, false, true],
+  [true, false, false, true, true, false],
+  [false, false, false, false, true, false],
+  [false, false, false, false, false, false],
+]} dlaczego={[
+  ['„Chatbot i analiza wydatków” pokrywa się z „chatbot” i z „analiza wydatków”.', '„Rzadko” i „sporadycznie” to prawie synonimy.', 'Liczby 3, 6 i 9 są w dwóch przedziałach naraz.', '„Kredytowe i inwestycyjne” pokrywa się z dwiema pierwszymi odpowiedziami.', 'Stopnie oceny się nie pokrywają, choć jednego brakuje.', '6, 12 i 24 miesiące są na styku dwóch przedziałów.'],
+  ['Brakuje „inna (jaka?)” dla innych funkcji AI.', 'Od „nigdy” do „bardzo często” — każdy znajdzie odpowiedź.', 'Od 0 do „powyżej 12” — każda liczba jest pokryta.', 'Brakuje rekomendacji innych rodzajów, np. oszczędnościowych.', 'Brakuje „trudno powiedzieć” — to pytanie o opinię, a klient zwykle nie wie, jak bezpieczna jest AI od środka.', 'Od „do 6 miesięcy” do „powyżej 3 lat” — każdy czas jest pokryty. Osoby, które nie korzystają, powinien odsiać filtr.'],
+  ['Żadna funkcja nie zgarnie wszystkich.', 'Jeden stopień „nigdy”, po dwa w stronę „rzadko” i „często”.', 'Przedziały mają podobną szerokość, żaden nie pasuje do każdego.', 'Żadna odpowiedź nie pasuje do wszystkich.', 'Trzy oceny pozytywne i tylko dwie negatywne — brak „raczej niski”.', 'Żaden przedział nie zgarnie wszystkich.'],
+  ['Wszystkie odpowiedzi to funkcje AI albo „nie korzystam”.', 'Wszystkie odpowiedzi mówią o częstości.', 'Wszystkie odpowiedzi to liczby razy.', 'Wszystkie odpowiedzi mówią o rodzaju rekomendacji.', 'Wszystkie odpowiedzi to oceny bezpieczeństwa.', 'Wszystkie odpowiedzi mówią o czasie korzystania.'],
+]}>
+
+Pytania są narysowane w rozwiązaniu „Kwestionariusz «AI w aplikacji bankowej w ocenie klientów banków»” wyżej (kroki 1, 2, 3, 5, 6, 7). Zaznacz krzyżykiem, które zasady łamie każde z nich. Uwaga: jeden wiersz zostaje pusty.
+
+</CwiczenieKafeteria>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'Kafeteria: „do 1000 zł”, „1000–2000 zł”, „ponad 2000 zł”. Którą zasadę łamie?', opcje: ['Nie jest wyczerpująca', 'Nie jest rozłączna', 'Nie jest adekwatna'], dobra: 1, dlaczego: 'Kwota 1000 zł jest w dwóch przedziałach naraz („do 1000” i „1000–2000”) — kafeteria nie jest rozłączna. Wyczerpująca jest: od zera do „ponad 2000” każda kwota ma miejsce.' },
+  { q: 'Pytanie: „Z jakiego systemu korzysta Twój telefon?” Kafeteria: „Android”, „iOS”. Co jest nie tak?', opcje: ['Nie jest wyczerpująca', 'Nie jest równomierna', 'Nie jest rozłączna'], dobra: 0, dlaczego: 'Są też inne systemy i osoby bez smartfona. Brakuje „inny (jaki?)” i „nie mam smartfona”. Rozłączność jest dobra — telefon ma jeden system.' },
+  { q: 'Pytanie: „Jak oceniasz kawę w kawiarni?” Kafeteria: „wybitna”, „bardzo dobra”, „dobra”, „przeciętna”, „słaba”. Co jest nie tak?', opcje: ['Nie jest rozłączna', 'Nie jest adekwatna', 'Nie jest równomierna'], dobra: 2, dlaczego: 'Trzy oceny na plus, jedna na minus. Krytyczny klient ma mało miejsca i wyniki wyjdą lepsze niż w rzeczywistości.' },
+  { q: 'Pytanie: „Gdzie najczęściej robisz zakupy spożywcze?” Kafeteria: „w dyskoncie”, „w hipermarkecie”, „w małym sklepie”, „gdy kończy się jedzenie”, „inne (jakie?)”. Jaki jest główny błąd odpowiedzi „gdy kończy się jedzenie”?', opcje: ['Przez nią kafeteria nie jest adekwatna', 'Przez nią kafeteria nie jest wyczerpująca', 'Psuje tylko rozłączność'], dobra: 0, dlaczego: 'Pytanie jest o miejsce, a ta odpowiedź mówi o sytuacji (kiedy). To odpowiedź na inne pytanie. Pasuje też do każdego, więc przy okazji psuje rozłączność i równomierność — ale główny błąd to brak adekwatności.' },
+  { q: 'Pytanie: „Jakim środkiem transportu dojeżdżasz na uczelnię?” Kafeteria: „autobus”, „tramwaj”, „komunikacja miejska”, „rower”, „samochód”, „inne”. Co jest nie tak?', opcje: ['Nie jest rozłączna', 'Nie jest wyczerpująca', 'Nie jest adekwatna'], dobra: 0, dlaczego: '„Komunikacja miejska” zawiera w sobie autobus i tramwaj. Osoba jadąca tramwajem pasuje do dwóch odpowiedzi. Wyczerpującą kafeterię zapewnia „inne”.' },
+]} />
+
+<a id="cw-popraw" class="k-anchor"></a>
+
+### Która kafeteria jest poprawna?
+
+<Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
+  { q: 'Pytanie: „Ile razy w tygodniu ćwiczysz?” Którą kafeterię wybrać?', opcje: ['0 / 1–2 / 2–4 / więcej niż 4', 'nie ćwiczę / 1–2 / 3–4 / 5 i więcej', 'rzadko / czasem / często'], dobra: 1, dlaczego: 'Druga ma ostre granice (2 i 3 to sąsiednie liczby) i miejsce dla osób, które nie ćwiczą. W pierwszej 2 jest w dwóch przedziałach. Trzecia to nieostre słowa zamiast liczb, choć pytanie pyta o liczbę.' },
+  { q: 'Pytanie: „Jak oceniasz ofertę banku?” Którą podziałkę wybrać?', opcje: ['bardzo dobrze / dobrze / raczej dobrze / źle', 'świetnie / bardzo dobrze / dobrze / średnio / źle', 'bardzo dobrze / raczej dobrze / ani dobrze, ani źle / raczej źle / bardzo źle'], dobra: 2, dlaczego: 'Trzecia ma po dwa stopnie na plus i na minus oraz środek — jest równomierna. Pierwsza ma trzy plusy i jeden minus. Druga ma trzy plusy, środek i jeden minus.' },
+  { q: 'Pytanie: „Z którego serwisu streamingowego korzystasz najczęściej?” Którą kafeterię wybrać?', opcje: ['Netflix / HBO Max / Disney+ / inny (jaki?) / nie korzystam', 'Netflix / HBO Max / Netflix i HBO Max / Disney+', 'Netflix / HBO Max / Disney+'], dobra: 0, dlaczego: 'Pierwsza jest rozłączna i wyczerpująca dzięki „inny” i „nie korzystam”. Druga ma odpowiedź łączoną, a trzecia pomija osoby z innym serwisem albo bez żadnego.' },
+  { q: 'Pytanie: „Jak długo masz konto w obecnym banku?” Którą kafeterię wybrać?', opcje: ['do 12 miesięcy / 1–3 lata / 36–60 miesięcy / ponad 5 lat', 'krócej niż rok / od roku do 3 lat / od ponad 3 do 5 lat / ponad 5 lat', 'krótko / średnio / długo'], dobra: 1, dlaczego: 'Druga trzyma jedną jednostkę (lata) i ma ostre granice: „krócej niż rok” kończy się przed 1, „od ponad 3” zaczyna się po 3. Pierwsza miesza miesiące z latami, a 12 miesięcy i 36 miesięcy są na styku dwóch przedziałów. Trzecia jest nieostra.' },
+]} />
+
+<a id="cw-bledy" class="k-anchor"></a>
+
+### Jaki błąd w pytaniu?
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: '„Czy aplikacja banku jest szybka i łatwa w obsłudze?”', opcje: ['Pytanie sugerujące', 'Pytanie podwójne', 'Bez błędu'], dobra: 1, dlaczego: 'Dwie cechy w jednym pytaniu. Ktoś może uważać aplikację za szybką, ale trudną. Nie wiadomo, do której cechy odnosi się „tak”.' },
+  { q: '„Większość klientów chwali naszą obsługę. Jak ją oceniasz?”', opcje: ['Pytanie sugerujące', 'Podwójne przeczenie', 'Nieostre słowa'], dobra: 0, dlaczego: 'Zdanie przed pytaniem podpowiada „dobrą” odpowiedź. Część osób dostosuje się do większości.' },
+  { q: '„Nie zgadzam się, że opłaty w banku nie są za wysokie” (odpowiedź: 1–5, od „nie zgadzam się” do „zgadzam się”).', opcje: ['Skrajne słowo', 'Ukryte założenie', 'Podwójne przeczenie'], dobra: 2, dlaczego: '„Nie zgadzam się” i „nie są” to dwa przeczenia w stwierdzeniu. Z odpowiedzią „nie zgadzam się” wychodzą trzy. Respondent musi to liczyć w głowie.' },
+  { q: '„Bank zawsze odpowiada na reklamacje w terminie.” (skala zgody 1–5)', opcje: ['Skrajne słowo', 'Pytanie podwójne', 'Bez błędu'], dobra: 0, dlaczego: '„Zawsze” sprawia, że jedno spóźnienie wystarcza, żeby się nie zgodzić. Osoba, która jest raczej zadowolona, nie wie, co zaznaczyć.' },
+  { q: '„Jak często korzystasz z płatności telefonem?” Kafeteria: „rzadko”, „czasami”, „często”.', opcje: ['Pytanie sugerujące', 'Nieostre słowa', 'Pytanie podwójne'], dobra: 1, dlaczego: 'Dla jednej osoby „często” to raz w tygodniu, dla innej — codziennie. Lepiej zapytać o liczbę razy w określonym czasie.' },
+  { q: 'Pytanie 1: „Czy masz kartę kredytową? tak / nie”. Pytanie 2 (do wszystkich): „Jak oceniasz limit na swojej karcie kredytowej?”', opcje: ['Brak pytania filtrującego', 'Pytanie podwójne', 'Niespójna forma'], dobra: 0, dlaczego: 'Pytanie 2 dostają też osoby bez karty. Po „nie” w pytaniu 1 trzeba odesłać je dalej, np. „jeśli nie — przejdź do pytania 3”.' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Sprawdź, czy rozumiesz skale i kafeterię" pytania={[
+  { q: 'Co to jest kafeteria?', opcje: ['Lista pytań w kwestionariuszu', 'Zestaw gotowych odpowiedzi pod pytaniem', 'Sposób doboru respondentów'], dobra: 1, dlaczego: 'Kafeteria to odpowiedzi do wyboru pod pytaniem zamkniętym. Lista pytań to kwestionariusz, a dobór respondentów to temat próby.' },
+  { q: 'Czym skala porządkowa różni się od nominalnej?', opcje: ['Ma odpowiedzi w liczbach', 'Ma więcej odpowiedzi', 'Odpowiedzi da się ułożyć po kolei'], dobra: 2, dlaczego: 'W porządkowej jest kolejność (rzadko → często), w nominalnej nie (nazwy banków). Liczba odpowiedzi nie ma znaczenia. Same liczby też nie rozstrzygają: ocena 1–10 to liczby, a skala jest porządkowa.' },
+  { q: 'Pytanie „Z usług ilu banków korzystasz? 1 / 2 / 3 / 4 i więcej” to skala…', opcje: ['stosunkowa (ilorazowa)', 'porządkowa', 'nominalna'], dobra: 0, dlaczego: 'Pytamy o liczbę banków. Dwa banki to dwa razy więcej niż jeden — skala stosunkowa, jak na slajdzie z zajęć.' },
+  { q: 'Kafeteria nie jest rozłączna, gdy…', opcje: ['brakuje jakiejś odpowiedzi', 'ktoś pasuje do dwóch odpowiedzi naraz', 'jedna odpowiedź zbiera większość'], dobra: 1, dlaczego: 'Rozłączność = brak nakładania się. Brak odpowiedzi to kafeteria niewyczerpująca, a odpowiedź zgarniająca większość — nierównomierna.' },
+  { q: 'Odpowiedź „inne (jakie?)” najczęściej sprawia, że kafeteria jest…', opcje: ['rozłączna', 'adekwatna', 'wyczerpująca'], dobra: 2, dlaczego: '„Inne” daje miejsce osobom, które nie mieszczą się w podanych odpowiedziach — kafeteria staje się wyczerpująca. Nakładających się odpowiedzi „inne” nie naprawi.' },
+  { q: 'Podziałka: „bardzo dobrze / dobrze / raczej dobrze / źle”. Jaki to błąd?', opcje: ['Brak równomierności', 'Brak adekwatności', 'Brak rozłączności'], dobra: 0, dlaczego: 'Trzy stopnie na plus, jeden na minus. Wyniki przesuną się w stronę pochwał.' },
+  { q: 'Respondent dzieli 100 punktów między sześć czynników wyboru lokaty. To skala…', opcje: ['rang', 'Likerta', 'rangowa sumowanych ocen'], dobra: 2, dlaczego: 'Jedna pula punktów na kilka czynników — rangowa skala sumowanych ocen. W skali rang się układa, w skali Likerta wyraża zgodę.' },
+  { q: 'Na zajęciach skala Likerta należy do skal…', opcje: ['złożonych', 'prostych', 'nominalnych'], dobra: 0, dlaczego: 'Na slajdzie: proste — rang, Thurstone’a, sumowanych ocen; złożone — pozycyjna, semantyczna, Stapela, Likerta. „Nominalna” to skala pomiarowa, nie rodzaj skali postaw.' },
+  { q: 'Tabelka: w wierszach gotówka, karta, telefon; w kolumnach „bardzo często … w ogóle”. To skala…', opcje: ['Likerta', 'pozycyjna', 'semantyczna'], dobra: 1, dlaczego: 'Wiersze to nazwy, kolumny to częstość — skala pozycyjna. Likert miałby w kolumnach zgodę, a w wierszach zdania.' },
+  { q: 'Stwierdzenie „AI jest szybka i wiarygodna” to błąd…', opcje: ['skrajnego słowa', 'pytania podwójnego', 'pytania sugerującego'], dobra: 1, dlaczego: 'Dwie cechy w jednym stwierdzeniu. Nie wiadomo, do której odnosi się zgoda. Nie ma tu słów „zawsze/nigdy” ani podpowiedzi.' },
+]} />

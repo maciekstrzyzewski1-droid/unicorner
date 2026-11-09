@@ -1,7 +1,7 @@
 # Unicorner
 
 Studencka platforma do nauki na egzaminy (UEP): fiszki, zadania krok po kroku, quizy
-z natychmiastową informacją zwrotną, kursy matematyki i rachunkowości od zera, sekcja artykułów (Wiedza)
+z natychmiastową informacją zwrotną, kursy matematyki, rachunkowości i metod badań rynku od zera, sekcja artykułów (Wiedza)
 i generator AI robiący fiszki oraz quiz z własnych notatek. Działa na telefonie.
 Strony z materiałami nie wymagają logowania; logowanie (Google) potrzebne jest tylko w generatorze.
 
@@ -58,6 +58,7 @@ przechodzący `npm run build`, więc przed pushem zawsze go uruchom. Na pull req
 - **Statystyka** (hub): `statystyka`, `dynamika`, `trend`, `sezonowosc`, `korelacja`, `korelacja-wieloraka`, `regresja`, `Statystyka_Navoica_Egzamin`.
 - **Matematyka** (kurs krok po kroku): `matematyka.html` + 11 gotowych modułów z 13 zaplanowanych (1–5, 7–12; brakuje 6 i 13) + słowniczek symboli.
 - **Rachunkowość** (kurs krok po kroku): `rachunkowosc.html` + 4 gotowe moduły z 11 zaplanowanych (1. Istota i zasady, 2. Bilans, 3. Operacje i konta bilansowe, 4. Zestawienie obrotów i sald) + słowniczek pojęć. Konta teowe: `src/components/kurs/konta/`, bilans: `src/components/kurs/bilans/`, rachunki: `src/lib/konta.js`, `src/lib/bilans.js`, sprawdzanie: `narzedzia/mat-check/rachunkowosc/`.
+- **Metody badań rynku** (kurs krok po kroku): `metody-badan-rynku.html` + 2 gotowe moduły z 5 zaplanowanych (1. Minimalna liczebność próby — z projektem w Excelu i kalkulatorem jak Biostat, 4. Skale, kafeteria i błędy w pytaniach) + słowniczek pojęć. Komponenty: `src/components/kurs/badania/`, rachunki: `src/lib/proba.js`, sprawdzanie: `narzedzia/mat-check/badania-rynku/`.
 - **Wiedza**: `wiedza.html` + 31 artykułów w czterech kategoriach (krypto, polityka, zdrowie i umysł, świat i technika).
 - **Generator AI**: `generator.html` (wymaga logowania Google), `talia.html` (podgląd udostępnionej talii, `noindex`).
 - **Pozostałe**: `kontakt`, `prywatnosc`, `regulamin`, `recenzje.html` (formularz opinii), `moderacja.html` (panel, `noindex`, nielinkowany, wymaga `ADMIN_CODE`).

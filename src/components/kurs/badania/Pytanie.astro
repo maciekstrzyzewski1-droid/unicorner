@@ -1,0 +1,139 @@
+---
+// Pytanie z kwestionariusza narysowane tak, jak widzi je respondent: treść + kafeteria (kółka, kratki albo siatka).
+// Odpowiedzi można podświetlić: kl = 'roz' (błąd), 'zloto' (pokrywa się z inną), 'ok' (dobrze), 'brak' (odpowiedź,
+// której brakuje — rysowana przerywaną linią). Uwaga przy odpowiedzi (uw) pojawia się pod nią małym drukiem.
+// tryb: 'lista' (kółka; wiele = kwadraty), 'rang' (kratki do wpisania kodów), 'punkty' (pola na punkty + SUMA),
+//       'siatka' (Likert / pozycyjna: nagłówki kolumn), 'semantyczna' (określenie — kratki — przeciwne określenie).
+// Pod rysunkiem: <slot /> — podpis „Jak czytać” i legenda.
+import { texInline } from '../../../lib/tex.js';
+interface Op { t: string; kl?: 'roz' | 'zloto' | 'ok' | 'brak' | 'cyan'; uw?: string }
+interface Wiersz { t: string; p?: string; kl?: 'roz' | 'zloto' | 'ok' | 'brak' | 'cyan'; uw?: string }
+interface Props {
+  nr?: string;
+  tresc: string;
+  tryb?: 'lista' | 'rang' | 'punkty' | 'siatka' | 'semantyczna';
+  wiele?: boolean;
+  opcje?: Op[];
+  kolumny?: string[];
+  wiersze?: Wiersz[];
+  kratki?: number;
+  suma?: string;
+  skala?: string;
+}
+const { nr, tresc, tryb = 'lista', wiele = false, opcje = [], kolumny = [], wiersze = [], kratki = 5, suma, skala } = Astro.props;
+const T = (s: string) => texInline(s);
+---
+<figure class="k-fig k-ank">
+  <div class="k-ank-box">
+    <p class="k-ank-q">{nr && <b class="k-ank-nr">{nr}</b>}<span set:html={T(tresc)} /></p>
+    {skala && <p class="k-ank-skala">{skala}</p>}
+
+    {tryb === 'lista' && (
+      <ul class="k-ank-op">
+        {opcje.map((o) => (
+          <li class={o.kl ? `is-${o.kl}` : ''}>
+            <span class={wiele ? 'k-ank-sq' : 'k-ank-o'} aria-hidden="true"></span>
+            <span class="k-ank-t"><span set:html={T(o.t)} />{o.uw && <small set:html={T(o.uw)} />}</span>
+          </li>
+        ))}
+      </ul>
+    )}
+
+    {tryb === 'rang' && (
+      <>
+        <ul class="k-ank-op k-ank-inline">
+          {opcje.map((o) => <li class={o.kl ? `is-${o.kl}` : ''}><span class="k-ank-t" set:html={T(o.t)} /></li>)}
+        </ul>
+        <div class="k-ank-kratki" aria-hidden="true">{Array.from({ length: kratki }, (_, i) => <span>{i === 0 ? '1.' : ''}</span>)}</div>
+      </>
+    )}
+
+    {tryb === 'punkty' && (
+      <table class="k-ank-pkt">
+        <tbody>
+          {wiersze.map((w) => <tr class={w.kl ? `is-${w.kl}` : ''}><td><span set:html={T(w.t)} />{w.uw && <small set:html={T(w.uw)} />}</td><td class="k-ank-pole">{w.p ?? ''}</td></tr>)}
+          {suma && <tr class="k-ank-suma"><td>SUMA</td><td class="k-ank-pole">{suma}</td></tr>}
+        </tbody>
+      </table>
+    )}
+
+    {tryb === 'siatka' && (
+      <div class="k-ank-siatka" style={`--n:${kolumny.length}`}>
+        <div class="k-ank-sr k-ank-sh"><span class="k-ank-pusty"></span>{kolumny.map((k) => <span set:html={T(k)} />)}</div>
+        {wiersze.map((w) => (
+          <div class={`k-ank-sr ${w.kl ? `is-${w.kl}` : ''}`}>
+            <span class="k-ank-wt"><span set:html={T(w.t)} />{w.uw && <small set:html={T(w.uw)} />}</span>
+            {kolumny.map(() => <span class="k-ank-c"><span class="k-ank-o" aria-hidden="true"></span></span>)}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {tryb === 'semantyczna' && (
+      <div class="k-ank-sem">
+        {wiersze.map((w) => (
+          <div class={`k-ank-semr ${w.kl ? `is-${w.kl}` : ''}`}>
+            <span class="k-ank-l" set:html={T(w.t)} />
+            <span class="k-ank-k">{Array.from({ length: kratki }, () => <span class="k-ank-sq" aria-hidden="true"></span>)}</span>
+            <span class="k-ank-r" set:html={T(w.p ?? '')} />
+          </div>
+        ))}
+        {wiersze.some((w) => w.uw) && (
+          <ul class="k-ank-uw">{wiersze.filter((w) => w.uw).map((w) => <li class={w.kl ? `is-${w.kl}` : ''} set:html={T(w.uw!)} />)}</ul>
+        )}
+      </div>
+    )}
+  </div>
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<style>
+  .k-ank-box{border:1px solid var(--line2);background:#f7f6fb;color:#1d1a2b;padding:14px 16px 12px;border-radius:4px;}
+  .k-ank-q{font-size:1rem;font-weight:600;line-height:1.45;margin:0 0 10px!important;color:#1d1a2b;}
+  .k-ank-nr{display:inline-block;margin-right:8px;font-family:var(--mono);font-size:.82rem;color:#5b4fc4;}
+  .k-ank-skala{font-size:.86rem;color:#4a4560;margin:-4px 0 10px!important;font-style:italic;}
+  .k-ank-op{list-style:none!important;margin:0!important;padding:0!important;display:grid;gap:4px;}
+  .k-ank-op li{display:flex;align-items:flex-start;gap:10px;padding:6px 8px;border-radius:3px;line-height:1.4;font-size:.95rem;margin:0!important;}
+  .k-ank-inline{display:flex;flex-wrap:wrap;gap:4px 14px;}
+  .k-ank-inline li{padding:3px 6px;}
+  .k-ank-t{display:flex;flex-direction:column;gap:2px;}
+  .k-ank-box small{display:block;font-size:.8rem;color:#5d5873;line-height:1.35;}
+  .k-ank-o,.k-ank-sq{flex:none;display:inline-block;width:18px;height:18px;border:1.5px solid #8d88a3;border-radius:50%;background:#fff;margin-top:1px;}
+  .k-ank-sq{border-radius:3px;}
+  .is-roz{background:rgba(255,46,151,.16);box-shadow:inset 3px 0 0 #e0137a;}
+  .is-zloto{background:rgba(255,190,30,.24);box-shadow:inset 3px 0 0 #c99400;}
+  .is-ok{background:rgba(40,170,120,.16);box-shadow:inset 3px 0 0 #1f9a6a;}
+  .is-cyan{background:rgba(20,170,200,.14);box-shadow:inset 3px 0 0 #1497b8;}
+  .k-ank-op li.is-brak{outline:1.5px dashed #1f9a6a;outline-offset:-2px;color:#1f6d4f;font-style:italic;}
+  .k-ank-kratki{display:flex;gap:0;margin-top:12px;}
+  .k-ank-kratki span{width:44px;height:38px;border:1.5px solid #3b3650;margin-left:-1.5px;font-size:.75rem;color:#8d88a3;padding:2px 4px;}
+  .k-ank-pkt{border-collapse:collapse;width:100%;font-size:.92rem;color:#1d1a2b;}
+  .k-ank-pkt td{border:1px solid #c9c6d6;padding:7px 9px;line-height:1.35;}
+  .k-ank-pole{width:86px;text-align:center;font-family:var(--mono);}
+  .k-ank-suma td{font-weight:700;text-align:right;}
+  .k-ank-suma td.k-ank-pole{text-align:center;}
+  .k-ank-siatka{font-size:.92rem;}
+  .k-ank-sr{display:grid;grid-template-columns:minmax(150px,1.6fr) repeat(var(--n),minmax(0,1fr));align-items:center;gap:0 4px;padding:7px 6px;border-top:1px solid #dcd9e6;border-radius:2px;}
+  .k-ank-sh{border-top:none;align-items:end;font-size:.74rem;font-weight:600;color:#4a4560;line-height:1.2;text-align:center;padding-bottom:4px;}
+  .k-ank-wt{line-height:1.35;padding-right:6px;}
+  .k-ank-c{display:flex;justify-content:center;}
+  .k-ank-sem{display:grid;gap:0;font-size:.9rem;}
+  .k-ank-semr{display:flex;align-items:center;gap:8px;padding:7px 8px;border-top:1px solid #dcd9e6;border-radius:2px;}
+  .k-ank-semr:first-child{border-top:none;}
+  .k-ank-l,.k-ank-r{flex:0 0 150px;}
+  .k-ank-r{text-align:right;}
+  .k-ank-k{flex:1;display:flex;justify-content:space-around;gap:4px;}
+  .k-ank-k .k-ank-o,.k-ank-k .k-ank-sq{width:16px;height:16px;margin:0;}
+  .k-ank-uw{margin:8px 0 0!important;padding:0!important;list-style:none!important;display:grid;gap:4px;font-size:.84rem;}
+  .k-ank-uw li{padding:5px 8px;border-radius:3px;margin:0!important;}
+  @media(max-width:520px){
+    .k-ank-box{padding:12px 10px 10px;}
+    .k-ank-sr{grid-template-columns:repeat(var(--n),minmax(0,1fr));row-gap:8px;}
+    .k-ank-sr .k-ank-wt{grid-column:1/-1;padding-right:0;}
+    .k-ank-sh .k-ank-pusty{display:none;}
+    .k-ank-sh{font-size:.68rem;}
+    .k-ank-semr{flex-wrap:wrap;row-gap:6px;}
+    .k-ank-l,.k-ank-r{flex:1 1 40%;font-size:.86rem;}
+    .k-ank-k{order:3;flex:1 1 100%;justify-content:space-between;padding:0 6px;}
+  }
+</style>

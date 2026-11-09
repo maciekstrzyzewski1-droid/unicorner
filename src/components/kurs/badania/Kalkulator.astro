@@ -1,0 +1,124 @@
+---
+// Kalkulator minimalnej liczebności próby dla cechy jakościowej — wzór z zajęć (lib/proba.js: nJak):
+// n = Z² p(1−p) / e² · WWP, a ze znanym N: n = Z² p(1−p) N / (Z² p(1−p) + (N−1) e²) · WWP; wynik w górę.
+// Uczeń wpisuje to samo, co do kalkulatora online (ufność, frakcja, błąd, populacja) + liczbę grup (WWP),
+// a pod spodem widzi cały rachunek linijka po linijce. Przyciski „wstaw” podstawiają liczby z przykładu.
+import { Z_UFNOSCI, WWP } from '../../../lib/proba.js';
+interface Wstaw { t: string; uf?: number; p: string; e: string; N?: string; grupy?: number }
+interface Props { wstaw?: Wstaw[]; start?: Wstaw }
+const { wstaw = [], start = { t: '', uf: 95, p: '0,5', e: '5', N: '', grupy: 2 } } = Astro.props;
+const dane = JSON.stringify({ Z: Z_UFNOSCI, WWP });
+---
+<section class="k-ct k-kal" data-kal data-tab={dane}>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Kalkulator</span>
+    <h3 class="k-pyt-h">Minimalna liczebność próby — cecha jakościowa</h3>
+  </div>
+  <div class="k-kal-pola">
+    <label><span>Szacowana wielkość frakcji (P) — %</span><input data-f="p" type="text" inputmode="decimal" value={start.p} autocomplete="off" /></label>
+    <label><span>Poziom istotności (α)</span>
+      <select data-f="uf">{[95, 99, 90].map((u) => <option value={u} selected={u === (start.uf ?? 95)}>{`${100 - u}% (${((100 - u) / 100).toFixed(2)}) — ufność ${u}%`}</option>)}</select></label>
+    <label><span>Wielkość populacji generalnej (N) — puste = nieskończona</span><input data-f="N" type="text" inputmode="numeric" value={start.N ?? ''} autocomplete="off" /></label>
+    <label><span>Dopuszczalny błąd (e) — %</span><input data-f="e" type="text" inputmode="decimal" value={start.e} autocomplete="off" /></label>
+    <label><span>Liczba grup cechy (WWP — w Biostacie go nie ma)</span>
+      <select data-f="g">{[2, 3, 4, 5, 10].map((g) => <option value={g} selected={g === (start.grupy ?? 2)}>{g === 2 ? '2 (bez WWP)' : g === 10 ? '6–10 (wiersz 10)' : g}</option>)}</select></label>
+  </div>
+  {wstaw.length > 0 && (
+    <div class="k-kal-wst" data-js-only hidden>
+      <span>Wstaw liczby z przykładu:</span>
+      {wstaw.map((w) => <button type="button" class="k-btn k-btn-ghost" data-wstaw={JSON.stringify(w)}>{w.t}</button>)}
+    </div>
+  )}
+  <ol class="k-kal-r" data-out aria-live="polite"><li>Wpisz liczby — rachunek pojawi się tutaj.</li></ol>
+  <noscript><p class="k-kal-ns">Kalkulator działa po włączeniu JavaScriptu. Ten sam rachunek jest rozpisany w zadaniach wyżej.</p></noscript>
+</section>
+
+<style>
+  .k-kal-pola{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 14px;margin:6px 0 10px;}
+  .k-kal-pola label{display:flex;flex-direction:column;gap:4px;font-size:.84rem;color:var(--muted);}
+  .k-kal-pola input,.k-kal-pola select{height:40px;font-family:var(--mono);font-size:1rem;font-weight:700;color:var(--text);background:rgba(255,255,255,.04);border:1px solid var(--line2);padding:0 8px;border-radius:0;}
+  .k-kal-pola select option{background:#15131d;}
+  .k-kal-pola input:focus,.k-kal-pola select:focus{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-kal-wst{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:0 0 10px;font-size:.84rem;color:var(--muted);}
+  .k-kal-wst .k-btn{padding:6px 10px;font-size:.76rem;}
+  .k-kal-r{margin:0!important;padding:10px 12px 10px 2.2em!important;border-left:2px solid var(--gold);background:rgba(255,216,74,.05);font-size:.92rem;line-height:1.65;}
+  .k-kal-r li{margin:0 0 2px!important;max-width:none!important;}
+  .k-kal-r li.is-wyn{font-weight:700;color:var(--gold);}
+  .k-kal-r li.is-blad{color:#ffb3d6;list-style:none;margin-left:-1.2em!important;}
+  .k-kal-ns{font-size:.85rem;color:var(--muted);}
+</style>
+
+<script>
+  const liczba = (s: string) => {
+    const t = s.replace(/[\s ]/g, '').replace(',', '.');
+    if (t === '') return NaN;
+    if (t.endsWith('%')) return Number(t.slice(0, -1)) / 100;
+    return Number(t);
+  };
+  const f = (x: number, d = 2) => x.toLocaleString('pl-PL', { minimumFractionDigits: d, maximumFractionDigits: d }).replace(/ | /g, ' ');
+  document.querySelectorAll<HTMLElement>('[data-kal]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((e) => { if (e.closest('[data-kal]') === box) e.hidden = false; });
+    const tab = JSON.parse(box.dataset.tab!);
+    const pole = (k: string) => box.querySelector<HTMLInputElement | HTMLSelectElement>(`[data-f="${k}"]`)!;
+    const out = box.querySelector<HTMLElement>('[data-out]')!;
+    const licz = () => {
+      const uf = Number(pole('uf').value);
+      let p = liczba(pole('p').value);
+      // pole jest w procentach, jak w Biostacie (39,05); liczba ≤ 1 bez % to ułamek (0,3905)
+      const pRaw = pole('p').value.trim();
+      let pUwaga = '';
+      if (!pRaw.endsWith('%')) { if (p > 1 && p < 100) p = p / 100; else if (p > 0 && p <= 1) pUwaga = ` (wpisano ${pRaw} — traktuję to jako ułamek; w Biostacie wpisz ${f(p * 100, 2)})`; }
+      let e = liczba(pole('e').value);
+      // pole jest w procentach (5 → 5%); bardzo mała liczba bez % (np. 0,05) to raczej ułamek
+      const eRaw = pole('e').value.trim();
+      let eUwaga = '';
+      if (eRaw.endsWith('%')) { /* liczba() już podzieliła przez 100 */ }
+      else if (e >= 0.2) e = e / 100;
+      else eUwaga = ` (wpisano ${eRaw} — traktuję to jako ułamek, czyli ${f(e * 100, 1)}%)`;
+      const Nraw = pole('N').value.trim();
+      const N = Nraw === '' ? null : liczba(Nraw);
+      const g = Number(pole('g').value);
+      const L: string[] = [];
+      const blad = (t: string) => { out.innerHTML = `<li class="is-blad">${t}</li>`; };
+      if (!(p > 0 && p < 1)) return blad('Frakcję wpisz w procentach, np. 39,05 (albo ułamkiem 0,3905).');
+      if (!(e > 0 && e < 1)) return blad('Błąd wpisz w procentach, np. 5 albo 4,5.');
+      if (N !== null && !(N > 1)) return blad('Wielkość populacji musi być liczbą większą od 1 — albo zostaw pole puste.');
+      const z = tab.Z[uf];
+      const w = g <= 2 ? 1 : tab.WWP[uf]?.[g];
+      if (w === undefined) return blad(`Tabela WWP z zajęć ma tylko kolumny 90% i 95%. Dla ${uf}% nie ma współczynnika — zapytaj na zajęciach, jaki przyjąć. Liczby grup nie zmieniaj, bo zmieni to wynik.`);
+      const a = z * z * p * (1 - p);
+      L.push(`α = ${100 - uf}%, czyli ufność ${uf}%: Z = <b>${f(z, 3)}</b>, więc Z² = ${f(z, 3)} · ${f(z, 3)} = <b>${f(z * z, 4)}</b>.`);
+      L.push(`P = ${f(p * 100, 2)}%, czyli p = ${f(p, 4)}${pUwaga}; 1 − p = ${f(1 - p, 4)}, p · (1 − p) = <b>${f(p * (1 - p), 4)}</b>.`);
+      L.push(`Wspólny kawałek: Z² · p(1 − p) = ${f(z * z, 4)} · ${f(p * (1 - p), 4)} ≈ <b>${f(a, 4)}</b>.`);
+      L.push(`e = ${f(e, 4)}${eUwaga}, e² = ${f(e * e, 6)}.`);
+      let n: number;
+      if (N === null) {
+        n = a / (e * e);
+        L.push(`Bez N: ${f(a, 4)} : ${f(e * e, 6)} ≈ <b>${f(n, 2)}</b>.`);
+      } else {
+        const licznik = a * N, mian = a + (N - 1) * e * e;
+        n = licznik / mian;
+        L.push(`Licznik: ${f(a, 6)} · ${f(N, 0)} ≈ ${f(licznik, 0)} (kawałek z 6 miejscami po przecinku, żeby wynik się zgadzał).`);
+        L.push(`Mianownik: ${f(a, 6)} + (${f(N, 0)} − 1) · ${f(e * e, 6)} ≈ ${f(mian, 2)}.`);
+        L.push(`Ze znanym N: ${f(licznik, 0)} : ${f(mian, 2)} ≈ <b>${f(n, 2)}</b>.`);
+      }
+      const bio = Math.ceil(n - 1e-9);
+      L.push(`<b>Biostat pokaże: Liczebność próby (n) = ${bio}</b> — to ${f(n, 2)} zaokrąglone w górę.`);
+      let wyn = bio;
+      if (w > 1) {
+        wyn = Math.ceil(bio * w - 1e-9);
+        L.push(`WWP (${g === 10 ? '6–10 grup' : g === 5 ? '5 grup' : g + ' grupy'}, ufność ${uf}%) = ${f(w, 2)}, mnożysz ręcznie: ${bio} · ${f(w, 2)} = ${f(bio * w, 2)}.`);
+        const wzor = Math.ceil(n * w - 1e-9);
+        if (wzor !== wyn) L.push(`Uwaga: rachunkiem wzorem, bez zaokrąglania przed WWP, wychodzi ${f(n, 2)} · ${f(w, 2)} = ${f(n * w, 2)} → ${wzor}. Różnica jednej osoby bierze się z zaokrąglenia w Biostacie.`);
+      } else L.push('Dwie grupy — bez WWP.');
+      out.innerHTML = L.map((t) => `<li>${t}</li>`).join('') + `<li class="is-wyn">${w > 1 ? 'W górę: ' : ''}minimalna liczebność próby n = ${wyn}.</li>`;
+    };
+    box.querySelectorAll('input, select').forEach((el) => el.addEventListener('input', licz));
+    box.querySelectorAll<HTMLButtonElement>('[data-wstaw]').forEach((b) => b.addEventListener('click', () => {
+      const w = JSON.parse(b.dataset.wstaw!);
+      pole('uf').value = String(w.uf ?? 95); pole('p').value = w.p; pole('e').value = w.e; pole('N').value = w.N ?? ''; pole('g').value = String(w.grupy ?? 2);
+      licz();
+    }));
+    licz();
+  });
+</script>

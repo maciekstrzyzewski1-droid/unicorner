@@ -1,0 +1,214 @@
+---
+// Przewodnik „od tabeli GUS do kwot” — arkusz jak w Excelu (litery kolumn, numery wierszy, pasek formuły fx):
+// 1) dane GUS (grupy wieku × mężczyźni / kobiety), 2) pokolenia: sumy, N, udziały, 3) kalkulator minimalnej próby
+// (co wpisać w które pole), 4) kwoty: n × udział komórki. Wszystkie liczby i formuły z lib/proba.js (arkusz).
+// Bez JS widać wypełniony arkusz. „Zobacz krok po kroku” odsłania go od danych GUS: kratki, z których liczymy, świecą
+// na turkusowo, wynik — na złoto, a w pasku fx stoi formuła do wpisania w Excelu (polska wersja: SUMA, średnik).
+import { arkusz, fmt, proc, w_gore } from '../../../lib/proba.js';
+import Sterowanie from '../Sterowanie.astro';
+import Legenda from '../Legenda.astro';
+interface Props { wariant: '16' | '18'; ufnosc?: number; e?: number }
+const { wariant, ufnosc = 95, e = 0.05 } = Astro.props;
+const a = arkusz(wariant, { ufnosc, e });
+const L = ['A', 'B', 'C', 'D', 'E'];
+// adresy: dane GUS w wierszach 2…, nagłówek w 1; tabela pokoleń dwa wiersze niżej
+const gR = (i: number) => 2 + i; // wiersz grupy wieku
+const ost = gR(a.W.gus.length - 1);
+const hP = ost + 2; // nagłówek tabeli pokoleń
+const pR = (i: number) => hP + 1 + i; // wiersz pokolenia
+const rO = pR(a.pok.length); // wiersz „ogółem”
+const rU = rO + 1; // wiersz „udział płci”
+const rN = rU + 2; // komórka z n
+const hK = rN + 2; // nagłówek tabeli kwot
+const kR = (i: number) => hK + 1 + i;
+const rKO = kR(a.pok.length);
+const zakres = (col: string, grupy: string[]) => {
+  const idx = grupy.map((g) => a.W.gus.findIndex(([x]) => x === g));
+  return `=SUMA(${col}${gR(Math.min(...idx))}:${col}${gR(Math.max(...idx))})`;
+};
+const pct = (x: number) => proc(x, 2);
+const pf = (x: number) => fmt(x, 4);
+const iNajw = a.pok.findIndex((p) => p.id === a.najw.id);
+const plecNajw = a.NM >= a.NK ? 'B' : 'C';
+const komorka = (id: string, plec: string) => a.komorki.find((c) => c.id === id && c.plec === plec)!;
+// kroki: od = krok, od którego element jest widoczny; hl = kratki-źródła w danym kroku; cel = kratki-wyniki
+type K = { a: string; html: string; fx?: string; hl?: string[]; cel?: string[] };
+const kroki: K[] = [];
+const lat = (w: string) => { const n = Number(w.split('–').pop()); const d = n % 10, dd = n % 100; return `${w} ${d >= 2 && d <= 4 && !(dd >= 12 && dd <= 14) ? 'lata' : 'lat'}`; };
+const gr = (g: string) => g.replace('-', '–');
+kroki.push({ a: 'start', html: `<b>Dane z GUS.</b> Każdy wiersz to grupa wieku. Kolumna B to mężczyźni, kolumna C — kobiety. W pliku z Banku Danych Lokalnych te same liczby leżą poziomo — przykład takiego układu jest w ramce pod arkuszem. Liczby są te same, zmienia się tylko adres komórki.`, hl: a.W.gus.flatMap((_, i) => [`B${gR(i)}`, `C${gR(i)}`]) });
+a.pok.forEach((p, i) => {
+  const r = pR(i);
+  const zr = (c: string) => p.grupy.map((g) => `${c}${gR(a.W.gus.findIndex(([x]) => x === g))}`);
+  const lista = (c: number) => p.grupy.map((g) => fmt(a.tab[g][c])).join(' + ');
+  if (i === 0) {
+    kroki.push({ a: 'pok', html: `<b>Pokolenie ${p.id} (${lat(p.wiek)}), mężczyźni.</b> Potrzebne są grupy ${p.grupy.map(gr).join(', ')} z kolumny B. Dodajesz je: ${lista(0)} = <b>${fmt(p.m)}</b>. W Excelu: kliknij komórkę B${r} i wpisz formułę z paska fx.`, fx: `B${r}: ${zakres('B', p.grupy)}`, hl: zr('B'), cel: [`B${r}`] });
+    kroki.push({ a: 'pok', html: `<b>Pokolenie ${p.id}, kobiety</b> — to samo w kolumnie C: ${lista(1)} = <b>${fmt(p.k)}</b>.`, fx: `C${r}: ${zakres('C', p.grupy)}`, hl: zr('C'), cel: [`C${r}`] });
+    kroki.push({ a: 'pok', html: `<b>Pokolenie ${p.id} razem:</b> mężczyźni + kobiety = ${fmt(p.m)} + ${fmt(p.k)} = <b>${fmt(p.razem)}</b>.`, fx: `D${r}: =B${r}+C${r}`, hl: [`B${r}`, `C${r}`], cel: [`D${r}`] });
+  } else {
+    kroki.push({ a: 'pok', html: `<b>Pokolenie ${p.id} (${lat(p.wiek)})</b> — tak samo jak Z, w wierszu ${r}. Mężczyźni: ${lista(0)} = ${fmt(p.m)}. Kobiety: ${lista(1)} = ${fmt(p.k)}. Razem: ${fmt(p.m)} + ${fmt(p.k)} = <b>${fmt(p.razem)}</b>. Uwaga: skopiowana formuła z wiersza ${pR(0)} przesunie zakres tylko o jeden wiersz. Zakres trzeba zmienić ręcznie na ten z paska fx.`, fx: `B${r}: ${zakres('B', p.grupy)}  ·  C${r}: ${zakres('C', p.grupy)}  ·  D${r}: =B${r}+C${r}`, hl: [...zr('B'), ...zr('C')], cel: [`B${r}`, `C${r}`, `D${r}`] });
+  }
+});
+kroki.push({ a: 'N', html: `<b>Ogółem.</b> Sumujesz kolumny pokoleń. Mężczyźni: ${a.pok.map((p) => fmt(p.m)).join(' + ')} = ${fmt(a.NM)}. Kobiety: ${a.pok.map((p) => fmt(p.k)).join(' + ')} = ${fmt(a.NK)}. Razem: <b>N = ${fmt(a.N)}</b> — to wielkość populacji do kalkulatora. Sprawdzenie: suma całej tabeli GUS, czyli =SUMA(B2:C${ost}), musi dać tę samą liczbę.`, fx: `B${rO}: =SUMA(B${pR(0)}:B${pR(a.pok.length - 1)})  ·  C${rO}: =SUMA(C${pR(0)}:C${pR(a.pok.length - 1)})  ·  D${rO}: =SUMA(D${pR(0)}:D${pR(a.pok.length - 1)})`, hl: a.pok.flatMap((_, i) => [`B${pR(i)}`, `C${pR(i)}`, `D${pR(i)}`]), cel: [`B${rO}`, `C${rO}`, `D${rO}`] });
+kroki.push({ a: 'udz', html: `<b>Udziały pokoleń, formuła.</b> Udział = liczebność pokolenia : N. W E${pR(0)} wpisujesz formułę z paska, a potem przeciągasz ją w dół do E${pR(a.pok.length - 1)}. Przeciąganie: złap mały kwadracik w prawym dolnym rogu komórki i ciągnij w dół. Znaki $ „przypinają” D${rO}, więc każda kopia dzieli przez N.`, fx: `E${pR(0)}: =D${pR(0)}/$D$${rO}   (potem przeciągnij do E${pR(a.pok.length - 1)})`, hl: [`D${pR(0)}`, `D${rO}`], cel: a.pok.map((_, i) => `E${pR(i)}`) });
+kroki.push({ a: 'udz', html: `<b>Udziały pokoleń, wynik.</b> Np. ${a.najw.id}: ${fmt(a.najw.razem)} : ${fmt(a.N)} ≈ ${pf(a.pPok)}. Przycisk % w Excelu pokazuje to jako <b>${pct(a.pPok)}</b>, ale w komórce dalej jest ${pf(a.pPok)}. Największy udział ma pokolenie ${a.najw.id}. To najliczniejsza frakcja — jej ułamek wpiszesz do kalkulatora.`, hl: [`D${pR(iNajw)}`, `D${rO}`], cel: [`E${pR(iNajw)}`] });
+kroki.push({ a: 'udz', html: `<b>Udziały płci</b> = mężczyźni : N i kobiety : N. Mężczyźni: ${fmt(a.NM)} : ${fmt(a.N)} = ${pct(a.NM / a.N)}. Kobiety: ${fmt(a.NK)} : ${fmt(a.N)} = ${pct(a.NK / a.N)}. Najliczniejsza frakcja płci: ${a.NM >= a.NK ? 'mężczyźni' : 'kobiety'}.`, fx: `B${rU}: =B${rO}/$D$${rO}  ·  C${rU}: =C${rO}/$D$${rO}`, hl: [`B${rO}`, `C${rO}`, `D${rO}`], cel: [`B${rU}`, `C${rU}`] });
+const bioPok = w_gore(a.nPokBez), bioPlec = w_gore(a.nPlec);
+const wynPok = w_gore(bioPok * a.wwpPok);
+const alfa = `${fmt(100 - ufnosc)}% (${((100 - ufnosc) / 100).toFixed(2)})`;
+kroki.push({ a: 'kalk', html: `<b>Biostat — kryterium pokolenie.</b> Zakładka „Obliczanie wielkości próby dla frakcji”, wariant „populacja skończona”. Wpisujesz cztery rzeczy. Z arkusza: frakcję P = <b>${fmt(a.pPok * 100, 2)}</b> (udział pokolenia ${a.najw.id} w procentach) i N = ${fmt(a.N)}. Z polecenia: poziom istotności α = ${alfa} — to 100% − ${ufnosc}% ufności — i dopuszczalny błąd e = ${fmt(e * 100)}. Kliknij „Oblicz”. Pod spodem Biostat liczy ${fmt(a.nPokBez, 2)} i od razu zaokrągla w górę: <b>n = ${bioPok}</b>.`, hl: [`E${pR(iNajw)}`, `D${rO}`], cel: ['k1-uf', 'k1-p', 'k1-e', 'k1-N', 'k1-n'] });
+kroki.push({ a: 'kalk', html: `<b>WWP — tego Biostat nie ma.</b> Pokolenia to ${a.pok.length} grupy, więc mnożysz wynik ręcznie przez WWP z tabeli (${a.pok.length} grupy, ${ufnosc}%): ${bioPok} · ${fmt(a.wwpPok, 2)} = ${fmt(bioPok * a.wwpPok, 2)}. Zaokrąglasz <b>w górę</b>: <b>${wynPok}</b>.`, hl: ['k1-n'], cel: ['k1-w', 'k1-wyn'] });
+kroki.push({ a: 'kalk', html: `<b>Biostat — kryterium płeć.</b> Te same pola, tylko frakcja P = udział ${a.NM >= a.NK ? 'mężczyzn' : 'kobiet'}: <b>${fmt(a.pPlec * 100, 2)}</b>. Biostat pokaże n = ${bioPlec}. Płeć to 2 grupy — bez WWP, więc zostaje <b>${bioPlec}</b>.`, hl: [`${plecNajw}${rU}`, `D${rO}`], cel: ['k2-uf', 'k2-p', 'k2-e', 'k2-N', 'k2-n', 'k2-wyn'] });
+const nBio = Math.max(wynPok, bioPlec);
+if (nBio !== a.n) throw new Error(`ArkuszProby: Biostat daje ${nBio}, wzór ${a.n} — opisz różnicę w tekście`);
+kroki.push({ a: 'n', html: `<b>Jedna liczebność próby.</b> Z dwóch kryteriów bierzesz większy wynik, bo ta sama próba musi wystarczyć dla obu. Większa z liczb ${wynPok} i ${bioPlec} to <b>n = ${a.n}</b>. Wpisz ją do osobnej komórki (B${rN}) — kwoty będą z niej korzystać.`, hl: ['k1-wyn', 'k2-wyn'], cel: [`B${rN}`] });
+const zk = komorka(a.pok[0].id, 'm');
+kroki.push({ a: 'kw', html: `<b>Kwoty dokładne.</b> Każda kratka próby = n · (osób w tej grupie) : N. Np. pokolenie ${a.pok[0].id}, mężczyźni: ${a.n} · ${fmt(a.pok[0].m)} : ${fmt(a.N)} ≈ <b>${fmt(zk.dokl, 2)}</b>. Formułę z paska przeciągasz w prawo i w dół na pozostałe kratki. Dolary trzymają n i N w miejscu.`, fx: `B${kR(0)}: =$B$${rN}*B${pR(0)}/$D$${rO}`, hl: [`B${rN}`, `B${pR(0)}`, `D${rO}`], cel: a.pok.flatMap((_, i) => [`dB${kR(i)}`, `dC${kR(i)}`]) });
+const zmienione = a.komorki.filter((c) => c.kwota !== c.zaokr);
+kroki.push({ a: 'kw', html: `<b>Zaokrąglenie i sprawdzenie.</b> Ludzi nie da się podzielić, więc zaokrąglasz do całych osób (ZAOKR). Potem „razem” w każdym wierszu i na dole. Suma kwot: ${a.komorki.map((c) => c.kwota).join(' + ')} = <b>${a.komorki.reduce((s, c) => s + c.kwota, 0)}</b> — równa n. ${zmienione.length ? 'Tu zwykłe zaokrąglenie dało inną sumę, więc poprawiono kratki według reguły niżej.' : ''} Gdyby suma wyszła o 1 za mała: dodaj 1 w kratce zaokrąglonej w dół, która miała największą część po przecinku. Gdyby o 1 za duża: odejmij 1 w kratce zaokrąglonej w górę, która miała najmniejszą część po przecinku.`, fx: `B${kR(0)}: =ZAOKR($B$${rN}*B${pR(0)}/$D$${rO};0)  ·  D${kR(0)}: =B${kR(0)}+C${kR(0)}  ·  D${rKO}: =SUMA(D${kR(0)}:D${kR(a.pok.length - 1)})`, hl: a.pok.flatMap((_, i) => [`dB${kR(i)}`, `dC${kR(i)}`]), cel: [...a.pok.flatMap((_, i) => [`B${kR(i)}`, `C${kR(i)}`, `D${kR(i)}`]), `B${rKO}`, `C${rKO}`, `D${rKO}`] });
+// od którego kroku widać kratkę (cel)
+const od: Record<string, number> = {};
+kroki.forEach((k, i) => (k.cel ?? []).forEach((c) => { if (od[c] === undefined) od[c] = i; }));
+const O = (c: string) => od[c];
+const kalk = [
+  { id: 'k1', tytul: 'kryterium pokolenie', p: a.pPok, n: bioPok, w: true, wynik: wynPok },
+  { id: 'k2', tytul: 'kryterium płeć', p: a.pPlec, n: bioPlec, w: false, wynik: bioPlec },
+];
+const PL = { m: 'mężczyźni', k: 'kobiety' };
+---
+<figure class="k-fig k-ark" data-kbox data-ark>
+  <div class="k-fig-box">
+    <div class="k-ark-fx" aria-hidden="true"><span class="k-ark-fxl">fx</span><code data-fxbar>—</code></div>
+    <div class="k-ark-scroll" data-kk-scroll>
+      <table class="k-ark-t">
+        <thead><tr><th class="k-ark-rn"></th>{L.map((l) => <th class="k-ark-cl">{l}</th>)}</tr></thead>
+        <tbody>
+          <tr><td class="k-ark-rn">1</td><td class="k-ark-h">Wiek</td><td class="k-ark-h">mężczyźni</td><td class="k-ark-h">kobiety</td><td></td><td></td></tr>
+          {a.W.gus.map(([g, v], i) => (
+            <tr><td class="k-ark-rn">{gR(i)}</td><td class="k-ark-lab">{gr(g)}</td>
+              <td data-adr={`B${gR(i)}`}>{fmt(v[0])}</td><td data-adr={`C${gR(i)}`}>{fmt(v[1])}</td><td></td><td></td></tr>
+          ))}
+          <tr class="k-ark-gap"><td class="k-ark-rn">{ost + 1}</td><td colspan="5"></td></tr>
+          <tr><td class="k-ark-rn">{hP}</td><td class="k-ark-h">Pokolenie</td><td class="k-ark-h">mężczyźni</td><td class="k-ark-h">kobiety</td><td class="k-ark-h">razem</td><td class="k-ark-h">udział</td></tr>
+          {a.pok.map((p, i) => (
+            <tr><td class="k-ark-rn">{pR(i)}</td><td class="k-ark-lab">{p.id} ({p.wiek})</td>
+              <td data-adr={`B${pR(i)}`} data-od={O(`B${pR(i)}`)}>{fmt(p.m)}</td>
+              <td data-adr={`C${pR(i)}`} data-od={O(`C${pR(i)}`)}>{fmt(p.k)}</td>
+              <td data-adr={`D${pR(i)}`} data-od={O(`D${pR(i)}`)}>{fmt(p.razem)}</td>
+              <td data-adr={`E${pR(i)}`} data-od={O(`E${pR(i)}`)} class:list={{ 'is-max': p.id === a.najw.id }}>{pct(p.razem / a.N)}</td></tr>
+          ))}
+          <tr class="is-sum"><td class="k-ark-rn">{rO}</td><td class="k-ark-lab">ogółem</td>
+            <td data-adr={`B${rO}`} data-od={O(`B${rO}`)}>{fmt(a.NM)}</td><td data-adr={`C${rO}`} data-od={O(`C${rO}`)}>{fmt(a.NK)}</td>
+            <td data-adr={`D${rO}`} data-od={O(`D${rO}`)} class="is-N">{fmt(a.N)}</td><td></td></tr>
+          <tr><td class="k-ark-rn">{rU}</td><td class="k-ark-lab">udział płci</td>
+            <td data-adr={`B${rU}`} data-od={O(`B${rU}`)} class:list={{ 'is-max': a.NM >= a.NK }}>{pct(a.NM / a.N)}</td>
+            <td data-adr={`C${rU}`} data-od={O(`C${rU}`)} class:list={{ 'is-max': a.NK > a.NM }}>{pct(a.NK / a.N)}</td><td></td><td></td></tr>
+          <tr class="k-ark-gap"><td class="k-ark-rn">{rU + 1}</td><td colspan="5"></td></tr>
+          <tr><td class="k-ark-rn">{rN}</td><td class="k-ark-lab">n (próba)</td><td data-adr={`B${rN}`} data-od={O(`B${rN}`)} class="is-N">{a.n}</td><td colspan="3"></td></tr>
+          <tr class="k-ark-gap"><td class="k-ark-rn">{rN + 1}</td><td colspan="5"></td></tr>
+          <tr><td class="k-ark-rn">{hK}</td><td class="k-ark-h">Kwoty</td><td class="k-ark-h">mężczyźni</td><td class="k-ark-h">kobiety</td><td class="k-ark-h">razem</td><td></td></tr>
+          {a.pok.map((p, i) => {
+            const m = komorka(p.id, 'm'), k = komorka(p.id, 'k');
+            return (
+              <tr><td class="k-ark-rn">{kR(i)}</td><td class="k-ark-lab">{p.id}</td>
+                <td data-adr={`B${kR(i)}`}><span class="k-ark-dk" data-adr={`dB${kR(i)}`} data-od={O(`dB${kR(i)}`)}>{fmt(m.dokl, 2)}</span><b data-od={O(`B${kR(i)}`)}>{m.kwota}</b></td>
+                <td data-adr={`C${kR(i)}`}><span class="k-ark-dk" data-adr={`dC${kR(i)}`} data-od={O(`dC${kR(i)}`)}>{fmt(k.dokl, 2)}</span><b data-od={O(`C${kR(i)}`)}>{k.kwota}</b></td>
+                <td data-adr={`D${kR(i)}`} data-od={O(`D${kR(i)}`)}>{m.kwota + k.kwota}</td><td></td></tr>
+            );
+          })}
+          <tr class="is-sum"><td class="k-ark-rn">{rKO}</td><td class="k-ark-lab">razem</td>
+            <td data-adr={`B${rKO}`} data-od={O(`B${rKO}`)}>{a.komorki.filter((c) => c.plec === 'm').reduce((s, c) => s + c.kwota, 0)}</td>
+            <td data-adr={`C${rKO}`} data-od={O(`C${rKO}`)}>{a.komorki.filter((c) => c.plec === 'k').reduce((s, c) => s + c.kwota, 0)}</td>
+            <td data-adr={`D${rKO}`} data-od={O(`D${rKO}`)}>{a.n}</td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="k-ark-kalk">
+      {kalk.map((k) => (
+        <div class="k-ark-k">
+          <div class="k-ark-kt">Biostat · {k.tytul}</div>
+          <dl>
+            <dt>Frakcja (P), %</dt><dd data-adr={`${k.id}-p`} data-od={O(`${k.id}-p`)}>{fmt(k.p * 100, 2)}</dd>
+            <dt>Poziom istotności (α)</dt><dd data-adr={`${k.id}-uf`} data-od={O(`${k.id}-uf`)}>{alfa}</dd>
+            <dt>Populacja generalna (N)</dt><dd data-adr={`${k.id}-N`} data-od={O(`${k.id}-N`)}>{fmt(a.N)}</dd>
+            <dt>Dopuszczalny błąd (e), %</dt><dd data-adr={`${k.id}-e`} data-od={O(`${k.id}-e`)}>{fmt(e * 100)}</dd>
+            <dt class="is-wyn">Liczebność próby (n)</dt><dd class="is-wyn" data-adr={`${k.id}-n`} data-od={O(`${k.id}-n`)}>{k.n}</dd>
+            {k.w && <><dt>ręcznie · WWP {fmt(a.wwpPok, 2)}</dt><dd data-adr={`${k.id}-w`} data-od={O(`${k.id}-w`)}>{fmt(k.n * a.wwpPok, 2)}</dd></>}
+            <dt class="is-wyn">W górę</dt><dd class="is-wyn is-N" data-adr={`${k.id}-wyn`} data-od={O(`${k.id}-wyn`)}>{k.wynik}</dd>
+          </dl>
+        </div>
+      ))}
+    </div>
+    <Legenda items={[['cyan', 'z tych komórek liczymy'], ['zloto', 'wynik albo liczba do kalkulatora'], ['ok', 'najliczniejsza frakcja (p)']]} />
+  </div>
+  <Sterowanie opis="arkusz wypełni się formuła po formule, potem kalkulator i kwoty" legenda={[['cyan', 'z tych liczymy'], ['ramka-zloto', 'wpisujemy teraz'], ['pusta', 'jeszcze puste']]} />
+  <ol hidden data-kroki>{kroki.map((k) => <li data-a={k.a} data-fx={k.fx ?? ''} data-hl={(k.hl ?? []).join(' ')} data-cel={(k.cel ?? []).join(' ')} set:html={k.html} />)}</ol>
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<script>
+  import { krokowka, own, widok } from '../../../lib/krokowka';
+  document.querySelectorAll<HTMLElement>('[data-ark]').forEach((box) => {
+    const els = own<HTMLElement>(box, '[data-od]');
+    const adr = own<HTMLElement>(box, '[data-adr]');
+    const fx = own<HTMLElement>(box, "[data-fxbar]")[0];
+    const czysc = () => {
+      els.forEach((e) => e.classList.remove('is-pusta'));
+      adr.forEach((e) => e.classList.remove('is-zrodlo', 'is-teraz'));
+      if (fx) fx.textContent = '—';
+    };
+    krokowka(box, {
+      render: (st, li) => {
+        czysc();
+        els.forEach((e) => e.classList.toggle('is-pusta', Number(e.dataset.od) > st));
+        const hl = (li.dataset.hl || '').split(' ').filter(Boolean);
+        const cel = (li.dataset.cel || '').split(' ').filter(Boolean);
+        adr.forEach((e) => {
+          if (hl.includes(e.dataset.adr!)) e.classList.add('is-zrodlo');
+          if (cel.includes(e.dataset.adr!)) e.classList.add('is-teraz');
+        });
+        if (fx) fx.textContent = li.dataset.fx || '—';
+        widok(box, adr.find((e) => cel.includes(e.dataset.adr!)) ?? adr.find((e) => hl.includes(e.dataset.adr!)));
+      },
+      zamknij: czysc,
+    });
+  });
+</script>
+
+<style>
+  .k-ark-fx{display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:6px 10px;background:#f4f4f6;border:1px solid #c9c9d3;color:#1d1a2b;font-size:.86rem;min-height:36px;}
+  .k-ark-fxl{font-style:italic;font-weight:700;color:#5d5873;font-family:Georgia,serif;}
+  .k-ark-fx code{font-family:var(--mono);color:#0b6b3a;white-space:pre-wrap;word-break:break-all;}
+  .k-ark-scroll{overflow-x:auto;}
+  .k-ark-t{border-collapse:collapse;background:#fff;color:#1d1a2b;font-size:.86rem;font-variant-numeric:tabular-nums;min-width:100%;}
+  .k-ark-t th,.k-ark-t td{border:1px solid #d4d4dc;padding:4px 8px;text-align:right;white-space:nowrap;transition:background .2s,box-shadow .2s;}
+  .k-ark-t thead th{background:#ececf1;color:#5d5873;font-weight:500;text-align:center;font-size:.76rem;}
+  .k-ark-t td.k-ark-rn,.k-ark-t th.k-ark-rn{background:#ececf1;color:#5d5873;text-align:center;font-size:.74rem;width:2.2em;padding:4px 4px;}
+  .k-ark-t td.k-ark-h{font-weight:700;text-align:center;background:#f6f5fa;}
+  .k-ark-t td.k-ark-lab{text-align:left;color:#3b3650;}
+  .k-ark-t tr.k-ark-gap td{height:10px;padding:0;}
+  .k-ark-t tr.is-sum td{font-weight:700;border-top:2px solid #8d88a3;}
+  .k-ark-t td.is-N{background:#fff6d6;font-weight:700;}
+  .k-ark-t td.is-max{background:#dff5ea;font-weight:700;}
+  .k-ark-dk{display:block;font-size:.72rem;color:#77728c;}
+  .k-ark-t td[data-adr].is-zrodlo,.k-ark-k dd.is-zrodlo{background:#cdf3fb;box-shadow:inset 0 0 0 2px #1497b8;}
+  .k-ark-t td[data-adr].is-teraz,.k-ark-k dd.is-teraz,.k-ark-dk.is-teraz{background:#ffe9a6;box-shadow:inset 0 0 0 2px #c99400;}
+  .k-ark :global(.is-pusta){color:transparent!important;}
+  .k-ark-kalk{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0 4px;}
+  .k-ark-k{border:1px solid var(--line2);background:rgba(255,255,255,.03);padding:10px 12px;}
+  .k-ark-kt{font-family:var(--mono);font-size:.7rem;letter-spacing:.8px;text-transform:uppercase;color:var(--cyan);margin-bottom:8px;}
+  .k-ark-k dl{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:0;font-size:.9rem;}
+  .k-ark-k dt{color:var(--muted);}
+  .k-ark-k dd{margin:0;text-align:right;font-family:var(--mono);font-weight:700;color:#fff;padding:1px 6px;transition:background .2s,box-shadow .2s;}
+  .k-ark-k dd.is-zrodlo,.k-ark-k dd.is-teraz{color:#1d1a2b;}
+  .k-ark-k dt.is-wyn{color:var(--text);font-weight:600;}
+  .k-ark-k dd.is-N{color:var(--gold);}
+  @media(max-width:560px){
+    .k-ark-t{font-size:.72rem;}
+    .k-ark-t th,.k-ark-t td{padding:2px 3px;}
+    .k-ark-t td.k-ark-rn,.k-ark-t th.k-ark-rn{width:1.6em;padding:2px 1px;font-size:.66rem;}
+    .k-ark-t td.k-ark-lab,.k-ark-t td.k-ark-h{white-space:normal;}
+    .k-ark-dk{font-size:.66rem;}
+    .k-ark-fx{font-size:.78rem;}
+  }
+</style>
