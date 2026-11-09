@@ -53,10 +53,15 @@ kroki.push({ a: 'N', html: `<b>Ogółem.</b> Sumujesz kolumny pokoleń. Mężczy
 kroki.push({ a: 'udz', html: `<b>Udziały pokoleń, formuła.</b> Udział = liczebność pokolenia : N. W E${pR(0)} wpisujesz formułę z paska, a potem przeciągasz ją w dół do E${pR(a.pok.length - 1)}. Przeciąganie: złap mały kwadracik w prawym dolnym rogu komórki i ciągnij w dół. Znaki $ „przypinają” D${rO}, więc każda kopia dzieli przez N.`, fx: `E${pR(0)}: =D${pR(0)}/$D$${rO}   (potem przeciągnij do E${pR(a.pok.length - 1)})`, hl: [`D${pR(0)}`, `D${rO}`], cel: a.pok.map((_, i) => `E${pR(i)}`) });
 kroki.push({ a: 'udz', html: `<b>Udziały pokoleń, wynik.</b> Np. ${a.najw.id}: ${fmt(a.najw.razem)} : ${fmt(a.N)} ≈ ${pf(a.pPok)}. Przycisk % w Excelu pokazuje to jako <b>${pct(a.pPok)}</b>, ale w komórce dalej jest ${pf(a.pPok)}. Największy udział ma pokolenie ${a.najw.id}. To najliczniejsza frakcja — jej ułamek wpiszesz do kalkulatora.`, hl: [`D${pR(iNajw)}`, `D${rO}`], cel: [`E${pR(iNajw)}`] });
 kroki.push({ a: 'udz', html: `<b>Udziały płci</b> = mężczyźni : N i kobiety : N. Mężczyźni: ${fmt(a.NM)} : ${fmt(a.N)} = ${pct(a.NM / a.N)}. Kobiety: ${fmt(a.NK)} : ${fmt(a.N)} = ${pct(a.NK / a.N)}. Najliczniejsza frakcja płci: ${a.NM >= a.NK ? 'mężczyźni' : 'kobiety'}.`, fx: `B${rU}: =B${rO}/$D$${rO}  ·  C${rU}: =C${rO}/$D$${rO}`, hl: [`B${rO}`, `C${rO}`, `D${rO}`], cel: [`B${rU}`, `C${rU}`] });
-kroki.push({ a: 'kalk', html: `<b>Kalkulator — kryterium pokolenie.</b> Wpisujesz cztery liczby. Z polecenia: poziom ufności ${ufnosc}% i maksymalny błąd ${fmt(e * 100)}%. Z arkusza: frakcję <b>${pf(a.pPok)}</b> (udział pokolenia ${a.najw.id}) i wielkość populacji ${fmt(a.N)}. Kalkulator liczy wzór ze znanym N. Licznik: Z² · p(1 − p) · N ≈ ${fmt(a.kawalek(a.pPok) * a.N, 0)}. Mianownik: Z² · p(1 − p) + (N − 1) · e² ≈ ${fmt(a.kawalek(a.pPok) + (a.N - 1) * e * e, 2)}. Iloraz ≈ <b>${fmt(a.nPokBez, 2)}</b>.`, hl: [`E${pR(iNajw)}`, `D${rO}`], cel: ['k1-uf', 'k1-p', 'k1-e', 'k1-N', 'k1-n'] });
-kroki.push({ a: 'kalk', html: `<b>WWP — tego kalkulator zwykle nie ma.</b> Pokolenia to ${a.pok.length} grupy, więc mnożysz wynik ręcznie przez WWP z tabeli (${a.pok.length} grupy, ${ufnosc}%): ${fmt(a.nPokBez, 2)} · ${fmt(a.wwpPok, 2)} ≈ ${fmt(a.nPok, 2)}. Zaokrąglasz <b>w górę</b>: <b>${w_gore(a.nPok)}</b>.`, hl: ['k1-n'], cel: ['k1-w', 'k1-wyn'] });
-kroki.push({ a: 'kalk', html: `<b>Kalkulator — kryterium płeć.</b> Te same pola, tylko frakcja = udział ${a.NM >= a.NK ? 'mężczyzn' : 'kobiet'}: <b>${pf(a.pPlec)}</b>. Wynik ≈ ${fmt(a.nPlec, 2)}. Płeć to 2 grupy — bez WWP. W górę: <b>${w_gore(a.nPlec)}</b>.`, hl: [`${plecNajw}${rU}`, `D${rO}`], cel: ['k2-uf', 'k2-p', 'k2-e', 'k2-N', 'k2-n', 'k2-wyn'] });
-kroki.push({ a: 'n', html: `<b>Jedna liczebność próby.</b> Z dwóch kryteriów bierzesz większy wynik, bo ta sama próba musi wystarczyć dla obu. Większa z liczb ${w_gore(a.nPok)} i ${w_gore(a.nPlec)} to <b>n = ${a.n}</b>. Wpisz ją do osobnej komórki (B${rN}) — kwoty będą z niej korzystać.`, hl: ['k1-wyn', 'k2-wyn'], cel: [`B${rN}`] });
+const bioPok = w_gore(a.nPokBez), bioPlec = w_gore(a.nPlec);
+const wynPok = w_gore(bioPok * a.wwpPok);
+const alfa = `${fmt(100 - ufnosc)}% (${((100 - ufnosc) / 100).toFixed(2)})`;
+kroki.push({ a: 'kalk', html: `<b>Biostat — kryterium pokolenie.</b> Zakładka „Obliczanie wielkości próby dla frakcji”, wariant „populacja skończona”. Wpisujesz cztery rzeczy. Z arkusza: frakcję P = <b>${fmt(a.pPok * 100, 2)}</b> (udział pokolenia ${a.najw.id} w procentach) i N = ${fmt(a.N)}. Z polecenia: poziom istotności α = ${alfa} — to 100% − ${ufnosc}% ufności — i dopuszczalny błąd e = ${fmt(e * 100)}. Kliknij „Oblicz”. Pod spodem Biostat liczy ${fmt(a.nPokBez, 2)} i od razu zaokrągla w górę: <b>n = ${bioPok}</b>.`, hl: [`E${pR(iNajw)}`, `D${rO}`], cel: ['k1-uf', 'k1-p', 'k1-e', 'k1-N', 'k1-n'] });
+kroki.push({ a: 'kalk', html: `<b>WWP — tego Biostat nie ma.</b> Pokolenia to ${a.pok.length} grupy, więc mnożysz wynik ręcznie przez WWP z tabeli (${a.pok.length} grupy, ${ufnosc}%): ${bioPok} · ${fmt(a.wwpPok, 2)} = ${fmt(bioPok * a.wwpPok, 2)}. Zaokrąglasz <b>w górę</b>: <b>${wynPok}</b>.`, hl: ['k1-n'], cel: ['k1-w', 'k1-wyn'] });
+kroki.push({ a: 'kalk', html: `<b>Biostat — kryterium płeć.</b> Te same pola, tylko frakcja P = udział ${a.NM >= a.NK ? 'mężczyzn' : 'kobiet'}: <b>${fmt(a.pPlec * 100, 2)}</b>. Biostat pokaże n = ${bioPlec}. Płeć to 2 grupy — bez WWP, więc zostaje <b>${bioPlec}</b>.`, hl: [`${plecNajw}${rU}`, `D${rO}`], cel: ['k2-uf', 'k2-p', 'k2-e', 'k2-N', 'k2-n', 'k2-wyn'] });
+const nBio = Math.max(wynPok, bioPlec);
+if (nBio !== a.n) throw new Error(`ArkuszProby: Biostat daje ${nBio}, wzór ${a.n} — opisz różnicę w tekście`);
+kroki.push({ a: 'n', html: `<b>Jedna liczebność próby.</b> Z dwóch kryteriów bierzesz większy wynik, bo ta sama próba musi wystarczyć dla obu. Większa z liczb ${wynPok} i ${bioPlec} to <b>n = ${a.n}</b>. Wpisz ją do osobnej komórki (B${rN}) — kwoty będą z niej korzystać.`, hl: ['k1-wyn', 'k2-wyn'], cel: [`B${rN}`] });
 const zk = komorka(a.pok[0].id, 'm');
 kroki.push({ a: 'kw', html: `<b>Kwoty dokładne.</b> Każda kratka próby = n · (osób w tej grupie) : N. Np. pokolenie ${a.pok[0].id}, mężczyźni: ${a.n} · ${fmt(a.pok[0].m)} : ${fmt(a.N)} ≈ <b>${fmt(zk.dokl, 2)}</b>. Formułę z paska przeciągasz w prawo i w dół na pozostałe kratki. Dolary trzymają n i N w miejscu.`, fx: `B${kR(0)}: =$B$${rN}*B${pR(0)}/$D$${rO}`, hl: [`B${rN}`, `B${pR(0)}`, `D${rO}`], cel: a.pok.flatMap((_, i) => [`dB${kR(i)}`, `dC${kR(i)}`]) });
 const zmienione = a.komorki.filter((c) => c.kwota !== c.zaokr);
@@ -66,8 +71,8 @@ const od: Record<string, number> = {};
 kroki.forEach((k, i) => (k.cel ?? []).forEach((c) => { if (od[c] === undefined) od[c] = i; }));
 const O = (c: string) => od[c];
 const kalk = [
-  { id: 'k1', tytul: 'Kryterium: pokolenie', p: a.pPok, n: a.nPokBez, w: true, wynik: w_gore(a.nPok) },
-  { id: 'k2', tytul: 'Kryterium: płeć', p: a.pPlec, n: a.nPlec, w: false, wynik: w_gore(a.nPlec) },
+  { id: 'k1', tytul: 'kryterium pokolenie', p: a.pPok, n: bioPok, w: true, wynik: wynPok },
+  { id: 'k2', tytul: 'kryterium płeć', p: a.pPlec, n: bioPlec, w: false, wynik: bioPlec },
 ];
 const PL = { m: 'mężczyźni', k: 'kobiety' };
 ---
@@ -121,14 +126,14 @@ const PL = { m: 'mężczyźni', k: 'kobiety' };
     <div class="k-ark-kalk">
       {kalk.map((k) => (
         <div class="k-ark-k">
-          <div class="k-ark-kt">Kalkulator minimalnej próby · {k.tytul}</div>
+          <div class="k-ark-kt">Biostat · {k.tytul}</div>
           <dl>
-            <dt>Poziom ufności</dt><dd data-adr={`${k.id}-uf`} data-od={O(`${k.id}-uf`)}>{ufnosc}%</dd>
-            <dt>Frakcja (p)</dt><dd data-adr={`${k.id}-p`} data-od={O(`${k.id}-p`)}>{pf(k.p)}</dd>
-            <dt>Maksymalny błąd</dt><dd data-adr={`${k.id}-e`} data-od={O(`${k.id}-e`)}>{fmt(e * 100)}%</dd>
-            <dt>Wielkość populacji</dt><dd data-adr={`${k.id}-N`} data-od={O(`${k.id}-N`)}>{fmt(a.N)}</dd>
-            <dt class="is-wyn">Wynik kalkulatora</dt><dd class="is-wyn" data-adr={`${k.id}-n`} data-od={O(`${k.id}-n`)}>{fmt(k.n, 2)}</dd>
-            {k.w && <><dt>· WWP ({a.pok.length} grupy)</dt><dd data-adr={`${k.id}-w`} data-od={O(`${k.id}-w`)}>{fmt(a.nPok, 2)}</dd></>}
+            <dt>Frakcja (P), %</dt><dd data-adr={`${k.id}-p`} data-od={O(`${k.id}-p`)}>{fmt(k.p * 100, 2)}</dd>
+            <dt>Poziom istotności (α)</dt><dd data-adr={`${k.id}-uf`} data-od={O(`${k.id}-uf`)}>{alfa}</dd>
+            <dt>Populacja generalna (N)</dt><dd data-adr={`${k.id}-N`} data-od={O(`${k.id}-N`)}>{fmt(a.N)}</dd>
+            <dt>Dopuszczalny błąd (e), %</dt><dd data-adr={`${k.id}-e`} data-od={O(`${k.id}-e`)}>{fmt(e * 100)}</dd>
+            <dt class="is-wyn">Liczebność próby (n)</dt><dd class="is-wyn" data-adr={`${k.id}-n`} data-od={O(`${k.id}-n`)}>{k.n}</dd>
+            {k.w && <><dt>ręcznie · WWP {fmt(a.wwpPok, 2)}</dt><dd data-adr={`${k.id}-w`} data-od={O(`${k.id}-w`)}>{fmt(k.n * a.wwpPok, 2)}</dd></>}
             <dt class="is-wyn">W górę</dt><dd class="is-wyn is-N" data-adr={`${k.id}-wyn`} data-od={O(`${k.id}-wyn`)}>{k.wynik}</dd>
           </dl>
         </div>

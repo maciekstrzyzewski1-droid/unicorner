@@ -4,6 +4,7 @@
 
 // osoby wg grup wieku: [mężczyźni, kobiety]
 export const GUS = {
+  '16-19': [81662, 76734], // osobna tabelka w arkuszu „liczebność próby 2026 -g3”
   '18': [19875, 18759],
   '19': [18844, 17498],
   '20-24': [86493, 81898],
@@ -16,9 +17,9 @@ export const GUS = {
   '55-59': [96373, 100584],
 };
 
-// Pokolenia przyjęte w zadaniu (przybliżenie do grup 5-letnich z GUS, tylko osoby dorosłe).
+// Pokolenia przyjęte w zadaniu (od 2026-11-09: Z od 16 lat, jak w arkuszu grupy „-g3”; najmłodsi z Z mają dziś ok. 14 lat).
 export const POKOLENIA = [
-  { id: 'Z', nazwa: 'Pokolenie Z', wiek: '18–29 lat', grupy: ['18', '19', '20-24', '25-29'] },
+  { id: 'Z', nazwa: 'Pokolenie Z', wiek: '16–29 lat', grupy: ['16-19', '20-24', '25-29'] },
   { id: 'Y', nazwa: 'Pokolenie Y', wiek: '30–44 lata', grupy: ['30-34', '35-39', '40-44'] },
   { id: 'X', nazwa: 'Pokolenie X', wiek: '45–59 lat', grupy: ['45-49', '50-54', '55-59'] },
 ];
@@ -85,7 +86,7 @@ export const blad = (n, Npop, z = 1.96, p = 0.5) => z * Math.sqrt((p * (1 - p)) 
 
 // --- Arkusz z zajęć „liczebność próby 2026 -g3”: pokolenie Z od 16 lat (GUS podaje osobno grupę 16–19) ---
 // 16–19 lat: [mężczyźni, kobiety] z tego samego arkusza (BDL, stan na 31.12.2025).
-export const GUS_16_19 = [81662, 76734];
+export const GUS_16_19 = GUS['16-19'];
 export const WARIANTY = {
   '18': {
     opis: 'pokolenie Z od 18 lat',

@@ -15,12 +15,12 @@ const dane = JSON.stringify({ Z: Z_UFNOSCI, WWP });
     <h3 class="k-pyt-h">Minimalna liczebność próby — cecha jakościowa</h3>
   </div>
   <div class="k-kal-pola">
-    <label><span>Poziom ufności</span>
-      <select data-f="uf">{[90, 95, 99].map((u) => <option value={u} selected={u === (start.uf ?? 95)}>{u}%</option>)}</select></label>
-    <label><span>Frakcja p (ułamek albo %)</span><input data-f="p" type="text" inputmode="decimal" value={start.p} autocomplete="off" /></label>
-    <label><span>Maksymalny błąd (%)</span><input data-f="e" type="text" inputmode="decimal" value={start.e} autocomplete="off" /></label>
-    <label><span>Wielkość populacji N (puste = nieznana)</span><input data-f="N" type="text" inputmode="numeric" value={start.N ?? ''} autocomplete="off" /></label>
-    <label><span>Liczba grup cechy (do WWP)</span>
+    <label><span>Szacowana wielkość frakcji (P) — %</span><input data-f="p" type="text" inputmode="decimal" value={start.p} autocomplete="off" /></label>
+    <label><span>Poziom istotności (α)</span>
+      <select data-f="uf">{[95, 99, 90].map((u) => <option value={u} selected={u === (start.uf ?? 95)}>{`${100 - u}% (${((100 - u) / 100).toFixed(2)}) — ufność ${u}%`}</option>)}</select></label>
+    <label><span>Wielkość populacji generalnej (N) — puste = nieskończona</span><input data-f="N" type="text" inputmode="numeric" value={start.N ?? ''} autocomplete="off" /></label>
+    <label><span>Dopuszczalny błąd (e) — %</span><input data-f="e" type="text" inputmode="decimal" value={start.e} autocomplete="off" /></label>
+    <label><span>Liczba grup cechy (WWP — w Biostacie go nie ma)</span>
       <select data-f="g">{[2, 3, 4, 5, 10].map((g) => <option value={g} selected={g === (start.grupy ?? 2)}>{g === 2 ? '2 (bez WWP)' : g === 10 ? '6–10 (wiersz 10)' : g}</option>)}</select></label>
   </div>
   {wstaw.length > 0 && (
@@ -64,7 +64,10 @@ const dane = JSON.stringify({ Z: Z_UFNOSCI, WWP });
     const licz = () => {
       const uf = Number(pole('uf').value);
       let p = liczba(pole('p').value);
-      if (p > 1 && p <= 100) p = p / 100; // ktoś wpisał 39,05 bez znaku %
+      // pole jest w procentach, jak w Biostacie (39,05); liczba ≤ 1 bez % to ułamek (0,3905)
+      const pRaw = pole('p').value.trim();
+      let pUwaga = '';
+      if (!pRaw.endsWith('%')) { if (p > 1 && p < 100) p = p / 100; else if (p > 0 && p <= 1) pUwaga = ` (wpisano ${pRaw} — traktuję to jako ułamek; w Biostacie wpisz ${f(p * 100, 2)})`; }
       let e = liczba(pole('e').value);
       // pole jest w procentach (5 → 5%); bardzo mała liczba bez % (np. 0,05) to raczej ułamek
       const eRaw = pole('e').value.trim();
@@ -77,15 +80,15 @@ const dane = JSON.stringify({ Z: Z_UFNOSCI, WWP });
       const g = Number(pole('g').value);
       const L: string[] = [];
       const blad = (t: string) => { out.innerHTML = `<li class="is-blad">${t}</li>`; };
-      if (!(p > 0 && p < 1)) return blad('Frakcja p musi być między 0 a 1 (np. 0,39) albo w procentach (39%).');
+      if (!(p > 0 && p < 1)) return blad('Frakcję wpisz w procentach, np. 39,05 (albo ułamkiem 0,3905).');
       if (!(e > 0 && e < 1)) return blad('Błąd wpisz w procentach, np. 5 albo 4,5.');
       if (N !== null && !(N > 1)) return blad('Wielkość populacji musi być liczbą większą od 1 — albo zostaw pole puste.');
       const z = tab.Z[uf];
       const w = g <= 2 ? 1 : tab.WWP[uf]?.[g];
       if (w === undefined) return blad(`Tabela WWP z zajęć ma tylko kolumny 90% i 95%. Dla ${uf}% nie ma współczynnika — zapytaj na zajęciach, jaki przyjąć. Liczby grup nie zmieniaj, bo zmieni to wynik.`);
       const a = z * z * p * (1 - p);
-      L.push(`Z dla ${uf}%: <b>${f(z, 3)}</b>, więc Z² = ${f(z, 3)} · ${f(z, 3)} = <b>${f(z * z, 4)}</b>.`);
-      L.push(`p = ${f(p, 4)}, 1 − p = ${f(1 - p, 4)}, p · (1 − p) = <b>${f(p * (1 - p), 4)}</b>.`);
+      L.push(`α = ${100 - uf}%, czyli ufność ${uf}%: Z = <b>${f(z, 3)}</b>, więc Z² = ${f(z, 3)} · ${f(z, 3)} = <b>${f(z * z, 4)}</b>.`);
+      L.push(`P = ${f(p * 100, 2)}%, czyli p = ${f(p, 4)}${pUwaga}; 1 − p = ${f(1 - p, 4)}, p · (1 − p) = <b>${f(p * (1 - p), 4)}</b>.`);
       L.push(`Wspólny kawałek: Z² · p(1 − p) = ${f(z * z, 4)} · ${f(p * (1 - p), 4)} ≈ <b>${f(a, 4)}</b>.`);
       L.push(`e = ${f(e, 4)}${eUwaga}, e² = ${f(e * e, 6)}.`);
       let n: number;
@@ -97,12 +100,18 @@ const dane = JSON.stringify({ Z: Z_UFNOSCI, WWP });
         n = licznik / mian;
         L.push(`Licznik: ${f(a, 6)} · ${f(N, 0)} ≈ ${f(licznik, 0)} (kawałek z 6 miejscami po przecinku, żeby wynik się zgadzał).`);
         L.push(`Mianownik: ${f(a, 6)} + (${f(N, 0)} − 1) · ${f(e * e, 6)} ≈ ${f(mian, 2)}.`);
-        L.push(`Ze znanym N: ${f(licznik, 0)} : ${f(mian, 2)} ≈ <b>${f(n, 2)}</b> — tyle pokaże kalkulator online.`);
+        L.push(`Ze znanym N: ${f(licznik, 0)} : ${f(mian, 2)} ≈ <b>${f(n, 2)}</b>.`);
       }
-      if (w > 1) L.push(`WWP (${g === 10 ? '6–10 grup' : g === 5 ? '5 grup' : g + ' grupy'}, ${uf}%) = ${f(w, 2)}: ${f(n, 2)} · ${f(w, 2)} ≈ <b>${f(n * w, 2)}</b>.`);
-      else L.push('Dwie grupy — bez WWP.');
-      const wyn = Math.ceil(n * w - 1e-9);
-      out.innerHTML = L.map((t) => `<li>${t}</li>`).join('') + `<li class="is-wyn">Zaokrąglamy w górę: n = ${wyn}.</li>`;
+      const bio = Math.ceil(n - 1e-9);
+      L.push(`<b>Biostat pokaże: Liczebność próby (n) = ${bio}</b> — to ${f(n, 2)} zaokrąglone w górę.`);
+      let wyn = bio;
+      if (w > 1) {
+        wyn = Math.ceil(bio * w - 1e-9);
+        L.push(`WWP (${g === 10 ? '6–10 grup' : g === 5 ? '5 grup' : g + ' grupy'}, ufność ${uf}%) = ${f(w, 2)}, mnożysz ręcznie: ${bio} · ${f(w, 2)} = ${f(bio * w, 2)}.`);
+        const wzor = Math.ceil(n * w - 1e-9);
+        if (wzor !== wyn) L.push(`Uwaga: rachunkiem wzorem, bez zaokrąglania przed WWP, wychodzi ${f(n, 2)} · ${f(w, 2)} = ${f(n * w, 2)} → ${wzor}. Różnica jednej osoby bierze się z zaokrąglenia w Biostacie.`);
+      } else L.push('Dwie grupy — bez WWP.');
+      out.innerHTML = L.map((t) => `<li>${t}</li>`).join('') + `<li class="is-wyn">${w > 1 ? 'W górę: ' : ''}minimalna liczebność próby n = ${wyn}.</li>`;
     };
     box.querySelectorAll('input, select').forEach((el) => el.addEventListener('input', licz));
     box.querySelectorAll<HTMLButtonElement>('[data-wstaw]').forEach((b) => b.addEventListener('click', () => {

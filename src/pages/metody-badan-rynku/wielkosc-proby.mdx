@@ -34,7 +34,7 @@ export const Zp = populacja[0];
 export const Yp = populacja[1];
 export const Xp = populacja[2];
 export const zapis = (p, i) => p.grupy.map((g) => fmt(GUS[g][i])).join(' + ');
-export const osoby1819 = GUS['18'][0] + GUS['18'][1] + GUS['19'][0] + GUS['19'][1];
+export const osoby1619 = GUS['16-19'][0] + GUS['16-19'][1];
 export const pY = udzial(Yp.razem);
 export const pM = NM / N;
 export const aY = 1.96 * 1.96 * pY * (1 - pY);
@@ -61,11 +61,11 @@ export const z3rok = nJak(95, 0.316, 0.045, null, 4);
 export const z3plec = nJak(95, 0.62, 0.045, null, 2);
 export const z3 = Math.max(w_gore(z3ucz), w_gore(z3rok), w_gore(z3plec));
 export const z1a = 3.8416 * z1V * z1V;
-export const ark = nJak(95, 0.41, 0.05, N, 2);
+export const ark = nJak(95, 0.4, 0.05, N, 2);
 
 ## Po co to jest
 
-Chcesz sprawdzić, jak kupują dorośli z pokoleń X, Y i Z w Wielkopolsce. To prawie dwa miliony osób. Nie zapytasz każdej. Zapytasz kilkaset i na tej podstawie powiesz coś o wszystkich.
+Chcesz sprawdzić, jak kupują konsumenci z pokoleń X, Y i Z w Wielkopolsce (od 16 do 59 lat). To ponad dwa miliony osób. Nie zapytasz każdej. Zapytasz kilkaset i na tej podstawie powiesz coś o wszystkich.
 
 Ile to „kilkaset”? Za mała próba daje wynik, który jest zgadywaniem. Za duża to wyrzucone pieniądze. Odpowiedź daje wzór. Wkładasz do niego kilka decyzji badacza i kilka liczb o populacji. Wychodzi **minimalna liczebność próby**: najmniejsza liczba respondentów, przy której wynik ma założoną dokładność.
 
@@ -85,7 +85,7 @@ Ile to „kilkaset”? Za mała próba daje wynik, który jest zgadywaniem. Za d
 Każdy z tych symboli stoi we wzorach z zajęć. Najpierw sens, potem wzór.
 
 <div class="k-symbole">
-<Znak t="N" nazwa="Liczebność populacji" czytamy="en (duże)" znaczy="Liczba wszystkich osób, o których chcemy coś wiedzieć. Tu: dorośli z pokoleń X, Y i Z w Wielkopolsce." pamiec="Duże N to cały worek." />
+<Znak t="N" nazwa="Liczebność populacji" czytamy="en (duże)" znaczy="Liczba wszystkich osób, o których chcemy coś wiedzieć. Tu: osoby od 16 do 59 lat z pokoleń X, Y i Z w Wielkopolsce." pamiec="Duże N to cały worek." />
 <Znak t="n" nazwa="Minimalna liczebność próby" czytamy="en (małe)" znaczy="Najmniejsza liczba osób, które trzeba zapytać. To ją liczymy." pamiec="Małe n to garstka wyjęta z worka." />
 <Znak t="Z_\alpha" nazwa="Z alfa" czytamy="zet alfa" znaczy="Liczba z tablic statystycznych, która odpowiada wybranemu poziomowi ufności. Im większa pewność, tym większe Z. Dla 95% to 1,96." pamiec="Nie liczysz jej. Bierzesz z tabeli niżej." />
 <Znak t="e" nazwa="Maksymalny dopuszczalny błąd szacunku" czytamy="e" znaczy="O ile wynik z próby może się różnić od prawdy w populacji, w górę lub w dół. Błąd 5% to zapis $e = 0{,}05$." pamiec="Mały błąd to duża próba." />
@@ -182,14 +182,23 @@ Tabela GUS dzieli ludzi na grupy 5-letnie, a pokolenia to zakresy roczników. Gr
 
 | Pokolenie | Wiek w 2025 r. | Grupy z GUS |
 |---|---|---|
-| Z | 18–29 lat | 18, 19, 20–24, 25–29 |
+| Z | 16–29 lat | 16–19, 20–24, 25–29 |
 | Y | 30–44 lata | 30–34, 35–39, 40–44 |
 | X | 45–59 lat | 45–49, 50–54, 55–59 |
 
 **Jak czytać:** wiersz to pokolenie. Prawa kolumna mówi, które kolumny tabeli GUS dodajesz.
 
 <Ramka kind="botak" tytul="granice pokoleń są umowne">
-Źródła różnie wyznaczają roczniki pokoleń. Tu granice dopasowano do grup 5-letnich z GUS i do dorosłych konsumentów (od 18 lat). Zawsze zapisz w pracy przyjęte granice. Inne granice dadzą trochę inne $N$.
+Źródła różnie wyznaczają roczniki pokoleń. Najmłodsi z pokolenia Z mają dziś około 14 lat. Na zajęciach przyjęto dolną granicę 16 lat — GUS podaje grupę 16–19 jedną liczbą. Pozostałe granice pokrywają się z grupami 5-letnimi z GUS. Zawsze zapisz w pracy przyjęte granice. Inne granice dadzą trochę inne $N$.
+</Ramka>
+
+<Ramka kind="kiedy" tytul="gdy granica pokolenia wypada w środku grupy GUS">
+Czasem pokolenie kończy się w środku grupy 5-letniej, np. Z do 27 lat, a GUS ma tylko grupę 25–29. Wtedy:
+
+1. **Najlepiej:** weź z Banku Danych Lokalnych tabelę z **pojedynczymi rocznikami** (każdy wiek osobno). Z takiej tabeli pochodzą osobne liczby dla 18 i 19 lat w arkuszu „Liczebność generacje”. Sumujesz dokładnie te roczniki, które należą do pokolenia.
+2. **Gdy masz tylko grupy 5-letnie:** dziel grupę proporcjonalnie, czyli zakładasz, że każdy rocznik w grupie jest tak samo liczny. Z do 27 lat bierze 3 z 5 roczników grupy 25–29 (25, 26, 27). Mężczyźni: 95 346 · 3 : 5 = 286 038 : 5 = 57 207,6 ≈ 57 208. Pozostałe 2 roczniki (28, 29) idą do następnego pokolenia.
+
+Sposób 2 daje przybliżenie. Zapisz w pracy, że tak liczono. W naszym zadaniu granice (16–29, 30–44, 45–59) pokrywają się z grupami GUS, więc niczego nie dzielimy.
 </Ramka>
 
 <Rozwiazanie tytul="Populacja pokoleń X, Y i Z w Wielkopolsce" zrodlo="zadanie z danymi GUS, stan na 31.12.2025">
@@ -208,13 +217,13 @@ Tabela GUS podaje liczbę ludności Wielkopolski wg wieku i płci. Policz liczeb
 
 </div>
 
-<Krok tytul="Pokolenie Z (18–29 lat)">
+<Krok tytul="Pokolenie Z (16–29 lat)">
 - **Mężczyźni:** {zapis(Zp, 0)} = **{fmt(Zp.m)}**
 - **Kobiety:** {zapis(Zp, 1)} = **{fmt(Zp.k)}**
 - **Razem:** {fmt(Zp.m)} + {fmt(Zp.k)} = **{fmt(Zp.razem)}**
 
 <Dlaczego>
-Cztery składniki, bo GUS podaje osobno 18 lat, 19 lat, 20–24 i 25–29. Razem to wiek od 18 do 29 lat.
+Trzy składniki: 16–19 (w arkuszu w osobnej tabelce), 20–24 i 25–29. Razem to wiek od 16 do 29 lat.
 </Dlaczego>
 </Krok>
 
@@ -251,7 +260,7 @@ Udział to liczebność grupy podzielona przez $N$. Np. dla Y: {fmt(Yp.razem)} :
 </Rozwiazanie>
 
 <Ramka kind="pulapka">
-- **Pominięte 18 i 19 lat.** Są w osobnej tabeli. Pokolenie Z byłoby zaniżone o {fmt(osoby1819)} osób.
+- **Pominięta grupa 16–19.** Jest w osobnej tabelce. Pokolenie Z byłoby zaniżone o {fmt(osoby1619)} osób.
 - **Dodane naraz kolumny „ogółem”, „mężczyźni” i „kobiety”.** Każda osoba policzona dwa razy.
 - **Granice pokoleń niezapisane w pracy.** Nie da się wtedy sprawdzić wyniku.
 </Ramka>
@@ -320,7 +329,7 @@ Najpierw osobno licznik i mianownik, potem dzielenie. Każde działanie w osobne
 </Dlaczego>
 
 <Dlaczego typ="inaczej">
-Wzór bez $N$ daje {fmt(genBezN, 2)}, prawie to samo. Przy prawie dwóch milionach osób $N$ niewiele zmienia.
+Wzór bez $N$ daje {fmt(genBezN, 2)}, prawie to samo. Przy ponad dwóch milionach osób $N$ niewiele zmienia.
 </Dlaczego>
 </Krok>
 
@@ -332,7 +341,7 @@ Wzór bez $N$ daje {fmt(genBezN, 2)}, prawie to samo. Przy prawie dwóch miliona
 </Dlaczego>
 
 <Dlaczego typ="inaczej">
-Kalkulator online (kalkulator wielkości próby dla proporcji) policzy część bez WWP: wpisujesz $N$, 95%, błąd 5% i odsetek {proc(pY, 0)}. Kalkulatory zwykle nie mają WWP, więc wynik mnożysz przez 1,53 sam(a).
+Kalkulator z zajęć (Biostat) policzy część bez WWP. Wpisujesz frakcję {fmt(pY * 100, 2)} (w procentach), poziom istotności α = 5% (to 100% − 95% ufności), $N$ i błąd 5. Biostat pokaże {w_gore(genBez)}, bo od razu zaokrągla w górę. WWP nie ma, więc mnożysz ręcznie: {w_gore(genBez)} · 1,53 = {fmt(w_gore(genBez) * 1.53, 2)} → {w_gore(w_gore(genBez) * 1.53)}.
 </Dlaczego>
 </Krok>
 
@@ -353,7 +362,7 @@ $p$ jest prawie równe 0,5, więc wynik jest prawie taki, jak przy $p = 0{,}5$.
 - **Zaokrąglenie w dół.** Z {fmt(gen, 2)} robi się {Math.floor(gen)} zamiast {w_gore(gen)}.
 - **$p = 0{,}5$, choć struktura jest podana.** We wzorze z zajęć $p$ to najliczniejsza frakcja.
 - **WWP przy dwóch grupach.** Tabela zaczyna się od trzech.
-- **Zaokrąglone $p$.** Z $p = 0{,}41$ zamiast {fmt(pY, 4)} wychodzi {fmt(ark, 2)} zamiast {fmt(genBez, 2)}, a po WWP {w_gore(ark * 1.53)} zamiast {w_gore(gen)}. Zasada w tym kursie: $p$ podane w treści bierzesz tak, jak podano. $p$ liczone samodzielnie zapisujesz z 4 miejscami po przecinku. Zaokrąglasz tylko wynik końcowy, po WWP.
+- **Za mocno zaokrąglone $p$.** Z $p = 0{,}4$ zamiast {fmt(pY, 4)} wychodzi {fmt(ark, 2)} zamiast {fmt(genBez, 2)}, a po WWP {w_gore(ark * 1.53)} zamiast {w_gore(gen)}. Zasada w tym kursie: $p$ podane w treści bierzesz tak, jak podano. $p$ liczone samodzielnie zapisujesz z 4 miejscami po przecinku (w Biostacie: procent z 2 miejscami, np. 39,05). Ręcznie zaokrąglasz tylko wynik końcowy, po WWP. Biostat zaokrągla wcześniej, przed WWP — czasem daje to o 1 osobę więcej.
 - **Brak kwadratu** przy $Z_\alpha$ albo $e$.
 </Ramka>
 
@@ -485,6 +494,7 @@ Reszta: 100 − 8 − 48 − 28,5 = 15,5%. Najliczniejsza frakcja: dwa produkty,
 - $p(1-p) = 0{,}48 \cdot 0{,}52 = 0{,}2496$
 - $n = 3{,}8416 \cdot 0{,}2496 : 0{,}0025$ ≈ {fmt(z2prod / 1.66, 2)} (0,0025 to $0{,}05^2$)
 - razy WWP: {fmt(z2prod / 1.66, 2)} · 1,66 ≈ {fmt(z2prod, 2)} → **{w_gore(z2prod)}**
+- w Biostacie: pokaże {w_gore(z2prod / 1.66)} (od razu w górę), a {w_gore(z2prod / 1.66)} · 1,66 = {fmt(w_gore(z2prod / 1.66) * 1.66, 2)} → {w_gore(w_gore(z2prod / 1.66) * 1.66)}. Różnica jednej osoby to skutek wcześniejszego zaokrąglenia — zapisz, którą drogą liczysz.
 
 <Dlaczego>
 „Reszta” to też grupa. Przed wyborem $p$ trzeba ją policzyć, bo mogłaby okazać się największa.
@@ -537,6 +547,7 @@ Największa frakcja: UAM, $p = 0{,}411$, $1 - p = 0{,}589$.
 
 - $n = 3{,}8416 \cdot 0{,}411 \cdot 0{,}589 : 0{,}002025$ ≈ {fmt(z3ucz / 1.66, 2)}
 - razy WWP: {fmt(z3ucz / 1.66, 2)} · 1,66 ≈ {fmt(z3ucz, 2)} → **{w_gore(z3ucz)}**
+- w Biostacie: {w_gore(z3ucz / 1.66)} · 1,66 = {fmt(w_gore(z3ucz / 1.66) * 1.66, 2)} → {w_gore(w_gore(z3ucz / 1.66) * 1.66)} (o jedną osobę więcej, z tego samego powodu co w Zad. 2).
 </Krok>
 
 <Krok tytul="Rok studiów (4 grupy)">
@@ -671,11 +682,7 @@ Na zajęciach to samo zadanie robisz w arkuszu. Dostajesz tabelę z GUS, liczysz
 - **Format procentowy:** przycisk % na pasku Narzędzia główne. Komórka pokazuje 39,05%, ale w środku dalej jest 0,3905 — i ten ułamek wpisujesz do kalkulatora.
 </Ramka>
 
-Arkusz poniżej to wariant arkusza „liczebność próby 2026 -g3”: pokolenie Z liczone **od 16 lat** (GUS podaje grupę 16–19 jedną liczbą). W krokach 1–5 tego modułu Z zaczyna się od 18 lat, bo tam badamy samych dorosłych. Wyniki dla tej wersji są w ramce pod arkuszem.
-
-<Ramka kind="botak" tytul="od 16 czy od 18 lat?">
-Tak, jak w arkuszu, który dostała Twoja grupa. Granice pokoleń to umowa przyjęta na zajęciach, a nie reguła ze wzoru. Zapisz w projekcie, jakie granice przyjęto.
-</Ramka>
+Arkusz poniżej odtwarza „liczebność próby 2026 -g3”: pokolenie Z od 16 lat, tak jak w krokach 1–5. Kalkulator to Biostat — ten polecany na zajęciach (biostat.com.pl/kalkulator.php, zakładka „Obliczanie wielkości próby dla frakcji”, wariant „populacja skończona”).
 
 <ArkuszProby wariant="16">
 na górze pasek „fx” — tu w każdym kroku pojawia się formuła do wpisania. Pod nim kopia arkusza: litery kolumn, numery wierszy, dane GUS, tabela pokoleń, liczebność próby i kwoty. Turkusowe kratki to te, z których liczymy, złote — wynik albo liczba, którą przepisujesz do kalkulatora, zielone — najliczniejsza frakcja. Dwa panele „Kalkulator minimalnej próby” pokazują, co wpisać w każde pole. Przycisk „Zobacz krok po kroku” odsłania wszystko po kolei.
@@ -706,7 +713,7 @@ Plik z Banku Danych Lokalnych ma jeden wiersz z województwem, a grupy wieku w k
 </Ramka>
 
 <Ramka kind="podobny" tytul="ten sam projekt, gdy pokolenie Z zaczyna się od 18 lat">
-Grupy 18 i 19 zamiast 16–19 (jak w krokach 1–5 wyżej i w arkuszu „Liczebność generacje”):
+Tak liczy arkusz „Liczebność generacje”: grupy 18 i 19 zamiast 16–19.
 
 - $N$ = {fmt(A18.N)}, najliczniejsza frakcja: pokolenie Y, $p$ = {fmt(A18.pPok, 4)};
 - kalkulator: {fmt(A18.nPokBez, 2)}, razy WWP 1,53 ≈ {fmt(A18.nPok, 2)} → **{w_gore(A18.nPok)}**;
@@ -718,20 +725,22 @@ Granice pokoleń to umowa. Zapisz w projekcie, jakie przyjęto.
 
 ### Kalkulator — policz samodzielnie
 
-To samo, co robi kalkulator online, ale z całym rachunkiem pod spodem. Wpisz liczby albo wstaw je z przykładu.
+Te same pola i ta sama kolejność co w Biostacie, ale z całym rachunkiem pod spodem. Wpisz liczby albo wstaw je z przykładu.
 
-<Kalkulator start={{ uf: 95, p: fmt(A16.pPok, 4), e: '5', N: fmt(A16.N), grupy: 3 }} wstaw={[
-  { t: 'Pokolenie (Z od 16 lat)', uf: 95, p: fmt(A16.pPok, 4), e: '5', N: fmt(A16.N), grupy: 3 },
-  { t: 'Płeć (Z od 16 lat)', uf: 95, p: fmt(A16.pPlec, 4), e: '5', N: fmt(A16.N), grupy: 2 },
-  { t: 'Pokolenie (Z od 18 lat)', uf: 95, p: fmt(A18.pPok, 4), e: '5', N: fmt(A18.N), grupy: 3 },
-  { t: 'Zad. 2: liczba produktów', uf: 95, p: '0,48', e: '5', grupy: 4 },
-  { t: 'Zad. 3: rodzaj uczelni', uf: 95, p: '0,411', e: '4,5', grupy: 4 },
+<Kalkulator start={{ uf: 95, p: fmt(A16.pPok * 100, 2), e: '5', N: fmt(A16.N), grupy: 3 }} wstaw={[
+  { t: 'Pokolenie (Z od 16 lat)', uf: 95, p: fmt(A16.pPok * 100, 2), e: '5', N: fmt(A16.N), grupy: 3 },
+  { t: 'Płeć (Z od 16 lat)', uf: 95, p: fmt(A16.pPlec * 100, 2), e: '5', N: fmt(A16.N), grupy: 2 },
+  { t: 'Pokolenie (Z od 18 lat)', uf: 95, p: fmt(A18.pPok * 100, 2), e: '5', N: fmt(A18.N), grupy: 3 },
+  { t: 'Zad. 2: liczba produktów', uf: 95, p: '48', e: '5', grupy: 4 },
+  { t: 'Zad. 3: rodzaj uczelni', uf: 95, p: '41,1', e: '4,5', grupy: 4 },
 ]} />
 
-<Ramka kind="granica" tytul="kalkulator online a wzór z zajęć">
-- Kalkulatory w internecie zwykle **nie mają WWP**. Przy cesze z 3 i więcej grupami mnożysz wynik ręcznie.
+<Ramka kind="granica" tytul="Biostat a wzór z zajęć">
+- Biostat **nie ma WWP**. Przy cesze z 3 i więcej grupami mnożysz jego wynik ręcznie.
+- Biostat pyta o **poziom istotności α**, a nie o ufność: ufność 95% → α = 5% (0.05).
+- Frakcję i błąd wpisujesz w **procentach**: 39,05 i 5, a nie 0,3905 i 0,05.
+- Biostat od razu **zaokrągla w górę**, a WWP mnożysz już po tym. Czasem wychodzi o 1 osobę więcej niż rachunkiem wzorem, np. w Zad. 2: 384 · 1,66 = 637,44 → 638, a wzorem 383,55 · 1,66 = 636,69 → 637. Zapisz, jak liczysz.
 - Niektóre liczą z $N \cdot e^2$ zamiast $(N-1) \cdot e^2$. Przy populacji rzędu milionów różnica jest niewidoczna.
-- Pole „frakcja” bywa w procentach (39,05), a bywa ułamkiem (0,3905). Sprawdź podpis pola.
 - Kalkulator nie wie, która frakcja jest najliczniejsza. Wybierasz ją z arkusza.
 </Ramka>
 
@@ -747,7 +756,7 @@ To samo, co robi kalkulator online, ale z całym rachunkiem pod spodem. Wpisz li
   <div><b>$p = 0{,}5$</b>Tylko gdy treść nie podaje struktury. Podana struktura → najliczniejsza frakcja.</div>
   <div><b>Zaokrąglenie</b>Zawsze w górę, jeden raz, na końcu (po WWP).</div>
   <div><b>Jakościowa czy ilościowa?</b>Odsetki grup → jakościowa. Średnia i odchylenie albo $V$ → ilościowa.</div>
-  <div><b>Excel i kalkulator</b>Pokolenie: SUMA grup wieku. Udział: pokolenie : N (w formule N z dolarami). Do kalkulatora: ufność, frakcja jako ułamek, błąd, N. Potem ręcznie razy WWP i w górę.</div>
+  <div><b>Excel i kalkulator</b>Pokolenie: SUMA grup wieku. Udział: pokolenie : N (w formule N z dolarami). Do Biostatu: frakcja w %, α = 5% (przy ufności 95%), N, błąd w %. Potem ręcznie razy WWP i w górę.</div>
   <div><b>Kwoty</b>Udział kratki w populacji razy $n$, potem przez liczbę ankieterów. Ułamki: schematy A i B.</div>
 </div>
 
@@ -764,7 +773,7 @@ Liczebność mówi, **ile** osób zapytać. **Kogo** i jak (losowo, kwotowo, prz
 ### Populacja
 
 <Pytania licznik tag="Ćwiczenia · 2 zadania" tytul="" pytania={[
-  { q: 'Które grupy wieku z tabeli GUS tworzą pokolenie Z w tym zadaniu?', opcje: ['18, 19, 20–24, 25–29', '20–24 i 25–29', '15–19, 20–24, 25–29'], dobra: 0, dlaczego: 'Pokolenie Z to tu 18–29 lat: cztery grupy, w tym osobno 18 i 19. Odpowiedź „20–24 i 25–29” pomija 18 i 19 lat. Trzecia zaczyna od 15 lat, a badamy dorosłych.' },
+  { q: 'Które grupy wieku z tabeli GUS tworzą pokolenie Z w tym zadaniu?', opcje: ['18, 19, 20–24, 25–29', '16–19, 20–24, 25–29', '20–24 i 25–29'], dobra: 1, dlaczego: 'Pokolenie Z to tu 16–29 lat: grupa 16–19 z osobnej tabelki oraz 20–24 i 25–29. Pierwsza odpowiedź to wersja od 18 lat z innego arkusza. Trzecia pomija grupę 16–19.' },
   { q: 'Ile osób (obu płci) liczy pokolenie Y?', opcje: [`${fmt(Yp.m)}`, `${fmt(Yp.k)}`, `${fmt(Yp.razem)}`], dobra: 2, dlaczego: `${fmt(Yp.m)} mężczyzn + ${fmt(Yp.k)} kobiet = ${fmt(Yp.razem)}. Pierwsza odpowiedź to sami mężczyźni, druga same kobiety.` },
 ]} />
 
@@ -800,11 +809,12 @@ Liczebność mówi, **ile** osób zapytać. **Kogo** i jak (losowo, kwotowo, prz
 
 ### Projekt w Excelu
 
-<Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
+<Pytania licznik tag="Ćwiczenia · 8 zadań" tytul="" pytania={[
   { q: 'W kolumnie B wiersze 2–4 to mężczyźni z grup 16–19, 20–24 i 25–29. Którą formułą policzysz mężczyzn z pokolenia Z?', opcje: ['=SUMA(B2;B4)', '=SUMA(B2:B4)', '=B2:B4'], dobra: 1, dlaczego: 'Dwukropek to zakres: B2, B3 i B4. Średnik oddziela pojedyncze komórki, więc =SUMA(B2;B4) doda tylko 16–19 i 25–29 i pominie 20–24. Sam zakres bez SUMA niczego nie doda.' },
   { q: 'Po co znaki $ w formule =D13/$D$16?', opcje: ['Żeby wynik był w złotych', 'Żeby po przeciągnięciu formuły w dół dzielić zawsze przez N z komórki D16', 'Żeby Excel zaokrąglił wynik'], dobra: 1, dlaczego: 'Bez dolarów po przeciągnięciu w dół D16 zmieni się w D17, D18… i wynik będzie bez sensu. $ przypina komórkę. Z walutą i zaokrąglaniem nie ma to nic wspólnego.' },
-  { q: 'Arkusz pokazuje udział pokolenia Y: 39,05%. Co wpiszesz w polu „frakcja”, jeśli kalkulator przyjmuje ułamek?', opcje: ['0,3905', '39,05', '0,5'], dobra: 0, dlaczego: '39,05% to 39,05 : 100 = 0,3905. Liczba 39,05 w polu na ułamek to błąd — frakcja nie może być większa od 1. 0,5 bierze się tylko wtedy, gdy struktura nie jest znana.' },
-  { q: 'Kalkulator dla kryterium „pokolenie” (3 grupy, 95%) pokazał 365,67. Ile wynosi minimalna próba dla tego kryterium?', opcje: ['366', '559', '560'], dobra: 2, dlaczego: 'Pokolenia to 3 grupy, więc razy WWP: 365,67 · 1,53 ≈ 559,48. W górę: 560. Wynik 366 pomija WWP, a 559 to zaokrąglenie w dół.' },
+  { q: 'Udział pokolenia Y to 39,05%. Co wpiszesz w Biostacie w polu „Szacowana wielkość frakcji (P) – podaj %”?', opcje: ['0,3905', '39,05', '50'], dobra: 1, dlaczego: 'Pole jest w procentach, więc wpisujesz 39,05. Wpisane 0,3905 Biostat potraktuje jako 0,39%. 50 to wartość domyślna — tylko gdy struktura nie jest znana.' },
+  { q: 'Badanie ma poziom ufności 95%. Co wybierasz w Biostacie w polu „Wybierz poziom istotności (α)”?', opcje: ['95%', '1% (0.01)', '5% (0.05)'], dobra: 2, dlaczego: 'Poziom istotności to ryzyko, które zostaje: 100% − 95% = 5%. Wpisanie 95% oznaczałoby ufność 5%. 1% to poziom istotności dla ufności 99%.' },
+  { q: 'Biostat dla kryterium „pokolenie” (3 grupy, 95%) pokazał n = 366. Ile wynosi minimalna próba dla tego kryterium?', opcje: ['366', '559', '560'], dobra: 2, dlaczego: 'Pokolenia to 3 grupy, więc razy WWP: 366 · 1,53 = 559,98. W górę: 560. Wynik 366 pomija WWP, a 559 to zaokrąglenie w dół.' },
   { q: 'Dla kryterium „pokolenie” wyszło 560, dla płci 385. Jaką liczebność próby przyjmujesz?', opcje: ['945 — dodajemy oba wyniki', '560 — większy z dwóch', '385 — mniejszy z dwóch'], dobra: 1, dlaczego: 'Ta sama próba ma wystarczyć dla obu kryteriów, więc bierzesz większy wynik. 560 osób wystarczy też dla płci. Wyników się nie dodaje — to te same osoby opisane dwiema cechami.' },
   { q: 'Po zaokrągleniu kwot suma kratek wynosi 559, a n = 560. Co robisz?', opcje: ['Dodajesz 1 osobę w kratce zaokrąglonej w dół, która miała największą część po przecinku', 'Zostawiasz 559 — to tylko jedna osoba', 'Zmieniasz n na 561'], dobra: 0, dlaczego: 'Suma kwot musi dać n. Brakującą osobę dostaje kratka, którą zaokrąglono w dół, a która była najbliżej kolejnej liczby (np. 108,46 → 108 dostaje 1 i ma 109). Kratki zaokrąglonej już w górę nie ruszasz. Zmiana n psuje rachunek z kalkulatora.' },
   { q: 'Formuła =SUMA(B2:C10), czyli suma całej tabeli GUS, daje 2 028 969. Komórka N w tabeli pokoleń pokazuje 2 029 969. Co to znaczy?', opcje: ['Wszystko się zgadza', 'W tabeli pokoleń jest błąd o 1 000 — trzeba sprawdzić sumy pokoleń', 'Excel zaokrąglił liczby'], dobra: 1, dlaczego: 'Pokolenia składają się z tych samych osób co tabela GUS, więc obie sumy muszą być równe. 2 029 969 − 2 028 969 = 1 000, czyli któraś suma pokolenia jest przepisana albo policzona źle. Excel nie zaokrągla liczb całkowitych.' },
