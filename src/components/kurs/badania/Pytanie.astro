@@ -74,7 +74,7 @@ const T = (s: string) => texInline(s);
         {wiersze.map((w) => (
           <div class={`k-ank-semr ${w.kl ? `is-${w.kl}` : ''}`}>
             <span class="k-ank-l" set:html={T(w.t)} />
-            <span class="k-ank-k">{Array.from({ length: kratki }, () => <span class="k-ank-o" aria-hidden="true"></span>)}</span>
+            <span class="k-ank-k">{Array.from({ length: kratki }, () => <span class="k-ank-sq" aria-hidden="true"></span>)}</span>
             <span class="k-ank-r" set:html={T(w.p ?? '')} />
           </div>
         ))}
@@ -123,7 +123,7 @@ const T = (s: string) => texInline(s);
   .k-ank-l,.k-ank-r{flex:0 0 150px;}
   .k-ank-r{text-align:right;}
   .k-ank-k{flex:1;display:flex;justify-content:space-around;gap:4px;}
-  .k-ank-k .k-ank-o{width:16px;height:16px;}
+  .k-ank-k .k-ank-o,.k-ank-k .k-ank-sq{width:16px;height:16px;margin:0;}
   .k-ank-uw{margin:8px 0 0!important;padding:0!important;list-style:none!important;display:grid;gap:4px;font-size:.84rem;}
   .k-ank-uw li{padding:5px 8px;border-radius:3px;margin:0!important;}
   @media(max-width:520px){
