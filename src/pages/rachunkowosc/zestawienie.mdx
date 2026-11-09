@@ -1,0 +1,677 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: rachunkowosc
+slug: zestawienie
+wyglad: szeroki
+title: Zestawienie obrotów i sald
+podtytul: pełny cykl – bilans otwarcia, konta, zestawienie, bilans zamknięcia
+description: Zestawienie obrotów i sald od zera – saldo początkowe, obroty za okres i narastająco, saldo końcowe, trzy równości kontrolne, strata z lat ubiegłych na minusie i bilans zamknięcia z sald kont. Zad. 5.5 krok po kroku.
+lede: Po zaksięgowaniu operacji masz kilkanaście kont rozsianych po kartce. Zestawienie obrotów i sald zbiera je w jedną tabelę i od razu pokazuje, czy gdzieś nie ma błędu. Z niego budujesz bilans zamknięcia.
+wymaga: Konto teowe, strony Wn i Ma, saldo (moduł „Operacje i konta bilansowe”) i układ bilansu z ustawy (moduł „Bilans”). Najważniejsze przypominamy na miejscu.
+umiesz:
+  - otworzyć konta z bilansu otwarcia, także konto straty z lat ubiegłych
+  - zaksięgować operacje z nowymi kontami (obligacje, zaliczka, wkład niepieniężny, pokrycie straty)
+  - sporządzić zestawienie obrotów i sald i sprawdzić je trzema równościami
+  - przenieść salda końcowe do bilansu zamknięcia w układzie z ustawy
+  - znaleźć rodzaj błędu po tym, która para sum się nie zgadza
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Znak from '../../components/kurs/Znak.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import KontoT from '../../components/kurs/konta/KontoT.astro';
+import Konta from '../../components/kurs/konta/Konta.astro';
+import Rzad from '../../components/kurs/konta/Rzad.astro';
+import Zestawienie from '../../components/kurs/konta/Zestawienie.astro';
+import CwiczenieKsiegowanie from '../../components/kurs/konta/CwiczenieKsiegowanie.astro';
+import BilansTabela from '../../components/kurs/bilans/BilansTabela.astro';
+import CwiczenieBilans from '../../components/kurs/bilans/CwiczenieBilans.astro';
+import { zestawienie, zl } from '../../lib/konta.js';
+import { K55, O55 } from '../../lib/konta-zadania.js';
+
+export const KM = [
+  { id: 'kasa', nazwa: 'Kasa', typ: 'A', sp: 2000 },
+  { id: 'rb', nazwa: 'Rachunek bieżący', typ: 'A', sp: 10000 },
+  { id: 'kp', nazwa: 'Kapitał podstawowy', typ: 'P', sp: 12000 },
+];
+export const OM = [
+  { nr: 1, kwota: 1500, wn: 'rb', ma: 'kasa', opis: 'Gotówkę z kasy wpłacono na rachunek bankowy.' },
+  { nr: 2, kwota: 5000, wn: 'rb', ma: 'kp', opis: 'Wspólnik wpłacił na rachunek dodatkowy wkład do kapitału podstawowego.' },
+];
+export const RM = zestawienie(KM, OM, { okres: 'miesiąc' });
+
+export const R55 = zestawienie(K55, O55, { okres: 'styczeń' });
+export const S55 = Object.fromEntries(K55.map((k) => [k.id, R55.zam[k.id]]));
+export const DL55 = {
+  st: 'Środki trwałe służą firmie dłużej niż rok — rzeczowe aktywa trwałe.',
+  inw: 'Obligacje dwuletnie: pieniądze wrócą za ponad 12 miesięcy — inwestycje długoterminowe.',
+  mat: 'Materiały czekają w magazynie na zużycie — zapasy.',
+  prac: 'Zaliczkę pracownik musi rozliczyć albo oddać. To należność od pracownika — należności krótkoterminowe.',
+  kasa: 'Gotówka to środki pieniężne, a te stoją w inwestycjach krótkoterminowych.',
+  rb: 'Pieniądze na rachunku bieżącym też są środkami pieniężnymi — inwestycje krótkoterminowe, razem z kasą.',
+  kp: 'Kapitał podstawowy po wkładzie nowego udziałowca.',
+  strata: 'Niepokryta jeszcze część straty z lat ubiegłych. W kapitale własnym wchodzi z minusem.',
+  kred: 'Kredyt krótkoterminowy jest do spłaty w ciągu 12 miesięcy — zobowiązania krótkoterminowe.',
+  wyn: 'Wynagrodzenia jeszcze niewypłacone pracownikom — zobowiązania krótkoterminowe.',
+};
+export const SALDA55 = K55.filter((k) => S55[k.id].saldo !== 0).map((k, i) => ({ nr: i + 1, nazwa: k.nazwa, kwota: (k.ujemne ? -1 : 1) * S55[k.id].saldo, poz: k.poz, dlaczego: DL55[k.id] }));
+export const ZERO55 = K55.filter((k) => S55[k.id].saldo === 0).map((k) => k.nazwa);
+
+export const KB = [
+  { id: 'kasa', nazwa: 'Kasa', typ: 'A', sp: 3000 },
+  { id: 'rb', nazwa: 'Rachunek bieżący', typ: 'A', sp: 20000 },
+  { id: 'tow', nazwa: 'Towary', typ: 'A', sp: 15000 },
+  { id: 'kp', nazwa: 'Kapitał podstawowy', typ: 'P', sp: 35000 },
+  { id: 'strata', nazwa: 'Strata z lat ubiegłych', typ: 'P', ujemne: true, sp: 5000 },
+  { id: 'dost', nazwa: 'Rozrachunki z dostawcami', typ: 'P', sp: 8000 },
+];
+export const OB = [
+  { nr: 1, kwota: 5000, wn: 'dost', ma: 'rb', opis: 'Przelewem spłacono część długu wobec dostawcy.' },
+  { nr: 2, kwota: 2000, wn: 'kasa', ma: 'rb', opis: 'Podjęto gotówkę z rachunku do kasy.' },
+  { nr: 3, kwota: 4000, wn: 'tow', ma: 'dost', opis: 'Kupiono towary, zapłata za 30 dni.' },
+  { nr: 4, kwota: 3000, wn: 'rb', ma: 'strata', opis: 'Wspólnicy dopłacili przelewem, a dopłatą pokryto część straty z lat ubiegłych.' },
+];
+
+export const KONTA_KS = [
+  { id: 'kasa', nazwa: 'Kasa', typ: 'A' }, { id: 'rb', nazwa: 'Rachunek bieżący', typ: 'A' }, { id: 'st', nazwa: 'Środki trwałe', typ: 'A' },
+  { id: 'inw', nazwa: 'Inwestycje długoterminowe', typ: 'A' }, { id: 'prac', nazwa: 'Pozostałe rozrachunki z pracownikami', typ: 'A' },
+  { id: 'kp', nazwa: 'Kapitał podstawowy', typ: 'P' }, { id: 'strata', nazwa: 'Strata z lat ubiegłych', typ: 'P', ujemne: true },
+  { id: 'kred', nazwa: 'Kredyt bankowy', typ: 'P' }, { id: 'dost', nazwa: 'Rozrachunki z dostawcami', typ: 'P' }, { id: 'wyn', nazwa: 'Rozrachunki z tytułu wynagrodzeń', typ: 'P' },
+];
+export const OPS_KS = [
+  { nr: 1, kwota: 700, wn: 'prac', ma: 'kasa', opis: 'Z kasy wypłacono pracownikowi zaliczkę na zakup drobnych materiałów.' },
+  { nr: 2, kwota: 40000, wn: 'st', ma: 'kp', opis: 'Wspólnik wniósł do spółki samochód dostawczy jako wkład.' },
+  { nr: 3, kwota: 15000, wn: 'inw', ma: 'rb', opis: 'Kupiono pięcioletnie obligacje, zapłata przelewem.' },
+  { nr: 4, kwota: 8000, wn: 'wyn', ma: 'rb', opis: 'Przelewem wypłacono pracownikom zaległe wynagrodzenia.' },
+  { nr: 5, kwota: 2500, wn: 'kasa', ma: 'strata', opis: 'Wspólnicy wpłacili do kasy dopłaty, którymi pokryto stratę z lat ubiegłych.' },
+  { nr: 6, kwota: 6000, wn: 'dost', ma: 'kred', opis: 'Bank z udzielonego kredytu zapłacił za firmę dług wobec dostawcy.' },
+  { nr: 7, kwota: 300, wn: 'kasa', ma: 'prac', opis: 'Pracownik zwrócił do kasy niewykorzystaną część tej zaliczki.' },
+];
+
+export const DELTA = [
+  { nazwa: 'Rachunek bieżący', kwota: 12000, poz: 'AB3', dlaczego: 'Pieniądze na rachunku to środki pieniężne — inwestycje krótkoterminowe.' },
+  { nazwa: 'Pozostałe rozrachunki z pracownikami (nierozliczona zaliczka)', kwota: 800, poz: 'AB2', dlaczego: 'Pracownik musi rozliczyć zaliczkę. To należność od niego — należności krótkoterminowe, nie środki pieniężne.' },
+  { nazwa: 'Inwestycje długoterminowe (obligacje pięcioletnie)', kwota: 15000, poz: 'AA4', dlaczego: 'Pieniądze wrócą za ponad 12 miesięcy — inwestycje długoterminowe w aktywach trwałych.' },
+  { nazwa: 'Kasa', kwota: 1500, poz: 'AB3', dlaczego: 'Gotówka to środki pieniężne — inwestycje krótkoterminowe, ta sama pozycja co rachunek bieżący.' },
+  { nazwa: 'Strata z lat ubiegłych (saldo Wn)', kwota: -4000, poz: 'PA5', dlaczego: 'Konto ma saldo po Wn, ale nie jest majątkiem. To niepokryta strata — w pasywach A.V z minusem.' },
+  { nazwa: 'Kredyt bankowy krótkoterminowy', kwota: 10000, poz: 'PB3', dlaczego: 'Kredyt do spłaty w ciągu 12 miesięcy — zobowiązania krótkoterminowe.' },
+  { nazwa: 'Materiały', kwota: 7000, poz: 'AB1', dlaczego: 'Materiały to zapasy.' },
+  { nazwa: 'Rozrachunki z tytułu wynagrodzeń', kwota: 6000, poz: 'PB3', dlaczego: 'Wynagrodzenia do wypłaty pracownikom — zobowiązania krótkoterminowe.' },
+];
+
+## Po co to jest
+
+Wyobraź sobie koniec miesiąca w małej firmie. Na kartce masz dwanaście kont teowych. Każde ma swoje wpisy, obroty i saldo. Zanim zbudujesz z tego nowy bilans, warto sprawdzić, czy każda operacja trafiła na dwa konta w tej samej kwocie.
+
+Sprawdzanie konto po koncie trwa długo. Dlatego księgowi przepisują wszystkie konta do jednej tabeli — **zestawienia obrotów i sald**. Każde konto zajmuje w niej jeden wiersz. Na dole są sumy kolumn. Jeśli sumy Wn i Ma się zgadzają, można sporządzić bilans zamknięcia. Jeśli się nie zgadzają, od razu widać, gdzie szukać błędu.
+
+Na kolokwium to jedno długie zadanie z czterema poleceniami: otwórz konta, zaksięguj operacje, sporządź zestawienie, sporządź bilans zamknięcia. Przejdziemy je razem na zadaniu z zajęć (spółka MIKS). Piąte polecenie z mapy niżej — szukanie błędu — to częsty dodatek.
+
+## Co będzie na kolokwium
+
+<Polecenia items={[
+  { polecenie: 'Otwórz konta w układzie teowym', jak: 'Każdy składnik bilansu otwarcia dostaje konto z saldem początkowym: aktywa po Wn, pasywa po Ma, strata z lat ubiegłych po Wn. Dla nowych składników z operacji otwierasz konta puste.', przepis: 'polecenie-otworz', cwiczenia: 'cw-otworz', zrodlo: 'jak w Zad. 5.5, str. 67, pkt 1' },
+  { polecenie: 'Zaksięguj operacje gospodarcze na kontach', jak: 'Każda operacja na dwóch kontach, po przeciwnych stronach, w tej samej kwocie, z numerem operacji.', przepis: 'polecenie-ksieguj', cwiczenia: 'cw-ksieguj', zrodlo: 'jak w Zad. 5.5, str. 67, pkt 2' },
+  { polecenie: 'Sporządź zestawienie obrotów i sald', jak: 'Każde konto w jednym wierszu: saldo początkowe, obroty za okres, obroty narastająco, saldo końcowe. Na dole sumy — w każdej parze Wn = Ma.', przepis: 'polecenie-zois', cwiczenia: 'cw-zois', zrodlo: 'jak w Zad. 5.5, str. 67, pkt 3' },
+  { polecenie: 'Sporządź bilans zamknięcia', jak: 'Salda końcowe kont przenosisz na pozycje bilansu z ustawy. Strata wchodzi do pasywów z minusem, konta z saldem 0 pomijasz.', przepis: 'polecenie-bilans', cwiczenia: 'cw-bilans', zrodlo: 'jak w Zad. 5.5, str. 67, pkt 4' },
+  { polecenie: 'Sprawdź księgowanie zestawieniem albo znajdź błąd', jak: 'Porównujesz sumy w parach. To, która para się nie zgadza, mówi, jaki to błąd.', przepis: 'polecenie-kontrola', cwiczenia: 'cw-kontrola' },
+]} />
+
+Polecenie może brzmieć też „sporządź obroty i salda” albo „sporządź zestawienie obrotów i sald za styczeń”. Chodzi o tę samą tabelę.
+
+## Cztery liczby na każdym koncie
+
+Zestawienie bierze z każdego konta cztery liczby i stawia je obok siebie. Trzy z nich widać na koncie: Sp., „Obr.” i saldo. Czwartą trzeba policzyć: obroty bez Sp. Każda z tych liczb ma dwie wersje: po stronie Wn i po stronie Ma.
+
+<div class="k-symbole">
+  <Znak t="\text{Sp.}" nazwa="saldo początkowe" czytamy="saldo początkowe" znaczy="Stan konta na początek okresu, przepisany z bilansu otwarcia. Konto aktywne ma je po Wn, pasywne po Ma." pamiec="To samo „Sp.” co na koncie teowym." />
+  <Znak t="\text{Obroty}" nazwa="obroty za okres" czytamy="obroty za styczeń (za miesiąc, za okres)" znaczy="Suma wpisów z operacji po jednej stronie konta, bez salda początkowego." pamiec="Tylko to, co się wydarzyło w tym okresie." />
+  <Znak t="\text{Narast.}" nazwa="obroty narastająco" czytamy="obroty narastająco" znaczy="Saldo początkowe plus obroty za okres, osobno dla Wn i dla Ma." pamiec="To „Obr.” z konta — na zajęciach liczymy je razem z Sp." />
+  <Znak t="\text{Sk}" nazwa="saldo końcowe" czytamy="saldo końcowe" znaczy="Różnica: większe obroty narastająco minus mniejsze. Wpisujemy ją w kolumnie strony, która przeważa." pamiec="To stan konta na koniec okresu — trafi do bilansu zamknięcia." />
+</div>
+
+<Ramka kind="zapamietaj" tytul="zestawienie obrotów i sald">
+Tabela, w której **każde konto ma jeden wiersz**. Kolumny to **cztery pary**: saldo początkowe, obroty za okres, obroty narastająco i saldo końcowe. Każda para ma kolumnę Wn i kolumnę Ma. W ostatnim wierszu „Razem” dodajemy każdą kolumnę. **W każdej parze suma Wn równa się sumie Ma.**
+</Ramka>
+
+<Ramka kind="botak" tytul="dlaczego dwie kolumny obrotów">
+Na kontach z zajęć „Obr.” to suma strony razem z Sp. W zestawieniu ta liczba nazywa się **obroty narastająco**. Obok stoją **obroty za okres** — te same wpisy, ale bez Sp. Tak wygląda arkusz z zajęć i tak go wypełniamy.
+</Ramka>
+
+<Ramka kind="granica" tytul="narastająco w kolejnych miesiącach">
+- Konspekt z wykładu (art. 18 ustawy o rachunkowości): zestawienie podaje obroty za okres i obroty narastająco **od początku roku obrotowego**.
+- W pierwszym miesiącu roku, jak styczeń w Zad. 5.5: narastająco = saldo początkowe + obroty stycznia.
+- W lutym: narastająco = saldo początkowe + obroty stycznia + obroty lutego. Obroty za okres to dalej tylko luty.
+</Ramka>
+
+### Najpierw mały przykład
+
+Trzy konta i dwie operacje. Najpierw konta teowe, potem z nich zestawienie.
+
+<Konta konta={KM} operacje={OM}>
+na górze lista operacji, pod nią trzy konta. Kasa i rachunek bieżący to konta aktywne (Sp. po Wn), kapitał podstawowy — pasywne (Sp. po Ma). Na dole każdego konta: „Obr.” i saldo końcowe.
+</Konta>
+
+Teraz przepisujemy każde konto do jednego wiersza. Rachunek bieżący pełnymi zdaniami:
+
+- **Saldo początkowe:** 10 000 po Wn, bo to konto aktywne. Po Ma — 0.
+- **Obroty za miesiąc:** po Wn są dwa wpisy z operacji: 1 500 i 5 000. Razem 1 500 + 5 000 = 6 500. Po Ma nie ma wpisów — 0.
+- **Obroty narastająco:** Wn: 10 000 + 6 500 = 16 500. Ma: 0 + 0 = 0. To ta sama liczba co „Obr.” na koncie.
+- **Saldo końcowe:** 16 500 − 0 = 16 500. Przeważa Wn, więc liczba stoi w kolumnie Wn.
+
+<Zestawienie konta={KM} operacje={OM} okres="miesiąc">
+każdy wiersz to jedno konto z rysunku wyżej. Kolumny idą parami: najpierw Wn, potem Ma. Stuknij dowolną liczbę. Pod tabelą zobaczysz, skąd się wzięła, a w koncie teowym podświetli się miejsce, z którego ją przepisujemy. Wiersz „Razem” to sumy kolumn. W każdej parze wychodzi to samo po Wn i po Ma: 12 000 i 12 000, 6 500 i 6 500, 18 500 i 18 500, 17 000 i 17 000.
+</Zestawienie>
+
+<Ramka kind="pulapka">
+- Obroty za okres liczysz **bez** saldo początkowego.
+- Obroty narastająco liczysz **z** saldem początkowym.
+- Pomylenie tych dwóch kolumn to najczęstszy błąd w zestawieniu.
+- Przykład: rachunek bieżący wyżej. Za miesiąc Wn 6 500, narastająco Wn 16 500.
+</Ramka>
+
+<Ramka kind="pulapka" tytul="saldo końcowe — inna kolumna niż na koncie">
+- Na koncie saldo końcowe wpisujesz po stronie **mniejszej**, żeby obie strony się zrównały.
+- W zestawieniu stawiasz je w kolumnie strony, która **przeważa**.
+- Przykład: kasa wyżej. Wn 2 000, Ma 1 500, przeważa Wn. Na koncie „Sk Wn 500” stoi po stronie Ma. W zestawieniu 500 stoi w kolumnie **Wn**.
+</Ramka>
+
+## Strata z lat ubiegłych — pasywo na minusie
+
+W zadaniu z zajęć w bilansie otwarcia po stronie pasywów stoi „Strata z lat ubiegłych (−7 000)”. To nowy przypadek. Dotąd każde pasywo było liczbą dodatnią.
+
+<Ramka kind="zapamietaj" tytul="konto straty z lat ubiegłych">
+Strata zmniejsza kapitał własny, więc w bilansie stoi w pasywach **ze znakiem minus**. Na koncie zapisujemy ją jak „odwrotne pasywo”:
+- saldo początkowe straty stoi po **Wn**;
+- strata rośnie → zapis po **Wn**;
+- strata maleje, czyli ktoś ją pokrywa → zapis po **Ma**;
+- saldo końcowe wychodzi po **Wn**, a w bilansie wpisujemy je z minusem.
+</Ramka>
+
+<Rzad jedno><KontoT konto={{ nazwa: 'Strata z lat ubiegłych', typ: 'P', ujemne: true, sp: 7000 }} wpisy={[{ nr: 10, strona: 'ma', kwota: 4000 }]} /></Rzad>
+
+Jak czytać: na górze strony konta „+” po Wn (tu strata rośnie) i „−” po Ma (tu maleje). Sp. 7 000 stoi po Wn. W zadaniu z zajęć jedna z operacji (nr 10) pokrywa 4 000 straty dopłatą wspólników — zapis po Ma. Zostaje saldo Wn 7 000 − 4 000 = 3 000. To 3 000 niepokrytej straty.
+
+<Dlaczego typ="umowa">
+W typowym planie kont strata siedzi na koncie „Rozliczenie wyniku finansowego”. W zadaniach z zajęć konto nazywa się po prostu „Strata z lat ubiegłych”. Zasada stron jest ta sama.
+</Dlaczego>
+
+<Ramka kind="pulapka">
+- Strata ma saldo po Wn, ale **nie jest aktywem**.
+- Do bilansu nie wpisujesz jej w aktywach.
+- Wpisujesz ją w pasywach, w pozycji A.V, z minusem: −3 000.
+</Ramka>
+
+<a id="polecenie-otworz" class="k-anchor"></a>
+
+## Zadanie z zajęć: bilans otwarcia i konta
+
+<Ramka kind="polecenie">
+„Otwórz konta w układzie teowym.”
+
+1. **Wypisz składniki z bilansu otwarcia.** Każdy dostanie jedno konto.
+2. **Aktywa** — saldo początkowe po **Wn**, czyli po lewej stronie konta.
+3. **Pasywa** — saldo początkowe po **Ma**.
+4. **Strata z lat ubiegłych** — saldo początkowe po **Wn**, choć stoi w pasywach (pasywo na minusie).
+5. **Przeczytaj operacje.** Jeśli któraś dotyczy składnika, którego nie było w bilansie (np. obligacje, zaliczka), otwórz dla niego konto **bez Sp.**
+6. **Sprawdź bilans otwarcia:** suma Sp. aktywów = suma pasywów (strata z minusem).
+</Ramka>
+
+<Rozwiazanie tytul="Spółka MIKS — konta i księgowanie stycznia" zrodlo="Zad. 5.5, str. 67, pkt 1–2">
+<div slot="tresc">
+
+Spółka MIKS na 1 stycznia 20X6 r.:
+
+<div class="k-dwa">
+<div>
+
+| Aktywa | zł |
+|---|---:|
+| Środki trwałe | 31 000 |
+| Materiały | 18 000 |
+| Należności z tytułu dostaw i usług | 16 000 |
+| Środki pieniężne w kasie | 4 000 |
+| Środki pieniężne na rachunku | 11 000 |
+| **Razem** | **80 000** |
+
+</div>
+<div>
+
+| Pasywa | zł |
+|---|---:|
+| Kapitał podstawowy | 50 000 |
+| Strata z lat ubiegłych | (−7 000) |
+| Kredyt bankowy krótkoterminowy | 20 000 |
+| Zobowiązania z tytułu dostaw | 12 000 |
+| Zobowiązania z tytułu wynagrodzeń | 5 000 |
+| **Razem** | **80 000** |
+
+</div>
+</div>
+
+Operacje w styczniu:
+
+1. Odbiorcy wpłacili na rachunek bankowy pieniądze za wcześniejsze dostawy — 16 000 zł.
+2. Przelewem spłacono część długu wobec dostawcy — 6 000 zł.
+3. Z rachunku bankowego spłacono ratę kredytu — 5 000 zł.
+4. Kupiono dwuletnie obligacje państwowe, zapłata przelewem — 10 000 zł.
+5. Z kasy wypłacono pracownikowi zaliczkę na podróż służbową po kraju — 1 000 zł.
+6. Nowy udziałowiec wniósł do spółki środek trwały — 19 000 zł.
+7. Gotówkę z kasy wpłacono na rachunek bankowy — 3 000 zł.
+8. Przelewem wypłacono pracownikom zaległe wynagrodzenia — 2 000 zł.
+9. Część materiałów zwrócono dostawcy, bo były złej jakości — 6 000 zł.
+10. Dopłatami gotówkowymi wspólników pokryto stratę z poprzedniego roku — 4 000 zł.
+
+Polecenia: 1) otwórz konta w układzie teowym, 2) zaksięguj operacje, 3) sporządź zestawienie obrotów i sald za styczeń, 4) sporządź bilans zamknięcia na 31 stycznia 20X6 r.
+
+</div>
+
+<div slot="plan">
+
+1. Otwieramy konta: dziesięć składników z bilansu i dwa nowe, które pojawiają się w operacjach. Bez kont nie ma gdzie księgować.
+2. Każdą operację rozkładamy na dwa składniki. Przy każdym ustalamy: aktywo czy pasywo, rośnie czy maleje. Z tego wynika strona zapisu. Operacje grupujemy według typu, bo w jednej grupie rozumowanie jest takie samo.
+3. Zamykamy konta. Salda końcowe przydadzą się w zestawieniu i w bilansie.
+4. Punkty 3 i 4 zadania robimy w kolejnych sekcjach: zestawienie, potem bilans zamknięcia.
+
+</div>
+
+<Krok tytul="Otwórz konta">
+Aktywa (środki trwałe, materiały, należności, kasa, rachunek bieżący) — Sp. po Wn. Pasywa (kapitał podstawowy, kredyt, zobowiązania wobec dostawców i z tytułu wynagrodzeń) — Sp. po Ma. Strata z lat ubiegłych — Sp. 7 000 po **Wn**.
+
+Dwa konta otwieramy bez Sp.: **Inwestycje długoterminowe** (operacja 4, obligacje) i **Pozostałe rozrachunki z pracownikami** (operacja 5, zaliczka).
+
+Sprawdzenie bilansu otwarcia: aktywa 31 000 + 18 000 + 16 000 + 4 000 + 11 000 = 80 000. Pasywa 50 000 − 7 000 + 20 000 + 12 000 + 5 000 = 80 000. Zgadza się.
+
+<Dlaczego>
+Konto dostaje każdy składnik bilansu otwarcia, także ten bez ruchu. Do tego każdy nowy składnik z operacji. Należności „z tytułu dostaw i usług” księgujemy na koncie „Rozrachunki z odbiorcami”, a zobowiązania „z tytułu dostaw” — na „Rozrachunkach z dostawcami”. To te same składniki pod nazwą konta.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacje 1, 4, 5 i 7 — zamiana jednego aktywa na drugie (A)">
+Operacja 1: rachunek bieżący **rośnie** o 16 000 → Wn „Rachunek bieżący”. Należności **maleją** o 16 000 → Ma „Rozrachunki z odbiorcami”.
+
+Operacja 4: obligacje to nowe aktywo — „Inwestycje długoterminowe” rosną o 10 000 → Wn. Rachunek maleje o 10 000 → Ma „Rachunek bieżący”.
+
+Operacja 5: z kasy ubywa 1 000 → Ma „Kasa”. Pracownik jest teraz winien firmie rozliczenie zaliczki. Ta należność rośnie → Wn „Pozostałe rozrachunki z pracownikami”.
+
+Operacja 7: rachunek rośnie o 3 000 → Wn „Rachunek bieżący”. Kasa maleje o 3 000 → Ma „Kasa”.
+
+Wszystkie cztery to typ **A**: jedno aktywo rośnie, drugie maleje. Suma bilansowa się nie zmienia.
+
+<Dlaczego>
+Obligacje są **dwuletnie**, czyli pieniądze wrócą za ponad 12 miesięcy. Dlatego to inwestycja długoterminowa, a nie krótkoterminowa.
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+Zaliczka to nie wynagrodzenie i jeszcze nie koszt. Pracownik musi się z niej rozliczyć: oddać resztę albo przynieść rachunki za podróż. Do tego czasu jest należnością od pracownika.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacje 2, 3, 8 i 9 — spłaty i zwroty (AP−)">
+Operacja 2: zobowiązania wobec dostawcy (pasywo) **maleją** o 6 000 → Wn „Rozrachunki z dostawcami”. Rachunek (aktywo) **maleje** → Ma „Rachunek bieżący”.
+
+Operacja 3: kredyt maleje o 5 000 → Wn „Kredyt bankowy krótkoterminowy”. Rachunek maleje → Ma „Rachunek bieżący”.
+
+Operacja 8: dług wobec pracowników maleje o 2 000 → Wn „Rozrachunki z tytułu wynagrodzeń”. Rachunek maleje → Ma „Rachunek bieżący”.
+
+Operacja 9: zwracamy materiały, więc materiałów ubywa → Ma „Materiały”. Dostawca nie dostanie za nie pieniędzy, więc nasz dług wobec niego maleje → Wn „Rozrachunki z dostawcami”.
+
+Wszystkie cztery to **AP−**: aktywo i pasywo maleją. Suma bilansowa spada.
+
+<Dlaczego>
+Przy zwrocie materiałów nie płyną pieniądze. Zmniejsza się to, co jesteśmy winni dostawcy. Dlatego po drugiej stronie stoi zobowiązanie, a nie rachunek.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacje 6 i 10 — nowe źródła finansowania (AP+)">
+Operacja 6: środki trwałe rosną o 19 000 → Wn „Środki trwałe”. Nowy udziałowiec wniósł je jako wkład, więc kapitał podstawowy rośnie o 19 000 → Ma „Kapitał podstawowy”.
+
+Operacja 10: wspólnicy dopłacili gotówką, więc kasa rośnie o 4 000 → Wn „Kasa”. Tą dopłatą pokryto stratę — strata **maleje** o 4 000 → Ma „Strata z lat ubiegłych”.
+
+Obie to **AP+**: aktywo i pasywo rosną o tę samą kwotę, więc suma bilansowa rośnie. W operacji 10 trudniej to zobaczyć. Strata jest pasywem na minusie. Gdy strata maleje, pasywa rosną: z −7 000 robi się −3 000, czyli o 4 000 więcej.
+
+<Dlaczego>
+Wkład wspólnika nie musi być w gotówce. Może to być maszyna, samochód albo budynek. Taki wkład też zwiększa kapitał podstawowy.
+</Dlaczego>
+
+Wszystkie dziesięć operacji na kontach — obejrzyj je po kolei:
+
+<Konta konta={K55} operacje={O55} bilans typy>
+na górze bilans otwarcia (strata z minusem) i lista operacji z typem. Pod nimi dwanaście kont w kolejności z zestawienia z zajęć. Kwota każdej operacji trafia na dwa konta, po przeciwnych stronach. Na końcu zamykamy konta. Salda wypisujemy w prostym bilansie — w układzie z ustawy ułożymy je w punkcie 4.
+</Konta>
+</Krok>
+
+<Krok tytul="Zamknij konta">
+Przykład: rachunek bieżący.
+
+- Wn: Sp. 11 000, operacja 1: 16 000, operacja 7: 3 000. Obroty Wn: 11 000 + 16 000 + 3 000 = 30 000.
+- Ma: operacja 2: 6 000, operacja 3: 5 000, operacja 4: 10 000, operacja 8: 2 000. Obroty Ma: 6 000 + 5 000 + 10 000 + 2 000 = 23 000.
+- Saldo Wn: 30 000 − 23 000 = **7 000**.
+
+Przykład: rozrachunki z dostawcami. Ma: Sp. 12 000. Wn: 2) 6 000 i 9) 6 000, razem 12 000. Obie strony po 12 000 — saldo **0**. Dług wobec dostawcy zniknął.
+
+Pozostałe konta — w rysunku wyżej (kroki „zamknięcie”).
+
+<Dlaczego>
+Każde konto aktywne wyszło z saldem Wn albo zerem, a pasywne — z saldem Ma albo zerem. Strata ma saldo Wn, tak jak powinna. Saldo po „złej” stronie byłoby sygnałem, że któraś operacja trafiła na złą stronę. Wyjątkiem bywają konta rozrachunków, np. przy nadpłacie.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<a id="polecenie-ksieguj" class="k-anchor"></a>
+
+<Ramka kind="kiedy" tytul="jakie konto podpowiada treść operacji (nowe w tym zadaniu)">
+- „obligacje dwuletnie”, „akcje na dłużej niż rok” → **Inwestycje długoterminowe**;
+- „zaliczka dla pracownika” → **Pozostałe rozrachunki z pracownikami** (należność);
+- „zaległe wynagrodzenia” → **Rozrachunki z tytułu wynagrodzeń** (zobowiązanie);
+- „nowy udziałowiec wniósł…”, „wkład wspólnika” → **Kapitał podstawowy** po Ma;
+- „pokryto stratę z lat ubiegłych” → **Strata z lat ubiegłych** po Ma.
+</Ramka>
+
+<Ramka kind="polecenie">
+„Zaksięguj operacje gospodarcze na kontach.”
+
+1. Przy każdej operacji nazwij **dwa składniki** i przy każdym zapisz: rośnie czy maleje.
+2. Ustal, czy to **aktywo, pasywo, czy strata**.
+3. Strona: aktywa + → Wn, − → Ma; pasywa + → Ma, − → Wn; strata + → Wn, − → Ma.
+4. Sprawdź, że wyszły **przeciwne strony**. Jeśli obie kwoty wylądowały po Wn albo obie po Ma, jest błąd.
+5. Zapisz kwotę na obu kontach z numerem: po Wn „4) 10 000”, po Ma „10 000 (4”.
+</Ramka>
+
+<Ramka kind="granica">
+- „Obligacje dwuletnie” to inwestycja długoterminowa.
+- Obligacje z wykupem do 12 miesięcy byłyby inwestycją **krótkoterminową**.
+- Decyduje termin zwrotu pieniędzy liczony od dnia bilansowego, a nie nazwa papieru.
+</Ramka>
+
+<a id="polecenie-zois" class="k-anchor"></a>
+
+## Zestawienie obrotów i sald krok po kroku
+
+Cel: tabela z dwunastoma wierszami (po jednym na konto) i wierszem „Razem”, w którym **w każdej parze kolumn Wn = Ma**. Jeśli któraś para się nie zgadza, gdzieś jest błąd — wtedy wracamy do kont.
+
+<Ramka kind="polecenie">
+„Sporządź zestawienie obrotów i sald za styczeń.”
+
+1. **Wpisz konta** w kolejności z kont teowych (najczęściej: jak w bilansie otwarcia, a nowe konta na końcu).
+2. **Saldo początkowe:** przepisz Sp. z konta do kolumny tej strony, po której stoi (aktywa i strata → Wn, pasywa → Ma). W drugiej kolumnie pary — 0.
+3. **Obroty za okres:** dodaj wpisy z operacji po Wn — **bez Sp.** Potem to samo po Ma. Brak wpisów → 0.
+4. **Obroty narastająco:** Sp. + obroty za okres, osobno dla Wn i dla Ma. Sprawdź, że wyszło „Obr.” z konta.
+5. **Saldo końcowe:** większe narastająco minus mniejsze. Liczbę wpisz w kolumnie strony, która przeważa. W drugiej kolumnie — 0. Uwaga: na koncie to samo saldo stoi po stronie mniejszej.
+6. **Razem:** dodaj każdą z ośmiu kolumn. Sprawdź trzy równości: Sp. Wn = Sp. Ma, obroty Wn = obroty Ma, saldo końcowe Wn = saldo końcowe Ma.
+</Ramka>
+
+<Rozwiazanie tytul="Spółka MIKS — zestawienie obrotów i sald za styczeń" zrodlo="Zad. 5.5, str. 67, pkt 3">
+<div slot="plan">
+
+1. Przepisujemy salda początkowe — to bilans otwarcia w innej formie. Suma od razu sprawdza, czy dobrze otworzyliśmy konta.
+2. Liczymy obroty za styczeń, czyli same operacje. Suma sprawdza podwójny zapis.
+3. Dodajemy Sp. i obroty — wychodzą obroty narastająco. Porównujemy je z „Obr.” na kontach.
+4. Liczymy salda końcowe. Suma sprawdza rachunki sald i przygotowuje bilans zamknięcia.
+
+</div>
+
+<Krok tytul="Salda początkowe">
+Z kont przepisujemy Sp. Aktywa i strata trafiają do kolumny Wn: 31 000, 18 000, 16 000, 4 000, 11 000 i strata 7 000. Pasywa do kolumny Ma: 50 000, 20 000, 12 000, 5 000. Nowe konta (inwestycje, zaliczki) mają 0 w obu kolumnach.
+
+Razem Wn: 31 000 + 18 000 + 16 000 + 4 000 + 11 000 + 7 000 = **87 000**. Razem Ma: 50 000 + 20 000 + 12 000 + 5 000 = **87 000**. Równe.
+
+<Dlaczego>
+Suma bilansu otwarcia to 80 000, a tu wychodzi 87 000. To nie błąd.
+
+- Kolumna Wn: aktywa 80 000 + strata 7 000 = 87 000.
+- Kolumna Ma: pasywa bez straty, czyli 50 000 + 20 000 + 12 000 + 5 000 = 87 000.
+- W bilansie od tej kwoty odejmowaliśmy stratę: 87 000 − 7 000 = 80 000. W zestawieniu strata stoi po Wn, więc nic się nie odejmuje.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Obroty za styczeń">
+Dla każdego konta dodajemy wpisy z operacji, bez Sp. Przykład: rachunek bieżący. Wn: 16 000 + 3 000 = 19 000. Ma: 6 000 + 5 000 + 10 000 + 2 000 = 23 000.
+
+Razem obroty Wn: 19 000 + 4 000 + 19 000 + 5 000 + 12 000 + 2 000 + 10 000 + 1 000 = **72 000**. Razem obroty Ma: 6 000 + 16 000 + 4 000 + 23 000 + 19 000 + 4 000 = **72 000**. Równe.
+
+<Dlaczego>
+Kwoty dziesięciu operacji dają razem 16 000 + 6 000 + 5 000 + 10 000 + 1 000 + 19 000 + 3 000 + 2 000 + 6 000 + 4 000 = 72 000. Każdą z nich zapisaliśmy raz po Wn i raz po Ma. Dlatego obie sumy obrotów muszą dać właśnie tyle.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Obroty narastająco i salda końcowe">
+Narastająco = Sp. + obroty. Rachunek bieżący: Wn 11 000 + 19 000 = 30 000, Ma 0 + 23 000 = 23 000. Saldo końcowe: 30 000 − 23 000 = 7 000 w kolumnie Wn.
+
+Razem narastająco: 87 000 + 72 000 = **159 000** po obu stronach. Razem salda końcowe: **87 000** po obu stronach.
+
+Całe zestawienie — każdą liczbę możesz stuknąć:
+
+<Zestawienie konta={K55} operacje={O55} okres="styczeń">
+kolumny parami, najpierw Wn, potem Ma. Lewa kreska przy nazwie konta: turkusowa — konto aktywne, różowa — pasywne. Stuknij liczbę, żeby zobaczyć, skąd się wzięła. Pod tabelą pojawi się konto teowe z podświetlonym miejscem. Stuknięcie liczby w wierszu „Razem” podświetla kolumnę, którą dodajemy. Na telefonie przełączaj grupy kolumn przyciskami nad tabelą.
+</Zestawienie>
+
+<Dlaczego>
+Salda końcowe Wn dają 87 000, a aktywa w bilansie zamknięcia dadzą 84 000. Różnica 3 000 to znowu strata: stoi w kolumnie Wn, ale aktywem nie jest. 87 000 − 3 000 = 84 000.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="zapamietaj" tytul="trzy równości zestawienia">
+- **Saldo początkowe Wn = Ma** — bo bilans otwarcia się bilansował.
+- **Obroty za okres Wn = Ma** — bo każdą operację zapisujemy raz po Wn i raz po Ma, w tej samej kwocie.
+- **Saldo końcowe Wn = Ma** — bo każde saldo to różnica narastająco Wn i Ma jednego konta. Skoro sumy narastająco są równe (po 159 000), sumy sald też wychodzą równe.
+
+Obroty narastająco też są równe, bo to suma dwóch pierwszych par.
+</Ramka>
+
+<a id="polecenie-bilans" class="k-anchor"></a>
+
+## Bilans zamknięcia z sald kont
+
+Ostatni krok zadania. Salda końcowe to stany składników na 31 stycznia. Trzeba je tylko rozstawić na pozycje bilansu tak, jak w module „Bilans”. Przypomnienie: aktywa A to aktywa trwałe, B — obrotowe. Pasywa A to kapitał własny, B — kapitał obcy, czyli zobowiązania i rezerwy.
+
+<Ramka kind="polecenie">
+„Sporządź bilans zamknięcia na dzień 31 stycznia.”
+
+1. Weź **saldo końcowe** każdego konta (kolumny Sk z zestawienia).
+2. Konta z saldem **0** pomiń — tego składnika już nie ma.
+3. Każde saldo wpisz na **pozycję bilansu**:
+   - środki trwałe → A.II Rzeczowe aktywa trwałe;
+   - obligacje długoterminowe → A.IV Inwestycje długoterminowe;
+   - materiały → B.I Zapasy;
+   - zaliczki i należności → B.II Należności krótkoterminowe;
+   - kasa i rachunek → B.III Inwestycje krótkoterminowe.
+4. Pasywa:
+   - kapitał podstawowy → A.I Kapitał podstawowy;
+   - **strata → A.V Zysk (strata) z lat ubiegłych, z minusem**;
+   - kredyt krótkoterminowy i inne zobowiązania krótkoterminowe → B.III Zobowiązania krótkoterminowe.
+5. Policz sumy pozycji, sekcji i stron. Aktywa = pasywa.
+6. Sprawdź sumę drugą drogą: bilans otwarcia + AP+ − AP−.
+</Ramka>
+
+<Rozwiazanie tytul="Spółka MIKS — bilans zamknięcia na 31 stycznia 20X6 r." zrodlo="Zad. 5.5, str. 67, pkt 4">
+<div slot="plan">
+
+1. Bierzemy salda końcowe z zestawienia (kolumny Sk). Konta z saldem 0 odpadają.
+2. Rozstawiamy salda na pozycje bilansu — jak w module o bilansie, tylko kwoty są z kont.
+3. Kapitał własny liczymy jako sumę jego pozycji (strata z minusem). Różnica „aktywa minus kapitał obcy (zobowiązania)” tylko to sprawdza.
+4. Sumę bilansową sprawdzamy jeszcze przez typy operacji.
+
+</div>
+
+<Krok tytul="Salda końcowe na pozycje bilansu">
+Saldo 0 mają dwa konta: {ZERO55.map((n) => '„' + n + '”').join(' i ')}. Pomijamy je. Pozostałe dziesięć sald wpisujemy na pozycje:
+
+<BilansTabela skladniki={SALDA55} zKont>
+na górze lista sald końcowych z zestawienia, pod nią bilans w układzie z ustawy. „Obliczenia” pokazują, z których sald składa się pozycja, „Kwoty” — sumę pozycji i sekcji. Przycisk „Zobacz krok po kroku” przenosi każde saldo na jego pozycję.
+</BilansTabela>
+
+<Dlaczego>
+Kasa (4 000) i rachunek bieżący (7 000) to środki pieniężne. W bilansie z ustawy stoją razem w B.III Inwestycje krótkoterminowe: 4 000 + 7 000 = 11 000. Zaliczka dla pracownika (1 000) to należność, więc idzie do B.II.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawdzenie przez typy operacji">
+Na start suma bilansowa to 80 000. Operacje AP+ ją zwiększają: operacja 6 (19 000) i operacja 10 (4 000). Operacje AP− ją zmniejszają: operacje 2 (6 000), 3 (5 000), 8 (2 000) i 9 (6 000). Operacje A nic nie zmieniają.
+
+80 000 + 19 000 + 4 000 − 6 000 − 5 000 − 2 000 − 6 000 = **84 000**.
+
+Tyle samo wyszło w bilansie zamknięcia. Zgadza się.
+
+<Dlaczego>
+To sprawdzenie nie korzysta z kont. Jeśli obie drogi dają tę samą sumę, a aktywa równają się pasywom, sumy się zgadzają.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="granica">
+- Bilans zamknięcia prosto z sald działa, gdy wszystkie operacje są bilansowe.
+- W Zad. 5.5 nie ma kosztów ani przychodów, więc zysk (strata) netto wynosi 0.
+- Gdy dojdą konta wynikowe, najpierw trzeba ustalić wynik finansowy.
+</Ramka>
+
+<a id="polecenie-kontrola" class="k-anchor"></a>
+
+## Gdy sumy się nie zgadzają
+
+Zestawienie to najprostszy test księgowania. Po tym, która para sum się nie zgadza, poznasz rodzaj błędu.
+
+<Ramka kind="polecenie">
+„Sprawdź poprawność księgowania” albo „znajdź błąd w zestawieniu”.
+
+1. **Sp. Wn ≠ Sp. Ma** → źle przepisany bilans otwarcia. Porównaj salda początkowe z bilansem.
+2. **Obroty Wn ≠ obroty Ma** → błąd w podwójnym zapisie. Policz różnicę:
+   - różnica = kwota operacji → operację zapisano tylko na jednym koncie;
+   - różnica = 2 × kwota operacji → obie kwoty operacji trafiły na tę samą stronę;
+   - inna różnica → np. różne kwoty po obu stronach (przestawione cyfry: 5 400 i 4 500) albo pomyłka w dodawaniu obrotów jednego konta.
+3. **Obroty równe, ale salda końcowe nie** → błąd przy saldzie któregoś konta: pomyłka w odejmowaniu albo saldo w złej kolumnie (wtedy różnica = 2 × saldo).
+4. Wszystkie pary równe → zestawienie nie widzi błędu. To nie znaczy, że błędu nie ma (ramka niżej).
+</Ramka>
+
+Przykład. Przypuśćmy, że przy księgowaniu MIKS ratę kredytu (operacja 3, 5 000) zapisano po Wn na obu kontach — na kredycie i na rachunku bieżącym. Obroty Wn rosną o 5 000: 72 000 + 5 000 = 77 000. Po Ma brakuje 5 000: 72 000 − 5 000 = 67 000. Różnica: 77 000 − 67 000 = 10 000. To 2 × 5 000, czyli obie kwoty jednej operacji poszły na tę samą stronę.
+
+<Ramka kind="podobny" tytul="błąd, którego zestawienie nie zauważy">
+Operację 7 (wpłata 3 000 z kasy do banku) zapisano odwrotnie: Wn „Kasa”, Ma „Rachunek bieżący”.
+
+- Kasa: Wn 4 000 + 4 000 + 3 000 = 11 000, Ma 1 000. Saldo Wn 11 000 − 1 000 = 10 000 (powinno być 4 000).
+- Rachunek bieżący: Wn 11 000 + 16 000 = 27 000, Ma 23 000 + 3 000 = 26 000. Saldo Wn 27 000 − 26 000 = 1 000 (powinno być 7 000).
+- Obroty Wn i Ma dalej po 72 000. Salda końcowe dalej po 87 000.
+
+Zestawienie się zgadza, a dwa salda są złe. Tak samo przejdzie operacja zaksięgowana na złym koncie po właściwej stronie i operacja w ogóle pominięta.
+</Ramka>
+
+<Ramka kind="pulapka">
+- Równe sumy w zestawieniu nie dowodzą, że księgowanie jest dobre.
+- Dowodzą tylko, że suma zapisów po Wn równa się sumie zapisów po Ma.
+- Konta i strony sprawdzasz osobno: porównaj każdy zapis z treścią operacji.
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Zestawienie</b>Jedno konto = jeden wiersz. Cztery pary kolumn (Wn, Ma): Sp., obroty za okres, obroty narastająco, saldo końcowe.</div>
+  <div><b>Saldo początkowe</b>Z bilansu otwarcia. Aktywa i strata → Wn. Pasywa → Ma.</div>
+  <div><b>Obroty za okres</b>Same wpisy z operacji, bez Sp.</div>
+  <div><b>Obroty narastająco</b>Sp. + obroty za okres. To „Obr.” z konta.</div>
+  <div><b>Saldo końcowe</b>Większe narastająco − mniejsze. W kolumnie strony, która przeważa.</div>
+  <div><b>Trzy równości</b>Sp. Wn = Ma. Obroty Wn = Ma. Saldo końcowe Wn = Ma.</div>
+  <div><b>Strata z lat ubiegłych</b>Pasywo na minusie. Saldo Wn (w zestawieniu w kolumnie Wn). Pokrycie straty → Ma. W bilansie: pasywa A.V z minusem.</div>
+  <div><b>Pokrycie straty dopłatą</b>Wn Kasa (albo Rachunek), Ma Strata. Typ AP+.</div>
+  <div><b>Wkład niepieniężny</b>Wn Środki trwałe, Ma Kapitał podstawowy. AP+.</div>
+  <div><b>Zaliczka</b>Należność od pracownika: Wn Pozostałe rozrachunki z pracownikami. W bilansie B.II.</div>
+  <div><b>Bilans zamknięcia</b>Salda końcowe na pozycje z ustawy. Kasa + rachunek → B.III. Saldo 0 → pomijasz.</div>
+  <div><b>Szukanie błędu</b>Różnica obrotów = kwota → zapis po jednej stronie. = 2 × kwota → obie kwoty po tej samej stronie. Różnica tylko w saldach → odejmowanie albo saldo w złej kolumnie.</div>
+  <div><b>Saldo: konto a zestawienie</b>Na koncie po stronie mniejszej. W zestawieniu w kolumnie strony, która przeważa.</div>
+</div>
+
+<Ramka kind="gdzie">
+W firmach zestawienie obrotów i sald robi się zwykle na koniec każdego miesiąca. Programy księgowe tworzą je same. Gdy dojdą konta kosztów i przychodów, ich obroty z zestawienia posłużą do policzenia wyniku finansowego.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — także dobrej — jest wyjaśnienie.
+
+<a id="cw-otworz" class="k-anchor"></a>
+
+### Otwarcie kont
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'Po której stronie konta stoi saldo początkowe „Strata z lat ubiegłych”?', opcje: ['Po Ma, bo strata jest w pasywach', 'Po Wn — strata to pasywo ze znakiem minus', 'Nigdzie — dla straty nie otwieramy konta'], dobra: 1, dlaczego: 'Strata zmniejsza pasywa, więc na koncie stoi odwrotnie niż zwykłe pasywo: Sp. po Wn. Odpowiedź „po Ma” traktuje stratę jak zwykły kapitał. Konto otwieramy, bo strata może się zmienić, np. gdy wspólnicy ją pokryją.' },
+  { q: 'W bilansie otwarcia jest „kredyt bankowy krótkoterminowy 20 000”. Jak otwierasz konto?', opcje: ['Sp. 20 000 po Wn', 'Konto bez Sp. — kwota pojawi się przy spłacie', 'Sp. 20 000 po Ma'], dobra: 2, dlaczego: 'Kredyt to pasywo, więc saldo początkowe stoi po Ma. Po Wn stoją Sp. aktywów. Kwotę z bilansu otwarcia zawsze przepisujemy jako Sp., nie czekamy na operacje.' },
+  { q: 'W operacjach jest „zakup dwuletnich obligacji”, a w bilansie otwarcia nie ma żadnych inwestycji. Co robisz?', opcje: ['Otwierasz konto „Inwestycje długoterminowe” bez Sp.', 'Dopisujesz obligacje do bilansu otwarcia', 'Księgujesz zakup tylko na koncie „Rachunek bieżący”'], dobra: 0, dlaczego: 'Składnik, którego nie było na start, dostaje konto z pustym Sp. Bilansu otwarcia nie zmieniamy — to stan z 1 stycznia. Zapis tylko na jednym koncie łamie podwójny zapis.' },
+  { q: 'Bilans otwarcia: kapitał podstawowy 50 000, strata z lat ubiegłych (−7 000), zobowiązania razem 37 000. Ile wynosi suma pasywów?', opcje: ['94 000', '80 000', '87 000'], dobra: 1, dlaczego: '50 000 − 7 000 + 37 000 = 80 000. Wynik 94 000 wychodzi, gdy stratę doda się zamiast odjąć (50 000 + 7 000 + 37 000). 87 000 — gdy stratę się pominie (50 000 + 37 000).' },
+  { q: 'Pracownik dostał z kasy zaliczkę na podróż służbową. Jakie konto otwierasz dla zaliczki?', opcje: ['Rozrachunki z tytułu wynagrodzeń', 'Kapitał podstawowy', 'Pozostałe rozrachunki z pracownikami'], dobra: 2, dlaczego: 'Zaliczka to należność od pracownika: musi ją rozliczyć albo oddać. Rozrachunki z tytułu wynagrodzeń to dług firmy wobec pracowników za pracę — coś odwrotnego. Kapitał podstawowy nie ma z zaliczką nic wspólnego.' },
+]} />
+
+<a id="cw-ksieguj" class="k-anchor"></a>
+
+### Księgowanie operacji
+
+<CwiczenieKsiegowanie tytul="Zaksięguj siedem operacji" konta={KONTA_KS} operacje={OPS_KS}>
+Wśród kont jest strata z lat ubiegłych (pasywo na minusie): jej zmniejszenie zapisujesz po Ma.
+</CwiczenieKsiegowanie>
+
+<a id="cw-zois" class="k-anchor"></a>
+
+### Zestawienie obrotów i sald
+
+<Zestawienie tryb="cwicz" tytul="Spółka Bajt — zestawienie za marzec" konta={KB} operacje={OB} okres="marzec">
+<div slot="tresc">
+
+Spółka Bajt na 1 marca: kasa 3 000, rachunek bieżący 20 000, towary 15 000 (razem 38 000); kapitał podstawowy 35 000, strata z lat ubiegłych (−5 000), rozrachunki z dostawcami 8 000 (razem 38 000). Operacje marca: 1) przelewem spłacono dostawcę, 5 000; 2) podjęto gotówkę z rachunku do kasy, 2 000; 3) kupiono towary z zapłatą za 30 dni, 4 000; 4) wspólnicy dopłacili przelewem i pokryto część straty, 3 000. Konta są już zaksięgowane i zamknięte — przepisz je do zestawienia.
+
+</div>
+</Zestawienie>
+
+<Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
+  { q: 'Konto „Towary”: Sp. 9 000; po Wn 1) 4 000 i 3) 2 500; po Ma 1 500 (2. Ile wynoszą obroty Wn za okres?', opcje: ['15 500', '6 500', '5 000'], dobra: 1, dlaczego: 'Obroty za okres to same operacje, bez Sp.: 4 000 + 2 500 = 6 500. Wynik 15 500 to obroty narastająco (z Sp.). 5 000 wychodzi po odjęciu strony Ma — a obroty każdej strony liczymy osobno.' },
+  { q: 'To samo konto „Towary”. Ile wynoszą obroty Wn narastająco?', opcje: ['15 500', '6 500', '14 000'], dobra: 0, dlaczego: 'Sp. + obroty za okres: 9 000 + 6 500 = 15 500. To samo „Obr.” po Wn na koncie. 14 000 to już saldo końcowe (15 500 − 1 500).' },
+  { q: 'To samo konto „Towary”. Co wpisujesz w kolumnach salda końcowego?', opcje: ['Wn 0, Ma 14 000', 'Wn 5 000, Ma 0', 'Wn 14 000, Ma 0'], dobra: 2, dlaczego: 'Narastająco: Wn 15 500, Ma 1 500. Saldo: 15 500 − 1 500 = 14 000. Przeważa Wn, więc liczba stoi w kolumnie Wn. Na koncie wpisujemy ją po stronie mniejszej (Ma), ale w zestawieniu — w kolumnie strony, która przeważa. 5 000 to różnica obrotów bez Sp.' },
+  { q: 'Konto „Kredyt bankowy”: Sp. 25 000; po Wn 1) 5 000; po Ma 10 000 (2. Jak wygląda jego wiersz w kolumnach Sp. i saldo końcowe?', opcje: ['Sp. Ma 25 000, saldo końcowe Ma 30 000', 'Sp. Wn 25 000, saldo końcowe Wn 30 000', 'Sp. Ma 25 000, saldo końcowe Ma 20 000'], dobra: 0, dlaczego: 'Kredyt to pasywo: Sp. po Ma. Narastająco Ma: 25 000 + 10 000 = 35 000, Wn: 5 000. Saldo Ma: 35 000 − 5 000 = 30 000. Wynik 20 000 pomija nowy kredyt 10 000 po Ma.' },
+  { q: 'W wierszu „Razem” obroty za okres Wn wynoszą 48 300. Ile muszą wynosić obroty za okres Ma?', opcje: ['Nie da się ustalić bez kont', 'Tyle samo: 48 300', 'Tyle, ile salda końcowe Ma'], dobra: 1, dlaczego: 'Każdą operację zapisujemy raz po Wn i raz po Ma w tej samej kwocie. Dlatego suma obrotów Wn wszystkich kont równa się sumie obrotów Ma. Do tego nie trzeba patrzeć na konta.' },
+  { q: 'Salda początkowe w zestawieniu MIKS dają po 87 000, a bilans otwarcia ma sumę 80 000. Dlaczego?', opcje: ['W zestawieniu jest błąd', 'Bilans otwarcia pomija konta bez ruchu', 'Strata 7 000 stoi w kolumnie Wn, a w bilansie odejmujemy ją w pasywach'], dobra: 2, dlaczego: 'W zestawieniu strata jest zwykłą liczbą w kolumnie Wn. W bilansie stoi w pasywach z minusem. Stąd 80 000 + 7 000 = 87 000 po obu stronach zestawienia. To nie błąd.' },
+  { q: 'Konto „Rozrachunki z odbiorcami”: Sp. 16 000, odbiorcy zapłacili całość (16 000 po Ma). Co wpisujesz w kolumnach salda końcowego?', opcje: ['16 000 w kolumnie Wn', '0 w obu kolumnach', '16 000 w kolumnie Ma'], dobra: 1, dlaczego: 'Narastająco Wn 16 000, Ma 16 000. Obie strony są równe, więc saldo końcowe wynosi 0. Należność zniknęła — nikt nie jest już winien firmie pieniędzy za dostawy.' },
+]} />
+
+<a id="cw-bilans" class="k-anchor"></a>
+
+### Bilans zamknięcia
+
+<CwiczenieBilans tytul="Spółka Delta — salda końcowe do rozstawienia" firma="Salda końcowe kont spółki Delta na 31 marca. Rozstaw je na pozycje bilansu zamknięcia." elementy={DELTA} />
+
+<Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
+  { q: 'Salda końcowe: kasa 4 000 i rachunek bieżący 7 000. Co wpisujesz w aktywach B.III Inwestycje krótkoterminowe?', opcje: ['7 000', '11 000', '4 000 w B.III, a 7 000 w B.II'], dobra: 1, dlaczego: 'Kasa i rachunek to środki pieniężne. Obie kwoty stoją w B.III: 4 000 + 7 000 = 11 000. W B.II są należności, a nie pieniądze.' },
+  { q: 'Kapitał podstawowy 69 000, a konto straty z lat ubiegłych ma saldo Wn 3 000. Ile wynosi kapitał własny?', opcje: ['72 000', '69 000', '66 000'], dobra: 2, dlaczego: 'Strata wchodzi z minusem: 69 000 − 3 000 = 66 000. Wynik 72 000 dodaje stratę zamiast ją odjąć. 69 000 ją pomija.' },
+  { q: 'Konto „Rozrachunki z dostawcami” ma na koniec saldo 0. Co z nim w bilansie zamknięcia?', opcje: ['Pomijasz je — zobowiązania wobec dostawców już nie ma', 'Wpisujesz saldo początkowe 12 000', 'Wpisujesz je w aktywach z kwotą 0'], dobra: 0, dlaczego: 'Bilans zamknięcia pokazuje stan na koniec. Saldo 0 znaczy, że dług spłacono. Saldo początkowe to stan z 1 stycznia, nie z końca miesiąca.' },
+  { q: 'Bilans otwarcia: 80 000. W okresie AP+ na 19 000 i 4 000, AP− na 6 000, 5 000, 2 000 i 6 000 oraz cztery operacje A. Ile wynosi suma bilansu zamknięcia?', opcje: ['84 000', '103 000', '61 000'], dobra: 0, dlaczego: '80 000 + 19 000 + 4 000 − 6 000 − 5 000 − 2 000 − 6 000 = 84 000. Operacje A nie zmieniają sumy. 103 000 pomija operacje AP−, a 61 000 — operacje AP+.' },
+]} />
+
+<a id="cw-kontrola" class="k-anchor"></a>
+
+### Szukanie błędu
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'W wierszu „Razem” obroty za okres: Wn 72 000, Ma 67 000. Co najpewniej się stało?', opcje: ['Źle przepisano bilans otwarcia', 'Po Wn jest o 5 000 za dużo albo po Ma o 5 000 za mało — np. operację na 5 000 zapisano tylko po Wn', 'Źle policzono saldo któregoś konta'], dobra: 1, dlaczego: 'Różnią się obroty, więc błąd jest w podwójnym zapisie. Różnica 72 000 − 67 000 = 5 000. Tyle może wynosić operacja zapisana tylko na jednym koncie. Bilans otwarcia widać w kolumnach Sp., a saldo — w kolumnach Sk.' },
+  { q: 'Operację na 10 000 zapisano po Wn na obu kontach (zamiast Wn i Ma). O ile obroty Wn przewyższą obroty Ma w wierszu „Razem”?', opcje: ['10 000', '0 — sumy dalej będą równe', '20 000'], dobra: 2, dlaczego: 'Po Wn jest o 10 000 za dużo, a po Ma o 10 000 za mało. Różnica: 10 000 + 10 000 = 20 000, czyli 2 × kwota operacji.' },
+  { q: 'Wpłatę 3 000 z kasy do banku zapisano odwrotnie: Wn „Kasa”, Ma „Rachunek bieżący”. Czy zestawienie to wykryje?', opcje: ['Tak — sumy Wn i Ma się rozjadą', 'Nie — po obu stronach dalej jest po 3 000, więc sumy są równe', 'Tak — saldo kasy wyjdzie po Ma'], dobra: 1, dlaczego: 'Kwota trafiła raz po Wn i raz po Ma, tylko na zamienione konta. Wszystkie sumy w zestawieniu są równe. Salda kasy i rachunku są złe (10 000 zamiast 4 000 i 1 000 zamiast 7 000), ale oba dalej stoją po Wn.' },
+  { q: 'Salda początkowe w wierszu „Razem”: Wn 87 000, Ma 80 000. Gdzie szukasz błędu?', opcje: ['W księgowaniu operacji', 'W odejmowaniu przy saldach końcowych', 'W przepisaniu sald początkowych z bilansu otwarcia'], dobra: 2, dlaczego: 'Kolumny Sp. nie zależą od operacji. Ich różnica znaczy, że źle przepisano bilans otwarcia: brakuje 7 000 po Ma albo jest 7 000 za dużo po Wn.' },
+  { q: 'Sp. i obroty się zgadzają, ale salda końcowe dają Wn 87 000 i Ma 85 000. Co sprawdzasz?', opcje: ['Saldo każdego konta: odejmowanie i kolumnę, w której stoi', 'Czy każda operacja ma dwie strony', 'Bilans otwarcia'], dobra: 0, dlaczego: 'Skoro Sp. i obroty są równe, równe są też obroty narastająco. Salda końcowe muszą wtedy wyjść równe. Różnica 2 000 to pomyłka w odejmowaniu przy którymś koncie albo saldo 1 000 wpisane w złą kolumnę (różnica = 2 × 1 000).' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Sprawdź, czy rozumiesz zestawienie" pytania={[
+  { q: 'Co pokazuje zestawienie obrotów i sald?', opcje: ['Wszystkie konta w jednej tabeli: saldo początkowe, obroty, obroty narastająco i saldo końcowe', 'Tylko konta, które się zmieniły w okresie', 'Bilans zamknięcia w innym układzie'], dobra: 0, dlaczego: 'Zestawienie obejmuje wszystkie konta, także te bez ruchu (wtedy obroty za okres to 0). Bilansem nie jest — z niego dopiero powstaje bilans zamknięcia.' },
+  { q: 'Czym różnią się obroty narastająco od obrotów za okres?', opcje: ['Niczym — to dwie nazwy tej samej kolumny', 'Narastająco = saldo początkowe + obroty za okres', 'Narastająco = obroty za okres − saldo końcowe'], dobra: 1, dlaczego: 'Obroty za okres to same operacje. Narastająco dodajemy do nich saldo początkowe. Na kontach z zajęć „Obr.” to właśnie obroty narastająco.' },
+  { q: 'Dlaczego suma obrotów Wn wszystkich kont równa się sumie obrotów Ma?', opcje: ['Bo bilans zawsze się bilansuje', 'Bo salda końcowe są równe', 'Bo każdą operację zapisujemy raz po Wn i raz po Ma, w tej samej kwocie'], dobra: 2, dlaczego: 'To skutek podwójnego zapisu. Bilansowanie się bilansu wyjaśnia równość sald początkowych, a równość sald końcowych wynika z dwóch pozostałych.' },
+  { q: 'Jakie saldo ma konto „Strata z lat ubiegłych”?', opcje: ['Saldo Wn', 'Saldo Ma', 'Zależy od tego, czy stratę pokryto'], dobra: 0, dlaczego: 'Strata to pasywo na minusie: przeważa strona Wn, więc to saldo Wn. Na koncie wpisuje się je po stronie mniejszej (Ma), ale nazwa salda pochodzi od strony, która przeważa. Pokrycie straty zmniejsza saldo, ale nie zmienia jego strony.' },
+  { q: 'Wspólnicy dopłacili gotówkę do kasy i pokryto nią stratę z lat ubiegłych. Jaki to typ operacji?', opcje: ['A', 'AP−', 'AP+'], dobra: 2, dlaczego: 'Kasa (aktywo) rośnie. Strata maleje, więc pasywa rosną (np. z −7 000 na −3 000). Aktywa i pasywa rosną o tę samą kwotę — AP+.' },
+  { q: 'Nowy udziałowiec wniósł do spółki maszynę. Jaki jest zapis?', opcje: ['Wn „Kapitał podstawowy”, Ma „Środki trwałe”', 'Wn „Środki trwałe”, Ma „Kapitał podstawowy”', 'Wn „Środki trwałe”, Ma „Rachunek bieżący”'], dobra: 1, dlaczego: 'Maszyny przybywa (aktywo rośnie → Wn). Wkład zwiększa kapitał podstawowy (pasywo rośnie → Ma). Rachunek się nie zmienia, bo nikt nie płacił przelewem.' },
+  { q: 'Gdzie w bilansie stoi zaliczka wypłacona pracownikowi i jeszcze nierozliczona?', opcje: ['Aktywa B.III Inwestycje krótkoterminowe', 'Pasywa B.III Zobowiązania krótkoterminowe', 'Aktywa B.II Należności krótkoterminowe'], dobra: 2, dlaczego: 'Pracownik jest winien firmie rozliczenie, więc to należność. Pieniądze już wyszły z kasy, więc nie są to środki pieniężne. Zobowiązaniem byłby dług firmy wobec pracownika.' },
+  { q: 'Gdzie w bilansie stoją obligacje państwowe z wykupem za dwa lata?', opcje: ['Aktywa A.IV Inwestycje długoterminowe', 'Aktywa B.III Inwestycje krótkoterminowe', 'Pasywa B.II Zobowiązania długoterminowe'], dobra: 0, dlaczego: 'Pieniądze wrócą za ponad 12 miesięcy, więc to inwestycja długoterminowa. Obligacje, które firma kupiła, są jej majątkiem. Zobowiązaniem byłyby obligacje, które firma sama wyemitowała.' },
+  { q: 'Zestawienie się bilansuje we wszystkich parach. Co to znaczy?', opcje: ['Suma zapisów Wn równa się sumie Ma — ale konta i strony mogły być pomylone', 'Księgowanie jest na pewno bezbłędne', 'Bilans zamknięcia będzie miał tę samą sumę co bilans otwarcia'], dobra: 0, dlaczego: 'Równe sumy nie wykryją zapisu na złym koncie ani odwróconych stron dwóch kont. Suma bilansu zamknięcia zmienia się przy AP+ i AP−, więc zwykle jest inna niż na otwarcie.' },
+  { q: 'Salda końcowe Wn w zestawieniu MIKS dają 87 000, a aktywa w bilansie zamknięcia 84 000. Skąd różnica?', opcje: ['Z błędu w zestawieniu', 'Strata 3 000 ma saldo Wn, ale nie jest aktywem', 'Konta z saldem 0 odpadły'], dobra: 1, dlaczego: 'Strata stoi w kolumnie Wn zestawienia, ale w bilansie wpisujemy ją w pasywach z minusem: 87 000 − 3 000 = 84 000. Konta z saldem 0 nic nie zmieniają w sumie.' },
+]} />

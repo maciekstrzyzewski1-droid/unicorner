@@ -7,9 +7,9 @@ import { krokiBilansu, POZYCJE, SEKCJE, zl } from '../../../lib/bilans.js';
 import { texInline } from '../../../lib/tex.js';
 import Legenda from '../Legenda.astro';
 import Sterowanie from '../Sterowanie.astro';
-interface Props { skladniki: any[]; procenty?: any[]; reszta?: string; lista?: boolean }
-const { skladniki, procenty = [], reszta, lista = true } = Astro.props;
-const r = krokiBilansu(skladniki, { procenty, reszta });
+interface Props { skladniki: any[]; procenty?: any[]; reszta?: string; lista?: boolean; zKont?: boolean }
+const { skladniki, procenty = [], reszta, lista = true, zKont = false } = Astro.props;
+const r = krokiBilansu(skladniki, { procenty, reszta, zKont });
 const kroki = r.kroki;
 const ks = (a: string) => kroki.findIndex((s: any) => s.a === a);
 const odSkl: Record<string, number> = {};

@@ -4,8 +4,8 @@
 // („Sk Ma” po lewej, „Sk Wn” po prawej — liczba stoi tylko w jednym) i sumy obu stron.
 // Bez skryptu. Animację robi pudełko nadrzędne (Konta.astro) po atrybutach data-k / data-el / data-od.
 // od: { sp, wpis: { [nr]: krok }, obrWn, obrMa, sk, razem } — od którego kroku element jest widoczny.
-import { zamknij, zl, NBSP, NAZWA_TYPU, stronaZmiany } from '../../../lib/konta.js';
-interface Konto { id?: string; nazwa: string; typ: 'A' | 'P' | 'K'; sp?: number }
+import { zamknij, zl, NBSP, plusStrona, typKonta } from '../../../lib/konta.js';
+interface Konto { id?: string; nazwa: string; typ: 'A' | 'P' | 'K'; sp?: number; ujemne?: boolean }
 interface Wpis { nr: number | string; strona: 'wn' | 'ma'; kwota: number }
 interface Props {
   konto: Konto; wpisy?: Wpis[]; zamkniete?: boolean; znaki?: boolean; od?: any;
@@ -22,9 +22,9 @@ const kol = (s: 'wn' | 'ma'): Kom[] => [
 const wn = kol('wn'), ma = kol('ma');
 const n = Math.max(wn.length, ma.length, 2);
 const wiersze = Array.from({ length: n }, (_, i) => [wn[i], ma[i]]);
-const plus = stronaZmiany(konto.typ, '+');
+const plus = plusStrona(konto);
 const znak = (s: string) => (s === plus ? '+' : '−');
-const typTxt = konto.typ === 'K' ? 'konto kosztów' : `konto ${NAZWA_TYPU[konto.typ]}`;
+const typTxt = typKonta(konto);
 // lewa kolumna ma napis „Sk Ma” (saldo Ma wpisane po Wn), prawa — „Sk Wn” (saldo Wn wpisane po Ma), jak w arkuszu z zajęć
 const skMa = z.wpisSalda === 'wn' ? zl(z.saldo) : '';
 const skWn = z.wpisSalda === 'ma' ? zl(z.saldo) : '';

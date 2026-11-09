@@ -1,0 +1,243 @@
+---
+// Zestawienie obrotów i sald (ZOiS) jak arkusz z zajęć: Lp. | konto | saldo początkowe | obroty za okres | obroty narastająco |
+// saldo końcowe (każde Wn i Ma) + wiersz „Razem”. Liczby i wyjaśnienia z lib/konta.js (zestawienie).
+// tryb="pokaz": stuknięcie liczby → panel pod tabelą mówi, skąd się wzięła, i pokazuje konto teowe z podświetlonym miejscem.
+// tryb="cwicz": uczeń wpisuje kwoty (puste pole = 0), „Sprawdź” koloruje i wyjaśnia błędne pola; konta teowe nad tabelą.
+// Na telefonie przełącznik grup kolumn (Sp. / Obroty / Narast. / Sk / Wszystko); bez JS cała tabela przewija się w bok.
+import { zestawienie, KOLUMNY_ZOIS, zl } from '../../../lib/konta.js';
+import KontoT from './KontoT.astro';
+import Legenda from '../Legenda.astro';
+interface Props { konta: any[]; operacje: any[]; okres?: string; tryb?: 'pokaz' | 'cwicz'; tytul?: string; zrodlo?: string; kontaNad?: boolean }
+const { konta, operacje, okres = 'okres', tryb = 'pokaz', tytul = 'Wypełnij zestawienie obrotów i sald', zrodlo, kontaNad = tryb === 'cwicz' } = Astro.props;
+const r = zestawienie(konta, operacje, { okres });
+const S = ['wn', 'ma'] as const;
+const SN = { wn: 'Wn', ma: 'Ma' };
+const nazwaKol = (c: any) => (c.id === 'ob' ? `Obroty za ${okres}` : c.nazwa);
+const cw = tryb === 'cwicz';
+// wyjaśnienia kratek: klucz „id|kolumna|strona”
+const expl: [string, string][] = [];
+r.wiersze.forEach((w: any) => KOLUMNY_ZOIS.forEach((c) => S.forEach((s) => expl.push([`${w.konto.id}|${c.id}|${s}`, w.d[c.id][s]]))));
+KOLUMNY_ZOIS.forEach((c) => S.forEach((s) => expl.push([`razem|${c.id}|${s}`, r.dRazem[c.id][s]])));
+const liczba = (v: number) => (v === 0 ? '0' : zl(v));
+---
+<figure class:list={['k-fig k-zs', { 'k-ct': cw }]} data-zs data-tryb={tryb} data-g="all">
+  {cw && (
+    <div class="k-pyt-head">
+      <span class="k-pyt-tag k-ct-tag">Wypełnij sam</span>
+      <h3 class="k-pyt-h">{tytul}</h3>
+      {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+    </div>
+  )}
+  {cw && <div class="k-ct-tresc"><slot name="tresc" /></div>}
+  {kontaNad && (
+    <div class="k-zs-konta">
+      {r.wiersze.map((w: any) => <KontoT konto={w.konto} wpisy={w.wpisy} maly />)}
+    </div>
+  )}
+  {cw && <p class="k-ct-how" data-js-only hidden>Przepisz liczby z kont do tabeli. Puste pole liczy się jako 0. Na końcu dodaj kolumny w wierszu „Razem” i kliknij „Sprawdź”.</p>}
+  <div class="k-zs-gr" data-js-only hidden role="group" aria-label="Które kolumny pokazać">
+    {KOLUMNY_ZOIS.map((c) => <button type="button" class="k-zs-gb" data-gb={c.id}>{c.skrot}</button>)}
+    <button type="button" class="k-zs-gb" data-gb="all">Wszystko</button>
+  </div>
+  <div class="k-fig-box">
+    <div class="k-tp k-zs-tp">
+      <div class="k-tp-scroll">
+        <table class="k-zs-t">
+          <thead>
+            <tr>
+              <th rowspan="2" class="k-zs-lp">Lp.</th>
+              <th rowspan="2" class="k-zs-n">Konto</th>
+              {KOLUMNY_ZOIS.map((c) => <th colspan="2" data-gr={c.id} class="k-zs-gh">{nazwaKol(c)}</th>)}
+            </tr>
+            <tr>{KOLUMNY_ZOIS.map((c) => S.map((s) => <th data-gr={c.id} class:list={['k-zs-s', { 'is-ma': s === 'ma' }]}>{SN[s]}</th>))}</tr>
+          </thead>
+          <tbody>
+            {r.wiersze.map((w: any) => (
+              <tr class:list={[`is-${w.konto.typ}`, { 'is-ujemne': w.konto.ujemne }]} data-row={w.konto.id}>
+                <td class="k-zs-lp">{w.lp}.</td>
+                <th scope="row" class="k-zs-n">{w.konto.nazwa}</th>
+                {KOLUMNY_ZOIS.map((c) => S.map((s) => (
+                  <td data-gr={c.id} class:list={{ 'is-ma': s === 'ma' }}>
+                    {cw
+                      ? <input class="k-zs-in" type="text" inputmode="numeric" autocomplete="off" data-c={`${w.konto.id}|${c.id}|${s}`} data-ok={w.v[c.id][s]} aria-label={`${w.konto.nazwa}: ${nazwaKol(c)} ${SN[s]}`} />
+                      : <button type="button" class:list={['k-zs-c', { 'is-0': w.v[c.id][s] === 0 }]} data-c={`${w.konto.id}|${c.id}|${s}`} aria-label={`${w.konto.nazwa}: ${nazwaKol(c)} ${SN[s]} — ${liczba(w.v[c.id][s])}. Pokaż, skąd ta liczba`}>{liczba(w.v[c.id][s])}</button>}
+                  </td>
+                )))}
+              </tr>
+            ))}
+            <tr class="is-razem" data-row="razem">
+              <td class="k-zs-lp"></td>
+              <th scope="row" class="k-zs-n">Razem</th>
+              {KOLUMNY_ZOIS.map((c) => S.map((s) => (
+                <td data-gr={c.id} class:list={{ 'is-ma': s === 'ma' }}>
+                  {cw
+                    ? <input class="k-zs-in" type="text" inputmode="numeric" autocomplete="off" data-c={`razem|${c.id}|${s}`} data-ok={r.razem[c.id][s]} aria-label={`Razem: ${nazwaKol(c)} ${SN[s]}`} />
+                    : <button type="button" class="k-zs-c" data-c={`razem|${c.id}|${s}`} aria-label={`Razem: ${nazwaKol(c)} ${SN[s]} — ${liczba(r.razem[c.id][s])}`}>{liczba(r.razem[c.id][s])}</button>}
+                </td>
+              )))}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <Legenda items={[['cyan', 'konto aktywne'], ['roz', 'konto pasywne'], ['zloto', 'w każdej parze Wn = Ma']]} />
+  </div>
+  {cw ? (
+    <>
+      <div class="k-ct-ctl" data-js-only hidden>
+        <button type="button" class="k-btn" data-check>Sprawdź</button>
+        <button type="button" class="k-btn k-btn-ghost" data-show>Pokaż odpowiedzi</button>
+        <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
+      </div>
+      <div class="k-ct-wynik" hidden aria-live="polite">
+        <p class="k-ct-sum" data-sum></p>
+        <ul class="k-ct-bledy" data-bledy></ul>
+      </div>
+    </>
+  ) : (
+    <div class="k-zs-out k-live" aria-live="polite" data-out>
+      <p data-txt><span data-js-only hidden>Stuknij dowolną liczbę w zestawieniu. Tu pojawi się, skąd się wzięła, i konto, z którego ją przepisujemy.</span></p>
+      <div class="k-zs-mini" data-mini>
+        {r.wiersze.map((w: any) => <div data-kk={w.konto.id} hidden><KontoT konto={w.konto} wpisy={w.wpisy} maly /></div>)}
+      </div>
+    </div>
+  )}
+  <ul hidden data-expl>{expl.map(([k, h]) => <li data-cell={k} set:html={h} />)}</ul>
+  {cw && <noscript><p class="k-zs-ns">Odpowiedzi: {r.wiersze.map((w: any) => `${w.konto.nazwa}: ${KOLUMNY_ZOIS.map((c) => `${c.skrot} ${zl(w.v[c.id].wn)} / ${zl(w.v[c.id].ma)}`).join(', ')}`).join('; ')}.</p></noscript>}
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<style>
+  .k-zs{position:relative;}
+  :global(.k-szeroki .k-prose) > .k-zs.k-ct{max-width:none;}
+  .k-zs-konta{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px 18px;margin:4px 0 14px;}
+  .k-zs-tp{margin:0 0 6px;}
+  .k-zs-t th,.k-zs-t td{padding:3px 4px;}
+  .k-zs-t th.k-zs-n{text-align:left;white-space:normal;min-width:140px;max-width:230px;font-size:.88rem;line-height:1.3;font-weight:600;}
+  .k-zs-t .k-zs-lp{font-family:var(--mono);font-size:.78rem;color:var(--muted);font-weight:400;}
+  .k-zs-t th.k-zs-gh{font-size:.78rem;line-height:1.25;white-space:normal;border-left:2px solid var(--line2);}
+  .k-zs-t th.k-zs-s{font-family:var(--mono);font-size:.74rem;color:var(--muted);}
+  .k-zs-t th.k-zs-s:not(.is-ma),.k-zs-t td[data-gr]:not(.is-ma){border-left:2px solid var(--line2);}
+  .k-zs-t tr.is-A th.k-zs-n{box-shadow:inset 3px 0 0 var(--cyan);}
+  .k-zs-t tr.is-P th.k-zs-n{box-shadow:inset 3px 0 0 var(--magenta);}
+  .k-zs-t tr.is-razem th,.k-zs-t tr.is-razem td{border-top:2px solid var(--gold);background:rgba(255,216,74,.06);}
+  .k-zs-c{width:100%;min-width:58px;min-height:34px;padding:2px 6px;font:inherit;font-family:var(--mono);font-weight:700;font-size:.95rem;text-align:right;color:#fff;background:transparent;border:1px solid transparent;cursor:pointer;transition:background .15s,border-color .15s;}
+  .k-zs-c:hover{border-color:var(--accent);}
+  .k-zs-c:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-zs-c.is-0{color:var(--muted2);font-weight:400;}
+  .k-zs-c.is-on{background:rgba(255,216,74,.22);border-color:var(--gold);color:#fff;}
+  .k-zs-c.is-src{background:rgba(39,232,255,.12);}
+  .is-razem .k-zs-c{color:var(--gold);}
+  .k-zs-in{width:4.7em;height:38px;font-family:var(--mono);font-weight:700;font-size:1rem;text-align:right;color:var(--text);background:rgba(255,255,255,.04);border:1px dashed var(--line2);border-radius:0;padding:0 6px;}
+  .k-zs-in:focus{outline:2px solid var(--cyan);outline-offset:1px;border-style:solid;}
+  .k-zs-in.is-good{background:rgba(90,209,160,.16);border:1px solid var(--ok);}
+  .k-zs-in.is-bad{background:rgba(255,46,151,.2);border:1px solid var(--magenta);color:#ffd0e6;}
+  .k-zs-in.is-shown{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.5);}
+  .k-zs-gr{display:none;flex-wrap:wrap;gap:6px;margin:0 0 8px;}
+  .k-zs-gb{font-family:var(--mono);font-size:.78rem;font-weight:700;color:var(--text);background:transparent;border:1px solid var(--line2);padding:7px 10px;min-height:36px;cursor:pointer;}
+  .k-zs-gb.is-on{color:#0b0918;background:var(--gold);border-color:var(--gold);}
+  .k-zs-out{margin-top:10px;padding:10px 12px;border-left:2px solid var(--gold);background:rgba(255,216,74,.05);font-size:.92rem;line-height:1.6;}
+  .k-zs-out p{margin:0 0 8px!important;}
+  .k-zs-mini [data-kk]{max-width:330px;}
+  .k-zs-mini :global(.k-t-c.is-hl){background:rgba(255,216,74,.28);box-shadow:inset 0 0 0 1.5px var(--gold);}
+  .k-zs-ns{font-size:.85rem;color:var(--muted);}
+  @media(max-width:640px){
+    .k-zs-gr:not([hidden]){display:flex;}
+    .k-zs[data-g="sp"] [data-gr]:not([data-gr="sp"]),
+    .k-zs[data-g="ob"] [data-gr]:not([data-gr="ob"]),
+    .k-zs[data-g="na"] [data-gr]:not([data-gr="na"]),
+    .k-zs[data-g="sk"] [data-gr]:not([data-gr="sk"]){display:none;}
+    .k-zs:not([data-g="all"]) .k-zs-t .k-zs-lp{display:none;}
+    .k-zs-t th.k-zs-n{min-width:96px;font-size:.82rem;}
+    .k-zs-c{min-width:52px;font-size:.9rem;padding:2px 3px;}
+    .k-zs-in{width:4.4em;padding:0 4px;}
+  }
+  @media(max-width:380px){
+    .k-zs-t th.k-zs-n{min-width:84px;font-size:.76rem;hyphens:auto;}
+    .k-zs-c{min-width:46px;font-size:.84rem;}
+    .k-zs-t th,.k-zs-t td{padding:2px 3px;}
+  }
+</style>
+
+<script>
+  const SN: Record<string, string> = { wn: 'Wn', ma: 'Ma' };
+  const czytaj = (s: string) => {
+    const t = s.replace(/[\s .]/g, '').replace(/^−/, '-');
+    if (t === '') return 0;
+    return /^-?\d+$/.test(t) ? Number(t) : NaN;
+  };
+  const fmt = (n: number) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+  document.querySelectorAll<HTMLElement>('[data-zs]').forEach((box) => {
+    const own = <T extends Element>(sel: string) => Array.from(box.querySelectorAll<T>(sel)).filter((e) => e.closest('[data-zs]') === box);
+    own<HTMLElement>('[data-js-only]').forEach((e) => (e.hidden = false));
+    const expl = (k: string) => own<HTMLElement>('[data-expl] > li').find((li) => li.dataset.cell === k)?.innerHTML ?? '';
+    // grupy kolumn na telefonie
+    const gbs = own<HTMLButtonElement>('[data-gb]');
+    const ustawG = (g: string) => { box.dataset.g = g; gbs.forEach((b) => b.classList.toggle('is-on', b.dataset.gb === g)); };
+    gbs.forEach((b) => b.addEventListener('click', () => ustawG(b.dataset.gb!)));
+    ustawG(window.matchMedia('(max-width: 640px)').matches ? 'sp' : 'all');
+
+    if (box.dataset.tryb === 'pokaz') {
+      const out = own<HTMLElement>('[data-out]')[0];
+      const txt = out.querySelector<HTMLElement>('[data-txt]')!;
+      const cells = own<HTMLButtonElement>('.k-zs-c');
+      const minis = own<HTMLElement>('[data-kk]');
+      cells.forEach((b) => b.addEventListener('click', () => {
+        const [id, kol, s] = b.dataset.c!.split('|');
+        cells.forEach((c) => c.classList.remove('is-on', 'is-src'));
+        b.classList.add('is-on');
+        txt.innerHTML = expl(b.dataset.c!);
+        minis.forEach((m) => { m.hidden = m.dataset.kk !== id; m.querySelectorAll('.is-hl').forEach((e) => e.classList.remove('is-hl')); });
+        if (id === 'razem') cells.filter((c) => { const [i2, k2, s2] = c.dataset.c!.split('|'); return i2 !== 'razem' && k2 === kol && s2 === s; }).forEach((c) => c.classList.add('is-src'));
+        else {
+          const t = minis.find((m) => m.dataset.kk === id);
+          const hl = (sel: string) => t?.querySelectorAll<HTMLElement>(sel).forEach((e) => e.classList.add('is-hl'));
+          if (kol === 'sp') hl(`.k-t-body .k-t-c.is-${s}[data-el="sp"]`);
+          if (kol === 'ob') hl(`.k-t-body .k-t-c.is-${s}[data-el^="w-"]`);
+          if (kol === 'na') hl(`[data-el="obr-${s}"]`);
+          if (kol === 'sk') hl('[data-el="sk"]');
+        }
+        out.classList.add('is-live');
+      }));
+      return;
+    }
+
+    // tryb ćwiczenia
+    const ins = own<HTMLInputElement>('.k-zs-in');
+    const wynik = own<HTMLElement>('.k-ct-wynik')[0];
+    const sum = wynik.querySelector<HTMLElement>('[data-sum]')!;
+    const bledy = wynik.querySelector<HTMLElement>('[data-bledy]')!;
+    const czysc = (i: HTMLInputElement) => i.classList.remove('is-good', 'is-bad', 'is-shown');
+    ins.forEach((i) => i.addEventListener('input', () => czysc(i)));
+    own<HTMLButtonElement>('[data-check]')[0].addEventListener('click', () => {
+      const zle: HTMLInputElement[] = [];
+      ins.forEach((i) => {
+        czysc(i);
+        const ok = czytaj(i.value) === Number(i.dataset.ok);
+        i.classList.add(ok ? 'is-good' : 'is-bad');
+        if (!ok) zle.push(i);
+      });
+      bledy.innerHTML = '';
+      if (!zle.length) sum.innerHTML = '<b class="k-ct-ok">Wszystko dobrze!</b> Każda kwota się zgadza, a w wierszu „Razem” każda para Wn i Ma jest równa.';
+      else {
+        sum.innerHTML = `Dobrze: <b>${ins.length - zle.length}</b> z ${ins.length} pól · do poprawy: <b>${zle.length}</b> (na różowo). Dlaczego:`;
+        zle.slice(0, 12).forEach((i) => {
+          const li = document.createElement('li');
+          const wpis = czytaj(i.value);
+          const [, , s] = i.dataset.c!.split('|');
+          li.innerHTML = `${expl(i.dataset.c!)} <i>(wpisano: ${i.value.trim() === '' ? 'puste pole' : Number.isNaN(wpis) ? `„${i.value}” — to nie liczba` : fmt(wpis)}, strona ${SN[s]})</i>`;
+          bledy.appendChild(li);
+        });
+        if (zle.length > 12) { const li = document.createElement('li'); li.textContent = `…i jeszcze ${zle.length - 12}. Popraw te wyżej i sprawdź jeszcze raz.`; bledy.appendChild(li); }
+      }
+      wynik.hidden = false;
+    });
+    own<HTMLButtonElement>('[data-show]')[0].addEventListener('click', () => {
+      ins.forEach((i) => { czysc(i); i.value = fmt(Number(i.dataset.ok)); i.classList.add('is-shown'); });
+      sum.innerHTML = 'Tak wygląda wypełnione zestawienie. Stuknij „Wyczyść”, żeby spróbować samodzielnie.';
+      bledy.innerHTML = '';
+      wynik.hidden = false;
+    });
+    own<HTMLButtonElement>('[data-clear]')[0].addEventListener('click', () => { ins.forEach((i) => { i.value = ''; czysc(i); }); wynik.hidden = true; });
+  });
+</script>
