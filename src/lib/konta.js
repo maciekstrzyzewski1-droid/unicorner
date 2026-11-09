@@ -267,7 +267,7 @@ export function zestawienie(konta, operacje, { okres = 'okres' } = {}) {
       if (!z.saldoStrona) d.sk[s] = `${nz}, saldo końcowe: narastająco Wn i Ma są równe (${zl(z.obrWn)} i ${zl(z.obrMa)}), więc saldo wynosi <b>0</b> w obu kolumnach.`;
       else if (z.saldoStrona === s) {
         const [wi, mn] = s === 'wn' ? [z.obrWn, z.obrMa] : [z.obrMa, z.obrWn];
-        d.sk[s] = `${nz}, saldo końcowe ${S}: większe narastająco minus mniejsze = ${zl(wi)} − ${zl(mn)} = <b>${zl(z.saldo)}</b>. Przeważa ${S}, więc liczba stoi w kolumnie ${S}. Na koncie to „Sk ${S}”.`;
+        d.sk[s] = `${nz}, saldo końcowe ${S}: większe narastająco minus mniejsze = ${zl(wi)} − ${zl(mn)} = <b>${zl(z.saldo)}</b>. Przeważa ${S}, więc liczba stoi w kolumnie ${S}. Na koncie to „Sk ${S}”, wpisane po stronie mniejszej (${STRONA[z.wpisSalda]}).`;
       } else d.sk[s] = `${nz}, saldo końcowe ${S}: <b>0</b>. Saldo wyszło po ${STRONA[z.saldoStrona]} (${zl(z.saldo)}), więc w kolumnie ${S} jest zero.`;
     }
     return { lp: i + 1, konto: x, v, d, wpisy: w };
