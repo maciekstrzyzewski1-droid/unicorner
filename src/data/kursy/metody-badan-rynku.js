@@ -17,7 +17,7 @@ export const COURSE = {
 };
 
 export const MODULES = [
-  { nr: 1, slug: 'wielkosc-proby', title: 'Minimalna liczebność próby', short: 'Populacja z danych GUS, wzory dla cechy jakościowej i ilościowej, WWP, kilka kryteriów naraz i kwoty dla ankieterów.', status: 'soon', minutes: 60, cwiczenia: 'cwiczenia' },
+  { nr: 1, slug: 'wielkosc-proby', title: 'Minimalna liczebność próby', short: 'Populacja z danych GUS, projekt w Excelu z kalkulatorem, wzory dla cechy jakościowej i ilościowej, WWP, kilka kryteriów naraz i kwoty dla ankieterów.', status: 'soon', minutes: 80, cwiczenia: 'cwiczenia' },
   { nr: 2, slug: 'dobor-proby', title: 'Dobór próby', short: 'Dobór kwotowy krok po kroku: struktura populacji, struktura próby i schematy kwot dla ankieterów. Operat losowania, błędy doboru, metody nielosowe i internetowe.', status: 'soon' },
   { nr: 3, slug: 'proces-badania', title: 'Proces badania marketingowego', short: 'Decyzje w przedsiębiorstwie, marketingowy system informacyjny, fazy i etapy badania.', status: 'soon' },
   { nr: 4, slug: 'skale', title: 'Skale, kafeteria i błędy w pytaniach', short: 'Skale nominalna, porządkowa i stosunkowa, skale postaw, cztery zasady budowy kafeterii, pytania otwarte i zamknięte, błędy w pytaniach ankiety.', status: 'soon', minutes: 60, cwiczenia: 'cwiczenia' },

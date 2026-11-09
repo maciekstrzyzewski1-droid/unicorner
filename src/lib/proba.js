@@ -82,3 +82,42 @@ export const proc = (x, d = 2) => fmt(x * 100, d) + '%';
 
 // Błąd maksymalny (połowa przedziału ufności) dla danej liczby respondentów, z poprawką na skończoną populację
 export const blad = (n, Npop, z = 1.96, p = 0.5) => z * Math.sqrt((p * (1 - p)) / n) * Math.sqrt((Npop - n) / (Npop - 1));
+
+// --- Arkusz z zajęć „liczebność próby 2026 -g3”: pokolenie Z od 16 lat (GUS podaje osobno grupę 16–19) ---
+// 16–19 lat: [mężczyźni, kobiety] z tego samego arkusza (BDL, stan na 31.12.2025).
+export const GUS_16_19 = [81662, 76734];
+export const WARIANTY = {
+  '18': {
+    opis: 'pokolenie Z od 18 lat',
+    gus: [['18', GUS['18']], ['19', GUS['19']], ...['20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59'].map((g) => [g, GUS[g]])],
+    pok: [{ id: 'Z', wiek: '18–29', grupy: ['18', '19', '20-24', '25-29'] }, { id: 'Y', wiek: '30–44', grupy: ['30-34', '35-39', '40-44'] }, { id: 'X', wiek: '45–59', grupy: ['45-49', '50-54', '55-59'] }],
+  },
+  '16': {
+    opis: 'pokolenie Z od 16 lat (arkusz grupy 3)',
+    gus: [['16-19', GUS_16_19], ...['20-24', '25-29', '30-34', '35-39', '40-44', '45-49', '50-54', '55-59'].map((g) => [g, GUS[g]])],
+    pok: [{ id: 'Z', wiek: '16–29', grupy: ['16-19', '20-24', '25-29'] }, { id: 'Y', wiek: '30–44', grupy: ['30-34', '35-39', '40-44'] }, { id: 'X', wiek: '45–59', grupy: ['45-49', '50-54', '55-59'] }],
+  },
+};
+// Cały rachunek „od tabeli GUS do kwot” dla jednego wariantu: pokolenia, N, udziały, n dla pokolenia (z WWP) i płci, kwoty.
+export function arkusz(wariant, { ufnosc = 95, e = 0.05 } = {}) {
+  const W = WARIANTY[wariant];
+  const tab = Object.fromEntries(W.gus);
+  const pok = W.pok.map((p) => {
+    const m = p.grupy.reduce((s, g) => s + tab[g][0], 0);
+    const k = p.grupy.reduce((s, g) => s + tab[g][1], 0);
+    return { ...p, m, k, razem: m + k };
+  });
+  const NM_ = pok.reduce((s, p) => s + p.m, 0), NK_ = pok.reduce((s, p) => s + p.k, 0), N_ = NM_ + NK_;
+  const najw = pok.reduce((a, b) => (b.razem > a.razem ? b : a));
+  const pPok = najw.razem / N_;
+  const pPlec = Math.max(NM_, NK_) / N_;
+  const z = Z_UFNOSCI[ufnosc];
+  const kawalek = (p) => z * z * p * (1 - p);
+  const zN = (p) => (kawalek(p) * N_) / (kawalek(p) + (N_ - 1) * e * e);
+  const nPokBez = zN(pPok), nPok = nPokBez * wwp(ufnosc, pok.length), nPlec = zN(pPlec);
+  const n = Math.max(w_gore(nPok), w_gore(nPlec));
+  const komorki = pok.flatMap((p) => [{ id: p.id, plec: 'm', N: p.m }, { id: p.id, plec: 'k', N: p.k }]);
+  const al = alokuj(n, komorki.map((c) => c.N));
+  komorki.forEach((c, i) => { c.dokl = al.dokladnie[i]; c.kwota = al.wynik[i]; c.zaokr = Math.round(al.dokladnie[i]); });
+  return { W, tab, pok, NM: NM_, NK: NK_, N: N_, najw, pPok, pPlec, z, kawalek, nPokBez, nPok, nPlec, n, komorki, wwpPok: wwp(ufnosc, pok.length), ufnosc, e };
+}

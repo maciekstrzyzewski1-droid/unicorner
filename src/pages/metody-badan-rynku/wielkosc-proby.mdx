@@ -23,7 +23,12 @@ import Pytania from '../../components/kurs/Pytania.astro';
 import Polecenia from '../../components/kurs/Polecenia.astro';
 import Rozbior from '../../components/kurs/Rozbior.astro';
 import Znak from '../../components/kurs/Znak.astro';
-import { GUS, populacja, N, NM, NK, udzial, nJak, nIl, w_gore, alokuj, blad, fmt, proc } from '../../lib/proba.js';
+import ArkuszProby from '../../components/kurs/badania/ArkuszProby.astro';
+import Kalkulator from '../../components/kurs/badania/Kalkulator.astro';
+import { GUS, populacja, N, NM, NK, udzial, nJak, nIl, w_gore, alokuj, blad, fmt, proc, arkusz } from '../../lib/proba.js';
+
+export const A16 = arkusz('16');
+export const A18 = arkusz('18');
 
 export const Zp = populacja[0];
 export const Yp = populacja[1];
@@ -71,6 +76,7 @@ Ile to „kilkaset”? Za mała próba daje wynik, który jest zgadywaniem. Za d
   { polecenie: 'Oszacuj minimalną liczebność próby — cecha jakościowa', jak: 'Bierzesz najliczniejszą frakcję $p$, podstawiasz do wzoru, mnożysz przez WWP, gdy są co najmniej trzy grupy.', przepis: 'polecenie-jakosciowa', cwiczenia: 'cw-jakosciowa', zrodlo: 'jak w zadaniu z danymi GUS i w Zad. 2' },
   { polecenie: 'Oszacuj minimalną liczebność próby — cecha ilościowa', jak: 'Podstawiasz odchylenie standardowe (albo współczynnik zmienności) i błąd do wzoru.', przepis: 'polecenie-ilosciowa', cwiczenia: 'cw-ilosciowa', zrodlo: 'jak w Zad. 1 i Zad. 2' },
   { polecenie: 'Kilka kryteriów naraz — podaj jedną liczebność', jak: 'Liczysz próbę dla każdego kryterium osobno i bierzesz największą.', przepis: 'polecenie-kryteria', cwiczenia: 'cw-kryteria', zrodlo: 'jak w Zad. 2 i Zad. 3' },
+  { polecenie: 'Projekt w Excelu: z tabeli GUS przez kalkulator do kwot', jak: 'Sumujesz grupy wieku w pokolenia, liczysz udziały, wpisujesz frakcję, błąd, ufność i N do kalkulatora, mnożysz przez WWP i rozpisujesz kwoty.', przepis: 'polecenie-excel', cwiczenia: 'cw-excel', zrodlo: 'jak w arkuszu „liczebność próby 2026 -g3”' },
   { polecenie: 'Dobór kwotowy: struktura próby i kwoty dla ankieterów', jak: 'Udział grupy w populacji razy $n$, potem podział przez liczbę ankieterów.', przepis: 'polecenie-kwoty', cwiczenia: 'cw-kwoty', zrodlo: 'jak w schemacie doboru kwotowego' },
 ]} />
 
@@ -637,6 +643,74 @@ Gdy zwykłe zaokrąglenie nie daje sumy $n$, brakujące osoby dostają grupy z n
 - **Ułamek w kwocie ankietera.** Nie zaokrąglaj wszystkim tak samo. Daj różne schematy, żeby suma się zgadzała.
 </Ramka>
 
+<a id="polecenie-excel" class="k-anchor"></a>
+
+## Projekt w Excelu: od tabeli GUS do kwot
+
+Na zajęciach to samo zadanie robisz w arkuszu. Dostajesz tabelę z GUS, liczysz pokolenia, wpisujesz cztery liczby do kalkulatora minimalnej próby, a na końcu rozpisujesz kwoty. Niżej cały ten proces na kopii arkusza — formuła po formule.
+
+<Ramka kind="polecenie" tytul="Projekt: minimalna próba i kwoty w Excelu">
+1. **Tabela z GUS** (Bank Danych Lokalnych: ludność według grup wieku i płci). Znajdź liczby mężczyzn i kobiet w każdej grupie wieku.
+2. **Pokolenia.** W nowej tabelce dodaj grupy wieku jednego pokolenia, osobno mężczyzn i osobno kobiety: `=SUMA(…)`. Potem „razem” = mężczyźni + kobiety.
+3. **Ogółem.** Dodaj pokolenia. Liczba w rogu „ogółem — razem” to $N$.
+4. **Udziały.** Pokolenie : $N$ (formuła `=D…/$D$…`), format procentowy. To samo dla mężczyzn i kobiet.
+5. **Najliczniejsza frakcja.** Największy udział wśród pokoleń i największy wśród płci. Zamień procent na ułamek: 39,05% → 0,3905.
+6. **Kalkulator.** Wpisz poziom ufności, frakcję, maksymalny błąd i $N$. Osobno dla pokolenia i osobno dla płci.
+7. **WWP.** Wynik dla pokolenia (3 grupy) pomnóż przez 1,53. Płeć — bez WWP.
+8. **W górę i większy z dwóch.** Oba wyniki zaokrąglij w górę i weź większy. To $n$.
+9. **Kwoty.** Każda kratka pokolenie × płeć = $n$ · (osób w kratce) : $N$, zaokrąglona do całych osób. Suma kratek musi dać $n$.
+</Ramka>
+
+<Ramka kind="botak" tytul="Excel po polsku — cztery rzeczy">
+- Formuła zaczyna się od „=”.
+- Dwukropek to zakres: `=SUMA(B2:B4)` dodaje B2, B3 i B4. Średnik oddziela osobne komórki: `=SUMA(B2;B5)` dodaje tylko B2 i B5.
+- Znak `$` przypina komórkę przy kopiowaniu formuły: `$D$16` po przeciągnięciu w dół dalej wskazuje D16.
+- `ZAOKR(liczba;0)` zaokrągla do całości.
+</Ramka>
+
+Arkusz poniżej to wariant z arkusza „liczebność próby 2026 -g3”: pokolenie Z liczone **od 16 lat** (GUS podaje grupę 16–19 w jednej kolumnie). W pozostałych krokach tego modułu Z zaczyna się od 18 lat — wyniki dla tej wersji są w ramce pod arkuszem.
+
+<ArkuszProby wariant="16">
+na górze pasek „fx” — tu w każdym kroku pojawia się formuła do wpisania. Pod nim kopia arkusza: litery kolumn, numery wierszy, dane GUS, tabela pokoleń, liczebność próby i kwoty. Turkusowe kratki to te, z których liczymy, złote — wynik albo liczba, którą przepisujesz do kalkulatora. Dwa panele „Kalkulator minimalnej próby” pokazują, co wpisać w każde pole. Przycisk „Zobacz krok po kroku” odsłania wszystko po kolei.
+</ArkuszProby>
+
+<Ramka kind="pulapka" tytul="sprawdź sumy, zanim pójdziesz dalej">
+- W jednej z wersji arkusza kobiety z pokolenia X mają 363 644. Powinno być 140 061 + 121 999 + 100 584. Po kolei: 140 061 + 121 999 = 262 060, a 262 060 + 100 584 = **{fmt(A16.pok[2].k)}**.
+- Przez tę jedną liczbę $N$ wychodzi 2 029 969 zamiast **{fmt(A16.N)}**.
+- Tu $n$ akurat się nie zmienia, ale przy innych danych taka pomyłka potrafi zmienić wynik.
+- Sprawdzenie: suma mężczyzn + suma kobiet musi dać to samo co suma kolumny „razem”. {fmt(A16.NM)} + {fmt(A16.NK)} = {fmt(A16.N)}.
+</Ramka>
+
+<Ramka kind="podobny" tytul="ten sam projekt, gdy pokolenie Z zaczyna się od 18 lat">
+Grupy 18 i 19 zamiast 16–19 (jak w krokach 1–5 wyżej i w arkuszu „Liczebność generacje”):
+
+- $N$ = {fmt(A18.N)}, najliczniejsza frakcja: pokolenie Y, $p$ = {fmt(A18.pPok, 4)};
+- kalkulator: {fmt(A18.nPokBez, 2)}, razy WWP 1,53 ≈ {fmt(A18.nPok, 2)} → **{w_gore(A18.nPok)}**;
+- płeć: $p$ = {fmt(A18.pPlec, 4)}, kalkulator ≈ {fmt(A18.nPlec, 2)} → {w_gore(A18.nPlec)};
+- $n$ = **{A18.n}**, kwoty: Z — {A18.komorki[0].kwota} M i {A18.komorki[1].kwota} K, Y — {A18.komorki[2].kwota} M i {A18.komorki[3].kwota} K, X — {A18.komorki[4].kwota} M i {A18.komorki[5].kwota} K.
+
+Granice pokoleń to umowa. Zapisz w projekcie, jakie przyjęto.
+</Ramka>
+
+### Kalkulator — policz sam
+
+To samo, co robi kalkulator online, ale z całym rachunkiem pod spodem. Wpisz liczby albo wstaw je z przykładu.
+
+<Kalkulator start={{ uf: 95, p: fmt(A16.pPok, 4), e: '5', N: fmt(A16.N), grupy: 3 }} wstaw={[
+  { t: 'Pokolenie (Z od 16 lat)', uf: 95, p: fmt(A16.pPok, 4), e: '5', N: fmt(A16.N), grupy: 3 },
+  { t: 'Płeć (Z od 16 lat)', uf: 95, p: fmt(A16.pPlec, 4), e: '5', N: fmt(A16.N), grupy: 2 },
+  { t: 'Pokolenie (Z od 18 lat)', uf: 95, p: fmt(A18.pPok, 4), e: '5', N: fmt(A18.N), grupy: 3 },
+  { t: 'Zad. 2: liczba produktów', uf: 95, p: '0,48', e: '5', grupy: 4 },
+  { t: 'Zad. 3: rodzaj uczelni', uf: 95, p: '0,411', e: '4,5', grupy: 4 },
+]} />
+
+<Ramka kind="granica" tytul="kalkulator online a wzór z zajęć">
+- Kalkulatory w internecie zwykle **nie mają WWP**. Przy cesze z 3 i więcej grupami mnożysz wynik sam.
+- Niektóre liczą z $N \cdot e^2$ zamiast $(N-1) \cdot e^2$. Przy populacji rzędu milionów różnica jest niewidoczna.
+- Pole „frakcja” bywa w procentach (39,05), a bywa ułamkiem (0,3905). Sprawdź podpis pola.
+- Kalkulator nie wie, która frakcja jest najliczniejsza. Wybierasz ją sam z arkusza.
+</Ramka>
+
 ## Ściąga przed kolokwium
 
 <div class="k-sciaga">
@@ -649,6 +723,7 @@ Gdy zwykłe zaokrąglenie nie daje sumy $n$, brakujące osoby dostają grupy z n
   <div><b>$p = 0{,}5$</b>Tylko gdy treść nie podaje struktury. Podana struktura → najliczniejsza frakcja.</div>
   <div><b>Zaokrąglenie</b>Zawsze w górę, jeden raz, na końcu (po WWP).</div>
   <div><b>Jakościowa czy ilościowa?</b>Odsetki grup → jakościowa. Średnia i odchylenie albo $V$ → ilościowa.</div>
+  <div><b>Excel i kalkulator</b>Pokolenie: SUMA grup wieku. Udział: pokolenie : N (w formule N z dolarami). Do kalkulatora: ufność, frakcja jako ułamek, błąd, N. Potem sam razy WWP i w górę.</div>
   <div><b>Kwoty</b>Udział kratki w populacji razy $n$, potem przez liczbę ankieterów. Ułamki: schematy A i B.</div>
 </div>
 
@@ -695,6 +770,20 @@ Liczebność mówi, **ile** osób zapytać. **Kogo** i jak (losowo, kwotowo, prz
 
 <Pytania licznik tag="Ćwiczenia · 1 zadanie" tytul="" pytania={[
   { q: 'Trzy cechy dały $n$ równe 296, 517 i 637. Jaka jest minimalna liczebność próby?', opcje: ['296', '637', '1450 (suma)'], dobra: 1, dlaczego: 'Bierzemy największy wynik, bo musi wystarczyć dla każdej cechy. 296 nie wystarczy dwóm pozostałym. Sumy się nie liczy: ci sami ludzie odpowiadają na pytania o wszystkie cechy.' },
+]} />
+
+<a id="cw-excel" class="k-anchor"></a>
+
+### Projekt w Excelu
+
+<Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
+  { q: 'W kolumnie B wiersze 2–4 to mężczyźni z grup 16–19, 20–24 i 25–29. Którą formułą policzysz mężczyzn z pokolenia Z?', opcje: ['=SUMA(B2;B4)', '=SUMA(B2:B4)', '=B2:B4'], dobra: 1, dlaczego: 'Dwukropek to zakres: B2, B3 i B4. Średnik oddziela pojedyncze komórki, więc =SUMA(B2;B4) doda tylko 16–19 i 25–29 i pominie 20–24. Sam zakres bez SUMA niczego nie doda.' },
+  { q: 'Po co znaki $ w formule =D13/$D$16?', opcje: ['Żeby wynik był w złotych', 'Żeby po przeciągnięciu formuły w dół dzielić zawsze przez N z komórki D16', 'Żeby Excel zaokrąglił wynik'], dobra: 1, dlaczego: 'Bez dolarów po przeciągnięciu w dół D16 zmieni się w D17, D18… i wynik będzie bez sensu. $ przypina komórkę. Z walutą i zaokrąglaniem nie ma to nic wspólnego.' },
+  { q: 'Arkusz pokazuje udział pokolenia Y: 39,05%. Co wpiszesz w polu „frakcja”, jeśli kalkulator przyjmuje ułamek?', opcje: ['0,3905', '39,05', '0,5'], dobra: 0, dlaczego: '39,05% to 39,05 : 100 = 0,3905. Liczba 39,05 w polu na ułamek to błąd — frakcja nie może być większa od 1. 0,5 bierze się tylko wtedy, gdy struktura nie jest znana.' },
+  { q: 'Kalkulator dla kryterium „pokolenie” (3 grupy, 95%) pokazał 365,67. Ile wynosi minimalna próba dla tego kryterium?', opcje: ['366', '559', '560'], dobra: 2, dlaczego: 'Pokolenia to 3 grupy, więc razy WWP: 365,67 · 1,53 ≈ 559,48. W górę: 560. Wynik 366 pomija WWP, a 559 to zaokrąglenie w dół.' },
+  { q: 'Dla kryterium „pokolenie” wyszło 560, dla płci 385. Jaką liczebność próby przyjmujesz?', opcje: ['945 — dodajemy oba wyniki', '560 — większy z dwóch', '385 — mniejszy z dwóch'], dobra: 1, dlaczego: 'Ta sama próba ma wystarczyć dla obu kryteriów, więc bierzesz większy wynik. 560 osób wystarczy też dla płci. Wyników się nie dodaje — to te same osoby opisane dwiema cechami.' },
+  { q: 'Po zaokrągleniu kwot suma kratek wynosi 559, a n = 560. Co robisz?', opcje: ['Dodajesz 1 osobę w kratce z największą resztą po przecinku', 'Zostawiasz 559 — to tylko jedna osoba', 'Zmieniasz n na 561'], dobra: 0, dlaczego: 'Suma kwot musi dać n. Brakującą osobę dostaje kratka, której wynik przed zaokrągleniem był najbliżej kolejnej liczby (największa reszta). Zmiana n psuje rachunek z kalkulatora.' },
+  { q: 'Suma mężczyzn: 1 023 128, suma kobiet: 1 005 841, a komórka „ogółem razem” pokazuje 2 029 969. Co to znaczy?', opcje: ['Wszystko się zgadza', 'W którejś sumie jest błąd: 1 023 128 + 1 005 841 = 2 028 969, czyli o 1 000 mniej', 'Excel zaokrąglił liczby'], dobra: 1, dlaczego: 'Dodaj: 1 023 128 + 1 005 841 = 2 028 969. Komórka pokazuje o 1 000 więcej, więc któraś liczba jest przepisana albo zsumowana źle. Excel nie zaokrągla liczb całkowitych.' },
 ]} />
 
 <a id="cw-kwoty" class="k-anchor"></a>
