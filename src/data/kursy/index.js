@@ -2,8 +2,9 @@
 // Nowy kurs: dodaj plik src/data/kursy/<slug>.js (COURSE, MODULES, opcjonalnie SLOWNICZEK) i dopisz go tutaj.
 import * as matematyka from './matematyka.js';
 import * as rachunkowosc from './rachunkowosc.js';
+import * as badaniaRynku from './badania-rynku.js';
 
-export const KURSY = { matematyka, rachunkowosc };
+export const KURSY = { matematyka, rachunkowosc, 'badania-rynku': badaniaRynku };
 
 export function getKurs(slug) {
   const k = KURSY[slug];

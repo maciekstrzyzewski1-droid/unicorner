@@ -1,0 +1,115 @@
+---
+// Ćwiczenie „W których pytaniach złamano zasady budowy kafeterii? (zaznacz krzyżykiem)”.
+// Wiersze = zasady, kolumny = pytania. Uczeń stuka kratkę (puste ↔ ✕), „Sprawdź” koloruje i przy każdej
+// błędnej kratce pisze, dlaczego zasada jest (albo nie jest) złamana. Dane: zle[z][p] = true, gdy pytanie p
+// łamie zasadę z; dlaczego[z][p] = jedno-dwa zdania wyjaśnienia (dla każdej kratki, także pustej).
+import { texInline } from '../../../lib/tex.js';
+interface Props { tytul: string; pytania: string[]; zasady: string[]; zle: boolean[][]; dlaczego: string[][]; zrodlo?: string; naglowek?: string }
+const { tytul, pytania, zasady, zle, dlaczego, zrodlo, naglowek = 'Kafeteria nie jest…' } = Astro.props;
+if (zle.length !== zasady.length || dlaczego.length !== zasady.length) throw new Error(`CwiczenieKafeteria „${tytul}”: liczba wierszy ≠ liczba zasad`);
+zle.forEach((w, i) => { if (w.length !== pytania.length || dlaczego[i].length !== pytania.length) throw new Error(`CwiczenieKafeteria „${tytul}”: wiersz ${i + 1} ma złą liczbę kolumn`); });
+---
+<section class="k-ct k-kaf" data-kaf>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Zaznacz sam</span>
+    <h3 class="k-pyt-h">{tytul}</h3>
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </div>
+  <div class="k-ct-tresc"><slot /></div>
+  <p class="k-ct-how" data-js-only hidden>Stuknij kratkę, żeby postawić krzyżyk ✕ (drugie stuknięcie go zdejmuje). Krzyżyk = „to pytanie łamie tę zasadę”. Potem kliknij „Sprawdź”.</p>
+  <div class="k-tp k-ct-tab">
+    <div class="k-tp-scroll">
+      <table>
+        <thead>
+          <tr><th class="k-kaf-h"><span class="k-kaf-pel">{naglowek}</span><span class="k-kaf-skr" aria-hidden="true">Nie jest…</span></th>{pytania.map((p) => <th>{p}</th>)}</tr>
+        </thead>
+        <tbody>
+          {zasady.map((z, zi) => (
+            <tr>
+              <th class="k-kaf-z" scope="row"><span class="k-kaf-pel">…{z}</span><span class="k-kaf-skr" aria-hidden="true">{z.slice(0, 4)}.</span></th>
+              {pytania.map((p, pi) => (
+                <td><button type="button" class="k-ct-c" data-ok={zle[zi][pi] ? 'x' : ''} data-z={zi} data-p={pi} aria-label={`${p}: kafeteria nie jest ${z}`}>·</button></td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="k-ct-ctl" data-js-only hidden>
+    <button type="button" class="k-btn" data-check>Sprawdź</button>
+    <button type="button" class="k-btn k-btn-ghost" data-show>Pokaż odpowiedzi</button>
+    <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
+  </div>
+  <div class="k-ct-wynik" hidden aria-live="polite">
+    <p class="k-ct-sum" data-sum></p>
+    <ul class="k-ct-bledy" data-bledy></ul>
+  </div>
+  <ul hidden data-expl>
+    {zasady.map((z, zi) => pytania.map((p, pi) => (
+      <li data-cell={`${zi}-${pi}`} set:html={`<b>${p}, ${zle[zi][pi] ? 'nie jest' : 'jest'} ${z}.</b> ${texInline(dlaczego[zi][pi])}`} />
+    )))}
+  </ul>
+  <noscript>
+    <ul class="k-kaf-ns">
+      {zasady.map((z, zi) => pytania.map((p, pi) => zle[zi][pi] && <li set:html={`<b>${p} — nie jest ${z}.</b> ${texInline(dlaczego[zi][pi])}`} />))}
+    </ul>
+  </noscript>
+</section>
+
+<style>
+  .k-kaf th.k-kaf-h,.k-kaf th.k-kaf-z{text-align:left;font-weight:600;font-size:.86rem;white-space:nowrap;padding-right:10px;}
+  .k-kaf th{text-align:center;}
+  .k-kaf td{min-width:52px;}
+  .k-kaf-skr{display:none;}
+  @media(max-width:520px){
+    .k-kaf-pel{display:none;}
+    .k-kaf-skr{display:inline;}
+    .k-kaf td{min-width:38px;padding:2px!important;}
+    .k-kaf th.k-kaf-z,.k-kaf th.k-kaf-h{padding:4px 6px 4px 2px;font-size:.8rem;}
+    .k-kaf :global(.k-ct-c){min-width:32px;}
+  }
+  .k-kaf :global(.k-ct-c[data-v="x"]){color:var(--magenta);border-style:solid;}
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-kaf]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => { if (el.closest('[data-kaf]') === box) el.hidden = false; });
+    const cells = Array.from(box.querySelectorAll<HTMLButtonElement>('.k-ct-c'));
+    const wynik = box.querySelector<HTMLElement>('.k-ct-wynik')!;
+    const sum = box.querySelector<HTMLElement>('[data-sum]')!;
+    const bledy = box.querySelector<HTMLElement>('[data-bledy]')!;
+    const set = (b: HTMLButtonElement, v: string) => {
+      b.dataset.v = v;
+      b.textContent = v === 'x' ? '✕' : '·';
+      b.classList.remove('is-good', 'is-bad', 'is-empty', 'is-shown');
+    };
+    cells.forEach((b) => b.addEventListener('click', () => set(b, b.dataset.v === 'x' ? '' : 'x')));
+    const expl = (b: HTMLButtonElement) => box.querySelector(`[data-expl] [data-cell="${b.dataset.z}-${b.dataset.p}"]`)?.innerHTML ?? '';
+    box.querySelector('[data-check]')!.addEventListener('click', () => {
+      const wrong: HTMLButtonElement[] = [];
+      let good = 0;
+      cells.forEach((b) => {
+        b.classList.remove('is-good', 'is-bad');
+        const ok = (b.dataset.v ?? '') === (b.dataset.ok ?? '');
+        if (ok) { good++; if (b.dataset.v === 'x') b.classList.add('is-good'); }
+        else { wrong.push(b); b.classList.add('is-bad'); }
+      });
+      bledy.innerHTML = '';
+      if (!wrong.length) sum.innerHTML = '<b class="k-ct-ok">Wszystko dobrze!</b> Każdy krzyżyk stoi na swoim miejscu i żadnego nie brakuje.';
+      else {
+        sum.innerHTML = `Dobrze: <b>${good}</b> z ${cells.length} kratek · do poprawy: <b>${wrong.length}</b> (na różowo). Dlaczego:`;
+        wrong.forEach((b) => { const li = document.createElement('li'); li.innerHTML = expl(b); bledy.appendChild(li); });
+      }
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-show]')!.addEventListener('click', () => {
+      cells.forEach((b) => { set(b, b.dataset.ok ?? ''); if (b.dataset.ok) b.classList.add('is-shown'); });
+      sum.innerHTML = 'Tak wygląda rozwiązanie. Przy każdym krzyżyku — dlaczego zasada jest złamana:';
+      bledy.innerHTML = '';
+      cells.filter((b) => b.dataset.ok).forEach((b) => { const li = document.createElement('li'); li.innerHTML = expl(b); bledy.appendChild(li); });
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-clear]')!.addEventListener('click', () => { cells.forEach((b) => set(b, '')); wynik.hidden = true; });
+  });
+</script>
