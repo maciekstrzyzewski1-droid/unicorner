@@ -19,6 +19,16 @@ const ownHead = Astro.slots.has('head');
 const canonical = new URL(Astro.url.pathname.replace(/(^|\/)index\.html$/, '$1'), Astro.site).href;
 // Podgląd przy udostępnianiu linku (Messenger, Discord, LinkedIn…) — bez tego link wygląda jak goła ramka tekstu
 const ogImage = new URL('/og-image.jpg', Astro.site).href;
+// Dane strukturalne tylko dla strony głównej: mówią Google, że „Unicorner” / „unicorner.pl” to nazwa tej witryny
+// (a nie restauracji o tej samej nazwie). Kursy mają własny JSON-LD w layouts/Kurs.astro.
+const isHome = canonical === new URL('/', Astro.site).href;
+const ldWitryna = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'WebSite', '@id': 'https://unicorner.pl/#witryna', url: 'https://unicorner.pl/', name: 'Unicorner', alternateName: ['unicorner.pl', 'Unicorner.pl'], inLanguage: 'pl', description },
+    { '@type': 'Organization', '@id': 'https://unicorner.pl/#organizacja', name: 'Unicorner', url: 'https://unicorner.pl/', logo: 'https://unicorner.pl/apple-touch-icon.png' },
+  ],
+};
 ---
 
 <!doctype html>
@@ -48,6 +58,7 @@ const ogImage = new URL('/og-image.jpg', Astro.site).href;
         <meta name="twitter:card" content="summary_large_image" />
       </>
     )}
+    {isHome && <script type="application/ld+json" set:html={JSON.stringify(ldWitryna)} />}
     <!-- fonty z naszej domeny (public/fonts), nie z Google Fonts: IP odwiedzających nie trafia do Google -->
     <link rel="stylesheet" href="/fonts/fonty.css" />
     <slot name="head" />
