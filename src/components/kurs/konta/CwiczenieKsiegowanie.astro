@@ -15,7 +15,7 @@ const dane = operacje.map((o: any) => ({ ...o, typ: indeksTypu(typOperacji(o, ko
   </div>
   <div class="k-ct-tresc"><slot /></div>
   <p class="k-ct-how">Przy każdej operacji wybierz konto zapisywane po stronie Wn i konto zapisywane po stronie Ma{typy ? ', a potem typ operacji' : ''}. Kliknij „Sprawdź”.</p>
-  <p class="k-cks-konta">Konta: {konta.map((k: any, i: number) => <><span class:list={['k-cks-k', `is-${k.typ}`]}>{k.nazwa}</span>{i < konta.length - 1 ? ' ' : ''}</>)}</p>
+  <p class="k-cks-konta">Konta: {konta.map((k: any, i: number) => <><span class:list={['k-cks-k', `is-${k.wynik ? 'WF' : k.typ}`]}>{k.nazwa}</span>{i < konta.length - 1 ? ' ' : ''}</>)}</p>
   <ol class="k-cks-ops">
     {dane.map((o: any) => (
       <li class="k-cks-op" data-nr={o.nr}>
@@ -35,7 +35,7 @@ const dane = operacje.map((o: any) => ({ ...o, typ: indeksTypu(typOperacji(o, ko
     <button type="button" class="k-btn k-btn-ghost" data-clear>Wyczyść</button>
   </div>
   <div class="k-ct-wynik" hidden aria-live="polite"><p class="k-ct-sum" data-sum></p></div>
-  <p class="k-cks-leg">Kolor nazwy konta: <span class="k-cks-k is-A">aktywne</span> <span class="k-cks-k is-P">pasywne</span>{konta.some((k: any) => k.typ === 'K') && <> <span class="k-cks-k is-K">kosztów</span></>}</p>
+  <p class="k-cks-leg">Kolor nazwy konta: <span class="k-cks-k is-A">aktywne</span> <span class="k-cks-k is-P">pasywne</span>{konta.some((k: any) => k.typ === 'K') && <> <span class="k-cks-k is-K">kosztów</span></>}{konta.some((k: any) => k.typ === 'R') && <> <span class="k-cks-k is-R">przychodów</span></>}{konta.some((k: any) => k.wynik) && <> <span class="k-cks-k is-WF">wyniku</span></>}</p>
 </section>
 
 <script>
@@ -79,7 +79,7 @@ const dane = operacje.map((o: any) => ({ ...o, typ: indeksTypu(typOperacji(o, ko
 <style>
   .k-cks-konta,.k-cks-leg{font-size:.86rem;color:var(--muted);margin:0 0 10px!important;line-height:2;}
   .k-cks-k{display:inline-block;padding:0 7px;margin:0 2px;border:1px solid currentColor;line-height:1.6;white-space:nowrap;}
-  .k-cks-k.is-A{color:var(--cyan);} .k-cks-k.is-P{color:var(--magenta);} .k-cks-k.is-K{color:var(--accent);}
+  .k-cks-k.is-A{color:var(--cyan);} .k-cks-k.is-P{color:var(--magenta);} .k-cks-k.is-K{color:var(--accent);} .k-cks-k.is-R{color:var(--ok);} .k-cks-k.is-WF{color:var(--gold);}
   .k-cks-ops{list-style:none;margin:0 0 12px!important;padding:0!important;display:grid;gap:10px;}
   .k-cks-op{margin:0!important;padding:8px 10px;border-left:2px solid var(--line2);}
   .k-cks-op::before{content:none!important;}

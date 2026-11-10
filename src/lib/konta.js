@@ -4,11 +4,16 @@
 // Konto: { id, nazwa, typ, sp? }
 //   typ: 'A' — konto aktywne (składnik majątku: kasa, rachunek bankowy, towary…)
 //        'P' — konto pasywne (źródło finansowania: kapitał, kredyt, zobowiązania…)
-//        'K' — konto kosztów (konto wynikowe; tu tylko jako „druga strona” operacji wynikowej)
+//        'K' — konto kosztów (konto wynikowe): koszt rośnie po Wn, saldo Wn albo 0
+//        'R' — konto przychodów (konto wynikowe): przychód rośnie po Ma, saldo Ma albo 0
 //   sp: saldo początkowe (liczba ≥ 0; strona wynika z typu: A → Wn, P → Ma)
 //   ujemne: true — pasywo „na minusie” (strata z lat ubiegłych): typ 'P', ale saldo stoi po Wn,
 //           strata rośnie po Wn, maleje po Ma, a w bilansie wchodzi do pasywów ze znakiem minus
-// Operacja: { nr, opis, kwota, wn: id konta, ma: id konta }
+//   wynik: true — konto „Wynik finansowy” (typ 'P'): koszty przenosimy na Wn, przychody na Ma;
+//          saldo Ma = zysk, saldo Wn = strata; w bilansie pasywa ze znakiem (strata z minusem)
+//   obciazenie: true — konto 'K', które nie jest kosztem działalności, tylko obciąża wynik (podatek dochodowy)
+//   rodzaj: podpis typu pod nazwą konta (zastępuje domyślny), bil: nazwa w bilansie zamknięcia (np. „Zysk netto”)
+// Operacja: { nr, opis, kwota, wn: id konta, ma: id konta, h?: własny podpis kroku (HTML) }
 //
 // Konwencje z zajęć (arkusz „Konta bilansowe”):
 // - strony konta: Wn (Winien, Dt) po lewej, Ma (Ma, Ct) po prawej;
@@ -25,14 +30,15 @@ export function zl(n) {
   return n < 0 ? `−${s}` : s;
 }
 
-export const NAZWA_TYPU = { A: 'aktywne', P: 'pasywne', K: 'kosztowe (wynikowe)' };
-export const TYP_DOP = { A: 'aktywnego', P: 'pasywnego', K: 'kosztów' };
+export const NAZWA_TYPU = { A: 'aktywne', P: 'pasywne', K: 'kosztowe (wynikowe)', R: 'przychodowe (wynikowe)' };
+export const TYP_DOP = { A: 'aktywnego', P: 'pasywnego', K: 'kosztów', R: 'przychodów' };
 export const STRONA = { wn: 'Wn', ma: 'Ma' };
+export const wynikowe = (k) => k.typ === 'K' || k.typ === 'R';
 
 // po której stronie konta zapisujemy zwiększenie / zmniejszenie
 export function stronaZmiany(typ, zmiana) {
   if (typ === 'A' || typ === 'K') return zmiana === '+' ? 'wn' : 'ma';
-  if (typ === 'P') return zmiana === '+' ? 'ma' : 'wn';
+  if (typ === 'P' || typ === 'R') return zmiana === '+' ? 'ma' : 'wn';
   throw new Error(`konta.js: nieznany typ konta „${typ}”`);
 }
 // odwrotnie: zapis po danej stronie oznacza zwiększenie (+) albo zmniejszenie (−)
@@ -43,7 +49,7 @@ export const stronaSp = (typ) => stronaZmiany(typ, '+');
 // to samo dla konkretnego konta (konto straty ma saldo po Wn, choć jest pasywne)
 export const spStrona = (k) => (k.ujemne ? 'wn' : stronaSp(k.typ));
 export const plusStrona = (k) => (k.ujemne ? 'wn' : stronaZmiany(k.typ, '+'));
-export const typKonta = (k) => (k.typ === 'K' ? 'konto kosztów' : k.ujemne ? 'pasywa na minusie' : `konto ${NAZWA_TYPU[k.typ]}`);
+export const typKonta = (k) => k.rodzaj ?? (k.typ === 'K' ? 'konto kosztów' : k.typ === 'R' ? 'konto przychodów' : k.wynik ? 'konto wyniku' : k.ujemne ? 'pasywa na minusie' : `konto ${NAZWA_TYPU[k.typ]}`);
 
 function mapa(konta) {
   const m = new Map();
@@ -55,12 +61,19 @@ function mapa(konta) {
 }
 
 // Typ operacji z tego, które konta rosną, a które maleją.
-// Zwraca 'A' | 'P' | 'AP+' | 'AP-' | 'W' (wynikowa — jedna ze stron to konto kosztów)
+// Zwraca 'A' | 'P' | 'AP+' | 'AP-' | 'W' (wynikowa — jedna ze stron to konto kosztów albo przychodów)
+//   | 'Z' (przeksięgowanie salda konta wynikowego na konto wyniku finansowego)
 export function typOperacji(op, konta) {
   const m = mapa(konta);
   const kw = m.get(op.wn), km = m.get(op.ma);
   if (!kw || !km) throw new Error(`konta.js: operacja ${op.nr} — brak konta ${!kw ? op.wn : op.ma}`);
-  if (kw.typ === 'K' || km.typ === 'K') return 'W';
+  if (kw.wynik || km.wynik) {
+    const inne = kw.wynik ? km : kw;
+    if (!wynikowe(inne)) throw new Error(`konta.js: operacja ${op.nr} — na konto wyniku przenosimy tylko koszty i przychody`);
+    if ((inne.typ === 'K') !== Boolean(kw.wynik)) throw new Error(`konta.js: operacja ${op.nr} — koszty przenosimy na Wn wyniku, przychody na Ma`);
+    return 'Z';
+  }
+  if (wynikowe(kw) || wynikowe(km)) return 'W';
   const zw = `${kw.typ}${zmianaStrony(kw.typ, 'wn')}`; // A+ albo P−
   const zm = `${km.typ}${zmianaStrony(km.typ, 'ma')}`; // A− albo P+
   if (zw === 'A+' && zm === 'A−') return 'A';
@@ -76,6 +89,7 @@ export const OPIS_TYPU = {
   'AP+': { nazwa: 'aktywno-pasywna zwiększająca', skrot: 'AP+', suma: 'rośnie', zdanie: 'aktywa i pasywa rosną o tę samą kwotę' },
   'AP-': { nazwa: 'aktywno-pasywna zmniejszająca', skrot: 'AP−', suma: 'maleje', zdanie: 'aktywa i pasywa maleją o tę samą kwotę' },
   W: { nazwa: 'wynikowa', skrot: 'wynikowa', suma: '—', zdanie: 'jedna ze stron to koszt (albo przychód), czyli operacja zmienia wynik finansowy' },
+  Z: { nazwa: 'przeksięgowanie', skrot: 'przeks.', suma: '—', zdanie: 'saldo konta kosztów albo przychodów przenosimy na konto wyniku finansowego' },
 };
 
 const ZMIANA_SLOWO = { '+': 'rośnie', '−': 'maleje' };
@@ -87,14 +101,26 @@ export function zdanieKonta(k, strona, kwota) {
     return `<b>„${k.nazwa}”</b> — strata (pasywa na minusie) ${rosnie ? 'rośnie' : 'maleje'} o ${zl(kwota)}, więc pasywa ${rosnie ? 'maleją' : 'rosną'} → zapis po stronie <b>${STRONA[strona]}</b>`;
   }
   const z = zmianaStrony(k.typ, strona);
-  const czyje = k.typ === 'K' ? 'konto kosztów — koszt' : `konto ${NAZWA_TYPU[k.typ]},`;
+  const czyje = k.obciazenie ? `${k.rodzaj ?? 'obciążenie wyniku'} —` : k.typ === 'K' ? 'konto kosztów — koszt' : k.typ === 'R' ? 'konto przychodów — przychód' : `konto ${NAZWA_TYPU[k.typ]},`;
   return `<b>„${k.nazwa}”</b> — ${czyje} ${ZMIANA_SLOWO[z]} o ${zl(kwota)} → zapis po stronie <b>${STRONA[strona]}</b>`;
+}
+
+// Podpis przeksięgowania: saldo konta wynikowego przechodzi na konto wyniku finansowego
+function opisPrzeksiegowania(op, m) {
+  const kw = m.get(op.wn), km = m.get(op.ma);
+  const wf = kw.wynik ? kw : km, x = kw.wynik ? km : kw;
+  const k = zl(op.kwota);
+  if (x.typ === 'R') return `Zamykamy konto <b>„${x.nazwa}”</b>. Ma saldo Ma ${k}. Zapis ${k} po stronie <b>Wn</b> zeruje to konto. Ta sama kwota trafia na <b>Ma</b> „${wf.nazwa}” — przychody zbieramy po Ma. To <b>przeksięgowanie</b>, a nie nowa operacja.`;
+  return `Zamykamy konto <b>„${x.nazwa}”</b>. Ma saldo Wn ${k}. Zapis ${k} po stronie <b>Ma</b> zeruje to konto. Ta sama kwota trafia na <b>Wn</b> „${wf.nazwa}” — ${x.obciazenie ? 'podatek, tak jak koszty, zmniejsza wynik' : 'koszty zbieramy po Wn'}. To <b>przeksięgowanie</b>, a nie nowa operacja.`;
 }
 
 // Podpis kroku dla jednej operacji (używany w animacji i w wyjaśnieniach ćwiczeń)
 export function opisOperacji(op, konta) {
+  if (op.h) return op.h;
   const m = mapa(konta);
-  const t = OPIS_TYPU[typOperacji(op, konta)];
+  const typ0 = typOperacji(op, konta);
+  if (typ0 === 'Z') return opisPrzeksiegowania(op, m);
+  const t = OPIS_TYPU[typ0];
   const typ = t.skrot === 'wynikowa' ? 'operacja <b>wynikowa</b>' : `typ <b>${t.skrot}</b> (${t.nazwa}) — ${t.zdanie}`;
   return `${zdanieKonta(m.get(op.wn), 'wn', op.kwota)}. ${zdanieKonta(m.get(op.ma), 'ma', op.kwota)}. To ${typ}.`;
 }
@@ -128,8 +154,11 @@ export function opisZamkniecia(konto, z) {
     const wieksze = z.saldoStrona === 'wn' ? z.obrWn : z.obrMa;
     const mniejsze = z.saldoStrona === 'wn' ? z.obrMa : z.obrWn;
     r.push(`Większa jest strona ${STRONA[z.saldoStrona]}, więc to <b>saldo ${STRONA[z.saldoStrona]}</b>: ${zl(wieksze)} − ${zl(mniejsze)} = <b>${zl(z.saldo)}</b>.`);
-    r.push(`Wpisujemy je po stronie mniejszej (${STRONA[z.wpisSalda]}), żeby obie strony dały po ${zl(z.razem)}.`);
+    if (wynikowe(konto)) r.push('Saldo konta wynikowego tylko liczymy, nie wpisujemy go na konto. Konto zamknie przeksięgowanie na wynik finansowy.');
+    else r.push(`Wpisujemy je po stronie mniejszej (${STRONA[z.wpisSalda]}), żeby obie strony dały po ${zl(z.razem)}.`);
   }
+  if (wynikowe(konto) && !z.saldoStrona && (z.obrWn || z.obrMa)) r.push('Konto wynikowe zamknęło przeksięgowanie na wynik finansowy — do bilansu nie wchodzi.');
+  if (konto.wynik && z.saldoStrona) r.push(z.saldoStrona === 'ma' ? `Saldo Ma konta wyniku to <b>zysk netto: ${zl(z.saldo)}</b>.` : `Saldo Wn konta wyniku to <b>strata netto: ${zl(z.saldo)}</b>.`);
   return r.join(' ');
 }
 
@@ -147,19 +176,23 @@ export function ksieguj(konta, operacje, { pelny = false } = {}) {
     }
   }
   const zam = Object.fromEntries(konta.map((k) => [k.id, zamknij(k, wpisy[k.id])]));
-  // saldo konta aktywnego musi wyjść po Wn, pasywnego po Ma (inaczej dane zadania są złe)
+  // saldo konta aktywnego (i kosztów) musi wyjść po Wn, pasywnego (i przychodów) po Ma — inaczej dane zadania są złe;
+  // konto wyniku może mieć saldo po obu stronach (zysk albo strata)
   for (const k of konta) {
     const z = zam[k.id];
-    if (k.typ !== 'K' && z.saldoStrona && z.saldoStrona !== spStrona(k)) throw new Error(`konta.js: konto „${k.nazwa}” ma saldo po złej stronie — sprawdź dane`);
+    if (!k.wynik && z.saldoStrona && z.saldoStrona !== spStrona(k)) throw new Error(`konta.js: konto „${k.nazwa}” ma saldo po złej stronie — sprawdź dane`);
+    if (wynikowe(k) && k.sp) throw new Error(`konta.js: konto wynikowe „${k.nazwa}” nie ma salda początkowego`);
   }
-  const bilansowe = konta.filter((k) => k.typ !== 'K');
+  const bilansowe = konta.filter((k) => !wynikowe(k));
   const sumaA0 = bilansowe.filter((k) => k.typ === 'A').reduce((a, k) => a + (k.sp ?? 0), 0);
   const sumaP0 = bilansowe.filter((k) => k.typ === 'P').reduce((a, k) => a + (k.ujemne ? -1 : 1) * (k.sp ?? 0), 0);
-  const aktywa = bilansowe.filter((k) => k.typ === 'A').map((k) => ({ nazwa: k.nazwa, id: k.id, kwota: zam[k.id].saldo }));
-  const pasywa = bilansowe.filter((k) => k.typ === 'P').map((k) => ({ nazwa: k.nazwa, id: k.id, kwota: (k.ujemne ? -1 : 1) * zam[k.id].saldo }));
+  const aktywa = bilansowe.filter((k) => k.typ === 'A').map((k) => ({ nazwa: k.bil ?? k.nazwa, id: k.id, kwota: zam[k.id].saldo }));
+  // pasywo z saldem po Wn (strata z lat ubiegłych, strata netto) wchodzi do bilansu z minusem
+  const pasywa = bilansowe.filter((k) => k.typ === 'P').map((k) => ({ nazwa: k.bil ?? k.nazwa, id: k.id, kwota: (zam[k.id].saldoStrona === 'wn' ? -1 : 1) * zam[k.id].saldo }));
   const sumaA = aktywa.reduce((a, x) => a + x.kwota, 0);
   const sumaP = pasywa.reduce((a, x) => a + x.kwota, 0);
-  const tylkoBilansowe = pelny && konta.every((k) => k.typ !== 'K');
+  // bilans sprawdzamy, gdy wszystkie konta wynikowe są już zamknięte (saldo 0) — wtedy cały wynik siedzi na koncie wyniku
+  const tylkoBilansowe = pelny && konta.every((k) => !wynikowe(k) || zam[k.id].saldo === 0);
   if (tylkoBilansowe && sumaA0 !== sumaP0) throw new Error(`konta.js: bilans otwarcia się nie bilansuje (${sumaA0} ≠ ${sumaP0})`);
   if (tylkoBilansowe && sumaA !== sumaP) throw new Error(`konta.js: bilans zamknięcia się nie bilansuje (${sumaA} ≠ ${sumaP})`);
   return { wpisy, zam, aktywa, pasywa, sumaA, sumaP, sumaA0, sumaP0 };
@@ -173,7 +206,9 @@ export function krokiKsiegowania(konta, operacje, { bilans = true } = {}) {
   const spP = konta.filter((x) => x.typ === 'P' && !x.ujemne && x.sp).map((x) => x.nazwa);
   const spU = konta.filter((x) => x.ujemne && x.sp).map((x) => x.nazwa);
   const uTxt = spU.length ? ` ${spU.join(', ')} to pasywo ze znakiem minus — jego Sp. stoi po stronie <b>Wn</b>.` : '';
-  kroki.push({ a: 'otwarcie', html: `<b>Otwieramy konta.</b> Każdy składnik z bilansu dostaje swoje konto, a jego kwota to <b>saldo początkowe (Sp.)</b>. Aktywa (${spA.join(', ')}) — Sp. po stronie <b>Wn</b>. Pasywa (${spP.join(', ')}) — Sp. po stronie <b>Ma</b>.${uTxt} Konta bez kwoty w bilansie otwieramy puste.` });
+  const maK = konta.some((x) => x.typ === 'K'), maR = konta.some((x) => x.typ === 'R'), maW = konta.some((x) => x.wynik);
+  const wTxt = maK || maR ? ` Konta ${maK && maR ? 'kosztów i przychodów' : maK ? 'kosztów' : 'przychodów'}${maW ? ' oraz konto wyniku' : ''} też startują puste — nie mają salda początkowego.` : '';
+  kroki.push({ a: 'otwarcie', html: `<b>Otwieramy konta.</b> Każdy składnik z bilansu dostaje swoje konto, a jego kwota to <b>saldo początkowe (Sp.)</b>. Aktywa (${spA.join(', ')}) — Sp. po stronie <b>Wn</b>. Pasywa (${spP.join(', ')}) — Sp. po stronie <b>Ma</b>.${uTxt} Konta bez kwoty w bilansie otwieramy puste.${wTxt}` });
   let sA = k.sumaA0;
   for (const op of operacje) {
     const t = typOperacji(op, konta);
@@ -181,13 +216,15 @@ export function krokiKsiegowania(konta, operacje, { bilans = true } = {}) {
     if (t === 'AP+') { sumaTxt = ` Suma bilansowa: ${zl(sA)} + ${zl(op.kwota)} = ${zl(sA + op.kwota)}.`; sA += op.kwota; }
     else if (t === 'AP-') { sumaTxt = ` Suma bilansowa: ${zl(sA)} − ${zl(op.kwota)} = ${zl(sA - op.kwota)}.`; sA -= op.kwota; }
     else if (t === 'A' || t === 'P') sumaTxt = ` Suma bilansowa bez zmian: ${zl(sA)}.`;
-    kroki.push({ a: 'op', nr: op.nr, wn: op.wn, ma: op.ma, html: `<b>Operacja ${op.nr}</b> (${zl(op.kwota)}). ${opisOperacji(op, konta)}${sumaTxt}` });
+    kroki.push({ a: 'op', nr: op.nr, wn: op.wn, ma: op.ma, html: `<b>${t === 'Z' ? 'Przeksięgowanie' : 'Operacja'} ${op.nr}</b> (${zl(op.kwota)}). ${opisOperacji(op, konta)}${sumaTxt}${op.dopisek ?? ''}` });
   }
   for (const x of konta) kroki.push({ a: 'zamk', konto: x.id, html: opisZamkniecia(x, k.zam[x.id]) });
-  if (bilans && konta.every((x) => x.typ !== 'K')) {
+  if (bilans && konta.every((x) => !wynikowe(x) || k.zam[x.id].saldo === 0)) {
     const zlN = (n) => (n < 0 ? `(${zl(n)})` : zl(n));
     const minus = konta.some((x) => x.ujemne) ? ' Strata wchodzi do pasywów z minusem.' : '';
-    kroki.push({ a: 'bilans', html: `<b>Bilans zamknięcia.</b> Saldo końcowe każdego konta przenosimy do bilansu: konta aktywne → strona aktywów, konta pasywne → strona pasywów.${minus} Aktywa: ${k.aktywa.map((x) => zlN(x.kwota)).join(' + ')} = <b>${zl(k.sumaA)}</b>. Pasywa: ${k.pasywa.map((x) => zlN(x.kwota)).join(' + ')} = <b>${zl(k.sumaP)}</b>. Równe — bilans się zgadza.` });
+    const wf = konta.find((x) => x.wynik);
+    const wfTxt = wf ? ` Konta kosztów i przychodów mają saldo 0, więc do bilansu nie wchodzą. Saldo konta „${wf.nazwa}” trafia do pasywów jako „${wf.bil ?? wf.nazwa}”.` : '';
+    kroki.push({ a: 'bilans', html: `<b>Bilans zamknięcia.</b> Saldo końcowe każdego konta przenosimy do bilansu: konta aktywne → strona aktywów, konta pasywne → strona pasywów.${minus}${wfTxt} Aktywa: ${k.aktywa.map((x) => zlN(x.kwota)).join(' + ')} = <b>${zl(k.sumaA)}</b>. Pasywa: ${k.pasywa.map((x) => zlN(x.kwota)).join(' + ')} = <b>${zl(k.sumaP)}</b>. Równe — bilans się zgadza.` });
   }
   return { ...k, kroki };
 }
@@ -287,4 +324,38 @@ export function zestawienie(konta, operacje, { okres = 'okres' } = {}) {
     }
   }
   return { ...k, wiersze, razem, dRazem };
+}
+
+// ——— Konta wynikowe i wynik finansowy (moduł „Konta wynikowe i wynik finansowy”) ———
+
+// Rachunek wyniku z sald kont wynikowych PRZED przeksięgowaniem: przychody (R) i koszty (K bez obciążeń wyniku, np. podatku).
+export function rachunekWyniku(konta, operacje) {
+  const k = ksieguj(konta, operacje);
+  const lista = (f) => konta.filter(f).map((x) => ({ id: x.id, nazwa: x.nazwa, kwota: k.zam[x.id].saldo })).filter((x) => x.kwota);
+  const przychody = lista((x) => x.typ === 'R');
+  const koszty = lista((x) => x.typ === 'K' && !x.obciazenie);
+  const sumaP = przychody.reduce((a, x) => a + x.kwota, 0);
+  const sumaK = koszty.reduce((a, x) => a + x.kwota, 0);
+  return { przychody, koszty, sumaP, sumaK, brutto: sumaP - sumaK, zam: k.zam };
+}
+
+// Podatek dochodowy jak w zadaniach z zajęć: stawka % od zysku brutto, do pełnych złotych; przy stracie 0.
+export const podatekDochodowy = (brutto, stawka = 19) => (brutto > 0 ? Math.round((brutto * stawka) / 100) : 0);
+
+// Przeksięgowania na koniec okresu: saldo każdego konta wynikowego (z listy `ids` albo wszystkich) przenosimy na konto wyniku.
+// Przychody: Wn konto przychodów / Ma wynik. Koszty (i podatek): Wn wynik / Ma konto kosztów. Numery P1, P2, … (od `od`).
+// Kolejność: najpierw przychody, potem koszty — w kolejności kont na liście.
+export function przeksiegowania(konta, operacje, { od = 1, prefiks = 'P', ids } = {}) {
+  const wf = konta.find((x) => x.wynik);
+  if (!wf) throw new Error('konta.js: przeksięgowania — brak konta wyniku (wynik: true)');
+  const k = ksieguj(konta, operacje);
+  const wyb = konta.filter((x) => wynikowe(x) && (!ids || ids.includes(x.id)) && k.zam[x.id].saldo !== 0);
+  const kolejne = [...wyb.filter((x) => x.typ === 'R'), ...wyb.filter((x) => x.typ === 'K')];
+  return kolejne.map((x, i) => {
+    const kwota = k.zam[x.id].saldo;
+    const nr = `${prefiks}${od + i}`;
+    return x.typ === 'R'
+      ? { nr, kwota, wn: x.id, ma: wf.id, opis: `Saldo „${x.nazwa}” przenosimy na wynik finansowy.` }
+      : { nr, kwota, wn: wf.id, ma: x.id, opis: `Saldo „${x.nazwa}” przenosimy na wynik finansowy.` };
+  });
 }
