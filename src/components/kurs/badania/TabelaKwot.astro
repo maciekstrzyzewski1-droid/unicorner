@@ -1,0 +1,54 @@
+---
+// Tabela do doboru kwotowego. Dwa tryby:
+// 1) macierz: wiersze × kolumny + m (liczby) — sumy „Razem” liczą się same (albo podaj własne: sumyW, sumyK, calosc);
+// 2) dowolna: head + rows (napisy, mogą zawierać <b>).
+// oznacz = [[wiersz, kolumna], …] podświetla kratki (liczone od 0, bez nagłówków). Podpis „Jak czytać” wstaw pod tabelą w treści.
+import { fmt } from '../../../lib/proba.js';
+type Kom = string | number;
+interface Props {
+  wiersze?: string[]; kolumny?: string[]; m?: number[][]; d?: number; jedn?: string; razem?: boolean; rog?: string;
+  sumyW?: Kom[]; sumyK?: Kom[]; calosc?: Kom;
+  head?: string[]; rows?: Kom[][]; oznacz?: [number, number][]; razemEt?: string;
+}
+const { wiersze, kolumny, m, d = 0, jedn = '', razem = true, rog = '', sumyW, sumyK, calosc, oznacz = [], razemEt = 'Razem' } = Astro.props;
+const f = (x: Kom) => (typeof x === 'number' ? fmt(x, d) + jedn : x);
+let head: string[]; let rows: Kom[][];
+if (m && wiersze && kolumny) {
+  const sw = sumyW ?? m.map((w) => w.reduce((a, b) => a + b, 0));
+  const sk = sumyK ?? kolumny.map((_, j) => m.reduce((a, w) => a + w[j], 0));
+  const c = calosc ?? m.flat().reduce((a, b) => a + b, 0);
+  head = [rog, ...kolumny, ...(razem ? [razemEt] : [])];
+  rows = m.map((w, i) => [wiersze[i], ...w.map(f), ...(razem ? [`<b>${f(sw[i])}</b>`] : [])]);
+  if (razem) rows.push([`<b>${razemEt}</b>`, ...sk.map((x) => `<b>${f(x)}</b>`), `<b>${f(c)}</b>`]);
+} else {
+  head = Astro.props.head ?? [];
+  rows = (Astro.props.rows ?? []).map((r) => r.map(f));
+}
+const dowolna = !(m && wiersze && kolumny);
+const zl = new Set(oznacz.map(([i, j]) => `${i},${j}`));
+---
+<div class={`k-tab k-kw ${dowolna ? 'k-kw-dow' : ''}`}>
+  <table>
+    <thead><tr>{head.map((h) => <th scope="col" set:html={h} />)}</tr></thead>
+    <tbody>
+      {rows.map((r, i) => (
+        <tr>{r.map((x, j) => (j === 0 ? <th scope="row" set:html={String(x)} /> : <td class={zl.has(`${i},${j - 1}`) ? 'k-kw-zl' : undefined} set:html={String(x)} />))}</tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .k-kw table{width:auto!important;}
+  .k-kw td{text-align:right!important;font-variant-numeric:tabular-nums;white-space:nowrap;}
+  .k-kw tbody th{font-family:inherit!important;font-size:inherit!important;letter-spacing:0!important;font-weight:600;white-space:nowrap;}
+  .k-kw-dow td,.k-kw-dow tbody th{white-space:normal;}
+  .k-kw td.k-kw-zl{background:rgba(255,216,74,.16);box-shadow:inset 0 0 0 2px var(--gold);color:#fff;font-weight:700;}
+  @media (max-width:520px){
+    .k-kw thead th{letter-spacing:0!important;font-size:.72rem!important;padding:5px 4px!important;}
+    .k-kw td,.k-kw tbody th{padding:5px 6px!important;}
+    .k-kw tbody th{white-space:normal;}
+    .k-kw-dow td,.k-kw-dow tbody th{font-size:.76rem;padding:5px 3px!important;}
+    .k-kw-dow thead th{font-size:.66rem!important;padding:5px 3px!important;}
+  }
+</style>

@@ -19,7 +19,7 @@ require('fs').mkdirSync(OUT, { recursive: true });
     await p.waitForTimeout(300);
     const szer = await p.evaluate(() => {
       const zle = [];
-      document.querySelectorAll('.k-ramka, .k-tab, .k-pol, .k-klas, .k-ct, .k-fig, .k-ank-box, .k-sciaga, .k-dwa, .k-pyt, .k-leg').forEach((el) => {
+      document.querySelectorAll('.k-ramka, .k-tab, .k-pol, .k-klas, .k-ct, .k-fig, .k-ank-box, .k-sciaga, .k-dwa, .k-pyt, .k-leg, .k-sch-slot, .k-sch-wynik').forEach((el) => {
         if (el.offsetParent === null) return;
         const ov = getComputedStyle(el).overflowX;
         if (el.scrollWidth > el.clientWidth + 1 && ov !== 'auto' && ov !== 'scroll') zle.push({ cls: el.className.slice(0, 40), sw: el.scrollWidth, cw: el.clientWidth, txt: (el.textContent || '').slice(0, 50) });
@@ -43,6 +43,26 @@ require('fs').mkdirSync(OUT, { recursive: true });
       kaf.push({ wyjasnienia_po_bledzie: n1, wszystko_dobrze: ok === 1 });
       if (w === 390) await box.screenshot({ path: OUT + `kaf-${kaf.length}-390.png` });
     }
+    // „ułóż schematy sam” (dobór kwotowy): przykładowy zestaw → wszystko się zgadza; zepsuta kratka → komunikaty; Wyczyść → stan początkowy
+    const sch = [];
+    for (const box of await p.locator('[data-sch]').all()) {
+      await box.scrollIntoViewIfNeeded();
+      await box.locator('[data-przyklad]').click();
+      const ok = await box.locator('[data-kom] .k-ct-ok').count();
+      const pole = box.locator('[data-kr]').first();
+      const stare = await pole.inputValue();
+      await pole.fill(String(Number(stare) + 1));
+      const kom = await box.locator('[data-kom] li').allTextContents();
+      const czerwone = await box.locator('[data-zb].is-zle').count();
+      if (w === 390) await box.screenshot({ path: OUT + `sch-${sch.length + 1}-blad-390.png` });
+      await pole.fill('x');
+      const zlePole = await box.locator('[data-kom] li').first().textContent();
+      await box.locator('[data-czysc]').click();
+      const start = await box.locator('[data-kom] li').first().textContent();
+      await box.locator('[data-przyklad]').click();
+      if (w !== 360) await box.screenshot({ path: OUT + `sch-${sch.length + 1}-ok-${w}.png` });
+      sch.push({ przyklad_ok: ok === 1, po_bledzie: kom.length, czerwone, zlePole: (zlePole || '').slice(0, 30), start: (start || '').slice(0, 25) });
+    }
     // klasyfikatory i quizy: kliknij zawsze dobrą odpowiedź
     let klas = 0, quiz = 0;
     for (const it of await p.locator('.k-klas-item').all()) { const k = await it.getAttribute('data-kat'); await it.locator(`.k-opt[data-i="${k}"]`).click(); klas++; }
@@ -52,7 +72,7 @@ require('fs').mkdirSync(OUT, { recursive: true });
       for (const [i, f] of (await p.locator('.k-ank').all()).entries()) if (i < 40 && await f.isVisible()) await f.screenshot({ path: OUT + `ank-${String(i).padStart(2, '0')}-390.png` });
     }
     if (w === 1440) await p.screenshot({ path: OUT + 'pelna-1440.png', fullPage: true });
-    console.log(JSON.stringify({ w, bledy, ...szer, kaf, klas, quiz, wyniki }, null, 0));
+    console.log(JSON.stringify({ w, bledy, ...szer, kaf, sch, klas, quiz, wyniki }, null, 0));
     await p.close();
   }
   await b.close();
