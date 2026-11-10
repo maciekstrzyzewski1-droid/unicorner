@@ -46,6 +46,8 @@ if (jedno) {
 const odBilans = kroki.findIndex((s: any) => s.a === 'bilans');
 const legenda: [string, string][] = [['cyan', 'konto aktywne (majątek)'], ['roz', 'konto pasywne (źródło finansowania)']];
 if (konta.some((x: any) => x.typ === 'K')) legenda.push(['fiolet', 'konto kosztów (wynikowe)']);
+if (konta.some((x: any) => x.typ === 'R')) legenda.push(['ok', 'konto przychodów (wynikowe)']);
+if (konta.some((x: any) => x.wynik)) legenda.push(['zloto', 'konto wyniku finansowego']);
 const bilansOtw = k && bilans ? { a: konta.filter((x: any) => x.typ === 'A' && x.sp), p: konta.filter((x: any) => x.typ === 'P' && x.sp) } : null;
 ---
 <figure class="k-fig k-ks" data-kbox data-ks>
@@ -54,8 +56,8 @@ const bilansOtw = k && bilans ? { a: konta.filter((x: any) => x.typ === 'A' && x
       <div class="k-ks-bil">
         <div class="k-ks-bil-t">Bilans otwarcia</div>
         <div class="k-ks-bt2">
-          <BilansStrona tytul="Aktywa" klasa="is-A" pozycje={bilansOtw.a.map((x: any) => ({ nazwa: x.nazwa, kwota: x.sp }))} suma={k.sumaA0} />
-          <BilansStrona tytul="Pasywa" klasa="is-P" pozycje={bilansOtw.p.map((x: any) => ({ nazwa: x.nazwa, kwota: x.ujemne ? -x.sp : x.sp }))} suma={k.sumaP0} />
+          <BilansStrona tytul="Aktywa" klasa="is-A" pozycje={bilansOtw.a.map((x: any) => ({ nazwa: x.bil ?? x.nazwa, kwota: x.sp }))} suma={k.sumaA0} />
+          <BilansStrona tytul="Pasywa" klasa="is-P" pozycje={bilansOtw.p.map((x: any) => ({ nazwa: x.bil ?? x.nazwa, kwota: x.ujemne ? -x.sp : x.sp }))} suma={k.sumaP0} />
         </div>
       </div>
     )}

@@ -51,4 +51,16 @@ export const SLOWNICZEK = [
   { nazwa: 'Strata z lat ubiegłych', znaczy: 'Niepokryta strata z poprzednich lat. W bilansie: pasywa A.V ze znakiem minus. Na koncie saldo po Wn, pokrycie straty po Ma.', modul: 'zestawienie' },
   { nazwa: 'Wkład niepieniężny (aport)', znaczy: 'Wkład wspólnika w postaci rzeczy, np. maszyny. Zapis: Wn Środki trwałe, Ma Kapitał podstawowy.', modul: 'zestawienie' },
   { nazwa: 'Zaliczka dla pracownika', znaczy: 'Pieniądze wypłacone pracownikowi do rozliczenia. Do czasu rozliczenia to należność: konto Pozostałe rozrachunki z pracownikami, w bilansie B.II.', modul: 'zestawienie' },
+  // --- Konta wynikowe i wynik finansowy ---
+  { nazwa: 'Przychód', znaczy: 'Wzrost aktywów albo spadek długów w okresie, przez który rośnie kapitał własny — bez wkładów właścicieli. Konto przychodów rośnie po Ma.', modul: 'wynik-finansowy' },
+  { nazwa: 'Koszt', znaczy: 'Spadek aktywów albo wzrost długów w okresie, przez który maleje kapitał własny — bez wypłat dla właścicieli. Konto kosztów rośnie po Wn.', modul: 'wynik-finansowy' },
+  { nazwa: 'Operacja wynikowa', znaczy: 'Operacja, w której jedną stroną jest koszt albo przychód. Druga strona to składnik bilansu.', modul: 'wynik-finansowy' },
+  { t: '\\text{PPO}', nazwa: 'Pozostałe przychody operacyjne', czytamy: 'pe-pe-o', znaczy: 'Przychody obok zwykłego handlu: umorzony dług, odszkodowanie, sprzedaż środka trwałego.', modul: 'wynik-finansowy' },
+  { t: '\\text{PKO}', nazwa: 'Pozostałe koszty operacyjne', czytamy: 'pe-ka-o', znaczy: 'Koszty obok zwykłego handlu: pożar, zalanie, zapłacona kara, wartość sprzedanego środka trwałego.', modul: 'wynik-finansowy' },
+  { t: '\\text{PF}', nazwa: 'Przychody finansowe', czytamy: 'pe-ef', znaczy: 'Odsetki otrzymane (od lokaty, od pieniędzy na rachunku), sprzedaż papierów wartościowych.', modul: 'wynik-finansowy' },
+  { t: '\\text{KF}', nazwa: 'Koszty finansowe', czytamy: 'ka-ef', znaczy: 'Odsetki od kredytu, wartość sprzedanych papierów wartościowych.', modul: 'wynik-finansowy' },
+  { nazwa: 'Wartość sprzedanych towarów', znaczy: 'Koszt towarów, które wyszły z magazynu do klienta, w cenie zakupu. Drugi zapis sprzedaży: Wn Wartość sprzedanych towarów, Ma Towary.', modul: 'wynik-finansowy' },
+  { nazwa: 'Wynik finansowy', znaczy: 'Przychody minus koszty za okres: zysk albo strata. Na koncie wyniku koszty stoją po Wn, przychody po Ma; saldo Ma to zysk, saldo Wn — strata.', modul: 'wynik-finansowy' },
+  { nazwa: 'Przeksięgowanie', znaczy: 'Zapis, który zeruje konto wynikowe i przenosi jego saldo na konto Wynik finansowy (przychody: Wn przychody, Ma wynik; koszty: Wn wynik, Ma koszty).', modul: 'wynik-finansowy' },
+  { nazwa: 'Zysk brutto i netto', znaczy: 'Brutto = przychody − koszty (przed podatkiem). Netto = brutto − podatek dochodowy (w zadaniach 19% zysku brutto). Zysk netto stoi w pasywach, A.VI.', modul: 'wynik-finansowy' },
 ];

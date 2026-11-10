@@ -5,7 +5,7 @@
 // Bez skryptu. Animację robi pudełko nadrzędne (Konta.astro) po atrybutach data-k / data-el / data-od.
 // od: { sp, wpis: { [nr]: krok }, obrWn, obrMa, sk, razem } — od którego kroku element jest widoczny.
 import { zamknij, zl, NBSP, plusStrona, typKonta } from '../../../lib/konta.js';
-interface Konto { id?: string; nazwa: string; typ: 'A' | 'P' | 'K'; sp?: number; ujemne?: boolean }
+interface Konto { id?: string; nazwa: string; typ: 'A' | 'P' | 'K' | 'R'; sp?: number; ujemne?: boolean; wynik?: boolean; rodzaj?: string }
 interface Wpis { nr: number | string; strona: 'wn' | 'ma'; kwota: number }
 interface Props {
   konto: Konto; wpisy?: Wpis[]; zamkniete?: boolean; znaki?: boolean; od?: any;
@@ -30,7 +30,7 @@ const skMa = z.wpisSalda === 'wn' ? zl(z.saldo) : '';
 const skWn = z.wpisSalda === 'ma' ? zl(z.saldo) : '';
 const pusto = (o?: number) => (o === undefined ? undefined : o);
 ---
-<div class:list={['k-t', `is-${konto.typ}`, { 'is-maly': maly }]} data-k={id}>
+<div class:list={['k-t', `is-${konto.typ}`, { 'is-maly': maly, 'is-WF': konto.wynik }]} data-k={id}>
   {znaki && <div class="k-t-zn" aria-hidden="true"><span>{znak('wn')}</span><span>{znak('ma')}</span></div>}
   <div class="k-t-head">
     <span class="k-t-s">Wn</span>
@@ -61,6 +61,8 @@ const pusto = (o?: number) => (o === undefined ? undefined : o);
   .k-t{--kt:var(--cyan);display:inline-block;vertical-align:top;width:100%;max-width:330px;min-width:0;font-variant-numeric:tabular-nums;}
   .k-t.is-P{--kt:var(--magenta);}
   .k-t.is-K{--kt:var(--accent);}
+  .k-t.is-R{--kt:var(--ok);}
+  .k-t.is-WF{--kt:var(--gold);}
   .k-t-zn{display:grid;grid-template-columns:1fr 1fr;text-align:center;font-family:var(--mono);font-weight:700;font-size:1.05rem;color:var(--kt);line-height:1.2;}
   .k-t-head{display:grid;grid-template-columns:auto 1fr auto;align-items:end;gap:6px;padding:0 4px 4px;border-bottom:2px solid var(--kt);}
   .k-t-s{font-family:var(--mono);font-size:.8rem;color:var(--muted);}
