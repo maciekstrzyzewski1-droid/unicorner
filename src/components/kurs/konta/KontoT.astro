@@ -29,6 +29,8 @@ const typTxt = typKonta(konto);
 const skMa = z.wpisSalda === 'wn' ? zl(z.saldo) : '';
 const skWn = z.wpisSalda === 'ma' ? zl(z.saldo) : '';
 const pusto = (o?: number) => (o === undefined ? undefined : o);
+// konto kosztów albo przychodów z saldem: saldo tylko pokazujemy (nie wpisujemy go na konto) — zamknie je przeksięgowanie na wynik
+const otwarte = (konto.typ === 'K' || konto.typ === 'R') && !!z.saldoStrona;
 ---
 <div class:list={['k-t', `is-${konto.typ}`, { 'is-maly': maly, 'is-WF': konto.wynik }]} data-k={id}>
   {znaki && <div class="k-t-zn" aria-hidden="true"><span>{znak('wn')}</span><span>{znak('ma')}</span></div>}
@@ -45,7 +47,14 @@ const pusto = (o?: number) => (o === undefined ? undefined : o);
       </>
     ))}
   </div>
-  {zamkniete && (
+  {zamkniete && otwarte && (
+    <div class="k-t-foot">
+      <div class="k-t-c is-wn is-obr" data-el="obr-wn" data-od={od?.obrWn}><span class="k-t-l">Obr.</span><span class="k-t-kw" data-v>{zl(z.obrWn)}</span></div>
+      <div class="k-t-c is-ma is-obr" data-el="obr-ma" data-od={od?.obrMa}><span class="k-t-kw" data-v>{zl(z.obrMa)}</span><span class="k-t-l">Obr.</span></div>
+      <div class="k-t-c is-sk is-saldo-wyn" data-el="sk" data-od={od?.sk}><span class="k-t-l">saldo {z.saldoStrona === 'wn' ? 'Wn' : 'Ma'}</span><span class="k-t-kw" data-v>{zl(z.saldo)}</span><span class="k-t-l">→ na wynik</span></div>
+    </div>
+  )}
+  {zamkniete && !otwarte && (
     <div class="k-t-foot">
       <div class="k-t-c is-wn is-obr" data-el="obr-wn" data-od={od?.obrWn}><span class="k-t-l">Obr.</span><span class="k-t-kw" data-v>{zl(z.obrWn)}</span></div>
       <div class="k-t-c is-ma is-obr" data-el="obr-ma" data-od={od?.obrMa}><span class="k-t-kw" data-v>{zl(z.obrMa)}</span><span class="k-t-l">Obr.</span></div>
@@ -80,6 +89,8 @@ const pusto = (o?: number) => (o === undefined ? undefined : o);
   .k-t-foot .k-t-c.is-obr .k-t-kw{font-weight:600;}
   .k-t-foot .k-t-c.is-sk .k-t-kw{color:var(--gold);font-weight:700;}
   .k-t-foot .k-t-c.is-nic .k-t-l{opacity:.45;}
+  .k-t-foot .k-t-c.is-saldo-wyn{grid-column:1/-1;justify-content:center;gap:10px;border-top:1px dashed var(--line2);}
+  .k-t-foot .k-t-c.is-saldo-wyn .k-t-kw{margin:0;}
   .k-t-foot .k-t-c.is-razem{border-top:1px solid var(--muted);border-bottom:3px double var(--muted);}
   .k-t-foot .k-t-c.is-razem .k-t-kw{color:var(--muted);}
   .k-t.is-maly .k-t-c{font-size:.9rem;min-height:1.8em;padding:2px 6px;}

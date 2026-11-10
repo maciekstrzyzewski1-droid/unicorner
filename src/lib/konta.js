@@ -154,7 +154,8 @@ export function opisZamkniecia(konto, z) {
     const wieksze = z.saldoStrona === 'wn' ? z.obrWn : z.obrMa;
     const mniejsze = z.saldoStrona === 'wn' ? z.obrMa : z.obrWn;
     r.push(`Większa jest strona ${STRONA[z.saldoStrona]}, więc to <b>saldo ${STRONA[z.saldoStrona]}</b>: ${zl(wieksze)} − ${zl(mniejsze)} = <b>${zl(z.saldo)}</b>.`);
-    r.push(`Wpisujemy je po stronie mniejszej (${STRONA[z.wpisSalda]}), żeby obie strony dały po ${zl(z.razem)}.`);
+    if (wynikowe(konto)) r.push('Saldo konta wynikowego tylko liczymy, nie wpisujemy go na konto. Konto zamknie przeksięgowanie na wynik finansowy.');
+    else r.push(`Wpisujemy je po stronie mniejszej (${STRONA[z.wpisSalda]}), żeby obie strony dały po ${zl(z.razem)}.`);
   }
   if (wynikowe(konto) && !z.saldoStrona && (z.obrWn || z.obrMa)) r.push('Konto wynikowe zamknęło przeksięgowanie na wynik finansowy — do bilansu nie wchodzi.');
   if (konto.wynik && z.saldoStrona) r.push(z.saldoStrona === 'ma' ? `Saldo Ma konta wyniku to <b>zysk netto: ${zl(z.saldo)}</b>.` : `Saldo Wn konta wyniku to <b>strata netto: ${zl(z.saldo)}</b>.`);

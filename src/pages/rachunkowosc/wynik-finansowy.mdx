@@ -6,7 +6,7 @@ wyglad: szeroki
 title: Konta wynikowe i wynik finansowy
 podtytul: przychody, koszty, sprzedaż w dwóch zapisach, zysk brutto i netto
 description: Konta wynikowe od zera – przychody i koszty, strony Wn i Ma, sprzedaż towarów w dwóch zapisach, PPO, PKO, przychody i koszty finansowe, przeksięgowanie na wynik finansowy, podatek dochodowy i zysk netto. Zad. 4.6 krok po kroku.
-lede: Bilans mówi, co firma ma. Nie mówi, czy firma zarabia. Do tego służą konta wynikowe – zbierają przychody i koszty, a na koniec miesiąca dają jedną liczbę, czyli zysk albo stratę.
+lede: Bilans mówi, co firma ma. Zysk pokaże jedną liczbą, ale nie powie, skąd się wziął. Do tego służą konta wynikowe – zbierają przychody i koszty, a na koniec okresu dają wynik, czyli zysk albo stratę.
 wymaga: Konto teowe, strony Wn i Ma, saldo i podwójny zapis (moduł „Operacje i konta bilansowe”). Najważniejsze przypominamy na miejscu.
 umiesz:
   - odróżnić operację bilansową od wynikowej
@@ -74,34 +74,36 @@ export const KC = [
 export const OPS_ROZ = [
   { nr: 1, kwota: 2400, wn: 'kasa', ma: 'pst', opis: 'Sprzedano towary za gotówkę, 2 400 zł.' },
   { nr: 2, kwota: 3000, wn: 'rb', ma: 'odb', opis: 'Odbiorca zapłacił przelewem za towary kupione w zeszłym miesiącu, 3 000 zł.', uwaga: ' Przychód był w zeszłym miesiącu, przy sprzedaży. Teraz należność tylko zamienia się w pieniądze.' },
-  { nr: 3, kwota: 500, wn: 'uo', ma: 'dost', opis: 'Przyszła faktura za transport towarów, płatna za 14 dni, 500 zł.' },
-  { nr: 4, kwota: 6000, wn: 'tow', ma: 'dost', opis: 'Kupiono towary z zapłatą za 30 dni, 6 000 zł.', uwaga: ' Zakup towarów to jeszcze nie koszt. Towary leżą w magazynie — kosztem staną się dopiero przy sprzedaży.' },
+  { nr: 3, kwota: 500, wn: 'uo', ma: 'dost', opis: 'Przyszła faktura za transport towarów do klienta, płatna za 14 dni, 500 zł.' },
+  { nr: 4, kwota: 6000, wn: 'tow', ma: 'dost', opis: 'Kupiono towary z zapłatą za 30 dni, 6 000 zł.', uwaga: ' Zakup towarów to jeszcze nie koszt. Towary leżą w magazynie — kosztem staną się, gdy z niego wyjdą: sprzedane albo zniszczone.' },
   { nr: 5, kwota: 150, wn: 'rb', ma: 'pf', opis: 'Bank dopisał do rachunku odsetki od lokaty, 150 zł.' },
   { nr: 6, kwota: 40000, wn: 'st', ma: 'kz', opis: 'Wspólnik wniósł aportem samochód, 40 000 zł.', uwaga: ' Kapitał rośnie, ale to wkład właściciela, a nie przychód.' },
   { nr: 7, kwota: 700, wn: 'dost', ma: 'ppo', opis: 'Dostawca umorzył część długu firmy, 700 zł.' },
   { nr: 8, kwota: 4000, wn: 'dost', ma: 'rb', opis: 'Przelewem spłacono dług wobec dostawcy, 4 000 zł.', uwaga: ' Pieniądze wychodzą, ale to nie koszt. Ubywa długu, więc firma nie jest biedniejsza.' },
   { nr: 9, kwota: 20000, wn: 'rb', ma: 'kred', opis: 'Bank przelał na rachunek kredyt, 20 000 zł.', uwaga: ' Pieniądze przychodzą, ale to nie przychód. Firma ma je oddać, więc to dług.' },
-  { nr: 10, kwota: 1200, wn: 'wynag', ma: 'wyn', opis: 'Naliczono wynagrodzenia pracowników, 1 200 zł.' },
+  { nr: 10, kwota: 5000, wn: 'dost', ma: 'kred', opis: 'Bank z udzielonego kredytu od razu spłacił dług firmy wobec dostawcy, 5 000 zł.', uwaga: ' Pieniądze nie trafiły do firmy, a dług wobec dostawcy zamienił się w dług wobec banku.' },
 ];
 export const KLAS_ROZ = OPS_ROZ.map((o) => ({ tekst: o.opis, kat: indeksTypu(typOperacji(o, KC)), dlaczego: opisOperacji(o, KC) + (o.uwaga ?? '') }));
 export const OPS_KS = [
-  { nr: 1, kwota: 5000, wn: 'rb', ma: 'pst', opis: 'Sprzedano towary, klient zapłacił od razu przelewem.' },
-  { nr: 2, kwota: 3100, wn: 'wst', ma: 'tow', opis: 'Wydano z magazynu towary sprzedane w operacji 1 (w cenie zakupu).' },
-  { nr: 3, kwota: 4200, wn: 'wynag', ma: 'wyn', opis: 'Naliczono wynagrodzenia pracowników.' },
-  { nr: 4, kwota: 250, wn: 'kf', ma: 'rb', opis: 'Bank pobrał z rachunku odsetki od kredytu.' },
-  { nr: 5, kwota: 300, wn: 'pio', ma: 'pp', opis: 'Naliczono podatek od nieruchomości.' },
-  { nr: 6, kwota: 600, wn: 'pko', ma: 'tow', opis: 'Zalanie magazynu zniszczyło część towarów.' },
-  { nr: 7, kwota: 800, wn: 'uo', ma: 'dost', opis: 'Przyszła faktura za usługi księgowe, płatna za 14 dni.' },
-  { nr: 8, kwota: 600, wn: 'rb', ma: 'ppo', opis: 'Ubezpieczyciel przelał odszkodowanie za zalane towary.' },
+  { nr: 1, kwota: 4000, wn: 'tow', ma: 'dost', opis: 'Kupiono towary, zapłata za 14 dni.' },
+  { nr: 2, kwota: 5000, wn: 'rb', ma: 'pst', opis: 'Sprzedano towary, klient zapłacił od razu przelewem.' },
+  { nr: 3, kwota: 3100, wn: 'wst', ma: 'tow', opis: 'Wydano z magazynu towary sprzedane w operacji 2 (w cenie zakupu).' },
+  { nr: 4, kwota: 4200, wn: 'wynag', ma: 'wyn', opis: 'Naliczono wynagrodzenia pracowników.' },
+  { nr: 5, kwota: 250, wn: 'kf', ma: 'rb', opis: 'Bank pobrał z rachunku odsetki od kredytu.' },
+  { nr: 6, kwota: 300, wn: 'pio', ma: 'pp', opis: 'Naliczono podatek od nieruchomości.' },
+  { nr: 7, kwota: 600, wn: 'pko', ma: 'tow', opis: 'Zalanie magazynu zniszczyło część towarów.' },
+  { nr: 8, kwota: 800, wn: 'uo', ma: 'dost', opis: 'Przyszła faktura za usługi księgowe, płatna za 14 dni.' },
+  { nr: 9, kwota: 600, wn: 'rb', ma: 'ppo', opis: 'Ubezpieczyciel przelał odszkodowanie za zalane towary.' },
+  { nr: 10, kwota: 1500, wn: 'dost', ma: 'rb', opis: 'Przelewem spłacono część długu wobec dostawcy.' },
 ];
 
 ## Po co to jest
 
 Spółka Star Wars handluje towarami. Na 1 stycznia jej bilans ma sumę 257 000 zł. Na 31 stycznia — 302 900 zł. Suma urosła o 302 900 − 257 000 = 45 900 zł. Czy spółka zarobiła w styczniu 45 900 zł?
 
-Nie. W tym czasie wspólnik wniósł do spółki środek trwały za 35 000 zł, a spółka kupiła drugi za 28 000 zł z zapłatą w lutym. To nie jest zarobek. Pierwsze to wkład właściciela, drugie — dług. Bilans pokazuje stan na jeden dzień i nie odróżnia „zarobiliśmy” od „pożyczyliśmy”.
+Nie. W tym czasie wspólnik wniósł do spółki środek trwały za 35 000 zł, a spółka kupiła drugi za 28 000 zł z zapłatą w lutym. To nie jest zarobek. Pierwsze to wkład właściciela, drugie — dług. Te dwie kwoty dają razem 63 000 zł, więcej niż 45 900 zł. To dlatego, że inne operacje sumę zmniejszyły, np. spłaty długów: 17 000 + 4 000 = 21 000 zł.
 
-Ile spółka naprawdę zarobiła? Odpowiedź dają **konta wynikowe**. Zapisujemy na nich każdy przychód i każdy koszt. Na koniec miesiąca wszystko trafia na jedno konto — **Wynik finansowy**. W Zad. 4.6 wyjdzie 1 215 zł zysku netto.
+Bilans pokazuje stan na jeden dzień i nie odróżnia „zarobiliśmy” od „pożyczyliśmy”. Ile spółka naprawdę zarobiła? Odpowiedź dają **konta wynikowe**. Zapisujemy na nich każdy przychód i każdy koszt. Na koniec okresu (w zadaniu — miesiąca) wszystko trafia na jedno konto — **Wynik finansowy**. W Zad. 4.6 wyjdzie 1 215 zł zysku netto.
 
 ## Co będzie na kolokwium
 
@@ -119,12 +121,12 @@ Polecenie może brzmieć też „ustal wynik finansowy brutto i netto”, „zam
 ## Przychód, koszt i wynik
 
 <div class="k-symbole">
-  <Znak t="\text{P}" nazwa="Przychód" czytamy="przychód" znaczy="Firma staje się bogatsza: przybywa jej aktywów (np. należność od klienta) albo ubywa długów (np. dostawca umorzył dług). Przez to rośnie kapitał własny. To, co wnoszą właściciele, przychodem nie jest." pamiec="Sprzedaż, odsetki od lokaty, umorzony dług." />
-  <Znak t="\text{K}" nazwa="Koszt" czytamy="koszt" znaczy="Firma staje się biedniejsza: ubywa jej aktywów (np. towar wydany klientowi albo spalony) albo przybywa długów (np. faktura za usługę). Przez to maleje kapitał własny. Wypłaty dla właścicieli kosztem nie są." pamiec="Wynagrodzenia, usługi, czynsz, sprzedane towary." />
+  <Znak t="\text{Przychód}" nazwa="Przychód" czytamy="przychód" znaczy="Firma staje się bogatsza: przybywa jej aktywów (np. należność od klienta) albo ubywa długów (np. dostawca umorzył dług). Przez to rośnie kapitał własny. To, co wnoszą właściciele, przychodem nie jest." pamiec="Sprzedaż, odsetki od lokaty, umorzony dług." />
+  <Znak t="\text{Koszt}" nazwa="Koszt" czytamy="koszt" znaczy="Firma staje się biedniejsza: ubywa jej aktywów (np. towar wydany klientowi albo spalony) albo przybywa długów (np. faktura za usługę). Przez to maleje kapitał własny. Wypłaty dla właścicieli kosztem nie są." pamiec="Wynagrodzenia, usługi, czynsz, sprzedane towary." />
   <Znak t="\text{WF}" nazwa="Wynik finansowy" czytamy="wynik finansowy" znaczy="Przychody minus koszty za okres. Wynik dodatni to <b>zysk</b>, ujemny — <b>strata</b>." pamiec="Jedna liczba: czy firma zarobiła." />
 </div>
 
-Przykład z życia: fryzjer w styczniu strzyże klientów za 12 000 zł. Płaci czynsz 3 000 zł i pensję pomocnicy 5 000 zł. Przychody: 12 000 zł. Koszty: 3 000 + 5 000 = 8 000 zł. Wynik: 12 000 − 8 000 = 4 000 zł zysku.
+Przykład z życia: fryzjer w styczniu strzyże klientów za 12 000 zł. Czynsz za lokal 3 000 zł i pensja pomocnicy 5 000 zł to jego koszty. Przychody: 12 000 zł. Koszty: 3 000 + 5 000 = 8 000 zł. Wynik: 12 000 − 8 000 = 4 000 zł zysku.
 
 <Ramka kind="zapamietaj" tytul="wynik finansowy">
 **Wynik finansowy = przychody − koszty.**
@@ -140,7 +142,7 @@ Najtrudniejsze w tym temacie jest to, że **przychód to nie to samo co pieniąd
 |---|---|---|
 | Sprzedaż towarów na fakturę, zapłata później (op. 12) | jeszcze nie ma | **przychód** — firma ma nową należność |
 | Odbiorca płaci za wcześniejszą sprzedaż (op. 4) | przyszły | **nie** — należność zamienia się w pieniądze |
-| Zaciągnięty kredyt (op. 2) | z kredytu | **nie** — firma ma dług, który musi oddać |
+| Kredyt, którym bank od razu spłacił dostawców (op. 2) | nie wpłynęły — bank zapłacił dostawcom | **nie** — jeden dług zamienił się w drugi |
 | Zakup towarów za gotówkę (op. 1) | wyszły | **nie** — towary leżą w magazynie |
 | Spłata długu wobec dostawcy (op. 5) | wyszły | **nie** — mniej gotówki, ale też mniej długu |
 | Faktura za obsługę prawną, zapłata później (op. 8) | jeszcze nie wyszły | **koszt** — usługa zużyta, przybyło długu |
@@ -150,18 +152,18 @@ Najtrudniejsze w tym temacie jest to, że **przychód to nie to samo co pieniąd
 <Ramka kind="pulapka">
 - „Przyszły pieniądze” nie znaczy „przychód”. Kredyt i zapłata starej należności przychodami nie są.
 - „Wyszły pieniądze” nie znaczy „koszt”. Zakup towarów i spłata długu kosztami nie są.
-- Zakupione towary staną się kosztem dopiero wtedy, gdy wyjdą z magazynu do klienta (op. 13).
+- Zakupione towary staną się kosztem dopiero wtedy, gdy wyjdą z magazynu: sprzedane (op. 13) albo zniszczone (op. 15).
 </Ramka>
 
 <Pytania pytania={[
-  { q: 'Wspólnik wniósł do spółki aportem środek trwały za 35 000 zł (op. 3). Kapitał własny urósł. Czy to przychód?', opcje: ['Tak, bo kapitał własny rośnie', 'Tak, pozostały przychód operacyjny', 'Nie, bo to wkład właściciela'], dobra: 2, dlaczego: 'Przychód zwiększa kapitał własny, ale <b>nie</b> przez wkład właściciela. Aport to wkład, więc zapis jest bilansowy: Wn „Środki trwałe”, Ma „Kapitał zakładowy”. To typ AP+.' },
+  { q: 'Wspólnik wniósł do spółki aportem środek trwały za 35 000 zł (op. 3). Kapitał własny urósł. Czy to przychód?', opcje: ['Tak, bo kapitał własny rośnie', 'Tak, pozostały przychód operacyjny', 'Nie, bo to wkład właściciela'], dobra: 2, dlaczego: 'Przychód zwiększa kapitał własny, ale <b>nie</b> przez wkład właściciela. Aport to wkład, więc zapis jest bilansowy: Wn „Środki trwałe”, Ma „Kapitał zakładowy”. To typ AP+. PPO to też przychód, więc odpada z tego samego powodu.' },
 ]} />
 
 <a id="polecenie-rozpoznaj" class="k-anchor"></a>
 
 ## Bilansowa czy wynikowa
 
-Z modułu o kontach bilansowych znasz cztery typy operacji: A, P, AP+ i AP−. W każdym obie strony to składniki bilansu. Teraz dochodzi piąty rodzaj — **operacja wynikowa**. Jedną jej stroną jest koszt albo przychód.
+Z modułu o kontach bilansowych znasz cztery typy operacji: A, P, AP+ i AP−. W każdym obie strony to składniki bilansu. Piąty rodzaj — **operację wynikową** — znasz stamtąd tylko z nazwy. Jedną jej stroną jest koszt albo przychód. Teraz uczymy się ją rozpoznawać i księgować.
 
 <Ramka kind="polecenie">
 „Określ, czy operacja jest bilansowa, czy wynikowa.”
@@ -180,9 +182,10 @@ Trzy przykłady z Zad. 4.6:
 - **Op. 11.** Kontrahent A umorzył spółce 3 000 zł długu. Dług maleje, a nic za to nie oddajemy. Spółka jest bogatsza — to przychód → **wynikowa**.
 
 <Ramka kind="granica">
-- Operacja wynikowa też zmienia bilans: jedna jej strona to zawsze aktywo albo pasywo.
+- W zadaniach z tego modułu jedna strona operacji wynikowej to zawsze aktywo albo pasywo.
 - Druga strona, koszt albo przychód, trafia do bilansu dopiero na koniec — jako zysk albo strata w kapitale własnym.
-- Dlatego w trakcie miesiąca suma aktywów nie równa się sumie pasywów. Wyrównuje je dopiero wynik finansowy.
+- Gdy w trakcie miesiąca zsumujesz tylko konta bilansowe, aktywa i pasywa różnią się o wynik, który leży jeszcze na kontach przychodów i kosztów.
+- W Zad. 4.6 po op. 16: aktywa 302 900, pasywa bez wyniku 192 000 + 59 900 + 48 000 + 1 300 + 200 = 301 400. Różnica 302 900 − 301 400 = 1 500 to właśnie zysk brutto.
 </Ramka>
 
 ## Po której stronie: koszty i przychody
@@ -192,6 +195,7 @@ Trzy przykłady z Zad. 4.6:
 - **Przychód rośnie → Ma.** Konto przychodów ma saldo po Ma.
 - Konta wynikowe **nie mają salda początkowego**. Każdy okres zaczynają od zera.
 - Na koniec okresu ich salda **przeksięgowujemy** na konto „Wynik finansowy”. Wtedy mają saldo 0.
+- W zadaniach okresem jest miesiąc. W firmie konta wynikowe zamyka się zwykle na koniec roku obrotowego.
 </Ramka>
 
 <Ramka kind="skad" tytul="dlaczego koszt po Wn, a przychód po Ma">
@@ -218,20 +222,20 @@ na górze lista operacji z rodzajem, pod nią konta. Turkus to konta aktywne, r�
 <Ramka kind="pulapka">
 - „Pieniądze przyszły, więc przychód po Wn” — błąd. Po Wn idzie kasa albo rachunek. Przychód zawsze rośnie po **Ma**.
 - „Zapłaciliśmy, więc koszt po Ma” — błąd. Po Ma idzie kasa. Koszt zawsze rośnie po **Wn**.
-- W operacji wynikowej strony nadal są przeciwne: koszt (Wn) z kasą, towarami albo długiem (Ma); przychód (Ma) z kasą, rachunkiem albo należnością (Wn).
+- W operacji wynikowej strony nadal są przeciwne. Koszt (Wn) idzie w parze z kasą, rachunkiem, towarami albo długiem, który rośnie (Ma). Przychód (Ma) idzie w parze z kasą, rachunkiem, należnością albo długiem, który maleje (Wn).
 </Ramka>
 
 <a id="polecenie-konto" class="k-anchor"></a>
 
 ## Które konto wynikowe
 
-W Zad. 4.6 są trzy konta przychodów i siedem kont kosztów (z podatkiem dochodowym). Wybór konta podpowiada treść operacji. Cztery z nich na zajęciach skraca się do liter:
+W Zad. 4.6 są trzy konta przychodów, sześć kont kosztów i konto podatku dochodowego. Podatek dochodowy nie jest kosztem, tylko obciążeniem wyniku — wyjaśniamy to przy op. 17. Wybór konta podpowiada treść operacji. Cztery z nich na zajęciach skraca się do liter:
 
 <div class="k-symbole">
-  <Znak t="\text{PPO}" nazwa="Pozostałe przychody operacyjne" czytamy="pe-pe-o" znaczy="Przychody spoza zwykłego handlu, ale związane z działalnością: umorzony dług, otrzymane odszkodowanie albo kara, sprzedaż środka trwałego." pamiec="„Pozostałe” = nie ze sprzedaży towarów." />
+  <Znak t="\text{PPO}" nazwa="Pozostałe przychody operacyjne" czytamy="pe-pe-o" znaczy="Przychody spoza zwykłego handlu, ale związane z działalnością: umorzony dług, otrzymane odszkodowanie albo kara, sprzedaż środka trwałego." pamiec="„Pozostałe” = nie ze sprzedaży towarów i nie z odsetek ani papierów wartościowych." />
   <Znak t="\text{PKO}" nazwa="Pozostałe koszty operacyjne" czytamy="pe-ka-o" znaczy="Koszty spoza zwykłego handlu: straty losowe (pożar, zalanie), zapłacone kary, wartość sprzedanego środka trwałego." pamiec="Lustro PPO po stronie kosztów." />
   <Znak t="\text{PF}" nazwa="Przychody finansowe" czytamy="pe-ef" znaczy="Zarobek na pieniądzach: odsetki od lokaty i od pieniędzy na rachunku, sprzedaż papierów wartościowych." pamiec="Pieniądz zarabia na siebie." />
-  <Znak t="\text{KF}" nazwa="Koszty finansowe" czytamy="ka-ef" znaczy="Koszt korzystania z cudzych pieniędzy: odsetki od kredytu, wartość sprzedanych papierów wartościowych." pamiec="Cena pożyczonych pieniędzy." />
+  <Znak t="\text{KF}" nazwa="Koszty finansowe" czytamy="ka-ef" znaczy="Koszty związane z pieniędzmi i inwestycjami: odsetki od kredytu, wartość sprzedanych papierów wartościowych." pamiec="Lustro PF: odsetki zapłacone zamiast otrzymanych." />
 </div>
 
 <Ramka kind="polecenie">
@@ -247,7 +251,7 @@ W Zad. 4.6 są trzy konta przychodów i siedem kont kosztów (z podatkiem dochod
 |---|---|---|
 | sprzedano towary (cena sprzedaży) | Przychody ze sprzedaży towarów — **Ma** | op. 12 |
 | wydano z magazynu sprzedane towary | Wartość sprzedanych towarów — **Wn** | op. 13 |
-| umorzono dług, odszkodowanie | Pozostałe przychody operacyjne — **Ma** | op. 11 |
+| umorzono dług, otrzymane odszkodowanie | Pozostałe przychody operacyjne — **Ma** | op. 11 |
 | pożar, zalanie, zapłacona kara | Pozostałe koszty operacyjne — **Wn** | op. 15 |
 | odsetki od lokaty lub rachunku | Przychody finansowe — **Ma** | op. 9a |
 | odsetki od kredytu | Koszty finansowe — **Wn** | op. 9b |
@@ -256,14 +260,15 @@ W Zad. 4.6 są trzy konta przychodów i siedem kont kosztów (z podatkiem dochod
 | podatek od nieruchomości, opłaty | Podatki i opłaty — **Wn** | op. 14 |
 | podatek dochodowy | Podatek dochodowy — **Wn** | op. 17 |
 
-<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> w lewej kolumnie słowo, które widzisz w treści operacji. W środku nazwa konta i strona, po której to konto rośnie. Po prawej operacja z Zad. 4.6, w której go użyto. Konta z „Ma” to przychody, konta z „Wn” — koszty.</p>
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> w lewej kolumnie słowo, które widzisz w treści operacji. W środku nazwa konta i strona, po której to konto rośnie. Po prawej operacja z Zad. 4.6, w której go użyto. Konta z „Ma” to przychody, konta z „Wn” — koszty. Wyjątek: podatek dochodowy rośnie po Wn i zmniejsza wynik, ale kosztem nie jest.</p>
 
 <Dlaczego typ="umowa">
-Usługi obce, wynagrodzenia oraz podatki i opłaty to tzw. **koszty według rodzaju**. Nazwa konta mówi, na co poszły pieniądze. Inne rodzaje to m.in. amortyzacja oraz zużycie materiałów i energii. Pełna lista i drugi sposób ujmowania kosztów są w module „Koszty”.
+Usługi obce, wynagrodzenia oraz podatki i opłaty to tzw. **koszty według rodzaju**. Nazwa konta mówi, co firma zużyła. Inne rodzaje to m.in. amortyzacja oraz zużycie materiałów i energii. Pełna lista i drugi sposób ujmowania kosztów są w module „Koszty” (wkrótce).
 </Dlaczego>
 
 <Ramka kind="kiedy" tytul="PPO, PKO czy sprzedaż">
 - Zwykły handel firmy (sprzedaż towarów i ich koszt) → **Przychody ze sprzedaży towarów** i **Wartość sprzedanych towarów**.
+- Zwykłe koszty prowadzenia firmy (usługi, czynsz, wynagrodzenia, podatki i opłaty) → konta kosztów według rodzaju: **Usługi obce**, **Wynagrodzenia**, **Podatki i opłaty**.
 - Coś, co zdarza się obok handlu (pożar, umorzony dług, kara) → **PPO** albo **PKO**.
 - Odsetki i papiery wartościowe → **PF** albo **KF**.
 </Ramka>
@@ -271,6 +276,7 @@ Usługi obce, wynagrodzenia oraz podatki i opłaty to tzw. **koszty według rodz
 <Ramka kind="pulapka">
 - Towary zniszczone w pożarze to **nie** „Wartość sprzedanych towarów”. Nikt ich nie kupił. To strata losowa — **PKO**.
 - Odsetki od kredytu to **nie** usługa obca, choć pobiera je bank. To **koszty finansowe**.
+- Za to prowizja banku za prowadzenie rachunku to usługa bankowa — **usługi obce**. Nie każdy koszt od banku jest finansowy.
 - Podatek od nieruchomości to **nie** podatek dochodowy. Pierwszy to zwykły koszt (Podatki i opłaty). Drugi liczymy od zysku na samym końcu.
 </Ramka>
 
@@ -278,15 +284,15 @@ Usługi obce, wynagrodzenia oraz podatki i opłaty to tzw. **koszty według rodz
 
 ## Sprzedaż w dwóch zapisach
 
-Gdy sklep sprzedaje towar, dzieją się dwie rzeczy naraz. Klient płaci (albo jest winien) cenę sprzedaży. Z magazynu wychodzi towar, za który sklep kiedyś zapłacił cenę zakupu. Dlatego **sprzedaż to dwie operacje wynikowe**: jedna daje przychód, druga koszt.
+Gdy sklep sprzedaje towar, dzieją się dwie rzeczy naraz. Klient płaci (albo jest winien) cenę sprzedaży. Z magazynu wychodzi towar, za który sklep kiedyś zapłacił cenę zakupu. Dlatego **sprzedaż to dwie operacje wynikowe**: jedna daje przychód, druga koszt. Na wykładzie pierwszą nazywa się **momentem finansowym** (należą nam się pieniądze), a drugą **momentem rzeczowym** (wydajemy rzecz).
 
 <Ramka kind="polecenie">
 „Zaksięguj sprzedaż towarów.”
 
-1. **Zapis 1 — przychód.** Kwota: cena sprzedaży z faktury.
+1. **Zapis 1 — przychód** (na wykładzie: moment finansowy). Kwota: cena sprzedaży z faktury.
    - Wn: **Kasa** (gotówka), **Rachunek bankowy** (przelew) albo **Rozrachunki z odbiorcami** (zapłata później).
    - Ma: **Przychody ze sprzedaży towarów**.
-2. **Zapis 2 — koszt.** Kwota: wartość towarów w magazynie, czyli cena zakupu.
+2. **Zapis 2 — koszt** (na wykładzie: moment rzeczowy). Kwota: wartość, w jakiej towary stoją na koncie „Towary”. W zadaniach to zwykle cena zakupu.
    - Wn: **Wartość sprzedanych towarów**.
    - Ma: **Towary** — z magazynu ubywa.
 3. Różnica „zapis 1 − zapis 2” to **marża**, czyli zarobek na tej sprzedaży.
@@ -316,7 +322,7 @@ Na wykładzie ta sama zasada działa przy sprzedaży innych składników. Zmieni
 <p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> każdy wiersz to inny sprzedawany składnik. W zapisie 1 po Wn zawsze stoi kasa, rachunek albo należność, a po Ma — przychód z tabeli. W zapisie 2 po Wn stoi koszt z tabeli, a po Ma — konto tego, co sprzedajemy (z pierwszej kolumny), bo ono wychodzi z firmy.</p>
 
 <Ramka kind="pulapka">
-- Zapis 2 robisz po **cenie zakupu**, nie po cenie sprzedaży. Z magazynu ubywa tyle, ile towary kosztowały.
+- Zapis 2 robisz po wartości z konta „Towary” (zwykle **cena zakupu**), nie po cenie sprzedaży. Z magazynu ubywa tyle, ile towary kosztowały.
 - Jedno zdanie w treści może dać dwa zapisy, np. „Sprzedano za gotówkę towary za 3 000 zł. Ich wartość w cenie zakupu to 2 000 zł”.
 - W Zad. 4.6 oba zapisy mają osobne numery: 12 i 13.
 </Ramka>
@@ -367,7 +373,7 @@ Przedsiębiorstwo handlowe Star Wars sp. z o.o. na 1 stycznia 20X5 r.:
 | Pasywa | zł |
 |---|---:|
 | Kapitał zakładowy | 157 000 |
-| Zobowiązania | 58 000 |
+| Zobowiązania (wobec dostawców) | 58 000 |
 | Kredyt bankowy | 42 000 |
 | **Razem** | **257 000** |
 
@@ -394,7 +400,7 @@ Operacje w styczniu:
 16. Naliczono czynsz za najem hali magazynowej za styczeń — 3 000 zł.
 17. Naliczono podatek dochodowy (19%) — kwotę trzeba policzyć.
 
-Do zrobienia: zaksięguj operacje, ustal wynik finansowy, sporządź bilans zamknięcia na 31 stycznia.
+Do zrobienia: zaksięguj operacje, ustal wynik finansowy, sporządź bilans zamknięcia na 31 stycznia. Polecenia na skanie z zajęć są ucięte, więc to typowy zestaw do takiego zadania.
 
 </div>
 
@@ -410,10 +416,10 @@ Do zrobienia: zaksięguj operacje, ustal wynik finansowy, sporządź bilans zamk
 <Krok tytul="Otwórz konta">
 Aktywa — Sp. po Wn: środki trwałe 92 000, towary 45 000, rozrachunki z odbiorcami 50 000, kasa 28 000, rachunek bankowy 42 000. Pasywa — Sp. po Ma: kapitał zakładowy 157 000, rozrachunki z dostawcami 58 000, kredyt bankowy 42 000.
 
-Puste konta bilansowe: **Rozrachunki z tytułu wynagrodzeń** (op. 10) i **Rozrachunki publicznoprawne** (op. 14 i 17). Puste konta wynikowe: trzy konta przychodów i sześć kont kosztów z tabeli „Które konto wynikowe”.
+Puste konta bilansowe: **Rozrachunki z tytułu wynagrodzeń** (op. 10) i **Rozrachunki publicznoprawne** (op. 14 i 17). Puste konta wynikowe: trzy konta przychodów i sześć kont kosztów z tabeli „Które konto wynikowe”. Konto „Podatek dochodowy” będzie potrzebne dopiero przy op. 17.
 
 <Dlaczego>
-„Należności” z bilansu księgujemy na koncie „Rozrachunki z odbiorcami”, a „Zobowiązania” — na „Rozrachunkach z dostawcami”. To te same składniki pod nazwą konta. Rozrachunki publicznoprawne to długi wobec urzędów, np. podatki do zapłaty (w notatkach z zajęć skrót „P-P”).
+„Należności” z bilansu księgujemy na koncie „Rozrachunki z odbiorcami”, a „Zobowiązania” (wobec dostawców) — na „Rozrachunkach z dostawcami”. To te same składniki pod nazwą konta. Rozrachunki publicznoprawne to długi wobec urzędów, np. podatki do zapłaty (w notatkach z zajęć skrót „P-P”). W spółce z o.o. kapitał podstawowy nazywa się **kapitałem zakładowym**. W bilansie z ustawy to pozycja A.I.
 </Dlaczego>
 </Krok>
 
@@ -427,7 +433,7 @@ Puste konta bilansowe: **Rozrachunki z tytułu wynagrodzeń** (op. 10) i **Rozra
 - **Op. 7:** środki trwałe rosną → Wn „Środki trwałe”. Dług wobec sprzedawcy rośnie → Ma „Rozrachunki z dostawcami”. Typ **AP+**.
 
 <Dlaczego>
-W żadnej z tych operacji firma nie staje się bogatsza ani biedniejsza. Aport (op. 3) to wkład właściciela. Wpłata należności (op. 4) to zamiana należności na pieniądze. Środek trwały (op. 7) zostaje w firmie — jego kosztem będzie dopiero amortyzacja, rozłożona na lata.
+W żadnej z tych operacji firma nie zarabia ani nie traci. Aport (op. 3) robi ją bogatszą, ale to wkład właściciela, a wkładów nie liczymy. Wpłata należności (op. 4) to zamiana należności na pieniądze. Środek trwały (op. 7) zostaje w firmie — jego kosztem będzie dopiero amortyzacja, rozłożona na lata.
 </Dlaczego>
 </Krok>
 
@@ -459,7 +465,7 @@ W każdej z nich **przychód rośnie → Ma**.
 - **Op. 12:** należność od klienta rośnie → Wn „Rozrachunki z odbiorcami” 8 200. Ma „Przychody ze sprzedaży towarów”.
 
 <Dlaczego>
-Przy umorzeniu (op. 11) nie płyną pieniądze. Spółka po prostu nie musi już oddać 3 000 zł. Jest więc bogatsza o 3 000 zł, a to przychód. Nie pochodzi ze sprzedaży, więc trafia do PPO.
+Przy umorzeniu (op. 11) nie płyną pieniądze. Spółka po prostu nie musi już oddać 3 000 zł. Jest więc bogatsza o 3 000 zł, a to przychód. Nie pochodzi ze sprzedaży towarów ani z odsetek, więc trafia do PPO.
 </Dlaczego>
 
 Wszystkie operacje 1–16 na kontach — obejrzyj je po kolei:
@@ -476,7 +482,17 @@ Przykład: rachunek bankowy.
 - Ma: op. 6: 4 000, op. 9b: 300. Obroty Ma: 4 000 + 300 = 4 300.
 - Saldo Wn: 58 700 − 4 300 = **54 400**.
 
-Konta wynikowe mają saldo po „swojej” stronie: koszty po Wn, przychody po Ma. Na przykład usługi obce: 900 + 3 000 = 3 900 po Wn.
+Pozostałe konta bilansowe tak samo:
+
+- Rozrachunki z dostawcami: Ma 58 000 + 28 000 + 900 + 3 000 = 89 900. Wn 10 000 + 17 000 + 3 000 = 30 000. Saldo Ma: 89 900 − 30 000 = **59 900**.
+- Towary: Wn 45 000 + 1 800 = 46 800. Ma 3 200 + 1 000 = 4 200. Saldo Wn: 46 800 − 4 200 = **42 600**.
+- Rozrachunki z odbiorcami: Wn 50 000 + 8 200 = 58 200. Ma 16 500. Saldo Wn: 58 200 − 16 500 = **41 700**.
+- Kasa: Wn 28 000. Ma 1 800 + 17 000 = 18 800. Saldo Wn: 28 000 − 18 800 = **9 200**.
+- Kredyt bankowy: Ma 42 000 + 10 000 = 52 000. Wn 4 000. Saldo Ma: 52 000 − 4 000 = **48 000**.
+- Środki trwałe: 92 000 + 35 000 + 28 000 = **155 000**. Kapitał zakładowy: 157 000 + 35 000 = **192 000**.
+- Rozrachunki z tytułu wynagrodzeń: **1 300**. Rozrachunki publicznoprawne: **200** (podatek dochodowy dojdzie przy op. 17).
+
+Konta wynikowe mają saldo po „swojej” stronie: koszty po Wn, przychody po Ma. Na przykład usługi obce: 900 + 3 000 = 3 900 po Wn. Tego salda nie wpisujemy na konto jak przy kontach bilansowych. Konto wynikowe zamknie przeksięgowanie w następnej sekcji.
 
 <Dlaczego>
 Te salda kont wynikowych są potrzebne w następnym kroku. Przeniesiemy je na konto „Wynik finansowy”.
@@ -503,7 +519,7 @@ Na koniec okresu wszystkie przychody i koszty zbieramy na jednym koncie — **Wy
 2. **Przeksięguj przychody:** Wn konto przychodów, Ma „Wynik finansowy”. Kwota = saldo. Konto przychodów się zeruje.
 3. **Przeksięguj koszty:** Wn „Wynik finansowy”, Ma konto kosztów. Konto kosztów się zeruje.
 4. **Zysk brutto** = przychody − koszty. Na koncie wyniku to saldo Ma. Saldo Wn oznacza stratę.
-5. **Podatek dochodowy** = 19% zysku brutto, czyli zysk brutto · 19 : 100. Zapis: Wn „Podatek dochodowy”, Ma „Rozrachunki publicznoprawne”.
+5. **Podatek dochodowy** = 19% zysku brutto, czyli zysk brutto · 19 : 100. Zapis: Wn „Podatek dochodowy”, Ma „Rozrachunki publicznoprawne”. Przy stracie podatek wynosi 0.
 6. **Przeksięguj podatek:** Wn „Wynik finansowy”, Ma „Podatek dochodowy”.
 7. **Zysk netto** = zysk brutto − podatek. To saldo Ma konta wyniku na końcu.
 </Ramka>
@@ -515,7 +531,7 @@ na górze bilans otwarcia i lista: trzy operacje, potem trzy przeksięgowania (�
 </Konta>
 
 <Ramka kind="botak" tytul="numery przeksięgowań">
-Przeksięgowania oznaczamy tu P1, P2, …, żeby nie myliły się z operacjami z zadania. Na kolokwium można numerować dalej (18, 19, …) albo literami. Ważne, żeby każdy zapis miał ten sam numer na obu kontach.
+Przeksięgowania oznaczamy tu P1, P2, …, żeby nie myliły się z operacjami z zadania. Prowadzący mogą oznaczać je inaczej — sprawdź, jak robi to Twój. Dowodem takiego zapisu jest zwykle **PK**, czyli polecenie księgowania. Ważne, żeby każdy zapis miał ten sam znak na obu kontach.
 </Ramka>
 
 <Rozwiazanie tytul="Star Wars sp. z o.o. — wynik finansowy za styczeń" zrodlo="Zad. 4.6, op. 17">
@@ -567,9 +583,9 @@ Saldo konta wyniku: Ma 11 400, Wn 9 900. Przeważa Ma, więc to zysk.
 
 **Zysk brutto = 11 400 − 9 900 = 1 500 zł.**
 
-<Rzad jedno><KontoT konto={{ ...WF, nazwa: 'Wynik finansowy — przed podatkiem' }} wpisy={W_BRUTTO} /></Rzad>
+<Rzad jedno><KontoT konto={{ ...WF, nazwa: 'Wynik finansowy — przed podatkiem' }} wpisy={W_BRUTTO} zamkniete={false} /></Rzad>
 
-<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> konto wyniku po przeksięgowaniach P1–P9. Po Ma przychody (P1–P3), po Wn koszty (P4–P9). Saldo Ma 1 500 to zysk brutto. Na koncie wpisujemy je po stronie mniejszej (Wn), żeby obie strony dały po 11 400.</p>
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> konto wyniku po przeksięgowaniach P1–P9. Po Ma przychody (P1–P3): 8 200 + 3 000 + 200 = 11 400. Po Wn koszty (P4–P9): razem 9 900. Saldo Ma: 11 400 − 9 900 = 1 500 — zysk brutto. Konta jeszcze nie zamykamy, bo dojdzie podatek.</p>
 </Krok>
 
 <Krok tytul="Podatek dochodowy (op. 17) i zysk netto">
@@ -655,11 +671,11 @@ na górze bilans otwarcia i wszystkie zapisy: operacje 1–16, przeksięgowania 
 | Pasywa | zł |
 |---|---:|
 | Kapitał zakładowy | 192 000 |
-| Zysk netto | 1 215 |
 | Zobowiązania wobec dostawców | 59 900 |
 | Kredyt bankowy | 48 000 |
 | Zobowiązania z tytułu wynagrodzeń | 1 300 |
 | Zobowiązania z tytułu podatków | 485 |
+| Zysk netto | 1 215 |
 | **Razem** | **302 900** |
 
 </div>
@@ -667,7 +683,7 @@ na górze bilans otwarcia i wszystkie zapisy: operacje 1–16, przeksięgowania 
 
 Aktywa: 155 000 + 42 600 + 41 700 + 9 200 + 54 400 = **302 900**.
 
-Pasywa: 192 000 + 1 215 + 59 900 + 48 000 + 1 300 + 485 = **302 900**. Równe.
+Pasywa: 192 000 + 59 900 + 48 000 + 1 300 + 485 + 1 215 = **302 900**. Równe. Zysk netto stoi tu na końcu, jak w rysunku wyżej. W bilansie z ustawy należy do kapitału własnego, razem z kapitałem zakładowym.
 
 <Dlaczego>
 Zobowiązania z tytułu podatków to dwa podatki do zapłaty: od nieruchomości (op. 14) i dochodowy (op. 17). 200 + 285 = 485.
@@ -680,7 +696,7 @@ Kapitał własny na start: 157 000. W styczniu urósł o aport (op. 3): 35 000. 
 157 000 + 35 000 + 1 215 = **193 215**. W bilansie: kapitał zakładowy 192 000 + zysk netto 1 215 = 193 215. Zgadza się.
 
 <Dlaczego>
-Kapitał własny zmieniają tylko dwie rzeczy: to, co wnoszą albo wypłacają właściciele, i wynik finansowy. Jeśli obie drogi dają to samo, wynik trafił do bilansu poprawnie.
+W zadaniach z tego modułu kapitał własny zmieniają tylko dwie rzeczy: to, co wnoszą albo wypłacają właściciele, i wynik finansowy. Jeśli obie drogi dają to samo, wynik trafił do bilansu poprawnie.
 </Dlaczego>
 </Krok>
 </Rozwiazanie>
@@ -707,7 +723,7 @@ Kapitał własny zmieniają tylko dwie rzeczy: to, co wnoszą albo wypłacają w
 </div>
 
 <Ramka kind="gdzie">
-Konta wynikowe wracają w każdym kolejnym temacie. Przy środkach pieniężnych i papierach wartościowych dochodzą przychody i koszty finansowe. Przy środkach trwałych — amortyzacja i sprzedaż środka trwałego (PPO i PKO). Przy materiałach — ich zużycie. W module „Koszty” poznasz drugi sposób ujmowania kosztów. Z sald kont wynikowych powstaje też rachunek zysków i strat — druga część sprawozdania finansowego obok bilansu.
+Konta wynikowe wracają w każdym kolejnym temacie. Przy środkach pieniężnych i papierach wartościowych dochodzą przychody i koszty finansowe. Przy środkach trwałych — amortyzacja i sprzedaż środka trwałego (PPO i PKO). Przy materiałach — ich zużycie. W module „Koszty” (wkrótce) poznasz drugi sposób ujmowania kosztów. Z sald kont wynikowych powstaje też rachunek zysków i strat — druga część sprawozdania finansowego obok bilansu.
 </Ramka>
 
 ## Ćwiczenia przed kolokwium
@@ -737,12 +753,12 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
 
 <Klasyfikator pytanie="Które konto kosztów?" kategorie={['Wartość sprzedanych towarów', 'Usługi obce', 'Podatki i opłaty', 'Pozostałe koszty operacyjne', 'Koszty finansowe']} elementy={[
   { tekst: 'Wydano z magazynu towary sprzedane klientowi.', kat: 0, dlaczego: 'To drugi zapis sprzedaży — koszt sprzedanych towarów w cenie zakupu: <b>wartość sprzedanych towarów</b>.' },
-  { tekst: 'Przyszła faktura za transport towarów.', kat: 1, dlaczego: 'Transport wykonała inna firma. To usługa — <b>usługi obce</b>.' },
+  { tekst: 'Przyszła faktura za transport sprzedanych towarów do klienta.', kat: 1, dlaczego: 'Transport wykonała inna firma. To usługa — <b>usługi obce</b>.' },
   { tekst: 'Bank pobrał odsetki od kredytu.', kat: 4, dlaczego: 'Odsetki od kredytu to koszt pożyczonych pieniędzy — <b>koszty finansowe</b>. Nie usługi obce, choć pobiera je bank.' },
   { tekst: 'Naliczono podatek od nieruchomości.', kat: 2, dlaczego: 'Podatek od nieruchomości to zwykły koszt działalności — <b>podatki i opłaty</b>. To nie podatek dochodowy.' },
   { tekst: 'Pożar zniszczył część towarów.', kat: 3, dlaczego: 'Nikt tych towarów nie kupił. To strata losowa obok handlu — <b>PKO</b>, nie wartość sprzedanych towarów.' },
   { tekst: 'Naliczono czynsz za wynajem magazynu.', kat: 1, dlaczego: 'Wynajem to usługa innej firmy — <b>usługi obce</b>, jak czynsz w op. 16.' },
-  { tekst: 'Zapłacono karę umowną za spóźnioną dostawę.', kat: 3, dlaczego: 'Kara nie ma związku z normalnym handlem — <b>PKO</b>.' },
+  { tekst: 'Zapłacono karę umowną za spóźnioną dostawę.', kat: 3, dlaczego: 'To nie zwykły koszt handlu, tylko sankcja za spóźnienie — <b>PKO</b>.' },
 ]} />
 
 <a id="cw-sprzedaz" class="k-anchor"></a>
@@ -761,7 +777,7 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
 
 ### Księgowanie na kontach bilansowych i wynikowych
 
-<CwiczenieKsiegowanie tytul="Zaksięguj osiem operacji" konta={KC} operacje={OPS_KS} />
+<CwiczenieKsiegowanie tytul="Zaksięguj dziesięć operacji" konta={KC} operacje={OPS_KS} />
 
 <a id="cw-wynik" class="k-anchor"></a>
 
@@ -769,9 +785,9 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
 
 <Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
   { q: 'Przychody: 20 000 zł. Koszty: 14 500 zł. Ile wynosi zysk brutto?', opcje: ['34 500', '5 500', '−5 500'], dobra: 1, dlaczego: 'Zysk brutto = przychody − koszty = 20 000 − 14 500 = 5 500. 34 500 to suma zamiast różnicy. −5 500 wychodzi po odjęciu w złej kolejności.' },
-  { q: 'Zysk brutto 5 500 zł. Ile wynosi podatek dochodowy (19%)?', opcje: ['1 045', '3 800', '4 455'], dobra: 0, dlaczego: '5 500 · 19 = 104 500, a 104 500 : 100 = 1 045. Łatwiej: 5 500 · 20 = 110 000, minus 5 500 = 104 500. Wynik 3 800 to 19% przychodów (20 000) — podatek liczymy od zysku brutto. 4 455 to zysk netto.' },
-  { q: 'Zysk brutto 5 500 zł, podatek 1 045 zł. Ile wynosi zysk netto?', opcje: ['6 545', '1 045', '4 455'], dobra: 2, dlaczego: 'Netto = brutto − podatek = 5 500 − 1 045 = 4 455. Łatwiej: 5 500 − 1 000 = 4 500, potem 4 500 − 45 = 4 455. 6 545 wychodzi po dodaniu podatku.' },
-  { q: 'Przychody 9 000 zł, koszty 11 000 zł. Co pokazuje konto wyniku i ile wynosi podatek?', opcje: ['Saldo Ma 2 000 — zysk; podatek 380', 'Saldo Wn 2 000 — strata; podatku nie liczymy', 'Saldo Wn 2 000 — strata; podatek 380'], dobra: 1, dlaczego: 'Koszty (Wn 11 000) przeważają nad przychodami (Ma 9 000). Saldo Wn: 11 000 − 9 000 = 2 000 — strata. Przy stracie w zadaniach podatek wynosi 0. 380 to 19% z 2 000 — liczone tak, jakby to był zysk.' },
+  { q: 'Zysk brutto 5 500 zł. Ile wynosi podatek dochodowy (19%)?', opcje: ['1 045', '3 800', '4 455'], dobra: 0, dlaczego: '5 500 · 19 = 104 500, a 104 500 : 100 = 1 045. Łatwiej: 5 500 · 20 = 110 000, minus 5 500 = 104 500. Wynik 3 800 to 19% przychodów (20 000) — podatek liczymy od zysku brutto. 4 455 to inna liczba z tego zadania — sprawdzisz ją w następnym pytaniu.' },
+  { q: 'Zysk brutto 5 500 zł, podatek 1 045 zł. Ile wynosi zysk netto?', opcje: ['6 545', '1 045', '4 455'], dobra: 2, dlaczego: 'Netto = brutto − podatek = 5 500 − 1 045 = 4 455. Łatwiej: 5 500 − 1 000 = 4 500, potem 4 500 − 45 = 4 455. 6 545 wychodzi po dodaniu podatku. 1 045 to sam podatek, a nie zysk.' },
+  { q: 'Przychody 9 000 zł, koszty 11 000 zł. Co pokazuje konto wyniku i ile wynosi podatek?', opcje: ['Saldo Ma 2 000 — zysk; podatek 380', 'Saldo Wn 2 000 — strata; podatku nie liczymy', 'Saldo Wn 2 000 — strata; podatek 380'], dobra: 1, dlaczego: 'Koszty (Wn 11 000) przeważają nad przychodami (Ma 9 000). Saldo Wn: 11 000 − 9 000 = 2 000 — strata. Saldo Ma i zysk byłyby przy przewadze przychodów. Przy stracie w zadaniach podatek wynosi 0. 380 to 19% z 2 000 — liczone tak, jakby to był zysk.' },
   { q: 'Konto „Przychody ze sprzedaży towarów” ma saldo Ma 8 200 zł. Jak je przeksięgować?', opcje: ['Wn „Przychody ze sprzedaży towarów”, Ma „Wynik finansowy”', 'Wn „Wynik finansowy”, Ma „Przychody ze sprzedaży towarów”', 'Ma „Przychody ze sprzedaży towarów”, Ma „Wynik finansowy”'], dobra: 0, dlaczego: 'Saldo Ma zerujemy zapisem po Wn. Ta sama kwota idzie na Ma konta wyniku, bo przychody zbieramy tam po Ma. Druga odpowiedź to zapis dla kosztów — tu podwoiłby saldo przychodów. Trzecia łamie podwójny zapis: obie kwoty po Ma.' },
   { q: 'Po przeksięgowaniach konto wyniku ma: Wn 7 300 zł, Ma 6 800 zł. Co to znaczy?', opcje: ['Zysk 500 zł', 'Zysk 14 100 zł', 'Strata 500 zł'], dobra: 2, dlaczego: 'Po Wn są koszty (7 300), po Ma przychody (6 800). Przeważa Wn, więc to strata: 7 300 − 6 800 = 500. 14 100 to suma obu stron.' },
 ]} />
@@ -782,7 +798,7 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
 
 <Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
   { q: 'Gdzie w bilansie zamknięcia stoi zysk netto?', opcje: ['W aktywach, bo firma ma więcej', 'W pasywach, w kapitale własnym', 'Nigdzie — jest tylko na koncie wyniku'], dobra: 1, dlaczego: 'Zysk zwiększa kapitał własny, a kapitał to pasywo. W układzie z ustawy to pozycja A.VI. Majątek, który zysk dał (np. pieniądze, należności), już siedzi w aktywach.' },
-  { q: 'Konto „Usługi obce” po przeksięgowaniu ma saldo 0. Co z nim w bilansie?', opcje: ['Wpisujemy w aktywach 0', 'Wpisujemy jego obroty w pasywach', 'Pomijamy — konta wynikowe nie wchodzą do bilansu'], dobra: 2, dlaczego: 'Konta wynikowe nie są składnikami bilansu. Ich salda przeszły na wynik finansowy, a do bilansu wchodzi tylko zysk netto. Obrotów do bilansu się nie przepisuje.' },
+  { q: 'Konto „Usługi obce” po przeksięgowaniu ma saldo 0. Co z nim w bilansie?', opcje: ['Wpisujemy w aktywach 0', 'Wpisujemy jego obroty w pasywach', 'Pomijamy — konta wynikowe nie wchodzą do bilansu'], dobra: 2, dlaczego: 'Konta wynikowe nie są składnikami bilansu. Ich salda przeszły na wynik finansowy, a do bilansu wchodzi tylko zysk netto. Zera w aktywach nie wpisujemy, a obrotów do bilansu się nie przepisuje.' },
   { q: 'Aktywa: 120 000 zł. Pasywa bez wyniku: 118 400 zł. Zysk netto: 1 600 zł. Czy bilans się zgadza?', opcje: ['Tak: 118 400 + 1 600 = 120 000', 'Nie, brakuje 1 600 po stronie aktywów', 'Tak, bo zysk dopisujemy do aktywów: 121 600'], dobra: 0, dlaczego: 'Zysk netto dopisujemy do pasywów: 118 400 + 1 600 = 120 000 = aktywa. Zgadza się. Zysk w aktywach dałby 121 600 po jednej stronie i 118 400 po drugiej.' },
   { q: 'Wynik finansowy to strata netto 900 zł. Jak wpisać ją do bilansu?', opcje: ['W aktywach: 900', 'W pasywach: 900', 'W pasywach z minusem: −900'], dobra: 2, dlaczego: 'Strata zmniejsza kapitał własny, więc stoi w pasywach ze znakiem minus — jak strata z lat ubiegłych. Strata nie jest majątkiem, więc nie trafia do aktywów.' },
 ]} />
@@ -790,14 +806,14 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
 ## Quiz z teorii
 
 <Pytania licznik tytul="Sprawdź, czy rozumiesz zasady" pytania={[
-  { q: 'Co to jest przychód?', opcje: ['Każdy wpływ pieniędzy do kasy lub na rachunek', 'Wzrost korzyści firmy w okresie, który zwiększa kapitał własny — bez wkładów właścicieli', 'Wartość towarów w magazynie'], dobra: 1, dlaczego: 'Przychód to wzrost aktywów albo spadek długów, przez który rośnie kapitał własny. Wpływ pieniędzy może być kredytem albo zapłatą starej należności. Towary w magazynie to aktywo, a nie przychód.' },
-  { q: 'Które z tych zdarzeń NIE jest kosztem?', opcje: ['Zakup towarów do magazynu za gotówkę', 'Wynagrodzenia naliczone pracownikom', 'Odsetki od kredytu pobrane przez bank'], dobra: 0, dlaczego: 'Kupione towary leżą w magazynie — to aktywo. Kosztem staną się przy sprzedaży (wartość sprzedanych towarów). Wynagrodzenia i odsetki od kredytu to koszty.' },
+  { q: 'Co to jest przychód?', opcje: ['Każdy wpływ pieniędzy do kasy albo na rachunek bankowy w danym okresie', 'Wzrost aktywów albo spadek długów, przez który rośnie kapitał własny — bez wkładów właścicieli', 'Wartość towarów, które firma ma w magazynie na koniec okresu'], dobra: 1, dlaczego: 'Przychód to wzrost aktywów albo spadek długów, przez który rośnie kapitał własny. Wpływ pieniędzy może być kredytem albo zapłatą starej należności. Towary w magazynie to aktywo, a nie przychód.' },
+  { q: 'Które z tych zdarzeń NIE jest kosztem?', opcje: ['Zakup towarów do magazynu za gotówkę', 'Wynagrodzenia naliczone pracownikom', 'Odsetki od kredytu pobrane przez bank'], dobra: 0, dlaczego: 'Kupione towary leżą w magazynie — to aktywo. Kosztem staną się, gdy z niego wyjdą: przy sprzedaży (wartość sprzedanych towarów) albo np. w pożarze (PKO). Wynagrodzenia i odsetki od kredytu to koszty.' },
   { q: 'Bank przelał firmie kredyt. Czy to przychód?', opcje: ['Tak, bo przybyło pieniędzy', 'Tak, przychód finansowy', 'Nie — to dług, typ AP+'], dobra: 2, dlaczego: 'Pieniędzy przybyło, ale tyle samo przybyło długu. Firma nie jest bogatsza. Rachunek (aktywo) rośnie, kredyt (pasywo) rośnie — AP+.' },
   { q: 'Po której stronie rośnie konto przychodów?', opcje: ['Ma', 'Wn', 'Po tej, po której jest kasa'], dobra: 0, dlaczego: 'Przychód zwiększa kapitał własny, a kapitał (pasywo) rośnie po Ma. Kasa w tej samej operacji stoi po Wn — po przeciwnej stronie.' },
   { q: 'Dlaczego koszty zapisujemy po Wn?', opcje: ['Bo koszty to aktywa', 'Bo koszt zmniejsza kapitał własny, a pasywa maleją po Wn', 'Bo pieniądze wychodzą z firmy'], dobra: 1, dlaczego: 'Koszt zmniejsza kapitał. Zmniejszenie pasywów zapisujemy po Wn. Koszty nie są aktywami. A koszt nie zawsze oznacza wyjście pieniędzy — np. naliczone wynagrodzenia.' },
-  { q: 'Ile wynosi saldo początkowe konta kosztów na początku okresu?', opcje: ['Zero — konta wynikowe startują puste', 'Tyle, ile saldo z końca poprzedniego okresu', 'Tyle, ile kapitał własny'], dobra: 0, dlaczego: 'Konta wynikowe zamykamy przeksięgowaniem na wynik finansowy. Dlatego każdy okres zaczynają od zera i nie mają „Sp.”.' },
+  { q: 'Ile wynosi saldo początkowe konta kosztów na początku roku obrotowego?', opcje: ['Zero — konta wynikowe startują puste', 'Tyle, ile saldo z końca poprzedniego roku', 'Tyle, ile kapitał własny'], dobra: 0, dlaczego: 'Na koniec roku konta wynikowe zamyka się przeksięgowaniem na wynik finansowy. Dlatego nowy rok zaczynają od zera i nie mają „Sp.”. W zadaniach to samo robimy na koniec miesiąca.' },
   { q: 'Dostawca umorzył firmie część długu. Na którym koncie zapiszesz przychód?', opcje: ['Przychody ze sprzedaży towarów', 'Przychody finansowe', 'Pozostałe przychody operacyjne'], dobra: 2, dlaczego: 'Umorzenie to przychód obok zwykłego handlu — PPO, jak op. 11 w Zad. 4.6. Nie ma tu sprzedaży ani odsetek.' },
-  { q: 'Towary zniszczone w pożarze księgujemy po Wn konta…', opcje: ['Wartość sprzedanych towarów', 'Pozostałe koszty operacyjne', 'Koszty finansowe'], dobra: 1, dlaczego: 'To strata losowa, a nie sprzedaż — PKO, jak op. 15 w Zad. 4.6. Wartość sprzedanych towarów dotyczy tylko towarów, które kupił klient.' },
+  { q: 'Towary zniszczone w pożarze księgujemy po Wn konta…', opcje: ['Wartość sprzedanych towarów', 'Pozostałe koszty operacyjne', 'Koszty finansowe'], dobra: 1, dlaczego: 'To strata losowa, a nie sprzedaż — PKO, jak op. 15 w Zad. 4.6. Wartość sprzedanych towarów dotyczy tylko towarów, które kupił klient. Koszty finansowe to odsetki i papiery wartościowe.' },
   { q: 'Zysk netto to…', opcje: ['Przychody minus koszty', 'Zysk brutto plus podatek dochodowy', 'Zysk brutto minus podatek dochodowy'], dobra: 2, dlaczego: 'Przychody minus koszty to zysk brutto. Netto jest po podatku: brutto − podatek. W Zad. 4.6: 1 500 − 285 = 1 215.' },
   { q: 'Jakie saldo ma konto kosztów po przeksięgowaniu na wynik finansowy?', opcje: ['Zero', 'Takie samo jak przed przeksięgowaniem', 'Saldo Ma'], dobra: 0, dlaczego: 'Przeksięgowanie to zapis po stronie przeciwnej niż saldo, na tę samą kwotę. Obie strony konta się zrównują, więc saldo wynosi 0.' },
 ]} />
