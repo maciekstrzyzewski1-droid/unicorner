@@ -29,6 +29,8 @@ jobs:
         run: npm ci
       - name: Build (Astro)
         run: npm run build
+      - name: Test tresci (kod zamiast liczby, bledy KaTeX)
+        run: node narzedzia/tresc-check/sprawdz.mjs dist
       - name: Playwright (do testu sieciowego, poza zaleznosciami projektu)
         run: |
           npm install --prefix "$RUNNER_TEMP/pw" --no-save --ignore-scripts playwright@1.63.0

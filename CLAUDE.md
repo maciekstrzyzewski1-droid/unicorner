@@ -29,4 +29,4 @@ Wiele plików ma 50–220 KB. Nie czytaj ich w całości: najpierw `grep -n`, po
 - Artykuły (`src/teksty/`) pisze się w palecie źródłowej (ciemna zieleń `#14150f`, złoty `#d1a13f`, Fraunces + Work Sans). Strona artykułu pokazuje je w tej palecie bez przekolorowania (`src/lib/wiedza.js` tylko zawęża CSS do `.art` i wycina `<script>`); czcionki są hostowane lokalnie w `public/fonts/fonty-artykul.css`, a ramka strony dostaje tę paletę przez zmienne na `body` w `src/pages/wiedza/[slug].astro`. Lista `wiedza.astro` zostaje w stylu cyberpunkowym.
 
 ## Sprawdzanie
-Testów nie ma. Po każdej zmianie: `npm run build` musi przejść (ok. 35 s). Przy zmianach CSS porównaj zbudowany `dist/` przed i po.
+Testów jednostkowych nie ma. Po każdej zmianie: `npm run build` musi przejść (ok. 35 s), potem `node narzedzia/tresc-check/sprawdz.mjs dist` (kod zamiast liczby we wzorach, błędy KaTeX, `NaN`/`undefined` w tekście; to samo robi CI w PR). Wyrażeń `{…}` nie wpisuj do środka `$…$`: MDX ich tam nie policzy. Przy zmianach CSS porównaj zbudowany `dist/` przed i po.
