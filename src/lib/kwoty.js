@@ -46,7 +46,7 @@ export const reszta = (proba, s) => mapuj(proba, (x, i, j) => x - s.ilu * s.m[i]
 // a 0,3 · 100 = 30 ankieterów dostaje o jedną osobę więcej (dodatek).
 export function dodatki(proba, ankieterow, naAnk) {
   const pewna = mapuj(proba, (x) => Math.floor(x / ankieterow + 1e-9));
-  const potrzeba = mapuj(proba, (x, i, j) => x - pewna[i][j] * ankieterow); // ilu ankieterów dostaje +1 w tej kratce
+  const potrzeba = mapuj(proba, (x, i, j) => x - pewna[i][j] * ankieterow); // ilu ankieterów dostaje +1 w tej kratce („dodatki kratki”)
   return { pewna, potrzeba, brak: naAnk - suma(pewna) }; // brak = ile dodatków dostaje każdy ankieter
 }
 // Jeden przykładowy schemat: część pewna + dodatki w kratkach z największą potrzebą (przy remisie wcześniejsza kratka).
@@ -73,9 +73,14 @@ export function ulozSchematy(proba, ankieterow, naAnk) {
     const pominiete = kolej.slice(brak);
     const ile = brak === 0 ? zostalo : Math.min(Math.min(...wybrane.map(([p]) => p)), zostalo - Math.max(0, ...pominiete.map(([p]) => p)));
     if (!(ile >= 1)) throw new Error('kwoty: nie da się ułożyć schematów — sprawdź, czy próba dzieli się na ankieterów');
+    const przed = potrz.slice();
+    const minWybrane = brak === 0 ? zostalo : Math.min(...wybrane.map(([p]) => p));
+    const maxPominiete = Math.max(0, ...pominiete.map(([p]) => p));
     const m = pewna.flat();
     wybrane.forEach(([, i]) => { m[i]++; potrz[i] -= ile; });
-    wynik.push({ nazwa: 'ABCDEFGHIJ'[wynik.length], ilu: ile, m: proba.map((_, i) => m.slice(i * k, i * k + k)), potrzebaPrzed: proba.map((_, i) => kolej.slice().sort((a, b) => a[1] - b[1]).map(([p]) => p).slice(i * k, i * k + k)), zostaloPrzed: zostalo });
+    const tnij = (t) => proba.map((_, i) => t.slice(i * k, i * k + k));
+    // dodatkiPrzed: ilu ankieterów ma jeszcze dostać dodatek w każdej kratce, zanim rozdamy tę kartkę
+    wynik.push({ nazwa: 'ABCDEFGHIJ'[wynik.length], ilu: ile, m: tnij(m), dodatkiPrzed: tnij(przed), zostaloPrzed: zostalo, minWybrane, maxPominiete });
     zostalo -= ile;
   }
   return wynik;

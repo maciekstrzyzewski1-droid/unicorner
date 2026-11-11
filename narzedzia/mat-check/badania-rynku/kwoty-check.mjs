@@ -2,6 +2,7 @@
 // Liczby z materiałów z zajęć są tu przepisane ręcznie (niezależnie od src/lib/kwoty.js) i porównywane z tym, co liczy lib.
 // Użycie: node narzedzia/mat-check/badania-rynku/kwoty-check.mjs   (z katalogu repo; exit 1 przy pierwszej niezgodności)
 import * as K from '../../../src/lib/kwoty.js';
+import { alokuj } from '../../../src/lib/proba.js';
 
 let bledy = 0;
 const eq = (a, b) => JSON.stringify(a) === JSON.stringify(b);
@@ -69,10 +70,29 @@ test('biblioteka: N = 16 000, procenty 14/22/13/16/21/14, próba 56/88/52/64/84/
 test('sklep: N = 5000, procenty 30/20/35/15, próba 60/40/70/30, wyjściowy 3/2/3,5/1,5', K.suma(K.SKLEP.pop) === 5000 && eq(K.procentyPelne(K.SKLEP.pop), [[30, 20], [35, 15]]) && blisko(K.wyjsciowy(K.probaZProcentow(K.procentyPelne(K.SKLEP.pop), 200), 20), [[3, 2], [3.5, 1.5]]));
 
 // ——— 4. Liczby z ramek i ćwiczeń wpisane w tekście ———
-test('ramka: 414/333/253 → 41+33+25 = 99%; n = 200 → 83 + 67 + 50', [414, 333, 253].map((x) => Math.round(x / 10)).reduce((a, b) => a + b) === 99 && eq([82, 66, 50].map((x, i) => x + [1, 1, 0][i]), [83, 67, 50]) && Math.abs(0.414 * 200 - 82.8) < 1e-9 && Math.abs(0.333 * 200 - 66.6) < 1e-9 && Math.abs(0.253 * 200 - 50.6) < 1e-9);
+const r3 = alokuj(200, [414, 334, 252]);
+test('ramka: 414/334/252 → 41 + 33 + 25 = 99%; dokładnie 82,8; 66,8; 50,4 (bez remisu o miejsce); wynik 83 + 67 + 50', [414, 334, 252].map((x) => Math.round(x / 10)).reduce((a, b) => a + b) === 99 && eq(r3.dokladnie.map((x) => +x.toFixed(1)), [82.8, 66.8, 50.4]) && eq(r3.wynik, [83, 67, 50]), JSON.stringify(r3));
 test('ćwiczenia: 1200 : 20 = 60; 572 : 10 → 58', K.ilu(1200, 20) === 60 && K.ilu(572, 10) === 58);
 test('ćwiczenia: 5·2 + 5·3 = 25; 8·2 + 2·3 = 22; 2·2 + 8·3 = 28', 5 * 2 + 5 * 3 === 25 && 8 * 2 + 2 * 3 === 22 && 2 * 2 + 8 * 3 === 28);
 test('sprawdź się: 2; 1,5; 2,5; 4 → kartki 2,2,2,4 i 2,1,3,4 mają 10, 2,2,3,4 ma 11, 2,1,2,4 ma 9', [2, 2, 2, 4].reduce((a, b) => a + b) === 10 && [2, 1, 3, 4].reduce((a, b) => a + b) === 10 && [2, 2, 3, 4].reduce((a, b) => a + b) === 11 && [2, 1, 2, 4].reduce((a, b) => a + b) === 9);
+
+// ——— 5. Przepis z modułu (dwie liczby w punkcie 4) na losowych danych: zawsze dochodzi do kompletu, który przechodzi trzy testy ———
+{
+  let ziarno = 20261111;
+  const los = (n) => { ziarno = (ziarno * 1103515245 + 12345) % 2147483648; return ziarno % n; };
+  let zle = 0;
+  const ILE = 5000;
+  for (let t = 0; t < ILE; t++) {
+    const ankieterow = 2 + los(39), naAnk = 5 + los(16), kratek = 2 + los(7);
+    const proba = Array(kratek).fill(0);
+    for (let i = 0; i < ankieterow * naAnk; i++) proba[los(kratek)]++;
+    try {
+      const u = K.ulozSchematy([proba], ankieterow, naAnk);
+      if (!K.sprawdz([proba], u, naAnk, ankieterow).ok) zle++;
+    } catch { zle++; }
+  }
+  test(`przepis na ${ILE} losowych próbach (2–40 ankieterów, 5–20 ankiet, 2–8 kratek)`, zle === 0, `nieudanych: ${zle}`);
+}
 
 console.log(bledy === 0 ? '\nWszystko się zgadza.' : `\nNiezgodności: ${bledy}`);
 process.exit(bledy === 0 ? 0 : 1);

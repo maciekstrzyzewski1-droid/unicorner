@@ -5,7 +5,7 @@ slug: dobor-proby
 title: Dobór kwotowy
 podtytul: struktura populacji, struktura próby, kwoty i schematy dla ankieterów
 description: Dobór kwotowy krok po kroku – struktura populacji w procentach, struktura próby, liczba ankieterów, kwoty na ankietera, schemat wyjściowy i komplet schematów A–D z trzema testami poprawności. Zadania z rozwiązaniami i ćwiczenia.
-lede: Wiesz już, ile osób zbadać. Teraz ustalisz, kogo – tak, żeby próba była miniaturą populacji. Przejdziesz od tabeli z danymi o populacji do kartek z kwotami dla ankieterów i nauczysz się sprawdzać, czy te kartki się zgadzają.
+lede: Wiesz już, ile osób zbadać. Teraz ustalisz, kogo — tak, żeby próba była miniaturą populacji. Przejdziesz od tabeli z danymi o populacji do kartek z kwotami dla ankieterów i nauczysz się sprawdzać, czy te kartki się zgadzają.
 wymaga: Nic. Liczebność próby dostajesz gotową. Jak ją policzyć, pokazuje moduł o minimalnej liczebności próby.
 umiesz:
   - zamienić tabelę populacji na strukturę procentową
@@ -46,7 +46,7 @@ export const aJeden = przykladowy(aPr, aAnk, A.naAnk);
 export const aTest = sprawdz(aPr, A.schematy, A.naAnk, aAnk);
 export const aPoA = reszta(aPr, A.schematy[0]);
 export const aInny = ulozSchematy(aPr, aAnk, A.naAnk);
-export const aKr = A.wiersze.flatMap((w, i) => A.kolumny.map((k, j) => ({ w, k, i, j, et: `${k}, ${w}` })));
+export const aKr = A.wiersze.flatMap((w, i) => A.kolumny.map((k, j) => ({ w, k, i, j, et: `${w}, ${k}` })));
 
 export const B = BIBLIOTEKA;
 export const bN = suma(B.pop);
@@ -59,7 +59,24 @@ export const bSch = ulozSchematy(bPr, bAnk, B.naAnk);
 export const bTest = sprawdz(bPr, bSch, B.naAnk, bAnk);
 export const bDok = probaDokladna(B.pop, B.n);
 export const bKr = B.wiersze.flatMap((w, i) => B.kolumny.map((k, j) => ({ w, k, i, j, et: `${w}, ${k}` })));
-export const bDodane = (s) => bKr.filter((c) => s.m[c.i][c.j] > bDod.pewna[c.i][c.j]).map((c) => `„${c.et}”`).join(', ');
+export const bWyb = (s) => bKr.filter((c) => s.m[c.i][c.j] > bDod.pewna[c.i][c.j]);
+export const bDodane = (s) => bWyb(s).map((c) => `„${c.et}”`).join(', ');
+export const bRemis = (s) => { const t = s.dodatkiPrzed.flat().sort((x, y) => y - x); return t[bDod.brak - 1] === t[bDod.brak]; };
+export const bWstep = (s, nr) => {
+  if (nr === 0) return `Kartki nie ma jeszcze ${s.zostaloPrzed} ankieterów. Liczby dodatków bierzemy z poprzedniego kroku:`;
+  const p = bSch[nr - 1];
+  const c = bWyb(p)[0];
+  return `Kartki nie ma jeszcze ${s.zostaloPrzed} ankieterów (${p.zostaloPrzed} − ${p.ilu}). Kratki, które miały dodatek na kartce ${p.nazwa}, rozdały go ${p.ilu} razy. Na przykład „${c.et}”: ${p.dodatkiPrzed[c.i][c.j]} − ${p.ilu} = ${s.dodatkiPrzed[c.i][c.j]}. Pozostałe kratki zostają bez zmian. Liczby dodatków teraz:`;
+};
+export const bKartka = (s, nr) => nr === bSch.length - 1
+  ? `Dodatki zostały tylko w kratkach ${bDodane(s)}. Każda ma ich ${s.ilu}, czyli tyle, ilu ankieterów nie ma jeszcze kartki. Wszyscy dostają tę samą kartkę:`
+  : `Każdy ankieter dostaje ${bDod.brak} dodatki. Dajemy je kratkom z największą liczbą dodatków: ${bDodane(s)}.${bRemis(s) ? ' Kilka kratek ma tę samą liczbę dodatków. Wtedy wolno wziąć dowolną z nich. Tu bierzemy tę, która stoi wcześniej, gdy czytasz tabelę wierszami.' : ''} Kartka (części pewne plus dodatki):`;
+export const bIlu = (s, nr) => {
+  if (nr === bSch.length - 1) return 'Po tej kartce w każdej kratce zostaje zero dodatków i każdy ankieter ma kartkę. Komplet jest gotowy.';
+  const c = bWyb(s).find((x) => s.dodatkiPrzed[x.i][x.j] === s.minWybrane);
+  const druga = s.zostaloPrzed - s.maxPominiete;
+  return `Ilu ankieterów dostaje tę kartkę? Pierwsza liczba: najmniej dodatków wśród złotych kratek ma „${c.et}”, czyli ${s.minWybrane}. Druga liczba: ${s.zostaloPrzed} ankieterów bez kartki minus ${s.maxPominiete}, bo tyle wynosi największa liczba dodatków wśród kratek bez dodatku. ${s.zostaloPrzed} − ${s.maxPominiete} = ${druga}. Mniejsza z nich to ${s.ilu}${s.minWybrane === druga ? ' (tu obie liczby są równe)' : ''}.`;
+};
 
 export const K = SKLEP;
 export const kN = suma(K.pop);
@@ -69,7 +86,7 @@ export const kAnk = ilu(K.n, K.naAnk);
 export const kWyj = wyjsciowy(kPr, kAnk);
 export const kSch = ulozSchematy(kPr, kAnk, K.naAnk);
 
-export const R3 = [414, 333, 253];
+export const R3 = [414, 334, 252];
 export const r3Pct = R3.map((x) => Math.round((100 * x) / 1000));
 export const r3 = alokuj(200, R3);
 export const rach = (sch, c) => sch.map((s) => `${s.ilu} · ${s.m[c.i][c.j]}`).join(' + ');
@@ -78,7 +95,7 @@ export const rach = (sch, c) => sch.map((s) => `${s.ilu} · ${s.m[c.i][c.j]}`).j
 
 Wiesz już, ile osób trzeba zapytać. Powiedzmy, że 1000. Zostaje pytanie: **które 1000?**
 
-Ankieterzy mogą stanąć w środę przed południem na rynku dużego miasta i pytać, kogo spotkają. Wtedy w próbie nie będzie nikogo ze wsi. Może w niej też zabraknąć osób, które o tej porze pracują. Taki wynik mówi coś o przechodniach z rynku. O całej populacji mówi niewiele.
+Ankieterzy mogą stanąć w środę przed południem na rynku dużego miasta i pytać każdego, kogo spotkają. Wtedy w próbie nie będzie prawie nikogo ze wsi. Może w niej też zabraknąć osób, które o tej porze pracują. Taki wynik mówi coś o przechodniach z rynku. O całej populacji mówi niewiele.
 
 Dobór kwotowy pilnuje, żeby próba była **miniaturą populacji**. Jeśli 8% populacji to młodzi ludzie z miast, to w próbie też ma ich być 8%. Każdy ankieter dostaje kartkę z **kwotami**. Kartka mówi, ile osób z której grupy ma zbadać. Na kolokwium to Ty przygotowujesz te kartki.
 
@@ -94,11 +111,13 @@ Dobór kwotowy pilnuje, żeby próba była **miniaturą populacji**. Jeśli 8% p
 ## Pojęcia od podstaw
 
 <Ramka kind="zapamietaj">
-- **Populacja** — wszyscy, o których chcesz coś wiedzieć. Jej liczebność zapisujemy $N$ (czytaj: „en duże”).
+- **Populacja** — wszyscy, o których chcesz coś wiedzieć. Jej liczebność, czyli liczbę osób, zapisujemy $N$ (czytaj: „en duże”).
 - **Próba** — osoby, które naprawdę zbadasz. Jej liczebność zapisujemy $n$ (czytaj: „en małe”).
 - **Cecha**, inaczej **kryterium** — to, według czego dzielisz ludzi na grupy. Na przykład wiek, płeć, miejsce zamieszkania.
-- **Kratka** — jedna grupa wyznaczona przez wszystkie cechy naraz, na przykład „miasto, 18–24 lata”. W tabeli to jedno pole.
-- **Struktura** — tabela zapisana w procentach. Pokazuje, jaka część całości przypada na każdą kratkę.
+- **Kratka** — jedna grupa wyznaczona przez wszystkie cechy naraz, na przykład „18–24 lata, miasto”. W tabeli to jedno pole. Kratkę nazywamy zawsze tak samo: najpierw wiersz, potem kolumna.
+- **Dobór próby** — sposób wybierania osób z populacji do próby.
+- **Struktura populacji** — tabela populacji zapisana w procentach. Pokazuje, jaka część całości przypada na każdą kratkę.
+- **Struktura próby** — tabela próby o tych samych proporcjach. Zapisujemy ją już w osobach.
 - **Kwota** — liczba osób z jednej kratki, które trzeba zbadać.
 - **Ankieter** — osoba, która prowadzi wywiady. W treści zadań bywa nazwany badaczem.
 - **Schemat** — kartka dla jednego ankietera: ile osób z każdej kratki ma zbadać.
@@ -108,7 +127,14 @@ Zobacz to na tabeli ze slajdów. Populacja to {sN} osób. Dzielimy je według dw
 
 <TabelaKwot wiersze={S.wiersze} kolumny={S.kolumny} m={S.pop} oznacz={[[1, 1]]} />
 
-**Jak czytać:** wiersz mówi o płci (K = kobiety, M = mężczyźni). Kolumna mówi o wykształceniu. „Podst. i zawod.” to wykształcenie podstawowe lub zasadnicze zawodowe. Tabelę czytasz jak planszę do gry w statki: najpierw wiersz, potem kolumna. Złota kratka leży w wierszu M i w kolumnie „średnie”. To {S.pop[1][1]} mężczyzn ze średnim wykształceniem. „Razem” na końcu wiersza to suma wiersza, a na dole kolumny suma kolumny. W prawym dolnym rogu stoi cała populacja: $N = {sN}$.
+**Jak czytać:**
+
+- Wiersz mówi o płci: K to kobiety, M to mężczyźni.
+- Kolumna mówi o wykształceniu. „Podst. i zawod.” to wykształcenie podstawowe lub zasadnicze zawodowe.
+- Kratkę znajdujesz tak: najpierw wiersz, potem kolumna. Złota kratka leży w wierszu M i w kolumnie „średnie”. To {S.pop[1][1]} mężczyzn ze średnim wykształceniem.
+- „Razem” na końcu wiersza to suma wiersza. „Razem” na dole kolumny to suma kolumny. W arkuszu z zajęć ta sama rubryka nazywa się „Ogółem”.
+- W prawym dolnym rogu stoi cała populacja: $N$ = {sN}.
+
 
 <Ramka kind="pulapka">
 - Kwota to liczba osób, nie pieniądze.
@@ -118,7 +144,7 @@ Zobacz to na tabeli ze slajdów. Populacja to {sN} osób. Dzielimy je według dw
 
 ## Czym jest dobór kwotowy
 
-Dobór kwotowy to najczęściej stosowana **nielosowa** metoda doboru próby w badaniach rynku. Opiera się na tym, że znasz strukturę populacji według wybranych cech. Tę strukturę nakładasz na próbę. Typowe cechy to wiek, płeć, wielkość rodziny, dochód, grupa społeczna i zawód.
+Dobór kwotowy to najczęściej stosowana **nielosowa** metoda doboru próby w badaniach rynku. Nielosowa znaczy: osób do próby nie wybiera losowanie. Metoda opiera się na tym, że znasz strukturę populacji według wybranych cech. Tę strukturę nakładasz na próbę. Typowe cechy to wiek, płeć, wielkość rodziny, dochód, grupa społeczna i zawód.
 
 <Ramka kind="intuicja">
 Próba ma być zdjęciem populacji w pomniejszeniu. Na zdjęciu wszystko jest mniejsze, ale proporcje zostają. Jeśli co piąta osoba w populacji to kobieta z wyższym wykształceniem, to w próbie też co piąta.
@@ -126,9 +152,9 @@ Próba ma być zdjęciem populacji w pomniejszeniu. Na zdjęciu wszystko jest mn
 
 <Ramka kind="granica">
 - To dobór **nielosowy**. Kartka mówi, ile osób z kratki zbadać. Konkretną osobę wybiera ankieter.
-- Dlatego przy doborze kwotowym nie da się oszacować błędu losowego. Tak podaje [słownik pojęć GUS](https://stat.gov.pl/metainformacje/slownik-pojec/pojecia-stosowane-w-statystyce-publicznej/2738,pojecie.html).
+- **Błąd losowy** to różnica między wynikiem z próby a prawdą o całej populacji, która bierze się stąd, że badasz tylko część osób. Jego rozmiar da się oszacować tylko wtedy, gdy próbę wybrano losowo. Przy doborze kwotowym nie ma do tego podstaw.
 - Próba zgadza się z populacją tylko w cechach z tabeli. Przykład: kwoty na wiek i płeć nie pilnują wykształcenia.
-- Potrzebujesz danych o strukturze populacji, na przykład z GUS. Bez nich nie ma z czego policzyć kwot.
+- Potrzebujesz danych o strukturze populacji, na przykład z Głównego Urzędu Statystycznego (GUS). Bez nich nie ma z czego policzyć kwot.
 </Ramka>
 
 <Pytania tag="Sprawdź się" pytania={[
@@ -155,19 +181,19 @@ Procent to setna część. 20% to 20 : 100 = 0,20. „20% ze 100 osób” liczys
 
 ### Mały przykład ze slajdów
 
-Populacja to {sN} osób. Próba ma liczyć $n = {S.n}$ osób.
+Populacja to {sN} osób. Próba ma liczyć {S.n} osób, czyli $n$ = {S.n}. Ankieterów jest {S.ankieterow}, każdy robi {S.naAnk} ankiet.
 
 **Etap 1.** Tabela populacji w liczbach. Sumy są już doliczone.
 
 <TabelaKwot wiersze={S.wiersze} kolumny={S.kolumny} m={S.pop} oznacz={[[0, 0]]} />
 
-**Etap 2.** Każdą kratkę dzielimy przez $N = {sN}$. Złota kratka: {S.pop[0][0]} : {sN} = {fmt(S.pop[0][0] / sN, 2)}, czyli {sPct[0][0]}%.
+**Etap 2.** Każdą kratkę dzielimy przez $N$ = {sN}. Złota kratka: {S.pop[0][0]} : {sN} = {fmt(S.pop[0][0] / sN, 2)}, czyli {sPct[0][0]}%.
 
 <TabelaKwot wiersze={S.wiersze} kolumny={S.kolumny} m={sPct} jedn="%" oznacz={[[0, 0]]} />
 
 **Jak czytać:** {sPct[0][0]}% całej populacji to kobiety z wykształceniem podstawowym lub zawodowym. Sześć kratek daje razem 100%.
 
-**Etap 3.** Procent każdej kratki bierzemy z $n = {S.n}$. Złota kratka: {sPct[0][0]}% ze {S.n} to {fmt(sPct[0][0] / 100, 2)} · {S.n} = {sPr[0][0]} osób.
+**Etap 3.** Procent każdej kratki bierzemy z $n$ = {S.n}. Złota kratka: {sPct[0][0]}% ze {S.n} to {fmt(sPct[0][0] / 100, 2)} · {S.n} = {sPr[0][0]} osób.
 
 <TabelaKwot wiersze={S.wiersze} kolumny={S.kolumny} m={sPr} oznacz={[[0, 0]]} />
 
@@ -178,7 +204,7 @@ Populacja to {sN} osób. Próba ma liczyć $n = {S.n}$ osób.
 <Rozwiazanie tytul="Struktura próby 1000 osób" zrodlo="arkusz „Metody doboru próby – przykład”">
 <div slot="tresc">
 
-Populację podzielono według wieku i miejsca zamieszkania. Tabela podaje liczby osób w każdej kratce. Próba ma liczyć $n = {fmt(A.n)}$ osób. Określ strukturę próby.
+Populację podzielono według wieku i miejsca zamieszkania. Tabela podaje liczby osób w każdej kratce. Próba ma liczyć {fmt(A.n)} osób ($n$ = {fmt(A.n)}). Określ strukturę próby.
 
 <TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={A.pop} razem={false} />
 
@@ -194,41 +220,41 @@ Populację podzielono według wieku i miejsca zamieszkania. Tabela podaje liczby
 </div>
 
 <Krok tytul="Sumy i N">
-<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={A.pop} razemEt="Ogółem" />
+<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={A.pop} />
 
-**Jak czytać:** ostatnia kolumna to suma wiersza, na przykład {fmt(A.pop[0][0])} + {fmt(A.pop[0][1])} = {fmt(A.pop[0][0] + A.pop[0][1])}. Ostatni wiersz to sumy kolumn. W rogu stoi $N = {fmt(aN)}$.
+**Jak czytać:** ostatnia kolumna to suma wiersza, na przykład {fmt(A.pop[0][0])} + {fmt(A.pop[0][1])} = {fmt(A.pop[0][0] + A.pop[0][1])}. Ostatni wiersz to sumy kolumn. W rogu stoi $N$ = {fmt(aN)}.
 
 <Dlaczego>
-$N$ to mianownik każdego procentu. Sumy wierszy i kolumn przydają się do kontroli: suma sum wierszy i suma sum kolumn muszą dać to samo $N$.
+$N$ to liczba, przez którą dzielisz każdą kratkę. Sumy wierszy i kolumn przydają się do kontroli: suma sum wierszy i suma sum kolumn muszą dać to samo $N$.
 </Dlaczego>
 
 <Dlaczego typ="inaczej" etykieta="Uwaga do arkusza">
-W arkuszu z zajęć w wierszu „65 i więcej” stoi suma {fmt(A.sumyWArkuszu[3])}. Kratki dają {fmt(A.pop[3][0])} + {fmt(A.pop[3][1])} = {fmt(A.pop[3][0] + A.pop[3][1])}. Różnica to jedna jednostka i nie zmienia żadnego procentu. Całość {fmt(aN)} zgadza się z sumą kratek, więc liczymy z kratek.
+W arkuszu z zajęć w wierszu „65 i więcej” stoi suma {fmt(A.sumyWArkuszu[3])}. Kratki dają {fmt(A.pop[3][0])} + {fmt(A.pop[3][1])} = {fmt(A.pop[3][0] + A.pop[3][1])}. Różnica wynosi 1 i nie zmienia żadnego procentu. Całość {fmt(aN)} zgadza się z sumą kratek, więc liczymy z kratek.
 </Dlaczego>
 </Krok>
 
 <Krok tytul="Struktura w procentach">
-Każdą kratkę dzielimy przez {fmt(aN)}. Przykład pełnymi zdaniami: w kratce „Miasto, 18–24” jest {fmt(A.pop[0][0])} osób. {fmt(A.pop[0][0])} : {fmt(aN)} = {fmt(A.pop[0][0] / aN, 4)}. To {fmt((100 * A.pop[0][0]) / aN, 2)}%, po zaokrągleniu {aPct[0][0]}%.
+Każdą kratkę dzielimy przez {fmt(aN)}. Przykład pełnymi zdaniami: w kratce „18–24, Miasto” jest {fmt(A.pop[0][0])} osób. {fmt(A.pop[0][0])} : {fmt(aN)} = {fmt(A.pop[0][0] / aN, 4)}. To {fmt((100 * A.pop[0][0]) / aN, 2)}%, po zaokrągleniu {aPct[0][0]}%.
 
-<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aPct} jedn="%" sumyW={aPctW} sumyK={aPctK} calosc={100} razemEt="Ogółem" oznacz={[[1, 0], [1, 1]]} />
+<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aPct} jedn="%" sumyW={aPctW} sumyK={aPctK} calosc={100} oznacz={[[1, 0], [1, 1]]} />
 
-**Jak czytać:** {aPct[0][0]}% populacji to osoby w wieku 18–24 lata mieszkające w mieście. Osiem kratek daje razem {suma(aPct)}%.
+**Jak czytać:** {aPct[0][0]}% populacji to osoby w wieku 18–24 lat mieszkające w mieście. Osiem kratek daje razem {suma(aPct)}%.
 
 <Dlaczego typ="umowa">
-W arkuszu z zajęć procenty są zaokrąglone do pełnych. Przy $n = {fmt(A.n)}$ każdy procent to równo 10 osób, więc dalej liczy się wygodnie.
+W arkuszu z zajęć procenty są zaokrąglone do pełnych. Przy $n$ = {fmt(A.n)} każdy procent to równo 10 osób, więc dalej liczy się wygodnie.
 </Dlaczego>
 
 <Dlaczego>
-Popatrz na złote kratki: {aPct[1][0]}% + {aPct[1][1]}% = {aPct[1][0] + aPct[1][1]}%, a w kolumnie „Ogółem” stoi {aPctW[1]}%. To nie pomyłka. Każdą liczbę zaokrąglono osobno: {fmt(A.pop[1][0] + A.pop[1][1])} : {fmt(aN)} to {fmt((100 * (A.pop[1][0] + A.pop[1][1])) / aN, 2)}%, czyli po zaokrągleniu {aPctW[1]}%. Do struktury próby bierzemy procenty **kratek**, nie procenty z kolumny „Ogółem”.
+Popatrz na złote kratki: {aPct[1][0]}% + {aPct[1][1]}% = {aPct[1][0] + aPct[1][1]}%, a w kolumnie „Razem” stoi {aPctW[1]}%. To nie pomyłka. Każdą liczbę zaokrąglono osobno: {fmt(A.pop[1][0] + A.pop[1][1])} : {fmt(aN)} to {fmt((100 * (A.pop[1][0] + A.pop[1][1])) / aN, 2)}%, czyli po zaokrągleniu {aPctW[1]}%. Do struktury próby bierzemy procenty **kratek**, nie procenty z kolumny „Razem”.
 </Dlaczego>
 </Krok>
 
 <Krok tytul="Struktura próby">
-Procent każdej kratki bierzemy z {fmt(A.n)} osób. Kratka „Miasto, 18–24”: {aPct[0][0]}% z {fmt(A.n)} to {fmt(aPct[0][0] / 100, 2)} · {fmt(A.n)} = {aPr[0][0]} osób.
+Procent każdej kratki bierzemy z {fmt(A.n)} osób. Kratka „18–24, Miasto”: {aPct[0][0]}% z {fmt(A.n)} to {fmt(aPct[0][0] / 100, 2)} · {fmt(A.n)} = {aPr[0][0]} osób.
 
-<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aPr} razemEt="Ogółem" />
+<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aPr} />
 
-**Jak czytać:** w próbie ma być {aPr[0][0]} osób z miasta w wieku 18–24 lata, {aPr[0][1]} osób ze wsi w tym samym wieku i tak dalej. Sumy wierszy i kolumn liczymy tu z kratek próby, na przykład {aPr[1][0]} + {aPr[1][1]} = {aPr[1][0] + aPr[1][1]}.
+**Jak czytać:** w próbie ma być {aPr[0][0]} osób z miasta w wieku 18–24 lat, {aPr[0][1]} osób ze wsi w tym samym wieku i tak dalej. Sumy wierszy i kolumn liczymy tu z kratek próby, na przykład {aPr[1][0]} + {aPr[1][1]} = {aPr[1][0] + aPr[1][1]}.
 
 <Dlaczego>
 Procenty kratek dają razem 100%. Dlatego kratki próby dają razem {fmt(suma(aPr))}, czyli całe $n$. Gdyby suma wyszła inna, gdzieś jest błąd.
@@ -238,14 +264,16 @@ Procenty kratek dają razem 100%. Dlatego kratki próby dają razem {fmt(suma(aP
 </Rozwiazanie>
 
 <Ramka kind="inaczej" tytul="bez zaokrąglania procentów">
-Można też nie zaokrąglać procentów, tylko od razu liczyć kratka : $N$ · $n$. Kratka „Miasto, 18–24”: {fmt(A.pop[0][0])} : {fmt(aN)} · {fmt(A.n)} = {fmt(aDok.dokladnie[0][0], 2)}, czyli {aDok.wynik[0][0]} osób zamiast {aPr[0][0]}. Oba sposoby dają próbę o strukturze populacji. Różnią się o kilka osób w kratce. W arkuszu z zajęć użyto pełnych procentów i tego sposobu trzymamy się dalej.
+Można też nie zaokrąglać procentów, tylko od razu liczyć kratka : $N$ · $n$. Kratka „18–24, Miasto”: {fmt(A.pop[0][0])} : {fmt(aN)} · {fmt(A.n)} = {fmt(aDok.dokladnie[0][0], 2)}, czyli {aDok.wynik[0][0]} osób zamiast {aPr[0][0]}. Oba sposoby dają próbę o strukturze populacji. Różnią się o kilka osób w kratce. W arkuszu z zajęć użyto pełnych procentów i tego sposobu trzymamy się dalej.
 </Ramka>
 
 <Ramka kind="granica" tytul="gdy pełne procenty nie dają 100">
 - Zaokrąglone procenty nie zawsze dają razem 100.
-- Przykład: trzy grupy mają {R3.join(', ')} osób, razem 1000. Procenty po zaokrągleniu: {r3Pct.join('%, ')}%. Razem {r3Pct.reduce((a, b) => a + b, 0)}%.
-- Przy $n = 200$ wyszłoby {r3Pct.map((p) => p * 2).join(' + ')} = {r3Pct.reduce((a, b) => a + b, 0) * 2} osób. Brakuje dwóch.
-- Wtedy licz dokładnie: {r3.dokladnie.map((x) => fmt(x, 1)).join('; ')}. Każdą liczbę obetnij w dół: {r3.dokladnie.map(Math.floor).join(', ')}. Brakujące osoby dostają grupy z największą częścią po przecinku.
+- Przykład: trzy grupy mają {R3[0]}, {R3[1]} i {R3[2]} osoby, razem 1000. Procenty po zaokrągleniu: {r3Pct.join('%, ')}%. Razem {r3Pct.reduce((a, b) => a + b, 0)}%.
+- Przy próbie 200 osób wyszłoby {r3Pct.map((p) => p * 2).join(' + ')} = {r3Pct.reduce((a, b) => a + b, 0) * 2} osób. Brakuje dwóch.
+- Wtedy licz dokładnie, bez procentów. Pierwsza grupa: {R3[0]} : 1000 · 200 = {fmt(r3.dokladnie[0], 1)}. Wszystkie trzy: {r3.dokladnie.map((x) => fmt(x, 1)).join('; ')}.
+- Każdą liczbę obetnij w dół: {r3.dokladnie.map(Math.floor).join(', ')}. Razem {r3.dokladnie.map(Math.floor).reduce((a, b) => a + b, 0)}, brakuje dwóch osób.
+- Brakujące osoby dostają grupy z największą częścią po przecinku. Tu to dwie pierwsze: obie mają 0,8.
 - Wynik: {r3.wynik.join(' + ')} = 200.
 </Ramka>
 
@@ -267,31 +295,31 @@ Próba jest gotowa. Teraz trzeba ją rozdzielić między ludzi, którzy zrobią 
 1. Znajdź w treści, ile ankiet robi jeden ankieter.
 2. **Liczba ankieterów** = $n$ podzielone przez liczbę ankiet na ankietera. Wynik z ułamkiem zaokrąglij w górę.
 3. **Kwoty na ankietera** = każda kratka próby podzielona przez liczbę ankieterów. Ta tabela nazywa się **schemat wyjściowy**.
-4. Kontrola: kratki schematu wyjściowego dają razem liczbę ankiet na ankietera.
+4. Kontrola: gdy $n$ dzieli się równo na ankieterów, kratki schematu wyjściowego dają razem liczbę ankiet na ankietera.
 </Ramka>
 
-**Mały przykład ze slajdów.** Próba to {S.n} osób, ankieterów jest {S.ankieterow}. Każdą kratkę próby dzielimy przez {S.ankieterow}. Złota kratka: {sPr[1][0]} : {S.ankieterow} = {fmt(sWyj[1][0], 1)}.
+**Mały przykład ze slajdów.** Próba to {S.n} osób, jeden ankieter robi {S.naAnk} ankiet. Liczba ankieterów: {S.n} : {S.naAnk} = {S.ankieterow}. Każdą kratkę próby dzielimy przez {S.ankieterow}. Złota kratka: {sPr[1][0]} : {S.ankieterow} = {fmt(sWyj[1][0], 1)}.
 
 <TabelaKwot wiersze={S.wiersze} kolumny={S.kolumny} m={sWyj} d={1} oznacz={[[1, 0], [1, 1]]} />
 
-**Jak czytać:** jeden ankieter ma zbadać {fmt(sWyj[0][0], 1)} kobiety z wykształceniem podstawowym lub zawodowym, {fmt(sWyj[0][1], 1)} ze średnim i tak dalej. Razem {fmt(suma(sWyj), 1)} ankiet. W złotych kratkach wyszły ułamki: {fmt(sWyj[1][0], 1)} i {fmt(sWyj[1][1], 1)} osoby.
+**Jak czytać:** jeden ankieter ma zbadać {fmt(sWyj[0][0], 1)} kobiety z wykształceniem podstawowym lub zawodowym, {fmt(sWyj[0][1], 1)} ze średnim i tak dalej. Razem {fmt(suma(sWyj), 0)} ankiet. W złotych kratkach wyszły ułamki: {fmt(sWyj[1][0], 1)} i {fmt(sWyj[1][1], 1)} osoby.
 
 **Zadanie z zajęć, ciąg dalszy.** Próba to {fmt(A.n)} osób. Jeden ankieter robi {A.naAnk} ankiet.
 
 - Liczba ankieterów: {fmt(A.n)} : {A.naAnk} = **{aAnk}**.
-- Kwoty na ankietera: każdą kratkę próby dzielimy przez {aAnk}. Kratka „Miasto, 18–24”: {aPr[0][0]} : {aAnk} = {fmt(aWyj[0][0], 1)}.
+- Kwoty na ankietera: każdą kratkę próby dzielimy przez {aAnk}. Kratka „18–24, Miasto”: {aPr[0][0]} : {aAnk} = {fmt(aWyj[0][0], 1)}.
 
-<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aWyj} d={1} razemEt="Ogółem" />
+<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aWyj} d={1} />
 
-**Jak czytać:** to schemat wyjściowy. Na jednego ankietera przypada {fmt(aWyj[0][0], 1)} osoby z miasta w wieku 18–24 lata, {fmt(aWyj[1][0], 1)} osoby z miasta w wieku 25–44 lata i tak dalej. Razem {fmt(suma(aWyj), 1)} ankiet, czyli tyle, ile robi jeden ankieter.
+**Jak czytać:** to schemat wyjściowy. Na jednego ankietera przypada {fmt(aWyj[0][0], 1)} osoby z miasta w wieku 18–24 lat, {fmt(aWyj[1][0], 1)} osoby z miasta w wieku 25–44 lat i tak dalej. Razem {fmt(suma(aWyj), 0)} ankiet, czyli tyle, ile robi jeden ankieter.
 
 <Ramka kind="botak" tytul="gdy n nie dzieli się równo">
-Liczbę ankieterów zaokrąglasz w górę. Przykład: $n = 572$, jeden ankieter robi 10 ankiet. 572 : 10 = 57,2, więc potrzeba {ilu(572, 10)} ankieterów. Przy 57 zabrakłoby rąk do dwóch ostatnich ankiet.
+Liczbę ankieterów zaokrąglasz w górę. Przykład: próba 572 osoby, jeden ankieter robi 10 ankiet. 572 : 10 = 57,2, więc potrzeba {ilu(572, 10)} ankieterów. Przy 57 zabrakłoby rąk do dwóch ostatnich ankiet. Ostatni ankieter robi wtedy tylko 2 ankiety. W przykładach z zajęć liczby dzielą się równo: 1000 : 10 i 100 : 10.
 </Ramka>
 
 <Ramka kind="pulapka">
 - **Dzielenie populacji zamiast próby.** Przez liczbę ankieterów dzielisz kratki próby.
-- **Zaokrąglanie schematu wyjściowego „na oko”.** Nie zamieniaj od razu 0,8 na 1, a 2,3 na 2. Najpierw przeczytaj następną sekcję.
+- **Zaokrąglanie schematu wyjściowego „na oko”.** Nie zamieniaj od razu 0,8 na 1, a 2,3 na 2. Suma kartki mogłaby się wtedy zmienić.
 </Ramka>
 
 <a id="polecenie-schemat" class="k-anchor"></a>
@@ -301,17 +329,17 @@ Liczbę ankieterów zaokrąglasz w górę. Przykład: $n = 572$, jeden ankieter 
 Ankieter nie zbada 0,8 osoby. Na jego kartce muszą stać całe liczby. Suma na kartce musi zostać ta sama: tyle ankiet, ile ma zrobić.
 
 <Ramka kind="intuicja" tytul="co znaczy ułamek">
-Kratka {fmt(aWyj[0][0], 1)} przy {aAnk} ankieterach nie znaczy „osiem dziesiątych człowieka”. Znaczy: **{aDod.potrzeba[0][0]} ankieterów bada po 1 osobie z tej kratki, a pozostałych {aAnk - aDod.potrzeba[0][0]} nie bada z niej nikogo.** Razem {aDod.potrzeba[0][0]} · 1 + {aAnk - aDod.potrzeba[0][0]} · 0 = {aPr[0][0]} osób, czyli tyle, ile trzeba.
+Kratka {fmt(aWyj[0][0], 1)} przy {aAnk} ankieterach nie znaczy „osiem dziesiątych człowieka”. Policz: {fmt(aWyj[0][0], 1)} · {aAnk} = {aDod.potrzeba[0][0]}. Znaczy to: **{aDod.potrzeba[0][0]} ankieterów bada po 1 osobie z tej kratki, a pozostałych {aAnk - aDod.potrzeba[0][0]} nie bada z niej nikogo.** Razem {aDod.potrzeba[0][0]} · 1 + {aAnk - aDod.potrzeba[0][0]} · 0 = {aPr[0][0]} osób, czyli tyle, ile trzeba.
 
-Tak samo kratka {fmt(aWyj[1][0], 1)}: każdy ankieter bada 2 osoby, a {aDod.potrzeba[1][0]} ankieterów bada o jedną więcej. Razem {aAnk} · 2 + {aDod.potrzeba[1][0]} · 1 = {aPr[1][0]}.
+Tak samo kratka {fmt(aWyj[1][0], 1)}: każdy ankieter bada 2 osoby, a część po przecinku mówi o dodatkowej osobie. 0,3 · {aAnk} = {aDod.potrzeba[1][0]}, więc {aDod.potrzeba[1][0]} ankieterów bada o jedną więcej. Razem {aAnk} · 2 + {aDod.potrzeba[1][0]} · 1 = {aPr[1][0]}.
 </Ramka>
 
 <Ramka kind="polecenie" tytul="Zaproponuj przykładową strukturę próby dla ankietera">
 **Przepis:**
 
-1. **Część pewna.** Każdą kratkę schematu wyjściowego obetnij w dół do całej liczby. 2,3 → 2. 0,8 → 0. Tyle dostaje każdy ankieter.
+1. **Część pewna.** Każdą kratkę schematu wyjściowego obetnij w dół do całej liczby. 2,3 → 2. 0,8 → 0. Tyle damy każdemu ankieterowi.
 2. **Ile brakuje.** Dodaj części pewne. Odejmij tę sumę od liczby ankiet na ankietera. Tylu osób brakuje na kartce.
-3. **Dodatki.** Brakujące osoby dołóż po jednej do kratek z największą częścią po przecinku.
+3. **Dodatki.** Brakujące osoby dołóż po jednej do kratek z największą częścią po przecinku. Przy równych częściach wybierz dowolną z nich.
 4. **Kontrola.** Suma na kartce = liczba ankiet na ankietera.
 </Ramka>
 
@@ -321,16 +349,16 @@ Tak samo kratka {fmt(aWyj[1][0], 1)}: każdy ankieter bada 2 osoby, a {aDod.potr
 
 **Jak czytać:** każdy wiersz to jedna kratka. „Część pewna” to liczba przed przecinkiem. „Po przecinku” to reszta, na przykład 2,3 − 2 = 0,3.
 
-Części pewne dają razem {suma(aDod.pewna)}. Ankieter ma zrobić {A.naAnk} ankiet, więc brakuje {A.naAnk} − {suma(aDod.pewna)} = {aDod.brak} osób. Trzy największe części po przecinku to 0,8, 0,7 i 0,6. Te trzy kratki dostają po jednej osobie więcej:
+Części pewne dają razem {suma(aDod.pewna)}. Ankieter ma zrobić {A.naAnk} ankiet, więc brakuje {A.naAnk} − {suma(aDod.pewna)} = {aDod.brak} osób. Trzy największe części po przecinku to 0,8; 0,7 i 0,6. Te trzy kratki dostają po jednej osobie więcej. Powód: kratka 0,8 ma dodatek u 80 ankieterów na 100, więc na typowej kartce go ma. Kratka 0,1 ma go tylko u 10.
 
-<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aJeden} razemEt="Ogółem" oznacz={[[0, 0], [0, 1], [3, 1]]} />
+<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aJeden} oznacz={[[0, 0], [0, 1], [3, 1]]} />
 
 **Jak czytać:** to gotowa kartka dla jednego ankietera. Złote kratki dostały dodatek. Razem {suma(aJeden)} ankiet. Tak wygląda schemat A w arkuszu z zajęć.
 
 <Ramka kind="granica" tytul="jeden schemat dla wszystkich nie wystarczy">
-- Jedna kartka to dobra odpowiedź na polecenie „zaproponuj przykładową strukturę dla ankietera”.
-- Ale tej samej kartki nie można dać wszystkim. {aAnk} ankieterów ze schematem powyżej zbada {aAnk * aJeden[0][0]} osób z kratki „Miasto, 18–24”. Potrzeba {aPr[0][0]}.
-- W kratce „Miasto, 25–44” zbadają {aAnk * aJeden[1][0]} osób. Potrzeba {aPr[1][0]}.
+- Jedna kartka to dobra odpowiedź na polecenie „zaproponuj przykładową strukturę próby dla ankietera”. Taka struktura i schemat to to samo: kartka w całych liczbach.
+- Ale tej samej kartki nie można dać wszystkim. {aAnk} ankieterów z kartką powyżej zbada {aAnk} · {aJeden[0][0]} = {aAnk * aJeden[0][0]} osób z kratki „18–24, Miasto”. W próbie ma ich być {aPr[0][0]}.
+- W kratce „25–44, Miasto” zbadają {aAnk} · {aJeden[1][0]} = {aAnk * aJeden[1][0]} osób. W próbie ma ich być {aPr[1][0]}.
 - Dlatego ankieterzy dostają **różne** schematy. O tym jest następna sekcja.
 </Ramka>
 
@@ -347,14 +375,14 @@ Cel: rozdać ankieterom takie kartki, żeby **wszyscy razem** zebrali dokładnie
 <Ramka kind="zapamietaj" tytul="trzy testy kompletu">
 1. **Kartka.** Każdy schemat daje w sumie tyle ankiet, ile robi jeden ankieter.
 2. **Ludzie.** Liczby ankieterów przy schematach dają razem liczbę wszystkich ankieterów.
-3. **Kratki.** Dla każdej kratki: schemat razy liczba ankieterów, dodane po wszystkich schematach, daje kratkę próby.
+3. **Kratki.** Dla każdej kratki mnożysz liczbę z kartki przez liczbę ankieterów, którzy tę kartkę mają. Wyniki ze wszystkich kartek dodajesz. Ma wyjść kratka próby. Przykład: 5 ankieterów ma na kartce 1 osobę, 5 ma 0 osób. Razem 5 · 1 + 5 · 0 = 5.
 
 Poprawnych kompletów jest wiele. Dobry jest każdy, który przechodzi te trzy testy.
 </Ramka>
 
 ### Mały przykład ze slajdów: schematy A i B
 
-Schemat wyjściowy ma dwie kratki z ułamkiem: {fmt(sWyj[1][0], 1)} i {fmt(sWyj[1][1], 1)}. Ułamek {fmt(sWyj[1][0], 1)} przy {S.ankieterow} ankieterach znaczy: połowa, czyli 5 ankieterów, bada o jedną osobę więcej.
+Schemat wyjściowy ma dwie kratki z ułamkiem: {fmt(sWyj[1][0], 1)} i {fmt(sWyj[1][1], 1)}. Części pewne to 2, 1, 2, 0, 2 i 2. Razem 9, więc każdemu ankieterowi brakuje jednej osoby do {S.naAnk} ankiet. Ułamek 0,5 przy {S.ankieterow} ankieterach znaczy: 0,5 · {S.ankieterow} = 5 ankieterów bada w tej kratce o jedną osobę więcej. Pięciu dostaje więc dodatek w pierwszej złotej kratce, a pozostałych pięciu w drugiej.
 
 <div class="k-dwa">
 <div>
@@ -379,14 +407,14 @@ Trzy testy:
 
 1. Kartka: A daje {suma(S.schematy[0].m)} ankiet, B daje {suma(S.schematy[1].m)}. Zgadza się.
 2. Ludzie: 5 + 5 = {S.ankieterow} ankieterów. Zgadza się.
-3. Kratki: „M, podst. i zawod.”: 5 · 1 + 5 · 0 = {sPr[1][0]}. „M, średnie”: 5 · 2 + 5 · 3 = {sPr[1][1]}. Pozostałe kratki są w obu schematach takie same, na przykład „K, wyższe”: 5 · 2 + 5 · 2 = {sPr[0][2]}. Zgadza się z próbą.
+3. Kratki: „M, podst. i zawod.”: 5 · 1 + 5 · 0 = {sPr[1][0]}. „M, średnie”: 5 · 2 + 5 · 3 = {sPr[1][1]}. Pozostałe kratki są w obu schematach takie same, na przykład „K, wyższe”: 5 · 2 + 5 · 2 = {sPr[0][2]}. W próbie te trzy kratki mają {sPr[1][0]}, {sPr[1][1]} i {sPr[0][2]} osób, więc wszystko się zgadza.
 
 ### Zadanie z zajęć: schematy A, B, C i D
 
 <Rozwiazanie tytul="Sprawdź komplet schematów z arkusza" zrodlo="arkusz „Metody doboru próby – przykład”">
 <div slot="tresc">
 
-W arkuszu z zajęć {aAnk} ankieterów dostało cztery schematy. Sprawdź trzema testami, czy komplet odtwarza próbę {fmt(A.n)} osób.
+W arkuszu z zajęć {aAnk} ankieterów podzielono na cztery grupy. Każda grupa ma swój schemat. Sprawdź trzema testami, czy komplet odtwarza próbę {fmt(A.n)} osób.
 
 <TabelaKwot head={['Kratka', ...A.schematy.map((s) => `${s.nazwa} (${s.ilu} ank.)`), 'Próba']} rows={[...aKr.map((c) => [c.et, ...A.schematy.map((s) => s.m[c.i][c.j]), `<b>${aPr[c.i][c.j]}</b>`]), ['<b>Razem</b>', ...aTest.sumy.map((x) => `<b>${x}</b>`), `<b>${fmt(suma(aPr))}</b>`]]} />
 
@@ -414,12 +442,12 @@ Ankieter robi {A.naAnk} ankiet. Kartka z inną sumą dawałaby mu za dużo albo 
 {A.schematy.map((s) => s.ilu).join(' + ')} = {aTest.razemAnk} ankieterów. Tylu miało być.
 
 <Dlaczego>
-Każdy ankieter musi dostać dokładnie jedną kartkę. Gdyby suma była mniejsza, ktoś zostałby bez kartki.
+Każdy ankieter musi dostać dokładnie jedną kartkę. Przy mniejszej sumie ktoś zostaje bez kartki. Przy większej kartek jest więcej niż ludzi.
 </Dlaczego>
 </Krok>
 
 <Krok tytul="Test kratek">
-Przykład pełnymi zdaniami. Kratka „Miasto, 18–24”: schemat A ma tam 1 osobę i dostaje go 50 ankieterów, czyli 50 · 1 = 50 osób. Schemat B ma 0, czyli 20 · 0 = 0. Schemat C ma 1, czyli 20 · 1 = 20. Schemat D ma 1, czyli 10 · 1 = 10. Razem 50 + 0 + 20 + 10 = {aTest.zebrane[0][0]}. W próbie ma być {aPr[0][0]}.
+Przykład pełnymi zdaniami. Kratka „18–24, Miasto”: schemat A ma tam 1 osobę i dostaje go 50 ankieterów, czyli 50 · 1 = 50 osób. Schemat B ma 0, czyli 20 · 0 = 0. Schemat C ma 1, czyli 20 · 1 = 20. Schemat D ma 1, czyli 10 · 1 = 10. Razem 50 + 0 + 20 + 10 = {aTest.zebrane[0][0]}. W próbie ma być {aPr[0][0]}.
 
 <TabelaKwot head={['Kratka', 'Rachunek: ankieterzy · osoby', 'Zebrane', 'Próba']} rows={aKr.map((c) => [c.et, rach(A.schematy, c), aTest.zebrane[c.i][c.j], `<b>${aPr[c.i][c.j]}</b>`])} />
 
@@ -428,34 +456,41 @@ Przykład pełnymi zdaniami. Kratka „Miasto, 18–24”: schemat A ma tam 1 os
 <Dlaczego>
 Dopiero ten test pokazuje, że kartki razem dają miniaturę populacji. Dwa pierwsze testy pilnują tylko liczby ankiet.
 </Dlaczego>
+
+<Dlaczego typ="inaczej" etykieta="Warto zauważyć">
+Schemat D ma w kratce „65 i więcej, Miasto” 0 osób, choć na ankietera przypada tam 1,1. Wolno. Kartka nie musi trzymać się części pewnej. Liczą się tylko trzy testy.
+</Dlaczego>
 </Krok>
 
 </Rozwiazanie>
 
 ### Jak ułożyć własny komplet
 
-W arkuszu z zajęć po schemacie A jest tabela z tym, **co zostało do zebrania**. To klucz do całej metody: układasz jedną kartkę, odejmujesz to, co zbiorą jej ankieterzy, i patrzysz na resztę.
+**Jak to zrobiono w arkuszu z zajęć.** Po schemacie A arkusz pokazuje tabelę z tym, co zostało do zebrania. Schemat A dostało {A.schematy[0].ilu} ankieterów. Od każdej kratki próby odejmujemy {A.schematy[0].ilu} razy liczbę z kartki A. Kratka „18–24, Miasto”: {aPr[0][0]} − {A.schematy[0].ilu} · {A.schematy[0].m[0][0]} = {aPoA[0][0]}.
+
+<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aPoA} />
+
+**Jak czytać:** tyle osób zostało do zebrania dla pozostałych {aAnk - A.schematy[0].ilu} ankieterów. Razem {suma(aPoA)}, czyli {aAnk - A.schematy[0].ilu} · {A.naAnk}. Kartki B, C i D z arkusza rozdzielają właśnie te osoby. To jeden z wielu poprawnych wyborów. Arkusz nie podaje reguły, według której je dobrano.
+
+Poniżej jest sposób, który prowadzi do kompletu krok po kroku. Opiera się na jednej liczbie dla każdej kratki: **ilu ankieterów ma dostać w niej dodatkową osobę**. Nazywamy ją **liczbą dodatków kratki**.
 
 <Ramka kind="polecenie" tytul="Ułóż schematy dla ankieterów">
 **Przepis:**
 
-1. Ułóż kartkę z tego, co zostało: część pewna plus dodatki w kratkach z największą częścią po przecinku.
-2. Zdecyduj, ilu ankieterów ją dostaje. Żadna kratka nie może być zebrana ponad potrzebę.
-3. Policz resztę: kratka próby minus (liczba ankieterów · liczba z kartki). Policz, ilu ankieterów zostało.
-4. Podziel resztę przez pozostałych ankieterów. To nowy schemat wyjściowy. Wróć do punktu 1.
-5. Koniec, gdy reszta dzieli się na pozostałych ankieterów bez ułamków. Ten wynik to ostatnia kartka.
-6. Zrób trzy testy.
+1. **Części pewne.** Każdą kratkę schematu wyjściowego obetnij w dół. Policz, ilu osób brakuje na kartce do pełnej liczby ankiet. Tyle dodatków dostanie każdy ankieter.
+2. **Liczba dodatków kratki.** Część po przecinku pomnóż przez liczbę ankieterów. Przykład: 0,8 · 100 = 80. W tej kratce 80 ankieterów ma dostać jedną osobę więcej.
+3. **Kartka.** Części pewne plus dodatki w kratkach z największą liczbą dodatków.
+4. **Ilu ankieterów dostaje kartkę.** Policz dwie liczby i weź mniejszą:
+   - najmniejszą liczbę dodatków wśród kratek, które dostały dodatek,
+   - liczbę ankieterów bez kartki minus największą liczbę dodatków wśród kratek bez dodatku.
+5. **Zapisz, co zostało.** W kratkach z dodatkiem odejmij od liczby dodatków liczbę ankieterów z punktu 4. Pozostałe kratki zostają bez zmian. Policz, ilu ankieterów nie ma jeszcze kartki.
+6. Wróć do punktu 3. Koniec, gdy każdy ankieter ma kartkę.
+7. Zrób trzy testy.
 </Ramka>
 
-Zobacz pierwszy obrót na liczbach z zajęć. Schemat A dostało {A.schematy[0].ilu} ankieterów. Od każdej kratki próby odejmujemy {A.schematy[0].ilu} razy liczbę z kartki A. Kratka „Miasto, 18–24”: {aPr[0][0]} − {A.schematy[0].ilu} · {A.schematy[0].m[0][0]} = {aPoA[0][0]}.
-
-<TabelaKwot wiersze={A.wiersze} kolumny={A.kolumny} m={aPoA} razemEt="Ogółem" />
-
-**Jak czytać:** tyle osób zostało do zebrania dla pozostałych {aAnk - A.schematy[0].ilu} ankieterów. Razem {suma(aPoA)}, czyli {aAnk - A.schematy[0].ilu} · {A.naAnk}. Kolejne kartki (B, C i D) układa się już z tej tabeli.
-
-<Ramka kind="kiedy" tytul="ilu ankieterom dać pierwszą kartkę">
-- Bezpieczny wybór to około połowy. Tak jest na slajdach (5 z 10) i w arkuszu (50 ze 100).
-- Górną granicę wyznacza kratka, która dostała dodatek najmniej potrzebny. W arkuszu to „Wieś, 18–24”: potrzebuje dodatku {aDod.potrzeba[0][1]} razy, więc kartkę A mogłoby dostać najwyżej {aDod.potrzeba[0][1]} ankieterów.
+<Ramka kind="skad" tytul="skąd dwie liczby w punkcie 4">
+- Pierwsza pilnuje, żeby nie dać dodatku za dużo razy. Jeśli w kratce dodatek ma dostać 12 ankieterów, to kartka z tym dodatkiem nie może trafić do 13.
+- Druga pilnuje kratek pominiętych. One też muszą rozdać swoje dodatki. Jeśli pominięta kratka ma jeszcze 8 dodatków, to po tej kartce musi zostać co najmniej 8 ankieterów bez kartki.
 </Ramka>
 
 ### Zadanie od zera do kompletu
@@ -463,7 +498,7 @@ Zobacz pierwszy obrót na liczbach z zajęć. Schemat A dostało {A.schematy[0].
 <Rozwiazanie tytul="Czytelnicy biblioteki miejskiej" zrodlo="dane wymyślone do ćwiczenia">
 <div slot="tresc">
 
-Biblioteka miejska bada swoich czytelników. Tabela podaje liczbę czytelników według płci i wieku. Próba ma liczyć $n = {B.n}$ osób. Jeden ankieter robi {B.naAnk} ankiet. Określ strukturę próby, liczbę ankieterów i ułóż komplet schematów.
+Biblioteka miejska bada swoich czytelników. Tabela podaje liczbę czytelników według płci i wieku. Próba ma liczyć {B.n} osób ($n$ = {B.n}). Jeden ankieter robi {B.naAnk} ankiet. Określ strukturę próby, liczbę ankieterów i ułóż komplet schematów.
 
 <TabelaKwot wiersze={B.wiersze} kolumny={B.kolumny} m={B.pop} razem={false} />
 
@@ -474,16 +509,18 @@ Biblioteka miejska bada swoich czytelników. Tabela podaje liczbę czytelników 
 1. Struktura populacji w procentach. Bez niej nie wiemy, jakie proporcje przenieść.
 2. Struktura próby: te same procenty z {B.n} osób.
 3. Liczba ankieterów i schemat wyjściowy. Zobaczymy, gdzie wychodzą ułamki.
-4. Części pewne i dodatki. Policzymy, ilu ankieterów dostaje dodatek w każdej kratce.
-5. Kartki A, B i C metodą „co zostało”.
+4. Części pewne i liczby dodatków. Policzymy, ilu ankieterów dostaje dodatek w każdej kratce.
+5. Kartki po kolei, według przepisu: kartka, liczba ankieterów, co zostało.
 6. Trzy testy.
 
 </div>
 
 <Krok tytul="Struktura populacji">
-Całość: $N = {fmt(bN)}$. Każdą kratkę dzielimy przez {fmt(bN)}. Kratka „K, 18–29”: {fmt(B.pop[0][0])} : {fmt(bN)} = {fmt(B.pop[0][0] / bN, 4)}, czyli {fmt((100 * B.pop[0][0]) / bN, 2)}%, po zaokrągleniu {bPct[0][0]}%.
+Całość: $N$ = {fmt(bN)}. Każdą kratkę dzielimy przez {fmt(bN)}. Kratka „K, 18–29”: {fmt(B.pop[0][0])} : {fmt(bN)} = {fmt(B.pop[0][0] / bN, 4)}, czyli {fmt((100 * B.pop[0][0]) / bN, 2)}%, po zaokrągleniu {bPct[0][0]}%.
 
 <TabelaKwot wiersze={B.wiersze} kolumny={B.kolumny} m={bPct} jedn="%" razem={false} />
+
+**Jak czytać:** {bPct[0][0]}% czytelników to kobiety w wieku 18–29 lat.
 
 Kontrola: {bPct.flat().join(' + ')} = {suma(bPct)}%.
 
@@ -497,6 +534,8 @@ Procent każdej kratki bierzemy z {B.n} osób. Kratka „K, 18–29”: {bPct[0]
 
 <TabelaKwot wiersze={B.wiersze} kolumny={B.kolumny} m={bPr} />
 
+**Jak czytać:** w próbie ma być {bPr[0][0]} kobiet w wieku 18–29 lat.
+
 <Dlaczego>
 Suma kratek to {suma(bPr)}, czyli $n$. Próba ma te same proporcje co populacja.
 </Dlaczego>
@@ -507,17 +546,19 @@ Liczba ankieterów: {B.n} : {B.naAnk} = **{bAnk}**. Każdą kratkę próby dziel
 
 <TabelaKwot wiersze={B.wiersze} kolumny={B.kolumny} m={bWyj} d={1} />
 
+**Jak czytać:** na jednego ankietera przypada {fmt(bWyj[0][0], 1)} kobiety w wieku 18–29 lat.
+
 <Dlaczego>
 Suma to {fmt(suma(bWyj), 0)}, czyli liczba ankiet jednego ankietera. Wszędzie wyszły ułamki, więc jedna kartka dla wszystkich nie wystarczy.
 </Dlaczego>
 </Krok>
 
-<Krok tytul="Części pewne i dodatki">
-Każdą kratkę obcinamy w dół. Część po przecinku mnożymy przez {bAnk} ankieterów. Wynik mówi, ilu ankieterów dostaje w tej kratce jedną osobę więcej.
+<Krok tytul="Części pewne i liczby dodatków">
+Każdą kratkę obcinamy w dół. Część po przecinku mnożymy przez {bAnk} ankieterów. Wynik to liczba dodatków kratki: ilu ankieterów dostaje w tej kratce jedną osobę więcej.
 
-<TabelaKwot head={['Kratka', 'Na ankietera', 'Część pewna', 'Po przecinku', `Ilu z ${bAnk} dostaje +1`]} rows={[...bKr.map((c) => [c.et, fmt(bWyj[c.i][c.j], 1), bDod.pewna[c.i][c.j], fmt(bWyj[c.i][c.j] - bDod.pewna[c.i][c.j], 1), `${fmt(bWyj[c.i][c.j] - bDod.pewna[c.i][c.j], 1)} · ${bAnk} = <b>${bDod.potrzeba[c.i][c.j]}</b>`]), ['<b>Razem</b>', `<b>${fmt(suma(bWyj), 0)}</b>`, `<b>${suma(bDod.pewna)}</b>`, `<b>${fmt(suma(bWyj) - suma(bDod.pewna), 0)}</b>`, `<b>${suma(bDod.potrzeba)}</b>`]]} />
+<TabelaKwot head={['Kratka', 'Na ankietera', 'Część pewna', 'Po przecinku', 'Liczba dodatków']} rows={[...bKr.map((c) => [c.et, fmt(bWyj[c.i][c.j], 1), bDod.pewna[c.i][c.j], fmt(bWyj[c.i][c.j] - bDod.pewna[c.i][c.j], 1), `${fmt(bWyj[c.i][c.j] - bDod.pewna[c.i][c.j], 1)} · ${bAnk} = <b>${bDod.potrzeba[c.i][c.j]}</b>`]), ['<b>Razem</b>', `<b>${fmt(suma(bWyj), 0)}</b>`, `<b>${suma(bDod.pewna)}</b>`, `<b>${fmt(suma(bWyj) - suma(bDod.pewna), 0)}</b>`, `<b>${suma(bDod.potrzeba)}</b>`]]} />
 
-**Jak czytać:** kratka „K, 18–29” ma {fmt(bWyj[0][0], 1)} na ankietera. Każdy ankieter bada z niej {bDod.pewna[0][0]} osoby, a {bDod.potrzeba[0][0]} ankieterów bada o jedną więcej.
+**Jak czytać:** kratka „K, 18–29” ma {fmt(bWyj[0][0], 1)} na ankietera. Każdy ankieter bada z niej {bDod.pewna[0][0]} osoby, a {bDod.potrzeba[0][0]} z {bAnk} ankieterów bada o jedną więcej.
 
 <Dlaczego>
 Części pewne dają razem {suma(bDod.pewna)}. Do {B.naAnk} ankiet brakuje {bDod.brak}. Każdy ankieter dostanie więc {bDod.brak} dodatki. Kontrola: {bAnk} ankieterów · {bDod.brak} dodatki = {bAnk * bDod.brak}, i tyle samo wychodzi w ostatniej kolumnie.
@@ -526,11 +567,13 @@ Części pewne dają razem {suma(bDod.pewna)}. Do {B.naAnk} ankiet brakuje {bDod
 
 {bSch.map((s, nr) => (
 <Krok tytul={`Schemat ${s.nazwa} — ${s.ilu} ankieterów`}>
-<p>{nr === 0 ? `Do rozdania jest ${s.zostaloPrzed} ankieterów.` : `Zostało ${s.zostaloPrzed} ankieterów.`} W tej chwili kratki potrzebują dodatku tyle razy:</p>
-<TabelaKwot wiersze={B.wiersze} kolumny={B.kolumny} m={s.potrzebaPrzed} razem={false} />
-<p>{nr === bSch.length - 1 ? `Każda z kratek ${bDodane(s)} potrzebuje dodatku dokładnie ${s.ilu} razy, czyli u każdego z pozostałych ankieterów. Kartka jest wymuszona:` : `Dodatek dostają trzy kratki z największą potrzebą: ${bDodane(s)}. Przy równych liczbach bierzemy wcześniejszą kratkę. Kartka (część pewna plus dodatki):`}</p>
-<TabelaKwot wiersze={B.wiersze} kolumny={B.kolumny} m={s.m} oznacz={bKr.filter((c) => s.m[c.i][c.j] > bDod.pewna[c.i][c.j]).map((c) => [c.i, c.j])} />
-<Dlaczego>{nr === bSch.length - 1 ? `Reszta dzieli się na pozostałych ankieterów bez ułamków, więc to ostatnia kartka.` : `Dostaje ją ${s.ilu} ankieterów, bo najmniejsza potrzeba wśród złotych kratek to ${Math.min(...bKr.filter((c) => s.m[c.i][c.j] > bDod.pewna[c.i][c.j]).map((c) => s.potrzebaPrzed[c.i][c.j]))}. Jeden ankieter więcej z tą kartką dałby w tej kratce o jedną osobę za dużo.`}</Dlaczego>
+<p>{bWstep(s, nr)}</p>
+<TabelaKwot wiersze={B.wiersze} kolumny={B.kolumny} m={s.dodatkiPrzed} razem={false} />
+<p><b>Jak czytać:</b> liczba w kratce mówi, ilu ankieterów ma jeszcze dostać w niej dodatek.</p>
+<p>{bKartka(s, nr)}</p>
+<TabelaKwot wiersze={B.wiersze} kolumny={B.kolumny} m={s.m} oznacz={bWyb(s).map((c) => [c.i, c.j])} />
+<p><b>Jak czytać:</b> złote kratki mają dodatek. Cała kartka daje {suma(s.m)} ankiet. Sumy wierszy nie muszą być równe.</p>
+<Dlaczego>{bIlu(s, nr)}</Dlaczego>
 </Krok>
 ))}
 
@@ -541,6 +584,8 @@ Części pewne dają razem {suma(bDod.pewna)}. Do {B.naAnk} ankiet brakuje {bDod
 
 <TabelaKwot head={['Kratka', 'Rachunek: ankieterzy · osoby', 'Zebrane', 'Próba']} rows={bKr.map((c) => [c.et, rach(bSch, c), bTest.zebrane[c.i][c.j], `<b>${bPr[c.i][c.j]}</b>`])} />
 
+**Jak czytać:** kratka „K, 18–29”: {rach(bSch, bKr[0])} = {bTest.zebrane[0][0]}. W próbie ma być {bPr[0][0]}. W każdym wierszu „Zebrane” i „Próba” są równe.
+
 <Dlaczego>
 Wszystkie trzy testy przechodzą. Komplet odtwarza próbę co do osoby.
 </Dlaczego>
@@ -548,9 +593,9 @@ Wszystkie trzy testy przechodzą. Komplet odtwarza próbę co do osoby.
 
 </Rozwiazanie>
 
-<Schematy tytul="Zadanie z zajęć po swojemu" zrodlo="próba z arkusza „Metody doboru próby – przykład”" wiersze={A.wiersze} kolumny={A.kolumny} proba={aPr} naAnk={A.naAnk} ankieterow={aAnk} przyklad={aInny} kolumnaPierwsza>
+<Schematy tytul="Zadanie z zajęć po swojemu" zrodlo="próba z arkusza „Metody doboru próby – przykład”" wiersze={A.wiersze} kolumny={A.kolumny} proba={aPr} naAnk={A.naAnk} ankieterow={aAnk} przyklad={aInny}>
 
-Próba {fmt(A.n)} osób, {aAnk} ankieterów, każdy robi {A.naAnk} ankiet. Ułóż własny komplet, inny niż A–D z arkusza. Schemat wyjściowy dla przypomnienia: {aKr.map((c) => `${c.et}: ${fmt(aWyj[c.i][c.j], 1)}`).join('; ')}.
+Próba {fmt(A.n)} osób, {aAnk} ankieterów, każdy robi {A.naAnk} ankiet. Ułóż własny komplet, inny niż A–D z arkusza. Kratki próby i liczby na ankietera są w tabelach wyżej. Schemat wyjściowy dla przypomnienia: {aKr.map((c) => `${c.et}: ${fmt(aWyj[c.i][c.j], 1)}`).join('; ')}.
 
 </Schematy>
 
@@ -567,23 +612,24 @@ Próba {fmt(A.n)} osób, {aAnk} ankieterów, każdy robi {A.naAnk} ankiet. Ułó
   <div><b>Procent kratki</b>Kratka : $N$ · 100. Zawsze przez całe $N$, nie przez sumę wiersza.</div>
   <div><b>Struktura próby</b>Procent kratki z $n$. Suma kratek = $n$.</div>
   <div><b>Liczba ankieterów</b>$n$ : ankiety na ankietera. Ułamek → w górę.</div>
-  <div><b>Schemat wyjściowy</b>Kratka próby : liczba ankieterów. Suma = ankiety na ankietera.</div>
+  <div><b>Schemat wyjściowy</b>Kratka próby : liczba ankieterów. Suma = ankiety na ankietera (gdy $n$ dzieli się równo).</div>
   <div><b>Ułamek w kratce</b>0,8 przy 100 ankieterach: 80 ankieterów bada 1 osobę, 20 bada 0.</div>
   <div><b>Jedna kartka</b>Część pewna (w dół) + po 1 osobie tam, gdzie część po przecinku największa.</div>
   <div><b>Trzy testy</b>Kartka: suma = ankiety na ankietera. Ludzie: suma ankieterów. Kratki: ankieterzy · osoby = próba.</div>
-  <div><b>Co zostało</b>Kratka próby − ankieterzy · liczba z kartki. Z reszty układasz następną kartkę.</div>
-  <div><b>Ograniczenia</b>Nie da się oszacować błędu losowego. Kontrolowane są tylko cechy z tabeli.</div>
+  <div><b>Liczba dodatków kratki</b>Część po przecinku · liczba ankieterów. Tylu ankieterów dostaje w kratce +1.</div>
+  <div><b>Ilu ankieterów na kartkę</b>Mniejsza z dwóch: najmniej dodatków wśród kratek z dodatkiem; ankieterzy bez kartki minus najwięcej dodatków wśród kratek bez dodatku.</div>
+  <div><b>Ograniczenia</b>Nie ma podstaw do szacowania błędu losowego. Kontrolowane są tylko cechy z tabeli.</div>
 </div>
 
 <Ramka kind="gdzie">
-Kartki z kwotami trafiają do ankieterów. To, o co i jak pytają, zależy od kwestionariusza: skal i kafeterii. Liczbę $n$, od której tu zaczynaliśmy, daje wzór na minimalną liczebność próby.
+Kartki z kwotami trafiają do ankieterów. To, o co i jak pytają, zależy od kwestionariusza: skal i kafeterii, czyli gotowych odpowiedzi do wyboru. Liczbę $n$, od której tu zaczynaliśmy, daje wzór na minimalną liczebność próby.
 </Ramka>
 
 ## Ćwiczenia przed kolokwium
 
 <a id="cwiczenia" class="k-anchor"></a>
 
-Dane do ćwiczeń (wymyślone). Sklep internetowy ma {fmt(kN)} klientów. Próba: $n = {K.n}$. Jeden ankieter robi {K.naAnk} ankiet.
+Dane do ćwiczeń (wymyślone). Sklep internetowy ma {fmt(kN)} klientów. Próba: {K.n} osób ($n$ = {K.n}). Jeden ankieter robi {K.naAnk} ankiet.
 
 <TabelaKwot wiersze={K.wiersze} kolumny={K.kolumny} m={K.pop} />
 
@@ -592,11 +638,11 @@ Dane do ćwiczeń (wymyślone). Sklep internetowy ma {fmt(kN)} klientów. Próba
 ### Struktura próby
 
 <Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
-  { q: `Jaki procent klientów sklepu to kobiety do 34 lat (${fmt(K.pop[0][0])} osób z ${fmt(kN)})?`, opcje: [`${kPct[0][0]}%`, `${Math.round((100 * K.pop[0][0]) / sumyW(K.pop)[0])}%`, `${kPct[1][1]}%`], dobra: 0, dlaczego: `${fmt(K.pop[0][0])} : ${fmt(kN)} = ${fmt(K.pop[0][0] / kN, 2)}, czyli ${kPct[0][0]}%. Wynik ${Math.round((100 * K.pop[0][0]) / sumyW(K.pop)[0])}% to dzielenie przez sumę wiersza (same kobiety) zamiast przez całe N. ${kPct[1][1]}% to inna kratka: mężczyźni od 35 lat.` },
-  { q: `Mężczyźni do 34 lat to ${kPct[1][0]}% klientów. Ilu ich powinno być w próbie ${K.n} osób?`, opcje: [`${kPct[1][0]}`, `${Math.round(K.n / (kPct[1][0] / 10))}`, `${kPr[1][0]}`], dobra: 2, dlaczego: `${kPct[1][0]}% z ${K.n} to ${fmt(kPct[1][0] / 100, 2)} · ${K.n} = ${kPr[1][0]}. Odpowiedź ${kPct[1][0]} to procent wzięty jako liczba osób. ${Math.round(K.n / (kPct[1][0] / 10))} wychodzi z dzielenia ${K.n} przez ${fmt(kPct[1][0] / 10, 1)} zamiast mnożenia.` },
+  { q: `Jaki procent klientów sklepu to kobiety do 34 lat (${fmt(K.pop[0][0])} osób z ${fmt(kN)})?`, opcje: [`${kPct[0][0]}%`, `${Math.round((100 * K.pop[0][0]) / sumyW(K.pop)[0])}%`, `${kPct[1][1]}%`], dobra: 0, dlaczego: `${fmt(K.pop[0][0])} : ${fmt(kN)} = ${fmt(K.pop[0][0] / kN, 2)}, czyli ${kPct[0][0]}%. Wynik ${Math.round((100 * K.pop[0][0]) / sumyW(K.pop)[0])}% to dzielenie przez sumę wiersza (same kobiety) zamiast przez całe N. ${kPct[1][1]}% to inna kratka: mężczyźni w wieku 35 lat i więcej.` },
+  { q: `Mężczyźni do 34 lat to ${kPct[1][0]}% klientów. Ilu ich powinno być w próbie ${K.n} osób?`, opcje: [`${kPct[1][0]}`, `${fmt(K.pop[1][0])}`, `${kPr[1][0]}`], dobra: 2, dlaczego: `${kPct[1][0]}% z ${K.n} to ${fmt(kPct[1][0] / 100, 2)} · ${K.n} = ${kPr[1][0]}. Odpowiedź ${kPct[1][0]} to procent wzięty jako liczba osób. ${fmt(K.pop[1][0])} to ${kPct[1][0]}% całej populacji, a nie próby.` },
   { q: 'Przez co dzielisz kratkę, żeby dostać jej procent w strukturze populacji?', opcje: ['Przez sumę jej wiersza', 'Przez całą populację N', 'Przez liczebność próby n'], dobra: 1, dlaczego: 'Struktura mówi, jaka część całej populacji siedzi w kratce, więc mianownikiem jest N. Suma wiersza dałaby udział w jednej grupie (np. wśród kobiet). Przez n nie dzielisz na tym etapie niczego.' },
-  { q: 'W tabeli procentów stoi: Miasto 23%, Wieś 14%, Ogółem 38%. Co to znaczy?', opcje: ['Każdą liczbę zaokrąglono osobno i to jest w porządku', 'Błąd: trzeba poprawić Ogółem na 37%', 'Błąd: jedna z kratek musi mieć 24%'], dobra: 0, dlaczego: 'Przed zaokrągleniem było 23,45% + 14,43% = 37,88%. Każda liczba zaokrąglona osobno daje 23%, 14% i 38%. Niczego nie poprawiasz. Do próby bierzesz procenty kratek.' },
-  { q: `Trzy grupy mają po zaokrągleniu ${r3Pct.join('%, ')}%. Próba to 200 osób. Co robisz?`, opcje: [`Biorę ${r3Pct.map((p) => p * 2).join(' + ')} i zostawiam ${r3Pct.reduce((a, b) => a + b, 0) * 2} osób`, 'Dokładam dwie osoby pierwszej grupie z brzegu', 'Liczę dokładnie, obcinam w dół i brakujące osoby daję grupom z największą częścią po przecinku'], dobra: 2, dlaczego: `Procenty dają razem ${r3Pct.reduce((a, b) => a + b, 0)}%, więc próba wyszłaby za mała. Dokładnie: ${r3.dokladnie.map((x) => fmt(x, 1)).join('; ')}. W dół: ${r3.dokladnie.map(Math.floor).join(', ')}. Dwie brakujące osoby dostają grupy z resztami 0,8 i 0,6. Wynik: ${r3.wynik.join(' + ')} = 200. Dokładanie „pierwszej z brzegu” psuje proporcje bez powodu.` },
+  { q: 'W tabeli procentów stoi: Miasto 23%, Wieś 14%, Razem 38%. Co to znaczy?', opcje: ['Każdą liczbę zaokrąglono osobno i to jest w porządku', 'Błąd: trzeba poprawić Razem na 37%', 'Błąd: jedna z kratek musi mieć 24%'], dobra: 0, dlaczego: 'Przed zaokrągleniem było 23,45% + 14,43% = 37,88%. Każda liczba zaokrąglona osobno daje 23%, 14% i 38%. Niczego nie poprawiasz. Do próby bierzesz procenty kratek.' },
+  { q: `Trzy grupy mają ${R3[0]}, ${R3[1]} i ${R3[2]} osoby, razem 1000. Po zaokrągleniu to ${r3Pct.join('%, ')}%. Próba to 200 osób. Co robisz?`, opcje: [`Biorę ${r3Pct.map((p) => p * 2).join(' + ')} i zostawiam ${r3Pct.reduce((a, b) => a + b, 0) * 2} osób`, 'Dokładam dwie osoby pierwszej grupie z brzegu', 'Liczę dokładnie, obcinam w dół i brakujące osoby daję grupom z największą częścią po przecinku'], dobra: 2, dlaczego: `Procenty dają razem ${r3Pct.reduce((a, b) => a + b, 0)}%, więc próba wyszłaby za mała. Dokładnie: ${r3.dokladnie.map((x) => fmt(x, 1)).join('; ')}. W dół: ${r3.dokladnie.map(Math.floor).join(', ')}. Dwie brakujące osoby dostają dwie pierwsze grupy, bo mają największą część po przecinku (0,8). Wynik: ${r3.wynik.join(' + ')} = 200. Dokładanie „pierwszej z brzegu” psuje proporcje bez powodu.` },
 ]} />
 
 <a id="cw-ankieterzy" class="k-anchor"></a>
@@ -607,7 +653,7 @@ Dane do ćwiczeń (wymyślone). Sklep internetowy ma {fmt(kN)} klientów. Próba
   { q: 'Próba to 1200 osób. Jeden badacz robi 20 ankiet. Ilu badaczy potrzeba?', opcje: [`${ilu(1200, 20)}`, '120', '24 000'], dobra: 0, dlaczego: '1200 : 20 = 60. Odpowiedź 120 to dzielenie przez 10. 24 000 to mnożenie zamiast dzielenia.' },
   { q: 'Próba to 572 osoby. Jeden ankieter robi 10 ankiet. Ilu ankieterów potrzeba?', opcje: ['57', '57,2', `${ilu(572, 10)}`], dobra: 2, dlaczego: '572 : 10 = 57,2. Ankietera nie da się zatrudnić w części, więc zaokrąglasz w górę: 58. Przy 57 ankieterach dwie ankiety zostałyby bez wykonawcy.' },
   { q: `Sklep: kratka „M, do 34 lat” ma w próbie ${kPr[1][0]} osób, ankieterów jest ${kAnk}. Ile osób z tej kratki przypada na ankietera?`, opcje: [`${fmt(kPr[1][0] / 10, 0)}`, `${fmt(kWyj[1][0], 1)}`, `${fmt(kWyj[1][0] / 10, 2)}`], dobra: 1, dlaczego: `${kPr[1][0]} : ${kAnk} = ${fmt(kWyj[1][0], 1)}. Odpowiedź ${fmt(kPr[1][0] / 10, 0)} to dzielenie przez liczbę ankiet (${K.naAnk}) zamiast przez liczbę ankieterów (${kAnk}). ${fmt(kWyj[1][0] / 10, 2)} to przecinek przesunięty o jedno miejsce.` },
-  { q: 'Ile wynosi suma wszystkich kratek schematu wyjściowego?', opcje: ['Tyle, ilu jest ankieterów', 'Tyle, ile wynosi n', 'Tyle, ile ankiet robi jeden ankieter'], dobra: 2, dlaczego: 'Schemat wyjściowy to praca jednego ankietera rozpisana na kratki. Suma musi dać jego liczbę ankiet. Jeśli wychodzi coś innego, w dzieleniu jest błąd.' },
+  { q: 'Próba dzieli się równo na ankieterów. Ile wynosi suma wszystkich kratek schematu wyjściowego?', opcje: ['Tyle, ilu jest ankieterów', 'Tyle, ile wynosi n', 'Tyle, ile ankiet robi jeden ankieter'], dobra: 2, dlaczego: 'Schemat wyjściowy to praca jednego ankietera rozpisana na kratki. Gdy n dzieli się równo na ankieterów, suma daje jego liczbę ankiet. Inny wynik oznacza wtedy błąd w dzieleniu.' },
 ]} />
 
 <a id="cw-schemat" class="k-anchor"></a>
@@ -644,7 +690,7 @@ Próba {K.n} osób: {K.wiersze.flatMap((w, i) => K.kolumny.map((k, j) => `${w}, 
   { q: 'Na czym opiera się dobór kwotowy?', opcje: ['Na znajomości struktury populacji i nałożeniu jej na próbę', 'Na losowaniu osób z listy mieszkańców', 'Na badaniu osób, które same się zgłoszą'], dobra: 0, dlaczego: 'Punktem wyjścia jest tabela ze strukturą populacji według wybranych cech. Próba ma mieć te same proporcje.' },
   { q: 'Które cechy są typowymi kryteriami kwot?', opcje: ['Opinia o badanej marce', 'Odpowiedzi z poprzedniej ankiety', 'Wiek, płeć, dochód'], dobra: 2, dlaczego: 'Kwoty buduje się na cechach, dla których znana jest struktura populacji: wiek, płeć, wielkość rodziny, dochód, grupa społeczna, zawód. Opinii o marce nie znamy przed badaniem.' },
   { q: 'Kto wybiera konkretną osobę do wywiadu?', opcje: ['Ankieter, w ramach swojej kwoty', 'Program losujący', 'Kierownik badania, z listy nazwisk'], dobra: 0, dlaczego: 'Kartka mówi, ile osób z której kratki. Kogo dokładnie zapytać, decyduje ankieter. To odróżnia dobór kwotowy od losowego.' },
-  { q: 'Czego nie da się oszacować przy doborze kwotowym?', opcje: ['Liczby ankieterów', 'Błędu losowego', 'Struktury próby'], dobra: 1, dlaczego: 'Błąd losowy da się szacować tylko wtedy, gdy próbę wybrano losowo. Liczbę ankieterów i strukturę próby liczysz bez problemu.' },
+  { q: 'Czego nie ma podstaw szacować przy doborze kwotowym?', opcje: ['Liczby ankieterów', 'Błędu losowego', 'Struktury próby'], dobra: 1, dlaczego: 'Rozmiar błędu losowego da się szacować tylko wtedy, gdy próbę wybrano losowo. Liczbę ankieterów i strukturę próby liczysz bez problemu.' },
   { q: 'Kwoty ułożono według wieku i płci. Co z wykształceniem osób w próbie?', opcje: ['Będzie takie jak w populacji', 'Zawsze idzie w parze z wiekiem', 'Nie wiadomo, bo tej cechy kwoty nie kontrolują'], dobra: 2, dlaczego: 'Próba odtwarza populację tylko w cechach z tabeli. W pozostałych może się od niej różnić.' },
   { q: 'Schemat w doborze kwotowym to:', opcje: ['Kartka dla jednego ankietera: ile osób z której kratki ma zbadać', 'Lista pytań w kwestionariuszu', 'Tabela procentów populacji'], dobra: 0, dlaczego: 'Schemat zawiera kwoty jednego ankietera w całych liczbach. Tabela procentów to struktura populacji.' },
   { q: 'Kiedy komplet schematów jest poprawny?', opcje: ['Gdy każda kartka ma tyle ankiet, ile robi ankieter', 'Gdy liczba ankieterów się zgadza', 'Gdy spełnia oba te warunki i odtwarza każdą kratkę próby'], dobra: 2, dlaczego: 'Potrzebne są trzy testy naraz: kartka, ludzie i kratki. Dwa pierwsze mogą wyjść dobrze przy złej strukturze.' },

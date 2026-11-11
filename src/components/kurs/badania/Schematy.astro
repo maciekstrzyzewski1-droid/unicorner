@@ -1,5 +1,5 @@
 ---
-// „Ułóż schematy sam”: uczeń wpisuje schematy kwot dla ankieterów (A, B, C…) i liczbę ankieterów przy każdym.
+// Ćwiczenie „ułóż komplet schematów”: uczeń wpisuje schematy kwot dla ankieterów (A, B, C…) i liczbę ankieterów przy każdym.
 // Pod spodem od razu widzi trzy testy z modułu (lib/kwoty.js: sprawdz): suma schematu = liczba ankiet na ankietera,
 // liczba ankieterów razem, schematy razy ankieterzy = struktura próby (kratka po kratce).
 // Poprawnych zestawów jest wiele, więc sprawdzamy warunki, a nie zgodność z jednym kluczem.
@@ -13,7 +13,7 @@ const dane = JSON.stringify({ wiersze, kolumny, proba, naAnk, ankieterow, przykl
 ---
 <section class="k-ct k-sch" data-sch data-dane={dane}>
   <div class="k-pyt-head">
-    <span class="k-pyt-tag k-ct-tag">Ułóż sam</span>
+    <span class="k-pyt-tag k-ct-tag">Ćwiczenie</span>
     <h3 class="k-pyt-h">{tytul}</h3>
     {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
   </div>
@@ -36,7 +36,7 @@ const dane = JSON.stringify({ wiersze, kolumny, proba, naAnk, ankieterow, przykl
     ))}
   </div>
   <div class="k-sch-wynik" data-js-only hidden>
-    <div class="k-sch-wynik-h">Razem ze wszystkich schematów <span>(zebrane / potrzeba)</span></div>
+    <div class="k-sch-wynik-h">Razem ze wszystkich schematów <span>(zebrane / ma być)</span></div>
     <table class="k-sch-t k-sch-zb">
       <thead><tr><th></th>{kolumny.map((k) => <th>{k}</th>)}</tr></thead>
       <tbody>
@@ -48,11 +48,11 @@ const dane = JSON.stringify({ wiersze, kolumny, proba, naAnk, ankieterow, przykl
     <div class="k-sch-suma" data-ank>ankieterów: 0 z {ankieterow}</div>
   </div>
   <div class="k-ct-ctl" data-js-only hidden>
-    {przyklad.length > 0 && <button type="button" class="k-btn k-btn-ghost" data-przyklad>Pokaż przykładowy zestaw</button>}
+    {przyklad.length > 0 && <button type="button" class="k-btn k-btn-ghost" data-przyklad>Pokaż przykładowy komplet</button>}
     <button type="button" class="k-btn k-btn-ghost" data-czysc>Wyczyść</button>
   </div>
   <ul class="k-ct-wynik k-sch-kom" data-kom aria-live="polite" data-js-only hidden><li>Wpisz pierwszy schemat — tu pojawi się wynik trzech testów.</li></ul>
-  <noscript><p class="k-ct-how">To ćwiczenie działa po włączeniu JavaScriptu. Przykładowe zestawy schematów są rozpisane w zadaniach wyżej.</p></noscript>
+  <noscript><p class="k-ct-how">To ćwiczenie działa po włączeniu JavaScriptu. Przykładowe komplety schematów są rozpisane w zadaniach wyżej.</p></noscript>
 </section>
 
 <style>
@@ -125,7 +125,7 @@ const dane = JSON.stringify({ wiersze, kolumny, proba, naAnk, ankieterow, przykl
         const z = zebrane[i][j], p = D.proba[i][j];
         td.textContent = `${z} / ${p}`;
         td.className = !ruszone ? '' : z === p ? 'is-ok' : 'is-zle';
-        if (ruszone && z !== p) { zleKratki++; if (zleKratki <= 4) L.push(`Kratka „${D.kolumnaPierwsza ? `${D.kolumny[j]}, ${D.wiersze[i]}` : `${D.wiersze[i]}, ${D.kolumny[j]}`}”: zebrane ${z}, potrzeba ${p} — ${z > p ? `o ${z - p} za dużo` : `brakuje ${p - z}`}.`); }
+        if (ruszone && z !== p) { zleKratki++; if (zleKratki <= 4) L.push(`Kratka „${D.kolumnaPierwsza ? `${D.kolumny[j]}, ${D.wiersze[i]}` : `${D.wiersze[i]}, ${D.kolumny[j]}`}”: zebrane ${z}, w próbie ma być ${p} — ${z > p ? `o ${z - p} za dużo` : `brakuje ${p - z}`}.`); }
       });
       if (zleKratki > 4) L.push(`…i jeszcze ${zleKratki - 4} ${zleKratki - 4 === 1 ? 'kratka' : 'kratki/kratek'} się nie zgadza (czerwone pola w tabeli wyżej).`);
       ankEl.textContent = `ankieterów: ${razemAnk} z ${D.ankieterow}`;
