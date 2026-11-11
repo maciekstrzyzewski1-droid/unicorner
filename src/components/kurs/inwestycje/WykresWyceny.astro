@@ -1,0 +1,57 @@
+---
+// Wycena pakietu papierów na kolejne dni bilansowe: linia = wartość rynkowa, słupek = wartość wpisana do bilansu,
+// linia przerywana = cena nabycia. Pokazuje, kiedy bilans „idzie za rynkiem”, a kiedy zatrzymuje się na cenie nabycia.
+import { zl } from '../../../lib/konta.js';
+import Legenda from '../Legenda.astro';
+interface Props { tytul: string; nabycie: number; dni: string[]; wyceny: { rynkowa: number; bilansowa: number }[]; zakup?: string }
+const { tytul, nabycie, dni, wyceny, zakup = 'zakup' } = Astro.props;
+const W = 360, H = 216, dol = 168, gora = 34;
+const maks = Math.max(nabycie, ...wyceny.map((w) => w.rynkowa)) * 1.08;
+const y = (v: number) => dol - (v / maks) * (dol - gora);
+const n = wyceny.length + 1;
+const x = (i: number) => 46 + (i * (W - 92)) / (n - 1);
+const punkty = [{ et: zakup, rynkowa: nabycie, bilansowa: nabycie }, ...wyceny.map((w, i) => ({ et: dni[i], ...w }))];
+// Podpis wartości rynkowej stoi nad kropką; w „dołku” (punkt niżej niż sąsiedzi) pod kropką, żeby nie wchodził na linię.
+const dolek = (i: number) => punkty[i].rynkowa < punkty[i - 1].rynkowa && (i === punkty.length - 1 || punkty[i].rynkowa < punkty[i + 1].rynkowa) && dol - y(punkty[i].rynkowa) > 40;
+const linia = punkty.map((p, i) => `${x(i).toFixed(1)},${y(p.rynkowa).toFixed(1)}`).join(' ');
+const opis = `${tytul}. Cena nabycia ${zl(nabycie)} zł. ` + wyceny.map((w, i) => `${dni[i]}: wartość rynkowa ${zl(w.rynkowa)} zł, do bilansu ${zl(w.bilansowa)} zł`).join('; ') + '.';
+---
+<figure class="k-ww">
+  <figcaption class="k-ww-t">{tytul}</figcaption>
+  <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={opis}>
+    <line class="k-ww-os" x1="8" x2={W - 8} y1={dol} y2={dol} />
+    {punkty.map((p, i) => (
+      <g>
+        <rect class="k-ww-slupek" x={x(i) - 21} y={y(p.bilansowa)} width="42" height={dol - y(p.bilansowa)} />
+        <text class="k-ww-bil" x={x(i)} y={dol - 7}>{zl(p.bilansowa)}</text>
+        <text class="k-ww-dzien" x={x(i)} y={dol + 17}>{p.et}</text>
+      </g>
+    ))}
+    <line class="k-ww-nab" x1="8" x2={W - 8} y1={y(nabycie)} y2={y(nabycie)} />
+    <polyline class="k-ww-rynek" points={linia} />
+    {punkty.map((p, i) => (
+      <g>
+        <circle class="k-ww-kropka" cx={x(i)} cy={y(p.rynkowa)} r="4.5" />
+        {i > 0 && <text class="k-ww-ryn" x={x(i)} y={y(p.rynkowa) + (dolek(i) ? 17 : -10)}>{zl(p.rynkowa)}</text>}
+      </g>
+    ))}
+    <text class="k-ww-podpis" x={W / 2} y={H - 6}>liczby w słupkach: wartość wpisana do bilansu (zł)</text>
+  </svg>
+  <Legenda items={[['cyan', 'wartość rynkowa pakietu'], ['zloto', 'wartość w bilansie'], ['wyblakla', 'linia przerywana: cena nabycia']]} />
+</figure>
+
+<style>
+  .k-ww{margin:1.2em 0 1.4em;max-width:520px;}
+  .k-ww-t{font-family:var(--mono);font-size:.78rem;letter-spacing:1px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px;}
+  .k-ww svg{display:block;width:100%;height:auto;border:1px solid var(--line2);background:var(--ink2);}
+  .k-ww-os{stroke:var(--line2);stroke-width:1;}
+  .k-ww-slupek{fill:rgba(255,216,74,.28);stroke:rgba(255,216,74,.8);stroke-width:1;}
+  .k-ww-nab{stroke:#fff;stroke-opacity:.55;stroke-width:1;stroke-dasharray:5 4;}
+  .k-ww-rynek{fill:none;stroke:#27e8ff;stroke-width:2;}
+  .k-ww-kropka{fill:#27e8ff;}
+  .k-ww text{text-anchor:middle;font-family:var(--mono);}
+  .k-ww-bil{fill:#ffd84a;font-size:11px;font-weight:700;}
+  .k-ww-ryn{fill:#27e8ff;font-size:11px;}
+  .k-ww-dzien{fill:#fff;font-size:11px;}
+  .k-ww-podpis{fill:var(--muted);font-size:9.5px;}
+</style>

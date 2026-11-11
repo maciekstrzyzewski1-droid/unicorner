@@ -23,7 +23,7 @@ export const MODULES = [
   { nr: 4, slug: 'zestawienie', title: 'Zestawienie obrotów i sald', short: 'Pełny cykl: bilans otwarcia, konta, zestawienie obrotów i sald, bilans zamknięcia. Strata na minusie i szukanie błędów.', status: 'live', minutes: 70, cwiczenia: 'cwiczenia' },
   { nr: 5, slug: 'wynik-finansowy', title: 'Konta wynikowe i wynik finansowy', short: 'Przychody i koszty, sprzedaż w dwóch zapisach, PPO i PKO, przeksięgowanie na wynik, podatek dochodowy i zysk netto.', status: 'live', minutes: 75, cwiczenia: 'cwiczenia' },
   { nr: 6, slug: 'srodki-pieniezne', title: 'Środki pieniężne', short: 'Kasa i raport kasowy, rachunek bieżący i wyciąg, środki pieniężne w drodze, akredytywa, czeki, weksle obce i własne, suma wekslowa i dyskonto.', status: 'live', minutes: 75, cwiczenia: 'cwiczenia' },
-  { nr: 7, slug: 'inwestycje-krotkoterminowe', title: 'Inwestycje krótkoterminowe', short: 'Papiery wartościowe i inne krótkoterminowe aktywa finansowe.', status: 'soon' },
+  { nr: 7, slug: 'inwestycje-krotkoterminowe', title: 'Inwestycje krótkoterminowe', short: 'Podział inwestycji, cena nabycia, zakup i sprzedaż akcji, wycena na dzień bilansowy według cen rynkowych i według ostrożnej wyceny.', status: 'live', minutes: 55, cwiczenia: 'cwiczenia' },
   { nr: 8, slug: 'rozrachunki', title: 'Rozrachunki', short: 'Należności i zobowiązania, konta analityczne, storno, rozrachunki z pracownikami, różnice kursowe.', status: 'soon' },
   { nr: 9, slug: 'srodki-trwale', title: 'Środki trwałe', short: 'Klasyfikacja, amortyzacja i ulepszenie środka trwałego.', status: 'soon' },
   { nr: 10, slug: 'materialy', title: 'Materiały', short: 'Dokumenty obrotu, wycena i ewidencja materiałów.', status: 'soon' },
