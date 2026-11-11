@@ -4,6 +4,66 @@ import '../styles/global.css';
 import FaultyTerminal from '../components/FaultyTerminal.jsx';
 import BorderGlow from '../components/BorderGlow.jsx';
 import HeroSkull from '../components/HeroSkull.jsx';
+
+// Kafelki przedmiotów renderują się przy buildzie (zwykłe <a href> w HTML-u, widoczne bez JS i dla wyszukiwarek).
+// Nowy przedmiot = nowy wpis w SUBJECTS.
+const SUBJECTS = [
+  { name:"Makroekonomia", emoji:"📈",
+    desc:"Pieniądz, inflacja, bezrobocie, wzrost, cykl koniunkturalny i polityka banku centralnego.",
+    tags:["Fiszki","Zadania","Ściana","Quiz"], status:"live", file:"makroekonomia.html" },
+  { name:"Podstawy marketingu", emoji:"🎯",
+    desc:"Reguły Cialdiniego, marketing mix (4P/7P/4C), proces decyzyjny konsumenta, segmentacja i perswazja.",
+    tags:["Materiały","Quiz 55 pytań"], status:"live", file:"marketing.html" },
+  { name:"Metody i Techniki Zarządzania", emoji:"⚙️",
+    desc:"VUCA, narzędzia jakości, analiza przyczyn źródłowych (RCA), kreatywność i praca zespołowa.",
+    tags:["Kompendium","Quiz"], status:"live", file:"mitz.html" },
+  { name:"Zarządzanie Jakością", emoji:"🏅",
+    desc:"Ewolucja QI→QC→QA→TQM, guru jakości, 7 zasad ISO, TQM/Lean/Six Sigma, normalizacja, ISO 9001, akredytacja i koszty jakości.",
+    tags:["Kompendium","Quiz 100 pytań"], status:"live", file:"zarzadzanie-jakoscia.html" },
+  { name:"Ekonomika Turystyki i Rekreacji", emoji:"🧳",
+    desc:"Rynek turystyczny, produkt, podaż, turystyka międzynarodowa i gospodarka turystyczna.",
+    tags:["Kompendium","Quiz 44 pytania"], status:"live", file:"etir.html" },
+  { name:"Obsługa Ruchu Turystycznego", emoji:"🧭",
+    desc:"Ruch turystyczny, rodzaje turystyki, obsługa na etapach podróży, organizacja imprez, praca pilota i przewodnika.",
+    tags:["Kompendium","Quiz 41 pytań"], status:"live", file:"ort.html" },
+  { name:"Geografia atrakcji turystycznych", emoji:"🗺️",
+    desc:"Środowisko przyrodnicze sześciu kontynentów — góry, rzeki, jeziora, wulkany, pustynie i rekordy natury.",
+    tags:["6 kontynentów","Quiz 40 pytań"], status:"live", file:"geografia.html" },
+  { name:"Matematyka — kurs od zera", emoji:"∑",
+    desc:"Logika, zbiory, relacje, macierze, programowanie liniowe, pochodne i całki. Każdy symbol wyjaśniony, zadania krok po kroku z „dlaczego”.",
+    tags:["Kurs krok po kroku","Interaktywne tabele","Quizy"], status:"live", badge:"w budowie", file:"matematyka.html" },
+  { name:"Rachunkowość — kurs od zera", emoji:"⊤",
+    desc:"Bilans, operacje gospodarcze, konto teowe, Wn i Ma, saldo i podwójny zapis. Zadania z zajęć krok po kroku, bilans i konta wypełniające się na oczach.",
+    tags:["Kurs krok po kroku","Konta teowe","Ćwiczenia"], status:"live", badge:"w budowie", file:"rachunkowosc.html" },
+  { name:"Metody badań rynku — kurs od zera", emoji:"n",
+    desc:"Skale pomiarowe i kafeteria, błędy w pytaniach ankiety, minimalna liczebność próby z danych GUS i dobór kwotowy. Każdy parametr wyjaśniony, zadania krok po kroku.",
+    tags:["Kurs krok po kroku","Kwestionariusz","Liczebność próby"], status:"live", badge:"w budowie", file:"metody-badan-rynku.html" },
+  { name:"Statystyka <span class=\"fb-tag\">— FINAL BOSS</span>", emoji:"📊",
+    desc:"Od miar opisowych, przez dynamikę i szeregi czasowe, po korelację i regresję. Teoria, zadania i quizy w ośmiu działach.",
+    tags:["8 działów","Quizy","Zadania"], status:"live", file:"statystyka-kurs.html" },
+  { name:"Kolejne przedmioty", emoji:"✦",
+    desc:"Dochodzą po kolei. Masz przedmiot, który chcesz tu zobaczyć następny? Daj znać.",
+    tags:["Wkrótce"], status:"soon", file:null }
+];
+
+const STAT_DZIALY = 8; // działy statystyki liczą się osobno (lista: src/pages/statystyka-kurs.astro)
+const liveCount = SUBJECTS.filter(s=>s.status==='live').length - 1 + STAT_DZIALY;
+const countText = liveCount + (liveCount===1?' gotowy':(liveCount>=2&&liveCount<=4?' gotowe':' gotowych'));
+function cardHtml(s){
+  const live = s.status==='live';
+  const tagHtml = s.tags.map(t=>`<span class="tag">${t}</span>`).join('');
+  const inner = `
+    <span class="card-glow" aria-hidden="true"></span>
+    <div class="card-top"><div class="emoji">${s.emoji}</div>
+    <span class="badge ${live?'live':'soon'}">${s.badge || (live?'gotowe':'wkrótce')}</span></div>
+    <h3>${s.name}</h3><p class="desc">${s.desc}</p>
+    <div class="tags">${tagHtml}</div>
+    <span class="go">${live?'Otwórz':'W przygotowaniu'} <span class="arr">→</span></span>`;
+  return live ? `<a class="card live" href="${s.file}">${inner}</a>`
+              : `<div class="card soon">${inner}</div>`;
+}
+const gridHtml = SUBJECTS.filter(s=>s.status==='live').map(cardHtml).join('');
+const nextHtml = SUBJECTS.filter(s=>s.status!=='live').map(cardHtml).join('');
 ---
 
 <Base>
@@ -51,11 +111,11 @@ import HeroSkull from '../components/HeroSkull.jsx';
 <main class="wrap" id="main">
   <div class="ow" aria-hidden="true"><span>NEXT LEVEL</span></div>
 
-  <div class="row-label" data-rev id="przedmioty"><h2>Przedmioty</h2><span class="count" id="count"></span><span class="line"></span></div>
-  <div class="grid" id="grid"></div>
+  <div class="row-label" data-rev id="przedmioty"><h2>Przedmioty</h2><span class="count" id="count">{countText}</span><span class="line"></span></div>
+  <div class="grid" id="grid" set:html={gridHtml}></div>
 
   <div class="next-zone">
-    <div class="next-card" id="nextCard"></div>
+    <div class="next-card" id="nextCard" set:html={nextHtml}></div>
     <div class="about">
       <div class="item"><h4>Po co to jest</h4><p>Wkuwanie definicji rzadko wystarcza — egzaminy lubią przykłady i zastosowanie. Materiały są pod to ułożone.</p></div>
       <div class="item"><h4>Jak korzystać</h4><p>Wybierz przedmiot, przejdź fiszki, rozwiąż zadania, sprawdź się quizem. Postęp zapisuje się w przeglądarce.</p></div>
@@ -240,44 +300,6 @@ import HeroSkull from '../components/HeroSkull.jsx';
 </script>
 
 <script is:inline>
-const SUBJECTS = [
-  { name:"Makroekonomia", emoji:"📈",
-    desc:"Pieniądz, inflacja, bezrobocie, wzrost, cykl koniunkturalny i polityka banku centralnego.",
-    tags:["Fiszki","Zadania","Ściana","Quiz"], status:"live", file:"makroekonomia.html" },
-  { name:"Podstawy marketingu", emoji:"🎯",
-    desc:"Reguły Cialdiniego, marketing mix (4P/7P/4C), proces decyzyjny konsumenta, segmentacja i perswazja.",
-    tags:["Materiały","Quiz 55 pytań"], status:"live", file:"marketing.html" },
-  { name:"Metody i Techniki Zarządzania", emoji:"⚙️",
-    desc:"VUCA, narzędzia jakości, analiza przyczyn źródłowych (RCA), kreatywność i praca zespołowa.",
-    tags:["Kompendium","Quiz"], status:"live", file:"mitz.html" },
-  { name:"Zarządzanie Jakością", emoji:"🏅",
-    desc:"Ewolucja QI→QC→QA→TQM, guru jakości, 7 zasad ISO, TQM/Lean/Six Sigma, normalizacja, ISO 9001, akredytacja i koszty jakości.",
-    tags:["Kompendium","Quiz 100 pytań"], status:"live", file:"zarzadzanie-jakoscia.html" },
-  { name:"Ekonomika Turystyki i Rekreacji", emoji:"🧳",
-    desc:"Rynek turystyczny, produkt, podaż, turystyka międzynarodowa i gospodarka turystyczna.",
-    tags:["Kompendium","Quiz 44 pytania"], status:"live", file:"etir.html" },
-  { name:"Obsługa Ruchu Turystycznego", emoji:"🧭",
-    desc:"Ruch turystyczny, rodzaje turystyki, obsługa na etapach podróży, organizacja imprez, praca pilota i przewodnika.",
-    tags:["Kompendium","Quiz 41 pytań"], status:"live", file:"ort.html" },
-  { name:"Geografia atrakcji turystycznych", emoji:"🗺️",
-    desc:"Środowisko przyrodnicze sześciu kontynentów — góry, rzeki, jeziora, wulkany, pustynie i rekordy natury.",
-    tags:["6 kontynentów","Quiz 40 pytań"], status:"live", file:"geografia.html" },
-  { name:"Matematyka — kurs od zera", emoji:"∑",
-    desc:"Logika, zbiory, relacje, macierze, programowanie liniowe, pochodne i całki. Każdy symbol wyjaśniony, zadania krok po kroku z „dlaczego”.",
-    tags:["Kurs krok po kroku","Interaktywne tabele","Quizy"], status:"live", badge:"w budowie", file:"matematyka.html" },
-  { name:"Rachunkowość — kurs od zera", emoji:"⊤",
-    desc:"Bilans, operacje gospodarcze, konto teowe, Wn i Ma, saldo i podwójny zapis. Zadania z zajęć krok po kroku, bilans i konta wypełniające się na oczach.",
-    tags:["Kurs krok po kroku","Konta teowe","Ćwiczenia"], status:"live", badge:"w budowie", file:"rachunkowosc.html" },
-  { name:"Metody badań rynku — kurs od zera", emoji:"n",
-    desc:"Skale pomiarowe i kafeteria, błędy w pytaniach ankiety, minimalna liczebność próby z danych GUS i dobór kwotowy. Każdy parametr wyjaśniony, zadania krok po kroku.",
-    tags:["Kurs krok po kroku","Kwestionariusz","Liczebność próby"], status:"live", badge:"w budowie", file:"metody-badan-rynku.html" },
-  { name:"Statystyka <span class=\"fb-tag\">— FINAL BOSS</span>", emoji:"📊",
-    desc:"Od miar opisowych, przez dynamikę i szeregi czasowe, po korelację i regresję. Teoria, zadania i quizy w ośmiu działach.",
-    tags:["8 działów","Quizy","Zadania"], status:"live", file:"statystyka-kurs.html" },
-  { name:"Kolejne przedmioty", emoji:"✦",
-    desc:"Dochodzą po kolei. Masz przedmiot, który chcesz tu zobaczyć następny? Daj znać.",
-    tags:["Wkrótce"], status:"soon", file:null }
-];
 
 const FAQS = [
   { q:"Co to jest Unicorner?",
@@ -293,31 +315,6 @@ const FAQS = [
 ];
 
 const grid = document.getElementById('grid');
-const STAT_DZIALY = 8; // działy statystyki liczą się osobno (lista: src/pages/statystyka-kurs.astro)
-const liveCount = SUBJECTS.filter(s=>s.status==='live').length - 1 + STAT_DZIALY;
-document.getElementById('count').textContent =
-  liveCount + (liveCount===1?' gotowy':(liveCount>=2&&liveCount<=4?' gotowe':' gotowych'));
-
-function cardHtml(s){
-  const live = s.status==='live';
-  const tagHtml = s.tags.map(t=>`<span class="tag">${t}</span>`).join('');
-  const inner = `
-    <span class="card-glow" aria-hidden="true"></span>
-    <div class="card-top"><div class="emoji">${s.emoji}</div>
-    <span class="badge ${live?'live':'soon'}">${s.badge || (live?'gotowe':'wkrótce')}</span></div>
-    <h3>${s.name}</h3><p class="desc">${s.desc}</p>
-    <div class="tags">${tagHtml}</div>
-    <span class="go">${live?'Otwórz':'W przygotowaniu'} <span class="arr">→</span></span>`;
-  return live ? `<a class="card live" href="${s.file}">${inner}</a>`
-              : `<div class="card soon">${inner}</div>`;
-}
-
-const liveSubjects = SUBJECTS.filter(s=>s.status==='live');
-const soonSubjects = SUBJECTS.filter(s=>s.status!=='live');
-grid.innerHTML =
-  liveSubjects.map(cardHtml).join('');
-const nextCard = document.getElementById('nextCard');
-if (nextCard) nextCard.innerHTML = soonSubjects.map(cardHtml).join('');
 
 // ===== Magic Bento: border-glow per karta (proximity) — cache rectow + rAF, bez lagu =====
 (function(){
