@@ -29,6 +29,7 @@ import KontoT from '../../components/kurs/konta/KontoT.astro';
 import Konta from '../../components/kurs/konta/Konta.astro';
 import Rzad from '../../components/kurs/konta/Rzad.astro';
 import CwiczenieKsiegowanie from '../../components/kurs/konta/CwiczenieKsiegowanie.astro';
+import TabelaKarty from '../../components/kurs/TabelaKarty.astro';
 import { ksieguj, zl } from '../../lib/konta.js';
 import { SCHEMAT_KASA, SCHEMAT_RB, sumaWekslowa, odsetkiDyskontowe, WZOR1, WZOR2, KA, OA, K2, O2, K3, O3, KC1, OC1, KC2, OC2 } from '../../lib/pieniadze-zadania.js';
 
@@ -376,12 +377,12 @@ Odsetki liczy się od kwoty wpisanej na wekslu, a nie od długu. Dlatego nie wys
 
 Weksel obcy księgujesz zawsze w **sumie wekslowej**. Różnica między sumą a długiem to dyskonto.
 
-| Nr | Operacja | Wn | Ma |
-|---|---|---|---|
-| 1 | Otrzymanie weksla obcego jako spłaty należności | Weksle obce (suma wekslowa) | a) Rozrachunki z odbiorcami (należność), b) Przychody finansowe (odsetki) |
-| 2 | Wykupienie weksla przez dłużnika | Rachunek bieżący | Weksle obce |
-| 3 | Oddanie weksla do dyskonta w banku | a) Rachunek bieżący (kwota przelana przez bank), b) Koszty finansowe (odsetki pobrane przez bank) | Weksle obce (suma wekslowa) |
-| 4 | Indosowanie weksla, czyli przekazanie go na spłatę naszego zobowiązania | a) Rozrachunki z dostawcami (spłacony dług), b) Koszty finansowe (odsetki) | Weksle obce (suma wekslowa) |
+<TabelaKarty naglowki={['Nr', 'Operacja', 'Wn', 'Ma']} wiersze={[
+  [1, 'Otrzymanie weksla obcego jako spłaty należności', 'Weksle obce (suma wekslowa)', 'a) Rozrachunki z odbiorcami (należność), b) Przychody finansowe (odsetki)'],
+  [2, 'Wykupienie weksla przez dłużnika', 'Rachunek bieżący', 'Weksle obce'],
+  [3, 'Oddanie weksla do dyskonta w banku', 'a) Rachunek bieżący (kwota przelana przez bank), b) Koszty finansowe (odsetki pobrane przez bank)', 'Weksle obce (suma wekslowa)'],
+  [4, 'Indosowanie weksla, czyli przekazanie go na spłatę naszego zobowiązania', 'a) Rozrachunki z dostawcami (spłacony dług), b) Koszty finansowe (odsetki)', 'Weksle obce (suma wekslowa)'],
+]} />
 
 **Jak czytać:** operacja 1 wprowadza weksel na konto. Operacje 2, 3 i 4 to trzy sposoby, w jakie weksel może z konta zejść. Przy każdym schodzi cała suma wekslowa. Litery a) i b) oznaczają dwie kwoty, które razem dają sumę wekslową. „Wykupienie” weksla to po prostu zapłata przez tego, kto go wystawił.
 
@@ -397,11 +398,11 @@ Weksel obcy księgujesz zawsze w **sumie wekslowej**. Różnica między sumą a 
 
 ### Weksel własny: trzy operacje
 
-| Nr | Operacja | Wn | Ma |
-|---|---|---|---|
-| 1 | Przekazanie weksla własnego wierzycielowi | a) Rozrachunki z dostawcami (spłacany dług), b) Koszty finansowe (odsetki) | Zobowiązania wekslowe (suma wekslowa) |
-| 2 | Wykupienie weksla przelewem | Zobowiązania wekslowe | Rachunek bieżący |
-| 3 | Odpisanie przedawnionych zobowiązań z tytułu weksli własnych | Zobowiązania wekslowe | Pozostałe przychody operacyjne |
+<TabelaKarty naglowki={['Nr', 'Operacja', 'Wn', 'Ma']} wiersze={[
+  [1, 'Przekazanie weksla własnego wierzycielowi', 'a) Rozrachunki z dostawcami (spłacany dług), b) Koszty finansowe (odsetki)', 'Zobowiązania wekslowe (suma wekslowa)'],
+  [2, 'Wykupienie weksla przelewem', 'Zobowiązania wekslowe', 'Rachunek bieżący'],
+  [3, 'Odpisanie przedawnionych zobowiązań z tytułu weksli własnych', 'Zobowiązania wekslowe', 'Pozostałe przychody operacyjne'],
+]} />
 
 **Jak czytać:** operacja 1 zamienia zwykły dług wobec dostawcy na dług wekslowy, wyższy o odsetki. Odsetki są naszym kosztem, bo to my płacimy za odroczenie. Operacja 2 spłaca weksel. Operacja 3 zdarza się rzadko: nikt nie zgłosił się po zapłatę w terminie przewidzianym prawem. Firma odpisuje wtedy dług z ksiąg, a odpisana kwota staje się przychodem.
 
