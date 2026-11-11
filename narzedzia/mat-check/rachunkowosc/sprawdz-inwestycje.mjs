@@ -33,6 +33,8 @@ const r3 = ksieguj(I.K3, I.O3), r5 = ksieguj(I.K5, I.O5);
 ok(r3.zam.kaf.saldo === 5000 && r5.zam.kaf.saldo === 6500 && r3.zam.rb.saldo === 5000 && r5.zam.rb.saldo === 5000, 'P3 i P5: salda konta akcji 5 000 i 6 500; wycena nie rusza rachunku');
 ok(I.lacznie(I.W3) === 0 && I.lacznie(I.W5) === 1500 && 6500 - 5000 === 1500, 'porównanie: wyceny za rok 0 i +1 500; ze sprzedażą po 6 500 obie zasady dają 1 500');
 
+ok(eq(I.W3B.map((w) => [w.bilansowa, w.konto, w.kwota]), [[5000, null, 0], [3000, 'kf', 2000], [4000, 'pf', 1000]]) && I.CZ.kwota === 5700 - 5200, 'częściowe cofnięcie przeceny: wariant 40 zł → 4 000 (przychód 1 000); ćwiczenie 5 200 → 5 700 (przychód 500)');
+
 // ——— Własność ogólna funkcji wycena(): 20 000 losowych ścieżek cen ———
 let los = 12345; const rnd = () => (los = (los * 1103515245 + 12345) % 2147483648) / 2147483648;
 let zle = 0;

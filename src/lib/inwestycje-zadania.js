@@ -2,7 +2,7 @@
 // Schematy księgowań (zakup, prowizja, sprzedaż w trzech zapisach, wzrost i zmniejszenie wartości) i treści pięciu przykładów:
 // konspekt z wykładu „Inwestycje krótkoterminowe”. Rozwiązań przykładów w konspekcie nie ma — księgowania według schematów
 // z konspektu i art. 35 ust. 3 ustawy o rachunkowości (skutki wyceny → przychody albo koszty finansowe).
-import { ksieguj } from './konta.js';
+import { ksieguj, zl } from './konta.js';
 
 // ——— Wycena na kolejne dni bilansowe ———
 // zasada: 'rynkowa' — zawsze cena rynkowa; 'ostrozna' — niższa z dwóch: cena nabycia albo cena rynkowa.
@@ -93,13 +93,15 @@ const operacjeH = (W) => {
   const ops = [{ nr: 1, kwota: H_NABYCIE, wn: 'kaf', ma: 'rb', opis: '17.05: zakup 100 akcji spółki H po 50 zł.' }];
   W.forEach((w, i) => {
     if (!w.konto) return;
-    ops.push({ nr: ops.length + 1, kwota: w.kwota, wn: w.konto === 'pf' ? 'kaf' : 'kf', ma: w.konto === 'pf' ? 'pf' : 'kaf', opis: `${H.dni[i]}: wycena ${w.konto === 'pf' ? 'w górę' : 'w dół'} do ${w.bilansowa} zł.` });
+    ops.push({ nr: ops.length + 1, kwota: w.kwota, wn: w.konto === 'pf' ? 'kaf' : 'kf', ma: w.konto === 'pf' ? 'pf' : 'kaf', opis: `${H.dni[i]}: wycena ${w.konto === 'pf' ? 'w górę' : 'w dół'} do ${zl(w.bilansowa)} zł.` });
   });
   return ops;
 };
 export const K3 = kontaH(), O3 = operacjeH(W3);
 // Dopowiedzenie spoza konspektu: sprzedaż wszystkich akcji w styczniu po cenie z 31.12 (do porównania obu zasad).
 export const H_SPRZEDAZ = H.ceny[2] * H.sztuk;
+// Wariant własny do Przykładu 3: 31.12 cena 40 zł (częściowe cofnięcie przeceny).
+export const W3B = wycena('ostrozna', H_NABYCIE, [70, 30, 40].map((c) => c * H.sztuk));
 export const lacznie = (W) => W.reduce((a, w) => a + w.roznica, 0); // łączny wpływ wycen na wynik
 export const K5 = kontaH(), O5 = operacjeH(W5);
 
@@ -123,6 +125,8 @@ export const OC = [
 export const CW = { nabycie: 6000, ceny: [6800, 5200, 6300] }; // jeden pakiet, trzy dni bilansowe
 export const CW_OSTR = wycena('ostrozna', CW.nabycie, CW.ceny);
 export const CW_RYN = wycena('rynkowa', CW.nabycie, CW.ceny);
+// częściowe cofnięcie przeceny: w księgach 5 200 po przecenie, rynek 5 700, cena nabycia 6 000
+export const CZ = { nabycie: 6000, ksiegi: 5200, rynkowa: 5700, kwota: Math.min(6000, 5700) - 5200 };
 
 // ——— Kontrola przy buildzie ———
 {
@@ -137,6 +141,7 @@ export const CW_RYN = wycena('rynkowa', CW.nabycie, CW.ceny);
   if (JSON.stringify(W5.map((w) => w.bilansowa)) !== '[7000,3000,6500]' || r5.zam.kaf.saldo !== 6500 || r5.zam.kf.saldo !== 4000 || r5.zam.pf.saldo !== 5500) blad('Przykład 5');
   // obie zasady dają ten sam łączny wynik: wyceny + sprzedaż = cena sprzedaży − cena nabycia
   for (const W of [W3, W5]) if (lacznie(W) + (H_SPRZEDAZ - W[2].bilansowa) !== H_SPRZEDAZ - H_NABYCIE) blad('porównanie zasad');
+  if (W3B[2].konto !== 'pf' || W3B[2].kwota !== 1000 || W3B[2].bilansowa !== 4000 || CZ.kwota !== 500) blad('częściowe cofnięcie przeceny');
   if (!Number.isInteger(C1.sprzedano * C1_ZA_AKCJE)) blad('ćwiczenie: cena ewidencyjna');
   for (const o of OC) if (!KC.some((k) => k.id === o.wn) || !KC.some((k) => k.id === o.ma)) blad('ćwiczenie: konta');
 }
