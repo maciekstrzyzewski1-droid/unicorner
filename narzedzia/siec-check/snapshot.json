@@ -74,12 +74,20 @@
   "/_astro/BilansTabela.astro_astro_type_script_index_0_lang.js",
   "/_astro/krokowka.js"
  ],
+ "rachunkowosc/inwestycje-krotkoterminowe.html": [
+  "/_astro/Konta.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
  "rachunkowosc/istota.html": [],
  "rachunkowosc/konta.html": [
   "/_astro/Konta.astro_astro_type_script_index_0_lang.js",
   "/_astro/krokowka.js"
  ],
  "rachunkowosc/pojecia.html": [],
+ "rachunkowosc/srodki-pieniezne.html": [
+  "/_astro/Konta.astro_astro_type_script_index_0_lang.js",
+  "/_astro/krokowka.js"
+ ],
  "rachunkowosc/wynik-finansowy.html": [
   "/_astro/Konta.astro_astro_type_script_index_0_lang.js",
   "/_astro/krokowka.js"
