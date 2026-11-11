@@ -1,0 +1,36 @@
+---
+// Tabela, która na telefonie (do 640 px) zamienia się w karty: każdy wiersz to osobna karta,
+// a nazwa kolumny stoi przy każdej wartości. Dla tabel z 4–6 kolumnami, które nie mieszczą się w 390 px.
+// mocne: numery kolumn pogrubionych; suma: ostatni wiersz to podsumowanie. Puste komórki ('') znikają z kart.
+interface Props { naglowki: string[]; wiersze: (string | number)[][]; mocne?: number[]; suma?: boolean }
+const { naglowki, wiersze, mocne = [], suma = false } = Astro.props;
+---
+<div class="k-tk">
+  <table>
+    <thead><tr>{naglowki.map((h) => <th>{h}</th>)}</tr></thead>
+    <tbody>
+      {wiersze.map((w, r) => (
+        <tr class:list={{ 'is-suma': suma && r === wiersze.length - 1 }}>
+          {w.map((c, i) => <td data-th={naglowki[i]} class:list={{ 'is-mocne': mocne.includes(i), 'is-pusta': c === '' }}>{c}</td>)}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .k-tk{margin:1.2em 0 1.4em;}
+  .k-tk table{width:100%;border-collapse:collapse;font-size:.94rem;}
+  .k-tk th,.k-tk td{border:1px solid var(--line2);padding:8px 12px;text-align:left;vertical-align:top;}
+  .k-tk th{background:rgba(167,139,250,.1);font-family:var(--mono);font-size:.8rem;letter-spacing:.8px;color:#fff;}
+  .k-tk .is-mocne,.k-tk .is-suma td{font-weight:700;color:#fff;}
+  @media (max-width:640px){
+    .k-tk thead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+    .k-tk table,.k-tk tbody,.k-tk tr,.k-tk td{display:block;}
+    .k-tk tr{border:1px solid var(--line2);background:var(--ink2);margin-bottom:10px;padding:6px 0;}
+    .k-tk td{border:0;padding:4px 12px;display:grid;grid-template-columns:minmax(0,42%) minmax(0,1fr);gap:10px;overflow-wrap:anywhere;}
+    .k-tk td::before{content:attr(data-th);font-family:var(--mono);font-size:.74rem;letter-spacing:.4px;line-height:1.5;color:var(--muted);font-weight:400;}
+    .k-tk td.is-pusta{display:none;}
+    .k-tk td:first-child{font-weight:700;color:var(--cyan);}
+  }
+</style>

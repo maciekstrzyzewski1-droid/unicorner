@@ -1,0 +1,776 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: rachunkowosc
+slug: inwestycje-krotkoterminowe
+wyglad: szeroki
+title: Inwestycje krótkoterminowe
+podtytul: akcje kupione na sprzedaż, cena nabycia i wycena na dzień bilansowy
+description: Inwestycje krótkoterminowe od zera – podział inwestycji, aktywa finansowe, cena zakupu i cena nabycia, zakup i sprzedaż akcji na kontach, wycena na dzień bilansowy według cen rynkowych i według zasady ostrożnej wyceny. Pięć przykładów z wykładu krok po kroku.
+lede: Firma ma wolne pieniądze i kupuje za nie akcje, żeby sprzedać je drożej. Tutaj nauczysz się trzech rzeczy. Za ile wpisać akcje przy zakupie. Jak zaksięgować sprzedaż. Co zrobić na dzień bilansowy, gdy cena się zmieniła, a akcje nadal leżą w firmie.
+wymaga: Konto teowe, strony Wn i Ma, konta kosztów i przychodów (moduły „Operacje i konta bilansowe” oraz „Konta wynikowe i wynik finansowy”). Najważniejsze przypominamy na miejscu.
+umiesz:
+  - nazwać rodzaje inwestycji i wskazać, które są krótkoterminowe
+  - policzyć cenę nabycia papierów wartościowych
+  - zaksięgować zakup i sprzedaż akcji trzema zapisami
+  - wycenić inwestycje na dzień bilansowy według cen rynkowych
+  - wycenić inwestycje na dzień bilansowy według zasady ostrożnej wyceny
+  - podać wartość bilansową i wpływ wyceny na rachunek zysków i strat
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import Konta from '../../components/kurs/konta/Konta.astro';
+import CwiczenieKsiegowanie from '../../components/kurs/konta/CwiczenieKsiegowanie.astro';
+import TabelaKarty from '../../components/kurs/TabelaKarty.astro';
+import WykresWyceny from '../../components/kurs/inwestycje/WykresWyceny.astro';
+import { ksieguj, zl } from '../../lib/konta.js';
+import { SCHEMAT, P1, P1_NABYCIE, P1_ZA_AKCJE, K1, O1, W2, K2, O2, W4, K4, O4, H, H_NABYCIE, W3, W5, K3, O3, K5, O5, H_SPRZEDAZ, lacznie, C1, C1_NABYCIE, C1_ZA_AKCJE, KC, OC, CW, CW_OSTR, CW_RYN } from '../../lib/inwestycje-zadania.js';
+
+export const R1 = ksieguj(K1, O1);
+export const R2 = ksieguj(K2, O2);
+export const R4 = ksieguj(K4, O4);
+export const ZAPIS = { pf: 'w górę: Wn Krótkoterminowe aktywa finansowe, Ma Przychody finansowe', kf: 'w dół: Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe' };
+export const NAGL_WYCEN = ['W księgach przed wyceną', 'Wartość rynkowa', 'Do bilansu', 'Kwota zapisu', 'Zapis'];
+export const wierszeWycen = (etykiety, w) => w.map((x, i) => [etykiety[i], zl(x.przed), zl(x.rynkowa), zl(x.bilansowa), x.konto ? zl(x.kwota) : '—', x.konto ? ZAPIS[x.konto] : 'brak zapisu']);
+export const znak = (w) => (w.roznica > 0 ? '+' : w.roznica < 0 ? '−' : '') + zl(w.kwota);
+
+## Po co to jest
+
+Firma sprzedała dużą partię towaru i ma na rachunku 50 000 zł, których nie potrzebuje przez pół roku. Pieniądze na rachunku prawie nie zarabiają. Zarząd kupuje więc za nie akcje spółki giełdowej i liczy, że za kilka miesięcy sprzeda je drożej.
+
+Dla księgowego to trzy pytania.
+
+1. **Za ile wpisać akcje do ksiąg?** Firma zapłaciła za akcje i osobno zapłaciła prowizję pośrednikowi.
+2. **Jak zaksięgować sprzedaż?** Pieniądze wpływają, akcje znikają, a pośrednik znowu bierze prowizję.
+3. **Co zrobić na dzień bilansowy?** Akcje nadal leżą w firmie, ale na giełdzie kosztują już inaczej niż w dniu zakupu.
+
+Na kolokwium dostajesz zwykle krótką historię: zakup, czasem sprzedaż, a potem ceny rynkowe na dzień bilansowy. Masz zaksięgować operacje, podać wartość do bilansu i powiedzieć, jak wycena zmieniła wynik.
+
+## Co będzie na kolokwium
+
+<Polecenia items={[
+  { polecenie: 'Podaj podział inwestycji. Kiedy aktywa finansowe są krótkoterminowe?', jak: 'Dwa podziały: według rodzaju (niefinansowe i finansowe) i według czasu (długo- i krótkoterminowe). Granica to 12 miesięcy.', przepis: 'polecenie-pojecia', cwiczenia: 'cw-pojecia', zrodlo: 'konspekt, część teoretyczna' },
+  { polecenie: 'Zaksięguj zakup akcji z prowizją maklerską', jak: 'Liczysz cenę nabycia: cena zakupu plus prowizja. Obie kwoty idą na konto „Krótkoterminowe aktywa finansowe”.', przepis: 'polecenie-zakup', cwiczenia: 'cw-obrot', zrodlo: 'konspekt, Przykład 1' },
+  { polecenie: 'Zaksięguj sprzedaż akcji', jak: 'Trzy zapisy: cena sprzedaży to przychód finansowy, wartość sprzedanych akcji z ksiąg to koszt finansowy, prowizja to też koszt finansowy.', przepis: 'polecenie-sprzedaz', cwiczenia: 'cw-obrot', zrodlo: 'konspekt, Przykład 1 i schemat księgowań' },
+  { polecenie: 'Wyceń inwestycje na dzień bilansowy zgodnie z zasadą ostrożnej wyceny', jak: 'Do bilansu idzie niższa z dwóch kwot: cena nabycia albo wartość rynkowa.', przepis: 'polecenie-ostrozna', cwiczenia: 'cw-wycena', zrodlo: 'konspekt, Przykłady 2 i 3' },
+  { polecenie: 'Wyceń inwestycje na dzień bilansowy według cen rynkowych', jak: 'Do bilansu idzie zawsze wartość rynkowa. Wzrost to przychód finansowy, spadek to koszt finansowy.', przepis: 'polecenie-rynkowa', cwiczenia: 'cw-wycena', zrodlo: 'konspekt, Przykłady 4 i 5' },
+  { polecenie: 'Podaj wartość bilansową akcji i wpływ wyceny na rachunek zysków i strat', jak: 'Wartość bilansowa to saldo konta po wycenie. Wpływ na wynik to przychody finansowe minus koszty finansowe z wyceny.', przepis: 'polecenie-wplyw', cwiczenia: 'cw-wycena', zrodlo: 'konspekt, Przykłady 2–5' },
+]} />
+
+Słowa takie jak cena nabycia, dzień bilansowy czy ostrożna wycena wyjaśniają kolejne sekcje. Ta lista to tylko mapa.
+
+<a id="polecenie-pojecia" class="k-anchor"></a>
+
+## Co to jest inwestycja
+
+<Ramka kind="zapamietaj">
+- **Inwestycja** — według ustawy o rachunkowości (art. 3 ust. 1 pkt 17) to składnik majątku, który firma trzyma po to, żeby na nim zarobić: na wzroście jego wartości, na odsetkach, na dywidendach albo na innych pożytkach. Firma go nie zużywa i nie używa w zwykłej działalności.
+- **Akcja** — papier wartościowy, który daje udział w spółce akcyjnej. Kto ma akcję, jest współwłaścicielem małej części spółki.
+- **Dywidenda** — część zysku spółki wypłacana właścicielom akcji.
+- **Obligacja** — papier wartościowy, w którym wystawca potwierdza, że pożyczył pieniądze i odda je z odsetkami.
+- **Papiery wartościowe** — wspólna nazwa na akcje, obligacje i podobne dokumenty, które można kupić i sprzedać.
+</Ramka>
+
+Inwestycje dzieli się na dwa sposoby. Oba trzeba znać.
+
+**Podział pierwszy: co to jest.**
+
+| Grupa | Co do niej należy | Przykład |
+|---|---|---|
+| Aktywa niefinansowe | rzeczy kupione po to, żeby na nich zarobić, a nie po to, żeby ich używać | działka kupiona, bo jej cena rośnie |
+| Aktywa finansowe: lokaty kapitałowe | prawo do części majątku innej firmy | akcje, udziały |
+| Aktywa finansowe: wierzytelności pieniężne | prawo do odzyskania pieniędzy z odsetkami | obligacje, bony skarbowe, udzielone pożyczki |
+| Aktywa finansowe: inne prawa | pozostałe prawa wynikające z umów | opcja, czyli prawo do kupna papieru po cenie ustalonej z góry |
+
+**Jak czytać:** pierwszy wiersz to inwestycje niefinansowe. Trzy kolejne wiersze to jedna grupa, aktywa finansowe, podzielona według tego, jakie prawo firma nabyła. Na wykładzie ten podział nazywa się podziałem „według kryterium praw nabytych”. Nazwy trzech podgrup pochodzą z konspektu. Przykłady w ostatniej kolumnie są typowe, ale to nasze dopowiedzenie.
+
+<Ramka kind="zapamietaj" tytul="aktywa finansowe według ustawy">
+Ustawa o rachunkowości (art. 3 ust. 1 pkt 24) zalicza do aktywów finansowych cztery rzeczy:
+
+- aktywa pieniężne, czyli pieniądze i to, co je zastępuje (znasz je z modułu „Środki pieniężne”),
+- instrumenty kapitałowe wyemitowane przez inne jednostki, na przykład akcje innej spółki,
+- prawo do otrzymania aktywów pieniężnych wynikające z kontraktu, na przykład obligację,
+- prawo do wymiany instrumentów finansowych z inną jednostką na korzystnych warunkach.
+
+„Wyemitowane” znaczy: wypuszczone do sprzedaży. „Jednostka” to w języku ustawy każda firma, która prowadzi księgi.
+</Ramka>
+
+**Podział drugi: na jak długo.**
+
+- **Inwestycje długoterminowe** — firma zamierza je trzymać dłużej niż rok. W bilansie stoją w aktywach trwałych.
+- **Inwestycje krótkoterminowe** — firma zamierza je sprzedać albo odzyskać pieniądze w ciągu roku. W bilansie stoją w aktywach obrotowych.
+
+<Ramka kind="zapamietaj" tytul="granica 12 miesięcy">
+Aktywa finansowe zalicza się do aktywów obrotowych (art. 3 ust. 1 pkt 18), gdy spełniają jeden z warunków:
+
+- są płatne i wymagalne w ciągu 12 miesięcy,
+- są przeznaczone do zbycia w ciągu 12 miesięcy,
+- są aktywami pieniężnymi.
+
+12 miesięcy liczy się od dnia bilansowego albo od dnia założenia, wystawienia lub nabycia. „Zbycie” to sprzedaż albo inne pozbycie się składnika. „Wymagalne” znaczy: nadszedł termin i można żądać zapłaty.
+</Ramka>
+
+<Ramka kind="pulapka">
+- O tym, czy akcje są krótkoterminowe, decyduje **zamiar**, a nie rodzaj papieru.
+- Te same akcje mogą być krótkoterminowe w jednej firmie i długoterminowe w drugiej.
+- Przykład: akcje kupione „z zamiarem odsprzedaży w styczniu” są krótkoterminowe. Akcje kupione, żeby przez lata mieć wpływ na inną spółkę, są długoterminowe.
+- W zadaniach szukaj słów „z zamiarem odsprzedaży”.
+</Ramka>
+
+**Miejsce w bilansie.** Akcje kupione na krótko stoją w aktywach, w pozycji **B.III Inwestycje krótkoterminowe**, w podgrupie „Krótkoterminowe aktywa finansowe”. W tej samej pozycji B.III stoją pieniądze w kasie i na rachunku.
+
+**Konto.** W tym module używamy jednego konta: **Krótkoterminowe aktywa finansowe**. To konto aktywne. Zakup wpisujesz po stronie Wn, a sprzedaż i spadek wartości po stronie Ma.
+
+<Ramka kind="zapamietaj" tytul="przypomnienie: strony konta">
+Konto aktywne (to, co firma ma) rośnie po stronie **Wn**, maleje po **Ma**. Koszt rośnie po **Wn**. Przychód rośnie po **Ma**. Każda operacja to ta sama kwota po Wn jednego konta i po Ma drugiego. **Przychody finansowe** i **koszty finansowe** to konta na zyski i straty z pieniędzy i papierów wartościowych, a nie ze zwykłego handlu.
+</Ramka>
+
+## Schemat księgowań z wykładu
+
+Cały moduł to siedem zapisów na czterech kontach. Najpierw zobacz je razem. Każdy zapis wyjaśniamy dalej osobno.
+
+<TabelaKarty naglowki={['Nr', 'Operacja', 'Wn (winien)', 'Ma (ma)']} wiersze={SCHEMAT.map((o) => [o.nr, o.opis, o.wn, o.ma])} />
+
+**Jak czytać:** wiersz to jedna operacja. Na telefonie każdy wiersz jest osobną kartą, a nazwa kolumny stoi przy wartości. Kolumna „Wn” podaje konto, na którym kwotę wpisujesz po lewej stronie. Kolumna „Ma” podaje konto, na którym tę samą kwotę wpisujesz po prawej stronie. Numery są takie jak na schemacie z wykładu. Operacje 1 i 1a to zakup, operacje 2a–2c to sprzedaż, operacje 3 i 4 to wycena na dzień bilansowy.
+
+<a id="polecenie-zakup" class="k-anchor"></a>
+
+## Zakup: cena zakupu i cena nabycia
+
+Firma nie kupuje akcji sama. Robi to przez **biuro maklerskie**, czyli pośrednika, który ma dostęp do giełdy. Za każdą transakcję biuro pobiera opłatę. Ta opłata to **prowizja maklerska**.
+
+Przy zakupie pojawiają się więc dwie kwoty i dwie nazwy.
+
+<Ramka kind="zapamietaj">
+- **Cena zakupu** — tyle należy się sprzedającemu za same akcje.
+- **Koszty transakcji** — to, co firma dopłaca, żeby kupić. W zadaniach to prowizja maklerska.
+- **Cena nabycia** = cena zakupu + koszty transakcji.
+</Ramka>
+
+Przykład na liczbach z wykładu. Firma kupuje {P1.sztuk} akcji po {P1.cena} zł i płaci {P1.prowizjaZakup} zł prowizji.
+
+- Cena zakupu: {P1.sztuk} · {P1.cena} = {zl(P1.sztuk * P1.cena)} zł.
+- Koszty transakcji: {P1.prowizjaZakup} zł.
+- Cena nabycia: {zl(P1.sztuk * P1.cena)} + {P1.prowizjaZakup} = **{zl(P1_NABYCIE)} zł**.
+
+<Ramka kind="botak" tytul="w jakiej cenie do ksiąg">
+Ustawa o rachunkowości (art. 35 ust. 1) każe ująć nabyte aktywa finansowe na dzień nabycia **w cenie nabycia**. Dopuszcza cenę zakupu tylko wtedy, gdy koszty przeprowadzenia i rozliczenia transakcji nie są istotne. W zadaniu z wykładu polityka rachunkowości mówi wprost: cena nabycia. Prowizja powiększa więc wartość akcji.
+</Ramka>
+
+<Ramka kind="zapamietaj" tytul="polityka rachunkowości">
+**Polityka rachunkowości** to spis zasad, które firma sama wybrała tam, gdzie ustawa daje wybór. Raz wybraną zasadę stosuje się co roku tak samo. W treści zadania zdanie „w polityce rachunkowości przyjęto…” mówi, którą zasadą masz liczyć.
+</Ramka>
+
+<Ramka kind="polecenie" tytul="Zaksięguj zakup akcji z prowizją">
+1. Policz cenę zakupu: liczba akcji razy cena jednej akcji.
+2. Zapisz ją: **Wn Krótkoterminowe aktywa finansowe, Ma Rachunek bieżący**.
+3. Prowizję zapisz tak samo: **Wn Krótkoterminowe aktywa finansowe, Ma Rachunek bieżący**.
+4. Dodaj obie kwoty. To cena nabycia całego pakietu.
+5. Podziel cenę nabycia przez liczbę akcji. Wynik to cena nabycia jednej akcji. Przyda się przy sprzedaży.
+</Ramka>
+
+<Ramka kind="pulapka">
+- Prowizja przy **zakupie** nie jest kosztem. Wchodzi w wartość akcji.
+- Prowizja przy **sprzedaży** jest kosztem finansowym.
+- Ta sama opłata, dwa różne zapisy. Decyduje moment: kupujesz czy sprzedajesz.
+</Ramka>
+
+<a id="polecenie-sprzedaz" class="k-anchor"></a>
+
+## Sprzedaż: trzy zapisy
+
+Przy sprzedaży dzieją się trzy rzeczy naraz. Każda dostaje własny zapis.
+
+<Ramka kind="polecenie" tytul="Zaksięguj sprzedaż akcji">
+1. **Cena sprzedaży.** Policz: liczba sprzedanych akcji razy cena sprzedaży. Zapis: **Wn Rachunek bieżący, Ma Przychody finansowe**.
+2. **Cena ewidencyjna.** Policz: liczba sprzedanych akcji razy cena nabycia jednej akcji. Zapis: **Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe**.
+3. **Prowizja przy sprzedaży.** Zapis: **Wn Koszty finansowe, Ma Rachunek bieżący**.
+4. Wynik na sprzedaży: przychód finansowy minus oba koszty finansowe.
+</Ramka>
+
+<Ramka kind="zapamietaj" tytul="cena ewidencyjna">
+**Cena ewidencyjna** to cena, w której składnik jest zapisany w księgach. „Ewidencja” to po prostu zapis w księgach. Tutaj ceną ewidencyjną akcji jest ich cena nabycia. Akcje schodzą z konta w tej samej cenie, w której na nie weszły.
+</Ramka>
+
+<Ramka kind="botak" tytul="dlaczego nie jeden zapis z samą różnicą">
+Sprzedaż akcji księguje się tak jak sprzedaż towarów: osobno przychód, osobno koszt. Przy towarach był zapis „Przychody ze sprzedaży” i drugi zapis „Wartość sprzedanych towarów”. Przy akcjach są to „Przychody finansowe” i „Koszty finansowe”. Dzięki temu w księgach widać i to, ile firma dostała, i to, ile ją to kosztowało.
+</Ramka>
+
+<Ramka kind="pulapka">
+- W zapisie 2 **nie** wpisujesz ceny sprzedaży. Wpisujesz cenę, po której akcje stoją w księgach.
+- W zapisie 2 **nie** wpisujesz samej ceny zakupu. Prowizja z zakupu też siedzi w wartości akcji.
+- Przykład: akcje kupione po 10 zł z prowizją 1 zł na akcję stoją w księgach po 11 zł. Sprzedajesz 100 sztuk po 13 zł. Z konta schodzi 100 · 11 = 1 100 zł, a nie 1 300 zł i nie 1 000 zł.
+</Ramka>
+
+## Przykład z wykładu: zakup i sprzedaż
+
+<Rozwiazanie tytul="Zakup akcji z prowizją i sprzedaż części pakietu" zrodlo="konspekt, Przykład 1">
+<div slot="tresc">
+
+W polityce rachunkowości przyjęto ewidencję inwestycji krótkoterminowych w cenie nabycia. Stan rachunku bieżącego na początek: 8 000 zł.
+
+1. 15.05 zakupiono (wyciąg bankowy):
+   - a) 120 akcji spółki A po 10 zł za akcję, razem 1 200 zł,
+   - b) prowizja maklerska przy zakupie: 120 zł.
+2. 20.07 sprzedano 100 akcji spółki A po 13 zł za akcję. Ujęto w księgach:
+   - a) wpływ środków pieniężnych na rachunek bieżący: … zł,
+   - b) wyksięgowano sprzedane akcje: … zł,
+   - c) opłacono prowizję maklerską: 130 zł.
+
+Kwoty w punktach 2a i 2b trzeba policzyć samemu.
+
+</div>
+
+<div slot="plan">
+
+1. Otwieramy cztery konta. Rachunek bieżący dostaje saldo początkowe 8 000 po Wn. Pozostałe są puste.
+2. Operacja 1: obie kwoty z zakupu wpisujemy na konto akcji. Razem dają cenę nabycia.
+3. Liczymy cenę nabycia jednej akcji. Bez niej nie da się zrobić punktu 2b.
+4. Operacja 2: trzy zapisy sprzedaży, każdy z innego powodu.
+5. Kontrola: ile akcji zostało, ile są warte i ile firma zarobiła.
+
+Innej drogi nie ma. Tak wygląda schemat z wykładu.
+
+</div>
+
+<Krok tytul="Operacja 1: zakup i prowizja">
+- 1a) Akcje: {P1.sztuk} · {P1.cena} = {zl(O1[0].kwota)}. **Wn Krótkoterminowe aktywa finansowe {zl(O1[0].kwota)}, Ma Rachunek bieżący {zl(O1[0].kwota)}**.
+- 1b) Prowizja: **Wn Krótkoterminowe aktywa finansowe {zl(O1[1].kwota)}, Ma Rachunek bieżący {zl(O1[1].kwota)}**.
+
+<Dlaczego>
+Firma ma teraz akcje, więc konto aktywne rośnie po Wn. Pieniądze wyszły z rachunku, więc rachunek maleje po Ma. Prowizja idzie na to samo konto co akcje, bo polityka rachunkowości każe wpisać je w cenie nabycia: {zl(O1[0].kwota)} + {zl(O1[1].kwota)} = {zl(P1_NABYCIE)}.
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+Numery 1a, 1b, 2a, 2b, 2c są takie jak litery w treści zadania. Na schemacie z wykładu ten sam zakup ma numery 1 i 1a.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Ile kosztowała jedna akcja">
+Cena nabycia jednej akcji: {zl(P1_NABYCIE)} : {P1.sztuk} = **{P1_ZA_AKCJE} zł**.
+
+<Dlaczego>
+Firma sprzedaje tylko część pakietu, {P1.sprzedano} akcji ze {P1.sztuk}. Trzeba wiedzieć, ile kosztowała jedna, żeby zdjąć z konta właściwą część. Jedna akcja kosztowała {P1.cena} zł u sprzedającego i jeszcze 1 zł prowizji ({P1.prowizjaZakup} : {P1.sztuk} = 1).
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 2a: wpływ ze sprzedaży">
+Cena sprzedaży: {P1.sprzedano} · {P1.cenaSprzedazy} = {zl(O1[2].kwota)}. **Wn Rachunek bieżący {zl(O1[2].kwota)}, Ma Przychody finansowe {zl(O1[2].kwota)}**.
+
+<Dlaczego>
+Pieniądze weszły na rachunek, więc Wn. Cała kwota ze sprzedaży to przychód finansowy, a przychód rośnie po Ma.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 2b: akcje schodzą z ksiąg">
+Cena ewidencyjna: {P1.sprzedano} · {P1_ZA_AKCJE} = {zl(O1[3].kwota)}. **Wn Koszty finansowe {zl(O1[3].kwota)}, Ma Krótkoterminowe aktywa finansowe {zl(O1[3].kwota)}**.
+
+<Dlaczego>
+Stu akcji już nie ma, więc konto aktywne maleje po Ma. Schodzą w cenie, w której weszły, czyli po {P1_ZA_AKCJE} zł. To, co firma za nie kiedyś zapłaciła, staje się teraz kosztem finansowym.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 2c: prowizja przy sprzedaży">
+**Wn Koszty finansowe {zl(O1[4].kwota)}, Ma Rachunek bieżący {zl(O1[4].kwota)}**.
+
+<Dlaczego>
+Akcji już nie ma, więc prowizji nie da się doliczyć do ich wartości. Zostaje koszt finansowy. Pieniądze wychodzą z rachunku po Ma.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kontrola">
+- Konto akcji: {zl(P1_NABYCIE)} − {zl(O1[3].kwota)} = **{zl(R1.zam.kaf.saldo)}**. Zostało {P1.sztuk - P1.sprzedano} akcji po {P1_ZA_AKCJE} zł: {P1.sztuk - P1.sprzedano} · {P1_ZA_AKCJE} = {zl((P1.sztuk - P1.sprzedano) * P1_ZA_AKCJE)}. Zgadza się.
+- Rachunek bieżący: 8 000 − {zl(O1[0].kwota)} − {zl(O1[1].kwota)} + {zl(O1[2].kwota)} − {zl(O1[4].kwota)} = **{zl(R1.zam.rb.saldo)}**.
+- Wynik na sprzedaży: przychody finansowe {zl(R1.zam.pf.saldo)} − koszty finansowe ({zl(O1[3].kwota)} + {zl(O1[4].kwota)}) = {zl(R1.zam.pf.saldo)} − {zl(R1.zam.kf.saldo)} = **{zl(R1.zam.pf.saldo - R1.zam.kf.saldo)} zł zysku**.
+
+<Dlaczego>
+Saldo konta akcji musi być równe wartości akcji, które zostały. Jeśli wychodzi inaczej, w punkcie 2b wpisana jest zła cena.
+</Dlaczego>
+</Krok>
+
+<Konta konta={K1} operacje={O1}>
+**Jak czytać:** każde „T” to jedno konto, lewa strona to Wn, prawa to Ma. Numer przy kwocie to numer operacji z treści. Ta sama kwota z tym samym numerem stoi zawsze na dwóch kontach, raz po Wn i raz po Ma. „Sp.” to saldo początkowe, „Sk.” to saldo końcowe.
+</Konta>
+
+</Rozwiazanie>
+
+<Ramka kind="inaczej" tytul="gdyby polityka mówiła: cena zakupu">
+Ustawa dopuszcza cenę zakupu, gdy koszty transakcji nie są istotne. Wtedy na konto akcji trafia sama cena zakupu, a prowizję przy zakupie zalicza się od razu do kosztów finansowych. W zadaniach z wykładu polityka mówi „cena nabycia”, więc tego wariantu nie używamy.
+</Ramka>
+
+## Dzień bilansowy: dwie zasady wyceny
+
+**Dzień bilansowy** to dzień, na który firma sporządza bilans. Zwykle jest to 31 grudnia. W zadaniach z wykładu firma sporządza sprawozdanie także na koniec każdego kwartału: 31 marca, 30 czerwca, 30 września i 31 grudnia. Każdy z tych dni jest wtedy dniem bilansowym.
+
+**Cena rynkowa** to cena, po której danego dnia można sprzedać akcję na giełdzie. **Wartość rynkowa** pakietu to liczba akcji razy cena rynkowa.
+
+Akcje kupione w maju po 50 zł mogą w grudniu kosztować 70 zł albo 30 zł. Firma ich nie sprzedała, więc żadne pieniądze nie wpłynęły ani nie wypłynęły. Mimo to bilans ma pokazać, ile te akcje są warte. Ustawa o rachunkowości (art. 28 ust. 1 pkt 5) daje do wyboru dwie zasady. Firma wybiera jedną w polityce rachunkowości.
+
+| Zasada | Co idzie do bilansu | Kiedy jest zapis |
+|---|---|---|
+| **Według cen rynkowych** | zawsze wartość rynkowa | przy każdej zmianie ceny, w górę i w dół |
+| **Ostrożna wycena** | niższa z dwóch kwot: cena nabycia albo wartość rynkowa | tylko gdy wartość spada poniżej ceny nabycia albo wraca w stronę ceny nabycia |
+
+**Jak czytać:** wiersz to jedna zasada. Środkowa kolumna mówi, jaką kwotę wpisujesz do bilansu. Ostatnia kolumna mówi, kiedy w ogóle robisz zapis na kontach. Przy ostrożnej wycenie akcje nigdy nie stoją w bilansie drożej, niż firma za nie zapłaciła.
+
+<Ramka kind="botak" tytul="skąd nazwa „ostrożna wycena”">
+W module „Istota rachunkowości” była zasada ostrożności: znane straty pokazuje się od razu, a niepewnych zysków się nie dopisuje. Spadek ceny akcji to strata, którą już widać. Wzrost ceny ponad cenę nabycia to zysk, którego firma jeszcze nie ma w ręku, bo akcji nie sprzedała. Dlatego przy ostrożnej wycenie spadek się księguje, a wzrostu ponad cenę nabycia nie.
+</Ramka>
+
+Zapisy na kontach są przy obu zasadach takie same. To operacje 3 i 4 ze schematu.
+
+- Wartość rośnie: **Wn Krótkoterminowe aktywa finansowe, Ma Przychody finansowe**.
+- Wartość maleje: **Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe**.
+
+Ustawa (art. 35 ust. 3) zalicza skutki wyceny inwestycji krótkoterminowych do przychodów finansowych albo kosztów finansowych. Różni się tylko to, **do jakiej kwoty** doprowadzasz konto.
+
+<Ramka kind="polecenie" tytul="Wyceń inwestycje na dzień bilansowy (obie zasady)">
+1. **W księgach.** Odczytaj, ile akcje są warte na koncie przed wyceną. Przy pierwszej wycenie to cena nabycia. Przy kolejnej to kwota z poprzedniego dnia bilansowego.
+2. **Rynkowa.** Policz wartość rynkową: liczba akcji razy cena rynkowa z tego dnia.
+3. **Do bilansu.** Ustal kwotę do bilansu.
+   - Zasada cen rynkowych: wartość rynkowa.
+   - Ostrożna wycena: niższa z dwóch kwot, cena nabycia albo wartość rynkowa.
+4. **Różnica.** Odejmij: kwota do bilansu minus kwota w księgach.
+5. **Zapis.**
+   - Różnica na plus: Wn Krótkoterminowe aktywa finansowe, Ma Przychody finansowe.
+   - Różnica na minus: Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe.
+   - Różnica zero: nie ma zapisu.
+</Ramka>
+
+<Ramka kind="pulapka">
+- W kroku 4 porównujesz z kwotą **w księgach**, a nie z ceną nabycia. Po pierwszej wycenie to już mogą być dwie różne kwoty.
+- Przykład: akcje kupione za 5 000 zostały przecenione do 3 000. Potem rynek daje 6 500. Przy cenach rynkowych zapis to 6 500 − 3 000 = 3 500, a nie 6 500 − 5 000 = 1 500.
+- Wycena to nie sprzedaż. Rachunek bieżący się nie zmienia.
+</Ramka>
+
+<a id="polecenie-ostrozna" class="k-anchor"></a>
+
+## Ostrożna wycena
+
+Do bilansu idzie **niższa z dwóch kwot**: cena nabycia albo wartość rynkowa. Są trzy sytuacje.
+
+| Sytuacja na dzień bilansowy | Do bilansu | Zapis |
+|---|---|---|
+| Wartość rynkowa wyższa od ceny nabycia | cena nabycia | brak zapisu, chyba że wcześniej był spadek (wtedy wiersz 3) |
+| Wartość rynkowa niższa od ceny nabycia | wartość rynkowa | spadek: Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe |
+| Po wcześniejszym spadku wartość rynkowa znów rośnie | wartość rynkowa, ale najwyżej cena nabycia | wzrost: Wn Krótkoterminowe aktywa finansowe, Ma Przychody finansowe |
+
+**Jak czytać:** najpierw znajdź wiersz, który pasuje do sytuacji. Środkowa kolumna podaje kwotę do bilansu. Ostatnia podaje zapis. W trzecim wierszu przychód finansowy może najwyżej odrobić wcześniejszy koszt. Ponad cenę nabycia konto nie wyjdzie.
+
+<Rozwiazanie tytul="Dwa pakiety akcji, jeden dzień bilansowy" zrodlo="konspekt, Przykład 2">
+<div slot="tresc">
+
+W polityce rachunkowości przyjęto wycenę inwestycji krótkoterminowych zgodnie z zasadą ostrożnej wyceny. Saldo początkowe inwestycji krótkoterminowych:
+
+- 100 akcji spółki Q kupionych po 70 zł z zamiarem odsprzedaży,
+- 200 akcji spółki S kupionych po 50 zł z zamiarem odsprzedaży.
+
+Na dzień bilansowy cena rynkowa akcji Q wzrosła do 95 zł, a cena rynkowa akcji S wynosi 45 zł.
+
+Zaksięgować operacje, podać wartość bilansową akcji, wykazać wpływ wyceny na rachunek zysków i strat.
+
+</div>
+
+<div slot="plan">
+
+1. Każdy pakiet liczymy osobno. Spadek jednego nie znosi się ze wzrostem drugiego.
+2. Dla każdego pakietu: cena nabycia, wartość rynkowa, niższa z nich.
+3. Tam, gdzie kwota do bilansu różni się od kwoty w księgach, robimy zapis.
+4. Sumujemy wartość bilansową i wpływ na wynik.
+
+</div>
+
+<Krok tytul="Cena nabycia i wartość rynkowa każdego pakietu">
+- Akcje Q: w księgach {W2[0].sztuk} · {W2[0].nabycie} = {zl(W2[0].przed)}. Rynkowo {W2[0].sztuk} · {W2[0].cenaRynkowa} = {zl(W2[0].rynkowa)}.
+- Akcje S: w księgach {W2[1].sztuk} · {W2[1].nabycie} = {zl(W2[1].przed)}. Rynkowo {W2[1].sztuk} · {W2[1].cenaRynkowa} = {zl(W2[1].rynkowa)}.
+
+Saldo początkowe konta: {zl(W2[0].przed)} + {zl(W2[1].przed)} = {zl(W2[0].przed + W2[1].przed)}.
+
+<Dlaczego>
+Wycenia się każdy składnik osobno. Gdyby zsumować oba pakiety, wzrost akcji Q przykryłby spadek akcji S i strata by zniknęła. Zasada ostrożności na to nie pozwala.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Niższa z dwóch kwot">
+- Akcje Q: niższa z {zl(W2[0].przed)} i {zl(W2[0].rynkowa)} to **{zl(W2[0].bilansowa)}**. W księgach jest {zl(W2[0].przed)}. Różnica zero, zapisu nie ma.
+- Akcje S: niższa z {zl(W2[1].przed)} i {zl(W2[1].rynkowa)} to **{zl(W2[1].bilansowa)}**. W księgach jest {zl(W2[1].przed)}. Różnica: {zl(W2[1].bilansowa)} − {zl(W2[1].przed)} = −{zl(W2[1].kwota)}.
+
+<Dlaczego>
+Akcje Q podrożały, ale firma ich nie sprzedała. Zysku {zl(W2[0].rynkowa - W2[0].przed)} zł jeszcze nie ma, więc się go nie dopisuje. Akcje S potaniały. Tę stratę już widać, więc trzeba ją pokazać.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zapis">
+1) Akcje S w dół: **Wn Koszty finansowe {zl(O2[0].kwota)}, Ma Krótkoterminowe aktywa finansowe {zl(O2[0].kwota)}**.
+
+<Dlaczego>
+Wartość aktywa maleje, więc konto aktywne dostaje zapis po Ma. Drugą stroną jest koszt finansowy, który rośnie po Wn. To operacja 4 ze schematu z wykładu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wartość bilansowa i wpływ na wynik">
+- Wartość bilansowa: akcje Q {zl(W2[0].bilansowa)} + akcje S {zl(W2[1].bilansowa)} = **{zl(R2.zam.kaf.saldo)} zł**. Tyle wynosi saldo konta po wycenie.
+- Rachunek zysków i strat: koszty finansowe rosną o {zl(R2.zam.kf.saldo)} zł. Przychodów z wyceny nie ma. Wycena **zmniejsza wynik o {zl(R2.zam.kf.saldo)} zł**.
+</Krok>
+
+<TabelaKarty naglowki={['Pakiet', ...NAGL_WYCEN]} wiersze={wierszeWycen(W2.map((p) => `Akcje ${p.spolka}`), W2)} mocne={[3]} />
+
+**Jak czytać:** wiersz to jeden pakiet akcji. „W księgach” to kwota na koncie przed wyceną. „Do bilansu” to niższa z dwóch kwot po lewej. „Kwota zapisu” to różnica między kolumną „Do bilansu” a kolumną „W księgach”.
+
+<Konta konta={K2} operacje={O2}>
+**Jak czytać:** saldo początkowe (Sp.) konta „Krótkoterminowe aktywa finansowe” to oba pakiety razem. Zapis 1 stoi po Ma tego konta i po Wn konta kosztów. Saldo końcowe (Sk.) to wartość bilansowa.
+</Konta>
+
+</Rozwiazanie>
+
+Teraz jeden pakiet i trzy dni bilansowe z rzędu. Tu widać wszystkie trzy sytuacje z tabeli.
+
+<Rozwiazanie tytul="Jeden pakiet, trzy dni bilansowe" zrodlo="konspekt, Przykład 3">
+<div slot="tresc">
+
+Jednostka kupiła 17.05.20X1 r. 100 akcji spółki H po 50 zł z zamiarem odsprzedaży w styczniu 20X2 r. Sprawozdanie finansowe sporządza na koniec każdego kwartału. W polityce rachunkowości przyjęto wycenę inwestycji krótkoterminowych zgodnie z zasadą ostrożnej wyceny.
+
+Cena rynkowa jednej akcji w kolejnych dniach bilansowych: 30.06.20X1 r. — 70 zł, 30.09.20X1 r. — 30 zł, 31.12.20X1 r. — 65 zł.
+
+Ująć na kontach i w sprawozdaniu finansowym wycenę inwestycji w kolejnych dniach bilansowych.
+
+„20X1” to umowny zapis roku. Znaczy „pewien rok”, a „20X2” to rok następny.
+
+</div>
+
+<div slot="plan">
+
+1. Księgujemy zakup. Treść nie podaje stanu rachunku, więc przyjmujemy 10 000 zł. Ta kwota nie wpływa na wycenę.
+2. Liczymy cenę nabycia pakietu. Z nią porównujemy każdą wartość rynkową.
+3. Dla każdego z trzech dni: wartość rynkowa, niższa z dwóch kwot, różnica z kwotą w księgach, zapis.
+4. Na końcu zbieramy wartości bilansowe i wpływ na wynik.
+
+</div>
+
+<Krok tytul="Zakup 17.05">
+Cena nabycia: {H.sztuk} · {H.nabycie} = {zl(H_NABYCIE)}. **Wn Krótkoterminowe aktywa finansowe {zl(H_NABYCIE)}, Ma Rachunek bieżący {zl(H_NABYCIE)}**.
+
+<Dlaczego>
+Treść nie podaje prowizji, więc cena nabycia jest równa cenie zakupu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="30.06: cena rynkowa 70 zł">
+- W księgach: {zl(W3[0].przed)}.
+- Rynkowa: {H.sztuk} · {H.ceny[0]} = {zl(W3[0].rynkowa)}.
+- Do bilansu: niższa z {zl(H_NABYCIE)} i {zl(W3[0].rynkowa)}, czyli **{zl(W3[0].bilansowa)}**.
+- Różnica: {zl(W3[0].bilansowa)} − {zl(W3[0].przed)} = 0. **Brak zapisu.**
+
+<Dlaczego>
+Akcje podrożały ponad cenę nabycia. Przy ostrożnej wycenie takiego wzrostu się nie księguje.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="30.09: cena rynkowa 30 zł">
+- W księgach: {zl(W3[1].przed)}.
+- Rynkowa: {H.sztuk} · {H.ceny[1]} = {zl(W3[1].rynkowa)}.
+- Do bilansu: niższa z {zl(H_NABYCIE)} i {zl(W3[1].rynkowa)}, czyli **{zl(W3[1].bilansowa)}**.
+- Różnica: {zl(W3[1].bilansowa)} − {zl(W3[1].przed)} = −{zl(W3[1].kwota)}.
+- Zapis: **Wn Koszty finansowe {zl(W3[1].kwota)}, Ma Krótkoterminowe aktywa finansowe {zl(W3[1].kwota)}**.
+
+<Dlaczego>
+Akcje są warte mniej, niż firma zapłaciła. Tę stratę pokazujemy od razu, choć akcji nikt nie sprzedał.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="31.12: cena rynkowa 65 zł">
+- W księgach: {zl(W3[2].przed)}.
+- Rynkowa: {H.sztuk} · {H.ceny[2]} = {zl(W3[2].rynkowa)}.
+- Do bilansu: niższa z {zl(H_NABYCIE)} i {zl(W3[2].rynkowa)}, czyli **{zl(W3[2].bilansowa)}**.
+- Różnica: {zl(W3[2].bilansowa)} − {zl(W3[2].przed)} = {zl(W3[2].kwota)}.
+- Zapis: **Wn Krótkoterminowe aktywa finansowe {zl(W3[2].kwota)}, Ma Przychody finansowe {zl(W3[2].kwota)}**.
+
+<Dlaczego>
+Powód wrześniowej przeceny zniknął, więc ją cofamy. Cofamy jednak tylko do ceny nabycia, czyli do {zl(H_NABYCIE)}. Rynek daje {zl(W3[2].rynkowa)}, ale nadwyżki {zl(W3[2].rynkowa - H_NABYCIE)} zł ponad cenę nabycia nie księgujemy. Przychód {zl(W3[2].kwota)} odrabia dokładnie wrześniowy koszt {zl(W3[1].kwota)}.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawozdanie finansowe">
+- Bilans, pozycja „Inwestycje krótkoterminowe”: 30.06 — {zl(W3[0].bilansowa)}, 30.09 — {zl(W3[1].bilansowa)}, 31.12 — {zl(W3[2].bilansowa)}.
+- Rachunek zysków i strat: w trzecim kwartale koszty finansowe {zl(W3[1].kwota)}, w czwartym przychody finansowe {zl(W3[2].kwota)}.
+- Za cały rok wycena zmienia wynik o {zl(W3[2].kwota)} − {zl(W3[1].kwota)} = **{lacznie(W3)} zł**.
+</Krok>
+
+<TabelaKarty naglowki={['Dzień bilansowy', ...NAGL_WYCEN]} wiersze={wierszeWycen(H.dni, W3)} mocne={[3]} />
+
+**Jak czytać:** wiersz to jeden dzień bilansowy. Kolumna „W księgach” w każdym wierszu jest równa kolumnie „Do bilansu” z wiersza wyżej. W pierwszym wierszu jest równa cenie nabycia.
+
+<WykresWyceny tytul="Akcje H: ostrożna wycena" nabycie={H_NABYCIE} dni={H.dni} wyceny={W3} zakup="17.05" />
+
+**Jak czytać:** oś pozioma to kolejne dni. Linia z kropkami pokazuje wartość rynkową pakietu. Słupek pokazuje kwotę wpisaną do bilansu. Linia przerywana to cena nabycia. Słupek nigdy nie wychodzi ponad linię przerywaną, nawet gdy kropka jest wyżej.
+
+<Konta konta={K3} operacje={O3}>
+**Jak czytać:** zapis 1 to zakup. Zapis 2 to przecena z 30.09. Zapis 3 to cofnięcie przeceny z 31.12. Na 30.06 zapisu nie było, dlatego nie ma go na kontach.
+</Konta>
+
+</Rozwiazanie>
+
+<a id="polecenie-rynkowa" class="k-anchor"></a>
+
+## Wycena według cen rynkowych
+
+Do bilansu idzie **zawsze wartość rynkowa**. Cena nabycia przestaje być granicą. Każda zmiana ceny daje zapis: wzrost to przychód finansowy, spadek to koszt finansowy.
+
+<Rozwiazanie tytul="Dwa pakiety akcji, jeden dzień bilansowy" zrodlo="konspekt, Przykład 4">
+<div slot="tresc">
+
+W polityce rachunkowości przyjęto, że inwestycje krótkoterminowe wycenia się według cen rynkowych. Saldo początkowe inwestycji krótkoterminowych:
+
+- 500 akcji spółki M kupionych 5.12.20X1 r. po 80 zł,
+- 1 000 akcji spółki K kupionych 12.09.20X1 r. po 120 zł.
+
+Na dzień bilansowy (31.12.20X1 r.) cena rynkowa akcji M spadła do 70 zł, a cena rynkowa akcji K wzrosła do 150 zł.
+
+Zaksięgować operacje, podać wartość bilansową akcji, wykazać wpływ wyceny na rachunek zysków i strat.
+
+</div>
+
+<div slot="plan">
+
+1. Każdy pakiet liczymy osobno: kwota w księgach i wartość rynkowa.
+2. Do bilansu idzie wartość rynkowa, bez porównywania z ceną nabycia.
+3. Różnica na minus to koszt finansowy, różnica na plus to przychód finansowy.
+4. Sumujemy wartość bilansową i wpływ na wynik.
+
+</div>
+
+<Krok tytul="Kwota w księgach i wartość rynkowa">
+- Akcje M: w księgach {W4[0].sztuk} · {W4[0].nabycie} = {zl(W4[0].przed)}. Rynkowo {W4[0].sztuk} · {W4[0].cenaRynkowa} = {zl(W4[0].bilansowa)}.
+- Akcje K: w księgach {zl(W4[1].sztuk)} · {W4[1].nabycie} = {zl(W4[1].przed)}. Rynkowo {zl(W4[1].sztuk)} · {W4[1].cenaRynkowa} = {zl(W4[1].bilansowa)}.
+
+Saldo początkowe konta: {zl(W4[0].przed)} + {zl(W4[1].przed)} = {zl(W4[0].przed + W4[1].przed)}.
+</Krok>
+
+<Krok tytul="Różnice i zapisy">
+- 1) Akcje M: {zl(W4[0].bilansowa)} − {zl(W4[0].przed)} = −{zl(W4[0].kwota)}. **Wn Koszty finansowe {zl(W4[0].kwota)}, Ma Krótkoterminowe aktywa finansowe {zl(W4[0].kwota)}**.
+- 2) Akcje K: {zl(W4[1].bilansowa)} − {zl(W4[1].przed)} = {zl(W4[1].kwota)}. **Wn Krótkoterminowe aktywa finansowe {zl(W4[1].kwota)}, Ma Przychody finansowe {zl(W4[1].kwota)}**.
+
+<Dlaczego>
+Przy cenach rynkowych wzrost księguje się tak samo chętnie jak spadek. Akcje K stoją teraz w księgach drożej, niż firma za nie zapłaciła. Przy ostrożnej wycenie zapisu 2 by nie było.
+</Dlaczego>
+
+<Dlaczego>
+Spadku i wzrostu nie łączy się w jeden zapis na 25 000. Rachunek zysków i strat ma pokazać osobno przychody i osobno koszty. To zasada zakazu kompensat z modułu „Istota rachunkowości”.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wartość bilansowa i wpływ na wynik">
+- Wartość bilansowa: akcje M {zl(W4[0].bilansowa)} + akcje K {zl(W4[1].bilansowa)} = **{zl(R4.zam.kaf.saldo)} zł**.
+- Rachunek zysków i strat: przychody finansowe {zl(R4.zam.pf.saldo)}, koszty finansowe {zl(R4.zam.kf.saldo)}. Wycena **zwiększa wynik o {zl(R4.zam.pf.saldo - R4.zam.kf.saldo)} zł**.
+</Krok>
+
+<TabelaKarty naglowki={['Pakiet', ...NAGL_WYCEN]} wiersze={wierszeWycen(W4.map((p) => `Akcje ${p.spolka}`), W4)} mocne={[3]} />
+
+**Jak czytać:** wiersz to jeden pakiet. Kolumna „Do bilansu” jest tu zawsze równa kolumnie „Wartość rynkowa”.
+
+<Konta konta={K4} operacje={O4}>
+**Jak czytać:** zapis 1 (akcje M w dół) stoi po Ma konta akcji i po Wn kosztów. Zapis 2 (akcje K w górę) stoi po Wn konta akcji i po Ma przychodów. Saldo końcowe konta akcji to wartość bilansowa.
+</Konta>
+
+</Rozwiazanie>
+
+Teraz te same akcje spółki H co w Przykładzie 3, ale wyceniane według cen rynkowych.
+
+<Rozwiazanie tytul="Jeden pakiet, trzy dni bilansowe" zrodlo="konspekt, Przykład 5">
+<div slot="tresc">
+
+Jednostka kupiła 17.05.20X1 r. 100 akcji spółki H po 50 zł z zamiarem odsprzedaży w styczniu 20X2 r. Sprawozdanie finansowe sporządza na koniec każdego kwartału. W polityce rachunkowości przyjęto wycenę inwestycji krótkoterminowych według cen rynkowych.
+
+Cena rynkowa jednej akcji w kolejnych dniach bilansowych: 30.06.20X1 r. — 70 zł, 30.09.20X1 r. — 30 zł, 31.12.20X1 r. — 65 zł.
+
+Ująć na kontach i w sprawozdaniu finansowym wycenę inwestycji w kolejnych dniach bilansowych.
+
+</div>
+
+<div slot="plan">
+
+1. Zakup księgujemy tak samo jak w Przykładzie 3. Stan rachunku znów przyjmujemy jako 10 000 zł.
+2. W każdym dniu bilansowym doprowadzamy konto do wartości rynkowej.
+3. Różnicę liczymy zawsze od kwoty w księgach, czyli od poprzedniej wyceny.
+4. Na końcu zbieramy wartości bilansowe i wpływ na wynik.
+
+</div>
+
+<Krok tytul="Zakup 17.05">
+**Wn Krótkoterminowe aktywa finansowe {zl(H_NABYCIE)}, Ma Rachunek bieżący {zl(H_NABYCIE)}**.
+</Krok>
+
+<Krok tytul="30.06: cena rynkowa 70 zł">
+- W księgach: {zl(W5[0].przed)}. Rynkowa: {H.sztuk} · {H.ceny[0]} = {zl(W5[0].rynkowa)}. Do bilansu: **{zl(W5[0].bilansowa)}**.
+- Różnica: {zl(W5[0].bilansowa)} − {zl(W5[0].przed)} = {zl(W5[0].kwota)}.
+- Zapis: **Wn Krótkoterminowe aktywa finansowe {zl(W5[0].kwota)}, Ma Przychody finansowe {zl(W5[0].kwota)}**.
+
+<Dlaczego>
+Przy cenach rynkowych wzrost ponad cenę nabycia jest przychodem finansowym. W Przykładzie 3 w tym samym dniu zapisu nie było.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="30.09: cena rynkowa 30 zł">
+- W księgach: {zl(W5[1].przed)}. Rynkowa: {H.sztuk} · {H.ceny[1]} = {zl(W5[1].rynkowa)}. Do bilansu: **{zl(W5[1].bilansowa)}**.
+- Różnica: {zl(W5[1].bilansowa)} − {zl(W5[1].przed)} = −{zl(W5[1].kwota)}.
+- Zapis: **Wn Koszty finansowe {zl(W5[1].kwota)}, Ma Krótkoterminowe aktywa finansowe {zl(W5[1].kwota)}**.
+
+<Dlaczego>
+Odejmujemy od {zl(W5[1].przed)}, bo tyle jest na koncie po czerwcowej wycenie. Od ceny nabycia ({zl(H_NABYCIE)}) wyszłoby {zl(H_NABYCIE - W5[1].rynkowa)} i konto pokazałoby {zl(W5[1].przed - (H_NABYCIE - W5[1].rynkowa))} zamiast {zl(W5[1].bilansowa)}.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="31.12: cena rynkowa 65 zł">
+- W księgach: {zl(W5[2].przed)}. Rynkowa: {H.sztuk} · {H.ceny[2]} = {zl(W5[2].rynkowa)}. Do bilansu: **{zl(W5[2].bilansowa)}**.
+- Różnica: {zl(W5[2].bilansowa)} − {zl(W5[2].przed)} = {zl(W5[2].kwota)}.
+- Zapis: **Wn Krótkoterminowe aktywa finansowe {zl(W5[2].kwota)}, Ma Przychody finansowe {zl(W5[2].kwota)}**.
+
+<Dlaczego>
+Tu nie ma górnej granicy. Konto idzie do pełnej wartości rynkowej, czyli {zl(W5[2].bilansowa)}, choć cena nabycia to {zl(H_NABYCIE)}.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprawozdanie finansowe">
+- Bilans, pozycja „Inwestycje krótkoterminowe”: 30.06 — {zl(W5[0].bilansowa)}, 30.09 — {zl(W5[1].bilansowa)}, 31.12 — {zl(W5[2].bilansowa)}.
+- Rachunek zysków i strat: w drugim kwartale przychody finansowe {zl(W5[0].kwota)}, w trzecim koszty finansowe {zl(W5[1].kwota)}, w czwartym przychody finansowe {zl(W5[2].kwota)}.
+- Za cały rok wycena zmienia wynik o {zl(W5[0].kwota)} − {zl(W5[1].kwota)} + {zl(W5[2].kwota)} = **+{zl(lacznie(W5))} zł**.
+</Krok>
+
+<TabelaKarty naglowki={['Dzień bilansowy', ...NAGL_WYCEN]} wiersze={wierszeWycen(H.dni, W5)} mocne={[3]} />
+
+**Jak czytać:** wiersz to jeden dzień bilansowy. Kolumna „W księgach” jest równa kolumnie „Do bilansu” z wiersza wyżej. Kolumna „Do bilansu” jest zawsze równa wartości rynkowej.
+
+<WykresWyceny tytul="Akcje H: ceny rynkowe" nabycie={H_NABYCIE} dni={H.dni} wyceny={W5} zakup="17.05" />
+
+**Jak czytać:** linia z kropkami to wartość rynkowa, słupek to kwota w bilansie. Tutaj słupek zawsze sięga do kropki, także ponad linię przerywaną, czyli ponad cenę nabycia.
+
+<Konta konta={K5} operacje={O5}>
+**Jak czytać:** zapis 1 to zakup. Zapisy 2, 3 i 4 to wyceny z 30.06, 30.09 i 31.12. Saldo końcowe konta akcji to wartość rynkowa z 31.12.
+</Konta>
+
+</Rozwiazanie>
+
+<a id="polecenie-wplyw" class="k-anchor"></a>
+
+## Te same akcje, dwie zasady: porównanie
+
+Przykłady 3 i 5 mają te same dane. Różni je tylko zasada z polityki rachunkowości. Zobacz obie obok siebie.
+
+<TabelaKarty suma naglowki={['Dzień bilansowy', 'Wartość rynkowa', 'Ostrożna wycena: do bilansu', 'Ostrożna wycena: wpływ na wynik', 'Ceny rynkowe: do bilansu', 'Ceny rynkowe: wpływ na wynik']} wiersze={[
+  ...H.dni.map((d, i) => [d, zl(W3[i].rynkowa), zl(W3[i].bilansowa), znak(W3[i]), zl(W5[i].bilansowa), znak(W5[i])]),
+  ['Razem za rok', '', '', String(lacznie(W3)), '', `+${zl(lacznie(W5))}`],
+]} />
+
+**Jak czytać:** wiersz to jeden dzień bilansowy. Dwie kolumny z napisem „Ostrożna wycena” pokazują pierwszą zasadę, dwie z napisem „Ceny rynkowe” drugą. „Wpływ na wynik” z plusem to przychód finansowy, z minusem koszt finansowy. Ostatni wiersz sumuje wpływ na wynik za cały rok.
+
+<Ramka kind="intuicja" tytul="zasada zmienia moment, nie sumę">
+To dopowiedzenie spoza konspektu. Załóżmy, że w styczniu firma sprzedaje wszystkie akcje po 65 zł, czyli za {zl(H_SPRZEDAZ)} zł, bez prowizji.
+
+- **Ostrożna wycena.** W księgach akcje stoją po {zl(W3[2].bilansowa)}. Wynik na sprzedaży: {zl(H_SPRZEDAZ)} − {zl(W3[2].bilansowa)} = {zl(H_SPRZEDAZ - W3[2].bilansowa)}. Wyceny dały wcześniej {lacznie(W3)}. Razem: **{zl(lacznie(W3) + H_SPRZEDAZ - W3[2].bilansowa)} zł**.
+- **Ceny rynkowe.** W księgach akcje stoją po {zl(W5[2].bilansowa)}. Wynik na sprzedaży: {zl(H_SPRZEDAZ)} − {zl(W5[2].bilansowa)} = {H_SPRZEDAZ - W5[2].bilansowa}. Wyceny dały wcześniej {zl(lacznie(W5))}. Razem: **{zl(lacznie(W5) + H_SPRZEDAZ - W5[2].bilansowa)} zł**.
+
+Łącznie wychodzi to samo: {zl(H_SPRZEDAZ)} − {zl(H_NABYCIE)} = {zl(H_SPRZEDAZ - H_NABYCIE)} zł. Zasada wyceny nie zmienia tego, ile firma zarobiła na akcjach. Zmienia tylko to, **w którym okresie** zysk widać w sprawozdaniu. Przy cenach rynkowych widać go już w roku 20X1. Przy ostrożnej wycenie dopiero przy sprzedaży, w roku 20X2.
+</Ramka>
+
+<Ramka kind="granica">
+- Te dwie zasady dotyczą tylko inwestycji **krótkoterminowych**.
+- Inwestycje długoterminowe wycenia się inaczej. Tego tematu ten moduł nie obejmuje.
+- Firma nie skacze między zasadami. Wybiera jedną w polityce rachunkowości i stosuje ją co roku.
+- W zadaniu zasadę zawsze podaje treść. Jeśli jej nie widzisz, przeczytaj pierwsze zdanie jeszcze raz.
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Podział inwestycji</b>Niefinansowe i finansowe. Finansowe według praw nabytych: lokaty kapitałowe, wierzytelności pieniężne, inne prawa. Według czasu: długo- i krótkoterminowe.</div>
+  <div><b>Krótkoterminowe</b>Płatne i wymagalne albo przeznaczone do zbycia w ciągu 12 miesięcy, albo aktywa pieniężne. Bilans: B.III Inwestycje krótkoterminowe.</div>
+  <div><b>Cena nabycia</b>Cena zakupu + koszty transakcji (prowizja). W tej cenie akcje wchodzą do ksiąg.</div>
+  <div><b>Zakup</b>Wn Krótkoterminowe aktywa finansowe, Ma Rachunek bieżący. Prowizja przy zakupie tak samo.</div>
+  <div><b>Sprzedaż</b>a) cena sprzedaży: Wn Rachunek bieżący, Ma Przychody finansowe. b) cena ewidencyjna: Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe. c) prowizja: Wn Koszty finansowe, Ma Rachunek bieżący.</div>
+  <div><b>Wycena w górę</b>Wn Krótkoterminowe aktywa finansowe, Ma Przychody finansowe.</div>
+  <div><b>Wycena w dół</b>Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe.</div>
+  <div><b>Ceny rynkowe</b>Do bilansu zawsze wartość rynkowa. Zapis przy każdej zmianie.</div>
+  <div><b>Ostrożna wycena</b>Do bilansu niższa z dwóch: cena nabycia albo wartość rynkowa. Wzrost ponad cenę nabycia: brak zapisu.</div>
+  <div><b>Różnica</b>Zawsze: kwota do bilansu minus kwota w księgach po poprzedniej wycenie.</div>
+  <div><b>Wpływ na wynik</b>Przychody finansowe z wyceny minus koszty finansowe z wyceny. Każdy pakiet osobno.</div>
+</div>
+
+<Ramka kind="gdzie">
+Przychody i koszty finansowe trafiają do wyniku finansowego. Pozycję B.III z bilansu znasz z modułu „Bilans”. Cena nabycia wróci przy środkach trwałych i materiałach, a wycena na dzień bilansowy przy rozrachunkach w walutach obcych.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+<a id="cw-pojecia" class="k-anchor"></a>
+
+### Rodzaje inwestycji
+
+<Klasyfikator pytanie="Do której grupy należy ta inwestycja?" kategorie={['Aktywa niefinansowe', 'Lokaty kapitałowe', 'Wierzytelności pieniężne']} elementy={[
+  { tekst: 'Akcje spółki giełdowej kupione z zamiarem odsprzedaży.', kat: 1, dlaczego: 'Akcja daje udział w majątku innej spółki. To lokata kapitałowa.' },
+  { tekst: 'Obligacje skarbowe z wykupem za 9 miesięcy.', kat: 2, dlaczego: 'Obligacja to prawo do odzyskania pożyczonych pieniędzy z odsetkami. To wierzytelność pieniężna.' },
+  { tekst: 'Działka kupiona tylko po to, żeby sprzedać ją drożej.', kat: 0, dlaczego: 'Działka to rzecz, a nie prawo do pieniędzy ani udział w spółce. To inwestycja niefinansowa.' },
+  { tekst: 'Udziały w spółce z o.o. innego przedsiębiorcy.', kat: 1, dlaczego: 'Udział, tak jak akcja, daje prawo do części majątku spółki. To lokata kapitałowa.' },
+  { tekst: 'Pożyczka udzielona innej firmie na pół roku.', kat: 2, dlaczego: 'Firma ma prawo do zwrotu pieniędzy z odsetkami. To wierzytelność pieniężna.' },
+  { tekst: 'Bony skarbowe kupione na 13 tygodni.', kat: 2, dlaczego: 'Bon skarbowy to krótki papier dłużny państwa. Państwo odda pieniądze, więc to wierzytelność pieniężna.' },
+]} />
+
+<Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
+  { q: 'Firma kupiła akcje z zamiarem odsprzedaży za 4 miesiące. Gdzie stoją w bilansie?', opcje: ['A. Aktywa trwałe, inwestycje długoterminowe', 'B.III Inwestycje krótkoterminowe', 'B.I Zapasy'], dobra: 1, dlaczego: 'Akcje przeznaczone do zbycia w ciągu 12 miesięcy to aktywa obrotowe, pozycja B.III. Zapasy to materiały, towary i wyroby. Do aktywów trwałych trafiłyby akcje trzymane dłużej niż rok.' },
+  { q: 'Co decyduje o tym, że akcje są inwestycją krótkoterminową?', opcje: ['To, że są notowane na giełdzie', 'To, że kosztowały mniej niż 10 000 zł', 'To, że firma zamierza je zbyć w ciągu 12 miesięcy'], dobra: 2, dlaczego: 'Liczy się zamiar i termin: zbycie w ciągu 12 miesięcy. Giełda ani kwota nie mają tu znaczenia.' },
+  { q: 'Do aktywów finansowych ustawa zalicza między innymi:', opcje: ['instrumenty kapitałowe wyemitowane przez inne jednostki', 'towary kupione w celu odsprzedaży', 'środki trwałe oddane w najem'], dobra: 0, dlaczego: 'Instrumenty kapitałowe innych jednostek, na przykład akcje, wymienia art. 3 ust. 1 pkt 24. Towary to zapasy, a środki trwałe to rzeczowe aktywa trwałe.' },
+]} />
+
+<a id="cw-obrot" class="k-anchor"></a>
+
+### Zakup i sprzedaż
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: 'Firma kupiła 50 obligacji po 100 zł i zapłaciła 40 zł prowizji. Polityka: cena nabycia. Ile wynosi cena nabycia pakietu?', opcje: ['5 000 zł', '4 960 zł', '5 040 zł'], dobra: 2, dlaczego: 'Cena zakupu: 50 · 100 = 5 000. Cena nabycia: 5 000 + 40 = 5 040. Odpowiedź 5 000 pomija prowizję. Odpowiedź 4 960 odejmuje prowizję, a trzeba ją dodać.' },
+  { q: 'Jak zaksięgować prowizję maklerską zapłaconą przy zakupie akcji (polityka: cena nabycia)?', opcje: ['Wn Krótkoterminowe aktywa finansowe, Ma Rachunek bieżący', 'Wn Koszty finansowe, Ma Rachunek bieżący', 'Wn Rachunek bieżący, Ma Krótkoterminowe aktywa finansowe'], dobra: 0, dlaczego: 'Prowizja przy zakupie powiększa wartość akcji, więc idzie po Wn konta akcji. Druga odpowiedź to prowizja przy sprzedaży. Trzecia ma odwrócone strony: wyglądałaby jak wpływ pieniędzy.' },
+  { q: 'Firma sprzedała za 2 600 zł akcje, które stoją w księgach po 2 400 zł. Jak zaksięgować wpływ pieniędzy?', opcje: ['Wn Rachunek bieżący 2 600, Ma Krótkoterminowe aktywa finansowe 2 600', 'Wn Rachunek bieżący 2 600, Ma Przychody finansowe 2 600', 'Wn Rachunek bieżący 200, Ma Przychody finansowe 200'], dobra: 1, dlaczego: 'Cała cena sprzedaży to przychód finansowy. Akcje schodzą z konta osobnym zapisem i w innej kwocie. Trzecia odpowiedź księguje samą różnicę, a na rachunek wpłynęło 2 600.' },
+  { q: 'Te same akcje. Jak zdjąć je z ksiąg?', opcje: ['Wn Koszty finansowe 2 600, Ma Krótkoterminowe aktywa finansowe 2 600', 'Wn Krótkoterminowe aktywa finansowe 2 400, Ma Koszty finansowe 2 400', 'Wn Koszty finansowe 2 400, Ma Krótkoterminowe aktywa finansowe 2 400'], dobra: 2, dlaczego: 'Akcje schodzą po Ma w cenie ewidencyjnej, czyli po 2 400. Pierwsza odpowiedź używa ceny sprzedaży. Druga ma odwrócone strony: zwiększałaby wartość akcji.' },
+  { q: 'Te same akcje, do tego prowizja przy sprzedaży 50 zł. Ile wynosi wynik na sprzedaży?', opcje: ['150 zł zysku', '200 zł zysku', '250 zł zysku'], dobra: 0, dlaczego: 'Przychód 2 600 minus koszty 2 400 i 50: 2 600 − 2 450 = 150. Odpowiedź 200 pomija prowizję. Odpowiedź 250 dodaje prowizję zamiast ją odjąć.' },
+  { q: 'Firma kupiła 80 akcji za 4 000 zł i zapłaciła 80 zł prowizji. Sprzedaje 20 akcji. Ile schodzi z konta akcji?', opcje: ['1 000 zł', '1 020 zł', '4 080 zł'], dobra: 1, dlaczego: 'Cena nabycia: 4 000 + 80 = 4 080. Jedna akcja: 4 080 : 80 = 51. Sprzedane: 20 · 51 = 1 020. Odpowiedź 1 000 liczy bez prowizji. 4 080 to cały pakiet, a sprzedano tylko 20 akcji.' },
+]} />
+
+<CwiczenieKsiegowanie tytul="Zaksięguj zakup, sprzedaż i dwie wyceny" konta={KC} operacje={OC} typy={false}>
+Firma kupuje {C1.sztuk} akcji po {C1.cena} zł i płaci {C1.prowizjaZakup} zł prowizji. Cena nabycia pakietu: {zl(C1.sztuk * C1.cena)} + {C1.prowizjaZakup} = {zl(C1_NABYCIE)} zł, czyli {String(C1_ZA_AKCJE).replace('.', ',')} zł za akcję. Potem sprzedaje {C1.sprzedano} akcji po {C1.cenaSprzedazy} zł. Polityka: ewidencja w cenie nabycia, wycena według cen rynkowych.
+</CwiczenieKsiegowanie>
+
+<a id="cw-wycena" class="k-anchor"></a>
+
+### Wycena na dzień bilansowy
+
+Jeden pakiet akcji kupiony za {zl(CW.nabycie)} zł. Wartość rynkowa pakietu w trzech kolejnych dniach bilansowych: {zl(CW.ceny[0])} zł, {zl(CW.ceny[1])} zł, {zl(CW.ceny[2])} zł. Pytania 1–3 dotyczą ostrożnej wyceny, pytania 4–5 wyceny według cen rynkowych.
+
+<Pytania licznik tag="Ćwiczenia · 7 zadań" tytul="" pytania={[
+  { q: `Ostrożna wycena, pierwszy dzień bilansowy: wartość rynkowa ${zl(CW.ceny[0])} zł. Jaki zapis?`, opcje: [`Wn Krótkoterminowe aktywa finansowe ${zl(CW.ceny[0] - CW.nabycie)}, Ma Przychody finansowe ${zl(CW.ceny[0] - CW.nabycie)}`, `Wn Koszty finansowe ${zl(CW.ceny[0] - CW.nabycie)}, Ma Krótkoterminowe aktywa finansowe ${zl(CW.ceny[0] - CW.nabycie)}`, 'Brak zapisu'], dobra: 2, dlaczego: `Niższa z ${zl(CW.nabycie)} i ${zl(CW.ceny[0])} to ${zl(CW_OSTR[0].bilansowa)}. Tyle jest już w księgach, więc zapisu nie ma. Pierwsza odpowiedź byłaby dobra przy cenach rynkowych. Druga księguje spadek, a wartość wzrosła.` },
+  { q: `Ostrożna wycena, drugi dzień bilansowy: wartość rynkowa ${zl(CW.ceny[1])} zł. Ile wynosi koszt finansowy?`, opcje: [`${zl(CW_OSTR[1].kwota)} zł`, `${zl(CW.ceny[0] - CW.ceny[1])} zł`, '0 zł'], dobra: 0, dlaczego: `W księgach jest ${zl(CW_OSTR[1].przed)}, do bilansu idzie ${zl(CW_OSTR[1].bilansowa)}. Różnica: ${zl(CW_OSTR[1].kwota)}. Odpowiedź ${zl(CW.ceny[0] - CW.ceny[1])} liczy spadek od ${zl(CW.ceny[0])}, ale tej kwoty nigdy nie było w księgach.` },
+  { q: `Ostrożna wycena, trzeci dzień bilansowy: wartość rynkowa ${zl(CW.ceny[2])} zł. Ile wynosi przychód finansowy?`, opcje: [`${zl(CW.ceny[2] - CW_OSTR[2].przed)} zł`, `${zl(CW_OSTR[2].kwota)} zł`, '0 zł'], dobra: 1, dlaczego: `W księgach jest ${zl(CW_OSTR[2].przed)}. Niższa z ${zl(CW.nabycie)} i ${zl(CW.ceny[2])} to ${zl(CW_OSTR[2].bilansowa)}. Różnica: ${zl(CW_OSTR[2].kwota)}. Odpowiedź ${zl(CW.ceny[2] - CW_OSTR[2].przed)} doprowadza konto do ${zl(CW.ceny[2])}, czyli ponad cenę nabycia. Zero byłoby błędem, bo wcześniejszą przecenę trzeba cofnąć.` },
+  { q: `Ceny rynkowe, drugi dzień bilansowy: wartość rynkowa spada z ${zl(CW.ceny[0])} do ${zl(CW.ceny[1])} zł. Ile wynosi koszt finansowy?`, opcje: [`${zl(CW.nabycie - CW.ceny[1])} zł`, `${zl(CW.ceny[0])} zł`, `${zl(CW_RYN[1].kwota)} zł`], dobra: 2, dlaczego: `Po pierwszej wycenie w księgach jest ${zl(CW_RYN[1].przed)}. Różnica: ${zl(CW_RYN[1].przed)} − ${zl(CW_RYN[1].bilansowa)} = ${zl(CW_RYN[1].kwota)}. Odpowiedź ${zl(CW.nabycie - CW.ceny[1])} liczy od ceny nabycia, a konto od pierwszej wyceny pokazuje już inną kwotę.` },
+  { q: `Ceny rynkowe, trzeci dzień bilansowy: wartość rynkowa rośnie z ${zl(CW.ceny[1])} do ${zl(CW.ceny[2])} zł. Jaki zapis?`, opcje: [`Wn Krótkoterminowe aktywa finansowe ${zl(CW_RYN[2].kwota)}, Ma Przychody finansowe ${zl(CW_RYN[2].kwota)}`, `Wn Krótkoterminowe aktywa finansowe ${zl(CW.nabycie - CW.ceny[1])}, Ma Przychody finansowe ${zl(CW.nabycie - CW.ceny[1])}`, `Wn Krótkoterminowe aktywa finansowe ${zl(CW.ceny[2] - CW.nabycie)}, Ma Przychody finansowe ${zl(CW.ceny[2] - CW.nabycie)}`], dobra: 0, dlaczego: `${zl(CW_RYN[2].bilansowa)} − ${zl(CW_RYN[2].przed)} = ${zl(CW_RYN[2].kwota)}. Odpowiedź ${zl(CW.nabycie - CW.ceny[1])} zatrzymuje się na cenie nabycia: tak jest przy ostrożnej wycenie. Odpowiedź ${zl(CW.ceny[2] - CW.nabycie)} liczy od ceny nabycia zamiast od kwoty w księgach.` },
+  { q: 'Firma ma 300 akcji kupionych po 20 zł. Na dzień bilansowy cena rynkowa to 18 zł. Ostrożna wycena. Ile wynosi wartość bilansowa?', opcje: ['6 000 zł', '5 400 zł', '600 zł'], dobra: 1, dlaczego: 'Cena nabycia: 300 · 20 = 6 000. Wartość rynkowa: 300 · 18 = 5 400. Niższa to 5 400. Odpowiedź 600 to kwota przeceny, a nie wartość bilansowa.' },
+  { q: 'Wycena według cen rynkowych. Pakiet X zyskał 4 000 zł, pakiet Y stracił 1 500 zł. Co pokaże rachunek zysków i strat?', opcje: ['Przychody finansowe 4 000 i koszty finansowe 1 500', 'Tylko przychody finansowe 2 500', 'Tylko koszty finansowe 1 500'], dobra: 0, dlaczego: 'Każdy pakiet wycenia się osobno: wzrost to przychód finansowy 4 000, spadek to koszt finansowy 1 500. Wynik rośnie łącznie o 2 500, ale obie kwoty pokazuje się osobno. Trzecia odpowiedź pasowałaby do ostrożnej wyceny, gdy pakiet X urósł ponad cenę nabycia.' },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Sprawdź, czy rozumiesz inwestycje krótkoterminowe" pytania={[
+  { q: 'Po co firma trzyma inwestycje?', opcje: ['Żeby na nich zarobić: na wzroście wartości, odsetkach albo dywidendach', 'Żeby używać ich w produkcji', 'Żeby sprzedać je klientom jako towar'], dobra: 0, dlaczego: 'Inwestycja ma przynieść korzyść sama z siebie. To, czego firma używa w produkcji, to środki trwałe. To, czym handluje, to towary.' },
+  { q: 'Według kryterium praw nabytych aktywa finansowe dzielą się na:', opcje: ['krótkoterminowe i długoterminowe', 'trwałe i obrotowe', 'lokaty kapitałowe, wierzytelności pieniężne i inne prawa'], dobra: 2, dlaczego: 'Kryterium praw nabytych pyta, jakie prawo firma kupiła. Podział na krótko- i długoterminowe to kryterium czasu.' },
+  { q: 'Cena nabycia akcji to:', opcje: ['cena rynkowa z dnia bilansowego', 'cena zakupu powiększona o koszty transakcji', 'cena zakupu pomniejszona o prowizję'], dobra: 1, dlaczego: 'Cena nabycia = cena zakupu + koszty transakcji, na przykład prowizja maklerska. Prowizję się dodaje, bo bez niej firma nie miałaby akcji.' },
+  { q: 'Kiedy ustawa pozwala ująć aktywa finansowe w cenie zakupu zamiast w cenie nabycia?', opcje: ['Zawsze, według uznania księgowego', 'Gdy cena rynkowa jest niższa od ceny zakupu', 'Gdy koszty przeprowadzenia i rozliczenia transakcji nie są istotne'], dobra: 2, dlaczego: 'Tak stanowi art. 35 ust. 1: cena zakupu jest dopuszczalna, jeśli koszty transakcji nie są istotne. Cena rynkowa ma znaczenie dopiero na dzień bilansowy.' },
+  { q: 'Gdzie trafia prowizja maklerska zapłacona przy sprzedaży akcji?', opcje: ['Do kosztów finansowych', 'Do wartości akcji', 'Do przychodów finansowych'], dobra: 0, dlaczego: 'Przy sprzedaży akcji już nie ma, więc prowizja jest kosztem finansowym. Do wartości akcji wchodzi prowizja zapłacona przy zakupie.' },
+  { q: 'Która zasada wyceny inwestycji krótkoterminowych na dzień bilansowy NIE istnieje w ustawie?', opcje: ['Według ceny rynkowej', 'Według wyższej z dwóch: ceny nabycia albo ceny rynkowej', 'Według niższej z dwóch: ceny nabycia albo ceny rynkowej'], dobra: 1, dlaczego: 'Art. 28 ust. 1 pkt 5 wymienia cenę rynkową oraz niższą z dwóch cen. „Wyższa z dwóch” zawyżałaby majątek, czyli łamałaby zasadę ostrożności.' },
+  { q: 'Ostrożna wycena. Akcje kupione za 5 000 zł są na dzień bilansowy warte 7 000 zł. Wcześniej nie było przecen. Co robisz?', opcje: ['Księgujesz przychód finansowy 2 000', 'Księgujesz koszt finansowy 2 000', 'Nic nie księgujesz'], dobra: 2, dlaczego: 'Do bilansu idzie niższa z dwóch kwot, czyli 5 000. Tyle jest w księgach. Wzrostu ponad cenę nabycia przy ostrożnej wycenie się nie księguje.' },
+  { q: 'Kto decyduje, którą zasadą firma wycenia inwestycje krótkoterminowe?', opcje: ['Biuro maklerskie', 'Firma, w polityce rachunkowości', 'Bank prowadzący rachunek'], dobra: 1, dlaczego: 'Ustawa daje wybór, a firma zapisuje go w polityce rachunkowości i stosuje co roku tak samo.' },
+  { q: 'Skutki wyceny inwestycji krótkoterminowych na dzień bilansowy trafiają do:', opcje: ['przychodów finansowych albo kosztów finansowych', 'przychodów ze sprzedaży', 'kapitału podstawowego'], dobra: 0, dlaczego: 'Wzrost to przychód finansowy, spadek to koszt finansowy (art. 35 ust. 3). Przychody ze sprzedaży dotyczą towarów i usług.' },
+  { q: 'Czy wycena na dzień bilansowy zmienia stan rachunku bieżącego?', opcje: ['Tak, o kwotę przeceny', 'Tak, ale tylko przy cenach rynkowych', 'Nie'], dobra: 2, dlaczego: 'Wycena to zapis między kontem akcji a kontem kosztów albo przychodów finansowych. Pieniądze ruszają się dopiero przy sprzedaży.' },
+]} />

@@ -73,4 +73,15 @@ export const SLOWNICZEK = [
   { nazwa: 'Suma wekslowa', znaczy: 'Kwota wpisana na wekslu (wartość nominalna): dług powiększony o odsetki dyskontowe. W tej kwocie księguje się weksel.', modul: 'srodki-pieniezne' },
   { nazwa: 'Dyskonto (odsetki dyskontowe)', znaczy: 'Różnica między sumą wekslową a długiem. Przyjmujemy weksel — przychód finansowy. Oddajemy weksel wcześniej albo wystawiamy własny — koszt finansowy.', modul: 'srodki-pieniezne' },
   { nazwa: 'Indos', znaczy: 'Przeniesienie praw z weksla (albo czeku) na inną osobę, np. zapłata dostawcy wekslem otrzymanym od odbiorcy.', modul: 'srodki-pieniezne' },
+  // --- Inwestycje krótkoterminowe ---
+  { nazwa: 'Inwestycja', znaczy: 'Składnik majątku trzymany po to, żeby na nim zarobić: na wzroście wartości, odsetkach, dywidendach (art. 3 ust. 1 pkt 17). Firma go nie zużywa i nie używa w zwykłej działalności.', modul: 'inwestycje-krotkoterminowe' },
+  { nazwa: 'Aktywa finansowe', znaczy: 'Aktywa pieniężne, instrumenty kapitałowe innych jednostek (np. akcje) oraz prawa z kontraktów do otrzymania pieniędzy albo wymiany instrumentów finansowych (art. 3 ust. 1 pkt 24).', modul: 'inwestycje-krotkoterminowe' },
+  { nazwa: 'Inwestycje krótkoterminowe', znaczy: 'Aktywa finansowe płatne i wymagalne albo przeznaczone do zbycia w ciągu 12 miesięcy oraz aktywa pieniężne. W bilansie: B.III. Konto: Krótkoterminowe aktywa finansowe (aktywne).', modul: 'inwestycje-krotkoterminowe' },
+  { nazwa: 'Prowizja maklerska', znaczy: 'Opłata dla biura maklerskiego za kupno albo sprzedaż papierów wartościowych. Przy zakupie powiększa wartość akcji, przy sprzedaży jest kosztem finansowym.', modul: 'inwestycje-krotkoterminowe' },
+  { nazwa: 'Cena nabycia papierów wartościowych', znaczy: 'Cena zakupu plus koszty transakcji, np. prowizja maklerska. W tej cenie akcje wchodzą do ksiąg (art. 35 ust. 1).', modul: 'inwestycje-krotkoterminowe' },
+  { nazwa: 'Cena ewidencyjna', znaczy: 'Cena, w której składnik jest zapisany w księgach. Sprzedane akcje schodzą z konta w cenie ewidencyjnej: Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe.', modul: 'inwestycje-krotkoterminowe' },
+  { nazwa: 'Cena (wartość) rynkowa', znaczy: 'Cena, po której danego dnia można sprzedać papier na giełdzie. Wartość rynkowa pakietu = liczba akcji razy cena rynkowa.', modul: 'inwestycje-krotkoterminowe' },
+  { nazwa: 'Wycena według cen rynkowych', znaczy: 'Zasada wyceny inwestycji krótkoterminowych: do bilansu zawsze wartość rynkowa. Wzrost to przychód finansowy, spadek to koszt finansowy.', modul: 'inwestycje-krotkoterminowe' },
+  { nazwa: 'Ostrożna wycena inwestycji', znaczy: 'Zasada wyceny inwestycji krótkoterminowych: do bilansu niższa z dwóch kwot, cena nabycia albo wartość rynkowa. Wzrostu ponad cenę nabycia się nie księguje.', modul: 'inwestycje-krotkoterminowe' },
+  { nazwa: 'Polityka rachunkowości', znaczy: 'Zasady, które firma sama wybrała tam, gdzie ustawa daje wybór, np. zasada wyceny inwestycji krótkoterminowych. Stosuje się je co roku tak samo.', modul: 'inwestycje-krotkoterminowe' },
 ];
