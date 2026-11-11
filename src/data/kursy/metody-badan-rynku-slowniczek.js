@@ -37,4 +37,12 @@ export const SLOWNICZEK = [
   { nazwa: 'Pytanie podwójne (wielowątkowe)', znaczy: 'Jedno pytanie lub stwierdzenie o dwóch rzeczach naraz („szybka i wiarygodna”). Nie wiadomo, do której odnosi się odpowiedź.', modul: 'skale' },
   { nazwa: 'Pytanie sugerujące', znaczy: 'Pytanie, które podpowiada „właściwą” odpowiedź, np. powołuje się na ekspertów albo większość.', modul: 'skale' },
   { nazwa: 'Pytanie filtrujące', znaczy: 'Pytanie, które odsyła dalej tylko część osób, np. „Czy korzystasz z…?” — kto nie korzysta, pomija pytania o korzystanie.', modul: 'skale' },
+  // --- Dobór kwotowy ---
+  { nazwa: 'Kryterium (cecha) doboru', znaczy: 'To, według czego dzielisz populację na grupy przy układaniu kwot, np. wiek, płeć, miejsce zamieszkania.', modul: 'dobor-proby' },
+  { nazwa: 'Kratka', znaczy: 'Jedna grupa wyznaczona przez wszystkie cechy naraz, np. „18–24 lata, miasto”. W tabeli to jedno pole.', modul: 'dobor-proby' },
+  { nazwa: 'Struktura populacji', znaczy: 'Tabela populacji zapisana w procentach: jaka część całości przypada na każdą kratkę.', modul: 'dobor-proby' },
+  { nazwa: 'Struktura próby', znaczy: 'Ta sama struktura przeniesiona na próbę: procent kratki wzięty z n. Kratki dają razem n.', modul: 'dobor-proby' },
+  { nazwa: 'Schemat wyjściowy', znaczy: 'Kwoty na jednego ankietera przed zaokrągleniem: kratka próby podzielona przez liczbę ankieterów. Mogą w nim wyjść ułamki.', modul: 'dobor-proby' },
+  { nazwa: 'Liczba dodatków kratki', znaczy: 'Ilu ankieterów ma dostać w danej kratce jedną osobę więcej, niż wynosi część pewna: część po przecinku razy liczba ankieterów.', modul: 'dobor-proby' },
+  { nazwa: 'Schemat (A, B, C…)', znaczy: 'Kartka dla jednego ankietera w całych liczbach: ile osób z której kratki ma zbadać. Różne grupy ankieterów dostają różne schematy.', modul: 'dobor-proby' },
 ];

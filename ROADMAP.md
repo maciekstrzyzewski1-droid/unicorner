@@ -1,7 +1,7 @@
 # UNICORNER — mapa drogowa
 
 > Kompas, nie spec. Wracaj tu, gdy poczujesz, że gubisz kierunek.
-> Stan na 2026-11-03. Notatki robocze, decyzje i raporty: prywatne repo `scratchbook` (patrz `CLAUDE.md`).
+> Stan na 2026-11-11. Notatki robocze, decyzje i raporty: prywatne repo `scratchbook` (patrz `CLAUDE.md`).
 
 ## ⭐ Gwiazda polarna
 **UNICORNER ma sprawić, że student szybciej i mniej boleśnie zda egzamin.**
@@ -37,7 +37,7 @@ Priorytet: **1 → 2** na pierwszym planie, **3** lekko w tle, **4 z twardym bud
 ---
 
 ## 🔧 W toku
-- **Kurs „Metody badań rynku”** (gałąź `kurs-metody-badan-rynku`, szkic PR #60) — piloty modułów 1 „Minimalna liczebność próby” i 4 „Skale, kafeteria i błędy w pytaniach” zaakceptowane stylem przez Maćka (2026-11-09), `status: soon` do „publikuj”. 2026-11-09 wieczór: w module 1 sekcja „Projekt w Excelu” — przewodnik po arkuszu (od tabeli GUS przez kalkulator do kwot, wariant Z od 16 lat z arkusza -g3: n = 560) i kalkulator minimalnej próby z rozpisanym rachunkiem. Dalej: moduł 2 „Dobór próby” (kwotowy, schematy A–D) i moduły teorii pod 24 zagadnienia egzaminu (potrzebne slajdy z wykładów). Maciek: slajd ze wzorami (WWP, Z dla 99,99%), nazwa kalkulatora z zajęć.
+- **Kurs „Metody badań rynku”** — 3 z 5 modułów: 1 „Minimalna liczebność próby” i 4 „Skale, kafeteria i błędy w pytaniach” (PR #60, 2026-11-09), 2 „Dobór kwotowy” (2026-11-11: przykład ze slajdów i z arkusza „Metody doboru próby – przykład”, schematy A–D, trzy testy kompletu, sprawdzarka schematów; rachunki w `src/lib/kwoty.js`, kontrola `narzedzia/mat-check/badania-rynku/kwoty-check.mjs`). Dalej: teoria pod 24 zagadnienia egzaminu (moduły 3 i 5 oraz część teoretyczna doboru próby: błędy doboru, operat losowania, metody nielosowe i internetowe). **Blokada:** na Dysku nie ma slajdów z wykładów ani rozdziałów podręcznika Kaczmarczyka, a egzamin to test z podziałów podanych na wykładzie — bez źródła teoria byłaby zgadywaniem klasyfikacji. Potrzebne od Maćka: slajdy lub notatki z wykładów (albo skany rozdziałów).
 - **Kurs „Rachunkowość”** — moduły 1–4 opublikowane (PR #61, 2026-11-09). 2026-11-10: moduł 5 „Konta wynikowe i wynik finansowy” na Zad. 4.6 (przychody i koszty, sprzedaż w dwóch zapisach, PPO/PKO/PF/KF, przeksięgowania, podatek 19%, zysk netto w bilansie) po niezależnym przeglądzie, publikacja PR-em z gałęzi `kurs-rachunkowosc-wynikowe` (zgoda Maćka z 9.11). Dalej moduły 6–12 z folderu „materiały z wykładów z rachunkowości” (środki pieniężne, papiery wartościowe, rozrachunki ze stornem i kontami analitycznymi, środki trwałe, materiały, koszty, wyroby gotowe).
 - **U4 (ton tekstów)** — plan zatwierdzony 2026-11-03, niski priorytet. Zasada: luz w opakowaniu (strona główna, huby, wstępy modułów, komunikaty, newsletter, stopka), precyzja w treści merytorycznej (definicje, kroki, zadania, odpowiedzi). Bez przekleństw i przeciąganych liter, maks. jeden luźny element na ekran, zwroty typu „po ludzku”, „bez dziur”, „final boss” zostają. Kroki: przewodnik tonu → mapa miejsc → pilot na jednej stronie (PR do przeglądu) → rozszerzenie. Nie obiecywać „na telefonie wszystko lata” przed pomiarem.
 - **U7 (audyt strony)** — pierwszy przebieg zrobiony 2026-11-04, partia poprawek wdrożona: PR #43–#46 (README, martwe fonty, metatagi, dostępność, fonty latin-ext −90 KB, pauza tła i „ogranicz ruch” dla tła), #49 (favicon), #50 (wspólne tokeny kolorów `src/styles/tokeny.css`), #51 (wspólny silnik quizu przedmiotów), #52 (kontrast `--muted2` 5,82:1). Główny ciężar strony to moduły matematyki (~42 MB surowo, 89% to HTML wzorów KaTeX; wycięcie MathML daje 9–17 KB gzip, nie jest priorytetem). Kolejne kroki:
@@ -57,7 +57,7 @@ Priorytet: **1 → 2** na pierwszym planie, **3** lekko w tle, **4 z twardym bud
 - [x] Usunięta stara wersja z roota (20 plików `.html`, `assets/`, `makroekonomia_files/`, `reviews.json`, `CNAME`). Nic ich nie przywoływało, na żywej stronie zwracały 404.
 - [x] Sitemap: moduły kursów (`/matematyka/*.html`) i strona Statystyka (Navoica) są w sitemapie.
 - [x] SEO: domyślne `canonical` i `og:` (tytuł, opis, adres) w `Base.astro`; 7 stron przedmiotów dostało brakujący `description`.
-- [ ] Obraz do podglądu linku (`og:image`, 1200×630). Dziś podgląd na Messengerze/Discordzie jest bez obrazka. Wymaga grafiki, nie kodu.
+- [x] Obraz do podglądu linku (`og:image`, 1200×630): `public/og-image.jpg`, metatagi w `Base.astro`.
 - [x] Audyt zależności (2026-10-19): `npm audit fix` bez zmian w wyniku builda; zostało 8 (1 krytyczna, 1 wysoka, 6 niskich).
   Pozostałe dotyczą Astro (`astro`, `sharp`, `esbuild`) i KaTeX. Na stronie w pełni statycznej, z treścią pisaną przez nas, nie są realnie wykorzystywalne:
   XSS w Astro wymaga wstrzyknięcia obcych danych do szablonu, a SSRF/server islands/`base` dotyczą trybu serwerowego, którego nie używamy.

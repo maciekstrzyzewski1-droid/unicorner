@@ -1,0 +1,151 @@
+---
+// Ćwiczenie „ułóż komplet schematów”: uczeń wpisuje schematy kwot dla ankieterów (A, B, C…) i liczbę ankieterów przy każdym.
+// Pod spodem od razu widzi trzy testy z modułu (lib/kwoty.js: sprawdz): suma schematu = liczba ankiet na ankietera,
+// liczba ankieterów razem, schematy razy ankieterzy = struktura próby (kratka po kratce).
+// Poprawnych zestawów jest wiele, więc sprawdzamy warunki, a nie zgodność z jednym kluczem.
+interface Schemat { nazwa?: string; ilu: number; m: number[][] }
+interface Props { tytul: string; wiersze: string[]; kolumny: string[]; proba: number[][]; naAnk: number; ankieterow: number; ile?: number; przyklad?: Schemat[]; zrodlo?: string; kolumnaPierwsza?: boolean }
+// kolumnaPierwsza: w komunikatach kratka nazywa się „kolumna, wiersz” (np. „Miasto, 18–24”), tak jak w treści modułu
+const { tytul, wiersze, kolumny, proba, naAnk, ankieterow, ile = 4, przyklad = [], zrodlo, kolumnaPierwsza = false } = Astro.props;
+const LIT = 'ABCDEF';
+const sloty = Array.from({ length: Math.max(ile, przyklad.length) }, (_, i) => LIT[i]);
+const dane = JSON.stringify({ wiersze, kolumny, proba, naAnk, ankieterow, przyklad, kolumnaPierwsza });
+---
+<section class="k-ct k-sch" data-sch data-dane={dane}>
+  <div class="k-pyt-head">
+    <span class="k-pyt-tag k-ct-tag">Ćwiczenie</span>
+    <h3 class="k-pyt-h">{tytul}</h3>
+    {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
+  </div>
+  <div class="k-ct-tresc"><slot /></div>
+  <p class="k-ct-how" data-js-only hidden>Wpisz liczby osób do kratek schematu i liczbę ankieterów, którzy go dostają. Puste pole liczy się jak 0. Schemat bez ankieterów jest pomijany. Wynik zmienia się od razu.</p>
+  <div class="k-sch-sloty" data-js-only hidden>
+    {sloty.map((l, s) => (
+      <div class="k-sch-slot" data-slot={s}>
+        <div class="k-sch-slot-h"><b>Schemat {l}</b><label>ankieterów: <input data-ilu type="text" inputmode="numeric" autocomplete="off" aria-label={`Schemat ${l}: liczba ankieterów`} /></label></div>
+        <table class="k-sch-t">
+          <thead><tr><th></th>{kolumny.map((k) => <th>{k}</th>)}</tr></thead>
+          <tbody>
+            {wiersze.map((w, i) => (
+              <tr><th>{w}</th>{kolumny.map((k, j) => <td><input data-kr={`${i},${j}`} type="text" inputmode="numeric" autocomplete="off" aria-label={`Schemat ${l}: ${kolumnaPierwsza ? `${k}, ${w}` : `${w}, ${k}`}`} /></td>)}</tr>
+            ))}
+          </tbody>
+        </table>
+        <div class="k-sch-suma" data-suma>suma: 0 z {naAnk}</div>
+      </div>
+    ))}
+  </div>
+  <div class="k-sch-wynik" data-js-only hidden>
+    <div class="k-sch-wynik-h">Razem ze wszystkich schematów <span>(zebrane / ma być)</span></div>
+    <table class="k-sch-t k-sch-zb">
+      <thead><tr><th></th>{kolumny.map((k) => <th>{k}</th>)}</tr></thead>
+      <tbody>
+        {wiersze.map((w, i) => (
+          <tr><th>{w}</th>{kolumny.map((_, j) => <td data-zb={`${i},${j}`}>0 / {proba[i][j]}</td>)}</tr>
+        ))}
+      </tbody>
+    </table>
+    <div class="k-sch-suma" data-ank>ankieterów: 0 z {ankieterow}</div>
+  </div>
+  <div class="k-ct-ctl" data-js-only hidden>
+    {przyklad.length > 0 && <button type="button" class="k-btn k-btn-ghost" data-przyklad>Pokaż przykładowy komplet</button>}
+    <button type="button" class="k-btn k-btn-ghost" data-czysc>Wyczyść</button>
+  </div>
+  <ul class="k-ct-wynik k-sch-kom" data-kom aria-live="polite" data-js-only hidden><li>Wpisz pierwszy schemat — tu pojawi się wynik trzech testów.</li></ul>
+  <noscript><p class="k-ct-how">To ćwiczenie działa po włączeniu JavaScriptu. Przykładowe komplety schematów są rozpisane w zadaniach wyżej.</p></noscript>
+</section>
+
+<style>
+  .k-sch-sloty{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:0 0 12px;}
+  .k-sch-slot{border:1px solid var(--line2);padding:10px 10px 8px;background:rgba(255,255,255,.02);min-width:0;}
+  .k-sch-slot-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;margin:0 0 6px;font-size:.9rem;}
+  .k-sch-slot-h label{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);}
+  .k-sch input{width:46px;height:38px;text-align:center;font-family:var(--mono);font-size:16px;font-weight:700;color:var(--text);background:rgba(255,255,255,.04);border:1px dashed var(--line2);border-radius:0;padding:0;}
+  .k-sch input:focus{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-sch input.is-zle{border:1px solid var(--magenta);background:rgba(255,46,151,.16);}
+  .k-sch-t{border-collapse:collapse;margin:0;width:auto;font-size:.82rem;}
+  .k-sch-t th{font-weight:600;color:var(--muted);padding:2px 6px 2px 0;text-align:left;font-size:.76rem;line-height:1.2;}
+  .k-sch-t thead th{text-align:center;padding:0 3px 4px;}
+  .k-sch-t td{padding:2px 3px;text-align:center;border:0;}
+  .k-sch-suma{margin:6px 0 0;font-family:var(--mono);font-size:.82rem;color:var(--muted);}
+  .k-sch-suma.is-ok{color:var(--ok);}
+  .k-sch-suma.is-zle{color:#ffb3d6;}
+  .k-sch-wynik{margin:0 0 12px;padding:10px 12px;border-left:2px solid var(--gold);background:rgba(255,216,74,.05);overflow-x:auto;}
+  .k-sch-wynik-h{font-size:.86rem;font-weight:700;margin:0 0 6px;}
+  .k-sch-wynik-h span{font-weight:400;color:var(--muted);}
+  .k-sch-zb td{font-family:var(--mono);font-size:.9rem;padding:5px 9px;border:1px solid var(--line2);white-space:nowrap;}
+  .k-sch-zb td.is-ok{background:rgba(90,209,160,.16);border-color:var(--ok);}
+  .k-sch-zb td.is-zle{background:rgba(255,46,151,.16);border-color:var(--magenta);}
+  .k-sch-kom{list-style:none!important;padding-left:12px!important;margin:0 0 6px!important;}
+  .k-sch-kom :global(li){margin:0 0 3px!important;max-width:none!important;}
+  .k-sch-kom :global(li.k-ct-ok){font-weight:700;}
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-sch]').forEach((box) => {
+    box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((e) => { if (e.closest('[data-sch]') === box) e.hidden = false; });
+    const D = JSON.parse(box.dataset.dane!);
+    const sloty = Array.from(box.querySelectorAll<HTMLElement>('[data-slot]'));
+    const kom = box.querySelector<HTMLElement>('[data-kom]')!;
+    const ankEl = box.querySelector<HTMLElement>('[data-ank]')!;
+    const LIT = 'ABCDEF';
+    // puste = 0; cokolwiek innego niż liczba całkowita ≥ 0 = błąd pola
+    const czytaj = (inp: HTMLInputElement) => {
+      const t = inp.value.trim();
+      if (t === '') { inp.classList.remove('is-zle'); return 0; }
+      const ok = /^\d+$/.test(t);
+      inp.classList.toggle('is-zle', !ok);
+      return ok ? Number(t) : NaN;
+    };
+    const licz = () => {
+      const L: string[] = [];
+      let zleLiczby = false, ruszone = false, razemAnk = 0;
+      const zebrane = D.proba.map((w: number[]) => w.map(() => 0));
+      sloty.forEach((slot, s) => {
+        const iluInp = slot.querySelector<HTMLInputElement>('[data-ilu]')!;
+        const pola = Array.from(slot.querySelectorAll<HTMLInputElement>('[data-kr]'));
+        const sumaEl = slot.querySelector<HTMLElement>('[data-suma]')!;
+        const ilu = czytaj(iluInp);
+        const wart = pola.map(czytaj);
+        if (Number.isNaN(ilu) || wart.some(Number.isNaN)) { zleLiczby = true; sumaEl.textContent = 'wpisz liczby całkowite'; sumaEl.className = 'k-sch-suma is-zle'; return; }
+        const suma = wart.reduce((a, b) => a + b, 0);
+        const pusty = suma === 0 && ilu === 0;
+        if (!pusty) ruszone = true;
+        sumaEl.textContent = `suma: ${suma} z ${D.naAnk}`;
+        sumaEl.className = 'k-sch-suma' + (pusty ? '' : suma === D.naAnk ? ' is-ok' : ' is-zle');
+        if (pusty) return;
+        if (ilu === 0) { L.push(`Schemat ${LIT[s]}: wpisz, ilu ankieterów go dostaje. Bez tego schemat się nie liczy.`); return; }
+        if (suma !== D.naAnk) L.push(`Schemat ${LIT[s]}: suma to ${suma}, a każdy ankieter ma zrobić ${D.naAnk} ankiet. ${suma < D.naAnk ? `Dołóż ${D.naAnk - suma}.` : `Zdejmij ${suma - D.naAnk}.`}`);
+        razemAnk += ilu;
+        pola.forEach((p, k) => { const [i, j] = p.dataset.kr!.split(',').map(Number); zebrane[i][j] += ilu * wart[k]; });
+      });
+      let zleKratki = 0;
+      box.querySelectorAll<HTMLElement>('[data-zb]').forEach((td) => {
+        const [i, j] = td.dataset.zb!.split(',').map(Number);
+        const z = zebrane[i][j], p = D.proba[i][j];
+        td.textContent = `${z} / ${p}`;
+        td.className = !ruszone ? '' : z === p ? 'is-ok' : 'is-zle';
+        if (ruszone && z !== p) { zleKratki++; if (zleKratki <= 4) L.push(`Kratka „${D.kolumnaPierwsza ? `${D.kolumny[j]}, ${D.wiersze[i]}` : `${D.wiersze[i]}, ${D.kolumny[j]}`}”: zebrane ${z}, w próbie ma być ${p} — ${z > p ? `o ${z - p} za dużo` : `brakuje ${p - z}`}.`); }
+      });
+      if (zleKratki > 4) L.push(`…i jeszcze ${zleKratki - 4} ${zleKratki - 4 === 1 ? 'kratka' : 'kratki/kratek'} się nie zgadza (czerwone pola w tabeli wyżej).`);
+      ankEl.textContent = `ankieterów: ${razemAnk} z ${D.ankieterow}`;
+      ankEl.className = 'k-sch-suma' + (!ruszone ? '' : razemAnk === D.ankieterow ? ' is-ok' : ' is-zle');
+      if (ruszone && razemAnk !== D.ankieterow) L.unshift(`Ankieterów razem: ${razemAnk}, a ma być ${D.ankieterow}. ${razemAnk < D.ankieterow ? `Zostało do rozdania: ${D.ankieterow - razemAnk}.` : `O ${razemAnk - D.ankieterow} za dużo.`}`);
+      if (zleLiczby) kom.innerHTML = '<li>W czerwonym polu jest coś innego niż liczba całkowita. Popraw je.</li>';
+      else if (!ruszone) kom.innerHTML = '<li>Wpisz pierwszy schemat — tu pojawi się wynik trzech testów.</li>';
+      else if (L.length === 0) kom.innerHTML = `<li class="k-ct-ok">Wszystko się zgadza. Każdy schemat ma ${D.naAnk} ankiet, ankieterów jest ${D.ankieterow}, a każda kratka próby jest zebrana co do osoby.</li>`;
+      else kom.innerHTML = L.map((t) => `<li>${t}</li>`).join('');
+    };
+    box.querySelectorAll<HTMLInputElement>('input').forEach((el) => { if (el.closest('[data-sch]') === box) el.addEventListener('input', licz); });
+    const wstaw = (zestaw: { ilu: number; m: number[][] }[]) => {
+      sloty.forEach((slot, s) => {
+        const z = zestaw[s];
+        slot.querySelector<HTMLInputElement>('[data-ilu]')!.value = z ? String(z.ilu) : '';
+        slot.querySelectorAll<HTMLInputElement>('[data-kr]').forEach((p) => { const [i, j] = p.dataset.kr!.split(',').map(Number); p.value = z ? String(z.m[i][j]) : ''; });
+      });
+      licz();
+    };
+    box.querySelector('[data-przyklad]')?.addEventListener('click', () => wstaw(D.przyklad));
+    box.querySelector('[data-czysc]')?.addEventListener('click', () => wstaw([]));
+  });
+</script>

@@ -20,3 +20,13 @@ równa funkcji podcałkowej (albo funkcji spod nowej całki, gdy linia od niej s
 ## Podgląd modułu
 
 `podglad.py <strona w dist> <katalog>` — strona i potrzebne pliki z `dist/_astro` z względnymi ścieżkami (katalog `astro/`, bo artifact nie przyjmuje ścieżek od „_”), do publikacji jako artifact.
+
+## Metody badań rynku — dobór kwotowy (`badania-rynku/`)
+
+```bash
+node narzedzia/mat-check/badania-rynku/kwoty-check.mjs
+```
+
+`kwoty-check.mjs`: liczby z arkusza „Metody doboru próby – przykład” i ze slajdów „Schemat doboru kwotowego” są przepisane ręcznie i porównywane z tym, co liczy `src/lib/kwoty.js` (procenty, struktura próby, schemat wyjściowy, schematy A–D razy liczba ankieterów, reszta po schemacie A). Każdy komplet schematów (z zajęć i ułożony przez `ulozSchematy`) przechodzi trzy testy: suma kartki, liczba ankieterów, zgodność każdej kratki z próbą. Na końcu liczby wpisane na sztywno w tekście modułu i w ćwiczeniach.
+
+`badania-rynku/kontrola.cjs` (Playwright): błędy JS, szerokości na 1440/390/360 px, quizy, ćwiczenie „ułóż schematy sam” (przykładowy zestaw → wszystko się zgadza, zepsuta kratka → komunikaty, Wyczyść).
