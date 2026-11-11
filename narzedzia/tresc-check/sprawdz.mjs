@@ -40,10 +40,11 @@ for (const plik of html) {
     for (const [, e] of s.matchAll(/class="katex-error"[^>]*title="([^"]*)"/g)) bledy.push(`${nazwa}: błąd KaTeX: ${dekoduj(e).slice(0, 120)}`);
   }
 
+  // Tylko do wyszukania tekstu we własnym buildzie, nie filtr bezpieczeństwa.
   const widoczny = s
-    .replace(/<script[\s\S]*?<\/script>/g, ' ')
-    .replace(/<style[\s\S]*?<\/style>/g, ' ')
-    .replace(/<annotation[\s\S]*?<\/annotation>/g, ' ')
+    .replace(/<script\b[\s\S]*?<\/script[^>]*>/gi, ' ')
+    .replace(/<style\b[\s\S]*?<\/style[^>]*>/gi, ' ')
+    .replace(/<annotation\b[\s\S]*?<\/annotation[^>]*>/gi, ' ')
     .replace(/<[^>]+>/g, ' ');
   const tekst = dekoduj(widoczny);
   for (const m of tekst.matchAll(SMIECI)) {
