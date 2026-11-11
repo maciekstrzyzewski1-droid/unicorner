@@ -54,6 +54,13 @@ const blisko = (a, b) => Math.abs(a - b) < 1e-6;
 ok(blisko(7.3 * 100 / 365, 2) && blisko(P.sumaWekslowa(4900, 7.3, 100), 5000) && blisko(P.odsetkiDyskontowe(5000, 7.3, 100), 100), 'wzory: 4 900 zł, 7,3%, 100 dni → Sw 5 000, Od 100');
 ok(blisko(10.95 * 30 / 365, 0.9) && blisko(P.sumaWekslowa(9910, 10.95, 30), 10000) && blisko(P.odsetkiDyskontowe(10000, 10.95, 30), 90), 'wzory: 9 910 zł, 10,95%, 30 dni → Sw 10 000, Od 90');
 ok((9910 * 10.95 * 30 / 36500).toFixed(2) === '89.19' && blisko(10000 * 10.95 * 30 / 3650, 900) && blisko(490000 / 98, 5000) && blisko(3650000 / 36500, 100) && blisko(991000 / 99.1, 10000) && blisko(3285000 / 36500, 90), 'wzory: liczby pośrednie i błędne odpowiedzi z ćwiczeń (89,19; 900)');
+ok((9910 * 1.009).toFixed(2) === '9999.19', 'ćwiczenia: błędna odpowiedź 9 999,19 = 9 910 · 1,009');
+// wariant „jak na slajdzie” (dyskonto jednym zapisem, bez konta w drodze) daje te same salda co wariant z modułu
+{
+  const o2 = [...P.O2.filter((o) => !['1.1', '2a.1', '2a.2'].includes(o.nr)), { nr: 'x1', kwota: 5850, wn: 'rb', ma: 'wo' }, { nr: 'x2', kwota: 150, wn: 'kf', ma: 'wo' }];
+  const a = ksieguj(P.K2, P.O2).zam, b = ksieguj(P.K2, o2).zam;
+  ok(P.K2.every((k) => a[k.id].saldo === b[k.id].saldo && a[k.id].saldoStrona === b[k.id].saldoStrona), 'P2: wariant jednozapisowy z wykładu daje te same salda końcowe');
+}
 for (const [nf, d, t] of [[1230, 12, 45], [50000, 9.5, 91], [777, 20, 10]]) { const sw = P.sumaWekslowa(nf, d, t); ok(blisko(sw - P.odsetkiDyskontowe(sw, d, t), nf), `wzory: Sw − Od = Nf dla ${nf}, ${d}%, ${t} dni`); }
 
 console.log(bledy === 0 ? '\nWszystko się zgadza.' : `\nNiezgodności: ${bledy}`);

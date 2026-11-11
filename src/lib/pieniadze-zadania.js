@@ -2,6 +2,8 @@
 // Schematy księgowań i treści przykładów: konspekt z wykładu „Środki pieniężne i ich ekwiwalenty”.
 // Rozwiązań przykładów w konspekcie nie ma — księgowania ułożone według schematów z tego konspektu
 // i sprawdzone tym, że konto „Środki pieniężne w drodze” w obu przykładach wychodzi na zero.
+// Numery operacji: litery (4a, 5d) są takie jak w treści zadania z wykładu; kropka i cyfra (2.1, 2.2)
+// oznaczają części jednego zapisu złożonego (np. dług i odsetki na jednym wekslu).
 import { ksieguj } from './konta.js';
 
 // ——— Typowe księgowania z konspektu (same strony, bez kwot) ———
@@ -44,8 +46,8 @@ export const KA = [
 ];
 export const OA = [
   { nr: 1, kwota: 2000, wn: 'akr', ma: 'rb', opis: 'Wyciąg bankowy: bank otworzył akredytywę, czyli odłożył 2 000 zł z rachunku na zapłatę za remont.' },
-  { nr: '2a', kwota: 1500, wn: 'uo', ma: 'dost', opis: 'Faktura za remont: wartość netto.' },
-  { nr: '2b', kwota: 345, wn: 'vat', ma: 'dost', opis: 'Faktura za remont: VAT.' },
+  { nr: '2.1', kwota: 1500, wn: 'uo', ma: 'dost', opis: 'Faktura za remont: wartość netto.' },
+  { nr: '2.2', kwota: 345, wn: 'vat', ma: 'dost', opis: 'Faktura za remont: VAT.' },
   { nr: 3, kwota: 1845, wn: 'dost', ma: 'akr', opis: 'Wyciąg bankowy: zapłata za remont z akredytywy.' },
   { nr: 4, kwota: 155, wn: 'rb', ma: 'akr', opis: 'Wyciąg bankowy: zamknięcie akredytywy, niewykorzystana reszta wraca na rachunek.' },
 ];
@@ -55,18 +57,18 @@ export const K2 = [
   { id: 'wo', nazwa: 'Weksle obce', typ: 'A', sp: 8000 },
   { id: 'co', nazwa: 'Czeki obce', typ: 'A', sp: 5000 },
   { id: 'spd', nazwa: 'Środki pieniężne w drodze', typ: 'A' },
-  { id: 'rb', nazwa: 'Rachunek bankowy', typ: 'A', sp: 9000 },
+  { id: 'rb', nazwa: 'Rachunek bieżący', typ: 'A', sp: 9000 },
   { id: 'dost', nazwa: 'Rozrachunki z dostawcami', typ: 'P', sp: 1800 },
   { id: 'kf', nazwa: 'Koszty finansowe', typ: 'K' },
 ];
 export const O2 = [
-  { nr: '1a', kwota: 6000, wn: 'spd', ma: 'wo', opis: 'Oddano do banku weksel obcy do dyskonta (wartość nominalna).' },
-  { nr: '1b', kwota: 5000, wn: 'spd', ma: 'co', opis: 'Oddano do banku czek rozrachunkowy do realizacji.' },
-  { nr: '2a', kwota: 5850, wn: 'rb', ma: 'spd', opis: 'Wyciąg bankowy: bank przyjął weksel do dyskonta i przelał pieniądze.' },
-  { nr: '2b', kwota: 150, wn: 'kf', ma: 'spd', opis: 'Wyciąg bankowy: dyskonto pobrane przez bank.' },
-  { nr: '2c', kwota: 5000, wn: 'rb', ma: 'spd', opis: 'Wyciąg bankowy: bank zrealizował czek obcy.' },
-  { nr: '3a', kwota: 1800, wn: 'dost', ma: 'wo', opis: 'Indos: weksel obcy przekazano dostawcy, spłacone zobowiązanie.' },
-  { nr: '3b', kwota: 200, wn: 'kf', ma: 'wo', opis: 'Indos: dyskonto, czyli różnica między wekslem a długiem.' },
+  { nr: '1.1', kwota: 6000, wn: 'spd', ma: 'wo', opis: 'Oddano do banku weksel obcy do dyskonta (wartość nominalna).' },
+  { nr: '1.2', kwota: 5000, wn: 'spd', ma: 'co', opis: 'Oddano do banku czek rozrachunkowy do realizacji.' },
+  { nr: '2a.1', kwota: 5850, wn: 'rb', ma: 'spd', opis: 'Wyciąg bankowy: bank przyjął weksel do dyskonta i przelał pieniądze.' },
+  { nr: '2a.2', kwota: 150, wn: 'kf', ma: 'spd', opis: 'Wyciąg bankowy: dyskonto pobrane przez bank.' },
+  { nr: '2b', kwota: 5000, wn: 'rb', ma: 'spd', opis: 'Wyciąg bankowy: bank zrealizował czek obcy.' },
+  { nr: '3.1', kwota: 1800, wn: 'dost', ma: 'wo', opis: 'Indos: weksel obcy przekazano dostawcy, spłacone zobowiązanie.' },
+  { nr: '3.2', kwota: 200, wn: 'kf', ma: 'wo', opis: 'Indos: dyskonto, czyli różnica między wekslem a długiem.' },
 ];
 
 // ——— Przykład 3 z wykładu („2.7, str. 40”): ewidencja środków pieniężnych u podatnika VAT ———
@@ -82,26 +84,26 @@ export const K3 = [
   { id: 'vat', nazwa: 'Rozrachunki z tytułu VAT', typ: 'P', rodzaj: 'konto rozrachunków (tu: zobowiązanie wobec urzędu)' },
   { id: 'ps', nazwa: 'Przychody ze sprzedaży usług', typ: 'R' },
   { id: 'pf', nazwa: 'Przychody finansowe', typ: 'R' },
-  { id: 'zm', nazwa: 'Zużycie materiałów', typ: 'K' },
+  { id: 'zm', nazwa: 'Zużycie materiałów i energii', typ: 'K' },
   { id: 'kf', nazwa: 'Koszty finansowe', typ: 'K' },
 ];
 export const O3 = [
-  { nr: '1a', kwota: 1000, wn: 'odb', ma: 'ps', opis: 'Faktura za wykonane usługi: wartość netto.' },
-  { nr: '1b', kwota: 230, wn: 'odb', ma: 'vat', opis: 'Faktura za wykonane usługi: VAT 23%.' },
-  { nr: '2a', kwota: 1230, wn: 'wo', ma: 'odb', opis: 'Odbiorca zapłacił wekslem: spłacona należność.' },
-  { nr: '2b', kwota: 170, wn: 'wo', ma: 'pf', opis: 'Odbiorca zapłacił wekslem: dyskonto pobrane przez przedsiębiorstwo.' },
-  { nr: '3a', kwota: 5000, wn: 'spd', ma: 'wo', opis: 'Oddano do banku weksel obcy do dyskonta.' },
-  { nr: '3b', kwota: 7000, wn: 'spd', ma: 'co', opis: 'Oddano do banku czek rozrachunkowy do realizacji.' },
+  { nr: '1.1', kwota: 1000, wn: 'odb', ma: 'ps', opis: 'Faktura za wykonane usługi: wartość netto.' },
+  { nr: '1.2', kwota: 230, wn: 'odb', ma: 'vat', opis: 'Faktura za wykonane usługi: VAT 23%.' },
+  { nr: '2.1', kwota: 1230, wn: 'wo', ma: 'odb', opis: 'Odbiorca zapłacił wekslem: spłacona należność.' },
+  { nr: '2.2', kwota: 170, wn: 'wo', ma: 'pf', opis: 'Odbiorca zapłacił wekslem: dyskonto pobrane przez przedsiębiorstwo.' },
+  { nr: '3.1', kwota: 5000, wn: 'spd', ma: 'wo', opis: 'Oddano do banku weksel obcy do dyskonta.' },
+  { nr: '3.2', kwota: 7000, wn: 'spd', ma: 'co', opis: 'Oddano do banku czek rozrachunkowy do realizacji.' },
   { nr: '4a', kwota: 2000, wn: 'spd', ma: 'kasa', opis: 'Raport kasowy: wpłata gotówki do banku.' },
-  { nr: '4b', kwota: 500, wn: 'zm', ma: 'kasa', opis: 'Raport kasowy: materiały biurowe do bezpośredniego zużycia, wartość netto.' },
-  { nr: '4c', kwota: 115, wn: 'vat', ma: 'kasa', opis: 'Raport kasowy: VAT 23% z faktury za materiały biurowe.' },
+  { nr: '4b.1', kwota: 500, wn: 'zm', ma: 'kasa', opis: 'Raport kasowy: materiały biurowe do bezpośredniego zużycia, wartość netto.' },
+  { nr: '4b.2', kwota: 115, wn: 'vat', ma: 'kasa', opis: 'Raport kasowy: VAT 23% z faktury za materiały biurowe.' },
   { nr: '5a', kwota: 2000, wn: 'rb', ma: 'spd', opis: 'Wyciąg bankowy: wpływ gotówki z kasy.' },
   { nr: '5b', kwota: 7000, wn: 'rb', ma: 'spd', opis: 'Wyciąg bankowy: realizacja czeku obcego.' },
-  { nr: '5c', kwota: 4700, wn: 'rb', ma: 'spd', opis: 'Wyciąg bankowy: suma zrealizowana przez bank za weksel przyjęty do dyskonta.' },
-  { nr: '5d', kwota: 300, wn: 'kf', ma: 'spd', opis: 'Wyciąg bankowy: dyskonto pobrane przez bank.' },
-  { nr: '5e', kwota: 10000, wn: 'zw', ma: 'rb', opis: 'Wyciąg bankowy: wykup weksla własnego w terminie.' },
-  { nr: '6a', kwota: 1190, wn: 'dost', ma: 'wo', opis: 'Indos weksla obcego na dostawcę: spłacone zobowiązanie.' },
-  { nr: '6b', kwota: 210, wn: 'kf', ma: 'wo', opis: 'Indos weksla obcego na dostawcę: dyskonto.' },
+  { nr: '5c.1', kwota: 4700, wn: 'rb', ma: 'spd', opis: 'Wyciąg bankowy: suma zrealizowana przez bank za weksel przyjęty do dyskonta.' },
+  { nr: '5c.2', kwota: 300, wn: 'kf', ma: 'spd', opis: 'Wyciąg bankowy: dyskonto pobrane przez bank.' },
+  { nr: '5d', kwota: 10000, wn: 'zw', ma: 'rb', opis: 'Wyciąg bankowy: wykup weksla własnego w terminie.' },
+  { nr: '6.1', kwota: 1190, wn: 'dost', ma: 'wo', opis: 'Indos weksla obcego na dostawcę: spłacone zobowiązanie.' },
+  { nr: '6.2', kwota: 210, wn: 'kf', ma: 'wo', opis: 'Indos weksla obcego na dostawcę: dyskonto.' },
 ];
 
 // ——— Ćwiczenia (dane wymyślone) ———
@@ -130,16 +132,16 @@ export const KC2 = [
   { id: 'pf', nazwa: 'Przychody finansowe', typ: 'R' }, { id: 'ppo', nazwa: 'Pozostałe przychody operacyjne', typ: 'R' }, { id: 'kf', nazwa: 'Koszty finansowe', typ: 'K' },
 ];
 export const OC2 = [
-  { nr: '1a', kwota: 9910, wn: 'wo', ma: 'odb', opis: 'Odbiorca zapłacił wekslem o sumie 10 000 zł: spłacona należność.' },
-  { nr: '1b', kwota: 90, wn: 'wo', ma: 'pf', opis: 'Ten sam weksel: odsetki (dyskonto) dla nas.' },
+  { nr: '1.1', kwota: 9910, wn: 'wo', ma: 'odb', opis: 'Odbiorca zapłacił wekslem o sumie wekslowej 10 000 zł: spłacona należność.' },
+  { nr: '1.2', kwota: 90, wn: 'wo', ma: 'pf', opis: 'Ten sam weksel: odsetki (dyskonto) dla nas.' },
   { nr: 2, kwota: 3000, wn: 'co', ma: 'odb', opis: 'Inny odbiorca zapłacił czekiem rozrachunkowym.' },
   { nr: 3, kwota: 3000, wn: 'spd', ma: 'co', opis: 'Czek złożono w banku do realizacji.' },
   { nr: 4, kwota: 3000, wn: 'rb', ma: 'spd', opis: 'Wyciąg bankowy: bank zrealizował czek.' },
-  { nr: '5a', kwota: 4900, wn: 'dost', ma: 'zw', opis: 'Wystawiono dostawcy weksel własny o sumie 5 000 zł: spłacony dług.' },
-  { nr: '5b', kwota: 100, wn: 'kf', ma: 'zw', opis: 'Ten sam weksel własny: dyskonto, czyli nasz koszt.' },
+  { nr: '5.1', kwota: 4900, wn: 'dost', ma: 'zw', opis: 'Wystawiono dostawcy weksel własny o sumie wekslowej 5 000 zł: spłacony dług.' },
+  { nr: '5.2', kwota: 100, wn: 'kf', ma: 'zw', opis: 'Ten sam weksel własny: dyskonto, czyli nasz koszt.' },
   { nr: 6, kwota: 5000, wn: 'zw', ma: 'rb', opis: 'Wyciąg bankowy: wykupiono weksel własny przelewem.' },
-  { nr: '7a', kwota: 9800, wn: 'rb', ma: 'wo', opis: 'Wyciąg bankowy: bank zdyskontował weksel obcy z operacji 1 i przelał pieniądze (weksel i wyciąg tego samego dnia).' },
-  { nr: '7b', kwota: 200, wn: 'kf', ma: 'wo', opis: 'Ten sam wyciąg: dyskonto pobrane przez bank.' },
+  { nr: '7.1', kwota: 9800, wn: 'rb', ma: 'wo', opis: 'Wyciąg bankowy: bank zdyskontował weksel obcy z operacji 1 i przelał pieniądze (weksel i wyciąg tego samego dnia).' },
+  { nr: '7.2', kwota: 200, wn: 'kf', ma: 'wo', opis: 'Ten sam wyciąg: dyskonto pobrane przez bank.' },
 ];
 
 // ——— Kontrola przy buildzie ———
