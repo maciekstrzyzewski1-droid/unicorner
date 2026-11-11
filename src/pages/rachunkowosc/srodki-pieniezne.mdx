@@ -1,0 +1,712 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: rachunkowosc
+slug: srodki-pieniezne
+wyglad: szeroki
+title: Środki pieniężne
+podtytul: kasa, rachunek bankowy, czeki, weksle i dyskonto
+description: Środki pieniężne od zera – kasa i raport kasowy, rachunek bieżący i wyciąg bankowy, środki pieniężne w drodze, formy rozliczeń bezgotówkowych, akredytywa, czeki obce, weksle obce i własne, suma wekslowa i dyskonto. Dwa przykłady z wykładu krok po kroku.
+lede: Pieniądz w firmie ma kilka postaci. Jest gotówka w kasie, są pieniądze na rachunku, czek od klienta, weksel i gotówka, która jedzie do banku. Każda postać ma swoje konto. Tutaj nauczysz się księgować je wszystkie.
+wymaga: Konto teowe, strony Wn i Ma, konta kosztów i przychodów (moduły „Operacje i konta bilansowe” oraz „Konta wynikowe i wynik finansowy”). Najważniejsze przypominamy na miejscu.
+umiesz:
+  - nazwać postacie środków pieniężnych i dokumenty, które je potwierdzają
+  - zaksięgować raport kasowy i wyciąg bankowy
+  - użyć konta „Środki pieniężne w drodze”, gdy pieniądze są między kasą a bankiem
+  - rozróżnić formy rozliczeń bezgotówkowych i zaksięgować akredytywę
+  - zaksięgować czek obcy, weksel obcy i weksel własny razem z dyskontem
+  - policzyć sumę wekslową i odsetki dyskontowe
+---
+
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozbior from '../../components/kurs/Rozbior.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import KontoT from '../../components/kurs/konta/KontoT.astro';
+import Konta from '../../components/kurs/konta/Konta.astro';
+import Rzad from '../../components/kurs/konta/Rzad.astro';
+import CwiczenieKsiegowanie from '../../components/kurs/konta/CwiczenieKsiegowanie.astro';
+import { ksieguj, zl } from '../../lib/konta.js';
+import { SCHEMAT_KASA, SCHEMAT_RB, sumaWekslowa, odsetkiDyskontowe, WZOR1, WZOR2, KA, OA, K2, O2, K3, O3, KC1, OC1, KC2, OC2 } from '../../lib/pieniadze-zadania.js';
+
+export const R2 = ksieguj(K2, O2);
+export const R3 = ksieguj(K3, O3);
+export const RA = ksieguj(KA, OA);
+export const SW1 = sumaWekslowa(WZOR1.nf, WZOR1.d, WZOR1.t);
+export const OD1 = odsetkiDyskontowe(SW1, WZOR1.d, WZOR1.t);
+export const SW2 = sumaWekslowa(WZOR2.nf, WZOR2.d, WZOR2.t);
+export const OD2 = odsetkiDyskontowe(SW2, WZOR2.d, WZOR2.t);
+export const KD = [
+  { id: 'kasa', nazwa: 'Kasa', typ: 'A', sp: 4000 },
+  { id: 'spd', nazwa: 'Środki pieniężne w drodze', typ: 'A' },
+  { id: 'rb', nazwa: 'Rachunek bieżący', typ: 'A', sp: 20000 },
+];
+export const OD = [
+  { nr: 1, kwota: 2000, wn: 'spd', ma: 'kasa', opis: 'Poniedziałek, raport kasowy: kasjer wpłacił gotówkę w banku.' },
+  { nr: 2, kwota: 2000, wn: 'rb', ma: 'spd', opis: 'Wtorek, wyciąg bankowy: bank potwierdził wpływ gotówki.' },
+];
+export const Tab = ({ dane }) => (
+  <div class="k-tab"><table>
+    <thead><tr><th>Nr</th><th>Operacja</th><th>Wn (winien)</th><th>Ma (ma)</th></tr></thead>
+    <tbody>{dane.map((o) => <tr><td>{o.nr}</td><td>{o.opis}</td><td>{o.wn}</td><td>{o.ma}</td></tr>)}</tbody>
+  </table></div>
+);
+
+## Po co to jest
+
+Do tej pory firma płaciła „z kasy” albo „przelewem” i na tym koniec. W praktyce pieniądz krąży w kilku postaciach.
+
+Klient płaci czekiem, czyli pisemnym poleceniem dla banku: „wypłać z mojego rachunku tyle a tyle”. Inny klient zamiast pieniędzy daje weksel, czyli pisemną obietnicę zapłaty za trzy miesiące. Kasjer zanosi utarg do banku w poniedziałek, a bank potwierdza wpłatę we wtorek. Przez jeden dzień tych pieniędzy nie ma ani w kasie, ani na rachunku.
+
+Księgowość musi wiedzieć, gdzie pieniądze są w każdej chwili. Dlatego każda postać dostaje własne konto. Na kolokwium dostajesz zwykle raport kasowy, wyciąg bankowy i kilka operacji z czekami i wekslami. Masz je zaksięgować.
+
+## Co będzie na kolokwium
+
+<Polecenia items={[
+  { polecenie: 'Zaksięguj operacje z raportu kasowego', jak: 'Kasa to konto aktywne: wpłaty po Wn, wypłaty po Ma. Drugą stronę wskazuje to, skąd przyszła albo dokąd poszła gotówka.', przepis: 'polecenie-kasa', cwiczenia: 'cw-kasa', zrodlo: 'schemat „Typowe księgowania na koncie Kasa” z konspektu' },
+  { polecenie: 'Zaksięguj operacje z wyciągu bankowego', jak: 'Rachunek bieżący też jest aktywny. Gdy wpłatę do banku i wyciąg dzieli czas, po drodze jest konto „Środki pieniężne w drodze”.', przepis: 'polecenie-bank', cwiczenia: 'cw-kasa', zrodlo: 'schemat „Typowe księgowania na koncie Rachunek bieżący” z konspektu' },
+  { polecenie: 'Wymień i scharakteryzuj formy rozliczeń bezgotówkowych. Zaksięguj akredytywę', jak: 'Pięć form i jedno zdanie o każdej. Akredytywa to pieniądze odłożone przez bank na konkretną zapłatę.', przepis: 'polecenie-bezgotowkowe', cwiczenia: 'cw-formy', zrodlo: 'konspekt, Przykład 1' },
+  { polecenie: 'Zaksięguj otrzymanie i realizację czeku obcego', jak: 'Trzy kroki: czek przychodzi, czek idzie do banku, bank go realizuje.', przepis: 'polecenie-czeki', cwiczenia: 'cw-weksle', zrodlo: 'schemat „Ewidencja czeków rozrachunkowych” z konspektu' },
+  { polecenie: 'Zaksięguj weksel obcy i weksel własny razem z dyskontem', jak: 'Weksel księgujesz w sumie wekslowej. Różnica między wekslem a długiem to dyskonto: przychód finansowy albo koszt finansowy.', przepis: 'polecenie-weksle', cwiczenia: 'cw-weksle', zrodlo: 'schematy weksla obcego i własnego z konspektu, Przykłady 2 i 3' },
+  { polecenie: 'Oblicz sumę wekslową i odsetki dyskontowe', jak: 'Dwa wzory. Najpierw policz d · t : 365.', przepis: 'polecenie-wzory', cwiczenia: 'cw-wzory', zrodlo: 'wzory z konspektu' },
+]} />
+
+Słowa takie jak czek obcy, suma wekslowa czy dyskonto wyjaśniają kolejne sekcje. Ta lista to tylko mapa.
+
+## Pieniądz w kilku postaciach
+
+<Ramka kind="zapamietaj">
+- **Aktywa pieniężne** — według ustawy o rachunkowości (art. 3 ust. 1 pkt 25) to aktywa w formie krajowych środków płatniczych, walut obcych i dewiz. Krajowe środki płatnicze to złotówki. Dewizy to papiery, które zastępują obcą walutę, na przykład czek w euro. Ustawa zalicza tu też inne aktywa finansowe, na przykład naliczone odsetki.
+- W bilansie aktywa pieniężne dzielą się na trzy grupy: **środki pieniężne w kasie i na rachunkach**, **inne środki pieniężne** oraz **inne aktywa pieniężne**.
+- **Środki pieniężne w kasie** — gotówka w firmie. **Na rachunkach** — pieniądze w banku.
+- **Inne środki pieniężne** — czeki obce, weksle obce i środki pieniężne w drodze.
+- **Obrót gotówkowy** — płacenie gotówką, przez kasę.
+- **Obrót bezgotówkowy** — rozliczenia przez bank, bez gotówki.
+</Ramka>
+
+| Gdzie jest pieniądz | Konto | Dokument |
+|---|---|---|
+| W kasie firmy | Kasa | KP, KW, raport kasowy (RK) |
+| Na rachunku w banku | Rachunek bieżący | wyciąg bankowy (WB) |
+| Czek od klienta, jeszcze niezrealizowany | Czeki obce | czek |
+| Weksel od klienta | Weksle obce | weksel |
+| Wyszedł z jednego miejsca, do drugiego nie dotarł | Środki pieniężne w drodze | bankowy dowód wpłaty, potem WB |
+
+**Jak czytać:** wiersz to jedna postać pieniądza. Środkowa kolumna podaje konto, na którym ją księgujesz. Ostatnia kolumna podaje dokument, bez którego zapisu nie robisz. Wszystkie te konta są **aktywne**: przybywa po Wn, ubywa po Ma.
+
+<Ramka kind="zapamietaj" tytul="przypomnienie: strony konta">
+Konto aktywne (to, co firma ma) rośnie po stronie **Wn**, maleje po **Ma**. Konto pasywne (długi i kapitały) odwrotnie: rośnie po **Ma**, maleje po **Wn**. Koszt rośnie po **Wn**. Przychód rośnie po **Ma**. Każda operacja to ta sama kwota po Wn jednego konta i po Ma drugiego.
+</Ramka>
+
+<Ramka kind="zapamietaj" tytul="skróty dokumentów">
+- **KP** („kasa przyjmie”) — dowód wpłaty gotówki do kasy.
+- **KW** („kasa wyda”) — dowód wypłaty gotówki z kasy.
+- **RK** — raport kasowy: zestawienie wszystkich wpłat i wypłat z danego okresu.
+- **WB** — wyciąg bankowy: lista operacji na rachunku przysłana przez bank.
+- Dowodem w obrocie gotówkowym są też faktury, rachunki i listy wypłat.
+</Ramka>
+
+<Ramka kind="zapamietaj" tytul="limit płatności gotówką">
+Prawo przedsiębiorców (art. 19) każe płacić przez rachunek, gdy stroną transakcji jest inny przedsiębiorca, a jednorazowa wartość transakcji przekracza 15 000 zł. Liczy się wartość całej transakcji, bez względu na liczbę płatności. Kwota obowiązuje w 2026 r.
+</Ramka>
+
+<a id="polecenie-kasa" class="k-anchor"></a>
+
+## Kasa
+
+W kasie leży gotówka trzech rodzajów: zapas na bieżące wydatki, gotówka pobrana z banku na konkretny cel i gotówka z bieżących wpływów.
+
+<Ramka kind="polecenie" tytul="Zaksięguj operacje z raportu kasowego">
+**Przepis:**
+
+1. Przy każdej pozycji raportu ustal: gotówka **wpłynęła** do kasy czy z niej **wyszła**.
+2. Wpłynęła → **Wn Kasa**. Wyszła → **Ma Kasa**.
+3. Zapytaj: skąd przyszła albo na co poszła? Odpowiedź wskazuje drugie konto.
+4. Drugie konto dostaje tę samą kwotę po przeciwnej stronie.
+</Ramka>
+
+Konspekt z wykładu podaje dziewięć typowych księgowań na koncie „Kasa”:
+
+<Tab dane={SCHEMAT_KASA} />
+
+**Jak czytać:** wiersz to jedna operacja. Kolumna „Wn” podaje konto, na którym kwotę zapisujesz po lewej stronie. Kolumna „Ma” podaje konto, na którym tę samą kwotę zapisujesz po prawej. W operacjach 1, 4, 6 i 9 gotówki przybywa, więc Kasa stoi w kolumnie Wn. W pozostałych ubywa, więc Kasa stoi w kolumnie Ma. „Rozrachunki z pracownikami” to dług firmy wobec pracowników. W module o wyniku finansowym to samo konto nazywało się „Rozrachunki z tytułu wynagrodzeń”.
+
+<Ramka kind="intuicja" tytul="niedobór i nadwyżka">
+Kasjer liczy gotówkę i wychodzi mu mniej, niż wynika z raportu. To **niedobór**. Gotówki naprawdę nie ma, więc zdejmujesz ją z Kasy (Ma). Nie wiadomo jeszcze, kto zawinił, więc kwota czeka na koncie „Rozliczenie niedoborów, szkód i nadwyżek” (Wn). **Nadwyżka** to sytuacja odwrotna: gotówki jest więcej, więc Kasa rośnie (Wn), a kwota czeka na tym samym koncie po stronie Ma.
+</Ramka>
+
+<Pytania tag="Sprawdź się" pytania={[
+  { q: 'Z kasy wypłacono pracownikom wynagrodzenia, 2 600 zł. Jak to zaksięgować?', opcje: ['Wn Kasa, Ma Rozrachunki z pracownikami', 'Wn Rozrachunki z pracownikami, Ma Kasa', 'Wn Koszty operacyjne, Ma Rozrachunki z pracownikami'], dobra: 1, dlaczego: 'Gotówka wyszła z kasy, więc Ma Kasa. Poszła na spłatę długu wobec pracowników. Dług to konto pasywne i maleje po Wn. Pierwsza odpowiedź ma odwrócone strony. Trzecia to naliczenie wynagrodzeń, czyli wcześniejsza operacja, w której gotówka się nie rusza.' },
+]} />
+
+<a id="polecenie-bank" class="k-anchor"></a>
+
+## Rachunek bieżący
+
+Bank prowadzi dla firmy kilka rodzajów rachunków: rachunek bieżący, rachunki pomocnicze, rachunki lokat terminowych oraz rachunki kredytów długo- i krótkoterminowych. Codzienne rozliczenia idą przez rachunek bieżący.
+
+<Ramka kind="polecenie" tytul="Zaksięguj operacje z wyciągu bankowego">
+**Przepis:**
+
+1. Przy każdej pozycji wyciągu ustal: pieniądze **wpłynęły** na rachunek czy z niego **wyszły**.
+2. Wpłynęły → **Wn Rachunek bieżący**. Wyszły → **Ma Rachunek bieżący**.
+3. Drugie konto wskazuje powód: odbiorca zapłacił, spłacono dostawcę, bank pobrał odsetki.
+4. Sprawdź, czy ta pozycja nie zamyka czegoś „w drodze”: gotówki wpłaconej wcześniej z kasy, czeku albo weksla oddanego do banku. Jeśli tak, drugim kontem są „Środki pieniężne w drodze”.
+</Ramka>
+
+Siedem typowych księgowań na koncie „Rachunek bieżący” z konspektu:
+
+<Tab dane={SCHEMAT_RB} />
+
+**Jak czytać:** tak samo jak tabelę kasy. W operacjach 1, 4 i 5 pieniędzy na rachunku przybywa (Wn). W pozostałych ubywa (Ma). Odsetki od kredytu to koszt finansowy, a koszt rośnie po Wn.
+
+### Środki pieniężne w drodze
+
+W schemacie gotówka przechodzi z kasy na rachunek jednym zapisem. Tak jest, gdy wpłatę i wyciąg masz tego samego dnia. Często jest inaczej: raport kasowy mówi „wpłacono do banku 2 000”, a wyciąg bankowy z tą wpłatą przychodzi później. To dwa dokumenty, więc robisz dwa zapisy. Między nimi pieniądze czekają na koncie **„Środki pieniężne w drodze”**.
+
+<Konta konta={KD} operacje={OD}>
+na górze dwie operacje, pod nimi trzy konta. Operacja 1: gotówka wychodzi z kasy (Ma Kasa) i trafia „w drogę” (Wn). Operacja 2: bank potwierdza wpływ, więc pieniądze schodzą z „drogi” (Ma) i wchodzą na rachunek (Wn). Konto „Środki pieniężne w drodze” kończy z saldem zero.
+</Konta>
+
+<Ramka kind="kiedy" tytul="konto „Środki pieniężne w drodze”">
+- Gdy pieniądze, czek albo weksel wyszły z jednego miejsca, a drugie miejsce jeszcze ich nie potwierdziło.
+- W zadaniu poznasz to po dwóch osobnych punktach: najpierw „oddano do banku” albo „wpłacono do banku”, potem „otrzymano wyciąg bankowy potwierdzający…”.
+- Kontrola: po zaksięgowaniu obu punktów konto „Środki pieniężne w drodze” ma saldo zero.
+</Ramka>
+
+<a id="polecenie-bezgotowkowe" class="k-anchor"></a>
+
+## Rozliczenia bezgotówkowe
+
+Obrót bezgotówkowy to regulowanie rozrachunków między firmami za pośrednictwem banku i pod jego kontrolą. **Dłużnik** to ten, kto ma zapłacić. **Wierzyciel** to ten, komu się należy. Bank **obciąża** rachunek, gdy zdejmuje z niego pieniądze, a **uznaje** rachunek, gdy je dopisuje.
+
+| Forma | Na czym polega | Kto zaczyna |
+|---|---|---|
+| **Polecenie przelewu** | Dłużnik każe bankowi obciążyć swój rachunek i przekazać kwotę wierzycielowi. | dłużnik |
+| **Czek rozrachunkowy** | Dłużnik wręcza wierzycielowi czek na kwotę długu. Wierzyciel składa go w banku. | dłużnik |
+| **Akredytywa** | Bank na wniosek dłużnika odkłada pieniądze z jego rachunku i przekazuje je do banku wierzyciela. Zapłata następuje, gdy wierzyciel spełni świadczenie. | dłużnik |
+| **Rozliczenia planowe i okresowe rozliczanie saldami** | Dwie firmy są dla siebie nawzajem dostawcą i odbiorcą. Co jakiś czas płacą tylko różnicę. | obie strony |
+| **Polecenie zapłaty** | Wierzyciel każe bankowi obciążyć rachunek dłużnika i uznać swój. | wierzyciel |
+
+**Jak czytać:** wiersz to jedna forma rozliczenia. Środkowa kolumna mówi, co się dzieje, ostatnia — kto wydaje dyspozycję bankowi. Najczęściej myli się polecenie przelewu z poleceniem zapłaty. Patrz na ostatnią kolumnę: przelew zleca ten, kto płaci, a polecenie zapłaty ten, kto ma dostać pieniądze.
+
+<Ramka kind="zapamietaj" tytul="VAT w pięciu zdaniach">
+- Faktura ma wartość **netto** i doliczony do niej **VAT**. Razem to kwota **brutto**, którą się płaci. Netto = brutto − VAT.
+- Firma, która jest **podatnikiem VAT**, rozlicza ten podatek z urzędem skarbowym. VAT nie jest wtedy ani jej kosztem, ani przychodem. Kosztem i przychodem jest wartość netto.
+- VAT ma własne konto: **„Rozrachunki z tytułu VAT”**. Sprzedajemy → VAT po **Ma** (jesteśmy go winni urzędowi). Kupujemy → VAT po **Wn** (zmniejsza to, co jesteśmy winni).
+- To konto może mieć saldo po obu stronach. Saldo Ma: firma jest winna urzędowi. Saldo Wn: urząd jest winien firmie.
+- Wzorzec zakupu za gotówkę: **Wn konto kosztu** w kwocie netto, **Wn Rozrachunki z tytułu VAT** w kwocie VAT, **Ma Kasa** w kwocie brutto.
+</Ramka>
+
+### Akredytywa na kontach
+
+<Rozwiazanie tytul="Remont opłacony z akredytywy" zrodlo="konspekt, Przykład 1">
+<div slot="tresc">
+
+Jednostka X zleca jednostce Y remont. Umowa wstępna określa koszt na 2 000 zł. Strony umawiają się na akredytywę.
+
+1. WB: otwarcie akredytywy, 2 000 zł.
+2. Faktura za remont: 1 845 zł, w tym VAT 345 zł. Wartość netto to 1 845 − 345 = 1 500 zł.
+3. WB: zapłata za remont z akredytywy.
+4. WB: zamknięcie akredytywy.
+
+Saldo początkowe rachunku bieżącego w konspekcie to „X”. Przyjmujemy {zl(KA[0].sp)} zł.
+
+</div>
+
+<div slot="plan">
+
+1. Odkładamy pieniądze. Z rachunku bieżącego przechodzą na osobne konto „Akredytywa”. Nadal są nasze, ale zarezerwowane.
+2. Księgujemy fakturę: koszt remontu na koncie „Usługi obce”, VAT na koncie „Rozrachunki z tytułu VAT” i dług wobec wykonawcy na koncie „Rozrachunki z dostawcami”. Wykonawca remontu jest dla nas dostawcą usługi.
+3. Płacimy z akredytywy, nie z rachunku bieżącego. Po to ją otwarto.
+4. Reszta akredytywy wraca na rachunek. Bez tego kroku pieniądze wisiałyby na koncie „Akredytywa”.
+
+</div>
+
+<Krok tytul="Wszystkie cztery operacje na kontach">
+
+<Konta konta={KA} operacje={OA}>
+operacja 1 przenosi 2 000 zł z rachunku na akredytywę. Operacja 2 ma dwa zapisy: 2.1 to koszt remontu netto, 2.2 to VAT. Oba trafiają po Ma na „Rozrachunki z dostawcami”, razem 1 845 zł. Operacja 3 spłaca dostawcę z akredytywy. Operacja 4 oddaje na rachunek resztę: 2 000 − 1 845 = 155 zł.
+</Konta>
+
+<Dlaczego>
+Akredytywa to konto aktywne, bo to wciąż nasze pieniądze, tylko w innym miejscu. Dlatego otwarcie to Wn Akredytywa, Ma Rachunek bieżący.
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+Fakturę rozbijamy na dwa zapisy: 2.1 i 2.2. Każda kwota ma wtedy własny znacznik i łatwo ją znaleźć na obu kontach. Na slajdzie z wykładu na koncie „Rozrachunki z dostawcami” stoi jedna kwota 1 845 pod numerem 2. Oba zapisy znaczą to samo: 1 500 + 345 = 1 845.
+</Dlaczego>
+
+<Dlaczego typ="inaczej" etykieta="Uwaga do slajdu">
+Na slajdzie w konspekcie operacja 4 ma po stronie Wn rachunku bieżącego kwotę 500, a po stronie Ma akredytywy 155. Poprawna jest 155: tyle zostało z 2 000 po zapłacie 1 845. Obie strony zapisu muszą mieć tę samą kwotę.
+</Dlaczego>
+</Krok>
+
+</Rozwiazanie>
+
+<a id="polecenie-czeki" class="k-anchor"></a>
+
+## Czeki
+
+**Czek** to dokument o formie ustalonej przez prawo. Wystawca poleca w nim bankowi wypłacić określoną kwotę ze swoich pieniędzy.
+
+Czeki dzieli się według trzech kryteriów:
+
+| Kryterium | Rodzaje |
+|---|---|
+| Sposób określenia osoby, która ma dostać pieniądze (remitenta) | imienny, na okaziciela |
+| Forma obrotu | gotówkowy, rozrachunkowy |
+| Wymogi prawa czekowego | krajowy, zagraniczny |
+
+**Jak czytać:** wiersz to jedno kryterium, a w prawej kolumnie stoją dwa rodzaje, na które dzieli ono czeki. Czek imienny wskazuje z nazwy, kto ma dostać pieniądze. Czek na okaziciela wypłaca się temu, kto go przyniesie. Do księgowania najważniejszy jest środkowy wiersz: **czek gotówkowy** każe bankowi wypłacić gotówkę temu, kto czek okaże. **Czek rozrachunkowy** nie daje gotówki. Bank przenosi kwotę z rachunku wystawcy na rachunek wierzyciela.
+
+<Ramka kind="zapamietaj" tytul="pięć cech czeku">
+1. Jest środkiem płatniczym.
+2. Wystawić go można tylko wtedy, gdy ma się pieniądze na rachunku.
+3. Jest płatny za okazaniem.
+4. Może być indosowany, czyli przekazany innej osobie.
+5. Przy przekazaniu czeku nie stosuje się dyskonta, czyli nie potrąca się odsetek. Dyskonto poznasz przy wekslach.
+</Ramka>
+
+**Czek obcy** to czek, który dostaliśmy od kogoś. Dopóki nie złożymy go w banku, leży na koncie „Czeki obce”. To jedno z kont w grupie „Inne środki pieniężne”.
+
+<Ramka kind="polecenie" tytul="Zaksięguj otrzymanie i realizację czeku obcego">
+**Trzy kroki:**
+
+1. **Otrzymanie czeku rozrachunkowego** od odbiorcy: Wn Czeki obce, Ma Rozrachunki z odbiorcami.
+2. **Złożenie czeku w banku** do realizacji: Wn Środki pieniężne w drodze, Ma Czeki obce.
+3. **Realizacja czeku** (wyciąg bankowy): Wn Rachunek bieżący, Ma Środki pieniężne w drodze.
+</Ramka>
+
+<Rzad>
+  <KontoT konto={{ nazwa: 'Rozrachunki z odbiorcami', typ: 'A', sp: 3000 }} wpisy={[{ nr: 1, strona: 'ma', kwota: 3000 }]} zamkniete={false} />
+  <KontoT konto={{ nazwa: 'Czeki obce', typ: 'A' }} wpisy={[{ nr: 1, strona: 'wn', kwota: 3000 }, { nr: 2, strona: 'ma', kwota: 3000 }]} zamkniete={false} />
+  <KontoT konto={{ nazwa: 'Środki pieniężne w drodze', typ: 'A' }} wpisy={[{ nr: 2, strona: 'wn', kwota: 3000 }, { nr: 3, strona: 'ma', kwota: 3000 }]} zamkniete={false} />
+  <KontoT konto={{ nazwa: 'Rachunek bieżący', typ: 'A' }} wpisy={[{ nr: 3, strona: 'wn', kwota: 3000 }]} zamkniete={false} />
+</Rzad>
+
+**Jak czytać:** czek na 3 000 zł wędruje od lewej do prawej. Operacja 1 zamienia należność na czek. Operacja 2 przenosi czek „w drogę”. Operacja 3 zamienia go na pieniądze na rachunku. Na każdym koncie po drodze kwota wchodzi po Wn i wychodzi po Ma.
+
+<a id="polecenie-weksle" class="k-anchor"></a>
+
+## Weksle
+
+**Weksel** to bezwarunkowe zobowiązanie do zapłaty określonej osobie określonej sumy pieniężnej, w miejscu i terminie ustalonym przez wystawcę, osobę przez niego wskazaną lub osoby podpisane na wekslu. Prościej: pisemna, bezwarunkowa obietnica „zapłacę tyle i tyle takiego a takiego dnia”.
+
+<div class="k-dwa">
+<div>
+
+**Weksel obcy**
+
+Ktoś obiecał zapłacić **nam**. Trzymamy weksel i czekamy na pieniądze. To nasz składnik aktywów: konto „Weksle obce” w grupie „Inne środki pieniężne”.
+
+</div>
+<div>
+
+**Weksel własny**
+
+To **my** obiecaliśmy zapłacić. To nasz dług: konto „Zobowiązania wekslowe”, konto pasywne.
+
+</div>
+</div>
+
+<Ramka kind="zapamietaj" tytul="cztery funkcje weksla">
+- **Kredytowa** — wręczenie weksla to udzielenie wystawcy kredytu: zapłaci później.
+- **Obiegowa** — weksel można przekazać dalej przez indos.
+- **Płatnicza** — wekslem reguluje się zobowiązania.
+- **Gwarancyjna** — weksel zabezpiecza roszczenia.
+</Ramka>
+
+<a id="polecenie-wzory" class="k-anchor"></a>
+
+### Suma wekslowa i dyskonto
+
+Kto przyjmuje weksel zamiast pieniędzy, ten czeka na zapłatę. Za czekanie należą mu się odsetki. Dlatego na wekslu wpisuje się kwotę wyższą niż dług.
+
+- **Należność finansowa** $N_f$ — dług, który weksel ma spłacić.
+- **Suma wekslowa** $S_w$ — kwota wpisana na wekslu. Inaczej: wartość nominalna weksla.
+- **Odsetki dyskontowe** $O_d$, w skrócie **dyskonto** — różnica między sumą wekslową a należnością.
+
+Słowo „dyskonto” ma dwa znaczenia. Raz to **kwota** odsetek. Raz to **operacja**: „oddać weksel do dyskonta” znaczy sprzedać go bankowi przed terminem.
+
+Odsetki liczy się od kwoty wpisanej na wekslu, a nie od długu. Dlatego nie wystarczy doliczyć procentu do długu. Szukamy takiej sumy wekslowej, która po odjęciu odsetek da dokładnie dług. Stąd dzielenie w pierwszym wzorze.
+
+<Rozbior t="S_w = \dfrac{N_f \cdot 100}{100 - \dfrac{d \cdot t}{365}}" czytamy="suma wekslowa równa się: należność razy sto, podzielone przez sto minus de razy te przez trzysta sześćdziesiąt pięć" czesci={[
+  { t: 'S_w', o: '<b>suma wekslowa</b> — kwota, na którą wystawia się weksel' },
+  { t: 'N_f', o: '<b>należność finansowa</b> — dług, który weksel spłaca' },
+  { t: 'd', o: '<b>stopa odsetek dyskontowych</b> w procentach za rok, np. 7,3' },
+  { t: 't', o: '<b>czas</b> od wystawienia weksla do jego wykupu, w dniach' },
+  { t: '365', o: 'liczba dni w roku — zamienia stopę roczną na stopę za $t$ dni' },
+]} />
+
+<Rozbior t="O_d = \dfrac{S_w \cdot d \cdot t}{100 \cdot 365}" czytamy="odsetki dyskontowe równają się: suma wekslowa razy de razy te, podzielone przez sto razy trzysta sześćdziesiąt pięć" czesci={[
+  { t: 'O_d', o: '<b>odsetki dyskontowe</b> — tyle wynosi różnica między sumą wekslową a należnością' },
+  { t: 'S_w \\cdot d \\cdot t', o: 'suma wekslowa razy stopa razy liczba dni' },
+  { t: '100 \\cdot 365', o: 'sto, bo stopa jest w procentach; 365, bo stopa jest roczna' },
+]} />
+
+<Ramka kind="polecenie" tytul="Oblicz sumę wekslową i odsetki dyskontowe">
+**Przepis:**
+
+1. Policz pomocniczo $d \cdot t : 365$. To procent za cały czas czekania.
+2. Odejmij wynik od 100. Przez tę liczbę będziesz dzielić w pierwszym wzorze.
+3. Suma wekslowa: należność razy 100, podzielone przez liczbę z punktu 2.
+4. Odsetki: suma wekslowa razy $d$ razy $t$, podzielone przez 36 500 (to 100 · 365).
+5. Kontrola: suma wekslowa minus odsetki daje należność.
+</Ramka>
+
+**Przykład (dane wymyślone).** Dług wynosi {zl(WZOR1.nf)} zł. Stopa dyskontowa to 7,3% rocznie. Weksel będzie wykupiony za {WZOR1.t} dni.
+
+1. 7,3 · 100 : 365 = 730 : 365 = 2.
+2. 100 − 2 = 98.
+3. Suma wekslowa: {zl(WZOR1.nf)} · 100 : 98 = 490 000 : 98 = **{zl(SW1)} zł**.
+4. Odsetki: {zl(SW1)} · 7,3 · 100 : 36 500 = 3 650 000 : 36 500 = **{zl(OD1)} zł**.
+5. Kontrola: {zl(SW1)} − {zl(OD1)} = {zl(SW1 - OD1)}. Zgadza się z długiem.
+
+<Ramka kind="pulapka">
+- **Odsetki liczone od długu zamiast od sumy wekslowej.** Drugi wzór ma w liczniku $S_w$, nie $N_f$.
+- **Stopa wpisana jako ułamek.** We wzorach $d$ to liczba procentów: 7,3, a nie 0,073.
+- **Czas w miesiącach.** $t$ jest w dniach.
+</Ramka>
+
+### Weksel obcy: cztery operacje
+
+Weksel obcy księgujesz zawsze w **sumie wekslowej**. Różnica między sumą a długiem to dyskonto.
+
+| Nr | Operacja | Wn | Ma |
+|---|---|---|---|
+| 1 | Otrzymanie weksla obcego jako spłaty należności | Weksle obce (suma wekslowa) | a) Rozrachunki z odbiorcami (należność), b) Przychody finansowe (odsetki) |
+| 2 | Wykupienie weksla przez dłużnika | Rachunek bieżący | Weksle obce |
+| 3 | Oddanie weksla do dyskonta w banku | a) Rachunek bieżący (kwota przelana przez bank), b) Koszty finansowe (odsetki pobrane przez bank) | Weksle obce (suma wekslowa) |
+| 4 | Indosowanie weksla, czyli przekazanie go na spłatę naszego zobowiązania | a) Rozrachunki z dostawcami (spłacony dług), b) Koszty finansowe (odsetki) | Weksle obce (suma wekslowa) |
+
+**Jak czytać:** operacja 1 wprowadza weksel na konto. Operacje 2, 3 i 4 to trzy sposoby, w jakie weksel może z konta zejść. Przy każdym schodzi cała suma wekslowa. Litery a) i b) oznaczają dwie kwoty, które razem dają sumę wekslową. „Wykupienie” weksla to po prostu zapłata przez tego, kto go wystawił.
+
+<Ramka kind="intuicja" tytul="kiedy dyskonto to przychód, a kiedy koszt">
+- **Czekamy na pieniądze → zarabiamy.** Przyjmujemy weksel zamiast gotówki. Odsetki są dla nas: **przychody finansowe**.
+- **Chcemy pieniędzy wcześniej → płacimy.** Oddajemy weksel bankowi przed terminem (dyskonto) albo płacimy nim dostawcy (indos). Dostajemy mniej, niż weksel jest wart. Różnica to **koszty finansowe**.
+</Ramka>
+
+<Ramka kind="zapamietaj" tytul="dyskonto w banku i indos">
+- **Oddać weksel do dyskonta** — sprzedać go bankowi przed terminem. Bank wypłaca sumę wekslową pomniejszoną o swoje odsetki i sam czeka na zapłatę od dłużnika.
+- **Indos** — przeniesienie praw z weksla na inną osobę. Weksel, który dostaliśmy od odbiorcy, oddajemy naszemu dostawcy jako zapłatę.
+</Ramka>
+
+### Weksel własny: trzy operacje
+
+| Nr | Operacja | Wn | Ma |
+|---|---|---|---|
+| 1 | Przekazanie weksla własnego wierzycielowi | a) Rozrachunki z dostawcami (spłacany dług), b) Koszty finansowe (odsetki) | Zobowiązania wekslowe (suma wekslowa) |
+| 2 | Wykupienie weksla przelewem | Zobowiązania wekslowe | Rachunek bieżący |
+| 3 | Odpisanie przedawnionych zobowiązań z tytułu weksli własnych | Zobowiązania wekslowe | Pozostałe przychody operacyjne |
+
+**Jak czytać:** operacja 1 zamienia zwykły dług wobec dostawcy na dług wekslowy, wyższy o odsetki. Odsetki są naszym kosztem, bo to my płacimy za odroczenie. Operacja 2 spłaca weksel. Operacja 3 zdarza się rzadko: nikt nie zgłosił się po zapłatę w terminie przewidzianym prawem. Firma odpisuje wtedy dług z ksiąg, a odpisana kwota staje się przychodem.
+
+<Pytania tag="Sprawdź się" pytania={[
+  { q: 'Odbiorca jest nam winien 9 910 zł. Płaci wekslem o sumie wekslowej 10 000 zł. Co trafia na konto „Przychody finansowe”?', opcje: ['10 000 zł po stronie Ma', '90 zł po stronie Ma', '90 zł po stronie Wn'], dobra: 1, dlaczego: 'Weksle obce: Wn 10 000 (suma wekslowa). Rozrachunki z odbiorcami: Ma 9 910 (spłacona należność). Różnica 10 000 − 9 910 = 90 to nasze odsetki. Przychód rośnie po Ma. Po Wn stałyby koszty.' },
+]} />
+
+## Przykład z konspektu: weksle i czeki obce
+
+<Rozwiazanie tytul="Dyskonto weksla, czek i indos" zrodlo="konspekt, Przykład 2">
+<div slot="tresc">
+
+Stany wybranych kont na początek okresu: weksle obce 8 000, czeki obce 5 000, rachunek bankowy 9 000, rozrachunki z dostawcami 1 800. „Rachunek bankowy” z treści to nasz rachunek bieżący.
+
+1. Oddano do banku: weksel obcy do dyskonta, wartość 6 000, i czek rozrachunkowy, wartość 5 000.
+2. Otrzymano wyciąg bankowy potwierdzający:
+   - a) przyjęcie weksla do dyskonta: wartość nominalna 6 000, suma zrealizowana przez bank 5 850, pobrane dyskonto 150,
+   - b) realizację czeku obcego 5 000.
+3. Indosowano weksel obcy: wartość nominalna 2 000, wartość zobowiązania 1 800, pobrane dyskonto 200.
+
+</div>
+
+<div slot="plan">
+
+1. Otwieramy konta. Trzy aktywne dostają Sp. po Wn, rozrachunki z dostawcami po Ma. Dokładamy puste konta „Środki pieniężne w drodze” i „Koszty finansowe”.
+2. Operacja 1 to dopiero oddanie papierów do banku. Pieniędzy jeszcze nie ma, więc weksel i czek idą „w drogę”.
+3. Operacja 2 to wyciąg. Zamyka „drogę”: część wchodzi na rachunek, część bank zatrzymuje jako dyskonto.
+4. Operacja 3 to indos: weksel spłaca dług wobec dostawcy, a różnica jest kosztem finansowym.
+5. Kontrola: „Środki pieniężne w drodze” mają wyjść na zero.
+
+</div>
+
+<Krok tytul="Operacja 1: papiery idą do banku">
+- 1.1) Weksel: **Wn Środki pieniężne w drodze 6 000, Ma Weksle obce 6 000**.
+- 1.2) Czek: **Wn Środki pieniężne w drodze 5 000, Ma Czeki obce 5 000**.
+
+<Dlaczego>
+Weksla i czeku nie mamy już w ręku, więc schodzą ze swoich kont (Ma). Bank jeszcze niczego nie przelał, więc nie wolno ruszać rachunku. Kwoty czekają na koncie „Środki pieniężne w drodze”.
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+Numery: litery (2a, 2b) są takie jak w treści zadania. Kropka i cyfra (1.1, 1.2) oznaczają osobne kwoty z jednego punktu.
+</Dlaczego>
+
+<Dlaczego typ="inaczej" etykieta="Jak na slajdzie z wykładu">
+Schemat weksla obcego z wykładu pokazuje dyskonto w banku jednym zapisem, bez konta „Środki pieniężne w drodze”. Wtedy przy oddaniu weksla nie księgujesz nic, a przy wyciągu: **Wn Rachunek bieżący 5 850, Wn Koszty finansowe 150, Ma Weksle obce 6 000**. Salda końcowe wychodzą takie same w obu sposobach. Tutaj treść ma dwa osobne punkty (oddanie i wyciąg), więc pokazujemy drogę przez „Środki pieniężne w drodze”, jak w schemacie czeków. Konspekt nie zawiera rozwiązania tego przykładu. Na kolokwium trzymaj się sposobu pokazanego na zajęciach.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 2: wyciąg bankowy">
+- 2a.1) Bank przelał za weksel 5 850: **Wn Rachunek bieżący 5 850, Ma Środki pieniężne w drodze 5 850**.
+- 2a.2) Bank zatrzymał dyskonto 150: **Wn Koszty finansowe 150, Ma Środki pieniężne w drodze 150**.
+- 2b) Bank zrealizował czek: **Wn Rachunek bieżący 5 000, Ma Środki pieniężne w drodze 5 000**.
+
+<Dlaczego>
+Weksel był wart 6 000, a bank wypłacił 5 850. Brakujące 150 to cena za to, że mamy pieniądze przed terminem. To koszt finansowy. Razem 5 850 + 150 = 6 000, więc cała kwota weksla schodzi z „drogi”.
+</Dlaczego>
+
+<Dlaczego>
+Przy czeku nie ma dyskonta. Bank wypłaca całe 5 000.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 3: indos weksla">
+- 3.1) Spłacony dług: **Wn Rozrachunki z dostawcami 1 800, Ma Weksle obce 1 800**.
+- 3.2) Dyskonto: **Wn Koszty finansowe 200, Ma Weksle obce 200**.
+
+<Dlaczego>
+Oddajemy dostawcy weksel wart 2 000, a nasz dług maleje tylko o 1 800. Dostawca będzie czekał na pieniądze z weksla, więc 200 zł to jego odsetki, a nasz koszt. Z konta „Weksle obce” schodzi cała suma wekslowa: 1 800 + 200 = 2 000.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wszystko na kontach i kontrola">
+
+<Konta konta={K2} operacje={O2}>
+klikaj „Dalej”, żeby zobaczyć operacje po kolei. Kropka i cyfra przy numerze (1.1, 1.2) oznaczają osobne kwoty z tego samego punktu zadania. Po ostatniej operacji konta „Weksle obce”, „Czeki obce”, „Środki pieniężne w drodze” i „Rozrachunki z dostawcami” mają saldo zero.
+</Konta>
+
+<Dlaczego>
+Kontrola: na „Środki pieniężne w drodze” weszło 6 000 + 5 000 = 11 000 i zeszło 5 850 + 150 + 5 000 = 11 000. Rachunek bieżący: 9 000 + 5 850 + 5 000 = {zl(R2.zam.rb.saldo)}. Koszty finansowe: 150 + 200 = {zl(R2.zam.kf.saldo)}.
+</Dlaczego>
+</Krok>
+
+</Rozwiazanie>
+
+## Przykład z wykładu: pełna ewidencja środków pieniężnych
+
+<Rozwiazanie tytul="Kasa, bank, czek i trzy weksle u podatnika VAT" zrodlo="Przykład 3 z wykładu (2.7, str. 40)">
+<div slot="tresc">
+
+Przedsiębiorstwo jest podatnikiem VAT. Salda wybranych kont: Kasa 4 000, Rachunek bieżący 20 000, Zobowiązania wekslowe 15 000, Rozrachunki z odbiorcami 5 000, Rozrachunki z dostawcami 11 190, Weksle obce 6 000, Czeki obce 10 000.
+
+Operacje:
+
+1. Wystawiono fakturę za wykonane usługi: wartość netto 1 000, VAT 23% — 230, suma faktury 1 230.
+2. Odbiorca usługi z operacji 1 zapłacił wekslem o wartości nominalnej 1 400. Dyskonto pobrane przez przedsiębiorstwo: 170.
+3. Oddano do banku weksel obcy do dyskonta, 5 000, oraz czek rozrachunkowy, 7 000.
+4. Raport kasowy zawiera:
+   - a) wpłatę gotówki do banku (bankowy dowód wpłaty), 2 000,
+   - b) zakup materiałów biurowych do bezpośredniego zużycia: wartość netto 500, VAT 23% — 115, suma faktury 615.
+5. Otrzymano wyciąg z rachunku bieżącego, potwierdzający:
+   - a) wpływ gotówki z kasy, 2 000,
+   - b) realizację czeku obcego, 7 000,
+   - c) przyjęcie weksla obcego do dyskonta: wartość nominalna 5 000, suma zrealizowana przez bank 4 700, dyskonto pobrane przez bank 300,
+   - d) wykup weksla własnego w terminie, 10 000.
+6. Indosowano weksel obcy z operacji 2 na dostawcę: wartość nominalna 1 400, zobowiązanie wobec dostawcy 1 190, dyskonto 210.
+
+„Dyskonto pobrane przez przedsiębiorstwo” w operacji 2 znaczy: weksel jest o 170 wyższy niż dług i ta nadwyżka należy się nam.
+
+</div>
+
+<div slot="plan">
+
+1. Otwieramy konta. Aktywa po Wn: kasa, rachunek, weksle obce, czeki obce, rozrachunki z odbiorcami. Pasywa po Ma: rozrachunki z dostawcami i zobowiązania wekslowe.
+2. Dokładamy puste konta: „Środki pieniężne w drodze”, „Rozrachunki z tytułu VAT”, dwa konta przychodów („Przychody ze sprzedaży usług”, „Przychody finansowe”) i dwa konta kosztów („Zużycie materiałów i energii”, „Koszty finansowe”).
+3. Idziemy operacja po operacji. Przy każdej pytamy: co przybyło, co ubyło, czy jest koszt albo przychód.
+4. Numery: litery (4a, 5d) jak w treści zadania. Kropka i cyfra (2.1, 2.2) to części jednego zapisu.
+5. Kontrola na końcu: „Środki pieniężne w drodze” na zero.
+
+</div>
+
+<Krok tytul="Operacja 1: faktura za usługi">
+- 1.1) **Wn Rozrachunki z odbiorcami 1 000, Ma Przychody ze sprzedaży usług 1 000**.
+- 1.2) **Wn Rozrachunki z odbiorcami 230, Ma Rozrachunki z tytułu VAT 230**.
+
+<Dlaczego>
+Odbiorca jest nam winien całą fakturę, czyli 1 230. Naszym przychodem jest tylko wartość netto. VAT jesteśmy winni urzędowi, więc rośnie po Ma konta rozrachunków z tytułu VAT.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 2: odbiorca płaci wekslem">
+- 2.1) **Wn Weksle obce 1 230, Ma Rozrachunki z odbiorcami 1 230**.
+- 2.2) **Wn Weksle obce 170, Ma Przychody finansowe 170**.
+
+<Dlaczego>
+Weksel wchodzi na konto w sumie wekslowej: 1 230 + 170 = 1 400. Należność 1 230 znika. Nadwyżka 170 to nasze odsetki za czekanie, czyli przychód finansowy.
+</Dlaczego>
+
+<Dlaczego typ="inaczej" etykieta="Jedna kwota zamiast dwóch">
+W schemacie z wykładu po stronie Wn konta „Weksle obce” stoi jedna kwota: 1 400. Po Ma są dwie: a) 1 230 i b) 170. To ten sam zapis. Tutaj kwotę 1 400 widać jako 1 230 + 170, żeby każda część miała parę na drugim koncie. Jeśli wolisz, wpisz po Wn jedno 1 400.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 3: weksel i czek idą do banku">
+- 3.1) **Wn Środki pieniężne w drodze 5 000, Ma Weksle obce 5 000**.
+- 3.2) **Wn Środki pieniężne w drodze 7 000, Ma Czeki obce 7 000**.
+
+<Dlaczego>
+To tylko oddanie papierów. Bank potwierdzi je dopiero wyciągiem w operacji 5.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 4: raport kasowy">
+- 4a) **Wn Środki pieniężne w drodze 2 000, Ma Kasa 2 000**.
+- 4b.1) **Wn Zużycie materiałów i energii 500, Ma Kasa 500**.
+- 4b.2) **Wn Rozrachunki z tytułu VAT 115, Ma Kasa 115**.
+
+<Dlaczego>
+Gotówka wyszła z kasy do banku, ale wyciągu jeszcze nie ma. Stąd „w drodze”.
+</Dlaczego>
+
+<Dlaczego>
+Zakup 4b to wzorzec z ramki o VAT. Materiały kupiono „do bezpośredniego zużycia”, więc nie trafiają do magazynu, tylko od razu w koszty. Kosztem jest wartość netto, 500. Z kasy wyszło brutto, 615. Różnica 115 to VAT z zakupu, który zmniejsza nasz dług wobec urzędu.
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+Konto kosztu nazywamy tu „Zużycie materiałów i energii”. W schemacie kasy z wykładu takie wydatki stoją ogólnie jako „Koszty operacyjne”. Zużycie materiałów to jeden z rodzajów kosztów operacyjnych.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 5: wyciąg bankowy">
+- 5a) **Wn Rachunek bieżący 2 000, Ma Środki pieniężne w drodze 2 000**.
+- 5b) **Wn Rachunek bieżący 7 000, Ma Środki pieniężne w drodze 7 000**.
+- 5c.1) **Wn Rachunek bieżący 4 700, Ma Środki pieniężne w drodze 4 700**.
+- 5c.2) **Wn Koszty finansowe 300, Ma Środki pieniężne w drodze 300**.
+- 5d) **Wn Zobowiązania wekslowe 10 000, Ma Rachunek bieżący 10 000**.
+
+<Dlaczego>
+Pozycje 5a, 5b i 5c zamykają to, co było „w drodze”: gotówkę z kasy, czek i weksel. Za weksel wart 5 000 bank przelał 4 700, a 300 zatrzymał. Pozycja 5d to co innego: wykupujemy własny weksel, więc nasz dług wekslowy maleje (Wn), a pieniądze wychodzą z rachunku (Ma).
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 6: indos weksla na dostawcę">
+- 6.1) **Wn Rozrachunki z dostawcami 1 190, Ma Weksle obce 1 190**.
+- 6.2) **Wn Koszty finansowe 210, Ma Weksle obce 210**.
+
+<Dlaczego>
+Weksel z operacji 2 jest wart 1 400. Oddajemy go dostawcy i spłacamy nim dług 1 190. Różnica 1 400 − 1 190 = 210 to dyskonto dostawcy, czyli nasz koszt finansowy.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wszystko na kontach i kontrola">
+
+<Konta konta={K3} operacje={O3}>
+na górze lista operacji, pod nią trzynaście kont. Turkus to konta aktywne, róż — pasywne, zieleń — przychody, fiolet — koszty. Klikaj „Dalej”, żeby zobaczyć każdy zapis po kolei.
+</Konta>
+
+<Dlaczego>
+Kontrola „drogi”: weszło 5 000 + 7 000 + 2 000 = 14 000, zeszło 2 000 + 7 000 + 4 700 + 300 = 14 000. Saldo zero.
+</Dlaczego>
+
+Salda końcowe kont bilansowych:
+
+- Kasa {zl(R3.zam.kasa.saldo)}, Rachunek bieżący {zl(R3.zam.rb.saldo)}, Weksle obce {zl(R3.zam.wo.saldo)}, Czeki obce {zl(R3.zam.co.saldo)}, Środki pieniężne w drodze {zl(R3.zam.spd.saldo)}, Rozrachunki z odbiorcami {zl(R3.zam.odb.saldo)}.
+- Rozrachunki z dostawcami {zl(R3.zam.dost.saldo)}, Zobowiązania wekslowe {zl(R3.zam.zw.saldo)}, Rozrachunki z tytułu VAT {zl(R3.zam.vat.saldo)} po stronie Ma.
+
+Konta wynikowe: Przychody ze sprzedaży usług {zl(R3.zam.ps.saldo)}, Przychody finansowe {zl(R3.zam.pf.saldo)}, Zużycie materiałów i energii {zl(R3.zam.zm.saldo)}, Koszty finansowe {zl(R3.zam.kf.saldo)}.
+</Krok>
+
+</Rozwiazanie>
+
+<Ramka kind="pulapka">
+- **Wyciąg księgowany prosto z kasy albo z weksli.** Jeśli wcześniej był zapis „w drogę”, wyciąg zdejmuje kwotę z „drogi”, nie drugi raz z kasy.
+- **Weksel w kwocie długu.** Na kontach „Weksle obce” i „Zobowiązania wekslowe” weksel stoi zawsze w sumie wekslowej.
+- **Dyskonto po złej stronie.** Przyjmujemy weksel → przychód finansowy (Ma). Oddajemy weksel wcześniej albo wystawiamy własny → koszt finansowy (Wn).
+- **VAT w przychodach albo w kosztach.** Przychodem i kosztem jest wartość netto.
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Konta pieniężne</b>Kasa, Rachunek bieżący, Czeki obce, Weksle obce, Środki pieniężne w drodze. Wszystkie aktywne: + Wn, − Ma.</div>
+  <div><b>Dokumenty</b>KP wpłata, KW wypłata, RK raport kasowy, WB wyciąg bankowy.</div>
+  <div><b>W drodze</b>Dwa dokumenty w różnym czasie → dwa zapisy przez „Środki pieniężne w drodze”. Na końcu saldo zero.</div>
+  <div><b>Formy bezgotówkowe</b>Polecenie przelewu, czek rozrachunkowy, akredytywa, rozliczenia planowe i okresowe rozliczanie saldami, polecenie zapłaty.</div>
+  <div><b>Akredytywa</b>Otwarcie: Wn Akredytywa, Ma Rachunek bieżący. Zapłata: Wn Rozrachunki z dostawcami, Ma Akredytywa. Reszta wraca na rachunek.</div>
+  <div><b>Czek obcy</b>1) Wn Czeki obce, Ma Rozrachunki z odbiorcami. 2) Wn Środki pieniężne w drodze, Ma Czeki obce. 3) Wn Rachunek bieżący, Ma Środki pieniężne w drodze. Bez dyskonta.</div>
+  <div><b>Weksel obcy przychodzi</b>Wn Weksle obce (suma wekslowa). Ma Rozrachunki z odbiorcami (dług) i Ma Przychody finansowe (odsetki).</div>
+  <div><b>Weksel obcy schodzi</b>Ma Weksle obce (suma wekslowa). Wn Rachunek bieżący albo Rozrachunki z dostawcami, a dyskonto Wn Koszty finansowe. Gdy oddanie do banku i wyciąg to dwa punkty: po drodze „Środki pieniężne w drodze”.</div>
+  <div><b>Weksel własny</b>Wystawienie: Wn Rozrachunki z dostawcami i Wn Koszty finansowe, Ma Zobowiązania wekslowe. Wykup: Wn Zobowiązania wekslowe, Ma Rachunek bieżący.</div>
+  <div><b>Wzory</b>$S_w = N_f \cdot 100 : (100 - d \cdot t : 365)$. $O_d = S_w \cdot d \cdot t : 36\,500$.</div>
+  <div><b>VAT</b>Sprzedaż: Ma Rozrachunki z tytułu VAT. Zakup: Wn Rozrachunki z tytułu VAT. Przychód i koszt w kwocie netto.</div>
+  <div><b>Limit gotówki</b>Między przedsiębiorcami transakcja powyżej 15 000 zł idzie przez rachunek.</div>
+</div>
+
+<Ramka kind="gdzie">
+Konta „Rozrachunki z odbiorcami” i „Rozrachunki z dostawcami” wracają przy rozrachunkach. Dyskonto i odsetki trafiają do przychodów i kosztów finansowych, a te do wyniku finansowego.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+<a id="cw-kasa" class="k-anchor"></a>
+
+### Kasa i rachunek bieżący
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'Odbiorca wpłacił należność do kasy, 900 zł.', opcje: ['Wn Kasa, Ma Rozrachunki z odbiorcami', 'Wn Rozrachunki z odbiorcami, Ma Kasa', 'Wn Kasa, Ma Przychody ze sprzedaży'], dobra: 0, dlaczego: 'Gotówka wpłynęła, więc Wn Kasa. Należność od odbiorcy maleje, a konto aktywne maleje po Ma. Przychód był wcześniej, przy sprzedaży. Teraz tylko należność zamienia się w gotówkę.' },
+  { q: 'Bank pobrał z rachunku odsetki od kredytu, 400 zł.', opcje: ['Wn Kredyt, Ma Rachunek bieżący', 'Wn Rachunek bieżący, Ma Koszty finansowe', 'Wn Koszty finansowe, Ma Rachunek bieżący'], dobra: 2, dlaczego: 'Pieniądze wyszły z rachunku, więc Ma Rachunek bieżący. Odsetki to koszt finansowy, a koszt rośnie po Wn. Wn Kredyt to spłata raty, czyli zmniejszenie długu, a nie odsetki.' },
+  { q: 'Raport kasowy: wpłacono gotówkę do banku, 1 500 zł. Wyciągu bankowego jeszcze nie ma.', opcje: ['Wn Rachunek bieżący, Ma Kasa', 'Wn Środki pieniężne w drodze, Ma Kasa', 'Wn Kasa, Ma Środki pieniężne w drodze'], dobra: 1, dlaczego: 'Gotówka wyszła z kasy (Ma Kasa). Bank jeszcze jej nie potwierdził, więc rachunku nie ruszamy. Kwota czeka na koncie „Środki pieniężne w drodze” po Wn. Trzecia odpowiedź ma odwrócone strony.' },
+  { q: 'Przyszedł wyciąg bankowy z wpłatą z poprzedniego zadania, 1 500 zł.', opcje: ['Wn Rachunek bieżący, Ma Kasa', 'Wn Środki pieniężne w drodze, Ma Rachunek bieżący', 'Wn Rachunek bieżący, Ma Środki pieniężne w drodze'], dobra: 2, dlaczego: 'Pieniądze są już na rachunku (Wn) i schodzą z „drogi” (Ma). Z kasy zdjęliśmy je przy raporcie kasowym. Drugi zapis Ma Kasa zdjąłby je dwa razy.' },
+  { q: 'Przy liczeniu kasy stwierdzono nadwyżkę gotówki, 30 zł.', opcje: ['Wn Kasa, Ma Rozliczenie niedoborów, szkód i nadwyżek', 'Wn Rozliczenie niedoborów, szkód i nadwyżek, Ma Kasa', 'Wn Kasa, Ma Przychody finansowe'], dobra: 0, dlaczego: 'Gotówki jest więcej, więc Wn Kasa. Skąd się wzięła, jeszcze nie wiadomo, więc kwota czeka na koncie rozliczenia po Ma. Druga odpowiedź to niedobór.' },
+]} />
+
+<CwiczenieKsiegowanie tytul="Zaksięguj dziesięć operacji gotówkowych i bankowych" konta={KC1} operacje={OC1} typy={false} />
+
+<a id="cw-formy" class="k-anchor"></a>
+
+### Formy rozliczeń bezgotówkowych
+
+<Klasyfikator pytanie="Która to forma rozliczenia?" kategorie={['Polecenie przelewu', 'Czek rozrachunkowy', 'Akredytywa', 'Rozliczanie saldami', 'Polecenie zapłaty']} elementy={[
+  { tekst: 'Dłużnik każe swojemu bankowi obciążyć swój rachunek i przekazać kwotę wierzycielowi.', kat: 0, dlaczego: 'Dyspozycję wydaje dłużnik i dotyczy ona jego własnego rachunku. To polecenie przelewu.' },
+  { tekst: 'Wierzyciel każe bankowi obciążyć rachunek dłużnika i uznać swój rachunek.', kat: 4, dlaczego: 'Dyspozycję wydaje wierzyciel. To polecenie zapłaty, np. comiesięczna opłata ściągana z rachunku.' },
+  { tekst: 'Bank na wniosek dłużnika odkłada pieniądze z jego rachunku na zapłatę za konkretne świadczenie.', kat: 2, dlaczego: 'Pieniądze są wyodrębnione i czekają, aż wierzyciel spełni świadczenie. To akredytywa.' },
+  { tekst: 'Dłużnik wręcza wierzycielowi dokument na kwotę długu, a wierzyciel składa go w banku.', kat: 1, dlaczego: 'Tym dokumentem jest czek rozrachunkowy. Bank przenosi kwotę między rachunkami, bez gotówki.' },
+  { tekst: 'Dwie firmy sprzedają sobie nawzajem i raz na kwartał płacą tylko różnicę.', kat: 3, dlaczego: 'Każda jest dla drugiej i dostawcą, i odbiorcą. To okresowe rozliczanie saldami.' },
+  { tekst: 'Po zakończeniu rozliczenia niewykorzystana reszta odłożonych pieniędzy wraca na rachunek bieżący.', kat: 2, dlaczego: 'Tak kończy się akredytywa: zamknięcie i zwrot reszty.' },
+]} />
+
+<a id="cw-weksle" class="k-anchor"></a>
+
+### Czeki i weksle
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: 'Odbiorca zapłacił czekiem rozrachunkowym, 3 000 zł. Czek leży jeszcze u nas.', opcje: ['Wn Rachunek bieżący, Ma Rozrachunki z odbiorcami', 'Wn Czeki obce, Ma Rozrachunki z odbiorcami', 'Wn Środki pieniężne w drodze, Ma Czeki obce'], dobra: 1, dlaczego: 'Mamy czek, nie pieniądze na rachunku. Czek obcy to konto aktywne i rośnie po Wn. Należność maleje po Ma. Trzecia odpowiedź to następny krok: złożenie czeku w banku.' },
+  { q: 'Odbiorca, który jest nam winien 2 450 zł, płaci wekslem o sumie wekslowej 2 500 zł. Ile wpisujesz po Wn konta „Weksle obce”?', opcje: ['2 450 zł', '50 zł', '2 500 zł'], dobra: 2, dlaczego: 'Weksel księgujesz zawsze w sumie wekslowej: 2 500. Po Ma: Rozrachunki z odbiorcami 2 450 i Przychody finansowe 50.' },
+  { q: 'Bank przyjął do dyskonta weksel obcy o sumie wekslowej 8 000 zł i przelał 7 800 zł. Gdzie trafia 200 zł?', opcje: ['Ma Przychody finansowe', 'Wn Koszty finansowe', 'Zostaje na koncie Weksle obce'], dobra: 1, dlaczego: 'Dostaliśmy pieniądze przed terminem i bank wziął za to 200 zł. To nasz koszt finansowy, po Wn. Z konta „Weksle obce” schodzi cała suma 8 000, nic na nim nie zostaje.' },
+  { q: 'Indosujemy weksel obcy o sumie wekslowej 3 000 zł na dostawcę. Nasz dług wobec niego to 2 900 zł. Który zapis jest pełny?', opcje: ['Wn Rozrachunki z dostawcami 3 000, Ma Weksle obce 3 000', 'Wn Rozrachunki z dostawcami 2 900, Wn Koszty finansowe 100, Ma Weksle obce 3 000', 'Wn Rozrachunki z dostawcami 2 900, Ma Weksle obce 2 900'], dobra: 1, dlaczego: 'Dług maleje o 2 900, weksel schodzi w całości (3 000), a różnica 100 to dyskonto, czyli koszt finansowy. Pierwsza odpowiedź zmniejsza dług o więcej, niż wynosi. Trzecia zostawia na koncie weksla 100 zł, choć weksla już nie mamy.' },
+  { q: 'Wystawiamy dostawcy weksel własny o sumie wekslowej 5 000 zł na spłatę długu 4 900 zł. Co stoi po stronie Ma?', opcje: ['Zobowiązania wekslowe 5 000', 'Weksle obce 5 000', 'Rozrachunki z dostawcami 4 900'], dobra: 0, dlaczego: 'Weksel własny to nasz dług, konto pasywne „Zobowiązania wekslowe”, rośnie po Ma o sumę wekslową. Po Wn: Rozrachunki z dostawcami 4 900 i Koszty finansowe 100. „Weksle obce” to weksle, które dostaliśmy od innych.' },
+  { q: 'Która cecha odróżnia czek od weksla?', opcje: ['Czek można indosować, weksla nie', 'Przy przekazaniu czeku nie stosuje się dyskonta', 'Czek jest zobowiązaniem do zapłaty w przyszłości'], dobra: 1, dlaczego: 'Czek jest płatny za okazaniem, więc nie ma za co naliczać odsetek. Indosować można i czek, i weksel. Zobowiązaniem do zapłaty w ustalonym terminie jest weksel.' },
+]} />
+
+<CwiczenieKsiegowanie tytul="Zaksięguj operacje z czekiem i wekslami" konta={KC2} operacje={OC2} typy={false} />
+
+<a id="cw-wzory" class="k-anchor"></a>
+
+### Suma wekslowa i odsetki dyskontowe
+
+<Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
+  { q: `Dług to ${zl(WZOR2.nf)} zł, stopa dyskontowa 10,95% rocznie, weksel na ${WZOR2.t} dni. Ile wynosi d · t : 365?`, opcje: ['0,9', '9', '328,5'], dobra: 0, dlaczego: '10,95 · 30 = 328,5. Potem 328,5 : 365 = 0,9. Odpowiedź 328,5 to rachunek przerwany w połowie. 9 to przecinek przesunięty o jedno miejsce.' },
+  { q: `Te same dane. Ile wynosi suma wekslowa?`, opcje: [`${zl(WZOR2.nf)} zł`, `${zl(SW2)} zł`, '9 999,19 zł'], dobra: 1, dlaczego: `Mianownik: 100 − 0,9 = 99,1. Suma wekslowa: ${zl(WZOR2.nf)} · 100 : 99,1 = 991 000 : 99,1 = ${zl(SW2)}. Pierwsza odpowiedź to sam dług, bez odsetek. Trzecia dolicza 0,9% do długu (9 910 · 1,009), a wzór każe dzielić przez 99,1.` },
+  { q: `Te same dane, suma wekslowa ${zl(SW2)} zł. Ile wynoszą odsetki dyskontowe?`, opcje: [`${zl(OD2)} zł`, '900 zł', '89,19 zł'], dobra: 0, dlaczego: `${zl(SW2)} · 10,95 · 30 : 36 500 = 3 285 000 : 36 500 = ${zl(OD2)}. Kontrola: ${zl(SW2)} − ${zl(OD2)} = ${zl(SW2 - OD2)}, czyli dług. 89,19 wychodzi, gdy odsetki liczy się od długu zamiast od sumy wekslowej. 900 wychodzi przy dzieleniu przez 3 650 zamiast przez 36 500.` },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Sprawdź, czy rozumiesz środki pieniężne" pytania={[
+  { q: 'Co należy do „innych środków pieniężnych”?', opcje: ['Gotówka w kasie i pieniądze na rachunku', 'Czeki obce, weksle obce i środki pieniężne w drodze', 'Zobowiązania wekslowe i kredyty'], dobra: 1, dlaczego: 'Kasa i rachunek to osobne grupy. Zobowiązania wekslowe i kredyty to długi, czyli pasywa, a nie środki pieniężne.' },
+  { q: 'Który dokument zbiera wszystkie wpłaty i wypłaty gotówki z danego okresu?', opcje: ['Raport kasowy (RK)', 'Wyciąg bankowy (WB)', 'Dowód KW'], dobra: 0, dlaczego: 'Raport kasowy to zestawienie obrotów kasy. KW dokumentuje jedną wypłatę. Wyciąg bankowy dotyczy rachunku, nie kasy.' },
+  { q: 'Kto wydaje dyspozycję przy poleceniu zapłaty?', opcje: ['Dłużnik', 'Bank z własnej inicjatywy', 'Wierzyciel'], dobra: 2, dlaczego: 'Polecenie zapłaty to dyspozycja wierzyciela: obciąż rachunek dłużnika, uznaj mój. Przy poleceniu przelewu dyspozycję wydaje dłużnik.' },
+  { q: 'Akredytywa to:', opcje: ['Kredyt udzielony przez bank na zakup towarów', 'Pieniądze dłużnika odłożone przez bank na zapłatę za konkretne świadczenie', 'Czek wystawiony na okaziciela'], dobra: 1, dlaczego: 'Przy akredytywie bank odkłada pieniądze z rachunku dłużnika. To nie kredyt: firma płaci własnymi pieniędzmi.' },
+  { q: 'Czym różni się czek rozrachunkowy od gotówkowego?', opcje: ['Rozrachunkowy nie daje gotówki, tylko przeniesienie kwoty między rachunkami', 'Rozrachunkowy jest płatny w przyszłości', 'Rozrachunkowego nie można złożyć w banku'], dobra: 0, dlaczego: 'Czek gotówkowy każe wypłacić gotówkę okazicielowi. Rozrachunkowy służy do rozliczenia bezgotówkowego. Oba są płatne za okazaniem.' },
+  { q: 'Weksel własny w bilansie to:', opcje: ['Składnik aktywów', 'Przychód finansowy', 'Zobowiązanie'], dobra: 2, dlaczego: 'Weksel własny to nasza obietnica zapłaty, czyli dług: konto „Zobowiązania wekslowe”. Aktywem jest weksel obcy.' },
+  { q: 'Która funkcja weksla wiąże się z indosem?', opcje: ['Gwarancyjna', 'Obiegowa', 'Kredytowa'], dobra: 1, dlaczego: 'Indos pozwala przekazać weksel dalej, więc weksel krąży: to funkcja obiegowa. Kredytowa oznacza odroczenie zapłaty, gwarancyjna zabezpieczenie roszczeń.' },
+  { q: 'Przyjmujemy od odbiorcy weksel wyższy niż jego dług. Różnica to dla nas:', opcje: ['Przychód finansowy', 'Koszt finansowy', 'Zobowiązanie wobec odbiorcy'], dobra: 0, dlaczego: 'Czekamy na pieniądze, więc odsetki należą się nam. Kosztem finansowym jest dyskonto, gdy to my chcemy pieniędzy wcześniej albo wystawiamy własny weksel.' },
+  { q: 'Od jakiej kwoty transakcja między przedsiębiorcami musi iść przez rachunek?', opcje: ['Powyżej 1 500 zł', 'Powyżej 15 000 zł', 'Każda, bez względu na kwotę'], dobra: 1, dlaczego: 'Prawo przedsiębiorców (art. 19) wskazuje jednorazową wartość transakcji powyżej 15 000 zł. Mniejsze transakcje można rozliczać gotówką.' },
+]} />
