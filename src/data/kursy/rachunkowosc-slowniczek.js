@@ -63,4 +63,14 @@ export const SLOWNICZEK = [
   { nazwa: 'Wynik finansowy', znaczy: 'Przychody minus koszty za okres: zysk albo strata. Na koncie wyniku koszty stoją po Wn, przychody po Ma; saldo Ma to zysk, saldo Wn — strata.', modul: 'wynik-finansowy' },
   { nazwa: 'Przeksięgowanie', znaczy: 'Zapis, który zeruje konto wynikowe i przenosi jego saldo na konto Wynik finansowy (przychody: Wn przychody, Ma wynik; koszty: Wn wynik, Ma koszty).', modul: 'wynik-finansowy' },
   { nazwa: 'Zysk brutto i netto', znaczy: 'Brutto = przychody − koszty (przed podatkiem). Netto = brutto − podatek dochodowy (w zadaniach 19% zysku brutto). Zysk netto stoi w pasywach, A.VI.', modul: 'wynik-finansowy' },
+  // --- Środki pieniężne ---
+  { nazwa: 'Raport kasowy (RK), KP, KW', znaczy: 'KP — dowód wpłaty gotówki do kasy, KW — dowód wypłaty, RK — zestawienie wszystkich wpłat i wypłat z okresu.', modul: 'srodki-pieniezne' },
+  { nazwa: 'Wyciąg bankowy (WB)', znaczy: 'Lista operacji na rachunku przysłana przez bank. Podstawa zapisów na koncie Rachunek bieżący.', modul: 'srodki-pieniezne' },
+  { nazwa: 'Środki pieniężne w drodze', znaczy: 'Konto aktywne na pieniądze, czeki i weksle, które wyszły z jednego miejsca, a drugie jeszcze ich nie potwierdziło (np. gotówka wpłacona do banku przed wyciągiem). Po obu dokumentach saldo zero.', modul: 'srodki-pieniezne' },
+  { nazwa: 'Akredytywa', znaczy: 'Pieniądze dłużnika odłożone przez bank na zapłatę za konkretne świadczenie. Otwarcie: Wn Akredytywa, Ma Rachunek bieżący.', modul: 'srodki-pieniezne' },
+  { nazwa: 'Czek obcy', znaczy: 'Czek otrzymany od kogoś, jeszcze niezrealizowany przez bank. Konto aktywne Czeki obce. Przy czeku nie ma dyskonta.', modul: 'srodki-pieniezne' },
+  { nazwa: 'Weksel obcy i weksel własny', znaczy: 'Weksel obcy: ktoś obiecał zapłacić nam (aktywa, konto Weksle obce). Weksel własny: my obiecaliśmy zapłacić (pasywa, konto Zobowiązania wekslowe).', modul: 'srodki-pieniezne' },
+  { nazwa: 'Suma wekslowa', znaczy: 'Kwota wpisana na wekslu (wartość nominalna): dług powiększony o odsetki dyskontowe. W tej kwocie księguje się weksel.', modul: 'srodki-pieniezne' },
+  { nazwa: 'Dyskonto (odsetki dyskontowe)', znaczy: 'Różnica między sumą wekslową a długiem. Przyjmujemy weksel — przychód finansowy. Oddajemy weksel wcześniej albo wystawiamy własny — koszt finansowy.', modul: 'srodki-pieniezne' },
+  { nazwa: 'Indos', znaczy: 'Przeniesienie praw z weksla (albo czeku) na inną osobę, np. zapłata dostawcy wekslem otrzymanym od odbiorcy.', modul: 'srodki-pieniezne' },
 ];
