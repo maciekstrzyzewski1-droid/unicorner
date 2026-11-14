@@ -255,7 +255,7 @@ html.rm .droga,html:not(.js) .droga,html.bez-anim .droga{--p:1}
 .droga-svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .dr-tlo,.dr-linia{fill:none;stroke-linecap:round;vector-effect:non-scaling-stroke}
 .dr-tlo{stroke:rgba(255,255,255,.2);stroke-width:2;stroke-dasharray:2 8}
-.dr-linia{stroke:url(#drogaGrad);stroke-width:3.5}
+.dr-linia{stroke-width:3.5}   /* kolor: gradient wpisany atrybutem stroke w SVG (odwołanie url(#…) z zewnętrznego CSS bywa zawodne) */
 html.js:not(.rm):not(.bez-anim) .droga-kolor{clip-path:inset(-20% 100% -20% 0)}
 .dr-kropka{position:absolute;left:0;top:0;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#fff;
   box-shadow:0 0 0 4px rgba(255,216,74,.28),0 0 22px 6px rgba(255,216,74,.55);will-change:transform}
