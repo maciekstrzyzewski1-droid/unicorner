@@ -26,6 +26,7 @@ Wiele plików ma 50–220 KB. Nie czytaj ich w całości: najpierw `grep -n`, po
 ## Pułapki
 - Strony przedmiotów i statystyki mają własny JS i część własnego CSS. Zmiana w nich nie przenosi się na inne strony. Zmiana we wspólnym pliku z `src/styles/` działa na wszystkie strony, które go importują.
 - Skrypty `is:inline` nie mogą importować modułów.
+- Strona główna (`src/pages/index.astro`) ma własny CSS `src/styles/start.css` i skrypty w `src/scripts/start/` (zwykły `<script>` z importami, pakowany przez Astro). `global.css` to dawny landing: dziś używa go tylko `kurs-szeroki.css`, więc zmiany w nim trafiają do kursów, nie na stronę główną. Animacje strony głównej steruje jedna pętla w `silnik.js` przez zmienne CSS (`--hp`, `--p`, `--g`, `--sp`); nowy efekt dopisuj tam, nie w osobnym `requestAnimationFrame`.
 - Artykuły (`src/teksty/`) pisze się w palecie źródłowej (ciemna zieleń `#14150f`, złoty `#d1a13f`, Fraunces + Work Sans). Strona artykułu pokazuje je w tej palecie bez przekolorowania (`src/lib/wiedza.js` tylko zawęża CSS do `.art` i wycina `<script>`); czcionki są hostowane lokalnie w `public/fonts/fonty-artykul.css`, a ramka strony dostaje tę paletę przez zmienne na `body` w `src/pages/wiedza/[slug].astro`. Lista `wiedza.astro` zostaje w stylu cyberpunkowym.
 
 ## Sprawdzanie

@@ -110,6 +110,8 @@ html.js:not(.rm):not(.bez-anim) .nav{animation:zGory .7s var(--ease-out) .1s bac
   display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto 1fr auto;padding:calc(var(--nav-h) + 4px) 0 clamp(18px,3.6vh,40px)}
 html.rm .hero-wrap,html:not(.js) .hero-wrap,html.bez-anim .hero-wrap{height:auto}
 html.rm .hero,html:not(.js) .hero,html.bez-anim .hero{position:relative}
+/* niskie okna (telefon poziomo): bez przypinania, żeby dół hero nie uciekał poza ekran */
+@media (max-height:560px){.hero-wrap{height:auto}.hero{position:relative}}
 
 /* scena: nocne niebo, żar na horyzoncie, blokowisko, neonowa podłoga */
 .scena{position:absolute;inset:0;z-index:-1;overflow:hidden;
@@ -148,7 +150,7 @@ html.js:not(.rm) .podloga i::before{animation:podloga 4.6s linear infinite}
   clip-path:polygon(0 0,calc(100% - 6px) 0,100% 6px,100% 100%,6px 100%,0 calc(100% - 6px))}
 .chrom-scena{position:relative;align-self:center;padding:clamp(22px,4.5vh,56px) var(--pad);transform:translateY(calc(var(--hp,0)*-5vh))}
 .hero .chrom-scena{align-self:start;margin-top:clamp(0px,5vh,64px)}
-.chrom-t{position:relative;z-index:1;margin:0;font:700 calc((100vw - 2*var(--pad))/5.5)/.9 var(--disp);letter-spacing:-.02em;text-align:center;white-space:nowrap}
+.chrom-t{position:relative;z-index:1;margin:0;font:700 calc((100vw - 2*var(--pad))/5.6)/.9 var(--disp);letter-spacing:-.02em;text-align:center;white-space:nowrap}
 .ct-l{display:inline-block;color:transparent;-webkit-background-clip:text;background-clip:text;
   background-image:linear-gradient(180deg,#fff 6%,#d9d3ff 28%,#a78bfa 45%,#2a1263 51%,#7a2090 63%,#ff8fd0 83%,#fff 100%)}
 .chrom-gl{position:absolute;inset:0;z-index:2;width:100%;height:100%;pointer-events:none}
@@ -161,6 +163,7 @@ html.bez-gl .chrom-gl,html:not(.js) .chrom-gl{display:none}
 .hs-lid{margin-top:.5em;max-width:34em;font-size:clamp(1rem,1.2vw,1.1875rem);line-height:1.5;color:var(--przygas);text-wrap:pretty}
 .hs-akcje{display:flex;flex-direction:column;align-items:flex-start;gap:6px}
 .hero-meta,.hero-stopa{opacity:calc(1 - var(--hp)*1.8);transform:translateY(calc(var(--hp)*-28px))}
+.hero.zgaszony .hero-meta,.hero.zgaszony .hero-stopa{pointer-events:none}
 /* wejście po wczytaniu: jedna zgrana sekwencja (chrom pęcznieje w shaderze, reszta dochodzi po nim) */
 html.js:not(.rm):not(.bez-anim) .hero-meta p{animation:zanik .8s ease .35s backwards}
 html.js:not(.rm):not(.bez-anim) .hs-tekst{animation:zDolu .8s var(--ease-out) .6s backwards}
@@ -201,12 +204,12 @@ html.js:not(.rm):not(.bez-anim) .hs-akcje{animation:zDolu .8s var(--ease-out) .7
 .sek-dop b{color:var(--text);font-weight:600}
 .lista{border-top:1px solid var(--line2)}
 .lista li{border-bottom:1px solid var(--line)}
-.wiersz{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1.25fr) minmax(0,17rem) 44px;align-items:center;
+.wiersz{position:relative;isolation:isolate;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1.15fr) minmax(0,15rem) 44px;align-items:center;
   gap:clamp(16px,2.4vw,40px);padding:clamp(16px,1.9vw,26px) clamp(8px,1.2vw,20px);text-decoration:none}
 .wiersz::before{content:"";position:absolute;inset:0;z-index:-1;clip-path:inset(0 100% 0 0);transition:clip-path .26s var(--ease-out);
   background:linear-gradient(90deg,rgba(167,139,250,.2),rgba(167,139,250,.06) 62%,transparent)}
 .w-nazwa{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25em .7em}
-.w-n{font:600 clamp(1.3rem,2.3vw,2.15rem)/1.08 var(--disp);letter-spacing:-.015em;transition:color .18s ease}
+.w-n{font:600 clamp(1.3rem,2.2vw,2rem)/1.1 var(--disp);letter-spacing:-.015em;transition:color .18s ease}
 .w-sub{font:500 .8125rem/1 var(--disp);letter-spacing:.02em;color:var(--muted)}
 .boss .w-sub{font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--magenta)}
 .w-stan{padding:4px 7px;font:600 .6875rem/1 var(--disp);letter-spacing:.06em;text-transform:uppercase;color:var(--gold);box-shadow:inset 0 0 0 1px rgba(255,216,74,.5)}
@@ -407,5 +410,5 @@ html.rm .stopka,html:not(.js) .stopka,html.bez-anim .stopka{--sp:1}
 @media (max-width:759px){
   .st-hero .chrom-t{text-align:center}
   .st-hero .ct-l{display:inline-block}
-  .st-hero .chrom-t{font-size:calc((100vw - 2*var(--pad))/5.5)}
+  .st-hero .chrom-t{font-size:calc((100vw - 2*var(--pad))/5.6)}
 }

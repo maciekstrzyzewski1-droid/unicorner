@@ -46,7 +46,8 @@ przechodzący `npm run build`, więc przed pushem zawsze go uruchom. Na pull req
 | `src/data/kursy/` | Opisy kursów, lista modułów (`status: 'live'` / `'soon'`), słowniczek. Rejestr w `index.js`. |
 | `src/data/wiedza.js` | Metadane artykułów: kategoria, seria, kolejność, tytuł SEO, opis. |
 | `src/teksty/*.html` | Treść artykułów (gotowy HTML, 31 plików). |
-| `src/styles/` | `tailwind.css`, `global.css`, `kurs.css`, `wiedza.css`, `generator.css`. |
+| `src/styles/` | `tailwind.css`, `start.css` (strona główna), `global.css` (dawny landing, dziś tylko baza dla `kurs-szeroki.css`), `kurs.css`, `wiedza.css`, `generator.css`. |
+| `src/scripts/start/` | Skrypty strony głównej: `silnik.js` (jedna pętla klatek dla animacji sterowanych scrollem, Lenis, menu) i `chrom.js` (napis UNICORNER w WebGL2). |
 | `public/` | Pliki kopiowane 1:1 do `dist/`: `CNAME`, `robots.txt`, `assets/` (szkielet 3D, wideo, skrypty generatora i talii), `recenzje.html`, `moderacja.html`, `reviews.json`. |
 | `worker.js` | Źródło Cloudflare Workera (nie jest częścią builda Astro). Opis endpointów na górze pliku. |
 | `WDROZENIE.md` | Konfiguracja i wdrożenie Workera. |
@@ -80,7 +81,7 @@ przechodzący `npm run build`, więc przed pushem zawsze go uruchom. Na pull req
 3. Komponenty interaktywne bierz z `src/components/kurs/` (ramki, rozbiór wzoru, rozwiązanie krok po kroku, tabele liczone kodem, pytania).
 
 ### Nowy kurs
-Plik danych w `src/data/kursy/<kurs>.js` + wpis w `index.js` + `src/pages/<kurs>.astro` z `<KursHub kurs="…" />` + kafelek w tablicy `SUBJECTS` w `src/pages/index.astro`.
+Plik danych w `src/data/kursy/<kurs>.js` + wpis w `index.js` + `src/pages/<kurs>.astro` z `<KursHub kurs="…" />` + wiersz w tablicy `SUBJECTS` w `src/pages/index.astro` (`sub: "kurs od zera"`, `badge: "w budowie"` dopóki kurs rośnie).
 
 ### Nowy przedmiot w stylu „kompendium + quiz"
 Nowa strona `src/pages/<nazwa>.astro` (opakowana w `Base.astro`, wzór: np. `etir.astro`) i wpis w `SUBJECTS` w `src/pages/index.astro` (`status:"live"`, `file:"<nazwa>.html"`).

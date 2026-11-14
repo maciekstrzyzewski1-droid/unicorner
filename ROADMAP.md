@@ -44,7 +44,7 @@ Priorytet: **1 → 2** na pierwszym planie, **3** lekko w tle, **4 z twardym bud
   - Maciek: reguły cache w Cloudflare. `/_astro/*` na rok: 2026-11-07 nagłówki nadal `max-age=14400`, czyli reguła niewdrożona (sprawdzić Deploy). `*.woff2` 30 dni. CSS fontów bez długiego cache (bez hasha).
   - Czaszka przy „ogranicz ruch”: PR `perf/czaszka-reduced-motion-v2` (statyczna poza, obracanie tylko ręczne, rysowanie na żądanie). Maciek sprawdza na żywym komputerze (testy w automatycznej przeglądarce wieszają się na WebGL programowym).
   - Propozycje: podział największych modułów matematyki na rozdziały (decyzja o nawigacji), automatyczne zrzuty ekranu jako test wyglądu.
-- **U1 (inspiracje z innych stron)** — po U7; potrzebne 3–5 stron, które Maciek lubi.
+- **U1 (inspiracje z innych stron) → nowa strona główna** — 2026-11-14, gałąź `claude/nifty-brown-tu1o2m`, czeka na przegląd Maćka. Inspiracja: Daydrift Festival z biblioteki Futurepedii (przejścia sterowane scrollem, jedna pętla klatek), bez kopiowania układu i grafik. Co jest: hero z napisem UNICORNER w płynnym chromie (własny shader WebGL2; szkielet 3D i tło ze znaków zeszły ze strony głównej, ok. 1,2 MB skryptów mniej), przypięte przejście nocy w świt nad blokowiskiem, skośne taśmy, indeks przedmiotów zamiast kart, zdanie rozświetlane scrollem i droga „Jak korzystać”, scena generatora, czytelnia w palecie artykułów, FAQ w zwykłym HTML-u (`<details>`), stopka o świcie. Lenis (wygładzony scroll) tylko dla myszy. Style w `src/styles/start.css`, skrypty w `src/scripts/start/`. Do decyzji po scaleniu: usunięcie nieużywanych `HeroSkull.jsx`, `FaultyTerminal.jsx`, `BorderGlow.jsx`, `public/assets/skeleton.glb` i zależności `three`, `@react-three/*`, `ogl` (osobny PR porządkowy).
 - Do potwierdzenia przez Maćka: czy wysłane maile do wykładowców (zgoda na materiały, W-06); sprzątanie niepotwierdzonych zapisów w EmailOctopus (obiecuje to polityka prywatności); stopka z wypisem przy pierwszej kampanii.
 - Terminy: 15.11 przegląd bezpieczeństwa (U6, zadanie cykliczne, pierwszy przebieg niezweryfikowany) i przypomnienie o `unicorner-old`; 19.11 R-26.
 - Rejestr, dziennik i decyzje: `scratchbook/narzedzia/radar/` (`DO-WDROZENIA.md`, `ROADMAP.md`, `mapa-potrzeb.md`).
@@ -84,9 +84,7 @@ Rzetelne artykuły oparte na źródłach, anty-clickbait. Filar, nie pivot: ma d
 ---
 
 ## 🧊 Zamrożone — nie otwierać ponownie bez sygnału z danych
-- **Stopka** = basic (wielki UNICORNER + eyebrow/tagline/CTA + legal).
-- **Hero** = chromowany szkielet + tło FaultyTerminal.
-- **Tło strony** = siatka 38px.
+- **Strona główna** (hero, stopka, tło): odmrożona przez Maćka 2026-11-14 na czas przebudowy (U1, patrz „W toku”). Po scaleniu nowej wersji wraca tu jako zamrożona w nowym kształcie: hero = napis w chromie nad blokowiskiem, stopka = ten sam napis o świcie.
 - Kolejne efekty 3D / tła / animacje: to szufladka POLISH, bez nowych pozycji, dopóki ① i ② nie ruszą.
 
 ## Zasada nadrzędna

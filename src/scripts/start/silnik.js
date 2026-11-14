@@ -19,7 +19,7 @@ const nav = $('[data-nav]');
 // ---------- wygładzone przewijanie: tylko mysz albo gładzik, nigdy na dotyku i nigdy przy „ogranicz ruch” ----------
 let lenis = null;
 if (!RM && mysz) {
-  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.95, autoRaf: false, anchors: { offset: -(nav ? nav.offsetHeight : 0) + 1, duration: 1.3 } });
+  lenis = new Lenis({ lerp: 0.1, wheelMultiplier: 0.95, autoRaf: false, anchors: { duration: 1.3 } });   // odstęp pod nawigację bierze się ze scroll-padding-top w CSS
 }
 
 // ---------- menu na wąskich ekranach: natywny <dialog> (pułapka fokusu i Esc są w przeglądarce) ----------
@@ -98,7 +98,7 @@ function pomiar() {
 // ---------- pętla ----------
 let chrom = { lista: [], dopasuj() {} };
 let ostY = scrollY, ostT = 0, pred = 0, kier = 1, kierS = 1;
-let oHp = -1, oSp = -1, oG = -1, oCz = -1, oSw = -1, oNa = null, oPrzew = null, oPoHero = null;
+let oHp = -1, oSp = -1, oG = -1, oCz = -1, oSw = -1, oNa = null, oPrzew = null, oPoHero = null, oZgasl = null;
 
 function klatka(t) {
   if (lenis) lenis.raf(t);
@@ -129,6 +129,8 @@ function klatka(t) {
     const zakres = rHero.height - vh;
     hp = zakres > 10 ? ogr(-rHero.top / zakres, 0, 1) : 0;
     if (Math.abs(hp - oHp) > 0.0005) { hero.style.setProperty('--hp', hp.toFixed(4)); oHp = hp; }
+    const zgasl = hp > 0.5;
+    if (zgasl !== oZgasl) { hero.classList.toggle('zgaszony', zgasl); oZgasl = zgasl; }
   }
 
   // taśmy: stały dryf, szybciej przy scrollu, kierunek za kierunkiem przewijania
@@ -151,7 +153,7 @@ function klatka(t) {
 
   // zdanie: słowa zapalają się w miarę przewijania
   if (rZd) {
-    const p = ogr((vh * 0.84 - rZd.top) / (rZd.height + vh * 0.3), 0, 1), ile = Math.round(p * slowa.length);
+    const p = ogr((vh * 0.86 - rZd.top) / (rZd.height + vh * 0.2), 0, 1), ile = Math.round(p * slowa.length);
     if (ile !== oSw) {
       const a = Math.min(ile, oSw < 0 ? 0 : oSw), b = Math.max(ile, oSw < 0 ? slowa.length : oSw);
       for (let i = a; i < b; i++) slowa[i].classList.toggle('on', i < ile);
@@ -161,7 +163,7 @@ function klatka(t) {
 
   // droga: linia odsłania się, kropka jedzie po krzywej, kroki zapalają się po kolei
   if (rDr) {
-    const p = ogr((vh * 0.82 - rDr.top) / (vh * 0.57), 0, 1);
+    const p = ogr((vh * 0.86 - rDr.top) / (vh * 0.42), 0, 1);
     if (Math.abs(p - dr.ost) > 0.001) {
       dr.ost = p;
       droga.style.setProperty('--p', p.toFixed(4));

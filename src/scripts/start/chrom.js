@@ -73,15 +73,15 @@ vec3 otoczenie(vec3 r){
   float d = max(-el, .0015);
   vec2 p = vec2(sin(az), cos(az)) / tan(d);
   p.y += uCzas * .55;
-  vec2 q = p * .38;
+  vec2 q = p * .2;
   float rozm = .012 / (d * d + .002);   // im dalej, tym szersza plama piksela: linie zlewają się w poświatę
   vec2 odl = abs(fract(q - .5) - .5);
-  vec2 ln = (1. - smoothstep(vec2(.05), vec2(.05 + rozm), odl)) / (1. + rozm * 3.);
+  vec2 ln = (1. - smoothstep(vec2(.06), vec2(.1 + rozm), odl)) / (1. + rozm * 3.);
   float siatka = max(ln.x, ln.y);
-  vec3 podl = mix(vec3(.22, .09, .42), vec3(.035, .03, .09), smoothstep(0., .24, d));   // fioletowa mgła pod horyzontem, niżej ciemno
-  podl = mix(podl, vec3(.1, .17, .52), smoothstep(.5, 1.3, d));                         // stromo w dół: łuna neonu z podłogi
+  vec3 podl = mix(vec3(.27, .11, .5), vec3(.05, .04, .14), smoothstep(0., .42, d));   // fioletowa mgła pod horyzontem, niżej ciemno
+  podl = mix(podl, vec3(.13, .2, .6), smoothstep(.45, 1.25, d));                         // stromo w dół: łuna neonu z podłogi
   podl = mix(podl, mix(MAGENTA * .7, ZLOTO * .8, uSwit), exp(-d * 26.));
-  podl += mix(FIOLET, CYJAN, .4) * siatka * exp(-d * 1.6) * .42;
+  podl += mix(FIOLET, CYJAN, .4) * siatka * exp(-d * 1.4) * .5;
 
   vec3 c = mix(podl, niebo, smoothstep(-.004, .004, el));
   c += mix(MAGENTA, ZLOTO, uSwit) * exp(-abs(el) * 90.) * .55;   // cienka gorąca linia horyzontu
@@ -140,7 +140,7 @@ void main(){
   kol = mix(kol, kol * ir * 1.5 + ir * .07, clamp(fr * .62, 0., .62));
   vec3 H = normalize(normalize(vec3(-.4, .7, .6)) + vec3(0., 0., 1.));
   kol += pow(max(dot(N, H), 0.), 140.) * vec3(1., .97, .95) * 1.3;
-  kol *= mix(.38, 1., smoothstep(.5, .7, M.r));
+  kol *= mix(.5, 1., smoothstep(.5, .7, M.r)) * 1.06;
   kol = clamp(kol, 0., 1.) + (los(fc) - .5) / 255.;
 
   // poświata pod literami zamiast cienia (alfa mniejsza niż kolor, więc na ciemnym tle świeci)
@@ -226,7 +226,7 @@ class Chrom {
 
     this.mysz = [0.5, 0.5]; this.cel = [0.5, 0.5];
     this.dotyk = 0; this.dotykCel = 0;
-    this.t0 = -1; this.widac = false; this.w = 0; this.h = 0; this.gotowy = false; this.zgubiony = false;
+    this.t0 = -1; this.widac = false; this.w = 0; this.h = 0; this.gotowy = false; this.zgubiony = false; this.co2 = false; this.ostPostep = -1;
 
     // kursor: reagujemy na całą sekcję, nie tylko na płótno
     const gospodarz = scena.closest('[data-chrom-pole]') || scena;
@@ -313,6 +313,10 @@ class Chrom {
     const gl = this.gl, U = this.U;
     if (this.t0 < 0) this.t0 = t;
     const wej = RM ? 1 : ogr((t - this.t0 - 80) / 1500, 0, 1);
+    // w bezruchu (po wejściu, bez scrolla i kursora) rysujemy co drugą klatkę: fale są powolne, a telefon mniej się grzeje
+    this.co2 = !this.co2;
+    if (!RM && wej >= 1 && pred < 0.02 && this.dotyk < 0.02 && !this.dotykCel && Math.abs(postep - this.ostPostep) < 0.0005 && this.co2) return;
+    this.ostPostep = postep;
     this.mysz[0] += (this.cel[0] - this.mysz[0]) * 0.08;
     this.mysz[1] += (this.cel[1] - this.mysz[1]) * 0.08;
     this.dotyk += (this.dotykCel - this.dotyk) * (this.dotykCel ? 0.06 : 0.025);
@@ -344,6 +348,8 @@ export async function startChrom() {
     html.classList.add('bez-gl');
     return { lista: [], dopasuj: () => dopasuj(sceny) };
   }
+  // rozgrzewka: pierwsze rysowanie kompiluje shader, więc robimy je od razu, a nie w trakcie przewijania do stopki
+  for (const c of lista) { c.klatka(performance.now(), 0, 0); c.t0 = -1; }
   html.classList.add('gl');
   return {
     lista,
