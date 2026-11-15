@@ -3,7 +3,7 @@
    Bez tęczowych gradientów. Tło całej strony to neonowa siatka (oczko 38 px), a kursor jest w niej światłem:
    rozjaśnia siatkę, ramki paneli i napis w hero.
    Ruch sterują zmienne CSS ustawiane w src/scripts/siatka/silnik.js: --hp (hero), --w (tytuły), --p (kroki),
-   --g (generator), --gx/--gy/--gi (poświata ramek), --py (podłoga).
+   --g (generator), --gx/--gy/--gi (poświata ramek). Podłoga jedzie animacją CSS; silnik zmienia tylko jej tempo (WAAPI).
    Klasy na <html>: `js`, `rm` (ogranicz ruch), `gl`/`bez-gl` (napis w WebGL albo tekst), `bez-anim`, `gotowe`. */
 
 :root{
@@ -68,11 +68,13 @@ main,.stopka{position:relative;z-index:1}
 /* podłoga z siatki w perspektywie (hero i stopka); płynie w stronę widza, szybciej przy scrollu */
 .podloga{position:absolute;left:0;right:0;bottom:0;height:46%;overflow:hidden;perspective:340px;perspective-origin:50% 0;pointer-events:none;background:var(--tlo);
   -webkit-mask-image:linear-gradient(180deg,transparent 0%,#000 42%);mask-image:linear-gradient(180deg,transparent 0%,#000 42%)}
-.podloga i{--py:0px;position:absolute;left:-150%;right:-150%;top:0;height:300%;transform-origin:50% 0;transform:rotateX(76deg);overflow:hidden}
-.podloga i::before{content:"";position:absolute;inset:-76px 0 0 0;transform:translate3d(0,var(--py),0);
+.podloga i{position:absolute;left:-150%;right:-150%;top:0;height:300%;transform-origin:50% 0;transform:rotateX(76deg);overflow:hidden}
+.podloga i::before{content:"";position:absolute;inset:-76px 0 0 0;
   background:
     linear-gradient(rgba(168,85,255,.8) 1.5px,transparent 1.5px) 0 0/100% 76px,
     linear-gradient(90deg,rgba(168,85,255,.62) 1.5px,transparent 1.5px) 50% 0/76px 100%}
+html.js:not(.rm):not(.bez-anim) .podloga i::before{animation:podloga 3.4s linear infinite}
+@keyframes podloga{to{transform:translate3d(0,76px,0)}}
 
 /* ---------- przyciski i łącza ---------- */
 .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:.6em;min-height:48px;padding:0 1.35em;
@@ -200,12 +202,24 @@ html.rm .tytul,html:not(.js) .tytul,html.bez-anim .tytul{--w:1}
 .sek-dop{margin-top:14px;max-width:30em;color:var(--cichy)}
 .sek-dop b{color:var(--tekst);font-weight:600}
 
-/* ---------- panele z poświatą (.pw): ramka ze ściętymi rogami, która świeci tam, gdzie jest kursor ---------- */
+/* ---------- panele z poświatą (.pw): ramka ze ściętymi rogami, która świeci tam, gdzie jest kursor ----------
+   Zmienne poświaty są zarejestrowane jako niedziedziczone: silnik zmienia je co klatkę, a dziedziczone kazałyby
+   przeliczać style każdego elementu wewnątrz karty. Dlatego gradient ma tylko .pw, a wnętrze jest lekko
+   półprzezroczyste i ten sam blask prześwituje przez nie jako delikatna poświata środka. */
+@property --gx{syntax:'<percentage>';inherits:false;initial-value:50%}
+@property --gy{syntax:'<percentage>';inherits:false;initial-value:50%}
+@property --gi{syntax:'<number>';inherits:false;initial-value:0}
 .pw{--gx:50%;--gy:50%;--gi:0;position:relative;display:block;padding:1.4px;clip-path:var(--sciecie);text-decoration:none;
-  background:radial-gradient(380px circle at var(--gx) var(--gy),rgba(206,170,255,calc(var(--gi)*.98)) 0%,rgba(168,85,255,calc(var(--gi)*.5)) 34%,transparent 64%),var(--linia2)}
+  background:radial-gradient(380px circle at var(--gx) var(--gy),rgba(206,170,255,calc(var(--gi)*.98)) 0%,rgba(168,85,255,calc(var(--gi)*.5)) 34%,transparent 64%),linear-gradient(rgba(189,139,255,.15),rgba(189,139,255,.15)),var(--panel)}
 .pw>.k-srodek{position:relative;display:flex;flex-direction:column;height:100%;clip-path:var(--sciecie-w);
-  background:radial-gradient(420px circle at var(--gx) var(--gy),rgba(168,85,255,calc(var(--gi)*.1)),transparent 62%),linear-gradient(160deg,var(--panel2),var(--panel))}
+  background:linear-gradient(160deg,rgba(23,16,48,.89),rgba(16,11,31,.91))}
 .pw.na{--gi:.85;--gx:50%;--gy:0%}
+/* blask kursora (tylko mysz): mała warstwa powiększona 4x, przesuwana transformem; nad tłem ramki, pod wnętrzem karty,
+   więc w szczelinie ramki świeci w pełni, a przez półprzezroczyste wnętrze prześwituje delikatnie */
+.pw-blask{position:absolute;left:0;top:0;width:190px;height:190px;margin:-95px 0 0 -95px;border-radius:50%;pointer-events:none;opacity:0;
+  transform:translate3d(-999px,-999px,0) scale(4);will-change:transform,opacity;
+  background:radial-gradient(closest-side,rgba(214,170,255,1) 0%,rgba(178,102,255,.85) 22%,rgba(168,85,255,.45) 40%,rgba(168,85,255,0) 64%)}
+.pw>.k-srodek{z-index:1}
 [data-poswiata]{position:relative}   /* panele liczą swoje położenie względem grupy */
 
 /* ---------- PRZEDMIOTY ---------- */

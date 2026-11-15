@@ -43,10 +43,17 @@ const heroWrap = sledz($('[data-hero]'));
 const hero = $('.hero');
 const scena = $('[data-napis]');
 const tytulNapisu = scena ? $('.napis-t', scena) : null;
-const podlogi = $$('[data-podloga]').map((el) => ({ el, rodzic: sledz(el.parentNode), y: 0 }));
+const podlogi = $$('[data-podloga]').map((el) => ({ el, rodzic: sledz(el.parentNode), anim: null, w: null, tempo: 0 }));
 const swiatlo = $('[data-swiatlo]');
 const swSiatka = swiatlo ? $('.sw-siatka', swiatlo) : null;
-const grupy = $$('[data-poswiata]').map((el) => ({ el: sledz(el), panele: $$('.pw', el).map((p) => ({ el: p, x: 0, y: 0, w: 0, h: 0, gi: 0 })), czysto: true }));
+const grupy = $$('[data-poswiata]').map((el) => ({ el: sledz(el), panele: $$('.pw', el).map((p) => ({ el: p, x: 0, y: 0, w: 0, h: 0, gi: 0, blask: null })), czysto: true }));
+// blask ramek tylko przy myszy (na dotyku świeci cała karta na wysokości wzroku, klasą .na)
+if (mysz && !RM) for (const g of grupy) for (const p of g.panele) {
+  const b = document.createElement('i');
+  b.className = 'pw-blask'; b.setAttribute('aria-hidden', 'true');
+  p.el.insertBefore(b, p.el.firstChild);
+  p.blask = b;
+}
 const karty = grupy.find((g) => g.el.classList.contains('karty'));
 const tytuly = $$('[data-tytul]').map((el) => ({ el: sledz(el), w: -1, tx: 0 }));
 const zdanie = sledz($('[data-zdanie]'));
@@ -160,11 +167,16 @@ function klatka(t) {
     nav.classList.add('zadokowany'); scena.style.opacity = '0'; oDok = true;
   }
 
-  // podłogi: stały dryf w stronę widza, szybciej przy scrollu
+  // podłogi: dryf to animacja CSS liczona przez kartę graficzną; tu tylko zmieniamy jej tempo (szybciej przy scrollu)
+  // i pauzujemy ją poza ekranem. Przestawianie transformu ze skryptu co klatkę zmuszało przeglądarkę do malowania
+  // warstwy 3D od nowa (pomiar: telefon 34 kl/s zamiast 60).
   for (const p of podlogi) {
-    if (!widac.get(p.rodzic)) continue;
-    p.y = (p.y + (22 + pred * 620) * (dt / 1000)) % 76;
-    p.el.style.setProperty('--py', p.y.toFixed(1) + 'px');
+    const w = !!widac.get(p.rodzic);
+    if (!p.anim) { p.anim = document.getAnimations().find((a) => a.animationName === 'podloga' && a.effect && a.effect.target === p.el) || null; if (!p.anim) continue; }
+    if (w !== p.w) { p.w = w; if (w) p.anim.play(); else p.anim.pause(); }
+    if (!w) continue;
+    const tempo = Math.round((1 + pred * 18) * 2) / 2;   // skok co 0,5, żeby nie wysyłać zmiany co klatkę
+    if (tempo !== p.tempo) { p.tempo = tempo; if (p.anim.updatePlaybackRate) p.anim.updatePlaybackRate(tempo); else p.anim.playbackRate = tempo; }
   }
 
   // światło kursora na siatce tła
@@ -205,9 +217,10 @@ function klatka(t) {
         gi = odl <= blisko ? 1 : odl <= daleko ? (daleko - odl) / (daleko - blisko) : 0;
       }
       if (gi > 0 || p.gi > 0) {
-        const st = p.el.style;
-        if (gi > 0) { st.setProperty('--gx', ((mx / p.w) * 100).toFixed(1) + '%'); st.setProperty('--gy', ((my / p.h) * 100).toFixed(1) + '%'); }
-        st.setProperty('--gi', gi.toFixed(3));
+        // blask to osobna warstwa: przesuwamy ją i rozjaśniamy (transform + opacity), więc nic nie jest malowane od nowa
+        const st = p.blask.style;
+        if (gi > 0) st.transform = `translate3d(${mx.toFixed(1)}px,${my.toFixed(1)}px,0) scale(4)`;
+        st.opacity = gi.toFixed(3);
         p.gi = gi;
       }
       if (gi > 0) cos = true;
