@@ -1,45 +1,47 @@
 ---
+// Strona główna, wariant „Siatka” (cyberpunk, fiolet). Style: src/styles/siatka.css, skrypty: src/scripts/siatka/.
+// Poprzedni wariant („Świt”) leży obok jako _wariant-swit.astro (podkreślnik = Astro go nie buduje).
 import Base from '../layouts/Base.astro';
-import '../styles/start.css';
+import '../styles/siatka.css';
 import { getArticles, CATEGORIES } from '../lib/wiedza.js';
 
-// Wiersze indeksu przedmiotów renderują się przy buildzie (zwykłe <a href> w HTML-u, widoczne bez JS i dla wyszukiwarek).
+// Karty przedmiotów renderują się przy buildzie (zwykłe <a href> w HTML-u, widoczne bez JS i dla wyszukiwarek).
 // Nowy przedmiot = nowy wpis w SUBJECTS. `sub` to dopisek obok nazwy, `badge` to stan („w budowie”).
 const SUBJECTS = [
-  { name:"Makroekonomia",
+  { name:"Makroekonomia", emoji:"📈",
     desc:"Pieniądz, inflacja, bezrobocie, wzrost, cykl koniunkturalny i polityka banku centralnego.",
     tags:["Fiszki","Zadania","Ściana","Quiz"], status:"live", file:"makroekonomia.html" },
-  { name:"Podstawy marketingu",
+  { name:"Podstawy marketingu", emoji:"🎯",
     desc:"Reguły Cialdiniego, marketing mix (4P/7P/4C), proces decyzyjny konsumenta, segmentacja i perswazja.",
     tags:["Materiały","Quiz 55 pytań"], status:"live", file:"marketing.html" },
-  { name:"Metody i Techniki Zarządzania",
+  { name:"Metody i Techniki Zarządzania", emoji:"⚙️",
     desc:"VUCA, narzędzia jakości, analiza przyczyn źródłowych (RCA), kreatywność i praca zespołowa.",
     tags:["Kompendium","Quiz"], status:"live", file:"mitz.html" },
-  { name:"Zarządzanie Jakością",
+  { name:"Zarządzanie Jakością", emoji:"🏅",
     desc:"Ewolucja QI→QC→QA→TQM, guru jakości, 7 zasad ISO, TQM/Lean/Six Sigma, normalizacja, ISO 9001, akredytacja i koszty jakości.",
     tags:["Kompendium","Quiz 100 pytań"], status:"live", file:"zarzadzanie-jakoscia.html" },
-  { name:"Ekonomika Turystyki i Rekreacji",
+  { name:"Ekonomika Turystyki i Rekreacji", emoji:"🧳",
     desc:"Rynek turystyczny, produkt, podaż, turystyka międzynarodowa i gospodarka turystyczna.",
     tags:["Kompendium","Quiz 44 pytania"], status:"live", file:"etir.html" },
-  { name:"Obsługa Ruchu Turystycznego",
+  { name:"Obsługa Ruchu Turystycznego", emoji:"🧭",
     desc:"Ruch turystyczny, rodzaje turystyki, obsługa na etapach podróży, organizacja imprez, praca pilota i przewodnika.",
     tags:["Kompendium","Quiz 41 pytań"], status:"live", file:"ort.html" },
-  { name:"Geografia atrakcji turystycznych",
+  { name:"Geografia atrakcji turystycznych", emoji:"🗺️",
     desc:"Środowisko przyrodnicze sześciu kontynentów — góry, rzeki, jeziora, wulkany, pustynie i rekordy natury.",
     tags:["6 kontynentów","Quiz 40 pytań"], status:"live", file:"geografia.html" },
-  { name:"Matematyka", sub:"kurs od zera",
+  { name:"Matematyka", sub:"kurs od zera", emoji:"∑",
     desc:"Logika, zbiory, relacje, macierze, programowanie liniowe, pochodne i całki. Każdy symbol wyjaśniony, zadania krok po kroku z „dlaczego”.",
     tags:["Kurs krok po kroku","Interaktywne tabele","Quizy"], status:"live", badge:"w budowie", file:"matematyka.html" },
-  { name:"Rachunkowość", sub:"kurs od zera",
+  { name:"Rachunkowość", sub:"kurs od zera", emoji:"⊤",
     desc:"Bilans, operacje gospodarcze, konto teowe, Wn i Ma, saldo i podwójny zapis. Zadania z zajęć krok po kroku, bilans i konta wypełniające się na oczach.",
     tags:["Kurs krok po kroku","Konta teowe","Ćwiczenia"], status:"live", badge:"w budowie", file:"rachunkowosc.html" },
-  { name:"Metody badań rynku", sub:"kurs od zera",
+  { name:"Metody badań rynku", sub:"kurs od zera", emoji:"n",
     desc:"Skale pomiarowe i kafeteria, błędy w pytaniach ankiety, minimalna liczebność próby z danych GUS i dobór kwotowy. Każdy parametr wyjaśniony, zadania krok po kroku.",
     tags:["Kurs krok po kroku","Kwestionariusz","Liczebność próby"], status:"live", badge:"w budowie", file:"metody-badan-rynku.html" },
-  { name:"Statystyka", sub:"final boss", boss:true,
+  { name:"Statystyka", sub:"final boss", boss:true, emoji:"📊",
     desc:"Od miar opisowych, przez dynamikę i szeregi czasowe, po korelację i regresję. Teoria, zadania i quizy w ośmiu działach.",
     tags:["8 działów","Quizy","Zadania"], status:"live", file:"statystyka-kurs.html" },
-  { name:"Kolejne przedmioty",
+  { name:"Kolejne przedmioty", emoji:"✦",
     desc:"Dochodzą po kolei. Masz przedmiot, który chcesz tu zobaczyć następny? Daj znać.",
     tags:["Wkrótce"], status:"soon", file:"kontakt.html" }
 ];
@@ -49,12 +51,11 @@ const zywe = SUBJECTS.filter(s=>s.status==='live');
 const liveCount = zywe.length - 1 + STAT_DZIALY;
 const odmiana = (n, jeden, kilka, wiele) => (n===1 ? jeden : (n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? kilka : wiele));
 const countText = liveCount + ' ' + odmiana(liveCount, 'gotowy', 'gotowe', 'gotowych');
-// opóźnienia wejścia wierszy: coraz mniejsze odstępy, żeby lista weszła jak fala, a nie jak kolejka
-const opoznienie = (i) => Math.min(300, Math.round(60 * (1 - Math.pow(0.8, i)) / 0.2));
+// opóźnienia wejścia kart: coraz mniejsze odstępy, żeby siatka weszła jak fala, a nie jak kolejka
+const opoznienie = (i) => Math.min(320, Math.round(55 * (1 - Math.pow(0.82, i)) / 0.18));
 
-// Zdanie, które rozświetla się słowo po słowie przy przewijaniu (tekst z dawnego „Po co to jest”).
+// Zdanie, które „dekoduje się” słowo po słowie przy przewijaniu (tekst z dawnego „Po co to jest”).
 const ZDANIE = 'Wkuwanie definicji rzadko wystarcza. Egzaminy lubią przykłady i zastosowanie. Materiały są pod to ułożone.';
-const AKCENT = new Set(['przykłady', 'zastosowanie.']);
 const slowa = ZDANIE.split(' ');
 
 const KROKI = [
@@ -82,43 +83,6 @@ const artykuly = getArticles();
 const wiedzaGodz = Math.round(artykuly.reduce((s,a)=>s+a.minutes,0) / 60);
 const polecane = CATEGORIES.map(c => artykuly.find(a => a.category === c.id)).filter(Boolean);
 
-// Blokowisko na horyzoncie: dwa plany bloków i garść zapalonych okien. Stałe ziarno, więc build zawsze daje ten sam rysunek.
-function generator(seed){ let s = seed; return () => (s = (s * 16807) % 2147483647) / 2147483647; }
-function bloki(seed, { minW, maxW, minH, maxH, przerwa, okna }){
-  const r = generator(seed), W = 1600, H = 200;
-  const mury = [], zolte = [], cyjan = [];
-  let x = -30;
-  while (x < W + 30) {
-    const w = Math.round(minW + r() * (maxW - minW)), h = Math.round(minH + r() * (maxH - minH)), y = H - h;
-    mury.push(`M${x} ${H}V${y}h${w}V${H}Z`);
-    if (r() < 0.5) { const nw = Math.round(8 + r() * 16), nx = Math.round(x + 5 + r() * Math.max(1, w - nw - 10)); mury.push(`M${nx} ${y}v-${Math.round(4 + r() * 7)}h${nw}V${y}Z`); }
-    if (okna) {
-      const kol = Math.floor((w - 8) / 9), wier = Math.floor((h - 8) / 11);
-      for (let i = 0; i < kol; i++) for (let j = 0; j < wier; j++) {
-        const p = r();
-        if (p < okna) zolte.push(`M${x + 5 + i * 9} ${y + 6 + j * 11}h4v5h-4z`);
-        else if (p < okna * 1.3) cyjan.push(`M${x + 5 + i * 9} ${y + 6 + j * 11}h4v5h-4z`);
-      }
-    }
-    x += w + Math.round(r() * przerwa);
-  }
-  return { mury: mury.join(''), zolte: zolte.join(''), cyjan: cyjan.join('') };
-}
-// Gwiazdy: jedna ścieżka z kółek zamiast setki elementów (mniej pracy dla przeglądarki przy każdej klatce).
-function gwiazdy(seed, ile, rMin, rMax){
-  const r = generator(seed); let d = '';
-  for (let i = 0; i < ile; i++) {
-    const x = (r() * 1600).toFixed(1), y = (r() * 620).toFixed(1), k = +(rMin + r() * (rMax - rMin)).toFixed(2);
-    d += `M${x} ${y}m-${k} 0a${k} ${k} 0 1 0 ${2 * k} 0a${k} ${k} 0 1 0 -${2 * k} 0`;
-  }
-  return d;
-}
-const gwBiale = gwiazdy(5, 110, 0.5, 1.25), gwKolor = gwiazdy(17, 40, 0.6, 1.5);
-const dal = bloki(11,{ minW:70, maxW:170, minH:50, maxH:150, przerwa:26, okna:0.035 });
-const blisko = bloki(29, { minW:110, maxW:260, minH:26, maxH:96, przerwa:60, okna:0.075 });
-
-const TASMA_A = ['Fiszki', 'Zadania krok po kroku', 'Quizy', 'Bez logowania', 'Za darmo', 'Bez reklam'];
-const TASMA_B = zywe.map(s => s.name);
 const NAV = [['Przedmioty', '#przedmioty'], ['Generator', '#generator'], ['Wiedza', '#wiedza'], ['FAQ', '#faq']];
 ---
 
@@ -133,17 +97,22 @@ setTimeout(function(){if(!h.classList.contains('gotowe'))h.classList.add('bez-an
 <svg class="defs" width="0" height="0" aria-hidden="true">
   <defs>
     <symbol id="i-strz" viewBox="0 0 24 24"><path d="M4 12h15M13 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-    <symbol id="i-iskra" viewBox="-10 -10 20 20"><path d="M0-10C.8-3.2 3.2-.8 10 0 3.2.8.8 3.2 0 10-.8 3.2-3.2.8-10 0-3.2-.8-.8-3.2 0-10Z"/></symbol>
   </defs>
 </svg>
 
+<!-- Tło całej strony: neonowa siatka (oczko 38 px jak dotąd) i światło kursora, które ją rozjaśnia. -->
+<div class="tlo" aria-hidden="true">
+  <div class="tlo-siatka"></div>
+  <div class="swiatlo" data-swiatlo><div class="sw-siatka"></div></div>
+</div>
+
 <header class="nav" data-nav>
-  <a class="marka" href="#top" aria-label="Unicorner, początek strony"><span class="m-uni">uni</span><span class="m-cor">corner</span></a>
+  <a class="marka" href="#top" aria-label="Unicorner, początek strony" data-marka>UNICORNER</a>
   <nav class="nav-linki" aria-label="Sekcje strony">
     {NAV.map(([t, h]) => <a href={h}>{t}</a>)}
   </nav>
   <div class="nav-kon">
-    <a class="btn btn-iris nav-cta" href="#przedmioty">Zacznij naukę</a>
+    <a class="btn btn-pelny nav-cta" href="#przedmioty">Zacznij naukę</a>
     <button class="menu-btn" type="button" aria-haspopup="dialog" aria-controls="menu" data-menu-otworz>
       <span class="menu-ik" aria-hidden="true"><i></i><i></i></span><span>Menu</span>
     </button>
@@ -161,170 +130,142 @@ setTimeout(function(){if(!h.classList.contains('gotowe'))h.classList.add('bez-an
 
 <main id="main">
 
-  <!-- ===== HERO: chromowy napis nad nocnym blokowiskiem. Przypięty przez chwilę przewijania: noc przechodzi w świt. ===== -->
+  <!-- ===== HERO: neonowy napis w ramce HUD. Przy przewijaniu napis zmniejsza się i wlatuje do nawigacji. ===== -->
   <div class="hero-wrap" id="top" data-hero>
-    <section class="hero" aria-labelledby="hero-t" data-chrom-pole>
-      <div class="scena" aria-hidden="true">
-        <div class="niebo-swit"></div>
-        <svg class="gwiazdy" viewBox="0 0 1600 620" preserveAspectRatio="xMidYMid slice"><path class="g-b" d={gwBiale}/><path class="g-k" d={gwKolor}/></svg>
-        <div class="zar"></div>
-        <svg class="bloki bl-dal" viewBox="0 0 1600 200" preserveAspectRatio="xMidYMax slice">
-          <path class="mur" d={dal.mury}/><path class="ok-z" d={dal.zolte}/><path class="ok-c" d={dal.cyjan}/>
-        </svg>
-        <div class="podloga"><i></i></div>
-        <svg class="bloki bl-bli" viewBox="0 0 1600 200" preserveAspectRatio="xMidYMax slice">
-          <path class="mur" d={blisko.mury}/><path class="ok-z" d={blisko.zolte}/><path class="ok-c" d={blisko.cyjan}/>
-        </svg>
-        <div class="dol"></div>
-      </div>
-
-      <div class="wrap hero-meta">
-        <p><span class="pigula">{countText}</span> {odmiana(liveCount, 'materiał', 'materiały', 'materiałów')} do egzaminów</p>
-        <p class="hm-sr">Bez logowania, opłat i reklam</p>
-        <p class="hm-pr">Projekt studencki</p>
-      </div>
-
-      <div class="chrom-scena" data-chrom="noc" data-maxh="0.42">
-        <h1 class="chrom-t" id="hero-t" aria-label="Unicorner"><span class="ct-l">UNI</span><span class="ct-l">CORNER</span></h1>
-        <canvas class="chrom-gl" aria-hidden="true"></canvas>
-      </div>
-
-      <div class="wrap hero-stopa">
-        <div class="hs-tekst">
-          <p class="hs-haslo">Edukacja po ludzku.</p>
-          <p class="hs-lid">Fiszki, zadania i quizy do egzaminów. Jedno miejsce, cała Twoja nauka.</p>
+    <section class="hero" aria-labelledby="hero-t">
+      <div class="podloga h-podloga" aria-hidden="true"><i data-podloga></i></div>
+      <div class="h-srodek">
+        <div class="h-rama" aria-hidden="true">
+          <i class="r-lg"></i><i class="r-pg"></i><i class="r-ld"></i><i class="r-pd"></i>
+          <span class="e-lg">unicorner_os</span>
+          <span class="e-pg"><b></b>system online</span>
+          <span class="e-ld">{countText}</span>
+          <span class="e-pd">bez logowania</span>
         </div>
-        <div class="hs-akcje">
-          <a class="btn btn-iris btn-duzy" href="#przedmioty">Zacznij naukę <svg class="ik" aria-hidden="true"><use href="#i-strz"/></svg></a>
+        <div class="napis-scena" data-napis>
+          <h1 class="napis-t" id="hero-t" aria-label="Unicorner">UNICORNER</h1>
+          <canvas class="napis-gl" aria-hidden="true"></canvas>
+        </div>
+      </div>
+      <div class="wrap h-dol">
+        <div class="h-tekst">
+          <p class="h-haslo" data-szyfr>Edukacja po ludzku.</p>
+          <p class="h-lid">Fiszki, zadania i quizy do egzaminów. Jedno miejsce, cała Twoja nauka.</p>
+        </div>
+        <div class="h-akcje">
+          <a class="btn btn-pelny btn-duzy" href="#przedmioty">Zacznij naukę <svg class="ik" aria-hidden="true"><use href="#i-strz"/></svg></a>
           <a class="lacze" href="#generator">Albo zrób fiszki z własnych notatek</a>
         </div>
       </div>
     </section>
   </div>
 
-  <!-- ===== TAŚMY: dwie skośne wstęgi, przyspieszają razem ze scrollem ===== -->
-  <section class="tasmy" aria-label="Co znajdziesz na Unicornerze">
-    <div class="tasma tasma-a"><div class="tor" data-tor data-predkosc="1">
-      {[0, 1].map((k) => TASMA_A.map((t) => <><span aria-hidden={k ? 'true' : undefined}>{t}</span><svg aria-hidden="true"><use href="#i-iskra"/></svg></>))}
-    </div></div>
-    <div class="tasma tasma-b" aria-hidden="true"><div class="tor" data-tor data-predkosc="-0.7">
-      {[0, 1].map(() => TASMA_B.map((t) => <><span>{t}</span><svg><use href="#i-iskra"/></svg></>))}
-    </div></div>
-  </section>
-
-  <!-- ===== PRZEDMIOTY: indeks z dużymi nazwami ===== -->
-  <section class="indeks" id="przedmioty" aria-labelledby="indeks-h">
+  <!-- ===== PRZEDMIOTY: karty z poświatą, która sunie za kursorem ===== -->
+  <section class="sek sek-przedmioty" id="przedmioty" aria-labelledby="przedmioty-h">
     <div class="wrap">
-      <header class="sek-glowa">
-        <h2 id="indeks-h">Przedmioty</h2>
-        <p class="sek-dop"><b id="count">{countText}</b>. Wybierz swój, otwiera się od razu.</p>
-      </header>
-      <ul class="lista" data-lista>
+      <h2 class="tytul" id="przedmioty-h" data-tytul data-t="Przedmioty">Przedmioty</h2>
+      <p class="sek-dop"><b>{countText}</b>. Wybierz swój, otwiera się od razu.</p>
+      <div class="karty" data-poswiata data-wejscie>
         {SUBJECTS.map((s, i) => (
-          <li style={`--d:${opoznienie(i)}ms`}>
-            <a class:list={['wiersz', { przyszly: s.status !== 'live', boss: s.boss }]} href={s.file}>
-              <span class="w-nazwa">
-                <span class="w-n">{s.name}</span>
-                {s.sub && <span class="w-sub">{s.sub}</span>}
-                {s.badge && <span class="w-stan">{s.badge}</span>}
+          <a class:list={['karta', 'pw', { przyszla: s.status !== 'live', boss: s.boss }]} href={s.file} style={`--d:${opoznienie(i)}ms`}>
+            <span class="k-srodek">
+              <span class="k-gora">
+                <span class="k-ikona" aria-hidden="true">{s.emoji}</span>
+                <span class:list={['k-stan', { budowa: s.badge, wkrotce: s.status !== 'live' }]}>{s.badge || (s.status === 'live' ? 'gotowe' : 'wkrótce')}</span>
               </span>
-              <span class="w-opis">{s.desc}</span>
-              <span class="w-tagi">{s.tags.map((t) => <span>{t}</span>)}</span>
-              <span class="w-strz" aria-hidden="true"><svg><use href="#i-strz"/></svg></span>
-            </a>
-          </li>
+              <span class="k-nazwa">{s.name}{s.sub && <span class="k-sub">{s.sub}</span>}</span>
+              <span class="k-opis">{s.desc}</span>
+              <span class="k-tagi">{s.tags.map((t) => <span>{t}</span>)}</span>
+              <span class="k-idz">{s.status === 'live' ? 'Otwórz' : 'Napisz do nas'} <svg class="ik" aria-hidden="true"><use href="#i-strz"/></svg></span>
+            </span>
+          </a>
         ))}
-      </ul>
+      </div>
     </div>
   </section>
 
-  <!-- ===== MANIFEST: zdanie rozświetlane scrollem + droga przez materiał ===== -->
-  <section class="manifest" aria-labelledby="manifest-h">
+  <!-- ===== PO CO: zdanie dekodowane scrollem + cztery kroki ===== -->
+  <section class="sek sek-po-co" aria-labelledby="po-co-h">
     <div class="wrap">
-      <h2 class="zdanie" id="manifest-h" data-zdanie>
-        {slowa.map((s, i) => <><span class:list={['s', { ak: AKCENT.has(s) }]}>{s}</span>{i < slowa.length - 1 ? ' ' : ''}</>)}
+      <h2 class="zdanie" id="po-co-h" data-zdanie>
+        {slowa.map((s, i) => <><span class="s">{s}</span>{i < slowa.length - 1 ? ' ' : ''}</>)}
       </h2>
 
-      <div class="droga" data-droga>
-        <h3 class="droga-h">Jak korzystać</h3>
-        <div class="droga-rys" aria-hidden="true">
-        <svg class="droga-svg" viewBox="0 0 1000 200" preserveAspectRatio="none">
-          <path class="dr-tlo" d="M12 176 C 150 176, 205 142, 338 134 S 530 96, 668 84 S 880 30, 988 22"/>
-        </svg>
-        <svg class="droga-svg droga-kolor" viewBox="0 0 1000 200" preserveAspectRatio="none">
-          <defs>
-            <linearGradient id="drogaGrad" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1000" y2="0">
-              <stop offset="0" stop-color="#27e8ff"/><stop offset=".4" stop-color="#a78bfa"/><stop offset=".75" stop-color="#ff2e97"/><stop offset="1" stop-color="#ffd84a"/>
-            </linearGradient>
-          </defs>
-          <path class="dr-linia" stroke="url(#drogaGrad)" d="M12 176 C 150 176, 205 142, 338 134 S 530 96, 668 84 S 880 30, 988 22"/>
-        </svg>
-        <span class="dr-kropka"></span>
-        </div>
-        <ol class="kroki">
+      <div class="kroki-blok" data-kroki>
+        <h3 class="etykieta">Jak korzystać</h3>
+        <div class="szyna" aria-hidden="true"><i></i></div>
+        <ol class="kroki" data-poswiata>
           {KROKI.map((k, i) => (
-            <li>
-              <span class="kr-nr">{i + 1}</span>
-              <span class="kr-t">{k.t}</span>
-              <span class="kr-d">{k.d}</span>
+            <li class="pw">
+              <span class="k-srodek">
+                <span class="kr-nr">0{i + 1}</span>
+                <span class="kr-t">{k.t}</span>
+                <span class="kr-d">{k.d}</span>
+              </span>
             </li>
           ))}
         </ol>
-        <p class="droga-stopka">Postęp zapisuje się w Twojej przeglądarce. To nasze własne opracowania na bazie zajęć: robimy je, bo sami się z nich uczymy.</p>
+        <p class="kroki-stopka">Postęp zapisuje się w Twojej przeglądarce. To nasze własne opracowania na bazie zajęć: robimy je, bo sami się z nich uczymy.</p>
       </div>
     </div>
   </section>
 
-  <!-- ===== GENERATOR: produkt pokazuje sam siebie, scena sterowana scrollem ===== -->
-  <section class="gen" id="generator" aria-labelledby="gen-h">
-    <div class="wrap gen-siatka">
-      <div class="gen-tekst">
-        <p class="etykieta">Generator AI <span class="et-stan">beta</span></p>
-        <h2 id="gen-h">Twoje notatki. Gotowa nauka.</h2>
-        <p class="lid">Wrzuć PDF z wykładu, zdjęcia notatek albo wklej tekst. AI ułoży z tego fiszki i quiz z wyjaśnieniami i skupi się na tym, o co poprosisz.</p>
-        <ul class="gen-wejscia" aria-label="Co możesz wrzucić">
-          <li>PDF</li><li>Zdjęcia notatek</li><li>Wklejony tekst</li>
-        </ul>
-        <a class="btn btn-iris btn-duzy" href="generator.html">Otwórz generator <svg class="ik" aria-hidden="true"><use href="#i-strz"/></svg></a>
-      </div>
-      <div class="demo" data-demo aria-hidden="true">
-        <div class="d-kartka">
-          <span class="d-nagl">wykład 4 · notatki</span>
-          <i style="--w:92%"></i><i style="--w:78%"></i><i style="--w:86%"></i><i style="--w:54%"></i><i style="--w:88%"></i><i style="--w:70%"></i><i style="--w:81%"></i><i style="--w:43%"></i>
-          <span class="d-skan"></span>
-        </div>
-        <div class="d-fiszka"><div class="d-obrot">
-          <span class="d-strona d-przod"><small>fiszka</small>Koszt alternatywny</span>
-          <span class="d-strona d-tyl">Wartość najlepszej opcji, z której rezygnujesz, wybierając inną.</span>
-        </div></div>
-        <div class="d-quiz">
-          <span class="d-qn">Pytanie 3 z 10</span>
-          <span class="d-opt">Popyt rośnie przy wzroście ceny</span>
-          <span class="d-opt d-ok">Popyt spada przy wzroście ceny</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ===== WIEDZA: czytelnia w palecie artykułów (ciemna zieleń, złoto, Fraunces) ===== -->
-  <section class="czyt" id="wiedza" aria-labelledby="czyt-h" data-czyt>
+  <!-- ===== GENERATOR: okno, w którym notatki zamieniają się w fiszkę i quiz (sterowane scrollem) ===== -->
+  <section class="sek sek-gen" id="generator" aria-labelledby="gen-h">
     <div class="wrap">
-      <span class="czyt-kreska" aria-hidden="true"></span>
-      <div class="czyt-siatka">
-        <div class="czyt-tekst">
-          <p class="etykieta">Wiedza</p>
-          <h2 id="czyt-h">Teksty, które sprawdzają fakty.</h2>
-          <p class="lid">Świat i technika, zdrowie, polska polityka i krypto. Długie rozbiory tematów oparte na źródłach, z faktami oddzielonymi od zarzutów.</p>
-          <p class="czyt-liczby">{artykuly.length} {odmiana(artykuly.length, 'tekst', 'teksty', 'tekstów')}, około {wiedzaGodz} {odmiana(wiedzaGodz, 'godzina', 'godziny', 'godzin')} czytania</p>
-          <a class="btn btn-zloto btn-duzy" href="wiedza.html">Przejdź do czytelni <svg class="ik" aria-hidden="true"><use href="#i-strz"/></svg></a>
+      <h2 class="tytul" id="gen-h" data-tytul data-t="Generator">Generator</h2>
+      <div class="gen-siatka">
+        <div class="gen-tekst">
+          <p class="etykieta">Generator AI <span class="et-stan">beta</span></p>
+          <p class="gen-haslo">Twoje notatki. Gotowa nauka.</p>
+          <p class="lid">Wrzuć PDF z wykładu, zdjęcia notatek albo wklej tekst. AI ułoży z tego fiszki i quiz z wyjaśnieniami i skupi się na tym, o co poprosisz.</p>
+          <ul class="gen-wejscia" aria-label="Co możesz wrzucić">
+            <li>PDF</li><li>Zdjęcia notatek</li><li>Wklejony tekst</li>
+          </ul>
+          <a class="btn btn-pelny btn-duzy" href="generator.html">Otwórz generator <svg class="ik" aria-hidden="true"><use href="#i-strz"/></svg></a>
         </div>
-        <ul class="czyt-lista">
+        <div class="okno" data-demo aria-hidden="true">
+          <div class="o-belka"><span>notatki.pdf</span><i></i><span>fiszki + quiz</span></div>
+          <div class="o-cialo">
+            <div class="o-notatki">
+              <i style="--w:92%"></i><i style="--w:74%"></i><i style="--w:86%"></i><i style="--w:52%"></i><i style="--w:88%"></i><i style="--w:68%"></i><i style="--w:80%"></i><i style="--w:44%"></i><i style="--w:90%"></i><i style="--w:61%"></i>
+              <span class="o-skan"></span>
+            </div>
+            <div class="o-wynik">
+              <div class="o-fiszka"><div class="o-obrot">
+                <span class="o-strona o-przod"><small>fiszka</small>Koszt alternatywny</span>
+                <span class="o-strona o-tyl">Wartość najlepszej opcji, z której rezygnujesz, wybierając inną.</span>
+              </div></div>
+              <div class="o-quiz">
+                <span class="o-qn">Pytanie 3 z 10</span>
+                <span class="o-opt">Popyt rośnie przy wzroście ceny</span>
+                <span class="o-opt o-ok">Popyt spada przy wzroście ceny</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== WIEDZA ===== -->
+  <section class="sek sek-wiedza" id="wiedza" aria-labelledby="wiedza-h">
+    <div class="wrap">
+      <h2 class="tytul" id="wiedza-h" data-tytul data-t="Wiedza">Wiedza</h2>
+      <div class="wiedza-siatka">
+        <div class="wiedza-tekst">
+          <p class="gen-haslo">Teksty, które sprawdzają fakty.</p>
+          <p class="lid">Świat i technika, zdrowie, polska polityka i krypto. Długie rozbiory tematów oparte na źródłach, z faktami oddzielonymi od zarzutów.</p>
+          <p class="wiedza-liczby">{artykuly.length} {odmiana(artykuly.length, 'tekst', 'teksty', 'tekstów')}, około {wiedzaGodz} {odmiana(wiedzaGodz, 'godzina', 'godziny', 'godzin')} czytania</p>
+          <a class="btn btn-ramka btn-duzy" href="wiedza.html"><span>Przejdź do czytelni <svg class="ik" aria-hidden="true"><use href="#i-strz"/></svg></span></a>
+        </div>
+        <ul class="teksty" data-poswiata>
           {polecane.map((a) => (
-            <li><a href={a.url.replace(/^\//, '')}>
-              <span class="cz-dzial">{a.categoryName}</span>
-              <span class="cz-tyt">{a.topic || a.title}</span>
-              <span class="cz-min">ok. {a.minutes} min</span>
-            </a></li>
+            <li><a class="pw tekst-w" href={a.url.replace(/^\//, '')}><span class="k-srodek">
+              <span class="t-dzial">{a.categoryName}</span>
+              <span class="t-tyt">{a.topic || a.title}</span>
+              <span class="t-min">ok. {a.minutes} min</span>
+            </span></a></li>
           ))}
         </ul>
       </div>
@@ -332,49 +273,45 @@ setTimeout(function(){if(!h.classList.contains('gotowe'))h.classList.add('bez-an
   </section>
 
   <!-- ===== FAQ ===== -->
-  <section class="pyt" id="faq" aria-labelledby="pyt-h">
-    <div class="wrap pyt-siatka">
-      <h2 id="pyt-h">Pytania i odpowiedzi</h2>
-      <div class="pyt-lista">
-        {FAQS.map((f) => (
-          <details name="faq">
-            <summary><span>{f.q}</span><i aria-hidden="true"></i></summary>
-            <div class="pyt-odp"><p set:html={f.a}></p></div>
-          </details>
-        ))}
-      </div>
-      <div class="brak">
-        <h3>Brakuje przedmiotu?</h3>
-        <p>Masz przedmiot, który chciałbyś tu zobaczyć? Daj znać. Możesz też podesłać własne notatki lub materiały — dobre wrzucę na stronę.</p>
-        <a class="lacze" href="kontakt.html">Napisz do nas</a>
+  <section class="sek sek-faq" id="faq" aria-labelledby="faq-h">
+    <div class="wrap">
+      <h2 class="tytul" id="faq-h" data-tytul data-t="FAQ">FAQ</h2>
+      <div class="faq-siatka">
+        <div class="faq-lista">
+          {FAQS.map((f) => (
+            <details name="faq">
+              <summary><span>{f.q}</span><i aria-hidden="true"></i></summary>
+              <div class="faq-odp"><p set:html={f.a}></p></div>
+            </details>
+          ))}
+        </div>
+        <div class="brak">
+          <h3>Brakuje przedmiotu?</h3>
+          <p>Masz przedmiot, który chciałbyś tu zobaczyć? Daj znać. Możesz też podesłać własne notatki lub materiały — dobre wrzucę na stronę.</p>
+          <a class="lacze" href="kontakt.html">Napisz do nas</a>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- ===== OPINIE: wczytywane z Workera (albo z reviews.json), sekcja pojawia się po wczytaniu ===== -->
-  <section class="opinie" id="reviews" hidden aria-labelledby="opinie-h">
+  <section class="sek sek-opinie" id="reviews" hidden aria-labelledby="opinie-h">
     <div class="wrap opinie-glowa">
-      <h2 id="opinie-h">Opinie</h2>
-      <a class="btn btn-linia" href="recenzje.html">Zostaw opinię</a>
+      <h2 class="etykieta etykieta-duza" id="opinie-h">Opinie</h2>
+      <a class="btn btn-ramka" href="recenzje.html"><span>Zostaw opinię</span></a>
     </div>
     <div class="karuzela"><div class="karuzela-tor" id="reviewTrack"></div></div>
   </section>
 </main>
 
-<!-- ===== STOPKA: świt. Napis wraca w chromie, tym razem odbija wschód słońca. ===== -->
-<footer class="stopka" data-stopka data-chrom-pole>
-  <div class="st-scena" aria-hidden="true"><div class="st-zar"></div><div class="podloga"><i></i></div></div>
+<!-- ===== STOPKA: wielki neonowy napis nad podłogą z siatki, jak dotąd ===== -->
+<footer class="stopka" data-stopka>
+  <div class="podloga st-podloga" aria-hidden="true"><i data-podloga></i></div>
   <div class="st-hero">
-    <div class="chrom-scena" data-chrom="swit" data-maxh="0.34">
-      <p class="chrom-t" aria-label="Unicorner"><span class="ct-l">UNI</span><span class="ct-l">CORNER</span></p>
-      <canvas class="chrom-gl" aria-hidden="true"></canvas>
-    </div>
-    <div class="st-teksty">
-      <p class="st-haslo">Wszystkie materiały do egzaminów — w jednym miejscu.</p>
-      <p class="st-zyczenia">Powodzenia na egzaminie.</p>
-    </div>
+    <p class="st-status"><b></b>unicorner_os · system online</p>
+    <p class="st-napis" aria-label="Unicorner"><span data-text="UNICORNER">UNICORNER</span></p>
+    <p class="st-haslo">Wszystkie materiały do egzaminów — w jednym miejscu.</p>
   </div>
-
   <div class="wrap st-prawne">
     <div class="st-lewa">
       <p class="st-noty"><b>Projekt studencki.</b> Niepowiązany z Uniwersytetem Ekonomicznym w Poznaniu ani z żadną katedrą. Materiały to nasze własne opracowania na bazie ogólnodostępnego materiału, częściowo z pomocą AI — nie udostępniamy prezentacji wykładowców i nie korzystamy z zamkniętych baz pytań; podobieństwo do pytań egzaminacyjnych jest przypadkowe. Bez ciasteczek śledzących. Bez gwarancji kompletności — ucz się też z oryginałów. Model 3D szkieletu: „three-skull” (Cullen Webber) · MIT.</p>
@@ -385,15 +322,12 @@ setTimeout(function(){if(!h.classList.contains('gotowe'))h.classList.add('bez-an
         <a href="mailto:unicornernotatki@gmail.com">Kontakt</a>
       </nav>
     </div>
-    <div class="st-marka">
-      <span class="marka" aria-hidden="true"><span class="m-uni">uni</span><span class="m-cor">corner</span></span>
-      <p>© 2026</p>
-    </div>
+    <p class="st-rok">© 2026 · unicorner</p>
   </div>
 </footer>
 
 <script>
-  import '../scripts/start/silnik.js';
+  import '../scripts/siatka/silnik.js';
 </script>
 
 <script is:inline>
