@@ -1,6 +1,6 @@
 ---
 // Strona główna, wariant „Siatka” (cyberpunk, fiolet). Style: src/styles/siatka.css, skrypty: src/scripts/siatka/.
-// Poprzedni wariant („Świt”) leży obok jako _wariant-swit.astro (podkreślnik = Astro go nie buduje).
+// Elementy dawnych wersji (strona live sprzed przebudowy, wariant „Świt”) do szybkiego przywracania: KATALOG-ELEMENTOW.md.
 import Base from '../layouts/Base.astro';
 import '../styles/siatka.css';
 import { getArticles, CATEGORIES } from '../lib/wiedza.js';
@@ -67,15 +67,15 @@ const KROKI = [
 
 const FAQS = [
   { q:"Co to jest Unicorner?",
-    a:"Zbiór materiałów do egzaminów: fiszki, zadania z omówieniem krok po kroku i quizy z natychmiastową informacją zwrotną. Wszystko w jednym miejscu — bez logowania, bez opłat, bez reklam. Działa w przeglądarce, na telefonie i na komputerze. Pomysł jest prosty: chcesz się nauczyć jednego przedmiotu — otwierasz zakładkę i się uczysz." },
+    a:"Zbiór materiałów do egzaminów: fiszki, zadania z omówieniem krok po kroku i quizy z natychmiastową informacją zwrotną. Wszystko w jednym miejscu, bez opłat i bez reklam. Materiały otwierasz bez logowania; konto (logowanie przez Google) jest potrzebne tylko w generatorze AI. Działa w przeglądarce, na telefonie i na komputerze. Pomysł jest prosty: chcesz się nauczyć jednego przedmiotu — otwierasz zakładkę i się uczysz." },
   { q:"Czy to oficjalna strona UEP?",
     a:"<b>Nie.</b> To projekt studencki, niepowiązany z uczelnią, żadną katedrą ani konkretnym wykładowcą. Robiony przez studentów, dla studentów. Wszystkie materiały to nasze własne opracowania — nie znajdziesz tu prezentacji ani skanów notatek wykładowców." },
   { q:"Skąd biorą się materiały?",
     a:"To <b>nasze własne opracowania</b> na bazie zajęć, notatek i literatury — układane pod to, co realnie sprawdzają na kolokwiach i egzaminach. Traktuj Unicornera jako dodatek do nauki i szybką powtórkę przed egzaminem, a nie zamiennik oryginalnych źródeł. Slajdów i skryptów z UEP tu nie kopiujemy." },
   { q:"Czy to darmowe?",
-    a:"Tak. Otwierasz i się uczysz — bez kont, bez opłat, bez reklam. Nie zbieramy adresów e-mail, nie sprzedajemy danych, nie mamy żadnego produktu premium. Cały projekt utrzymujemy sami, bo sami się z niego uczymy." },
+    a:"Tak. Materiały są za darmo i bez reklam, a do nich nie potrzebujesz konta. Generator AI też jest darmowy: co miesiąc dostajesz pulę kredytów, a ile zostało, widzisz w generatorze. Nie mamy płatnej wersji i nie sprzedajemy danych. Adres e-mail mamy tylko wtedy, gdy sam go dasz: przy logowaniu do generatora (przekazuje go Google) albo przy zapisie na powiadomienia o nowych materiałach. Szczegóły są w <a href=\"prywatnosc.html\">polityce prywatności</a>. Cały projekt utrzymujemy sami, bo sami się z niego uczymy." },
   { q:"Czy postęp się zapisuje?",
-    a:"Tak, ale tylko lokalnie. W quizach i fiszkach postęp (co odznaczyłeś jako „Umiem”, jaki masz wynik quizu) trzymany jest w Twojej przeglądarce (localStorage). Nic nie wysyłamy na żaden serwer. Wyczyścisz dane przeglądarki lub otworzysz stronę w trybie incognito — zacznie się od zera. Jeśli chcesz uczyć się na dwóch urządzeniach, postęp się między nimi nie zsynchronizuje." }
+    a:"Tak, ale tylko lokalnie. W quizach i fiszkach postęp (co odznaczyłeś jako „Umiem”, jaki masz wynik quizu) trzymany jest w Twojej przeglądarce (localStorage). Ten postęp nie trafia na żaden serwer. Wyczyścisz dane przeglądarki lub otworzysz stronę w trybie incognito — zacznie się od zera, a między dwoma urządzeniami się nie zsynchronizuje. Wyjątek to generator AI: talie i postęp w nich zapisują się na Twoim koncie, więc po zalogowaniu widzisz je na każdym urządzeniu." }
 ];
 
 // Czytelnia: liczby i po jednym tekście z każdego działu, prosto z danych artykułów.

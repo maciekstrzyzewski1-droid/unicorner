@@ -361,6 +361,7 @@ html.rm .okno,html:not(.js) .okno,html.bez-anim .okno{--g:1}
 .faq-lista details[open] summary i::after{transform:translate(-50%,-50%)}
 .faq-odp{max-width:46em;padding:0 4px 22px;color:var(--przygas)}
 .faq-odp b{color:var(--tekst);font-weight:600}
+.faq-odp a{color:var(--fiolet);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 @supports (interpolate-size:allow-keywords){
   .faq-lista{interpolate-size:allow-keywords}
   .faq-lista details::details-content{height:0;overflow:clip;transition:height .28s var(--ease-out),content-visibility .28s allow-discrete}

@@ -13,7 +13,7 @@ import jsDane from '../scripts/makroekonomia/dane.js?raw';
   /* wspólne tokeny (--ink, --muted, --muted2, --accent, --cyan, --magenta, --gold, --iris, --disp): src/styles/tokeny.css, ładowane w Base.astro */
   --ink2:#0b0918; --line:#241d4a; --line2:#3a2e74;
   --accent-d:#8b5cf6;
-  --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
+  --gold-line:linear-gradient(115deg,#efe6ff,#bd8bff 55%,#a78bfa);
   --mono:'Chakra Petch',ui-monospace,monospace;
   --bad:#ff6b8b; --bad-bg:#2a0d18; --bad-line:#5a2233; --ok-line:#1d4a3a;
   /* aliasy dla istniejacej struktury makro + blok econ-fig */
@@ -36,7 +36,7 @@ body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;le
     var(--ink);}
 body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
   background:linear-gradient(rgba(39,232,255,.025) 1px,transparent 1px) 0 0/100% 3px,linear-gradient(90deg,rgba(167,139,250,.04) 1px,transparent 1px) 0 0/52px 100%,linear-gradient(rgba(167,139,250,.04) 1px,transparent 1px) 0 0/100% 52px;mix-blend-mode:screen;opacity:.6;}
-body::after{content:"";position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(39,232,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
+body::after{content:"";position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(214,186,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
 @media (prefers-reduced-motion:no-preference){body::after{animation:sweep 14s ease-in-out infinite;}}
 @keyframes sweep{0%,100%{transform:translateX(-30%);}50%{transform:translateX(30%);}}
 header,main,.giant,footer.uc-foot{position:relative;z-index:1;}
@@ -182,7 +182,7 @@ table.mini th{background:var(--surface2);color:var(--mint);font-family:var(--mon
 .wall-card::before{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:var(--iris);opacity:.9;}
 .wall-card:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 22px 54px rgba(0,0,0,.52),0 0 22px rgba(167,139,250,.18);}
 .wall-card h3{font-size:1.16rem;font-weight:700;color:#fff;margin-bottom:16px;display:flex;align-items:center;gap:12px;letter-spacing:.2px;}
-.wall-card .ico{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,rgba(39,232,255,.16),rgba(167,139,250,.1));border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.wall-card .ico{width:40px;height:40px;border-radius:8px;background:linear-gradient(135deg,rgba(214,186,255,.16),rgba(167,139,250,.1));border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
 .wall-card ul{list-style:none;}
 .wall-card li{padding:11px 0;border-bottom:1px solid rgba(58,46,116,.42);font-size:.94rem;line-height:1.62;color:#d8d3ee;}
 .wall-card li:last-child{border-bottom:none;padding-bottom:0;}
@@ -233,7 +233,7 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
 </style>
 <style is:inline>
 /* ===== KWADRACIK ZAMIAST NUMERU (ostatnie zadania) — w kolorach przycisku „Zostaw opinię" ===== */
-.acc-num.acc-sq{background:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);border-radius:4px;box-shadow:0 2px 11px rgba(167,139,250,.45),inset 0 0 0 1px rgba(255,255,255,.12);}
+.acc-num.acc-sq{background:linear-gradient(115deg,#8b5cf6 0%,#a78bfa 34%,#bd8bff 66%,#e2ccff 100%);border-radius:4px;box-shadow:0 2px 11px rgba(167,139,250,.45),inset 0 0 0 1px rgba(255,255,255,.12);}
 
 /* ===== INTERAKTYWNE WYKRESY MAKRO (krok po kroku: szok → reakcja, opis + rzut na obie osie) ===== */
 .econ-fig{position:relative;margin:14px 0 4px;background:#0a0818;border:1px solid var(--border2);border-radius:4px;padding:12px 12px 4px;outline:none;}
@@ -273,7 +273,7 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
 .econ-fig .fig-btn:disabled{opacity:.32;cursor:default;}
 .econ-fig .fig-track{display:inline-flex;gap:6px;align-items:center;}
 .econ-fig .fig-dot{width:8px;height:8px;border-radius:50%;background:#3a3357;transition:background .3s,transform .3s;}
-.econ-fig .fig-dot.on{background:linear-gradient(115deg,#27e8ff,#a78bfa 60%,#ff2e97);transform:scale(1.15);}
+.econ-fig .fig-dot.on{background:linear-gradient(115deg,#d6baff,#a78bfa 60%,#6d28d9);transform:scale(1.15);}
 .econ-fig .fig-now{font:700 .7rem 'Chakra Petch',sans-serif;color:var(--muted);letter-spacing:.3px;}
 /* widoczność i ruch zależne od etapu (data-stage) */
 .econ-fig[data-stage="0"] .fig-cap.c0,
@@ -305,8 +305,8 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
 <div class="scanbar" aria-hidden="true"></div>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
   <lineargradient id="irisGrad" x1="0" y1="1" x2="1" y2="0">
-    <stop offset="0" stop-color="#5ad1ff"></stop><stop offset="0.34" stop-color="#a78bfa"></stop>
-    <stop offset="0.66" stop-color="#f472b6"></stop><stop offset="1" stop-color="#fcd34d"></stop>
+    <stop offset="0" stop-color="#6d28d9"></stop><stop offset="0.34" stop-color="#a78bfa"></stop>
+    <stop offset="0.66" stop-color="#bd8bff"></stop><stop offset="1" stop-color="#efe6ff"></stop>
   </lineargradient></defs></svg>
 <header>
   <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;">Makroekonomia — nauka do egzaminu</h1>
@@ -399,7 +399,7 @@ footer.uc-foot .fb-corner{background:var(--iris);-webkit-background-clip:text;ba
     <!-- ============ LEGENDA + ŚCIĄGA ============ -->
     <div class="accordion legend-card" id="legendCard">
       <div class="acc-head" onclick="this.parentElement.classList.toggle(&#39;open&#39;)">
-        <span class="acc-num" style="background:linear-gradient(135deg,#fcd34d,#f472b6);">📖</span>
+        <span class="acc-num" style="background:linear-gradient(135deg,#efe6ff,#6d28d9);">📖</span>
         <span><span style="font-size:.66rem;letter-spacing:.5px;color:var(--gold);display:block;">ZACZNIJ TUTAJ</span>Legenda symboli i ściąga ze wzorami</span>
         <span class="acc-arrow">▸</span>
       </div>

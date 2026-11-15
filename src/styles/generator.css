@@ -254,7 +254,7 @@
 
 /* powtórki fiszek */
 .g-sbar{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 14px;padding:12px 14px 12px 18px;
-  background:linear-gradient(90deg,rgba(39,232,255,.08),rgba(167,139,250,.06));border:1px solid rgba(39,232,255,.3);border-radius:8px;}
+  background:linear-gradient(90deg,rgba(214,186,255,.08),rgba(167,139,250,.06));border:1px solid rgba(39,232,255,.3);border-radius:8px;}
 .g-sbar[hidden]{display:none;}
 .g-sbar-t{display:flex;flex-direction:column;gap:2px;}
 .g-sbar-t b{font-family:var(--mono);font-size:.74rem;letter-spacing:2px;text-transform:uppercase;color:var(--cyan);}

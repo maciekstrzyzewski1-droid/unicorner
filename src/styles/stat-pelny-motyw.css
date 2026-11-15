@@ -3,7 +3,7 @@
 .scanbar{position:fixed;top:0;left:0;right:0;height:2px;z-index:60;background:var(--iris);background-size:200% 100%;opacity:.9;}
 @media (prefers-reduced-motion:no-preference){.scanbar{animation:ucshim 6s linear infinite;}}
 @keyframes ucshim{to{background-position:200% 0;}}
-.uc-sweep{position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(39,232,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
+.uc-sweep{position:fixed;inset:-40% -10%;z-index:0;pointer-events:none;background:linear-gradient(115deg,transparent 40%,rgba(167,139,250,.06) 48%,rgba(214,186,255,.05) 52%,transparent 60%);transform:translateX(-30%);}
 @media (prefers-reduced-motion:no-preference){.uc-sweep{animation:ucsweep 14s ease-in-out infinite;}}
 @keyframes ucsweep{0%,100%{transform:translateX(-30%);}50%{transform:translateX(30%);}}
 .wrap{position:relative;z-index:1;}
