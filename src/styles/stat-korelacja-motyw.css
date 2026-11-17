@@ -8,7 +8,7 @@
     --ok:#5ad1a0; --ok-bg:#10241d; --ok-line:#1d4a3a;
     --bad:#f87a8e; --bad-bg:#2a0f17; --bad-line:#5a2230;
     --shadow:0 18px 50px rgba(0,0,0,.5);
-    --mono:'Chakra Petch','Space Grotesk',ui-monospace,monospace; --gold-line:linear-gradient(115deg,#ffd84a,#a78bfa 60%,#27e8ff);
+    --mono:'Chakra Petch','Space Grotesk',ui-monospace,monospace; --gold-line:linear-gradient(115deg,#efe6ff,#bd8bff 55%,#a78bfa);
   }
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
   html{scroll-behavior:smooth;}

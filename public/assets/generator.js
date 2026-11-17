@@ -888,7 +888,7 @@ function buildStandaloneHtml(data){
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fiszki i quiz · Unicorner</title>
 <style>
-:root{--ink:#0c0a18;--surface:#161230;--surface2:#1c1740;--line:#272050;--text:#ece9f7;--muted:#9b93c4;--accent:#a78bfa;--ok:#5ad1a0;--ok-bg:#10241d;--ok-line:#1d4a3a;--bad:#f87a8e;--bad-bg:#2a0f17;--bad-line:#5a2230;--iris:linear-gradient(115deg,#5ad1ff,#a78bfa 34%,#f472b6 66%,#fcd34d);--mono:'Space Grotesk',ui-monospace,monospace;}
+:root{--ink:#0c0a18;--surface:#161230;--surface2:#1c1740;--line:#272050;--text:#ece9f7;--muted:#9b93c4;--accent:#a78bfa;--ok:#5ad1a0;--ok-bg:#10241d;--ok-line:#1d4a3a;--bad:#f87a8e;--bad-bg:#2a0f17;--bad-line:#5a2230;--iris:linear-gradient(115deg,#8b5cf6 0%,#a78bfa 34%,#bd8bff 66%,#e2ccff 100%);--mono:'Space Grotesk',ui-monospace,monospace;}
 *{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;background:radial-gradient(900px 500px at 85% -8%,#1e1646,transparent 58%),var(--ink);color:var(--text);line-height:1.55;padding:24px 16px;min-height:100vh;}
 .wrap{max-width:860px;margin:0 auto;}

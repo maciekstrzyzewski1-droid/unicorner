@@ -21,10 +21,6 @@ const EXTRA = {
     // jeśli Google zmieni ten CSS, w konsoli wróci jedno naruszenie — logowanie działa i bez niego
     style: ['https://accounts.google.com', "'sha256-RU4sU0AaS8IBGZx8XrGt/pa9A5SLA3dQszGeqT5L3Kw='"],
   },
-  // dekoder meshopt (WebAssembly) dla szkieletu HeroSkull (assets/skeleton.glb, EXT_meshopt_compression)
-  'index.html': {
-    script: ["'wasm-unsafe-eval'"],
-  },
 };
 
 const sha = (s) => `'sha256-${createHash('sha256').update(s, 'utf8').digest('base64')}'`;

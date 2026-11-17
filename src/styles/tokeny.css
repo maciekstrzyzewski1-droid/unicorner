@@ -10,6 +10,8 @@
   --muted:#9b93c4; --muted2:#6f679a;
   --accent:#a78bfa;
   --cyan:#27e8ff; --magenta:#ff2e97; --gold:#ffd84a;
-  --iris:linear-gradient(115deg,#27e8ff 0%,#a78bfa 38%,#ff2e97 72%,#ffd84a 100%);
+  /* --iris: od 2026-11-15 fioletowy gradient zamiast tęczy (decyzja Maćka: fiolet napisu ze stopki, bez tęczy).
+     Nazwa zostaje, żeby nie zmieniać ok. 80 miejsc, które jej używają. Najciemniejszy punkt (#8b5cf6) ma 4,8:1 z ciemnym tekstem. */
+  --iris:linear-gradient(115deg,#8b5cf6 0%,#a78bfa 34%,#bd8bff 66%,#e2ccff 100%);
   --disp:'Chakra Petch','Space Grotesk',sans-serif;
 }
