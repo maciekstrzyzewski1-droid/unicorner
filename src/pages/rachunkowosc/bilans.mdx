@@ -115,7 +115,7 @@ export const Z215 = [
   { nr: 18, nazwa: 'długoterminowy kredyt bankowy', kwota: 134000, poz: 'PB2', dlaczego: 'Dług wobec banku do spłaty za ponad 12 miesięcy — zobowiązania długoterminowe.' },
   { nr: 19, nazwa: 'rezerwy na naprawy gwarancyjne', kwota: 21000, poz: 'PB1', dlaczego: 'Część odzieży wróci do naprawy na gwarancji. Firma nie wie dokładnie, ile to będzie kosztować — rezerwy.' },
   { nr: 20, nazwa: 'rezerwy na odprawy emerytalne', kwota: 13000, poz: 'PB1', dlaczego: 'Przyszły wydatek na odprawy, kwota jeszcze niepewna — rezerwy.' },
-  { nr: 21, nazwa: 'zobowiązania z tytułu podatku dochodowego', kwota: 99180, poz: 'PB3', dlaczego: 'Firma jest winna podatek urzędowi skarbowemu i zapłaci go w ciągu kilku miesięcy — zobowiązania krótkoterminowe.' },
+  { nr: 21, nazwa: 'zobowiązania z tytułu podatku dochodowego', kwota: 99180, poz: 'PB3', dlaczego: 'Firma jest winna podatek urzędowi skarbowemu. Podatek za rok płaci się w ciągu kilku miesięcy po jego końcu — zobowiązania krótkoterminowe.' },
 ];
 
 export const DOD4 = [
@@ -263,8 +263,17 @@ Bilans ma ustawowy wzór: **załącznik nr 1 do ustawy o rachunkowości**. Na za
 
 <Ramka kind="botak">
 - Kolejność pozycji ustala ustawa. Aktywa idą od najmniej płynnych (aktywa trwałe) do najbardziej płynnych (pieniądze w inwestycjach krótkoterminowych). Pasywa — od kapitału własnego do zobowiązań krótkoterminowych.
-- Formularz z zajęć pomija w pasywach pozycje IV (pozostałe kapitały rezerwowe) i VII (odpisy z zysku netto). W zadaniach się nie pojawiają.
+- Formularz z zajęć pomija w kapitale własnym dwie pozycje, które są w pełnym wzorze z ustawy (i na slajdach z wykładu). **A.IV Pozostałe kapitały rezerwowe** to zysk odłożony przez wspólników na konkretny cel, np. na inwestycję. **A.VII Odpisy z zysku netto w ciągu roku** to np. zaliczki na dywidendę wypłacone wspólnikom przed końcem roku — ta pozycja jest zawsze **ujemna**, bo zmniejsza kapitał. W zadaniach z zajęć obu nie ma.
 - Pieniądze (kasa, rachunek bankowy) stoją w **B.III Inwestycje krótkoterminowe**. Na poziomie cyfr rzymskich nie ma osobnej pozycji „środki pieniężne”.
+</Ramka>
+
+<Ramka kind="zapamietaj" tytul="rozliczenia międzyokresowe — czynne i bierne">
+Rozliczenia międzyokresowe przypisują koszt albo przychód do okresu, którego naprawdę dotyczą, a nie do dnia zapłaty.
+
+- **Czynne** stoją w **aktywach** (A.V i B.IV). To koszty zapłacone z góry, np. roczne ubezpieczenie samochodu albo czynsz za kilka miesięcy. Firma już zapłaciła, a „korzystanie” jeszcze przed nią — to jakby jej majątek.
+- **Bierne** stoją w **pasywach** (B.IV). To przede wszystkim przychody otrzymane z góry, np. dotacja do maszyny rozliczana przez lata, i ujemna wartość firmy. Na wykładzie do biernych zalicza się też koszty, które już dotyczą tego roku, a zapłata przyjdzie później.
+
+Jak zapamiętać: czynne = zapłacone z góry (firma coś „ma”), bierne = źródło albo obowiązek na przyszłość.
 </Ramka>
 
 <a id="polecenie-pozycja" class="k-anchor"></a>
@@ -392,11 +401,11 @@ na górze lista 23 składników z zadania. Pod nią formularz z zajęć: kolumna
 
 <Ramka kind="podobny" tytul="ta sama firma w zbiorze zadań (Zad. 2.16)">
 Na zajęciach w grupach była wersja uproszczona. W zbiorze trzy pozycje wyglądają inaczej:
-- **Należności od odbiorców 222 000, z czego 22 000 uznano za nieściągalne.** Do bilansu wchodzi tylko to, co firma realnie odzyska: 222 000 − 22 000 = 200 000. Pozycja: **B.II**.
-- **Weksel własny wystawiony dla kontrahenta** (19 500). Firma obiecała na piśmie zapłacić — to jej dług. Pozycja: **pasywa B.III Zobowiązania krótkoterminowe**.
-- **Weksel obcy otrzymany od kontrahenta** (18 900). Ktoś obiecał zapłacić firmie. Weksle obce należą do „innych środków pieniężnych”, a środki pieniężne stoją w **aktywach B.III Inwestycje krótkoterminowe**.
+- **Należności od odbiorców 222 000, z czego 22 000 uznano za nieściągalne.** Do bilansu wchodzi tylko to, co firma realnie odzyska: 222 000 − 22 000 = 200 000. Pozycja: **aktywa B.II Należności krótkoterminowe**.
+- **Weksel** to kartka, na której ktoś na piśmie obiecuje zapłacić konkretną kwotę w konkretnym dniu. **Weksel własny wystawiony dla kontrahenta** (19 500): to firma obiecała zapłacić — to jej dług. Pozycja: **pasywa B.III Zobowiązania krótkoterminowe**.
+- **Weksel obcy otrzymany od kontrahenta** (18 900): to ktoś obiecał zapłacić firmie. Brzmi jak należność, ale weksel można od ręki oddać innej firmie zamiast zapłaty albo sprzedać w banku. Dlatego ustawa liczy go jak pieniądze — do „innych środków pieniężnych”. Pozycja: **aktywa B.III Inwestycje krótkoterminowe**. To trzeba zapamiętać.
 
-W zbiorze nie ma za to gotówki w kasie ani nadpłaconego podatku. Resztę rozstawiasz tak samo jak wyżej.
+W zbiorze nie ma za to dwóch pozycji z wersji z grup: środków w kasie (19 500) i nadpłaconego podatku (18 900). Resztę rozstawiasz tak samo jak wyżej.
 </Ramka>
 
 <a id="polecenie-brak" class="k-anchor"></a>
@@ -493,9 +502,12 @@ lista 22 składników z zadania i formularz. Złote kwoty w pasywach to kapitał
 <Ramka kind="podobny" tytul="ta sama firma w zbiorze zadań (Zad. 2.17)">
 Wersja ze zbioru ma dwie pozycje, których nie było w grupach:
 - **Należność za sprzedany zbędny środek trwały, płatna za 14 miesięcy** (22 000). To nie jest należność za dostawy i usługi, więc reguła 12 miesięcy działa. Ponad rok → **A.III Należności długoterminowe**.
-- **Fundusze specjalne** (12 000), np. zakładowy fundusz świadczeń socjalnych. Ustawa wpisuje je do **pasywów B.III Zobowiązania krótkoterminowe**.
+- **Fundusze specjalne** (12 000). To pieniądze, które firma z mocy przepisów odkłada na konkretny cel, najczęściej na pracowników: zapomogi, dofinansowanie wczasów (zakładowy fundusz świadczeń socjalnych). Nie należą do właścicieli — firma musi je wydać na ten cel. Dlatego ustawa wpisuje je do **pasywów B.III Zobowiązania krótkoterminowe**.
 
-Przepis na kapitał podstawowy z procentu i wynik netto zostaje ten sam. Zmienią się tylko liczby: zobowiązania i rezerwy rosną o 12 000, więc kapitał własny maleje o 12 000.
+Przepis na kapitał podstawowy z procentu i wynik netto zostaje ten sam. Zmienią się tylko liczby:
+- **razem aktywa bez zmian** — należność 22 000 jest w obu wersjach, tylko w zbiorze stoi w A.III zamiast w B.II;
+- **zobowiązania i rezerwy rosną o 12 000** (fundusze specjalne): 90 000 + 12 000 = 102 000;
+- więc **kapitał własny jest o 12 000 mniejszy**: 2 650 700 − 102 000 = 2 548 700. Od niego liczysz 31,39% i dopiero potem wynik netto.
 </Ramka>
 
 <Ramka kind="granica">
@@ -545,10 +557,10 @@ Polecenia: **1.** Uzupełnij uproszczony bilans (cyfry rzymskie) zgodny z załą
 
 <div slot="plan">
 
-1. **Aktywa trwałe.** Przy każdym składniku cztery pytania z przepisu: strona, sekcja, pozycja, pułapka. Zaczynamy tu, bo tu siedzą dwie pułapki.
+1. **Aktywa trwałe.** Przy każdym składniku cztery pytania z [przepisu „Przypisywanie składników”](#polecenie-pozycja): strona, sekcja, pozycja, pułapka. Zaczynamy tu, bo tu siedzą dwie pułapki.
 2. **Aktywa obrotowe.** Tu jest trzecia pułapka.
-3. **Pasywa.** Wpisujemy wszystko, co jest w treści. Zysku netto w treści nie ma — zostawiamy puste pole.
-4. **Sumy.** Najpierw każda pozycja, potem sekcje, na końcu razem aktywa. Po stronie pasywów sumujemy część B.
+3. **Pasywa.** Wpisujemy wszystko, co jest w treści. Zysku netto w treści nie ma — zostawiamy na niego puste pole. Wpiszemy go na końcu, bo wyjdzie z różnicy.
+4. **Sumy.** Najpierw każda pozycja, potem sekcje, na końcu razem aktywa. Po stronie pasywów sumujemy tylko część B (zobowiązania i rezerwy). Części A (kapitału własnego) jeszcze nie zsumujemy, bo brakuje w niej zysku netto.
 5. **Wynik finansowy (polecenie 2).** Kapitał własny jako różnica, a z niego zysk netto.
 6. **Sprawdzenie:** pasywa razem = aktywa razem.
 
@@ -556,7 +568,7 @@ Polecenie 2 nie wymaga osobnej metody. „Wynik finansowy” to tu zysk (strata)
 
 </div>
 
-<Krok tytul="Aktywa trwałe — sześć składników, dwie pułapki">
+<Krok tytul="Aktywa trwałe — siedem składników, dwie pułapki">
 - **A.I Wartości niematerialne i prawne:** program finansowo-księgowy (poz. 4) 28 000, patent (poz. 5) 32 000.
 - **A.II Rzeczowe aktywa trwałe:** samochody (poz. 1) 580 000, grunty (poz. 2) 340 000, środki trwałe w trakcie modernizacji (poz. 3) 180 000.
 - **A.IV Inwestycje długoterminowe:** nieruchomości jako inwestycje (poz. 6) 98 000, udziały w spółce „Loozak” (poz. 12) 26 000.
@@ -601,15 +613,15 @@ Kredyt długoterminowy to pierwszy składnik w B.II w zadaniach z tego modułu. 
 <Krok tytul="Sumy: pozycje, sekcje, razem aktywa">
 Aktywa trwałe:
 - A.I: 28 000 + 32 000 = **60 000**
-- A.II: 580 000 + 340 000 + 180 000 = **1 100 000**
+- A.II: 580 000 + 340 000 + 180 000 = **1 100 000**. Jak to policzyć: 580 000 + 340 000 = 920 000, potem 920 000 + 180 000 = 1 100 000.
 - A.IV: 98 000 + 26 000 = **124 000**
-- **A. Aktywa trwałe:** 60 000 + 1 100 000 + 124 000 = **1 284 000**
+- **A. Aktywa trwałe:** 60 000 + 1 100 000 + 124 000 = **1 284 000**. Jak to policzyć: 60 000 + 1 100 000 = 1 160 000, potem 1 160 000 + 124 000 = 1 284 000.
 
 Aktywa obrotowe:
 - B.I: 44 000 + 54 000 = **98 000**
 - B.II: 16 000 + 2 000 = **18 000**
 - B.III: **109 000**
-- **B. Aktywa obrotowe:** 98 000 + 18 000 + 109 000 = **225 000**
+- **B. Aktywa obrotowe:** 98 000 + 18 000 + 109 000 = **225 000**. Jak to policzyć: 98 000 + 18 000 = 116 000, potem 116 000 + 109 000 = 225 000.
 
 **Razem aktywa:** 1 284 000 + 225 000 = **1 509 000**.
 
@@ -620,7 +632,7 @@ Pasywa B (zobowiązania i rezerwy):
 - **B. Zobowiązania i rezerwy:** 34 000 + 134 000 + 224 180 = **392 180**. Jak to policzyć: 34 000 + 134 000 = 168 000, potem 168 000 + 224 180 = 392 180.
 
 <Dlaczego>
-Sumujemy od dołu do góry: składniki → pozycja (cyfra rzymska) → sekcja (litera) → strona. Każdą sumę wpisujesz od razu w kolumnę „Kwoty”. Wtedy przy szukaniu błędu widać, w której pozycji się nie zgadza.
+Sumujemy od najmniejszych kawałków do całości: składniki → pozycja (cyfra rzymska) → sekcja (litera) → strona. Każdą sumę wpisujesz od razu w kolumnę „Kwoty”. Wtedy przy szukaniu błędu widać, w której pozycji się nie zgadza.
 </Dlaczego>
 </Krok>
 
@@ -686,12 +698,14 @@ Stoły szwalnicze w trakcie montażu jeszcze nie działają. To środki trwałe 
 </Dlaczego>
 </Krok>
 
-<Krok tytul="Aktywa obrotowe — co jest na sprzedaż">
+<Krok tytul="Aktywa obrotowe — zapasy, należności i pieniądze">
 - **B.I Zapasy:** tkanina (1) 13 500, rakiety tenisowe (4) 8 000, pasmanteria (5) 2 700, stoły do ping-ponga (10) 1 000, kurtki i spodnie narciarskie (12) 30 000, kangurki i narty (15) 8 400.
 - **B.II Należności krótkoterminowe:** od odbiorców za odzież (9) 26 300.
 - **B.III Inwestycje krótkoterminowe:** rachunek bieżący (13) 49 000, lokata 3-miesięczna (18) 50 000, obligacje z wykupem za 8 miesięcy (20) 18 000.
 
 <Dlaczego>
+Zapasy mają cztery rodzaje (tak dzieli je też wykład): **materiały** — do zużycia w produkcji (tkanina, pasmanteria); **produkty w toku** — rzeczy w trakcie szycia; **produkty gotowe** — to, co firma sama uszyła (kurtki narciarskie); **towary** — to, co kupiła, żeby odsprzedać bez przerabiania (rakiety, narty). Wszystkie cztery to B.I Zapasy.
+
 **Decyduje cel, nie rzecz.** Stół do ping-ponga w biurze byłby wyposażeniem, czyli środkiem trwałym. Ale ta spółka handluje sprzętem sportowym. Stoły, rakiety i narty czekają na klientów, więc to **towary** — zapasy. Obligacje z wykupem za 8 miesięcy oddadzą pieniądze w ciągu roku, więc B.III, a nie A.IV.
 </Dlaczego>
 </Krok>
@@ -705,10 +719,11 @@ Stoły szwalnicze w trakcie montażu jeszcze nie działają. To środki trwałe 
 <Krok tytul="Sumy">
 - A.I: **11 000**. A.II: 300 000 + 450 000 + 62 000 + 400 000 + 500 000 + 24 000 + 32 000 + 90 000 = **1 858 000**. A.IV: **15 200**.
 - **A. Aktywa trwałe:** 11 000 + 1 858 000 + 15 200 = **1 884 200**.
-- B.I: 13 500 + 8 000 + 2 700 + 1 000 + 30 000 + 8 400 = **63 600**. B.II: **26 300**. B.III: 49 000 + 50 000 + 18 000 = **117 000**.
-- **B. Aktywa obrotowe:** 63 600 + 26 300 + 117 000 = **206 900**.
+- B.I: 13 500 + 8 000 + 2 700 + 1 000 + 30 000 + 8 400 = **63 600**. Jak to policzyć: 13 500 + 8 000 = 21 500; + 2 700 = 24 200; + 1 000 = 25 200; + 30 000 = 55 200; + 8 400 = 63 600.
+- B.II: **26 300**. B.III: 49 000 + 50 000 + 18 000 = **117 000**.
+- **B. Aktywa obrotowe:** 63 600 + 26 300 + 117 000 = **206 900**. Jak to policzyć: 63 600 + 26 300 = 89 900, potem 89 900 + 117 000 = 206 900.
 - **Razem aktywa:** 1 884 200 + 206 900 = **2 091 100**.
-- **B. Zobowiązania i rezerwy:** 19 000 + 135 000 + 10 000 + 15 000 = **179 000**.
+- **B. Zobowiązania i rezerwy:** 19 000 + 135 000 + 10 000 + 15 000 = **179 000**. Jak to policzyć: 19 000 + 135 000 = 154 000, potem + 10 000 = 164 000, potem + 15 000 = 179 000.
 
 <Dlaczego typ="inaczej">
 Długie dodawanie (osiem budynków i maszyn) łatwiej zrobić parami: 300 000 + 450 000 = 750 000, 62 000 + 400 000 = 462 000, 500 000 + 24 000 = 524 000, 32 000 + 90 000 = 122 000. Potem 750 000 + 462 000 = 1 212 000, 524 000 + 122 000 = 646 000. Na końcu 1 212 000 + 646 000 = 1 858 000.
@@ -716,7 +731,7 @@ Długie dodawanie (osiem budynków i maszyn) łatwiej zrobić parami: 300 000 + 
 </Krok>
 
 <Krok tytul="Wynik netto i sprawdzenie">
-**Kapitał własny** = 2 091 100 − 179 000 = **1 912 100**.
+**Kapitał własny** = 2 091 100 − 179 000 = **1 912 100**. Jak to policzyć: 2 091 100 − 100 000 = 1 991 100, potem 1 991 100 − 79 000 = 1 912 100.
 
 Znane pozycje: 1 800 000 + 250 000 = 2 050 000.
 
@@ -725,7 +740,9 @@ Znane pozycje: 1 800 000 + 250 000 = 2 050 000.
 Sprawdzenie: 1 800 000 + 250 000 + (−137 900) = 1 912 100, a 1 912 100 + 179 000 = **2 091 100** = razem aktywa.
 
 <Dlaczego>
-Kapitał własny (1 912 100) jest mniejszy niż suma znanych pozycji (2 050 000). Brakującą pozycję trzeba więc dopisać na minusie. Jak to policzyć: 2 050 000 − 1 912 100 = 137 900. Wynik ma znak minus, bo odejmujemy liczbę większą od mniejszej.
+Wspólnicy wnieśli i zostawili w spółce 2 050 000 (kapitał podstawowy i zapasowy). Na koniec roku kapitał własny to tylko 1 912 100. Część kapitału zniknęła — to jest strata tego roku. Dlatego brakująca pozycja wchodzi z minusem.
+
+Jak to policzyć: w działaniu 1 912 100 − 2 050 000 od mniejszej liczby odejmujemy większą, więc wynik jest ujemny. Ile wynosi, liczysz odwrotnie: 2 050 000 − 1 912 100 = 137 900. Stąd −137 900.
 </Dlaczego>
 </Krok>
 </Rozwiazanie>
@@ -741,7 +758,8 @@ lista 26 składników z zadania i formularz z zajęć. Złote pole w pasywach to
   <div><b>Aktywa</b>Co firma ma. A — trwałe (dłużej niż rok), B — obrotowe.</div>
   <div><b>Pasywa</b>Skąd to ma. A — kapitał własny, B — zobowiązania i rezerwy (kapitał obcy).</div>
   <div><b>A.I / A.II</b>Niematerialne (licencje, programy, know-how) / rzeczy (grunty, budynki, maszyny, auta, środki trwałe w budowie).</div>
-  <div><b>B.I / B.II / B.III</b>Zapasy / należności (wszystkie za dostawy) / pieniądze i lokaty do 12 miesięcy.</div>
+  <div><b>B.I / B.II / B.III</b>Zapasy / należności krótkoterminowe — w tym <b>każda</b> należność za dostawy i usługi, nawet płatna za ponad rok / pieniądze, weksle obce i lokaty do 12 miesięcy.</div>
+  <div><b>Czynne i bierne</b>Rozliczenia międzyokresowe czynne (aktywa) = koszty zapłacone z góry. Bierne (pasywa) = np. przychody i dotacje otrzymane z góry.</div>
   <div><b>Pasywa B</b>I — rezerwy, II — długi na ponad rok, III — długi do roku i wszystkie za dostawy.</div>
   <div><b>Poza bilansem</b>Leasing operacyjny — rzecz należy do leasingodawcy.</div>
   <div><b>Prawo wieczystego użytkowania</b>A.II, przy gruntach.</div>

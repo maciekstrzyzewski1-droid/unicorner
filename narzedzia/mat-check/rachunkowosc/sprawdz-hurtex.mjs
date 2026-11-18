@@ -38,7 +38,7 @@ ok(pr(9000) === 69.2 && pr(2000) === 15.4 && pr(5000) === 38.5 && pr(8000) === 6
 ok(Math.round((pr(9000) + 2 * pr(2000)) * 10) === 1000 && Math.round((pr(5000) + pr(8000)) * 10) === 1000, 'udziały sumują się do 100,0');
 // liczby w tekście modułu
 const src = fs.readFileSync(new URL('../../../src/pages/rachunkowosc/zestawienie.mdx', import.meta.url), 'utf8').replace(/ /g, ' ');
-for (const frag of ['9 000 − 1 000 = **8 000**', '5 000 − 3 000 = **2 000**', '13 000 − 5 000 = **+8 000**', '8 000 ÷ 5 000 · 100% = **160%**', '5 000 + 9 000 (operacja 1, AP+) − 1 000 (operacja 3, AP−) = **13 000**', '| Towary | 0 | 0 | 9 000 | 69,2 |', '| Kredyt bankowy (obcy) | 0 | 0 | 8 000 | 61,5 |', '69,2 + 15,4 + 15,4 = 100,0', '38,5 + 61,5 = 100,0']) ok(src.includes(frag), `tekst: „${frag}”`);
+for (const frag of ['9 000 − 1 000 = **8 000**', '5 000 − 3 000 = **2 000**', '13 000 − 5 000 = **+8 000**', '8 000 ÷ 5 000 = 1,6, a 1,6 · 100% = **160%**', '13 000 ÷ 5 000 = 2,6', '9 ÷ 13 = 0,6923… → 69,23% → **69,2%**', '9 000 + 2 000 + 2 000 = 13 000 → **100%**', '5 000 + 9 000 (operacja 1, AP+) − 1 000 (operacja 3, AP−) = **13 000**', '| Towary | 0 | 0 | 9 000 | 69,2 |', '| Kredyt bankowy (obcy) | 0 | 0 | 8 000 | 61,5 |', '69,2 + 15,4 + 15,4 = 100,0', '38,5 + 61,5 = 100,0']) ok(src.includes(frag), `tekst: „${frag}”`);
 // ćwiczenia „Analiza zmian w bilansie”: [fragment pytania, poprawna odpowiedź, niezależny rachunek]
 const cw = [
   ['O ile procent wzrosła?', '25%', ((50000 - 40000) / 40000) * 100 === 25],
