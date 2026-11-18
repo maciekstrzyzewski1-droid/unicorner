@@ -307,9 +307,9 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
 .k-hub-h{font-family:var(--disp);font-weight:700;font-size:1.35rem;color:#fff;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid var(--line);}
 .k-hub-p{color:#d6d2ea;line-height:1.7;margin:0 0 14px;max-width:72ch;}
 .k-mods{list-style:none;margin:0;padding:0;display:grid;gap:8px;}
-.k-mod>a,.k-mod>div{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid var(--line);background:var(--ink2);text-decoration:none;color:inherit;}
-.k-mod.is-live>a{border-color:rgba(167,139,250,.35);background:linear-gradient(120deg,rgba(167,139,250,.08),rgba(214,186,255,.04));transition:border-color .2s,transform .25s var(--ease-out);}
-.k-mod.is-live>a:hover{border-color:var(--accent);transform:translateX(3px);}
+.k-mod>a:not(.k-mod-cw),.k-mod>div{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center;padding:14px 16px;border:1px solid var(--line);background:var(--ink2);text-decoration:none;color:inherit;}
+.k-mod.is-live>a:not(.k-mod-cw){border-color:rgba(167,139,250,.35);background:linear-gradient(120deg,rgba(167,139,250,.08),rgba(214,186,255,.04));transition:border-color .2s,transform .25s var(--ease-out);}
+.k-mod.is-live>a:not(.k-mod-cw):hover{border-color:var(--accent);transform:translateX(3px);}
 .k-mod-nr{font-family:var(--mono);font-weight:800;font-size:1.05rem;color:var(--muted2);}
 .k-mod.is-live .k-mod-nr{background:var(--iris);-webkit-background-clip:text;background-clip:text;color:transparent;}
 .k-mod-t{display:flex;flex-direction:column;gap:3px;min-width:0;}
@@ -319,7 +319,7 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
 .k-mod-go{font-family:var(--mono);font-size:.76rem;color:var(--muted);white-space:nowrap;}
 .k-mod-go i{font-style:normal;color:var(--cyan);margin-left:4px;}
 .k-mod-soon{color:var(--muted2);letter-spacing:1px;text-transform:uppercase;font-size:.68rem;}
-@media(max-width:560px){.k-mod>a,.k-mod>div{grid-template-columns:32px 1fr;}.k-mod-go{grid-column:2;}}
+@media(max-width:560px){.k-mod>a:not(.k-mod-cw),.k-mod>div{grid-template-columns:32px 1fr;}.k-mod-go{grid-column:2;}}
 .k-legenda{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin:0 0 16px;}
 .k-legenda .k-ramka{margin:0;}
 .k-slow{width:100%;border-collapse:collapse;font-size:.92rem;}
@@ -453,3 +453,41 @@ li.is-1{border-color:rgba(39,232,255,.35);} li.is-0{border-color:rgba(255,46,151
 .k-cr{color:#ff6fb5;}
 /* podpis „Jak czytać” pod rysunkiem, który nie jest w <figure> (np. rząd kont teowych w rachunkowości) */
 .k-prose .k-fig-cap{margin:-.4em 0 1.4em!important;font-size:.88rem;line-height:1.6;color:var(--muted);}
+
+/* --- hub: „Przed kolokwium” (zadania wskazane przez prowadzącą) i spis zadań z zajęć --- */
+.k-kol{border:1px solid rgba(189,139,255,.45);background:linear-gradient(160deg,rgba(189,139,255,.10),rgba(189,139,255,.02));padding:18px 18px 8px;}
+.k-kol .k-hub-h{display:flex;align-items:center;gap:10px;border-bottom-color:rgba(189,139,255,.25);}
+.k-kol-ic{color:#bd8bff;font-size:1.05rem;}
+.k-kol-lista{list-style:none;margin:0 0 10px;padding:0;display:grid;gap:6px;}
+.k-kol-el{display:flex;align-items:stretch;gap:0;border:1px solid var(--line);background:rgba(10,9,16,.7);transition:border-color .2s;}
+.k-kol-el:hover{border-color:#bd8bff;}
+.k-kol-chk{flex:0 0 auto;display:flex;align-items:center;justify-content:center;width:48px;cursor:pointer;}
+.k-kol-cb{width:22px;height:22px;margin:0;accent-color:var(--ok);cursor:pointer;}
+.k-kol-a{flex:1;display:grid;grid-template-columns:150px 1fr auto;gap:12px;align-items:center;padding:12px 14px 12px 10px;text-decoration:none;color:inherit;min-width:0;}
+.k-kol-nr{font-family:var(--mono);font-size:.78rem;font-weight:700;letter-spacing:.4px;color:#bd8bff;}
+.k-kol-t{display:flex;flex-direction:column;gap:2px;min-width:0;}
+.k-kol-t b{font-weight:600;color:#fff;font-size:.98rem;line-height:1.35;}
+.k-kol-t span{font-size:.82rem;color:var(--muted);}
+.k-kol-a i{font-style:normal;color:var(--cyan);}
+.k-kol-el.is-done{border-color:rgba(90,209,160,.45);}
+.k-kol-el.is-done .k-kol-t b{color:#bfe9d6;text-decoration:line-through;text-decoration-color:rgba(90,209,160,.6);}
+.k-kol-el.is-done .k-kol-nr{color:var(--ok);}
+.k-kol-licz{font-family:var(--mono);font-size:.76rem;color:var(--muted);margin:0 0 10px;}
+@media(max-width:560px){.k-kol{padding:14px 12px 6px;}.k-kol-a{grid-template-columns:1fr auto;gap:2px 10px;}.k-kol-nr{grid-column:1;}.k-kol-t{grid-column:1;}.k-kol-a i{grid-column:2;grid-row:1/span 2;}.k-kol-chk{width:44px;}}
+.k-spis{display:grid;gap:8px;}
+.k-spis-w{display:grid;grid-template-columns:240px 1fr;gap:10px 16px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line);}
+.k-spis-m{color:#fff;text-decoration:none;font-weight:600;font-size:.95rem;}
+.k-spis-m span{font-family:var(--mono);font-size:.76rem;color:var(--muted2);margin-right:8px;}
+.k-spis-m:hover{color:#bd8bff;}
+.k-spis-z{display:flex;flex-wrap:wrap;gap:6px;}
+.k-spis-z a{font-family:var(--mono);font-size:.78rem;color:#e6dcff;text-decoration:none;border:1px solid rgba(189,139,255,.35);background:rgba(189,139,255,.06);padding:5px 9px;line-height:1.2;}
+.k-spis-z a:hover{border-color:#bd8bff;background:rgba(189,139,255,.14);}
+@media(max-width:640px){.k-spis-w{grid-template-columns:1fr;gap:8px;}.k-spis-z a{padding:7px 10px;}}
+/* rozwiązanie wskazane przed kolokwium + kotwica pod przyklejonym paskiem */
+.k-rozw{scroll-margin-top:90px;}
+@media(max-width:1099px){.k-rozw{scroll-margin-top:118px;}}
+.k-rozw-kol{font-family:var(--mono);font-size:.68rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#bd8bff;border:1px solid rgba(189,139,255,.5);padding:1px 7px;}
+.k-rozw:target{border-color:#bd8bff;box-shadow:0 0 0 1px rgba(189,139,255,.35),0 0 28px rgba(189,139,255,.15);}
+/* pasek u góry kursu mniej przezroczysty — tekst pod nim nie miesza się z napisami paska */
+.wz-bar{background:rgba(5,5,8,.92);}
+.k-toc details{background:rgba(13,12,19,.96);}

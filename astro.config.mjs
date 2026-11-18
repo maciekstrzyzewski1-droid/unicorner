@@ -8,6 +8,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeTabele from './src/lib/rehype-tabele.mjs';
 import rehypeInterpunkcja from './src/lib/rehype-interpunkcja.mjs';
+import rehypeLiczby from './src/lib/rehype-liczby.mjs';
 import { KATEX_OPCJE } from './src/lib/katex-opcje.js';
 import { cspMeta } from './src/lib/csp-meta.mjs';
 import { cp, mkdir, readFile } from 'node:fs/promises';
@@ -43,7 +44,7 @@ export default defineConfig({
   markdown: {
     processor: unified({
       remarkPlugins: [remarkMath],
-      rehypePlugins: [[rehypeKatex, KATEX_OPCJE], rehypeInterpunkcja, rehypeTabele],
+      rehypePlugins: [[rehypeKatex, KATEX_OPCJE], rehypeInterpunkcja, rehypeLiczby, rehypeTabele],
     }),
   },
   vite: {

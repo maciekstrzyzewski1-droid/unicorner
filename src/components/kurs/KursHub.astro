@@ -6,10 +6,34 @@ import '../../styles/kurs.css';
 import Bar from '../wiedza/Bar.astro';
 import Powiadom from './Powiadom.astro';
 import { getKurs, moduleUrl, courseUrl } from '../../data/kursy/index.js';
+import { rozwiazaniaZMdx, numerowane } from '../../lib/kotwica.js';
 
 interface Props { kurs: string }
-const { COURSE, MODULES } = getKurs(Astro.props.kurs);
+const { COURSE, MODULES, KOLOKWIUM } = getKurs(Astro.props.kurs) as any;
 const live = MODULES.filter((m) => m.status === 'live').length;
+
+// Spis zadań z zajęć: każde <Rozwiazanie zrodlo="…"> z gotowych modułów, z linkiem prosto do rozwiązania.
+const MDX = import.meta.glob('../../pages/*/*.mdx', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
+const rozw = (m: any) => rozwiazaniaZMdx(MDX[`../../pages/${COURSE.slug}/${m.slug}.mdx`] ?? '');
+// Dwa rozwiązania z tą samą kotwicą na jednej stronie = zepsuty link. Build się zatrzymuje i mówi, co poprawić.
+for (const m of MODULES.filter((x) => x.status === 'live')) {
+  const ids = rozw(m).map((r) => r.id);
+  const dup = ids.filter((id, i) => ids.indexOf(id) !== i);
+  if (dup.length) throw new Error(`Moduł ${COURSE.slug}/${m.slug}: kilka rozwiązań z kotwicą „${dup[0]}” — nadaj jednemu własne id (<Rozwiazanie id="…">)`);
+}
+// „Zad. 2.15” przed „Zad. 2.16”, potem reszta (konspekt, zadania dodatkowe) w kolejności z modułu
+const klucz = (r: any) => { const m = r.zrodlo.match(/^Zad\.\s*(\d+)\.(\d+)/); return m ? [0, +m[1], +m[2], r.i] : [1, 0, 0, r.i]; };
+const poNumerze = (a: any, b: any) => { const x = klucz(a), y = klucz(b); for (let k = 0; k < 4; k++) if (x[k] !== y[k]) return x[k] - y[k]; return 0; };
+const SPIS = MODULES.filter((m) => m.status === 'live')
+  .map((m) => ({ m, zad: rozw(m).filter((r, i, all) => numerowane(r.zrodlo) && all.findIndex((x) => x.zrodlo === r.zrodlo) === i).map((r, i) => ({ ...r, i })).sort(poNumerze) }))
+  .filter((x) => x.zad.length);
+// „Przed kolokwium”: każdy wpis musi wskazywać istniejące rozwiązanie w gotowym module.
+const KOL = KOLOKWIUM?.zadania?.map((z: any) => {
+  const m = MODULES.find((x) => x.slug === z.modul);
+  if (!m || m.status !== 'live') throw new Error(`KOLOKWIUM (${COURSE.slug}): moduł „${z.modul}” nie istnieje albo nie jest gotowy`);
+  if (!rozw(m).some((r) => r.id === z.id)) throw new Error(`KOLOKWIUM (${COURSE.slug}): w module „${z.modul}” nie ma rozwiązania z kotwicą „${z.id}”`);
+  return { ...z, m, href: `${moduleUrl(COURSE.slug, m)}#${z.id}` };
+}) ?? [];
 const RAMKI = [
   ['polecenie', '✎', 'Polecenie na kolokwium', 'Jak brzmi polecenie i przepis krok po kroku, jak je zrobić.'],
   ['intuicja', '◐', 'Po ludzku', 'Porównanie z życia, które działa tak samo jak pojęcie — nie tylko „brzmi podobnie”.'],
@@ -48,6 +72,26 @@ const url = `https://unicorner.pl${courseUrl(COURSE.slug)}`;
       </div>
     </header>
 
+    {KOL.length > 0 && (
+      <section class="k-hub-sec k-kol" data-kol={COURSE.slug}>
+        <h2 class="k-hub-h"><span class="k-kol-ic" aria-hidden="true">★</span>{KOLOKWIUM.tytul}</h2>
+        <p class="k-hub-p">{KOLOKWIUM.opis}</p>
+        <ol class="k-kol-lista">
+          {KOL.map((z: any) => (
+            <li class="k-kol-el">
+              <label class="k-kol-chk"><input type="checkbox" class="k-kol-cb" data-id={z.id} aria-label={`Przerobione: ${z.nr}`} /></label>
+              <a href={z.href} class="k-kol-a">
+                <span class="k-kol-nr">{z.nr}</span>
+                <span class="k-kol-t"><b>{z.nazwa}</b><span>moduł {z.m.nr} · {z.m.title}</span></span>
+                <i aria-hidden="true">→</i>
+              </a>
+            </li>
+          ))}
+        </ol>
+        <p class="k-kol-licz" data-js-only hidden><span data-licz>0</span> z {KOL.length} przerobione</p>
+      </section>
+    )}
+
     <section class="k-hub-sec">
       <h2 class="k-hub-h">Moduły</h2>
       <ol class="k-mods">
@@ -80,6 +124,23 @@ const url = `https://unicorner.pl${courseUrl(COURSE.slug)}`;
       </ol>
     </section>
 
+    {SPIS.length > 0 && (
+      <section class="k-hub-sec">
+        <h2 class="k-hub-h">Znajdź zadanie z zajęć</h2>
+        <p class="k-hub-p">Masz numer zadania ze zbioru, z listy albo z konspektu? Kliknij go — otworzy się rozwiązanie krok po kroku. Przykłady własne kursu są w modułach.</p>
+        <div class="k-spis">
+          {SPIS.map(({ m, zad }) => (
+            <div class="k-spis-w">
+              <a class="k-spis-m" href={moduleUrl(COURSE.slug, m)}><span>{String(m.nr).padStart(2, '0')}</span>{m.title}</a>
+              <div class="k-spis-z">
+                {zad.map((r) => <a href={`${moduleUrl(COURSE.slug, m)}#${r.id}`} title={r.tytul}>{r.zrodlo}</a>)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    )}
+
     {live < MODULES.length && <Powiadom kurs={COURSE.slug} nazwa={COURSE.name} />}
 
     <section class="k-hub-sec">
@@ -95,6 +156,32 @@ const url = `https://unicorner.pl${courseUrl(COURSE.slug)}`;
 
     <p class="k-bug">Kurs to nasze własne opracowanie — nie kopiujemy slajdów ani skryptów i nie jesteśmy powiązani z uczelnią ani prowadzącymi. Zapis bywa różny w różnych grupach; gdy prowadzący zapisuje coś inaczej, liczy się jego wersja. Błąd albo niejasność? <a href="/kontakt.html">Napisz</a>.</p>
   </main>
+
+  {KOL.length > 0 && (
+    <script>
+      // „Przed kolokwium”: odhaczone zadania zostają w tej przeglądarce (localStorage; bez niego lista działa, tylko nie pamięta).
+      document.querySelectorAll<HTMLElement>('[data-kol]').forEach((box) => {
+        const klucz = `unicorner:kolokwium:${box.dataset.kol}`;
+        const cbs = Array.from(box.querySelectorAll<HTMLInputElement>('.k-kol-cb'));
+        const licz = box.querySelector<HTMLElement>('[data-licz]');
+        let zrobione: string[] = [];
+        try { zrobione = JSON.parse(localStorage.getItem(klucz) || '[]'); } catch { zrobione = []; }
+        const odswiez = () => {
+          cbs.forEach((c) => c.closest('li')?.classList.toggle('is-done', c.checked));
+          if (licz) licz.textContent = String(cbs.filter((c) => c.checked).length);
+        };
+        cbs.forEach((c) => {
+          c.checked = zrobione.includes(c.dataset.id!);
+          c.addEventListener('change', () => {
+            odswiez();
+            try { localStorage.setItem(klucz, JSON.stringify(cbs.filter((x) => x.checked).map((x) => x.dataset.id))); } catch { /* bez pamięci */ }
+          });
+        });
+        box.querySelectorAll<HTMLElement>('[data-js-only]').forEach((el) => (el.hidden = false));
+        odswiez();
+      });
+    </script>
+  )}
 
   <footer class="wz-foot">
     <div class="wz-wrap">

@@ -31,4 +31,21 @@ export const MODULES = [
   { nr: 12, slug: 'wyroby-gotowe', title: 'Wyroby gotowe i wynik', short: 'Wyroby gotowe w rzeczywistym i stałym koszcie wytworzenia, zmiana stanu produktów i wynik finansowy firmy produkcyjnej.', status: 'soon' },
 ];
 
+// Zadania wskazane na zajęciach przed kolokwium (listopad 2026). Strona kursu pokazuje je na górze
+// z linkiem prosto do rozwiązania; rozwiązanie w module dostaje znaczek. `id` = kotwica komponentu Rozwiazanie
+// (build sprawdza, że istnieje w module).
+export const KOLOKWIUM = {
+  tytul: 'Przed kolokwium',
+  opis: 'Te zadania wskazano na zajęciach jako warte uwagi przed kolokwium. Każdy link otwiera rozwiązanie krok po kroku. Odhaczaj, co już przerobione — zaznaczenia zostają w tej przeglądarce.',
+  zadania: [
+    { nr: 'Zad. 2.15', nazwa: 'Snow — uproszczony bilans i wynik finansowy', modul: 'bilans', id: 'zad-2-15' },
+    { nr: 'Bilans w grupach 1', nazwa: 'FCB Maniac (Zad. 2.16) — bilans i strata netto', modul: 'bilans', id: 'zad-2-16' },
+    { nr: 'Bilans w grupach 2', nazwa: 'DerbiTravel (Zad. 2.17) — kapitał podstawowy z procentu', modul: 'bilans', id: 'zad-2-17' },
+    { nr: 'Bilans w grupach 3', nazwa: 'Spółka ABC (zadanie dodatkowe 4) — 26 składników', modul: 'bilans', id: 'zad-dod-4' },
+    { nr: 'Zad. 4.1', nazwa: 'Zdarzenie czy operacja gospodarcza (grupa a i b)', modul: 'konta', id: 'zad-4-1' },
+    { nr: 'Zad. 5.4', nazwa: 'Hurtex — konta, zestawienie, bilans zamknięcia i analiza zmian', modul: 'zestawienie', id: 'zad-5-4' },
+    { nr: 'Zad. 5.5', nazwa: 'MIKS — konta, zestawienie obrotów i sald, bilans zamknięcia', modul: 'zestawienie', id: 'zad-5-5' },
+  ],
+};
+
 export { SLOWNICZEK };
