@@ -31,7 +31,7 @@ export const Z216 = [
   { nr: 2, nazwa: 'prawo do używania znaku FCB', kwota: 90000, poz: 'AA1', dlaczego: 'To prawo, nie rzecz. Firma korzysta z niego latami — wartości niematerialne i prawne.' },
   { nr: 3, nazwa: 'zobowiązania wobec dostawców (spłata do 12 miesięcy)', kwota: 190000, poz: 'PB3', dlaczego: 'Dług wobec dostawców — kapitał obcy. Zobowiązania za dostawy są zawsze krótkoterminowe.' },
   { nr: 4, nazwa: 'zobowiązania wobec pracowników', kwota: 33000, poz: 'PB3', dlaczego: 'Bieżący dług wobec pracowników, do spłaty szybko — zobowiązania krótkoterminowe.' },
-  { nr: 5, nazwa: 'należność dochodzona na drodze sądowej', kwota: 12000, poz: 'AB2', dlaczego: 'Ktoś jest winien firmie pieniądze. Ustawa umieszcza należności dochodzone w sądzie wśród należności krótkoterminowych.' },
+  { nr: 5, nazwa: 'należność dochodzona na drodze sądowej', kwota: 12000, poz: 'AB2', dlaczego: 'Ktoś jest winien firmie pieniądze, a termin zapłaty już minął — dlatego sprawa trafiła do sądu. Ustawa dzieli należności według tego, kiedy dłużnik <b>ma</b> zapłacić (wymagalność), a nie według tego, ile potrwa proces. Ta należność jest wymagalna już teraz, więc jest krótkoterminowa.' },
   { nr: 6, nazwa: 'niepokryta strata z lat ubiegłych', kwota: -9000, poz: 'PA5', dlaczego: 'Wynik z poprzednich lat należy do kapitału własnego. Strata wchodzi ze znakiem minus.' },
   { nr: 7, nazwa: 'kapitał podstawowy', kwota: 1500000, poz: 'PA1', dlaczego: 'Wkład wspólników przy zakładaniu spółki.' },
   { nr: 8, nazwa: 'kapitał zapasowy', kwota: 121000, poz: 'PA2', dlaczego: 'Zyski, które wspólnicy zostawili w spółce na stałe — kapitał własny, pozycja II.' },
@@ -299,7 +299,7 @@ Przy każdym składniku zadaj cztery pytania po kolei:
 - **Nieruchomość, w której firma nie pracuje**, tylko trzyma ją dla zysku (wynajem, wzrost ceny) — **A.IV Inwestycje długoterminowe**, a nie A.II.
 - **Lokata 3-miesięczna, obligacje z wykupem do 12 miesięcy** — **B.III Inwestycje krótkoterminowe**. Obligacje (papiery dłużne, za które wystawca odda pieniądze z odsetkami w dniu wykupu) z wykupem za ponad 12 miesięcy — **A.IV Inwestycje długoterminowe**.
 - **Części zamienne do maszyn** — materiały, czyli **B.I Zapasy**, a nie maszyny.
-- **Nadpłacony podatek**, należność **dochodzona w sądzie** — **B.II Należności krótkoterminowe**.
+- **Nadpłacony podatek**, należność **dochodzona w sądzie** — **B.II Należności krótkoterminowe**. Przy sądzie liczy się termin zapłaty, a ten już minął. Długość procesu nic nie zmienia. Ryzyko, że pieniądze nie wrócą, firma pokazuje inaczej: obniża kwotę należności w bilansie (tzw. odpis aktualizujący).
 - **Strata** (z lat ubiegłych albo netto) — w kapitale własnym ze **znakiem minus**.
 </Ramka>
 
