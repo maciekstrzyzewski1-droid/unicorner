@@ -1,12 +1,21 @@
 ---
 // Zadanie rozwiązane krok po kroku. Kroki odsłania się po jednym — student może najpierw spróbować sam.
 // Bez JavaScriptu wszystkie kroki są widoczne (nic nie znika na stałe).
-interface Props { tytul: string; zrodlo?: string; odslaniaj?: boolean }
+// Kotwica: id z propsa albo liczone ze źródła/tytułu (lib/kotwica.js) — tak samo liczy ją spis zadań na stronie kursu.
+// Gdy zadanie jest na liście „Przed kolokwium” kursu (KOLOKWIUM w src/data/kursy/<kurs>.js), nagłówek dostaje znaczek.
+import { kotwicaZadania } from '../../lib/kotwica.js';
+import { KURSY } from '../../data/kursy/index.js';
+interface Props { tytul: string; zrodlo?: string; odslaniaj?: boolean; id?: string }
 const { tytul, zrodlo, odslaniaj = true } = Astro.props;
+const id = kotwicaZadania(Astro.props);
+const [, kurs, modul] = Astro.url.pathname.match(/^\/([^/]+)\/([^/.]+)/) ?? [];
+const kol = (KURSY as any)[kurs]?.KOLOKWIUM;
+const naKol = kol?.zadania?.some((z: any) => z.modul === modul && z.id === id);
 ---
-<section class="k-rozw" data-rozw={odslaniaj ? '' : undefined}>
+<section class="k-rozw" id={id} data-rozw={odslaniaj ? '' : undefined}>
   <header class="k-rozw-head">
     <span class="k-rozw-tag">Zadanie · krok po kroku</span>
+    {naKol && <span class="k-rozw-kol">★ wskazane przed kolokwium</span>}
     <h3 class="k-rozw-h">{tytul}</h3>
     {zrodlo && <span class="k-rozw-zr">{zrodlo}</span>}
   </header>

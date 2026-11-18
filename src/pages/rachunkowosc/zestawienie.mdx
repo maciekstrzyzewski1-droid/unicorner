@@ -31,7 +31,7 @@ import CwiczenieKsiegowanie from '../../components/kurs/konta/CwiczenieKsiegowan
 import BilansTabela from '../../components/kurs/bilans/BilansTabela.astro';
 import CwiczenieBilans from '../../components/kurs/bilans/CwiczenieBilans.astro';
 import { zestawienie, zl } from '../../lib/konta.js';
-import { K55, O55 } from '../../lib/konta-zadania.js';
+import { K55, O55, K54, O54 } from '../../lib/konta-zadania.js';
 
 export const KM = [
   { id: 'kasa', nazwa: 'Kasa', typ: 'A', sp: 2000 },
@@ -60,6 +60,16 @@ export const DL55 = {
 };
 export const SALDA55 = K55.filter((k) => S55[k.id].saldo !== 0).map((k, i) => ({ nr: i + 1, nazwa: k.nazwa, kwota: (k.ujemne ? -1 : 1) * S55[k.id].saldo, poz: k.poz, dlaczego: DL55[k.id] }));
 export const ZERO55 = K55.filter((k) => S55[k.id].saldo === 0).map((k) => k.nazwa);
+
+export const R54 = zestawienie(K54, O54, { okres: 'styczeń' });
+export const DL54 = {
+  rb: 'Pieniądze na rachunku bieżącym to środki pieniężne — inwestycje krótkoterminowe.',
+  kasa: 'Gotówka to środki pieniężne — inwestycje krótkoterminowe, razem z rachunkiem.',
+  tow: 'Towary czekają na sprzedaż — zapasy.',
+  kz: 'Kapitał zakładowy spółki z o.o. to jej kapitał podstawowy.',
+  kred: 'Kredyt krótkoterminowy jest do spłaty w ciągu 12 miesięcy — zobowiązania krótkoterminowe.',
+};
+export const SALDA54 = K54.filter((k) => R54.zam[k.id].saldo !== 0).map((k, i) => ({ nr: i + 1, nazwa: k.nazwa, kwota: R54.zam[k.id].saldo, poz: k.poz, dlaczego: DL54[k.id] }));
 
 export const KB = [
   { id: 'kasa', nazwa: 'Kasa', typ: 'A', sp: 3000 },
@@ -109,15 +119,16 @@ Wyobraź sobie koniec miesiąca w małej firmie. Na kartce masz dwanaście kont 
 
 Sprawdzanie konto po koncie trwa długo. Dlatego księgowi przepisują wszystkie konta do jednej tabeli — **zestawienia obrotów i sald**. Każde konto zajmuje w niej jeden wiersz. Na dole są sumy kolumn. Jeśli sumy Wn i Ma się zgadzają, można sporządzić bilans zamknięcia. Jeśli się nie zgadzają, od razu widać, gdzie szukać błędu.
 
-Na kolokwium to jedno długie zadanie z czterema poleceniami: otwórz konta, zaksięguj operacje, sporządź zestawienie, sporządź bilans zamknięcia. Przejdziemy je razem na zadaniu z zajęć (spółka MIKS). Piąte polecenie z mapy niżej — szukanie błędu — to częsty dodatek.
+Na kolokwium to jedno długie zadanie z czterema poleceniami: otwórz konta, zaksięguj operacje, sporządź zestawienie, sporządź bilans zamknięcia. Przejdziemy je razem na zadaniu z zajęć (spółka MIKS). Potem cały cykl jeszcze raz na krótszym zadaniu (Hurtex), z dodatkowym poleceniem: analizą zmian w bilansie. Ostatnie polecenie z mapy niżej — szukanie błędu — to częsty dodatek.
 
 ## Co będzie na kolokwium
 
 <Polecenia items={[
-  { polecenie: 'Otwórz konta w układzie teowym', jak: 'Każdy składnik bilansu otwarcia dostaje konto z saldem początkowym: aktywa po Wn, pasywa po Ma, strata z lat ubiegłych po Wn. Dla nowych składników z operacji otwierasz konta puste.', przepis: 'polecenie-otworz', cwiczenia: 'cw-otworz', zrodlo: 'jak w Zad. 5.5, str. 67, pkt 1' },
-  { polecenie: 'Zaksięguj operacje gospodarcze na kontach', jak: 'Każda operacja na dwóch kontach, po przeciwnych stronach, w tej samej kwocie, z numerem operacji.', przepis: 'polecenie-ksieguj', cwiczenia: 'cw-ksieguj', zrodlo: 'jak w Zad. 5.5, str. 67, pkt 2' },
-  { polecenie: 'Sporządź zestawienie obrotów i sald', jak: 'Każde konto w jednym wierszu: saldo początkowe, obroty za okres, obroty narastająco, saldo końcowe. Na dole sumy — w każdej parze Wn = Ma.', przepis: 'polecenie-zois', cwiczenia: 'cw-zois', zrodlo: 'jak w Zad. 5.5, str. 67, pkt 3' },
-  { polecenie: 'Sporządź bilans zamknięcia', jak: 'Salda końcowe kont przenosisz na pozycje bilansu z ustawy. Strata wchodzi do pasywów z minusem, konta z saldem 0 pomijasz.', przepis: 'polecenie-bilans', cwiczenia: 'cw-bilans', zrodlo: 'jak w Zad. 5.5, str. 67, pkt 4' },
+  { polecenie: 'Otwórz konta w układzie teowym', jak: 'Każdy składnik bilansu otwarcia dostaje konto z saldem początkowym: aktywa po Wn, pasywa po Ma, strata z lat ubiegłych po Wn. Dla nowych składników z operacji otwierasz konta puste.', przepis: 'polecenie-otworz', cwiczenia: 'cw-otworz', zrodlo: 'jak w Zad. 5.4 i 5.5, pkt 1' },
+  { polecenie: 'Zaksięguj operacje gospodarcze na kontach', jak: 'Każda operacja na dwóch kontach, po przeciwnych stronach, w tej samej kwocie, z numerem operacji.', przepis: 'polecenie-ksieguj', cwiczenia: 'cw-ksieguj', zrodlo: 'jak w Zad. 5.4 i 5.5, pkt 2' },
+  { polecenie: 'Sporządź zestawienie obrotów i sald', jak: 'Każde konto w jednym wierszu: saldo początkowe, obroty za okres, obroty narastająco, saldo końcowe. Na dole sumy — w każdej parze Wn = Ma.', przepis: 'polecenie-zois', cwiczenia: 'cw-zois', zrodlo: 'jak w Zad. 5.4 i 5.5, pkt 3' },
+  { polecenie: 'Sporządź bilans zamknięcia', jak: 'Salda końcowe kont przenosisz na pozycje bilansu z ustawy. Strata wchodzi do pasywów z minusem, konta z saldem 0 pomijasz.', przepis: 'polecenie-bilans', cwiczenia: 'cw-bilans', zrodlo: 'jak w Zad. 5.4 i 5.5, pkt 4' },
+  { polecenie: 'Przeanalizuj zmiany w sumie bilansowej i w strukturze majątku oraz źródeł finansowania', jak: 'Suma na początek i na koniec, zmiana wyjaśniona typami operacji, potem udział każdego składnika w sumie bilansowej w procentach i 2–3 zdania wniosków.', przepis: 'polecenie-analiza', cwiczenia: 'cw-analiza', zrodlo: 'jak w Zad. 5.4, str. 66, pkt 5' },
   { polecenie: 'Sprawdź księgowanie zestawieniem albo znajdź błąd', jak: 'Porównujesz sumy w parach. To, która para się nie zgadza, mówi, jaki to błąd.', przepis: 'polecenie-kontrola', cwiczenia: 'cw-kontrola' },
 ]} />
 
@@ -221,7 +232,7 @@ W typowym planie kont strata siedzi na koncie „Rozliczenie wyniku finansowego�
 6. **Sprawdź bilans otwarcia:** suma Sp. aktywów = suma pasywów (strata z minusem).
 </Ramka>
 
-<Rozwiazanie tytul="Spółka MIKS — konta i księgowanie stycznia" zrodlo="Zad. 5.5, str. 67, pkt 1–2">
+<Rozwiazanie id="zad-5-5" tytul="Spółka MIKS — konta i księgowanie stycznia" zrodlo="Zad. 5.5, str. 67, pkt 1–2">
 <div slot="tresc">
 
 Spółka MIKS na 1 stycznia 20X6 r.:
@@ -405,7 +416,7 @@ Cel: tabela z dwunastoma wierszami (po jednym na konto) i wierszem „Razem”, 
 6. **Razem:** dodaj każdą z ośmiu kolumn. Sprawdź trzy równości: Sp. Wn = Sp. Ma, obroty Wn = obroty Ma, saldo końcowe Wn = saldo końcowe Ma.
 </Ramka>
 
-<Rozwiazanie tytul="Spółka MIKS — zestawienie obrotów i sald za styczeń" zrodlo="Zad. 5.5, str. 67, pkt 3">
+<Rozwiazanie id="zad-5-5-zestawienie" tytul="Spółka MIKS — zestawienie obrotów i sald za styczeń" zrodlo="Zad. 5.5, str. 67, pkt 3">
 <div slot="plan">
 
 1. Przepisujemy salda początkowe — to bilans otwarcia w innej formie. Suma od razu sprawdza, czy dobrze otworzyliśmy konta.
@@ -489,7 +500,7 @@ Ostatni krok zadania. Salda końcowe to stany składników na 31 stycznia. Trzeb
 6. Sprawdź sumę drugą drogą: bilans otwarcia + AP+ − AP−.
 </Ramka>
 
-<Rozwiazanie tytul="Spółka MIKS — bilans zamknięcia na 31 stycznia 20X6 r." zrodlo="Zad. 5.5, str. 67, pkt 4">
+<Rozwiazanie id="zad-5-5-bilans" tytul="Spółka MIKS — bilans zamknięcia na 31 stycznia 20X6 r." zrodlo="Zad. 5.5, str. 67, pkt 4">
 <div slot="plan">
 
 1. Bierzemy salda końcowe z zestawienia (kolumny Sk). Konta z saldem 0 odpadają.
@@ -528,6 +539,232 @@ To sprawdzenie nie korzysta z kont. Jeśli obie drogi dają tę samą sumę, a a
 - Bilans zamknięcia prosto z sald działa, gdy wszystkie operacje są bilansowe.
 - W Zad. 5.5 nie ma kosztów ani przychodów, więc zysk (strata) netto wynosi 0.
 - Gdy dojdą konta wynikowe, najpierw trzeba ustalić wynik finansowy.
+</Ramka>
+
+<a id="polecenie-analiza" class="k-anchor"></a>
+
+## Cały cykl jeszcze raz i analiza zmian: Hurtex
+
+Zad. 5.4 to krótsza wersja zadania MIKS: cztery operacje i sześć kont. Dochodzi w nim piąte polecenie — **przeanalizować zmiany w sumie bilansowej i w strukturze** majątku i źródeł finansowania. Najpierw dwa pojęcia, potem przepis i całe zadanie od początku do końca.
+
+<Ramka kind="zapamietaj" tytul="suma bilansowa i struktura">
+**Suma bilansowa** to razem aktywa. Tyle samo wynosi razem pasywa.
+
+**Struktura** mówi, jaką część sumy bilansowej stanowi każdy składnik. Podajemy ją w procentach:
+
+udział składnika = kwota składnika ÷ suma bilansowa · 100%
+
+Struktura aktywów pokazuje, **w czym** firma trzyma majątek. Struktura pasywów pokazuje, **skąd** ma na niego pieniądze:
+- **kapitał własny** — wartość wniesiona przez właścicieli i przez nich wypracowana (kapitał podstawowy, zapasowy, zysk);
+- **kapitał obcy** — wszystko, co trzeba komuś oddać: kredyty, długi wobec dostawców, pracowników i urzędów, a także rezerwy.
+
+Po co to liczyć? Same kwoty nie mówią, czy zmiana jest duża. „Urosło o 8 000” to dużo przy starcie z 5 000, a mało przy starcie z miliona. Procenty pokazują proporcje — od razu widać, co w firmie przeważa.
+</Ramka>
+
+Przykład z życia: masz 1 000 zł, z czego 250 zł w portfelu, a 750 zł na koncie. Gotówka to 250 ÷ 1 000 · 100% = 25% twoich pieniędzy, konto — 75%. Razem zawsze 100%.
+
+<Ramka kind="polecenie">
+„Przeanalizuj zmiany w sumie bilansowej oraz w strukturze składników majątku i źródeł ich finansowania.”
+
+1. **Suma na początek i na koniec.** Weź razem aktywa z bilansu otwarcia i z bilansu zamknięcia.
+2. **Zmiana = koniec − początek.** W procentach: zmiana ÷ początek · 100%. Dzielisz przez początek, bo zmianę porównujesz z punktem startu.
+3. **Wyjaśnij zmianę typami operacji.** AP+ zwiększają sumę, AP− ją zmniejszają, A i P jej nie zmieniają. Sprawdź: początek + AP+ − AP− = koniec.
+4. **Struktura.** Każdy składnik aktywów podziel przez sumę bilansową z tego samego dnia i pomnóż przez 100%. Tak samo każdy składnik pasywów. Zrób to dla początku i dla końca.
+5. **Grupy.** Zsumuj udziały: aktywa trwałe i obrotowe, kapitał własny i obcy.
+6. **Wnioski w 2–3 zdaniach.** Co urosło, co zmalało, czym firma finansuje majątek.
+</Ramka>
+
+<Ramka kind="pulapka">
+- Udział liczysz od sumy z **tego samego dnia**. Strukturę na koniec dzielisz przez sumę na koniec, a nie na początek.
+- Udziały aktywów dają razem 100%. Udziały pasywów — osobno też 100%.
+- Po zaokrągleniu do jednego miejsca po przecinku suma czasem wychodzi 99,9% albo 100,1%. To nie błąd. Dopisz „po zaokrągleniu”.
+</Ramka>
+
+<Rozwiazanie id="zad-5-4" tytul="Hurtex — konta, zestawienie, bilans zamknięcia i analiza zmian" zrodlo="Zad. 5.4, str. 66">
+<div slot="tresc">
+
+Hurtex rozpoczyna działalność 1 stycznia 20X6 r. Na start ma tylko dwa składniki:
+
+| Bilans otwarcia | zł |
+|---|---:|
+| Środki pieniężne na rachunku bankowym (aktywa) | 5 000 |
+| Kapitał zakładowy (pasywa) | 5 000 |
+
+Operacje w styczniu:
+
+1. Kupiono towary do magazynu. Dostawca X wystawił fakturę, zapłata nastąpi później — 9 000 zł.
+2. Podjęto gotówkę z rachunku bieżącego do kasy — 2 000 zł.
+3. Przelewem z rachunku spłacono część długu wobec dostawcy X — 1 000 zł.
+4. Zaciągnięto kredyt bankowy krótkoterminowy na spłatę pozostałego długu wobec dostawcy X — **kwoty w treści nie ma**.
+
+Polecenia:
+
+1. Otwórz konta w układzie teowym.
+2. Zaksięguj operacje.
+3. Sporządź zestawienie obrotów i sald za styczeń.
+4. Sporządź bilans zamknięcia na 31 stycznia.
+5. Przeanalizuj zmiany w sumie bilansowej i w strukturze majątku oraz źródeł finansowania.
+
+</div>
+
+<div slot="plan">
+
+1. **Otwieramy konta.** Dwa z bilansu otwarcia, z saldem. Cztery nowe z operacji, bez salda.
+2. **Liczymy kwotę operacji 4.** Bez niej nie da się zaksięgować ostatniej operacji.
+3. **Księgujemy** cztery operacje. Przy każdej zapisujemy typ — przyda się w analizie.
+4. **Zamykamy konta i robimy zestawienie** obrotów i sald.
+5. **Bilans zamknięcia** z sald końcowych.
+6. **Analiza:** najpierw suma bilansowa, potem struktura aktywów i pasywów (każdy składnik i grupy), na końcu wnioski. Po to, żeby słowami powiedzieć, jak firma zmieniła się w pierwszym miesiącu: w czym trzyma majątek i kto go finansuje.
+
+Kolejność jest wymuszona: każde polecenie korzysta z wyniku poprzedniego.
+
+</div>
+
+<Krok tytul="Otwórz konta">
+- **Rachunek bieżący** — aktywo, Sp. **5 000 po Wn**.
+- **Kapitał zakładowy** — pasywo, Sp. **5 000 po Ma**.
+- Bez Sp., bo 1 stycznia tych składników jeszcze nie było: **Towary** (operacja 1), **Rozrachunki z dostawcami** (operacja 1), **Kasa** (operacja 2), **Kredyty bankowe** (operacja 4).
+
+Sprawdzenie bilansu otwarcia: aktywa 5 000 = pasywa 5 000.
+
+<Dlaczego>
+Konto otwierasz dla każdego składnika, który pojawi się w zadaniu — także takiego, którego na start nie ma. Bez konta operacji nie ma gdzie zapisać. „Kapitał zakładowy” i „kapitał podstawowy” to ta sama rzecz. Spółki nazywają go zakładowym, a bilans z ustawy — podstawowym. Stoi w pasywach A.I.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kwota operacji 4 — trzeba ją policzyć">
+Dług wobec dostawcy X:
+- powstał w operacji 1: **9 000**;
+- w operacji 3 spłacono **1 000**;
+- zostało: 9 000 − 1 000 = **8 000**.
+
+Kredyt spłaca „pozostały” dług, więc operacja 4 = **8 000 zł**.
+
+<Dlaczego>
+Treść celowo nie podaje kwoty. Trzeba prześledzić, co się działo z długiem: ile powstało i ile już spłacono. Częsty błąd to wpisanie 9 000. Wtedy na koncie dostawcy po Wn stoi 1 000 + 9 000 = 10 000, a po Ma tylko 9 000. Saldo wychodzi 1 000 po Wn, czyli „nadpłata” — jakby firma zapłaciła dostawcy więcej, niż była winna. Takiej nadpłaty w zadaniu nie było.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Zaksięguj operacje i ustal ich typy">
+- **Operacja 1 (9 000):** towary (aktywo) rosną → Wn „Towary”. Dług wobec dostawcy (pasywo) rośnie → Ma „Rozrachunki z dostawcami”. Oba rosną → **AP+**. Suma bilansowa rośnie o 9 000.
+- **Operacja 2 (2 000):** kasa rośnie → Wn „Kasa”. Rachunek maleje → Ma „Rachunek bieżący”. Oba składniki to aktywa → **A**. Suma bez zmian.
+- **Operacja 3 (1 000):** dług wobec dostawcy maleje → Wn „Rozrachunki z dostawcami”. Rachunek maleje → Ma „Rachunek bieżący”. Oba maleją → **AP−**. Suma maleje o 1 000.
+- **Operacja 4 (8 000):** dług wobec dostawcy maleje → Wn „Rozrachunki z dostawcami”. Dług wobec banku rośnie → Ma „Kredyty bankowe”. Oba składniki to pasywa → **P**. Suma bez zmian.
+
+<Dlaczego>
+W operacji 4 pieniądze z kredytu nie trafiają na rachunek firmy. Bank płaci dostawcy wprost. Firma zamienia więc jeden dług (wobec dostawcy) na drugi (wobec banku). Dlatego zmieniają się tylko pasywa.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Gdyby kredyt najpierw wpłynął na rachunek, a firma sama zrobiła przelew, byłyby dwa zapisy. Wpływ kredytu: Wn „Rachunek bieżący”, Ma „Kredyty bankowe” (AP+). Przelew: Wn „Rozrachunki z dostawcami”, Ma „Rachunek bieżący” (AP−). Salda końcowe wyjdą takie same. Treść opisuje jedną operację, więc tu wystarcza jeden zapis.
+</Dlaczego>
+
+<Konta konta={K54} operacje={O54} bilans typy>
+na górze bilans otwarcia i lista operacji z typem. Pod nimi sześć kont. Kwota każdej operacji trafia na dwa konta, po przeciwnych stronach. Na końcu zamykamy konta i wypisujemy salda.
+</Konta>
+</Krok>
+
+<Krok tytul="Zamknij konta i sporządź zestawienie">
+Salda końcowe, konto po koncie:
+- **Rachunek bieżący:** Wn Sp. 5 000. Ma 2 000 + 1 000 = 3 000. Saldo Wn: 5 000 − 3 000 = **2 000**.
+- **Kasa:** Wn 2 000, Ma nic. Saldo Wn **2 000**.
+- **Towary:** Wn 9 000, Ma nic. Saldo Wn **9 000**.
+- **Kapitał zakładowy:** Ma Sp. 5 000, bez ruchu. Saldo Ma **5 000**.
+- **Rozrachunki z dostawcami:** Ma 9 000. Wn 1 000 + 8 000 = 9 000. Saldo **0** — długu wobec dostawcy już nie ma.
+- **Kredyty bankowe:** Ma 8 000. Saldo Ma **8 000**.
+
+<Zestawienie konta={K54} operacje={O54} okres="styczeń">
+każde konto w jednym wierszu. Stuknij liczbę, a pod tabelą zobaczysz, skąd się wzięła. W wierszu „Razem” w każdej parze kolumn Wn = Ma: salda początkowe 5 000, obroty 20 000, narastająco 25 000, salda końcowe 13 000.
+</Zestawienie>
+
+<Dlaczego>
+Obroty za styczeń po Wn: 9 000 (towary) + 2 000 (kasa) + 9 000 (dostawcy) = 20 000. Po Ma: 3 000 (rachunek) + 9 000 (dostawcy) + 8 000 (kredyt) = 20 000. Równe, bo każda operacja trafiła raz na Wn i raz na Ma.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Gdy formularz nie ma kolumny „narastająco” albo prowadząca każe ją pominąć, saldo końcowe liczysz od razu: (Sp. + obroty) po jednej stronie minus (Sp. + obroty) po drugiej. To ten sam rachunek, tylko bez zapisywania wyniku pośredniego.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Bilans zamknięcia na 31 stycznia">
+Konto „Rozrachunki z dostawcami” ma saldo 0 — pomijamy je. Pozostałe pięć sald rozstawiamy na pozycje:
+
+<BilansTabela skladniki={SALDA54} zKont>
+lista sald końcowych i bilans w układzie z ustawy. Kasa i rachunek bieżący lądują razem w B.III, towary w B.I, kredyt w zobowiązaniach krótkoterminowych.
+</BilansTabela>
+
+- **Aktywa:** B.I Zapasy (towary) **9 000**, B.III Inwestycje krótkoterminowe: kasa 2 000 + rachunek 2 000 = **4 000**. Razem 9 000 + 4 000 = **13 000**.
+- **Pasywa:** A.I Kapitał zakładowy **5 000**, B.III Zobowiązania krótkoterminowe (kredyt) **8 000**. Razem 5 000 + 8 000 = **13 000**.
+</Krok>
+
+<Krok tytul="Analiza 1: zmiana sumy bilansowej">
+- Suma bilansowa 1 stycznia: **5 000**. 31 stycznia: **13 000**.
+- Zmiana: 13 000 − 5 000 = **+8 000**.
+- W procentach: 8 000 ÷ 5 000 = 1,6, a 1,6 · 100% = **160%**. Suma bilansowa wzrosła **o** 160%.
+- Inaczej: 13 000 ÷ 5 000 = 2,6, czyli suma na koniec jest **2,6 raza większa**. To nie przeczy 160%: 2,6 = 1 (cały start) + 1,6 (przyrost). „O ile procent wzrosła” liczysz z przyrostu, „ile razy większa” — z całej sumy na koniec.
+
+Skąd ta zmiana — przez typy operacji: 5 000 + 9 000 (operacja 1, AP+) − 1 000 (operacja 3, AP−) = **13 000**. Operacje 2 (A) i 4 (P) sumy nie zmieniły. Zgadza się z bilansem zamknięcia.
+
+<Dlaczego>
+Suma bilansowa rośnie tylko wtedy, gdy jednocześnie przybywa majątku i źródeł jego finansowania. Tu urosła dzięki zakupowi towarów z zapłatą później (operacja 1). Taki zakup nazywa się „na kredyt kupiecki”: to nie kredyt z banku, tylko dług wobec dostawcy, który czeka na pieniądze. Zmalała przez spłatę części długu (operacja 3).
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Analiza 2: struktura aktywów i pasywów">
+Każdy składnik dzielimy przez sumę bilansową z tego samego dnia: 5 000 na początek, 13 000 na koniec.
+
+| Aktywa | 1.01 (zł) | % | 31.01 (zł) | % |
+|---|---:|---:|---:|---:|
+| Towary | 0 | 0 | 9 000 | 69,2 |
+| Kasa | 0 | 0 | 2 000 | 15,4 |
+| Rachunek bieżący | 5 000 | 100 | 2 000 | 15,4 |
+| **Razem** | **5 000** | **100** | **13 000** | **100** |
+
+| Pasywa | 1.01 (zł) | % | 31.01 (zł) | % |
+|---|---:|---:|---:|---:|
+| Kapitał zakładowy (własny) | 5 000 | 100 | 5 000 | 38,5 |
+| Kredyt bankowy (obcy) | 0 | 0 | 8 000 | 61,5 |
+| **Razem** | **5 000** | **100** | **13 000** | **100** |
+
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> w każdym wierszu kwota i jej udział w sumie bilansowej z tego dnia, najpierw na 1 stycznia, potem na 31 stycznia. Udziały w jednej kolumnie „%” dają razem 100.</p>
+
+Rachunki na 31 stycznia, jeden po drugim. Najpierw skreśl po trzy zera w liczniku i mianowniku — wynik się nie zmieni: 9 000 ÷ 13 000 = 9 ÷ 13.
+- towary: 9 ÷ 13 = 0,6923… → 69,23% → **69,2%**;
+- kasa: 2 ÷ 13 = 0,1538… → 15,38% → **15,4%**; rachunek bieżący — tak samo, **15,4%**;
+- kapitał zakładowy: 5 ÷ 13 = 0,3846… → 38,46% → **38,5%**;
+- kredyt: 8 ÷ 13 = 0,6153… → 61,53% → **61,5%**.
+
+Sprawdzenie: 69,2 + 15,4 + 15,4 = 100,0 oraz 38,5 + 61,5 = 100,0.
+
+<Dlaczego>
+Procent to setne części: ułamek zamieniasz na procent, mnożąc przez 100 (przecinek o dwa miejsca w prawo): 0,6923 · 100 = 69,23.
+</Dlaczego>
+
+<Dlaczego typ="umowa">
+Wynik zaokrąglamy do jednego miejsca po przecinku — tak czyta się go najwygodniej. Patrzysz na drugą cyfrę po przecinku: 0–4 → w dół (69,23 → 69,2), 5–9 → w górę (38,46 → 38,5).
+</Dlaczego>
+
+Na koniec grupy — dodajesz udziały składników, które do nich należą:
+- **aktywa trwałe:** 0 na początek i 0 na koniec (firma nie ma środków trwałych) → **0%** i **0%**;
+- **aktywa obrotowe:** na koniec towary + kasa + rachunek = 9 000 + 2 000 + 2 000 = 13 000 → **100%** (na początek też 100%: same pieniądze na rachunku);
+- **kapitał własny:** kapitał zakładowy → **100%** na początek, **38,5%** na koniec;
+- **kapitał obcy:** kredyt 8 000 + zobowiązania wobec dostawców 0 = 8 000 → **0%** na początek, **61,5%** na koniec.
+</Krok>
+
+<Krok tytul="Wnioski">
+- **Suma bilansowa** wzrosła z 5 000 do 13 000 zł, czyli o 8 000 zł (o 160%).
+- **Majątek:** na początku to same pieniądze na rachunku (100%). Na koniec stycznia większość to towary (69,2%), a pieniądze w kasie i na rachunku to razem 30,8%. Firma nie ma aktywów trwałych — cały majątek jest obrotowy.
+- **Źródła finansowania:** na początku tylko kapitał właścicieli (100%). Na koniec 61,5% majątku finansuje kredyt bankowy. Przeważa kapitał obcy. Dług wobec dostawcy zamieniono na dług wobec banku.
+
+<Dlaczego>
+Wnioski to opis liczb słowami: co się zmieniło i w którą stronę. Nie oceniaj, czy firma „ma się dobrze” — z jednego miesiąca tego nie widać. Wystarczy nazwać największe zmiany.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="granica">
+- Struktura pokazuje proporcje w jednym dniu. Nie mówi, czy firma zarabia — do tego potrzebny jest wynik finansowy (zysk albo strata), czyli przychody minus koszty.
+- Udział w procentach może spaść, choć kwota rośnie. Wystarczy, że suma bilansowa rośnie szybciej. Dlatego zawsze patrz na kwoty i procenty razem.
 </Ramka>
 
 <a id="polecenie-kontrola" class="k-anchor"></a>
@@ -582,6 +819,9 @@ Zestawienie się zgadza, a dwa salda są złe. Tak samo przejdzie operacja zaksi
   <div><b>Bilans zamknięcia</b>Salda końcowe na pozycje z ustawy. Kasa + rachunek → B.III. Saldo 0 → pomijasz.</div>
   <div><b>Szukanie błędu</b>Różnica obrotów = kwota → zapis po jednej stronie. = 2 × kwota → obie kwoty po tej samej stronie. Różnica tylko w saldach → odejmowanie albo saldo w złej kolumnie.</div>
   <div><b>Saldo: konto a zestawienie</b>Na koncie po stronie mniejszej. W zestawieniu w kolumnie strony, która przeważa.</div>
+  <div><b>Kwota do wyliczenia</b>„Spłata pozostałej kwoty” = dług z początku − to, co już spłacono (Hurtex: 9 000 − 1 000 = 8 000).</div>
+  <div><b>Zmiana sumy bilansowej</b>Koniec − początek. Sprawdzenie: początek + AP+ − AP−. A i P sumy nie zmieniają.</div>
+  <div><b>Struktura</b>Składnik ÷ suma bilansowa z tego samego dnia · 100%. Aktywa razem 100%, pasywa razem 100%.</div>
 </div>
 
 <Ramka kind="gdzie">
@@ -647,6 +887,19 @@ Spółka Bajt na 1 marca: kasa 3 000, rachunek bieżący 20 000, towary 15 000 (
   { q: 'Kapitał podstawowy 69 000, a konto straty z lat ubiegłych ma saldo Wn 3 000. Ile wynosi kapitał własny?', opcje: ['72 000', '69 000', '66 000'], dobra: 2, dlaczego: 'Strata wchodzi z minusem: 69 000 − 3 000 = 66 000. Wynik 72 000 dodaje stratę zamiast ją odjąć. 69 000 ją pomija.' },
   { q: 'Konto „Rozrachunki z dostawcami” ma na koniec saldo 0. Co z nim w bilansie zamknięcia?', opcje: ['Pomijasz je — zobowiązania wobec dostawców już nie ma', 'Wpisujesz saldo początkowe 12 000', 'Wpisujesz je w aktywach z kwotą 0'], dobra: 0, dlaczego: 'Bilans zamknięcia pokazuje stan na koniec. Saldo 0 znaczy, że dług spłacono. Saldo początkowe to stan z 1 stycznia, nie z końca miesiąca.' },
   { q: 'Bilans otwarcia: 80 000. W okresie AP+ na 19 000 i 4 000, AP− na 6 000, 5 000, 2 000 i 6 000 oraz cztery operacje A. Ile wynosi suma bilansu zamknięcia?', opcje: ['84 000', '103 000', '61 000'], dobra: 0, dlaczego: '80 000 + 19 000 + 4 000 − 6 000 − 5 000 − 2 000 − 6 000 = 84 000. Operacje A nie zmieniają sumy. 103 000 pomija operacje AP−, a 61 000 — operacje AP+.' },
+]} />
+
+<a id="cw-analiza" class="k-anchor"></a>
+
+### Analiza zmian w bilansie
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: 'Suma bilansowa na początek miesiąca: 40 000. Na koniec: 50 000. O ile procent wzrosła?', opcje: ['20%', '25%', '125%'], dobra: 1, dlaczego: 'Zmiana: 50 000 − 40 000 = 10 000. W procentach: 10 000 ÷ 40 000 · 100% = 25%. 20% wychodzi przy dzieleniu przez sumę na koniec (10 000 ÷ 50 000). 125% to stosunek końca do początku (50 000 ÷ 40 000), a nie wzrost.' },
+  { q: 'Aktywa na koniec: towary 6 000, kasa 1 500, rachunek bieżący 2 500. Jaki jest udział towarów w sumie bilansowej?', opcje: ['60%', '0,6%', '40%'], dobra: 0, dlaczego: 'Suma: 6 000 + 1 500 + 2 500 = 10 000. Udział towarów: 6 000 ÷ 10 000 = 0,6, a 0,6 · 100% = 60%. 0,6% wychodzi, gdy dopisze się znak % bez mnożenia przez 100. 40% to udział pieniędzy (kasa + rachunek).' },
+  { q: 'Bilans otwarcia: 20 000. W miesiącu: operacja AP+ na 5 000, A na 3 000, AP− na 2 000, P na 4 000. Ile wynosi suma bilansu zamknięcia?', opcje: ['30 000', '23 000', '26 000'], dobra: 1, dlaczego: 'Sumę zmieniają tylko AP+ i AP−: 20 000 + 5 000 − 2 000 = 23 000. Operacje A i P przesuwają kwoty w obrębie jednej strony bilansu. 30 000 wychodzi po dodaniu wszystkich kwot. 26 000 — gdy doda się też operację A.' },
+  { q: 'Pasywa na koniec: kapitał własny 4 000, kredyt bankowy 12 000, zobowiązania wobec dostawców 4 000. Jaki jest udział kapitału obcego?', opcje: ['20%', '60%', '80%'], dobra: 2, dlaczego: 'Kapitał obcy to kredyt i zobowiązania: 12 000 + 4 000 = 16 000. Suma pasywów: 4 000 + 16 000 = 20 000. Udział: 16 000 ÷ 20 000 · 100% = 80%. 60% to sam kredyt, bez zobowiązań. 20% to udział kapitału własnego.' },
+  { q: 'Kredyt zaciągnięty na spłatę długu wobec dostawcy (bank płaci dostawcy wprost). Co dzieje się z sumą bilansową?', opcje: ['Nie zmienia się — jeden dług zamienia się na drugi', 'Rośnie o kwotę kredytu', 'Maleje o kwotę kredytu'], dobra: 0, dlaczego: 'To operacja P: dług wobec dostawcy maleje, dług wobec banku rośnie o tę samą kwotę. Obie zmiany są w pasywach, więc suma stoi w miejscu. Zmienia się tylko struktura pasywów. „Rośnie” wychodzi, gdy patrzy się tylko na nowy kredyt i zapomina, że dług wobec dostawcy zniknął. „Maleje” — gdy patrzy się tylko na spłatę dostawcy.' },
+  { q: 'Hurtex na 31 stycznia: kapitał zakładowy 38,5% pasywów, kredyt 61,5%. Który wniosek jest poprawny?', opcje: ['Suma bilansowa zmalała, bo kredyt to dług', 'Firma ma stratę, bo przeważa kapitał obcy', 'Większość majątku firma finansuje kapitałem obcym'], dobra: 2, dlaczego: '61,5% to więcej niż połowa, więc przeważa kapitał obcy. Dwie pozostałe odpowiedzi wyciągają z procentów wnioski, których one nie zawierają. Suma bilansowa nie zmalała, tylko urosła z 5 000 do 13 000 — procenty w ogóle nie mówią o sumie. Strata też nie wynika ze struktury: wynik powstaje z przychodów i kosztów, a tu ich nie było.' },
 ]} />
 
 <a id="cw-kontrola" class="k-anchor"></a>

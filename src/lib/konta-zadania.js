@@ -31,6 +31,25 @@ export const O55 = [
   { nr: 10, kwota: 4000, wn: 'kasa', ma: 'strata', opis: 'Wspólnicy dopłacili gotówką do kasy, a dopłatą pokryto stratę z poprzedniego roku.' },
 ];
 
+// Zad. 5.4, str. 66 (Hurtex): firma zaczyna działalność 1.01.20X6 — bilans otwarcia: rachunek 5 000, kapitał zakładowy 5 000.
+// 4 operacje ze stycznia; kwoty operacji 4 nie ma w treści: kredyt spłaca resztę długu wobec dostawcy X = 9 000 − 1 000.
+// Polecenie 5: analiza zmian sumy bilansowej i struktury (lib/konta-zadania.js → strukturaHurtex niżej, kontrola w narzedzia/mat-check).
+export const K54 = [
+  { id: 'rb', nazwa: 'Rachunek bieżący', typ: 'A', sp: 5000, poz: 'AB3' },
+  { id: 'kasa', nazwa: 'Kasa', typ: 'A', poz: 'AB3' },
+  { id: 'tow', nazwa: 'Towary', typ: 'A', poz: 'AB1' },
+  { id: 'kz', nazwa: 'Kapitał zakładowy', typ: 'P', sp: 5000, poz: 'PA1' },
+  { id: 'dost', nazwa: 'Rozrachunki z dostawcami', typ: 'P', poz: 'PB3' },
+  { id: 'kred', nazwa: 'Kredyty bankowe', typ: 'P', poz: 'PB3' },
+];
+const DLUG_X = 9000 - 1000; // op. 1 minus op. 3
+export const O54 = [
+  { nr: 1, kwota: 9000, wn: 'tow', ma: 'dost', opis: 'Kupiono towary do magazynu. Dostawca X wystawił fakturę, zapłata później.' },
+  { nr: 2, kwota: 2000, wn: 'kasa', ma: 'rb', opis: 'Podjęto gotówkę z rachunku bieżącego do kasy.' },
+  { nr: 3, kwota: 1000, wn: 'dost', ma: 'rb', opis: 'Przelewem z rachunku spłacono część długu wobec dostawcy X.' },
+  { nr: 4, kwota: DLUG_X, wn: 'dost', ma: 'kred', opis: 'Zaciągnięto kredyt krótkoterminowy na spłatę reszty długu wobec dostawcy X (9 000 − 1 000).' },
+];
+
 // Zad. 4.6 (skan „ZADANIE WYNIK”, materiały z wykładów): przedsiębiorstwo handlowe Star Wars sp. z o.o.,
 // bilans na 1.01.20X5, 18 operacji ze stycznia (9a i 9b z jednego wyciągu bankowego), konta bilansowe i wynikowe,
 // przeksięgowania na wynik finansowy, podatek dochodowy 19% (w rozwiązaniu z zajęć: 1 500 · 19% = 285), bilans zamknięcia.

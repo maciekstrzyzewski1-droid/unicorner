@@ -106,6 +106,15 @@ const ld = {
     // Sprawdzamy też po każdym kliknięciu, bo odkryte kroki rozwiązań mogą pokazać nowe szerokie wzory.
     const markScroll = () => document.querySelectorAll<HTMLElement>('.k-tp-scroll, .k-tab, .k-prose .katex-display, .k-obl-scroll').forEach((el) => el.classList.toggle('k-scrollable', el.scrollWidth > el.clientWidth + 4));
     markScroll(); addEventListener('resize', markScroll);
+    // Link prosto do rozwiązania (#zad-…): rozwiązania wyżej zwijają kroki po załadowaniu i strona się przesuwa.
+    // Safari nie ma „scroll anchoring”, więc po załadowaniu raz poprawiamy pozycję, jeśli cel uciekł z ekranu.
+    addEventListener('load', () => {
+      const id = decodeURIComponent(location.hash.slice(1));
+      const cel = id ? document.getElementById(id) : null;
+      if (!cel) return;
+      const top = cel.getBoundingClientRect().top;
+      if (top < 0 || top > innerHeight * 0.6) cel.scrollIntoView({ block: 'start' });
+    }, { once: true });
     document.addEventListener('click', () => requestAnimationFrame(markScroll));
     // Podświetlenie bieżącej sekcji w spisie treści + zwijanie spisu na telefonie.
     const links = Array.from(document.querySelectorAll<HTMLAnchorElement>('[data-toc]'));
