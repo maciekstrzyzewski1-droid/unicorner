@@ -134,11 +134,11 @@ Aktywa finansowe zalicza się do aktywów obrotowych (art. 3 ust. 1 pkt 18 lit. 
 
 **Miejsce w bilansie.** Akcje kupione na krótko stoją w aktywach, w pozycji **B.III Inwestycje krótkoterminowe**, w podgrupie „Krótkoterminowe aktywa finansowe”. W tej samej pozycji B.III stoją pieniądze w kasie i na rachunku.
 
-**Konto.** Na akcje używamy w tym module jednego konta: **Krótkoterminowe aktywa finansowe**. To konto aktywne. Zakup wpisujesz po stronie Wn, a sprzedaż i spadek wartości po stronie Ma. W objaśnieniach piszemy też krócej: **konto akcji**. To to samo konto.
+**Konto.** Na akcje używamy w tym module jednego konta: **Krótkoterminowe aktywa finansowe**. To konto aktywne, bo akcje to coś, co firma ma. Jego stan stoi więc po Wn. Zakup dokłada akcje, więc wpisujesz go po stronie Wn. Sprzedaż i spadek wartości zmniejszają to, co firma ma, więc idą po stronie Ma. W objaśnieniach piszemy też krócej: **konto akcji**. To to samo konto.
 
 <Ramka kind="zapamietaj" tytul="przypomnienie: strony konta">
-- Konto aktywne (to, co firma ma) rośnie po stronie **Wn**, maleje po **Ma**.
-- Koszt rośnie po **Wn**. Przychód rośnie po **Ma**.
+- Konto aktywne (to, co firma ma) ma stan po **Wn**, bo aktywa stoją w bilansie po lewej. Przybytek dopisujemy po stronie stanu, czyli po **Wn**. Ubytek po przeciwnej, czyli po **Ma**.
+- Koszt zmniejsza zysk, a więc kapitał własny. Zmniejszenie pasywów idzie po Wn, dlatego koszt rośnie po **Wn**. Przychód zwiększa zysk, dlatego rośnie po **Ma**.
 - Każda operacja to ta sama kwota po Wn jednego konta i po Ma drugiego.
 - **Przychody finansowe** i **Koszty finansowe** to konta, na których zapisuje się zyski i straty z pieniędzy i papierów wartościowych, a nie ze zwykłego handlu.
 </Ramka>
@@ -278,7 +278,7 @@ Firma sprzedaje tylko część pakietu, {P1.sprzedano} akcji ze {P1.sztuk}. Trze
 Cena sprzedaży: {P1.sprzedano} · {P1.cenaSprzedazy} = {zl(O1[2].kwota)}. **Wn Rachunek bieżący {zl(O1[2].kwota)}, Ma Przychody finansowe {zl(O1[2].kwota)}**.
 
 <Dlaczego>
-Pieniądze weszły na rachunek, więc Wn. Cała kwota ze sprzedaży to przychód finansowy, a przychód rośnie po Ma.
+Pieniądze weszły na rachunek. To przybytek aktywa, więc Wn. Cała kwota ze sprzedaży to przychód finansowy. Przychód zwiększa zysk, więc stoi po Ma.
 </Dlaczego>
 </Krok>
 
@@ -286,7 +286,7 @@ Pieniądze weszły na rachunek, więc Wn. Cała kwota ze sprzedaży to przychód
 Cena ewidencyjna: {P1.sprzedano} · {P1_ZA_AKCJE} = {zl(O1[3].kwota)}. **Wn Koszty finansowe {zl(O1[3].kwota)}, Ma Krótkoterminowe aktywa finansowe {zl(O1[3].kwota)}**.
 
 <Dlaczego>
-Stu akcji już nie ma, więc konto aktywne maleje po Ma. Od zakupu nie było wyceny, więc schodzą w cenie nabycia, czyli po {P1_ZA_AKCJE} zł za sztukę. To, co firma za nie kiedyś zapłaciła, staje się teraz kosztem finansowym.
+Stu akcji już nie ma, więc konto aktywne maleje po Ma. Od zakupu nie było wyceny, więc schodzą w cenie nabycia, czyli po {P1_ZA_AKCJE} zł za sztukę. To, co firma za nie kiedyś zapłaciła, staje się teraz kosztem finansowym. Firma oddała akcje kupującemu, więc ich wartość pomniejsza zysk ze sprzedaży. Dlatego ten koszt stoi po Wn.
 </Dlaczego>
 </Krok>
 
@@ -294,7 +294,7 @@ Stu akcji już nie ma, więc konto aktywne maleje po Ma. Od zakupu nie było wyc
 **Wn Koszty finansowe {zl(O1[4].kwota)}, Ma Rachunek bieżący {zl(O1[4].kwota)}**.
 
 <Dlaczego>
-Akcji już nie ma, więc prowizji nie da się doliczyć do ich wartości. Zostaje koszt finansowy. Pieniądze wychodzą z rachunku po Ma.
+Akcji już nie ma, więc prowizji nie da się doliczyć do ich wartości. Zostaje koszt finansowy. Zmniejsza zysk, więc stoi po Wn. Pieniądze wychodzą z rachunku, więc ubytek aktywa idzie po Ma.
 </Dlaczego>
 </Krok>
 
@@ -345,8 +345,8 @@ W module „Istota rachunkowości” była zasada ostrożności: znane straty po
 
 Zapisy na kontach są przy obu zasadach takie same. To operacje 3 i 4 ze schematu.
 
-- Wartość rośnie: **Wn Krótkoterminowe aktywa finansowe, Ma Przychody finansowe**.
-- Wartość maleje: **Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe**.
+- Wartość rośnie: **Wn Krótkoterminowe aktywa finansowe, Ma Przychody finansowe**. Akcje są warte więcej, więc przybytek aktywa idzie po Wn. Ten wzrost to zysk. Przychód zwiększa zysk, więc stoi po Ma.
+- Wartość maleje: **Wn Koszty finansowe, Ma Krótkoterminowe aktywa finansowe**. Akcje są warte mniej, więc ubytek aktywa idzie po Ma. Ten spadek to strata. Koszt zmniejsza zysk, więc stoi po Wn.
 
 Ustawa (art. 35 ust. 3) zalicza skutki wzrostu i obniżenia wartości inwestycji krótkoterminowych wycenianych według cen rynkowych do przychodów finansowych albo kosztów finansowych. Obie zasady różni tylko to, **do jakiej kwoty** doprowadzasz konto.
 
@@ -430,7 +430,7 @@ Akcje Q podrożały, ale firma ich nie sprzedała. Zysku {zl(W2[0].rynkowa - W2[
 1) Akcje S w dół: **Wn Koszty finansowe {zl(O2[0].kwota)}, Ma Krótkoterminowe aktywa finansowe {zl(O2[0].kwota)}**.
 
 <Dlaczego>
-Wartość aktywa maleje, więc konto aktywne dostaje zapis po Ma. Drugą stroną jest koszt finansowy, który rośnie po Wn. To operacja 4 ze schematu z wykładu.
+Akcje S są warte mniej, niż pokazuje konto, więc firma ma mniej majątku. Ubytek aktywa idzie po Ma. Ta strata zmniejsza zysk, dlatego drugą stroną jest koszt finansowy po Wn. To operacja 4 ze schematu z wykładu.
 </Dlaczego>
 </Krok>
 
@@ -769,8 +769,8 @@ Przychody i koszty finansowe trafiają do wyniku finansowego. Pozycję B.III z b
 <Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
   { q: 'Firma kupiła 50 obligacji po 100 zł i zapłaciła 40 zł prowizji. Polityka: cena nabycia. Ile wynosi cena nabycia pakietu?', opcje: ['5 000 zł', '4 960 zł', '5 040 zł'], dobra: 2, dlaczego: 'Cena zakupu: 50 · 100 = 5 000. Cena nabycia: 5 000 + 40 = 5 040. Odpowiedź 5 000 pomija prowizję. Odpowiedź 4 960 odejmuje prowizję, a trzeba ją dodać.' },
   { q: 'Jak zaksięgować prowizję maklerską zapłaconą przy zakupie akcji (polityka: cena nabycia)?', opcje: ['Wn Krótkoterminowe aktywa finansowe, Ma Rachunek bieżący', 'Wn Koszty finansowe, Ma Rachunek bieżący', 'Wn Rachunek bieżący, Ma Krótkoterminowe aktywa finansowe'], dobra: 0, dlaczego: 'Prowizja przy zakupie powiększa wartość akcji, więc idzie po Wn konta akcji. Druga odpowiedź to prowizja przy sprzedaży. Trzecia ma odwrócone strony: wyglądałaby jak wpływ pieniędzy.' },
-  { q: 'Firma sprzedała za 2 600 zł akcje, które są zapisane w księgach w kwocie 2 400 zł. Jak zaksięgować wpływ pieniędzy?', opcje: ['Wn Rachunek bieżący 2 600, Ma Krótkoterminowe aktywa finansowe 2 600', 'Wn Rachunek bieżący 2 600, Ma Przychody finansowe 2 600', 'Wn Rachunek bieżący 200, Ma Przychody finansowe 200'], dobra: 1, dlaczego: 'Cała cena sprzedaży to przychód finansowy. Akcje schodzą z konta osobnym zapisem i w innej kwocie. Trzecia odpowiedź księguje samą różnicę, a na rachunek wpłynęło 2 600.' },
-  { q: 'Te same akcje. Jak zdjąć je z ksiąg?', opcje: ['Wn Koszty finansowe 2 600, Ma Krótkoterminowe aktywa finansowe 2 600', 'Wn Krótkoterminowe aktywa finansowe 2 400, Ma Koszty finansowe 2 400', 'Wn Koszty finansowe 2 400, Ma Krótkoterminowe aktywa finansowe 2 400'], dobra: 2, dlaczego: 'Akcje schodzą po Ma w cenie ewidencyjnej, czyli w kwocie 2 400. Pierwsza odpowiedź używa ceny sprzedaży. Druga ma odwrócone strony: zwiększałaby wartość akcji.' },
+  { q: 'Firma sprzedała za 2 600 zł akcje, które są zapisane w księgach w kwocie 2 400 zł. Jak zaksięgować wpływ pieniędzy?', opcje: ['Wn Rachunek bieżący 2 600, Ma Krótkoterminowe aktywa finansowe 2 600', 'Wn Rachunek bieżący 2 600, Ma Przychody finansowe 2 600', 'Wn Rachunek bieżący 200, Ma Przychody finansowe 200'], dobra: 1, dlaczego: 'Pieniądze wpłynęły na rachunek, więc Wn Rachunek bieżący. Cała cena sprzedaży to przychód finansowy. Zwiększa zysk, więc stoi po Ma. Akcje schodzą z konta osobnym zapisem i w innej kwocie. Trzecia odpowiedź księguje samą różnicę, a na rachunek wpłynęło 2 600.' },
+  { q: 'Te same akcje. Jak zdjąć je z ksiąg?', opcje: ['Wn Koszty finansowe 2 600, Ma Krótkoterminowe aktywa finansowe 2 600', 'Wn Krótkoterminowe aktywa finansowe 2 400, Ma Koszty finansowe 2 400', 'Wn Koszty finansowe 2 400, Ma Krótkoterminowe aktywa finansowe 2 400'], dobra: 2, dlaczego: 'Akcji ubywa, więc schodzą po Ma w cenie ewidencyjnej, czyli w kwocie 2 400. Po Wn stoi koszt finansowy, bo oddane akcje pomniejszają zysk ze sprzedaży. Pierwsza odpowiedź używa ceny sprzedaży. Druga ma odwrócone strony: zwiększałaby wartość akcji.' },
   { q: 'Te same akcje, do tego prowizja przy sprzedaży 50 zł. Ile wynosi wynik na sprzedaży?', opcje: ['150 zł zysku', '200 zł zysku', '250 zł zysku'], dobra: 0, dlaczego: 'Przychód 2 600 minus koszty 2 400 i 50: 2 600 − 2 450 = 150. Odpowiedź 200 pomija prowizję. Odpowiedź 250 dodaje prowizję zamiast ją odjąć.' },
   { q: 'Firma kupiła 80 akcji za 4 000 zł i zapłaciła 80 zł prowizji. Sprzedaje 20 akcji. Ile schodzi z konta akcji?', opcje: ['1 000 zł', '1 020 zł', '4 080 zł'], dobra: 1, dlaczego: 'Cena nabycia: 4 000 + 80 = 4 080. Jedna akcja: 4 080 : 80 = 51. Sprzedane: 20 · 51 = 1 020. Odpowiedź 1 000 liczy bez prowizji. 4 080 to cały pakiet, a sprzedano tylko 20 akcji.' },
 ]} />

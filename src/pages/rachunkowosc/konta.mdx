@@ -312,9 +312,9 @@ Operacja **bilansowa** to taka, która zmienia tylko składniki bilansu i nie zm
 
 Przykłady od najprostszego:
 
-- Odbiorca wpłaca na rachunek 3 000 zł za wcześniejszą dostawę. Rachunek bankowy (aktywo) rośnie. Należności od odbiorców (aktywo — pieniądze, które odbiorcy są winni firmie) maleją. Oba w aktywach, jeden w górę, drugi w dół → **A**.
-- Firma kupuje towary za 12 000 zł z zapłatą za 30 dni. Towary (aktywo) rosną. Zobowiązania wobec dostawców (pasywo) rosną → **AP+**. Suma bilansowa rośnie o 12 000 zł.
-- Bank z kredytu płaci za firmę dług wobec dostawcy. Zobowiązania wobec dostawcy (pasywo) maleją. Kredyt (pasywo) rośnie → **P**. Majątek się nie zmienił — zmienił się tylko wierzyciel.
+- Odbiorca wpłaca na rachunek 3 000 zł za wcześniejszą dostawę. Pieniądze wpłynęły, więc rachunek bankowy rośnie. To aktywo — coś, co firma ma. Odbiorca nie jest już winien firmie tych 3 000 zł, więc należności od odbiorców maleją. To też aktywo: pieniądze, które odbiorcy są winni firmie. Oba składniki są w aktywach, jeden w górę, drugi w dół → **A**.
+- Firma kupuje towary za 12 000 zł z zapłatą za 30 dni. Towar już jest w magazynie, więc towary rosną. To aktywo. Zapłaty jeszcze nie było, więc powstał dług wobec dostawcy: zobowiązania wobec dostawców rosną. To pasywo — źródło, z którego firma ma ten towar. Jedno aktywo i jedno pasywo, oba rosną → **AP+**. Suma bilansowa rośnie o 12 000 zł.
+- Bank z kredytu płaci za firmę dług wobec dostawcy. Dostawca dostał pieniądze, więc dług wobec niego maleje. To pasywo. Teraz tę kwotę firma jest winna bankowi, więc kredyt rośnie. To też pasywo. Oba składniki są w pasywach, jeden w górę, drugi w dół → **P**. Majątek się nie zmienił — zmienił się tylko wierzyciel.
 
 <Ramka kind="pulapka">
 - „Zapłacono” nie zawsze znaczy AP−. Zapłata gotówką za maszynę to **A**: maszyn przybywa, pieniędzy ubywa, oba w aktywach.
@@ -329,7 +329,7 @@ Przykłady od najprostszego:
 </Ramka>
 
 <Pytania pytania={[
-  { q: 'Z kasy wpłacono 2 000 zł na rachunek bankowy. Jaki to typ operacji?', opcje: ['AP−', 'A', 'P'], dobra: 1, dlaczego: 'Kasa (aktywo) maleje, rachunek bankowy (aktywo) rośnie. Oba składniki są w aktywach, więc to operacja <b>A</b>. AP− byłoby wtedy, gdyby razem z pieniędzmi zmalał dług. P — gdyby oba składniki były w pasywach.' },
+  { q: 'Z kasy wpłacono 2 000 zł na rachunek bankowy. Jaki to typ operacji?', opcje: ['AP−', 'A', 'P'], dobra: 1, dlaczego: 'Gotówka wyszła z kasy, więc kasa (aktywo) maleje. Te same pieniądze wpłynęły na rachunek, więc rachunek bankowy (aktywo) rośnie. Oba składniki są w aktywach, więc to operacja <b>A</b>. AP− byłoby wtedy, gdyby razem z pieniędzmi zmalał dług. P — gdyby oba składniki były w pasywach.' },
 ]} />
 
 ## Konto teowe — jak wygląda
@@ -368,10 +368,11 @@ To najważniejsza reguła całego modułu. Zależy od tego, czy konto jest **akt
 | pasywne | Ma | Ma | Wn | Ma |
 
 <Ramka kind="botak">
-Taka jest umowa w rachunkowości. Da się ją zapamiętać z bilansu:
-- aktywa stoją w bilansie **po lewej** → stan konta aktywnego zapisujemy **po lewej** (Wn), i tam też to, co go zwiększa;
-- pasywa stoją **po prawej** → stan konta pasywnego zapisujemy **po prawej** (Ma), i tam też zwiększenia;
-- zmniejszenie zawsze idzie na stronę przeciwną do stanu.
+Taka jest umowa w rachunkowości. Wynika z bilansu i z tego, jak liczy się stan:
+- **Stan konta stoi po tej stronie, po której składnik stoi w bilansie.** Aktywa są w bilansie **po lewej**, więc stan konta aktywnego zapisujemy po lewej — po Wn. Pasywa są **po prawej**, więc stan konta pasywnego zapisujemy po prawej — po Ma.
+- **Przybytek dopisujemy po stronie stanu**, bo się do niego dodaje. W kasie było 1 300 zł, wpłynęło 4 000 zł. Obie kwoty stoją po Wn i razem dają 5 300.
+- **Ubytek zapisujemy po stronie przeciwnej**, bo odejmuje się od stanu. Wypłaty z kasy stoją po Ma. Przy zamknięciu konta odejmujemy je od sumy strony Wn.
+- Saldo końcowe to więc: strona stanu minus strona przeciwna. Wychodzi tyle, ile składnika zostało.
 </Ramka>
 
 <Ramka kind="botak" tytul="jak zapisujemy numer operacji">
@@ -387,10 +388,10 @@ Dzięki numerom po zamknięciu konta widać, skąd wziął się każdy wpis.
 
 1. **Otwórz konto.** Narysuj T, wpisz nazwę i podpisz strony: Wn po lewej, Ma po prawej.
 2. **Ustal, czy konto jest aktywne, czy pasywne.** Kasa, rachunek, towary → aktywne. Zobowiązania, kredyty, kapitał → pasywne.
-3. **Wpisz saldo początkowe** „Sp.”: konto aktywne — po Wn, pasywne — po Ma.
+3. **Wpisz saldo początkowe** „Sp.” po tej stronie, po której składnik stoi w bilansie: konto aktywne — po Wn, pasywne — po Ma.
 4. **Każdą operację zapisz po jednej stronie:**
    - przeczytaj operację i zdecyduj, czy składnik rośnie, czy maleje;
-   - aktywne: rośnie → Wn, maleje → Ma; pasywne: rośnie → Ma, maleje → Wn;
+   - przybytek wpisz po stronie stanu, ubytek po przeciwnej. Aktywne: rośnie → Wn, maleje → Ma. Pasywne: rośnie → Ma, maleje → Wn;
    - wpisz kwotę z numerem operacji.
 5. **Policz obroty** każdej strony: dodaj wszystkie kwoty po Wn (razem z Sp., jeśli tam stoi), potem wszystkie po Ma.
 6. **Policz saldo końcowe:** większe obroty minus mniejsze. Saldo nazywasz od strony, która przeważa („Sk Wn” albo „Sk Ma”).
@@ -440,9 +441,9 @@ Stan na start to „ile firma ma”. Aktywa stoją w bilansie po lewej, więc st
 <Krok tytul="Zapisz trzy operacje">
 Przy każdej operacji pytamy: **gotówki w kasie przybywa czy ubywa?**
 
-- Operacja 1: pieniądze z banku trafiają **do** kasy. Kasy przybywa o 4 000 zł. Zwiększenie konta aktywnego zapisujemy po Wn → „1) 4 000”.
-- Operacja 2: zaliczkę wypłacamy **z** kasy. Kasy ubywa o 2 500 zł. Zmniejszenie konta aktywnego zapisujemy po Ma → „2 500 (2”.
-- Operacja 3: fakturę płacimy gotówką **z** kasy. Kasy ubywa o 1 100 zł → „1 100 (3” po Ma.
+- Operacja 1: pieniądze z banku trafiają **do** kasy. Gotówki przybywa o 4 000 zł. Kasa to aktywo, więc jej stan stoi po Wn. Przybytek dopisujemy po stronie stanu, bo się do niego dodaje → „1) 4 000” po Wn.
+- Operacja 2: zaliczkę wypłacamy **z** kasy. Gotówki ubywa o 2 500 zł. Ubytek zapisujemy po stronie przeciwnej do stanu, bo przy saldzie odejmiemy go od stanu → „2 500 (2” po Ma.
+- Operacja 3: fakturę płacimy gotówką **z** kasy. Gotówki znowu ubywa, tym razem o 1 100 zł. To ubytek aktywa, więc strona przeciwna do stanu → „1 100 (3” po Ma.
 
 <Rzad jedno><KontoT konto={KASA} wpisy={W52} zamkniete={false} /></Rzad>
 
@@ -462,7 +463,7 @@ Obroty mówią, ile w sumie „weszło” na stronę zwiększeń (razem ze stane
 </Krok>
 
 <Krok tytul="Policz saldo i zamknij konto">
-Większe obroty są po Wn (5 300 > 3 600). Saldo: 5 300 − 3 600 = **1 700**. Przeważa Wn, więc to **saldo Wn** — „Sk Wn”.
+Większe obroty są po Wn (5 300 > 3 600). Saldo: 5 300 − 3 600 = **1 700**. Przeważa Wn, więc to **saldo Wn** — „Sk Wn”. W rzeczywistości znaczy to: w kasie zostaje 1 700 zł gotówki.
 
 Wpisujemy je po stronie **mniejszej**, czyli po Ma. Sprawdzenie: po Ma 3 600 + 1 700 = 5 300. Po Wn też 5 300. Obie strony równe — konto zamknięte.
 
@@ -490,9 +491,9 @@ lista operacji na górze, pod nią konto „Kasa”. Saldo końcowe jest na zło
 </Konta>
 
 <Ramka kind="podobny" tytul="konto pasywne — Zad. 5.3, str. 65">
-Konto „Zobowiązania z tytułu dostaw i usług” jest **pasywne**: to dług, czyli źródło finansowania. Strony są odwrotnie niż przy kasie. Sp. 8 900 stoi po **Ma**. Spłata długu (op. 1) i obniżka ceny po reklamacji (op. 3) zmniejszają dług → po **Wn**. Nowa faktura do zapłaty (op. 2) zwiększa dług → po **Ma**.
+Konto „Zobowiązania z tytułu dostaw i usług” jest **pasywne**: to dług, czyli źródło finansowania. Strony są odwrotnie niż przy kasie. Pasywa stoją w bilansie po prawej, więc Sp. 8 900 stoi po **Ma**. Spłata z rachunku (op. 1) zmniejsza dług, bo część już oddaliśmy. Obniżka ceny po reklamacji (op. 3) też go zmniejsza, bo za ten sam towar należy się dostawcy mniej. Ubytek idzie na stronę przeciwną do stanu → po **Wn**. Faktura za usługę księgową (op. 2) zwiększa dług: usługa jest wykonana, a zapłata będzie za 14 dni. Przybytek idzie na stronę stanu → po **Ma**.
 
-Obroty Wn: 1 700 + 1 400 = 3 100. Obroty Ma: 8 900 + 2 500 = 11 400. Przeważa Ma, więc saldo Ma: 11 400 − 3 100 = **8 300**. Wpisujemy je po Wn. Zadłużenie na koniec stycznia: 8 300 zł.
+Obroty Wn: 1 700 + 1 400 = 3 100. Obroty Ma: 8 900 + 2 500 = 11 400. Przeważa Ma, więc saldo Ma: 11 400 − 3 100 = **8 300**. Wpisujemy je po Wn. Zadłużenie na koniec stycznia: 8 300 zł. Tyle firma jest jeszcze winna dostawcom.
 
 <Konta jedno={{ konto: ZOB, zmiany: ZM53 }} />
 </Ramka>
@@ -518,7 +519,13 @@ Na zajęciach dopisano więc drugie konta. Te same trzy operacje po drugiej stro
 
 <p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> numer przy kwocie to numer operacji z zad. 5.2. Na koncie „Kasa” operacja 1 stoi po Wn, a tu, na rachunku bankowym, po Ma. Operacje 2 i 3 stoją na kasie po Ma, a tu po Wn. Sp. 1 100 to grudniowa faktura za telefon.</p>
 
-Zobacz, że każda operacja stoi na kasie po jednej stronie, a na drugim koncie — **po przeciwnej**. I zawsze w tej samej kwocie. To nie przypadek, tylko reguła.
+Zobacz, że każda operacja stoi na kasie po jednej stronie, a na drugim koncie — **po przeciwnej**. Sprawdźmy dlaczego:
+
+- Operacja 1: z rachunku bankowego wyszło 4 000 zł. Rachunek to aktywo, więc ubytek idzie na stronę przeciwną do stanu — Ma. Na kasie te same pieniądze są przybytkiem — Wn.
+- Operacja 2: pracownik dostał zaliczkę i musi się z niej rozliczyć. Firma ma wobec niego należność, czyli aktywo, którego przybyło — Wn. Na kasie to ubytek — Ma.
+- Operacja 3: dług za telefon zniknął, bo go zapłaciliśmy. Dług to pasywo ze stanem po Ma, więc ubytek idzie na Wn. Na kasie to ubytek aktywa — Ma.
+
+I zawsze w tej samej kwocie. To nie przypadek, tylko reguła.
 
 <Ramka kind="zapamietaj" tytul="zasada podwójnego zapisu">
 Każdą operację księgujemy:
@@ -530,7 +537,7 @@ Gdy kont jest więcej niż dwa, suma zapisów po Wn równa się sumie zapisów p
 </Ramka>
 
 <Ramka kind="skad">
-Skąd pewność, że wyjdzie przeciwna strona? Policzmy dla operacji 1 z zad. 5.2. Kasa (aktywo) rośnie → aktywa rosną po Wn. Rachunek bankowy (aktywo) maleje → aktywa maleją po Ma. Dla AP+ (np. zakup towarów z zapłatą później): towary (aktywo) rosną po Wn, zobowiązania (pasywo) rosną po Ma. Dla każdego z czterech typów jedna zmiana wypada po Wn, a druga po Ma. Dlatego suma wszystkich zapisów po Wn zawsze równa się sumie zapisów po Ma.
+Skąd pewność, że wyjdzie przeciwna strona? Przy typach A i P oba składniki są po tej samej stronie bilansu, więc ich stany stoją po tej samej stronie kont. Jeden rośnie, drugi maleje. Przybytek idzie na stronę stanu, ubytek na przeciwną — wychodzą dwie różne strony. Przy AP+ i AP− składniki są po przeciwnych stronach bilansu, więc ich stany też stoją po przeciwnych stronach kont. Oba zmieniają się w tym samym kierunku, więc znowu lądują po różnych stronach. Przykład AP+: przy zakupie towarów z zapłatą później towary rosną po stronie swojego stanu, Wn, a dług wobec dostawcy po stronie swojego stanu, Ma. Dlatego suma wszystkich zapisów po Wn zawsze równa się sumie zapisów po Ma.
 </Ramka>
 
 <Ramka kind="zapamietaj" tytul="cztery typy na kontach">
@@ -542,15 +549,15 @@ Skąd pewność, że wyjdzie przeciwna strona? Policzmy dla operacji 1 z zad. 5.
 | III (AP+) | aktywo ↑ | pasywo ↑ | rośnie |
 | IV (AP−) | pasywo ↓ | aktywo ↓ | maleje |
 
-Jak czytać: w kolumnach Wn i Ma stoi składnik, który trafia na tę stronę. ↑ — rośnie, ↓ — maleje. Przykład z wiersza I: kasa rośnie (Wn), rachunek bankowy maleje (Ma).
+Jak czytać: w kolumnach Wn i Ma stoi składnik, który trafia na tę stronę. ↑ — rośnie, ↓ — maleje. Przykład z wiersza I: gotówki w kasie przybywa, więc przybytek aktywa idzie na Wn. Na rachunku tyle samo ubywa, więc ubytek aktywa idzie na Ma.
 
-Na slajdach przy kwocie na koncie stoi czasem znak: „Wn Kasa +5 000, Ma Rachunek bankowy −5 000”. **Znak mówi, czy saldo konta rośnie, czy maleje — a nie, po której stronie zapisać.** Stronę wybierasz zawsze regułą z tabeli wyżej (aktywne: + po Wn, − po Ma; pasywne odwrotnie). Na kartce piszesz same kwoty, bez znaków.
+Na slajdach przy kwocie na koncie stoi czasem znak: „Wn Kasa +5 000, Ma Rachunek bankowy −5 000”. **Znak mówi, czy saldo konta rośnie, czy maleje — a nie, po której stronie zapisać.** Stronę wybierasz zawsze regułą stanu: przybytek po stronie stanu, ubytek po przeciwnej. Aktywne: + po Wn, − po Ma. Pasywne odwrotnie. Na kartce piszesz same kwoty, bez znaków.
 </Ramka>
 
 Tak samo z zadaniem 5.3. Na zajęciach do konta zobowiązań dopisano rachunek bankowy, konto kosztów i towary. Stan rachunku przyjęto 50 000 zł, a towarów 20 000 zł. Kliknij „Zobacz krok po kroku”, żeby zobaczyć, jak kwota każdej operacji trafia na dwa konta:
 
 <Konta konta={K53} operacje={O53} typy>
-przy operacji jest jej typ. Druga operacja to faktura za usługę księgową. Po drugiej stronie stoi koszt, a nie składnik bilansu, więc to operacja wynikowa. Konto kosztów ma fioletową kreskę.
+przy operacji jest jej typ. Druga operacja to faktura za usługę księgową. Po drugiej stronie stoi koszt, a nie składnik bilansu, więc to operacja wynikowa. Koszt stoi po Wn, bo zmniejsza zysk, czyli kapitał własny. Zmniejszenie pasywów zapisujemy po Wn. Konto kosztów ma fioletową kreskę.
 </Konta>
 
 <a id="polecenie-ksiegowanie" class="k-anchor"></a>
@@ -571,9 +578,9 @@ Teraz pełne zadanie: cały bilans, kilka operacji, wszystkie konta i nowy bilan
 <Ramka kind="polecenie">
 „Otwórz konta, zaksięguj operacje gospodarcze, sporządź bilans zamknięcia.” Czasem dochodzi: „określ typ operacji”.
 
-1. **Otwórz konta.** Każdy składnik z bilansu otwarcia dostaje konto z Sp. (aktywa po Wn, pasywa po Ma). Konto dla składnika, którego w bilansie nie było (np. materiały), otwierasz bez Sp.
+1. **Otwórz konta.** Każdy składnik z bilansu otwarcia dostaje konto z Sp. po tej stronie, po której stoi w bilansie: aktywa po Wn, pasywa po Ma. Konto dla składnika, którego w bilansie nie było (np. materiały), otwierasz bez Sp.
 2. **Każdą operację rozpisz na dwa składniki:** który rośnie, który maleje — i czy to aktywo, czy pasywo.
-3. **Ustal strony** regułą z tabeli: aktywa + → Wn, − → Ma; pasywa + → Ma, − → Wn. Sprawdź, że wyszły przeciwne strony.
+3. **Ustal strony** regułą stanu: przybytek po stronie stanu, ubytek po przeciwnej. Aktywa: + → Wn, − → Ma. Pasywa: + → Ma, − → Wn. Sprawdź, że wyszły przeciwne strony.
 4. **Zapisz kwotę na obu kontach** z numerem operacji. Jeśli polecenie tego chce — dopisz typ operacji.
 5. **Zamknij każde konto:** obroty, saldo końcowe, sumy.
 6. **Sporządź bilans zamknięcia:** salda końcowe kont aktywnych → aktywa, kont pasywnych → pasywa. Zsumuj obie strony — muszą być równe.
@@ -604,7 +611,7 @@ Otwórz konta, zaksięguj operacje i sporządź bilans zamknięcia.
 </div>
 
 <Krok tytul="Otwórz konta">
-Aktywa: środki trwałe, należności, rachunek bieżący → Sp. po Wn. Pasywa: kapitał własny, kredyt, zobowiązania → Sp. po Ma. Materiałów w bilansie nie było, ale operacja 2 ich dotyczy — otwieramy konto „Materiały” bez Sp.
+Aktywa: środki trwałe, należności, rachunek bieżący. W bilansie stoją po lewej, więc Sp. wpisujemy po Wn. Pasywa: kapitał własny, kredyt, zobowiązania. W bilansie stoją po prawej, więc Sp. wpisujemy po Ma. Materiałów w bilansie nie było, ale operacja 2 ich dotyczy — otwieramy konto „Materiały” bez Sp.
 
 <Dlaczego>
 Konto zakładamy dla każdego składnika, który pojawi się w operacjach. Składnik bez stanu na start ma konto z pustym Sp.
@@ -612,21 +619,21 @@ Konto zakładamy dla każdego składnika, który pojawi się w operacjach. Skła
 </Krok>
 
 <Krok tytul="Operacje 1 i 5 — spłaty długów z rachunku (AP−)">
-Operacja 1: zobowiązania (pasywo) **maleją** o 2 500 → Wn „Zobowiązania”. Rachunek (aktywo) **maleje** o 2 500 → Ma „Rachunek bieżący”.
+Operacja 1: firma przelała dostawcy 2 500 zł. Dług wobec dostawcy jest mniejszy o 2 500. Zobowiązania to pasywo — stan stoi po Ma, więc zmniejszenie zapisujemy po przeciwnej stronie: Wn „Zobowiązania”. Z rachunku wyszło 2 500 zł. Rachunek to aktywo — stan po Wn, więc ubytek po Ma „Rachunek bieżący”.
 
-Operacja 5: kredyt (pasywo) maleje o 6 000 → Wn „Kredyt”. Rachunek maleje o 6 000 → Ma „Rachunek bieżący”.
+Operacja 5: firma oddała bankowi 6 000 zł kredytu. Długu wobec banku jest mniej, więc ubytek pasywa idzie na Wn „Kredyt”. Z rachunku wyszło 6 000 zł — ubytek aktywa, Ma „Rachunek bieżący”.
 
 Obie operacje to **AP−**: aktywo i pasywo maleją. Suma bilansowa spada.
 
 <Dlaczego>
-Płacimy dług, więc ubywa i pieniędzy, i długu. Zmniejszenie pasywów zapisujemy po Wn, zmniejszenie aktywów — po Ma. Wyszły przeciwne strony, czyli dobrze.
+Płacimy dług, więc ubywa i pieniędzy, i długu. Oba zapisy to ubytki, a jednak lądują po różnych stronach. Powód: aktywa i pasywa mają stany po przeciwnych stronach kont. Kwota po obu stronach jest ta sama — podwójny zapis się zgadza.
 </Dlaczego>
 </Krok>
 
 <Krok tytul="Operacje 2 i 4 — zakupy z zapłatą później (AP+)">
-Operacja 2: materiały rosną o 8 000 → Wn „Materiały”. Po drugiej stronie — zobowiązania rosną o 8 000 → Ma „Zobowiązania”.
+Operacja 2: materiały przyjęto do magazynu, więc firma ma ich o 8 000 więcej. Materiały to aktywo — przybytek dopisujemy po stronie stanu: Wn „Materiały”. W treści nie ma zapłaty, więc przyjmujemy zakup z zapłatą później. Powstaje dług wobec dostawcy. Zobowiązania to pasywo ze stanem po Ma, więc przybytek też idzie na stronę stanu: Ma „Zobowiązania”.
 
-Operacja 4: meble biurowe to **środki trwałe** — rosną o 5 000 → Wn „Środki trwałe”. Zapłata później → zobowiązania rosną o 5 000 → Ma „Zobowiązania”.
+Operacja 4: meble biurowe to **środki trwałe**. Przybyło ich za 5 000 — przybytek aktywa, Wn „Środki trwałe”. Zapłata będzie później, więc dług wobec dostawcy rośnie o 5 000 — przybytek pasywa, Ma „Zobowiązania”.
 
 Obie operacje to **AP+**: aktywo i pasywo rosną.
 
@@ -636,7 +643,7 @@ W operacji 2 nie napisano, jak zapłacono. Przyjmujemy zakup z zapłatą późni
 </Krok>
 
 <Krok tytul="Operacja 3 — wpłata od odbiorcy (A)">
-Rachunek (aktywo) rośnie o 3 000 → Wn „Rachunek bieżący”. Należności (aktywo) maleją o 3 000 → Ma „Należności”. Oba składniki w aktywach → **A**. Suma bilansowa bez zmian.
+Odbiorca wpłacił 3 000 zł, które był winien firmie. Na rachunku przybyło 3 000 — przybytek aktywa, Wn „Rachunek bieżący”. Odbiorca już zapłacił, więc należność od niego zniknęła. Należności to też aktywo, więc ubytek idzie na stronę przeciwną do stanu: Ma „Należności”. Oba składniki w aktywach → **A**. Suma bilansowa bez zmian.
 
 Wszystkie pięć operacji na kontach — obejrzyj je po kolei:
 
@@ -646,9 +653,9 @@ na górze bilans otwarcia i lista operacji z typem. Pod nimi siedem kont. Kwota 
 </Krok>
 
 <Krok tytul="Zamknij konta">
-Przykład dla rachunku bieżącego. Obroty Wn: 25 000 + 3 000 = 28 000. Obroty Ma: 2 500 + 6 000 = 8 500. Saldo Wn: 28 000 − 8 500 = **19 500**.
+Przykład dla rachunku bieżącego. Obroty Wn: 25 000 + 3 000 = 28 000. Obroty Ma: 2 500 + 6 000 = 8 500. Saldo Wn: 28 000 − 8 500 = **19 500**. Tyle pieniędzy zostaje na rachunku.
 
-Przykład dla zobowiązań. Obroty Wn: 2 500. Obroty Ma: 4 000 + 8 000 + 5 000 = 17 000. Saldo Ma: 17 000 − 2 500 = **14 500**.
+Przykład dla zobowiązań. Obroty Wn: 2 500. Obroty Ma: 4 000 + 8 000 + 5 000 = 17 000. Saldo Ma: 17 000 − 2 500 = **14 500**. Tyle firma jest jeszcze winna dostawcom.
 
 Pozostałe konta — w rysunku wyżej (kroki „zamknięcie”). Konta bez ruchu, jak kapitał własny, mają saldo równe Sp.
 
@@ -744,9 +751,9 @@ Zadłużenie z tytułu kredytów na początek miesiąca: 30 000 zł.
 </CwiczenieKonto>
 
 <Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
-  { q: 'Konto „Towary”: Sp. 9 000, zakup towarów 3 500, zwrot wadliwych towarów do dostawcy 1 200. Ile wynosi saldo końcowe i po której stronie?', opcje: ['11 300, saldo Wn', '13 700, saldo Wn', '11 300, saldo Ma'], dobra: 0, dlaczego: 'Towary to konto aktywne. Wn: 9 000 + 3 500 = 12 500. Ma: 1 200. Saldo Wn: 12 500 − 1 200 = 11 300. Odpowiedź 13 700 powstaje, gdy zwrot dopisze się po Wn jak zakup. Saldo Ma przy koncie aktywnym oznaczałoby ujemne towary.' },
-  { q: 'Konto „Zobowiązania wobec dostawców”: Sp. 12 000, spłata 7 000, nowa faktura za materiały 4 000. Po której stronie wpiszesz spłatę 7 000?', opcje: ['Ma, bo pieniądze wychodzą z firmy', 'Wn, bo dług maleje', 'Wn, bo to pierwsza operacja'], dobra: 1, dlaczego: 'Zobowiązania to konto pasywne. Spłata zmniejsza dług, a zmniejszenie pasywów idzie na Wn. Odpowiedź „Ma, bo pieniądze wychodzą” opisuje konto rachunku bankowego, nie zobowiązań. Kolejność operacji nie ma wpływu na stronę.' },
-  { q: 'To samo konto zobowiązań: Sp. 12 000, spłata 7 000, nowa faktura 4 000. Jaki jest stan zadłużenia na koniec?', opcje: ['1 000', '23 000', '9 000'], dobra: 2, dlaczego: 'Ma: 12 000 + 4 000 = 16 000. Wn: 7 000. Saldo Ma: 16 000 − 7 000 = 9 000. Wynik 1 000 wychodzi, gdy faktura trafi na Wn razem ze spłatą. 23 000 — gdy spłata trafi na Ma.' },
+  { q: 'Konto „Towary”: Sp. 9 000, zakup towarów 3 500, zwrot wadliwych towarów do dostawcy 1 200. Ile wynosi saldo końcowe i po której stronie?', opcje: ['11 300, saldo Wn', '13 700, saldo Wn', '11 300, saldo Ma'], dobra: 0, dlaczego: 'Towary to konto aktywne, stan po Wn. Zakup dokłada towary do magazynu, więc przybytek idzie po Wn: 9 000 + 3 500 = 12 500. Zwrot zabiera towary z magazynu, więc ubytek idzie na stronę przeciwną, Ma: 1 200. Saldo Wn: 12 500 − 1 200 = 11 300. Tyle towarów zostało. Odpowiedź 13 700 powstaje, gdy zwrot dopisze się po Wn jak zakup. Saldo Ma przy koncie aktywnym oznaczałoby ujemne towary.' },
+  { q: 'Konto „Zobowiązania wobec dostawców”: Sp. 12 000, spłata 7 000, nowa faktura za materiały 4 000. Po której stronie wpiszesz spłatę 7 000?', opcje: ['Ma, bo pieniądze wychodzą z firmy', 'Wn, bo dług maleje', 'Wn, bo to pierwsza operacja'], dobra: 1, dlaczego: 'Zobowiązania to dług, czyli pasywo. Stan długu stoi po Ma, jak pasywa w bilansie po prawej. Spłata zmniejsza dług, więc ubytek idzie na stronę przeciwną do stanu: Wn. Odpowiedź „Ma, bo pieniądze wychodzą” opisuje konto rachunku bankowego, nie zobowiązań. Kolejność operacji nie ma wpływu na stronę.' },
+  { q: 'To samo konto zobowiązań: Sp. 12 000, spłata 7 000, nowa faktura 4 000. Jaki jest stan zadłużenia na koniec?', opcje: ['1 000', '23 000', '9 000'], dobra: 2, dlaczego: 'Nowa faktura zwiększa dług, więc idzie na stronę stanu, Ma: 12 000 + 4 000 = 16 000. Spłata zmniejsza dług, więc stoi po Wn: 7 000. Saldo Ma: 16 000 − 7 000 = 9 000. Tyle firma jest jeszcze winna dostawcom. Wynik 1 000 wychodzi, gdy faktura trafi na Wn razem ze spłatą. 23 000 — gdy spłata trafi na Ma.' },
   { q: 'Obroty Wn konta wynoszą 5 300, a obroty Ma 3 600. Gdzie wpisujesz saldo końcowe?', opcje: ['Po Ma — to saldo Wn, wpisane po stronie mniejszej', 'Po Wn — to saldo Wn, więc stoi po Wn', 'Po Ma — to saldo Ma'], dobra: 0, dlaczego: 'Przeważa Wn, więc to saldo Wn (1 700). Wpisujemy je po stronie mniejszej, czyli Ma, żeby obie strony dały po 5 300. Saldo wpisane po Wn, czyli po stronie większej, rozjeżdża sumy: 7 000 kontra 3 600. Saldo „Ma” byłoby przy przewadze strony Ma.' },
   { q: 'Konto aktywne po zamknięciu wyszło z saldem Ma. Co to najpewniej znaczy?', opcje: ['Wszystko w porządku — saldo może być po obu stronach', 'Firma ma więcej tego składnika niż na początku', 'Któraś operacja trafiła na złą stronę'], dobra: 2, dlaczego: 'Saldo Ma na koncie aktywnym znaczyłoby, że kasy albo towarów jest mniej niż zero. To niemożliwe, więc najpewniej jest błąd strony. Sprawdź, czy zwiększenia stoją po Wn. Więcej składnika niż na początku dałoby większe saldo Wn, a nie saldo Ma.' },
 ]} />
@@ -760,7 +767,7 @@ Zadłużenie z tytułu kredytów na początek miesiąca: 30 000 zł.
 <Pytania licznik tag="Ćwiczenia · 3 zadania" tytul="" pytania={[
   { q: 'Bilans otwarcia: suma 115 000. W okresie: AP+ na 8 000, A na 3 000, AP− na 2 500. Ile wynosi suma bilansu zamknięcia?', opcje: ['123 500', '120 500', '117 500'], dobra: 1, dlaczego: '115 000 + 8 000 − 2 500 = 120 500. Operacja A nie zmienia sumy bilansowej. Odpowiedź 123 500 powstaje, gdy dolicza się operację A. 117 500 — gdy operację A odejmuje się jak AP−.' },
   { q: 'Suma obrotów Wn wszystkich kont po zaksięgowaniu operacji (bez Sp.) wynosi 24 500. Ile wynosi suma obrotów Ma (bez Sp.)?', opcje: ['Nie da się tego ustalić', '49 000', '24 500'], dobra: 2, dlaczego: 'Przy każdej operacji suma zapisów po Wn równa się sumie zapisów po Ma. Dlatego dla wszystkich operacji razem też wychodzi 24 500. 49 000 wychodzi, gdy liczy się każdą operację dwa razy. „Nie da się” — da się, bo wynika to z podwójnego zapisu.' },
-  { q: 'Kupiono maszynę za 25 000 zł i od razu zapłacono przelewem. Jaki jest zapis?', opcje: ['Wn „Środki trwałe”, Ma „Rachunek bankowy”', 'Wn „Rachunek bankowy”, Ma „Środki trwałe”', 'Wn „Środki trwałe”, Ma „Rozrachunki z dostawcami”'], dobra: 0, dlaczego: 'Maszyny przybywa (aktywo rośnie → Wn), pieniędzy ubywa (aktywo maleje → Ma). Typ A. Odwrócony zapis znaczyłby, że sprzedano maszynę. Rozrachunki z dostawcami byłyby przy zapłacie później.' },
+  { q: 'Kupiono maszynę za 25 000 zł i od razu zapłacono przelewem. Jaki jest zapis?', opcje: ['Wn „Środki trwałe”, Ma „Rachunek bankowy”', 'Wn „Rachunek bankowy”, Ma „Środki trwałe”', 'Wn „Środki trwałe”, Ma „Rozrachunki z dostawcami”'], dobra: 0, dlaczego: 'Firma ma nową maszynę. Środki trwałe to aktywo, więc przybytek idzie na stronę stanu: Wn. Z rachunku wyszło 25 000 zł. To ubytek aktywa, więc strona przeciwna: Ma. Oba składniki w aktywach — typ A. Odwrócony zapis znaczyłby, że sprzedano maszynę. Rozrachunki z dostawcami byłyby przy zapłacie później.' },
 ]} />
 
 ## Quiz z teorii
@@ -770,10 +777,10 @@ Zadłużenie z tytułu kredytów na początek miesiąca: 30 000 zł.
   { q: 'Ile składników bilansu zmienia każda operacja bilansowa?', opcje: ['Jeden', 'Co najmniej dwa', 'Wszystkie po jednej stronie bilansu'], dobra: 1, dlaczego: 'Każda operacja dotyka co najmniej dwóch składników. Przy dwóch zmieniają się o tę samą kwotę. Dzięki temu aktywa dalej równają się pasywom.' },
   { q: 'Przy którym typie operacji suma bilansowa maleje?', opcje: ['A', 'AP+', 'AP−'], dobra: 2, dlaczego: 'AP− zmniejsza jednocześnie aktywa i pasywa, np. spłata długu z rachunku. Przy A i P suma się nie zmienia, przy AP+ rośnie.' },
   { q: 'Po której stronie konta pasywnego zapisujemy zwiększenia?', opcje: ['Ma', 'Wn', 'Po tej, po której stoi saldo końcowe'], dobra: 0, dlaczego: 'Pasywa stoją w bilansie po prawej, więc stan i zwiększenia konta pasywnego są po prawej — po Ma. Saldo końcowe wpisujemy po stronie mniejszej, więc nie wskazuje strony zwiększeń.' },
-  { q: 'Gdzie stoi saldo początkowe konta „Kasa”?', opcje: ['Po Ma', 'Po Wn', 'Zależy od tego, czy kasy przybywa'], dobra: 1, dlaczego: 'Kasa to konto aktywne. Saldo początkowe konta aktywnego zawsze stoi po Wn.' },
+  { q: 'Gdzie stoi saldo początkowe konta „Kasa”?', opcje: ['Po Ma', 'Po Wn', 'Zależy od tego, czy kasy przybywa'], dobra: 1, dlaczego: 'Kasa to gotówka, którą firma ma, czyli aktywo. Aktywa stoją w bilansie po lewej, więc saldo początkowe konta aktywnego zawsze stoi po lewej — po Wn. To, czy kasy potem przybywa, nie zmienia strony stanu.' },
   { q: 'Co znaczy zapis „2 500 (2” po stronie Ma?', opcje: ['Saldo 2 500 po drugim miesiącu', 'Operacja numer 2 na kwotę 2 500, zapisana po Ma', 'Dwie operacje po 2 500'], dobra: 1, dlaczego: 'Na zajęciach numer operacji stoi przy kwocie od strony zewnętrznej konta: po Ma za kwotą, po Wn przed kwotą („2) 2 500”).' },
   { q: 'Jak liczymy obroty strony Wn konta aktywnego na zajęciach?', opcje: ['Tylko zapisy operacji, bez Sp.', 'Saldo końcowe plus zapisy', 'Wszystkie kwoty po Wn razem z saldem początkowym'], dobra: 2, dlaczego: 'Na zajęciach „Obr.” to suma całej strony razem z Sp. Część podręczników liczy bez Sp. — saldo końcowe wychodzi to samo, ale licz jak na zajęciach.' },
   { q: 'Saldo końcowe nazywamy „saldem Wn”, gdy…', opcje: ['…obroty Wn są większe niż obroty Ma', '…wpisujemy je po stronie Wn', '…konto jest pasywne'], dobra: 0, dlaczego: 'Nazwa salda pochodzi od strony, która przeważa. Wpisujemy je po przeciwnej, mniejszej stronie. Konto pasywne ma zwykle saldo Ma.' },
-  { q: 'Bank z kredytu spłacił za firmę zobowiązanie wobec dostawcy. Jaki to typ operacji?', opcje: ['AP+', 'P', 'A'], dobra: 1, dlaczego: 'Zobowiązanie wobec dostawcy (pasywo) maleje, kredyt (pasywo) rośnie. Oba w pasywach → P. Majątek się nie zmienił, zmienił się tylko wierzyciel.' },
+  { q: 'Bank z kredytu spłacił za firmę zobowiązanie wobec dostawcy. Jaki to typ operacji?', opcje: ['AP+', 'P', 'A'], dobra: 1, dlaczego: 'Dostawca dostał pieniądze od banku, więc dług wobec niego (pasywo) maleje. Tę kwotę firma jest teraz winna bankowi, więc kredyt (pasywo) rośnie. Oba w pasywach → P. Majątek się nie zmienił, zmienił się tylko wierzyciel.' },
   { q: 'Przyszła faktura za usługę księgową, płatna za 14 dni. Jak opisano tę operację na zajęciach?', opcje: ['Jako operację wynikową', 'Jako AP+', 'Jako zdarzenie, bo nie ma zapłaty'], dobra: 0, dlaczego: 'Zobowiązanie rośnie, ale po drugiej stronie stoi koszt usług obcych, a nie składnik bilansu. Dlatego to operacja wynikowa. Brak zapłaty nie robi z niej zdarzenia: powstał dług i jest faktura.' },
 ]} />

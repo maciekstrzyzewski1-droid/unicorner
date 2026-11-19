@@ -29,7 +29,7 @@ import Konta from '../../components/kurs/konta/Konta.astro';
 import Rzad from '../../components/kurs/konta/Rzad.astro';
 import CwiczenieKsiegowanie from '../../components/kurs/konta/CwiczenieKsiegowanie.astro';
 import { ksieguj, przeksiegowania, rachunekWyniku, typOperacji, opisOperacji, indeksTypu, KATEGORIE_TYPOW, zl } from '../../lib/konta.js';
-import { K46, O46, R46, P46, PODATEK46, O46_17, P46_POD, NETTO46 } from '../../lib/konta-zadania.js';
+import { K46, O46, R46, P46, PODATEK46, O46_17, P46_POD, NETTO46, KT1, OT1, KT2, OT2, KT3, OT3 } from '../../lib/konta-zadania.js';
 
 export const KM = [
   { id: 'kasa', nazwa: 'Kasa', typ: 'A', sp: 5000 },
@@ -111,7 +111,8 @@ Bilans pokazuje stan na jeden dzień i nie odróżnia „zarobiliśmy” od „p
   { polecenie: 'Określ, czy operacja jest bilansowa, czy wynikowa', jak: 'Szukasz kosztu albo przychodu po jednej ze stron. Jest → wynikowa. Obie strony to składniki bilansu → jeden z typów A, P, AP+, AP−.', przepis: 'polecenie-rozpoznaj', cwiczenia: 'cw-rozpoznaj' },
   { polecenie: 'Dobierz konto przychodów albo kosztów', jak: 'Po słowach z treści: sprzedaż, umorzenie długu, pożar, odsetki, faktura za usługę, wynagrodzenia, podatek od nieruchomości.', przepis: 'polecenie-konto', cwiczenia: 'cw-konto', zrodlo: 'jak w Zad. 4.6' },
   { polecenie: 'Zaksięguj sprzedaż towarów', jak: 'Dwa zapisy: przychód po cenie sprzedaży i koszt po cenie zakupu (towary wychodzą z magazynu).', przepis: 'polecenie-sprzedaz', cwiczenia: 'cw-sprzedaz', zrodlo: 'jak w Zad. 4.6, op. 12 i 13' },
-  { polecenie: 'Zaksięguj operacje na kontach bilansowych i wynikowych', jak: 'Koszt rośnie → Wn. Przychód rośnie → Ma. Druga strona jak dotąd: aktywa i pasywa.', przepis: 'polecenie-ksieguj', cwiczenia: 'cw-ksieguj', zrodlo: 'Zad. 4.6' },
+  { polecenie: 'Zaksięguj operacje na kontach bilansowych i wynikowych', jak: 'Koszt zmniejsza kapitał własny, więc rośnie po Wn. Przychód zwiększa kapitał, więc rośnie po Ma. Druga strona jak dotąd: aktywa i pasywa.', przepis: 'polecenie-ksieguj', cwiczenia: 'cw-ksieguj', zrodlo: 'Zad. 4.6' },
+  { polecenie: 'Zaksięguj operacje i zamknij konta — pułapki: spłata długu, reklamacja, towar za darmo', jak: 'Przy każdym składniku trzy pytania: co się naprawdę stało, rośnie czy maleje, jakie to konto. Stronę daje lustro kont: przybytek po stronie stanu, ubytek po przeciwnej.', przepis: 'trening', cwiczenia: 'cw-trening', zrodlo: 'trzy zadania treningowe' },
   { polecenie: 'Ustal wynik finansowy', jak: 'Przeksięgowujesz przychody i koszty na konto „Wynik finansowy”. Przychody − koszty = zysk brutto. Podatek to 19% zysku brutto. Zysk brutto − podatek = zysk netto.', przepis: 'polecenie-wynik', cwiczenia: 'cw-wynik', zrodlo: 'Zad. 4.6, op. 17' },
   { polecenie: 'Sporządź bilans zamknięcia', jak: 'Konta wynikowe mają saldo 0 i do bilansu nie wchodzą. Zysk netto stoi w pasywach, w kapitale własnym.', przepis: 'polecenie-bilans', cwiczenia: 'cw-bilans' },
 ]} />
@@ -191,8 +192,8 @@ Trzy przykłady z Zad. 4.6:
 ## Po której stronie: koszty i przychody
 
 <Ramka kind="zapamietaj" tytul="strony kont wynikowych">
-- **Koszt rośnie → Wn.** Konto kosztów ma saldo po Wn.
-- **Przychód rośnie → Ma.** Konto przychodów ma saldo po Ma.
+- **Koszt rośnie → Wn**, bo zmniejsza kapitał własny. Zapisy kosztów zbierają się po Wn, więc tam stoi saldo.
+- **Przychód rośnie → Ma**, bo zwiększa kapitał własny. Zapisy przychodów zbierają się po Ma, więc tam stoi saldo.
 - Konta wynikowe **nie mają salda początkowego**. Każdy okres zaczynają od zera.
 - Na koniec okresu ich salda **przeksięgowujemy** na konto „Wynik finansowy”. Wtedy mają saldo 0.
 - W zadaniach okresem jest miesiąc. W firmie konta wynikowe zamyka się zwykle na koniec roku obrotowego.
@@ -211,18 +212,18 @@ Konta wynikowe działają jak przegródki kapitału. Zbierają jego zmiany osobn
   <KontoT konto={{ nazwa: 'Przychody ze sprzedaży towarów', typ: 'R' }} wpisy={[{ nr: 12, strona: 'ma', kwota: 8200 }]} />
 </Rzad>
 
-<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> dwa konta wynikowe z Zad. 4.6. Nad kontem znak „+” pokazuje stronę, po której konto rośnie: przy kosztach Wn, przy przychodach Ma. Brak „Sp.” — konta wynikowe startują puste. Usługi obce: faktura za obsługę prawną (op. 8) i czynsz (op. 16), saldo Wn 900 + 3 000 = 3 900. Przychody: sprzedaż towarów (op. 12), saldo Ma 8 200.</p>
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> dwa konta wynikowe z Zad. 4.6. Znak „+” nad kontem pokazuje stronę, po której konto rośnie. Przy kosztach to Wn, bo koszt zmniejsza kapitał własny. Przy przychodach to Ma, bo przychód kapitał zwiększa. Brak „Sp.” — konta wynikowe startują puste, bo na koniec poprzedniego okresu ich salda przeniesiono na wynik. Usługi obce: faktura za obsługę prawną (op. 8) i czynsz za halę (op. 16). Obie usługi spółka zużyła, więc obie kwoty to koszt i stoją po Wn. Saldo Wn 900 + 3 000 = 3 900 — tyle kosztowały spółkę usługi obce w styczniu. Przychody: sprzedaż towarów (op. 12) zwiększyła kapitał o 8 200, więc kwota stoi po Ma. Saldo Ma 8 200.</p>
 
 Najpierw mały przykład. Sklep ma w kasie 5 000 zł, w magazynie towary za 4 000 zł i kapitał 9 000 zł. Robi trzy operacje.
 
 <Konta konta={KM1} operacje={OM1} typy>
-na górze lista operacji z rodzajem, pod nią konta. Turkus to konta aktywne, róż — pasywne, zieleń — przychody, fiolet — koszty. Operacja 1: kasa rośnie (Wn), przychód rośnie (Ma). Operacja 2: koszt rośnie (Wn), towarów ubywa (Ma). Operacja 3: koszt rośnie (Wn), kasa maleje (Ma). Każda operacja wynikowa ma po jednej stronie składnik bilansu.
+na górze lista operacji z rodzajem, pod nią konta. Turkus to konta aktywne, róż — pasywne, zieleń — przychody, fiolet — koszty. Operacja 1: klient zapłacił gotówką 3 000 zł. Gotówki w kasie przybyło. Kasa to aktywo, jej stan stoi po Wn, więc przybytek też idzie po Wn. Sprzedaż daje przychód. Przychód zwiększa kapitał, dlatego stoi po Ma. Operacja 2: z magazynu wyszły sprzedane towary warte 2 000 zł. Towary to aktywo, więc ubytek idzie na stronę przeciwną do stanu — Ma. Wydany towar to koszt tej sprzedaży. Koszt zmniejsza kapitał, dlatego stoi po Wn. Operacja 3: sklep zapłacił gotówką 400 zł za przewóz. Usługa została zużyta, więc to koszt — Wn. Z kasy wyszło 400 zł — ubytek aktywa, Ma. Każda operacja wynikowa ma po jednej stronie składnik bilansu.
 </Konta>
 
 <Ramka kind="pulapka">
-- „Pieniądze przyszły, więc przychód po Wn” — błąd. Po Wn idzie kasa albo rachunek. Przychód zawsze rośnie po **Ma**.
-- „Zapłaciliśmy, więc koszt po Ma” — błąd. Po Ma idzie kasa. Koszt zawsze rośnie po **Wn**.
-- W operacji wynikowej strony nadal są przeciwne. Koszt (Wn) idzie w parze z kasą, rachunkiem, towarami albo długiem, który rośnie (Ma). Przychód (Ma) idzie w parze z kasą, rachunkiem, należnością albo długiem, który maleje (Wn).
+- „Pieniądze przyszły, więc przychód po Wn” — błąd. Po Wn idzie kasa albo rachunek, bo to ich przybyło. Przychód zwiększa kapitał, więc zawsze rośnie po **Ma**.
+- „Zapłaciliśmy, więc koszt po Ma” — błąd. Po Ma idzie kasa, bo gotówki ubyło. Koszt zmniejsza kapitał, więc zawsze rośnie po **Wn**.
+- W operacji wynikowej strony nadal są przeciwne. Koszt stoi po Wn, więc druga kwota idzie po Ma. Po Ma trafia aktywo, którego ubyło — kasa, rachunek, towary — albo dług, który urósł. Przychód stoi po Ma, więc druga kwota idzie po Wn. Po Wn trafia aktywo, którego przybyło — kasa, rachunek, należność — albo dług, który zmalał.
 </Ramka>
 
 <a id="polecenie-konto" class="k-anchor"></a>
@@ -243,7 +244,7 @@ W Zad. 4.6 są trzy konta przychodów, sześć kont kosztów i konto podatku doc
 
 1. Ustal, czy to przychód (firma bogatsza), czy koszt (firma biedniejsza).
 2. Znajdź w tabeli niżej słowo z treści operacji.
-3. Przychód — konto po stronie **Ma**. Koszt — konto po stronie **Wn**.
+3. Przychód zapisujesz po **Ma** konta przychodów, bo zwiększa kapitał własny. Koszt — po **Wn** konta kosztów, bo kapitał zmniejsza.
 4. Drugie konto to składnik bilansu: kasa, rachunek, należność, towary, dług.
 </Ramka>
 
@@ -260,7 +261,7 @@ W Zad. 4.6 są trzy konta przychodów, sześć kont kosztów i konto podatku doc
 | podatek od nieruchomości, opłaty | Podatki i opłaty — **Wn** | op. 14 |
 | podatek dochodowy | Podatek dochodowy — **Wn** | op. 17 |
 
-<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> w lewej kolumnie słowo, które widzisz w treści operacji. W środku nazwa konta i strona, po której to konto rośnie. Po prawej operacja z Zad. 4.6, w której go użyto. Konta z „Ma” to przychody, konta z „Wn” — koszty. Wyjątek: podatek dochodowy rośnie po Wn i zmniejsza wynik, ale kosztem nie jest.</p>
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> w lewej kolumnie słowo, które widzisz w treści operacji. W środku nazwa konta i strona, po której to konto rośnie. Po prawej operacja z Zad. 4.6, w której go użyto. Konta z „Ma” to przychody — zwiększają kapitał własny. Konta z „Wn” to koszty — kapitał zmniejszają. Wyjątek: podatek dochodowy rośnie po Wn, bo też zmniejsza wynik, ale kosztem nie jest.</p>
 
 <Dlaczego typ="umowa">
 Usługi obce, wynagrodzenia oraz podatki i opłaty to tzw. **koszty według rodzaju**. Nazwa konta mówi, co firma zużyła. Inne rodzaje to m.in. amortyzacja oraz zużycie materiałów i energii. Pełna lista i drugi sposób ujmowania kosztów są w module „Koszty” (wkrótce).
@@ -290,11 +291,11 @@ Gdy sklep sprzedaje towar, dzieją się dwie rzeczy naraz. Klient płaci (albo j
 „Zaksięguj sprzedaż towarów.”
 
 1. **Zapis 1 — przychód** (na wykładzie: moment finansowy). Kwota: cena sprzedaży z faktury.
-   - Wn: **Kasa** (gotówka), **Rachunek bankowy** (przelew) albo **Rozrachunki z odbiorcami** (zapłata później).
-   - Ma: **Przychody ze sprzedaży towarów**.
+   - Wn: **Kasa** (gotówka), **Rachunek bankowy** (przelew) albo **Rozrachunki z odbiorcami** (zapłata później). Tego aktywa przybywa, a przybytek aktywa idzie po Wn.
+   - Ma: **Przychody ze sprzedaży towarów** — przychód zwiększa kapitał.
 2. **Zapis 2 — koszt** (na wykładzie: moment rzeczowy). Kwota: wartość, w jakiej towary stoją na koncie „Towary”. W zadaniach to zwykle cena zakupu.
-   - Wn: **Wartość sprzedanych towarów**.
-   - Ma: **Towary** — z magazynu ubywa.
+   - Wn: **Wartość sprzedanych towarów** — koszt zmniejsza kapitał.
+   - Ma: **Towary** — z magazynu ubywa, a ubytek aktywa idzie na stronę przeciwną do stanu.
 3. Różnica „zapis 1 − zapis 2” to **marża**, czyli zarobek na tej sprzedaży.
 </Ramka>
 
@@ -307,7 +308,7 @@ Zad. 4.6, operacje 12 i 13. Spółka sprzedała towary za 8 200 zł z zapłatą 
   <KontoT konto={{ nazwa: 'Towary', typ: 'A' }} wpisy={[{ nr: 13, strona: 'ma', kwota: 3200 }]} zamkniete={false} />
 </Rzad>
 
-<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> pokazujemy tylko zapisy tej sprzedaży, bez sald początkowych. Pierwsza para kont to zapis 1 (op. 12): należność od klienta rośnie po Wn, przychód po Ma. Druga para to zapis 2 (op. 13): koszt rośnie po Wn, towary maleją po Ma.</p>
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> pokazujemy tylko zapisy tej sprzedaży, bez sald początkowych. Pierwsza para kont to zapis 1 (op. 12). Klient jeszcze nie zapłacił, więc spółka ma nową należność. Należność to aktywo, więc przybytek idzie po Wn. Sprzedaż zwiększa kapitał, więc przychód stoi po Ma. Druga para to zapis 2 (op. 13). Wydany towar to koszt sprzedaży, a koszt zmniejsza kapitał — Wn. Towarów w magazynie ubyło, więc ubytek aktywa idzie na Ma.</p>
 
 Marża: 8 200 − 3 200 = **5 000 zł**. Tyle spółka zarobiła na tej sprzedaży, zanim policzymy inne koszty.
 
@@ -319,7 +320,7 @@ Na wykładzie ta sama zasada działa przy sprzedaży innych składników. Zmieni
 | środki trwałe | Pozostałe przychody operacyjne | Pozostałe koszty operacyjne |
 | papiery wartościowe | Przychody finansowe | Koszty finansowe |
 
-<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> każdy wiersz to inny sprzedawany składnik. W zapisie 1 po Wn zawsze stoi kasa, rachunek albo należność, a po Ma — przychód z tabeli. W zapisie 2 po Wn stoi koszt z tabeli, a po Ma — konto tego, co sprzedajemy (z pierwszej kolumny), bo ono wychodzi z firmy.</p>
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> każdy wiersz to inny sprzedawany składnik. W zapisie 1 po Wn zawsze stoi kasa, rachunek albo należność, bo tego aktywa przybywa. Po Ma — przychód z tabeli, bo zwiększa kapitał. W zapisie 2 po Wn stoi koszt z tabeli, bo zmniejsza kapitał. Po Ma — konto tego, co sprzedajemy (z pierwszej kolumny), bo ono wychodzi z firmy, a ubytek aktywa idzie na Ma.</p>
 
 <Ramka kind="pulapka">
 - Zapis 2 robisz po wartości z konta „Towary” (zwykle **cena zakupu**), nie po cenie sprzedaży. Z magazynu ubywa tyle, ile towary kosztowały.
@@ -333,7 +334,7 @@ Na wykładzie ta sama zasada działa przy sprzedaży innych składników. Zmieni
 </Ramka>
 
 <Pytania pytania={[
-  { q: 'Sprzedano za gotówkę towary za 3 000 zł. W cenie zakupu były warte 2 000 zł. Jaki jest zapis 2?', opcje: ['Wn „Wartość sprzedanych towarów”, Ma „Towary” — 2 000', 'Wn „Wartość sprzedanych towarów”, Ma „Towary” — 3 000', 'Wn „Towary”, Ma „Wartość sprzedanych towarów” — 2 000'], dobra: 0, dlaczego: 'Z magazynu ubywa towarów za tyle, ile kosztowały: 2 000. Koszt rośnie po Wn, towary maleją po Ma. Kwota 3 000 to cena sprzedaży — należy do zapisu 1 (przychodu). Odwrócone strony znaczyłyby, że towarów przybywa.' },
+  { q: 'Sprzedano za gotówkę towary za 3 000 zł. W cenie zakupu były warte 2 000 zł. Jaki jest zapis 2?', opcje: ['Wn „Wartość sprzedanych towarów”, Ma „Towary” — 2 000', 'Wn „Wartość sprzedanych towarów”, Ma „Towary” — 3 000', 'Wn „Towary”, Ma „Wartość sprzedanych towarów” — 2 000'], dobra: 0, dlaczego: 'Z magazynu ubywa towarów za tyle, ile kosztowały: 2 000. Wydany towar to koszt, a koszt zmniejsza kapitał — dlatego Wn. Towary to aktywo, więc ich ubytek idzie na stronę przeciwną do stanu, Ma. Kwota 3 000 to cena sprzedaży — należy do zapisu 1 (przychodu). Odwrócone strony znaczyłyby, że towarów przybywa.' },
 ]} />
 
 <a id="polecenie-ksieguj" class="k-anchor"></a>
@@ -343,10 +344,10 @@ Na wykładzie ta sama zasada działa przy sprzedaży innych składników. Zmieni
 <Ramka kind="polecenie">
 „Zaksięguj operacje na kontach.”
 
-1. **Otwórz konta** z bilansu: aktywa — Sp. po Wn, pasywa — Sp. po Ma. Nowe konta bilansowe i wszystkie konta wynikowe otwierasz puste.
+1. **Otwórz konta** z bilansu: aktywa — Sp. po Wn, pasywa — Sp. po Ma. Tak jak w bilansie: aktywa stoją po lewej, pasywa po prawej. Nowe konta bilansowe i wszystkie konta wynikowe otwierasz puste.
 2. Przy każdej operacji sprawdź, czy jest w niej **koszt albo przychód**.
-3. Składnik bilansu księgujesz jak dotąd: aktywa + Wn, − Ma; pasywa + Ma, − Wn.
-4. Koszt rośnie → **Wn** konta kosztów. Przychód rośnie → **Ma** konta przychodów.
+3. Składnik bilansu księgujesz jak dotąd: przybytek po stronie stanu, ubytek po przeciwnej. Aktywa + Wn, − Ma; pasywa + Ma, − Wn.
+4. Koszt zmniejsza kapitał własny, więc idzie na **Wn** konta kosztów. Przychód zwiększa kapitał, więc idzie na **Ma** konta przychodów.
 5. Sprawdź przeciwne strony i tę samą kwotę. Przy obu kwotach wpisz numer operacji.
 </Ramka>
 
@@ -414,9 +415,9 @@ Do zrobienia: zaksięguj operacje, ustal wynik finansowy, sporządź bilans zamk
 </div>
 
 <Krok tytul="Otwórz konta">
-Aktywa — Sp. po Wn: środki trwałe 92 000, towary 45 000, rozrachunki z odbiorcami 50 000, kasa 28 000, rachunek bankowy 42 000. Pasywa — Sp. po Ma: kapitał zakładowy 157 000, rozrachunki z dostawcami 58 000, kredyt bankowy 42 000.
+Aktywa — Sp. po Wn: środki trwałe 92 000, towary 45 000, rozrachunki z odbiorcami 50 000, kasa 28 000, rachunek bankowy 42 000. Pasywa — Sp. po Ma: kapitał zakładowy 157 000, rozrachunki z dostawcami 58 000, kredyt bankowy 42 000. Saldo początkowe stawiamy po tej stronie, po której składnik stoi w bilansie.
 
-Puste konta bilansowe: **Rozrachunki z tytułu wynagrodzeń** (op. 10) i **Rozrachunki publicznoprawne** (op. 14 i 17). Puste konta wynikowe: trzy konta przychodów i sześć kont kosztów z tabeli „Które konto wynikowe”. Konto „Podatek dochodowy” będzie potrzebne dopiero przy op. 17.
+Puste konta bilansowe: **Rozrachunki z tytułu wynagrodzeń** (op. 10) i **Rozrachunki publicznoprawne** (op. 14 i 17). Na 1 stycznia spółka nie miała takich długów. Puste konta wynikowe: trzy konta przychodów i sześć kont kosztów z tabeli „Które konto wynikowe”. Konto „Podatek dochodowy” będzie potrzebne dopiero przy op. 17.
 
 <Dlaczego>
 „Należności” z bilansu księgujemy na koncie „Rozrachunki z odbiorcami”, a „Zobowiązania” (wobec dostawców) — na „Rozrachunkach z dostawcami”. To te same składniki pod nazwą konta. Rozrachunki publicznoprawne to długi wobec urzędów, np. podatki do zapłaty (w notatkach z zajęć skrót „P-P”). W spółce z o.o. kapitał podstawowy nazywa się **kapitałem zakładowym**. W bilansie z ustawy to pozycja A.I.
@@ -424,13 +425,13 @@ Puste konta bilansowe: **Rozrachunki z tytułu wynagrodzeń** (op. 10) i **Rozra
 </Krok>
 
 <Krok tytul="Operacje 1–7 — bilansowe">
-- **Op. 1:** towary rosną → Wn „Towary”. Kasa maleje → Ma „Kasa”. Typ **A**.
-- **Op. 2:** dług wobec dostawców maleje → Wn „Rozrachunki z dostawcami”. Kredyt rośnie → Ma „Kredyt bankowy”. Typ **P**.
-- **Op. 3:** środki trwałe rosną → Wn „Środki trwałe”. Kapitał zakładowy rośnie → Ma „Kapitał zakładowy”. Typ **AP+**.
-- **Op. 4:** rachunek rośnie → Wn „Rachunek bankowy”. Należności maleją → Ma „Rozrachunki z odbiorcami”. Typ **A**.
-- **Op. 5:** dług maleje → Wn „Rozrachunki z dostawcami”. Kasa maleje → Ma „Kasa”. Typ **AP−**.
-- **Op. 6:** kredyt maleje → Wn „Kredyt bankowy”. Rachunek maleje → Ma „Rachunek bankowy”. Typ **AP−**.
-- **Op. 7:** środki trwałe rosną → Wn „Środki trwałe”. Dług wobec sprzedawcy rośnie → Ma „Rozrachunki z dostawcami”. Typ **AP+**.
+- **Op. 1:** spółka kupiła towary za gotówkę. Towarów w magazynie przybyło. Towary to aktywo, a stan aktywa stoi po Wn. Przybytek dopisujemy po stronie stanu: Wn „Towary”. Gotówka wyszła z kasy. Kasa to też aktywo, więc ubytek idzie na stronę przeciwną do stanu: Ma „Kasa”. Typ **A**.
+- **Op. 2:** bank udzielił kredytu i od razu spłacił nim część długu wobec dostawców. Dług wobec dostawców zmalał. Dług to pasywo, a stan pasywa stoi po Ma. Zmniejszenie zapisujemy po przeciwnej stronie: Wn „Rozrachunki z dostawcami”. Przybyło za to długu wobec banku. Przybytek pasywa idzie po stronie stanu: Ma „Kredyt bankowy”. Typ **P**.
+- **Op. 3:** wspólnik wniósł środek trwały. Środków trwałych przybyło — przybytek aktywa, Wn „Środki trwałe”. Urósł wkład właścicieli, czyli kapitał — przybytek pasywa, Ma „Kapitał zakładowy”. Typ **AP+**.
+- **Op. 4:** odbiorca zapłacił przelewem. Na rachunku przybyło pieniędzy — przybytek aktywa, Wn „Rachunek bankowy”. Klient nie jest już winien tej kwoty, więc należności ubyło — ubytek aktywa, Ma „Rozrachunki z odbiorcami”. Typ **A**.
+- **Op. 5:** spółka spłaciła dostawców gotówką z kasy. Dług zmalał — ubytek pasywa, Wn „Rozrachunki z dostawcami”. Gotówka wyszła z kasy — ubytek aktywa, Ma „Kasa”. Typ **AP−**.
+- **Op. 6:** spółka spłaciła przelewem ratę kredytu. Długu wobec banku jest mniej — ubytek pasywa, Wn „Kredyt bankowy”. Z rachunku wyszły pieniądze — ubytek aktywa, Ma „Rachunek bankowy”. Typ **AP−**.
+- **Op. 7:** spółka kupiła środek trwały z zapłatą w lutym. Środek trwały już jest w firmie — przybytek aktywa, Wn „Środki trwałe”. Zapłaty jeszcze nie było, więc powstał dług wobec sprzedawcy — przybytek pasywa, Ma „Rozrachunki z dostawcami”. Typ **AP+**.
 
 <Dlaczego>
 W żadnej z tych operacji firma nie zarabia ani nie traci. Aport (op. 3) robi ją bogatszą, ale to wkład właściciela, a wkładów nie liczymy. Wpłata należności (op. 4) to zamiana należności na pieniądze. Środek trwały (op. 7) zostaje w firmie — jego kosztem będzie dopiero amortyzacja, rozłożona na lata.
@@ -438,15 +439,15 @@ W żadnej z tych operacji firma nie zarabia ani nie traci. Aport (op. 3) robi j�
 </Krok>
 
 <Krok tytul="Operacje z kosztem: 8, 9b, 10, 13, 14, 15, 16">
-W każdej z nich **koszt rośnie → Wn**. Drugą stronę ustalamy jak dotąd.
+W każdej z nich jest koszt. Koszt zmniejsza kapitał własny, więc konto kosztów dostaje kwotę po **Wn**. Druga kwota idzie po Ma: to aktywo, którego ubyło, albo dług, który urósł.
 
-- **Op. 8:** Wn „Usługi obce” 900. Dług wobec kancelarii rośnie → Ma „Rozrachunki z dostawcami”.
-- **Op. 9b:** Wn „Koszty finansowe” 300. Bank zabrał pieniądze z rachunku → Ma „Rachunek bankowy”.
-- **Op. 10:** Wn „Wynagrodzenia” 1 300. Dług wobec pracowników rośnie → Ma „Rozrachunki z tytułu wynagrodzeń”.
-- **Op. 13:** Wn „Wartość sprzedanych towarów” 3 200. Towary wychodzą z magazynu → Ma „Towary”.
-- **Op. 14:** Wn „Podatki i opłaty” 200. Dług wobec gminy rośnie → Ma „Rozrachunki publicznoprawne”.
-- **Op. 15:** Wn „Pozostałe koszty operacyjne” 1 000. Towary spłonęły → Ma „Towary”.
-- **Op. 16:** Wn „Usługi obce” 3 000. Dług wobec wynajmującego halę rośnie → Ma „Rozrachunki z dostawcami”.
+- **Op. 8:** Wn „Usługi obce” 900 — spółka zużyła usługę prawną i księgową. Kancelarii jeszcze nie zapłacono, więc przybyło długu. Dług to pasywo, a przybytek pasywa idzie po stronie stanu: Ma „Rozrachunki z dostawcami”.
+- **Op. 9b:** Wn „Koszty finansowe” 300 — tyle kosztowało korzystanie z kredytu. Bank sam pobrał pieniądze z rachunku. Rachunku ubyło, a ubytek aktywa idzie na stronę przeciwną do stanu: Ma „Rachunek bankowy”.
+- **Op. 10:** Wn „Wynagrodzenia” 1 300 — pracownicy przepracowali styczeń. Pensji jeszcze nie wypłacono, więc spółka jest im winna pieniądze — przybytek pasywa, Ma „Rozrachunki z tytułu wynagrodzeń”.
+- **Op. 13:** Wn „Wartość sprzedanych towarów” 3 200 — tyle kosztowały towary wydane klientowi. Z magazynu ubyło towarów — ubytek aktywa, Ma „Towary”.
+- **Op. 14:** Wn „Podatki i opłaty” 200. Podatku jeszcze nie zapłacono, więc spółka ma dług wobec gminy — przybytek pasywa, Ma „Rozrachunki publicznoprawne”.
+- **Op. 15:** Wn „Pozostałe koszty operacyjne” 1 000 — spółka straciła towary i nic za nie nie dostała. Towary spłonęły, więc w magazynie ich ubyło — ubytek aktywa, Ma „Towary”.
+- **Op. 16:** Wn „Usługi obce” 3 000 — spółka korzystała z hali przez styczeń. Czynszu jeszcze nie zapłacono, więc przybyło długu wobec wynajmującego — przybytek pasywa, Ma „Rozrachunki z dostawcami”.
 
 <Dlaczego typ="umowa">
 „Naliczono” znaczy: zapisano dług, ale jeszcze nie zapłacono. Dlatego w op. 10, 14 i 16 po Ma stoi konto rozrachunków (zobowiązanie), a nie kasa ani rachunek.
@@ -458,11 +459,11 @@ Pożar (op. 15) nie ma nic wspólnego z normalnym handlem spółki. Dlatego ta s
 </Krok>
 
 <Krok tytul="Operacje z przychodem: 9a, 11, 12">
-W każdej z nich **przychód rośnie → Ma**.
+W każdej z nich jest przychód. Przychód zwiększa kapitał własny, więc konto przychodów dostaje kwotę po **Ma**. Druga kwota idzie po Wn: to aktywo, którego przybyło, albo dług, który zmalał.
 
-- **Op. 9a:** rachunek rośnie → Wn „Rachunek bankowy” 200. Ma „Przychody finansowe”.
-- **Op. 11:** dług maleje → Wn „Rozrachunki z dostawcami” 3 000. Ma „Pozostałe przychody operacyjne”.
-- **Op. 12:** należność od klienta rośnie → Wn „Rozrachunki z odbiorcami” 8 200. Ma „Przychody ze sprzedaży towarów”.
+- **Op. 9a:** bank dopisał odsetki. Na rachunku przybyło pieniędzy — przybytek aktywa, Wn „Rachunek bankowy” 200. Spółka zarobiła na pieniądzach trzymanych w banku, więc to przychód: Ma „Przychody finansowe”.
+- **Op. 11:** kontrahent umorzył dług. Dług zmalał, a ubytek pasywa idzie na stronę przeciwną do stanu: Wn „Rozrachunki z dostawcami” 3 000. Druga kwota to przychód: Ma „Pozostałe przychody operacyjne”.
+- **Op. 12:** spółka sprzedała towary, klient zapłaci później. Przybyło należności — przybytek aktywa, Wn „Rozrachunki z odbiorcami” 8 200. Przychód powstaje już przy sprzedaży, nie przy zapłacie: Ma „Przychody ze sprzedaży towarów”.
 
 <Dlaczego>
 Przy umorzeniu (op. 11) nie płyną pieniądze. Spółka po prostu nie musi już oddać 3 000 zł. Jest więc bogatsza o 3 000 zł, a to przychód. Nie pochodzi ze sprzedaży towarów ani z odsetek, więc trafia do PPO.
@@ -471,7 +472,7 @@ Przy umorzeniu (op. 11) nie płyną pieniądze. Spółka po prostu nie musi już
 Wszystkie operacje 1–16 na kontach — obejrzyj je po kolei:
 
 <Konta konta={KS46} operacje={O46} typy>
-na górze lista operacji z rodzajem (A, P, AP+, AP− albo „wynikowa”). Pod nią konta: najpierw osiem z bilansu otwarcia, potem dwa nowe konta bilansowe, na końcu konta przychodów (zieleń) i kosztów (fiolet). Kwota każdej operacji trafia na dwa konta, po przeciwnych stronach. Na końcu zamykamy konta.
+na górze lista operacji z rodzajem (A, P, AP+, AP− albo „wynikowa”). Pod nią konta: najpierw osiem z bilansu otwarcia, potem dwa nowe konta bilansowe, na końcu konta przychodów (zieleń) i kosztów (fiolet). Każda kwota trafia na dwa konta, po przeciwnych stronach — dlatego suma zapisów Wn zawsze równa się sumie Ma. W tym zadaniu fioletowe konta dostają kwoty tylko po Wn, bo każdy koszt zmniejsza kapitał. Zielone — tylko po Ma, bo każdy przychód go zwiększa. Na końcu zamykamy konta. Saldo konta bilansowego pokazuje, ile składnika zostało 31 stycznia. Saldo konta wynikowego — ile przychodu albo kosztu zebrało się w styczniu.
 </Konta>
 </Krok>
 
@@ -480,19 +481,19 @@ Przykład: rachunek bankowy.
 
 - Wn: Sp. 42 000, op. 4: 16 500, op. 9a: 200. Obroty Wn: 42 000 + 16 500 + 200 = 58 700.
 - Ma: op. 6: 4 000, op. 9b: 300. Obroty Ma: 4 000 + 300 = 4 300.
-- Saldo Wn: 58 700 − 4 300 = **54 400**.
+- Saldo Wn: 58 700 − 4 300 = **54 400**. Przybyło więcej, niż ubyło, więc to saldo Wn. Tyle pieniędzy spółka ma na rachunku 31 stycznia.
 
 Pozostałe konta bilansowe tak samo:
 
-- Rozrachunki z dostawcami: Ma 58 000 + 28 000 + 900 + 3 000 = 89 900. Wn 10 000 + 17 000 + 3 000 = 30 000. Saldo Ma: 89 900 − 30 000 = **59 900**.
-- Towary: Wn 45 000 + 1 800 = 46 800. Ma 3 200 + 1 000 = 4 200. Saldo Wn: 46 800 − 4 200 = **42 600**.
-- Rozrachunki z odbiorcami: Wn 50 000 + 8 200 = 58 200. Ma 16 500. Saldo Wn: 58 200 − 16 500 = **41 700**.
-- Kasa: Wn 28 000. Ma 1 800 + 17 000 = 18 800. Saldo Wn: 28 000 − 18 800 = **9 200**.
-- Kredyt bankowy: Ma 42 000 + 10 000 = 52 000. Wn 4 000. Saldo Ma: 52 000 − 4 000 = **48 000**.
-- Środki trwałe: 92 000 + 35 000 + 28 000 = **155 000**. Kapitał zakładowy: 157 000 + 35 000 = **192 000**.
+- Rozrachunki z dostawcami: Ma 58 000 + 28 000 + 900 + 3 000 = 89 900. Wn 10 000 + 17 000 + 3 000 = 30 000. Saldo Ma: 89 900 − 30 000 = **59 900** — tyle spółka jest jeszcze winna dostawcom.
+- Towary: Wn 45 000 + 1 800 = 46 800. Ma 3 200 + 1 000 = 4 200. Saldo Wn: 46 800 − 4 200 = **42 600** — za tyle towarów zostało w magazynie.
+- Rozrachunki z odbiorcami: Wn 50 000 + 8 200 = 58 200. Ma 16 500. Saldo Wn: 58 200 − 16 500 = **41 700** — tyle klienci są jeszcze winni spółce.
+- Kasa: Wn 28 000. Ma 1 800 + 17 000 = 18 800. Saldo Wn: 28 000 − 18 800 = **9 200** — tyle gotówki zostało w kasie.
+- Kredyt bankowy: Ma 42 000 + 10 000 = 52 000. Wn 4 000. Saldo Ma: 52 000 − 4 000 = **48 000** — tyle kredytu zostało do spłaty.
+- Środki trwałe: 92 000 + 35 000 + 28 000 = **155 000**. Kapitał zakładowy: 157 000 + 35 000 = **192 000**. Na tych kontach nic nie ubyło, więc saldo to suma.
 - Rozrachunki z tytułu wynagrodzeń: **1 300**. Rozrachunki publicznoprawne: **200** (podatek dochodowy dojdzie przy op. 17).
 
-Konta wynikowe mają saldo po „swojej” stronie: koszty po Wn, przychody po Ma. Na przykład usługi obce: 900 + 3 000 = 3 900 po Wn. Tego salda nie wpisujemy na konto jak przy kontach bilansowych. Konto wynikowe zamknie przeksięgowanie w następnej sekcji.
+Konta wynikowe mają saldo po „swojej” stronie: koszty po Wn, przychody po Ma. Każdy zapis kosztu stał po Wn, a każdy zapis przychodu po Ma, więc tam jest też saldo. Na przykład usługi obce: 900 + 3 000 = 3 900 po Wn. Tego salda nie wpisujemy na konto jak przy kontach bilansowych. Konto wynikowe zamknie przeksięgowanie w następnej sekcji.
 
 <Dlaczego>
 Te salda kont wynikowych są potrzebne w następnym kroku. Przeniesiemy je na konto „Wynik finansowy”.
@@ -516,18 +517,18 @@ Na koniec okresu wszystkie przychody i koszty zbieramy na jednym koncie — **Wy
 „Ustal wynik finansowy.”
 
 1. Policz saldo każdego konta przychodów (saldo Ma) i kosztów (saldo Wn).
-2. **Przeksięguj przychody:** Wn konto przychodów, Ma „Wynik finansowy”. Kwota = saldo. Konto przychodów się zeruje.
-3. **Przeksięguj koszty:** Wn „Wynik finansowy”, Ma konto kosztów. Konto kosztów się zeruje.
-4. **Zysk brutto** = przychody − koszty. Na koncie wyniku to saldo Ma. Saldo Wn oznacza stratę.
-5. **Podatek dochodowy** = 19% zysku brutto, czyli zysk brutto · 19 : 100. Zapis: Wn „Podatek dochodowy”, Ma „Rozrachunki publicznoprawne”. Przy stracie podatek wynosi 0.
-6. **Przeksięguj podatek:** Wn „Wynik finansowy”, Ma „Podatek dochodowy”.
+2. **Przeksięguj przychody:** Wn konto przychodów, Ma „Wynik finansowy”. Kwota = saldo. Saldo przychodów stoi po Ma, więc zapis po przeciwnej stronie, Wn, je zeruje. Na koncie wyniku przychód staje po Ma, bo powiększa zysk.
+3. **Przeksięguj koszty:** Wn „Wynik finansowy”, Ma konto kosztów. Saldo kosztów stoi po Wn, więc zeruje je zapis po Ma. Na koncie wyniku koszt staje po Wn, bo zysk zmniejsza.
+4. **Zysk brutto** = przychody − koszty. Na koncie wyniku to saldo Ma: przychodów jest więcej niż kosztów. Saldo Wn oznacza stratę.
+5. **Podatek dochodowy** = 19% zysku brutto, czyli zysk brutto · 19 : 100. Zapis: Wn „Podatek dochodowy”, Ma „Rozrachunki publicznoprawne”. Podatek zmniejsza wynik, więc rośnie po Wn jak koszt. Spółka jest go winna urzędowi skarbowemu, a przybytek długu idzie po Ma. Przy stracie podatek wynosi 0.
+6. **Przeksięguj podatek:** Wn „Wynik finansowy”, Ma „Podatek dochodowy”. Podatek zmniejsza zysk, więc na koncie wyniku staje po Wn.
 7. **Zysk netto** = zysk brutto − podatek. To saldo Ma konta wyniku na końcu.
 </Ramka>
 
 Najpierw mały przykład — sklep z trzema operacjami. Po nich zamykamy konta wynikowe przeksięgowaniami P1, P2 i P3. Podatek tu pomijamy, więc zysk netto równa się zyskowi brutto.
 
 <Konta konta={KM} operacje={OM} bilans typy>
-na górze bilans otwarcia i lista: trzy operacje, potem trzy przeksięgowania („przeks.”). Przeksięgowanie zapisuje kwotę po przeciwnej stronie konta wynikowego. Dzięki temu jego saldo spada do zera, a kwota ląduje na koncie „Wynik finansowy” (złote). Przychód trafia na Ma wyniku, koszty na Wn. Saldo Ma wyniku: 3 000 − 2 000 − 400 = 600. Na dole bilans zamknięcia, w którym zysk netto stoi w pasywach.
+na górze bilans otwarcia i lista: trzy operacje, potem trzy przeksięgowania („przeks.”). Przeksięgowanie zapisuje kwotę po przeciwnej stronie konta wynikowego. Dzięki temu jego saldo spada do zera, a kwota ląduje na koncie „Wynik finansowy” (złote). Przychód trafia na Ma wyniku, bo zysk zwiększa. Koszty trafiają na Wn, bo zysk zmniejszają. Saldo Ma wyniku: 3 000 − 2 000 − 400 = 600 — tyle sklep zarobił. Na dole bilans zamknięcia, w którym zysk netto stoi w pasywach, bo powiększa kapitał własny.
 </Konta>
 
 <Ramka kind="botak" tytul="numery przeksięgowań">
@@ -538,7 +539,7 @@ Przeksięgowania oznaczamy tu P1, P2, …, żeby nie myliły się z operacjami z
 <div slot="plan">
 
 1. Wypisujemy salda kont wynikowych po operacjach 1–16. Z nich składa się wynik.
-2. Przeksięgowujemy je na konto „Wynik finansowy”: przychody na Ma, koszty na Wn.
+2. Przeksięgowujemy je na konto „Wynik finansowy”: przychody na Ma, bo zysk zwiększają, koszty na Wn, bo go zmniejszają.
 3. Odczytujemy zysk brutto z salda konta wyniku i sprawdzamy go rachunkiem „przychody − koszty”.
 4. Liczymy podatek (op. 17) i przeksięgowujemy go na wynik. Zostaje zysk netto.
 
@@ -568,24 +569,24 @@ Koszty razem, po kolei: 3 200 + 3 900 = 7 100. Dalej 7 100 + 1 300 = 8 400. Dale
 </Krok>
 
 <Krok tytul="Przeksięgowania P1–P9">
-- **P1–P3 (przychody):** Wn konto przychodów, Ma „Wynik finansowy” — 8 200, 3 000 i 200.
-- **P4–P9 (koszty):** Wn „Wynik finansowy”, Ma konto kosztów — 3 200, 3 900, 1 300, 200, 1 000 i 300.
+- **P1–P3 (przychody):** Wn konto przychodów, Ma „Wynik finansowy” — 8 200, 3 000 i 200. Saldo przychodów stoi po Ma, więc zdejmuje je zapis po Wn.
+- **P4–P9 (koszty):** Wn „Wynik finansowy”, Ma konto kosztów — 3 200, 3 900, 1 300, 200, 1 000 i 300. Saldo kosztów stoi po Wn, więc zdejmuje je zapis po Ma.
 
 Każde konto wynikowe ma teraz saldo 0. Konto wyniku ma po Ma 11 400, a po Wn 9 900.
 
 <Dlaczego>
-Przeksięgowanie robimy po przeciwnej stronie niż saldo. Przychody mają saldo Ma, więc zapis idzie po Wn — i konto się zeruje. Na koncie wyniku ta sama kwota stoi po Ma. Tak przychód „przechodzi” na wynik.
+Przeksięgowanie robimy po przeciwnej stronie niż saldo. Tylko wtedy obie strony konta wynikowego się zrównują i saldo spada do zera. Na koncie wyniku kwota staje po tej samej stronie, po której stała wcześniej. Wynik to część kapitału własnego. Przychód go zwiększa, więc stoi po Ma. Koszt go zmniejsza, więc stoi po Wn. Tak przychody i koszty „przechodzą” na wynik.
 </Dlaczego>
 </Krok>
 
 <Krok tytul="Zysk brutto">
-Saldo konta wyniku: Ma 11 400, Wn 9 900. Przeważa Ma, więc to zysk.
+Saldo konta wyniku: Ma 11 400, Wn 9 900. Przeważa Ma, czyli strona przychodów, więc to zysk.
 
 **Zysk brutto = 11 400 − 9 900 = 1 500 zł.**
 
 <Rzad jedno><KontoT konto={{ ...WF, nazwa: 'Wynik finansowy — przed podatkiem' }} wpisy={W_BRUTTO} zamkniete={false} /></Rzad>
 
-<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> konto wyniku po przeksięgowaniach P1–P9. Po Ma przychody (P1–P3): 8 200 + 3 000 + 200 = 11 400. Po Wn koszty (P4–P9): razem 9 900. Saldo Ma: 11 400 − 9 900 = 1 500 — zysk brutto. Konta jeszcze nie zamykamy, bo dojdzie podatek.</p>
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> konto wyniku po przeksięgowaniach P1–P9. Po Ma przychody (P1–P3): 8 200 + 3 000 + 200 = 11 400. Po Wn koszty (P4–P9): razem 9 900. Saldo Ma: 11 400 − 9 900 = 1 500 — zysk brutto. O tyle przychody przewyższyły koszty, czyli tyle spółka zarobiła przed podatkiem. Konta jeszcze nie zamykamy, bo dojdzie podatek.</p>
 </Krok>
 
 <Krok tytul="Podatek dochodowy (op. 17) i zysk netto">
@@ -594,13 +595,13 @@ Podatek to 19% zysku brutto: 1 500 · 19 : 100.
 - 1 500 · 19 = 28 500. Łatwiej: 1 500 · 20 = 30 000, a potem 30 000 − 1 500 = 28 500.
 - 28 500 : 100 = **285 zł**.
 
-Op. 17: Wn „Podatek dochodowy” 285, Ma „Rozrachunki publicznoprawne” 285. Potem **P10**: Wn „Wynik finansowy” 285, Ma „Podatek dochodowy” 285.
+Op. 17: Wn „Podatek dochodowy” 285, Ma „Rozrachunki publicznoprawne” 285. Podatek zmniejsza wynik tak jak koszt, więc rośnie po Wn. Spółka zapłaci go później, więc przybywa jej długu wobec urzędu skarbowego — przybytek pasywa, Ma. Potem **P10**: Wn „Wynik finansowy” 285, Ma „Podatek dochodowy” 285. Zapis po Ma zeruje saldo Wn konta podatku. Na koncie wyniku podatek staje po Wn, bo zmniejsza zysk.
 
 **Zysk netto = 1 500 − 285 = 1 215 zł.** Łatwiej: 1 500 − 300 = 1 200, a potem 1 200 + 15 = 1 215.
 
 <Rzad jedno><KontoT konto={WF} wpisy={KSIEG46.wpisy.wf} /></Rzad>
 
-<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> to samo konto wyniku po przeksięgowaniu podatku (P10, po Wn). Wn: 9 900 + 285 = 10 185. Ma: 11 400. Saldo Ma: 11 400 − 10 185 = 1 215 — zysk netto.</p>
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> to samo konto wyniku po przeksięgowaniu podatku (P10, po Wn). Podatek stoi po stronie kosztów, bo też zmniejsza zysk. Wn: 9 900 + 285 = 10 185. Ma: 11 400. Saldo Ma: 11 400 − 10 185 = 1 215 — zysk netto. Tyle zostaje dla właścicieli.</p>
 
 <Dlaczego typ="umowa">
 W zadaniach z zajęć podatek dochodowy to 19% zysku brutto. W prawdziwej firmie podstawę podatku ustala się według przepisów podatkowych. Może się ona różnić od zysku z ksiąg.
@@ -619,9 +620,9 @@ Podatek dochodowy nie jest kosztem prowadzenia handlu. To obciążenie wyniku, k
 </Ramka>
 
 <Ramka kind="granica" tytul="gdy wychodzi strata">
-- Koszty większe od przychodów → konto wyniku ma saldo **Wn**. To strata brutto.
+- Koszty większe od przychodów → konto wyniku ma saldo **Wn**. Koszty stoją na nim po Wn, przychody po Ma, więc przeważa strona kosztów. To strata brutto.
 - Przy stracie podatku dochodowego w zadaniach nie liczymy — wynosi 0.
-- W bilansie strata netto stoi w pasywach **z minusem**, tak jak strata z lat ubiegłych.
+- W bilansie strata netto stoi w pasywach **z minusem**, tak jak strata z lat ubiegłych. Zmniejsza kapitał własny, a majątkiem nie jest.
 </Ramka>
 
 <a id="polecenie-bilans" class="k-anchor"></a>
@@ -631,23 +632,23 @@ Podatek dochodowy nie jest kosztem prowadzenia handlu. To obciążenie wyniku, k
 <Ramka kind="polecenie">
 „Sporządź bilans zamknięcia.”
 
-1. Sprawdź, że każde konto wynikowe ma saldo 0. Do bilansu nie wchodzą.
+1. Sprawdź, że każde konto wynikowe ma saldo 0. Do bilansu nie wchodzą — ich salda są już na koncie wyniku.
 2. Salda kont aktywnych wpisz w aktywach, pasywnych — w pasywach (jak dotąd).
-3. Saldo konta „Wynik finansowy” wpisz w pasywach jako **zysk netto**. Strata netto — z minusem.
+3. Saldo konta „Wynik finansowy” wpisz w pasywach jako **zysk netto**, bo zysk powiększa kapitał własny. Strata netto — z minusem.
 4. Sprawdź, czy aktywa = pasywa. Jeśli nie, sprawdź, czy przeksięgowano wszystkie przychody i koszty i czy zaksięgowano podatek.
 </Ramka>
 
 Całe Zad. 4.6 na kontach — od bilansu otwarcia do bilansu zamknięcia:
 
 <Konta konta={K46} operacje={O46_ALL} bilans typy>
-na górze bilans otwarcia i wszystkie zapisy: operacje 1–16, przeksięgowania P1–P9, podatek (op. 17) i jego przeksięgowanie P10. Pod nimi 21 kont. Złote konto „Wynik finansowy” zbiera przychody po Ma i koszty po Wn. Po zamknięciu kont konta wynikowe mają saldo 0. Na dole bilans zamknięcia — zysk netto w pasywach.
+na górze bilans otwarcia i wszystkie zapisy: operacje 1–16, przeksięgowania P1–P9, podatek (op. 17) i jego przeksięgowanie P10. Pod nimi 21 kont. Złote konto „Wynik finansowy” zbiera przychody po Ma i koszty po Wn — po tych samych stronach co konta wynikowe, bo przychód zysk zwiększa, a koszt go zmniejsza. Po zamknięciu kont konta wynikowe mają saldo 0, bo każde przeksięgowanie stanęło po stronie przeciwnej do salda. Na dole bilans zamknięcia — zysk netto w pasywach, bo to przyrost kapitału własnego.
 </Konta>
 
 <Rozwiazanie id="zad-4-6-bilans" tytul="Star Wars sp. z o.o. — bilans zamknięcia na 31 stycznia 20X5 r." zrodlo="Zad. 4.6, bilans zamknięcia">
 <div slot="plan">
 
 1. Bierzemy salda końcowe kont bilansowych. Konta wynikowe pomijamy — mają saldo 0.
-2. Saldo konta wyniku (1 215, saldo Ma) wpisujemy w pasywach jako zysk netto.
+2. Saldo konta wyniku (1 215, saldo Ma) wpisujemy w pasywach jako zysk netto. Saldo Ma to przyrost kapitału własnego, a kapitał stoi w pasywach.
 3. Dodajemy obie strony. Sprawdzamy kapitał własny drugą drogą.
 
 </div>
@@ -707,17 +708,274 @@ W zadaniach z tego modułu kapitał własny zmieniają tylko dwie rzeczy: to, co
 - Pozostałe salda rozstawiasz tak jak w module „Zestawienie obrotów i sald”.
 </Ramka>
 
+<a id="trening" class="k-anchor"></a>
+
+## Trening: trzy zadania z pułapkami
+
+Trzy zadania, w których konta bilansowe mieszają się z wynikowymi. W każdym jest pułapka, na której najczęściej traci się punkty: spłata długu, przy której oba konta maleją, reklamacja uznana przez dostawcę i towar dostany za darmo. Zanim zaczniemy — jedna tabela, z której wynika strona każdego zapisu.
+
+<Ramka kind="zapamietaj" tytul="lustro kont — skąd się bierze strona zapisu">
+
+| Konto | + (rośnie) | − (maleje) | Dlaczego tak |
+|---|---|---|---|
+| aktywne | Wn | Ma | aktywa stoją w bilansie po lewej |
+| pasywne | Ma | Wn | pasywa stoją w bilansie po prawej |
+| kosztów | Wn | Ma | koszt zmniejsza kapitał własny |
+| przychodów | Ma | Wn | przychód zwiększa kapitał własny |
+
+Stan konta stoi zawsze po stronie „+”. Przybytek dopisujemy do stanu, ubytek zapisujemy po przeciwnej stronie, żeby się od stanu odjął. Konto aktywne i pasywne to lustrzane odbicia — stąd nazwa „lustro”.
+
+Koszty rosną po Wn jak aktywa, a przychody po Ma jak pasywa. Powód jest jednak inny: oba zmieniają kapitał własny, a kapitał to pasywo. Koszt go zmniejsza — zmniejszenie pasywów idzie po Wn. Przychód go zwiększa — zwiększenie pasywów idzie po Ma.
+</Ramka>
+
+<Rzad>
+  <KontoT konto={{ nazwa: 'Konto aktywne', typ: 'A' }} zamkniete={false} />
+  <KontoT konto={{ nazwa: 'Konto pasywne', typ: 'P' }} zamkniete={false} />
+  <KontoT konto={{ nazwa: 'Konto kosztów', typ: 'K' }} zamkniete={false} />
+  <KontoT konto={{ nazwa: 'Konto przychodów', typ: 'R' }} zamkniete={false} />
+</Rzad>
+
+<p class="k-fig-cap"><span class="k-lbl">Jak czytać:</span> znak nad stroną konta mówi, co po niej zapisujesz: „+” przybytki, „−” ubytki. Aktywne i pasywne są swoim odbiciem. Konto kosztów ma znaki jak aktywne, konto przychodów — jak pasywne.</p>
+
+<Rozwiazanie id="trening-1" tytul="Zakup, spłata długu i reklamacja u dostawcy" zrodlo="zadanie treningowe 1">
+<div slot="tresc">
+
+Stan na początek miesiąca: rachunek bankowy 40 000, towary 15 000, rozrachunki z dostawcami (dług wobec dostawców) 10 000. Konto „Usługi obce” startuje puste.
+
+1. Kupiono towary na fakturę z zapłatą za 30 dni — 12 000 zł.
+2. Przelewem spłacono część starego długu wobec dostawcy — 6 500 zł.
+3. Dostawca uznał reklamację wadliwego towaru i obniżył cenę — 1 500 zł.
+4. Przyszła faktura za obsługę księgową, płatna za 14 dni — 2 400 zł.
+5. Przelewem zapłacono fakturę za obsługę księgową — 2 400 zł.
+
+Polecenie: zaksięguj operacje na kontach i zamknij konta.
+
+</div>
+
+<div slot="plan">
+
+1. **Otwieramy konta.** Stan na start stoi po stronie „+”: rachunek i towary po Wn, dług po Ma. Konto kosztów startuje puste, bo koszty liczy się od zera w każdym okresie.
+2. **Każdą operację rozkładamy na dwa składniki.** Przy każdym pytamy: co się z nim naprawdę stało, rośnie czy maleje, i jakie to konto. Stronę daje lustro kont — nie trzeba jej pamiętać.
+3. **Zamykamy konta** i sprawdzamy, czy suma zapisów po Wn równa się sumie po Ma.
+
+Pułapki są w operacji 2 (oba konta maleją) i w operacji 3 (reklamacja).
+
+</div>
+
+<Krok tytul="Operacja 1 — zakup na fakturę">
+Do magazynu przyszedł towar za 12 000 zł. Towary to aktywo, więc przybytek idzie po stronie „+” — **Wn „Towary”**.
+
+Za towar jeszcze nie zapłaciliśmy. Firma ma dług wobec dostawcy, a dług to pasywo. Przybytek pasywa — **Ma „Rozrachunki z dostawcami”**.
+
+<Dlaczego>
+Rosną dwa składniki: majątek (towary) i jego źródło (dług). Dlatego to AP+ — suma bilansowa rośnie o 12 000. Pieniądze w ogóle się nie ruszyły, więc rachunek bankowy nie bierze udziału.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 2 — spłata długu: oba konta maleją, a strony są różne">
+Firma przelała dostawcy 6 500 zł.
+
+- Dług wobec dostawcy jest mniejszy o 6 500. Dług to pasywo — jego stan stoi po Ma. Ubytek idzie na stronę przeciwną: **Wn „Rozrachunki z dostawcami”**.
+- Z rachunku wyszło 6 500. Rachunek to aktywo — stan po Wn. Ubytek idzie na stronę przeciwną: **Ma „Rachunek bankowy”**.
+
+<Dlaczego>
+Tu łatwo o błąd: „oba maleją, więc oba po tej samej stronie”. Strona nie zależy jednak od samego „maleje”. Zależy od tego, **czy maleje aktywo, czy pasywo**. Ubytek aktywa idzie po Ma, ubytek pasywa — po Wn. Dlatego wychodzą przeciwne strony i podwójny zapis się zgadza. To AP−: suma bilansowa maleje o 6 500.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 3 — reklamacja uznana przez dostawcę">
+Towar okazał się wadliwy. Dostawca uznał reklamację i obniżył cenę o 1 500 zł. Faktura nie była jeszcze zapłacona, więc dostawca niczego nie oddaje — zmienia tylko kwotę do zapłaty.
+
+- Firma jest winna dostawcy mniej. Ubytek pasywa: **Wn „Rozrachunki z dostawcami”**.
+- Towar w magazynie kosztował mniej, niż zapisaliśmy przy zakupie. Jego wartość poprawiamy w dół. Ubytek aktywa: **Ma „Towary”**.
+
+<Dlaczego>
+Firma niczego tu nie zarobiła, więc **nie ma przychodu**. Zapłaci mniej, bo dostała gorszy towar — cena zakupu po prostu się zmienia. Dlatego żadne konto wynikowe nie bierze udziału. Maleją towary i dług, czyli AP−.
+</Dlaczego>
+
+<Dlaczego typ="inaczej">
+Gdyby faktura była już zapłacona, zapis byłby ten sam: Wn „Rozrachunki z dostawcami”, Ma „Towary”. Różnica wyszłaby przy saldzie: na koncie dostawcy zostałoby 1 500 zł po Wn. Saldo po Wn na koncie dostawcy znaczy, że to dostawca jest winien firmie. Gdy odda pieniądze, rachunek rośnie (Wn), a konto dostawcy się zeruje (Ma).
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacje 4 i 5 — koszt usługi i zapłata faktury">
+**Operacja 4.** Biuro rachunkowe zrobiło księgowość za ten miesiąc — firma zużyła usługę. To koszt, a koszt zmniejsza kapitał własny, więc rośnie po **Wn „Usługi obce”**. Faktura nie jest zapłacona, więc rośnie dług: **Ma „Rozrachunki z dostawcami”**. To operacja wynikowa.
+
+**Operacja 5.** Firma zapłaciła tę fakturę. Dzieje się to samo co w operacji 2: dług maleje (**Wn**), pieniądze wychodzą z rachunku (**Ma**). AP−.
+
+<Dlaczego>
+Zapłata nie jest kosztem. Koszt powstał w operacji 4, gdy firma zużyła usługę. Zapłata zmienia już tylko dwa składniki bilansu: dług i rachunek. Gdyby przy zapłacie dopisać koszt drugi raz, ta sama usługa obciążyłaby wynik dwa razy.
+</Dlaczego>
+
+<Konta konta={KT1} operacje={OT1} typy>
+na górze stan na start i lista operacji z typem, pod nią cztery konta. Przy każdej operacji podpis mówi, co się stało z każdym składnikiem i dlaczego kwota trafia na tę stronę. Na końcu zamykamy konta.
+</Konta>
+</Krok>
+
+<Krok tytul="Zamknij konta i sprawdź">
+| Konto | Obroty Wn | Obroty Ma | Saldo |
+|---|---:|---:|---|
+| Rachunek bankowy | 40 000 | 8 900 | Wn 31 100 |
+| Towary | 27 000 | 1 500 | Wn 25 500 |
+| Rozrachunki z dostawcami | 10 400 | 24 400 | Ma 14 000 |
+| Usługi obce | 2 400 | 0 | Wn 2 400 |
+
+- **Rachunek:** po Wn stan na start 40 000. Po Ma dwa przelewy: 6 500 + 2 400 = 8 900. Zostaje 40 000 − 8 900 = 31 100 zł.
+- **Towary:** po Wn 15 000 + 12 000 = 27 000. Po Ma reklamacja 1 500. W magazynie są towary warte 27 000 − 1 500 = 25 500.
+- **Dostawcy:** po Ma 10 000 + 12 000 + 2 400 = 24 400 (stary dług i dwa nowe). Po Wn 6 500 + 1 500 + 2 400 = 10 400 (spłaty i reklamacja). Firma jest jeszcze winna 24 400 − 10 400 = 14 000 zł.
+- **Usługi obce:** koszt miesiąca 2 400. Na koniec okresu trafi na wynik finansowy.
+
+Kontrola podwójnego zapisu: suma kwot wszystkich operacji po Wn to 12 000 + 6 500 + 1 500 + 2 400 + 2 400 = 24 800. Po Ma — te same kwoty, więc też 24 800.
+</Krok>
+</Rozwiazanie>
+
+<Rozwiazanie id="trening-2" tytul="Towar za darmo, rata kredytu i faktura za prąd" zrodlo="zadanie treningowe 2">
+<div slot="tresc">
+
+Stan na początek miesiąca: rachunek bankowy 60 000, towary 20 000, kredyty bankowe 25 000, rozrachunki z dostawcami 8 000. Konta „Pozostałe przychody operacyjne” i „Zużycie materiałów i energii” startują puste.
+
+1. Hurtownia przekazała nieodpłatnie partię towarów w podziękowaniu za współpracę — 4 000 zł.
+2. Z rachunku spłacono ratę kredytu — 5 000 zł.
+3. Kupiono towary i od razu zapłacono przelewem — 7 000 zł.
+4. Przyszła faktura za energię elektryczną w magazynie, płatna za 14 dni — 1 800 zł.
+5. Z rachunku spłacono cały początkowy dług wobec dostawcy — 8 000 zł.
+
+Polecenie: zaksięguj operacje na kontach i zamknij konta.
+
+</div>
+
+<div slot="plan">
+
+1. Otwieramy konta: aktywa po Wn, pasywa po Ma, konta wynikowe puste.
+2. Księgujemy operacje. Przy operacji 1 zatrzymujemy się na dłużej — to pułapka.
+3. Zamykamy konta i sprawdzamy podwójny zapis.
+
+</div>
+
+<Krok tytul="Operacja 1 — towar za darmo: rachunek się nie zmienia">
+Do magazynu przyszedł towar za 4 000 zł. Przybytek aktywa: **Wn „Towary”**.
+
+Druga strona musi być po Ma, w tej samej kwocie. Pytamy więc: **skąd firma ma ten towar?**
+- Nie z rachunku — nikt nie zapłacił ani złotówki. Rachunek bankowy nie bierze udziału.
+- Nie z długu — firma nic nie jest winna hurtowni.
+- Nie z wkładu właścicieli — to nie oni go dali.
+
+Firma dostała towar za darmo. To korzyść, czyli przychód. Ustawa zalicza nieodpłatnie otrzymane składniki majątku do pozostałych przychodów operacyjnych. Przychód zwiększa kapitał własny, więc rośnie po **Ma „Pozostałe przychody operacyjne”**.
+
+<Dlaczego>
+Pytanie „skąd to mamy?” to pytanie o pasywa — o źródło majątku. Gdy źródłem nie jest ani dług, ani wkład właścicieli, zostaje przychód. Przy zakupie za pieniądze (operacja 3) źródłem jest rachunek, a przy zakupie na fakturę — dług wobec dostawcy.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacje 2, 3 i 5 — rata kredytu, zakup za przelew, spłata dostawcy">
+- **Operacja 2:** dług wobec banku jest mniejszy o ratę. Ubytek pasywa: **Wn „Kredyty bankowe”**. Rata wyszła z rachunku — ubytek aktywa: **Ma „Rachunek bankowy”**. AP−.
+- **Operacja 3:** do magazynu przyszedł towar — **Wn „Towary”**. Zapłata od razu wyszła z rachunku — **Ma „Rachunek bankowy”**. Żaden dług nie powstał. Jedno aktywo zamieniło się w drugie, więc to typ A.
+- **Operacja 5:** stary dług wobec dostawcy jest spłacony — **Wn „Rozrachunki z dostawcami”**. Przelew wyszedł z rachunku — **Ma „Rachunek bankowy”**. AP−.
+
+<Dlaczego>
+Spłata raty to nie koszt. Firma oddaje bankowi pieniądze, które od niego wcześniej dostała, więc maleje tylko dług. Kosztem byłyby dopiero odsetki — cena za korzystanie z kredytu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Operacja 4 — faktura za prąd">
+Firma zużyła prąd w magazynie. To koszt, a koszt zmniejsza kapitał własny — **Wn „Zużycie materiałów i energii”**. Faktura nie jest zapłacona, więc rośnie dług wobec dostawcy prądu — **Ma „Rozrachunki z dostawcami”**. Operacja wynikowa.
+
+<Konta konta={KT2} operacje={OT2} typy>
+stan na start, lista operacji z typem i sześć kont. Zwróć uwagę na operację 1: rachunek bankowy się nie rusza, a drugą stroną jest konto przychodów.
+</Konta>
+</Krok>
+
+<Krok tytul="Zamknij konta i sprawdź">
+| Konto | Obroty Wn | Obroty Ma | Saldo |
+|---|---:|---:|---|
+| Rachunek bankowy | 60 000 | 20 000 | Wn 40 000 |
+| Towary | 31 000 | 0 | Wn 31 000 |
+| Kredyty bankowe | 5 000 | 25 000 | Ma 20 000 |
+| Rozrachunki z dostawcami | 8 000 | 9 800 | Ma 1 800 |
+| Pozostałe przychody operacyjne | 0 | 4 000 | Ma 4 000 |
+| Zużycie materiałów i energii | 1 800 | 0 | Wn 1 800 |
+
+- **Rachunek:** z 60 000 wyszło 5 000 + 7 000 + 8 000 = 20 000. Zostaje 40 000 zł.
+- **Towary:** 20 000 + 4 000 + 7 000 = 31 000. Nic nie wyszło z magazynu.
+- **Dostawcy:** stary dług 8 000 spłacony w całości. Zostaje tylko nowa faktura za prąd: 9 800 − 8 000 = 1 800.
+- **Konta wynikowe:** przychód 4 000 i koszt 1 800 trafią na koniec okresu na wynik finansowy.
+
+Kontrola: suma kwot operacji to 4 000 + 5 000 + 7 000 + 1 800 + 8 000 = 25 800 — tyle samo po Wn i po Ma.
+</Krok>
+</Rozwiazanie>
+
+<Rozwiazanie id="trening-3" tytul="Wszystkie pułapki razem — jak na kolokwium" zrodlo="zadanie treningowe 3">
+<div slot="tresc">
+
+Stan na początek miesiąca: rachunek bankowy 50 000, towary 30 000, rozrachunki z dostawcami 14 000, kredyty bankowe 20 000. Konta „Usługi obce” i „Pozostałe przychody operacyjne” startują puste.
+
+1. Kupiono towary na fakturę z zapłatą za 21 dni — 10 000 zł.
+2. Dostawca uznał reklamację towarów z operacji 1 i obniżył cenę — 1 200 zł.
+3. Przelewem spłacono część długu wobec dostawców — 9 000 zł.
+4. Przyszła faktura za kampanię reklamową, płatna za 14 dni — 3 500 zł.
+5. Partner przysłał za darmo promocyjną dostawę towarów — 2 000 zł.
+6. Z rachunku spłacono część kredytu — 4 000 zł.
+
+Polecenie: zaksięguj operacje na kontach, zamknij konta i sprawdź podwójny zapis.
+
+</div>
+
+<div slot="plan">
+
+Spróbuj najpierw na kartce. Przy każdej operacji zadaj trzy pytania: co się naprawdę stało, rośnie czy maleje, jakie to konto. Potem porównaj z krokami.
+
+</div>
+
+<Krok tytul="Każda operacja w jednym zdaniu">
+1. Towar przyszedł, zapłata później: przybytek aktywa **Wn „Towary”**, przybytek pasywa **Ma „Rozrachunki z dostawcami”**. AP+.
+2. Reklamacja: dług mniejszy — **Wn „Rozrachunki z dostawcami”**, towar wart mniej — **Ma „Towary”**. Bez przychodu. AP−.
+3. Spłata długu: dług maleje — **Wn „Rozrachunki z dostawcami”**, pieniądze wychodzą — **Ma „Rachunek bankowy”**. AP−.
+4. Usługa reklamowa zużyta: koszt — **Wn „Usługi obce”**, faktura niezapłacona — **Ma „Rozrachunki z dostawcami”**. Wynikowa.
+5. Towar za darmo: przybytek aktywa **Wn „Towary”**, korzyść bez płacenia — **Ma „Pozostałe przychody operacyjne”**. Wynikowa. Rachunek się nie zmienia.
+6. Spłata kredytu: dług wobec banku maleje — **Wn „Kredyty bankowe”**, pieniądze wychodzą — **Ma „Rachunek bankowy”**. AP−.
+
+<Konta konta={KT3} operacje={OT3} typy>
+całe zadanie na sześciu kontach. Podpis przy każdej operacji powtarza rozumowanie: co się stało, jakie to konto i dlaczego ta strona.
+</Konta>
+</Krok>
+
+<Krok tytul="Zamknij konta i sprawdź">
+| Konto | Obroty Wn | Obroty Ma | Saldo |
+|---|---:|---:|---|
+| Rachunek bankowy | 50 000 | 13 000 | Wn 37 000 |
+| Towary | 42 000 | 1 200 | Wn 40 800 |
+| Rozrachunki z dostawcami | 10 200 | 27 500 | Ma 17 300 |
+| Kredyty bankowe | 4 000 | 20 000 | Ma 16 000 |
+| Usługi obce | 3 500 | 0 | Wn 3 500 |
+| Pozostałe przychody operacyjne | 0 | 2 000 | Ma 2 000 |
+
+Kontrola podwójnego zapisu: suma kwot operacji to 10 000 + 1 200 + 9 000 + 3 500 + 2 000 + 4 000 = 29 700 po Wn i tyle samo po Ma.
+
+<Dlaczego>
+Obroty kont razem ze stanem na start tu się nie zrównają. Na start aktywa to 50 000 + 30 000 = 80 000, a pasywa w tym zadaniu tylko 14 000 + 20 000 = 34 000. Brakujące 80 000 − 34 000 = 46 000 to kapitał własny, którego konta w zadaniu nie ma. Dlatego podwójny zapis sprawdzamy na samych operacjach.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="trzy błędy, które wracają co roku">
+- **Spłata długu po tej samej stronie.** Oba konta maleją, ale jedno to pasywo (ubytek po Wn), a drugie aktywo (ubytek po Ma).
+- **Reklamacja jako przychód.** Obniżka ceny to nie zarobek. Maleje dług i wartość towaru, konta wynikowe nie biorą udziału.
+- **Towar za darmo z rachunkiem bankowym.** Nikt nie płacił, więc rachunek się nie zmienia. Drugą stroną jest przychód: pozostałe przychody operacyjne.
+</Ramka>
+
 ## Ściąga przed kolokwium
 
 <div class="k-sciaga">
-  <div><b>Przychód</b>Firma bogatsza (bez wkładów właścicieli). Konto przychodów: + po Ma, saldo Ma.</div>
-  <div><b>Koszt</b>Firma biedniejsza (bez wypłat dla właścicieli). Konto kosztów: + po Wn, saldo Wn.</div>
+  <div><b>Przychód</b>Firma bogatsza (bez wkładów właścicieli). Zwiększa kapitał, więc konto przychodów: + po Ma, saldo Ma.</div>
+  <div><b>Koszt</b>Firma biedniejsza (bez wypłat dla właścicieli). Zmniejsza kapitał, więc konto kosztów: + po Wn, saldo Wn.</div>
   <div><b>Wynikowa czy bilansowa</b>Koszt lub przychód po jednej stronie → wynikowa. Obie strony z bilansu → A, P, AP+, AP−.</div>
   <div><b>Pieniądze to nie wynik</b>Kredyt, wpłata należności, aport — nie przychód. Zakup towarów, spłata długu — nie koszt.</div>
   <div><b>Sprzedaż = 2 zapisy</b>Wn kasa / rachunek / odbiorcy, Ma przychody (cena sprzedaży). Wn wartość sprzedanych towarów, Ma towary (cena zakupu).</div>
   <div><b>PPO i PKO</b>Obok handlu. PPO: umorzony dług, odszkodowanie. PKO: pożar, zalanie, kara.</div>
   <div><b>PF i KF</b>Odsetki otrzymane → PF. Odsetki od kredytu → KF.</div>
-  <div><b>Przeksięgowanie</b>Przychody: Wn przychody, Ma wynik. Koszty: Wn wynik, Ma koszty. Konta wynikowe → saldo 0.</div>
+  <div><b>Lustro kont</b>Stan konta stoi po stronie „+”: aktywa i koszty po Wn, pasywa i przychody po Ma. Przybytek po stronie stanu, ubytek po przeciwnej.</div>
+  <div><b>Pułapki</b>Spłata długu: dług Wn, rachunek Ma. Reklamacja: dług Wn, towary Ma, bez przychodu. Towar za darmo: towary Wn, pozostałe przychody operacyjne Ma.</div>
+  <div><b>Przeksięgowanie</b>Zapis po stronie przeciwnej niż saldo, więc konto wynikowe się zeruje. Przychody: Wn przychody, Ma wynik. Koszty: Wn wynik, Ma koszty.</div>
   <div><b>Wynik</b>Brutto = przychody − koszty. Podatek = 19% brutto. Netto = brutto − podatek.</div>
   <div><b>Bilans zamknięcia</b>Konta wynikowe pomijasz. Zysk netto w pasywach (A.VI), strata z minusem.</div>
 </div>
@@ -747,7 +1005,7 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
   { tekst: 'Dostawca umorzył część długu firmy.', kat: 1, dlaczego: 'Dług maleje bez zapłaty, więc firma jest bogatsza. To nie sprzedaż, tylko zdarzenie obok handlu — <b>PPO</b>.' },
   { tekst: 'Bank dopisał odsetki od lokaty.', kat: 2, dlaczego: 'Odsetki to zarobek na pieniądzach — <b>przychody finansowe</b>.' },
   { tekst: 'Ubezpieczyciel wypłacił odszkodowanie za zalany magazyn.', kat: 1, dlaczego: 'Odszkodowanie nie pochodzi ze sprzedaży ani z pieniędzy na lokacie — <b>PPO</b>.' },
-  { tekst: 'Wystawiono fakturę za sprzedane towary, zapłata za 30 dni.', kat: 0, dlaczego: 'Przychód powstaje przy sprzedaży, choć pieniądze przyjdą później — <b>przychody ze sprzedaży towarów</b>. Po Wn: rozrachunki z odbiorcami.' },
+  { tekst: 'Wystawiono fakturę za sprzedane towary, zapłata za 30 dni.', kat: 0, dlaczego: 'Przychód powstaje przy sprzedaży, choć pieniądze przyjdą później — <b>przychody ze sprzedaży towarów</b>. Po Wn: rozrachunki z odbiorcami, bo przybyło należności.' },
   { tekst: 'Bank dopisał odsetki od pieniędzy na rachunku bieżącym.', kat: 2, dlaczego: 'Tak jak w op. 9a z Zad. 4.6 — <b>przychody finansowe</b>.' },
 ]} />
 
@@ -767,9 +1025,9 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
 
 <Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
   { q: 'Sprzedano za gotówkę towary za 4 000 zł. W cenie zakupu były warte 2 500 zł. Ile zapisów i na jakie kwoty?', opcje: ['Jeden: 4 000', 'Dwa: 4 000 (przychód) i 2 500 (koszt)', 'Jeden: 1 500 (marża)'], dobra: 1, dlaczego: 'Sprzedaż to dwie operacje wynikowe: przychód po cenie sprzedaży (4 000) i koszt po cenie zakupu (2 500). Jeden zapis na 4 000 pomija wydanie towarów z magazynu. Marży osobno się nie księguje — wychodzi sama z obu zapisów.' },
-  { q: 'Ten sam przykład. Jaki jest zapis przychodu?', opcje: ['Wn „Kasa”, Ma „Przychody ze sprzedaży towarów”', 'Wn „Przychody ze sprzedaży towarów”, Ma „Kasa”', 'Wn „Kasa”, Ma „Towary”'], dobra: 0, dlaczego: 'Kasa rośnie (Wn), przychód rośnie (Ma). Odwrócony zapis znaczyłby, że kasa maleje. Zapis „Ma Towary” na 4 000 miesza dwa zapisy w jeden — towary wychodzą po cenie zakupu, i to w zapisie kosztu.' },
-  { q: 'Zapis kosztu przy sprzedaży towarów to…', opcje: ['Wn „Towary”, Ma „Wartość sprzedanych towarów”', 'Wn „Wartość sprzedanych towarów”, Ma „Kasa”', 'Wn „Wartość sprzedanych towarów”, Ma „Towary”'], dobra: 2, dlaczego: 'Koszt rośnie (Wn), towarów w magazynie ubywa (Ma). Pierwsza odpowiedź ma odwrócone strony. Druga zmniejsza kasę, a przy wydaniu towarów pieniądze się nie ruszają.' },
-  { q: 'Sprzedano towary, zapłata za 21 dni. Które konto stoi po Wn w zapisie przychodu?', opcje: ['Rozrachunki z odbiorcami', 'Kasa', 'Rachunek bankowy'], dobra: 0, dlaczego: 'Klient zapłaci później, więc dziś firma ma należność. Należność od odbiorcy rośnie po Wn konta „Rozrachunki z odbiorcami”. Kasa i rachunek byłyby przy zapłacie od razu.' },
+  { q: 'Ten sam przykład. Jaki jest zapis przychodu?', opcje: ['Wn „Kasa”, Ma „Przychody ze sprzedaży towarów”', 'Wn „Przychody ze sprzedaży towarów”, Ma „Kasa”', 'Wn „Kasa”, Ma „Towary”'], dobra: 0, dlaczego: 'Gotówka wpłynęła do kasy. Kasa to aktywo, więc przybytek idzie po stronie stanu, Wn. Sprzedaż zwiększa kapitał własny, więc przychód stoi po Ma. Odwrócony zapis znaczyłby, że kasa maleje. Zapis „Ma Towary” na 4 000 miesza dwa zapisy w jeden — towary wychodzą po cenie zakupu, i to w zapisie kosztu.' },
+  { q: 'Zapis kosztu przy sprzedaży towarów to…', opcje: ['Wn „Towary”, Ma „Wartość sprzedanych towarów”', 'Wn „Wartość sprzedanych towarów”, Ma „Kasa”', 'Wn „Wartość sprzedanych towarów”, Ma „Towary”'], dobra: 2, dlaczego: 'Wydany towar to koszt, a koszt zmniejsza kapitał, więc stoi po Wn. Towarów w magazynie ubywa. Ubytek aktywa idzie na stronę przeciwną do stanu, Ma. Pierwsza odpowiedź ma odwrócone strony. Druga zmniejsza kasę, a przy wydaniu towarów pieniądze się nie ruszają.' },
+  { q: 'Sprzedano towary, zapłata za 21 dni. Które konto stoi po Wn w zapisie przychodu?', opcje: ['Rozrachunki z odbiorcami', 'Kasa', 'Rachunek bankowy'], dobra: 0, dlaczego: 'Klient zapłaci później, więc dziś firma ma należność. Należność to aktywo, więc jej przybytek idzie po Wn konta „Rozrachunki z odbiorcami”. Kasa i rachunek byłyby przy zapłacie od razu.' },
   { q: 'Ile firma zarobiła na sprzedaży z pierwszego pytania (marża)?', opcje: ['4 000', '6 500', '1 500'], dobra: 2, dlaczego: 'Marża = przychód − koszt sprzedanych towarów = 4 000 − 2 500 = 1 500. 4 000 to sam przychód. 6 500 wychodzi po dodaniu zamiast odjęcia.' },
 ]} />
 
@@ -788,7 +1046,7 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
   { q: 'Zysk brutto 5 500 zł. Ile wynosi podatek dochodowy (19%)?', opcje: ['1 045', '3 800', '4 455'], dobra: 0, dlaczego: '5 500 · 19 = 104 500, a 104 500 : 100 = 1 045. Łatwiej: 5 500 · 20 = 110 000, minus 5 500 = 104 500. Wynik 3 800 to 19% przychodów (20 000) — podatek liczymy od zysku brutto. 4 455 to inna liczba z tego zadania — sprawdzisz ją w następnym pytaniu.' },
   { q: 'Zysk brutto 5 500 zł, podatek 1 045 zł. Ile wynosi zysk netto?', opcje: ['6 545', '1 045', '4 455'], dobra: 2, dlaczego: 'Netto = brutto − podatek = 5 500 − 1 045 = 4 455. Łatwiej: 5 500 − 1 000 = 4 500, potem 4 500 − 45 = 4 455. 6 545 wychodzi po dodaniu podatku. 1 045 to sam podatek, a nie zysk.' },
   { q: 'Przychody 9 000 zł, koszty 11 000 zł. Co pokazuje konto wyniku i ile wynosi podatek?', opcje: ['Saldo Ma 2 000 — zysk; podatek 380', 'Saldo Wn 2 000 — strata; podatku nie liczymy', 'Saldo Wn 2 000 — strata; podatek 380'], dobra: 1, dlaczego: 'Koszty (Wn 11 000) przeważają nad przychodami (Ma 9 000). Saldo Wn: 11 000 − 9 000 = 2 000 — strata. Saldo Ma i zysk byłyby przy przewadze przychodów. Przy stracie w zadaniach podatek wynosi 0. 380 to 19% z 2 000 — liczone tak, jakby to był zysk.' },
-  { q: 'Konto „Przychody ze sprzedaży towarów” ma saldo Ma 8 200 zł. Jak je przeksięgować?', opcje: ['Wn „Przychody ze sprzedaży towarów”, Ma „Wynik finansowy”', 'Wn „Wynik finansowy”, Ma „Przychody ze sprzedaży towarów”', 'Ma „Przychody ze sprzedaży towarów”, Ma „Wynik finansowy”'], dobra: 0, dlaczego: 'Saldo Ma zerujemy zapisem po Wn. Ta sama kwota idzie na Ma konta wyniku, bo przychody zbieramy tam po Ma. Druga odpowiedź to zapis dla kosztów — tu podwoiłby saldo przychodów. Trzecia łamie podwójny zapis: obie kwoty po Ma.' },
+  { q: 'Konto „Przychody ze sprzedaży towarów” ma saldo Ma 8 200 zł. Jak je przeksięgować?', opcje: ['Wn „Przychody ze sprzedaży towarów”, Ma „Wynik finansowy”', 'Wn „Wynik finansowy”, Ma „Przychody ze sprzedaży towarów”', 'Ma „Przychody ze sprzedaży towarów”, Ma „Wynik finansowy”'], dobra: 0, dlaczego: 'Saldo Ma zerujemy zapisem po przeciwnej stronie, Wn — wtedy obie strony konta się zrównują. Ta sama kwota idzie na Ma konta wyniku, bo przychód zwiększa zysk. Druga odpowiedź to zapis dla kosztów — tu podwoiłby saldo przychodów. Trzecia łamie podwójny zapis: obie kwoty po Ma.' },
   { q: 'Po przeksięgowaniach konto wyniku ma: Wn 7 300 zł, Ma 6 800 zł. Co to znaczy?', opcje: ['Zysk 500 zł', 'Zysk 14 100 zł', 'Strata 500 zł'], dobra: 2, dlaczego: 'Po Wn są koszty (7 300), po Ma przychody (6 800). Przeważa Wn, więc to strata: 7 300 − 6 800 = 500. 14 100 to suma obu stron.' },
 ]} />
 
@@ -801,6 +1059,23 @@ Krótkie zadania z natychmiastową odpowiedzią. Przy każdej odpowiedzi — tak
   { q: 'Konto „Usługi obce” po przeksięgowaniu ma saldo 0. Co z nim w bilansie?', opcje: ['Wpisujemy w aktywach 0', 'Wpisujemy jego obroty w pasywach', 'Pomijamy — konta wynikowe nie wchodzą do bilansu'], dobra: 2, dlaczego: 'Konta wynikowe nie są składnikami bilansu. Ich salda przeszły na wynik finansowy, a do bilansu wchodzi tylko zysk netto. Zera w aktywach nie wpisujemy, a obrotów do bilansu się nie przepisuje.' },
   { q: 'Aktywa: 120 000 zł. Pasywa bez wyniku: 118 400 zł. Zysk netto: 1 600 zł. Czy bilans się zgadza?', opcje: ['Tak: 118 400 + 1 600 = 120 000', 'Nie, brakuje 1 600 po stronie aktywów', 'Tak, bo zysk dopisujemy do aktywów: 121 600'], dobra: 0, dlaczego: 'Zysk netto dopisujemy do pasywów: 118 400 + 1 600 = 120 000 = aktywa. Zgadza się. Zysk w aktywach dałby 121 600 po jednej stronie i 118 400 po drugiej.' },
   { q: 'Wynik finansowy to strata netto 900 zł. Jak wpisać ją do bilansu?', opcje: ['W aktywach: 900', 'W pasywach: 900', 'W pasywach z minusem: −900'], dobra: 2, dlaczego: 'Strata zmniejsza kapitał własny, więc stoi w pasywach ze znakiem minus — jak strata z lat ubiegłych. Strata nie jest majątkiem, więc nie trafia do aktywów.' },
+]} />
+
+<a id="cw-trening" class="k-anchor"></a>
+
+### Pułapki na kontach
+
+<Pytania licznik tag="Ćwiczenia · 10 zadań" tytul="" pytania={[
+  { q: 'Firma spłaciła przelewem 4 200 zł zaległej faktury wobec dostawcy. Dlaczego 4 200 zł trafia na Ma konta „Rachunek bankowy”?', opcje: ['Rachunek to konto aktywne, a jego stan maleje — ubytek aktywa idzie po Ma', 'Rachunek to konto pasywne, a spłata zwiększa obroty', 'Wszystko, co dotyczy dostawców, księguje się po Ma', 'Bank pobrał prowizję za przelew'], dobra: 0, dlaczego: 'Pieniędzy na rachunku ubyło. Rachunek to aktywo, jego stan stoi po Wn, więc ubytek zapisujemy po przeciwnej stronie — Ma. Rachunek nie jest pasywem: to majątek, a nie źródło majątku. „Dostawcy zawsze po Ma” to fałsz — spłata zmniejsza dług, a ubytek pasywa idzie po Wn. Prowizji w tej operacji nie ma.' },
+  { q: 'Hurtownia dała firmie za darmo towar wart 2 500 zł. Dlaczego w tej operacji nie ma konta „Rachunek bankowy”?', opcje: ['Konto „Towary” nie może łączyć się z rachunkiem bankowym', 'Nikt nie zapłacił ani nie dostał pieniędzy, więc stan rachunku się nie zmienia', 'Darowizny księguje się tylko na kontach kosztów', 'Towar idzie po Ma, a dług wobec hurtowni po Wn'], dobra: 1, dlaczego: 'Konto bierze udział tylko wtedy, gdy jego stan się zmienia. Pieniądze się nie ruszyły. Towary rosną (Wn), a drugą stroną jest korzyść bez płacenia — pozostałe przychody operacyjne (Ma). Towary łączą się z rachunkiem, gdy płacimy przelewem. Darowizna to korzyść, więc przychód, a nie koszt. Długu wobec hurtowni nie ma — towar był za darmo.' },
+  { q: 'Kupujesz towar za 10 000 zł z zapłatą później. Rosną towary i dług. Jak to zaksięgować?', opcje: ['Towary Wn 10 000 i dług Wn 10 000', 'Towary Ma 10 000 i dług Ma 10 000', 'Towary Wn 10 000 i dług Ma 10 000', 'Towary Ma 10 000 i dług Wn 10 000'], dobra: 2, dlaczego: 'Towary to aktywo — przybytek po stronie stanu, Wn. Dług to pasywo — przybytek po stronie stanu, Ma. Dwie kwoty po tej samej stronie łamią podwójny zapis: suma Wn przestaje równać się sumie Ma. Ostatnia odpowiedź to zapis odwrotny — oznaczałby, że towarów ubywa i dług maleje.' },
+  { q: 'Dostawca uznał reklamację towaru kupionego na fakturę, której jeszcze nie zapłacono, i obniżył cenę o 1 800 zł. Co dzieje się na kontach?', opcje: ['Towary Wn 1 800, dług Ma 1 800', 'Rachunek Wn 1 800, towary Ma 1 800', 'Usługi obce Wn 1 800, towary Ma 1 800', 'Dług Wn 1 800, towary Ma 1 800'], dobra: 3, dlaczego: 'Firma jest winna mniej — ubytek pasywa, Wn na koncie dostawcy. Towar kosztował mniej — jego wartość maleje, Ma „Towary”. Pierwsza odpowiedź to zapis zakupu, a nie obniżki. Rachunek się nie zmienia, bo faktura nie była zapłacona — dostawca nie ma czego oddawać. Reklamacja to nie koszt: firma za nic dodatkowo nie płaci.' },
+  { q: 'Która para zapisów jest poprawna dla faktury za usługę księgową 1 500 zł, płatnej za 14 dni?', opcje: ['Wn „Usługi obce” 1 500, Ma „Rozrachunki z dostawcami” 1 500', 'Wn „Rozrachunki z dostawcami” 1 500, Ma „Usługi obce” 1 500', 'Wn „Usługi obce” 1 500, Ma „Towary” 1 500', 'Wn „Rachunek bankowy” 1 500, Ma „Usługi obce” 1 500'], dobra: 0, dlaczego: 'Usługa została zużyta — powstaje koszt. Koszt zmniejsza kapitał własny, więc rośnie po Wn. Faktura jest niezapłacona — rośnie dług, czyli pasywo, po Ma. Druga odpowiedź to odwrotność: zmniejszenie długu i kosztu. Usługa księgowa nie zabiera towarów z magazynu. Wn na rachunku oznaczałoby wpływ pieniędzy do firmy.' },
+  { q: 'Jak otworzysz konta na początek miesiąca: towary 15 000, rozrachunki z dostawcami 6 400, zużycie energii — brak stanu?', opcje: ['Towary Sp. Ma 15 000, dostawcy Sp. Wn 6 400', 'Towary Sp. Wn 15 000, dostawcy Sp. Ma 6 400, konto energii bez Sp.', 'Wszystkie trzy Sp. po Wn', 'Towary Sp. Wn 15 000, dostawcy Sp. Wn 6 400'], dobra: 1, dlaczego: 'Stan konta stoi po stronie „+”: aktywa po Wn, pasywa po Ma. Konta kosztów i przychodów nie mają stanu początkowego — każdy okres liczą od zera. Pierwsza odpowiedź odwraca strony. Dług to pasywo, więc jego stan nie może stać po Wn jak majątek.' },
+  { q: 'Konto „Rozrachunki z dostawcami”: Sp. 9 000 po Ma, nowa faktura 3 000 po Ma, spłata 5 000 po Wn. Ile wynosi saldo i gdzie je wpisujesz?', opcje: ['7 000 — saldo Ma, wpisane po Wn, żeby obie strony dały po 12 000', '7 000 — wpisane po Ma i nazwane saldem Wn', '17 000 po Ma, bo dodajemy wszystkie kwoty', '1 000 po Wn, bo spłata jest większa od nowej faktury'], dobra: 0, dlaczego: 'Po Ma: 9 000 + 3 000 = 12 000. Po Wn: 5 000. Saldo to różnica: 12 000 − 5 000 = 7 000. Przeważa Ma, więc to saldo Ma — firma jest jeszcze winna 7 000. Wpisujemy je po mniejszej stronie, czyli Wn, żeby obie kolumny zamknęły się sumą 12 000. Druga odpowiedź wpisuje saldo po złej stronie: Ma wyszłoby 19 000 przy 5 000 po Wn. 17 000 dodaje spłatę zamiast ją odjąć. 1 000 pomija stan na start.' },
+  { q: 'Dystrybutor przysłał za darmo próbki towarów warte 1 200 zł. Jak wygląda zapis?', opcje: ['Towary Ma 1 200, pozostałe przychody operacyjne Wn 1 200', 'Towary Wn 1 200, rozrachunki z dostawcami Ma 1 200', 'Towary Wn 1 200, pozostałe przychody operacyjne Ma 1 200', 'Towary Wn 1 200, rachunek bankowy Ma 1 200'], dobra: 2, dlaczego: 'Towaru przybyło — Wn. Źródłem nie jest dług ani pieniądze, tylko korzyść bez płacenia, czyli przychód — Ma. Pierwsza odpowiedź odwraca strony obu kont. Ma na dostawcach oznaczałoby dług, a towar był za darmo. Ma na rachunku oznaczałoby zapłatę, której nie było.' },
+  { q: 'Spłacasz ratę kredytu 2 000 zł z rachunku firmy. Jakie konta i strony?', opcje: ['Kredyty Ma 2 000, rachunek Wn 2 000', 'Kredyty Wn 2 000, rachunek Ma 2 000', 'Koszty finansowe Wn 2 000, kredyty Ma 2 000', 'Kredyty Wn 2 000, rachunek Wn 2 000'], dobra: 1, dlaczego: 'Dług wobec banku maleje — ubytek pasywa, Wn. Pieniądze wychodzą — ubytek aktywa, Ma. Pierwsza odpowiedź to zapis zaciągnięcia kredytu. Spłata raty to nie koszt: kosztem są tylko odsetki. Dwa zapisy po Wn łamią podwójny zapis.' },
+  { q: 'Zamknięto wszystkie konta w zadaniu. Jak najprościej sprawdzić, czy przy księgowaniu nie było błędu technicznego?', opcje: ['Czy na każdym koncie obroty Wn równają się obrotom Ma', 'Czy konto kosztów ma większe saldo niż rachunek', 'Czy suma wszystkich zapisów po Wn równa się sumie wszystkich zapisów po Ma', 'Czy każde konto aktywne ma saldo 0'], dobra: 2, dlaczego: 'Każda operacja wchodzi raz po Wn i raz po Ma, w tej samej kwocie. Dlatego suma wszystkich zapisów Wn musi równać się sumie Ma. Na jednym koncie obroty zwykle się różnią — ich różnica to właśnie saldo. Porównanie kosztów z rachunkiem nic nie mówi o poprawności zapisów. Konta aktywne zwykle mają saldo — to majątek na koniec okresu. Uwaga: ta kontrola nie wykryje zapisu na złym koncie po właściwej stronie.' },
 ]} />
 
 ## Quiz z teorii
