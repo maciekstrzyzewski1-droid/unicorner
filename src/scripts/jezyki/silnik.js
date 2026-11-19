@@ -588,7 +588,13 @@ const R = {
           p.readOnly = true;
           const w = porownaj(p.value, [c.f[i]]);
           p.classList.add(w ? 'is-ok' : 'is-bad');
-          if (!w) { ok = false; p.insertAdjacentHTML('afterend', `<span class="jz-odm-pop" lang="es">${c.f[i]}</span>`); }
+          if (!w) {
+            ok = false;
+            const pop = h('span', 'jz-odm-pop');
+            pop.lang = 'es';
+            pop.textContent = c.f[i];
+            p.insertAdjacentElement('afterend', pop);
+          }
           if (w === 'akcent') akcent = true;
         });
         return { ok, akcent, poprawnie: c.f.join(', '), mowic: c.f.join(', ') };
