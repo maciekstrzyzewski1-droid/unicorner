@@ -256,7 +256,7 @@ function modal(tresc, przyciski = []) {
   const m = h('div', 'jz-modal');
   m.setAttribute('role', 'dialog');
   m.setAttribute('aria-modal', 'true');
-  if (typeof tresc === 'string') m.innerHTML = tresc; else m.append(tresc);
+  if (typeof tresc === 'string') m.textContent = tresc; else m.append(tresc);
   const nag = $('h3', m);
   if (nag) { nag.id = nag.id || `jz-m-${Math.random().toString(36).slice(2, 8)}`; m.setAttribute('aria-labelledby', nag.id); }
   const powrot = document.activeElement;
@@ -1055,7 +1055,13 @@ export function start() {
       const w = LEK.get(el.dataset.wezel);
       if (!w) return;
       if (dostepny(w)) return otworz(w);
-      modal(`<h3>🔒 ${w.tytul}</h3><p>Ta lekcja jest dalej na ścieżce. Najlepiej przejść po kolei, bo każda lekcja korzysta z poprzednich. Kolokwium za pasem? Możesz otworzyć ją od razu.</p>`,
+      const tresc = document.createElement('div');
+      const nag = document.createElement('h3');
+      nag.textContent = `🔒 ${w.tytul}`;
+      const p = document.createElement('p');
+      p.textContent = 'Ta lekcja jest dalej na ścieżce. Najlepiej przejść po kolei, bo każda lekcja korzysta z poprzednich. Kolokwium za pasem? Możesz otworzyć ją od razu.';
+      tresc.append(nag, p);
+      modal(tresc,
         [['Otwórz mimo to', 'jz-btn-glow', () => otworz(w)], ['Wracam do ścieżki', 'jz-btn-ghost']]);
     });
   }
