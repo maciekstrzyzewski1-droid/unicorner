@@ -786,7 +786,13 @@ function otworz(w) {
   const pokazHaslo = () => {
     if (!boss) return;
     haslo.hidden = false;
-    haslo.innerHTML = [...w.l.haslo].map((lit, i) => `<span class="${retoWynik[i].koniec ? (retoWynik[i].ok ? 'is-ok' : 'is-meh') : ''}">${retoWynik[i].koniec ? lit : '•'}</span>`).join('');
+    haslo.textContent = '';
+    [...w.l.haslo].forEach((lit, i) => {
+      const span = document.createElement('span');
+      if (retoWynik[i].koniec) span.className = retoWynik[i].ok ? 'is-ok' : 'is-meh';
+      span.textContent = retoWynik[i].koniec ? lit : '•';
+      haslo.appendChild(span);
+    });
   };
 
   function ustawPrzycisk(tekst, tryb) {
