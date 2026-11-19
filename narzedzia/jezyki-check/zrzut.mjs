@@ -4,7 +4,7 @@ import { JEZYKI } from '../../src/data/jezyki/index.js';
 
 const slug = process.argv[2] || 'hiszpanski';
 const { KURS } = JEZYKI[slug];
-const bt = (s) => String(s ?? '').replace(/<[^>]+>/g, '').replace(/\s+/g, ' ').trim();
+const bt = (s) => String(s ?? '').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim();
 const out = [];
 const p = (s = '') => out.push(s);
 const awTxt = (a) => a ? ` [POSTAĆ: ${a.imie}, ${a.plec === 'k' ? 'kobieta' : 'mężczyzna'}, ${a.wzrost}, ${a.wiek}, ${a.budowa}, pelo ${a.pelo}, ojos ${a.ojos}${a.gafas ? ', gafas' : ''}${a.barba ? ', barba' : ''}${a.bigote ? ', bigote' : ''}]` : '';
