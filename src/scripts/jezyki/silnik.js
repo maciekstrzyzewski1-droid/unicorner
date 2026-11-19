@@ -6,7 +6,15 @@ import { awatar } from './awatar.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const h = (tag, cls, content, allowHtml = false) => {
+  const e = document.createElement(tag);
+  if (cls) e.className = cls;
+  if (content != null) {
+    if (allowHtml) e.innerHTML = content;
+    else e.textContent = String(content);
+  }
+  return e;
+};
 const tasuj = (a) => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
 const bezTagow = (s) => String(s).replace(/<[^>]+>/g, '');
 const ruch = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -820,8 +828,13 @@ function otworz(w) {
     if (boss && (poz === 0 || CW.get(kolejka[poz - 1].k).reto !== c.reto)) {
       karta.append(h('div', 'jz-reto', `Reto ${c.reto + 1}/${w.l.retos.length} · ${w.l.retos[c.reto].nazwa}`));
     }
-    karta.append(h('div', 'jz-typ', `${ETYKIETA[c.t] || ''}${wpis.proba ? ' · <span class="jz-znow">jeszcze raz</span>' : ''}`));
-    if (c.aw) karta.append(h('div', 'jz-aw-box', awatar(c.aw)));
+    const typ = h('div', 'jz-typ', ETYKIETA[c.t] || '');
+    if (wpis.proba) {
+      typ.append(document.createTextNode(' · '));
+      typ.append(h('span', 'jz-znow', 'jeszcze raz'));
+    }
+    karta.append(typ);
+    if (c.aw) karta.append(h('div', 'jz-aw-box', awatar(c.aw), true));
     if (c.kol) { const s = h('div', 'jz-swatch'); s.style.background = c.kol; s.setAttribute('aria-hidden', 'true'); karta.append(s); }
     const q = h('div', 'jz-q', c.q || '');
     karta.append(q);
