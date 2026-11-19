@@ -10,8 +10,7 @@ const bezTagow = (s) => String(s).replace(/<[^>]+>/g, '');
 const h = (tag, cls, content, allowHtml = false) => {
   const e = document.createElement(tag);
   if (content != null) {
-    if (allowHtml) e.innerHTML = bezTagow(content);
-    else e.textContent = String(content);
+    e.textContent = String(content);
   }
   return e;
 };
