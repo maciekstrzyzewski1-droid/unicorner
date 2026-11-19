@@ -6,17 +6,16 @@ import { awatar } from './awatar.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const bezTagow = (s) => String(s).replace(/<[^>]+>/g, '');
 const h = (tag, cls, content, allowHtml = false) => {
   const e = document.createElement(tag);
-const bezTagow = (s) => { const t = document.createElement('template'); t.innerHTML = String(s); return t.content.textContent || ''; };
   if (content != null) {
-    if (allowHtml) e.innerHTML = content;
+    if (allowHtml) e.innerHTML = bezTagow(content);
     else e.textContent = String(content);
   }
   return e;
 };
 const tasuj = (a) => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
-const bezTagow = (s) => String(s).replace(/<[^>]+>/g, '');
 const ruch = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ── porównywanie odpowiedzi ──
