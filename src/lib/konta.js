@@ -13,7 +13,9 @@
 //          saldo Ma = zysk, saldo Wn = strata; w bilansie pasywa ze znakiem (strata z minusem)
 //   obciazenie: true — konto 'K', które nie jest kosztem działalności, tylko obciąża wynik (podatek dochodowy)
 //   rodzaj: podpis typu pod nazwą konta (zastępuje domyślny), bil: nazwa w bilansie zamknięcia (np. „Zysk netto”)
-// Operacja: { nr, opis, kwota, wn: id konta, ma: id konta, h?: własny podpis kroku (HTML) }
+// Operacja: { nr, opis, kwota, wn: id konta, ma: id konta, h?: własny podpis kroku (HTML),
+//             co?: { wn: 'co się naprawdę stało ze składnikiem po Wn', ma: '… po Ma' } — powód w podpisie animacji }
+// Konto może mieć stan?: 'zdanie o saldzie końcowym z {k} w miejscu kwoty' (np. 'W kasie zostaje {k} zł gotówki.').
 //
 // Konwencje z zajęć (arkusz „Konta bilansowe”):
 // - strony konta: Wn (Winien, Dt) po lewej, Ma (Ma, Ct) po prawej;
@@ -94,15 +96,38 @@ export const OPIS_TYPU = {
 
 const ZMIANA_SLOWO = { '+': 'rośnie', '−': 'maleje' };
 
-// Jedno zdanie o koncie w operacji: „Kasa” — konto aktywne, rośnie o 4 000 → zapis po Wn.
-export function zdanieKonta(k, strona, kwota) {
+// Zdania o jednym koncie w operacji. Uczą, DLACZEGO kwota trafia na tę stronę — strona sama w sobie jest na rysunku:
+// 1) co się stało ze składnikiem (pole co z danych operacji), 2) czym jest składnik, 3) reguła stron z uzasadnieniem.
+// wyjasnione: zbiór przypadków już wyjaśnionych w tym zadaniu — pełna reguła tylko za pierwszym razem, potem skrót.
+const przypadek = (k, z) => `${k.ujemne ? 'U' : k.obciazenie ? 'O' : k.typ}${z}`;
+export function zdanieKonta(k, strona, kwota, { co, wyjasnione = new Set() } = {}) {
+  const S = `<b>${STRONA[strona]}</b>`;
+  const powod = co ? ` — ${co}` : '';
+  const z = k.ujemne ? (strona === 'wn' ? '+' : '−') : zmianaStrony(k.typ, strona);
+  const klucz = przypadek(k, z);
+  const pelna = !wyjasnione.has(klucz);
+  wyjasnione.add(klucz);
+  const nz = `„${k.nazwa}”`;
   if (k.ujemne) {
-    const rosnie = strona === 'wn';
-    return `<b>„${k.nazwa}”</b> — strata (pasywa na minusie) ${rosnie ? 'rośnie' : 'maleje'} o ${zl(kwota)}, więc pasywa ${rosnie ? 'maleją' : 'rosną'} → zapis po stronie <b>${STRONA[strona]}</b>`;
+    if (z === '+') return `${nz}: strata rośnie o ${zl(kwota)}${powod}. ${pelna ? 'Strata to pasywo na minusie, więc jej stan stoi po Wn — po przeciwnej stronie niż zwykłe pasywa. Większa strata to większy minus, więc dopisujemy po stronie stanu, ' : 'Większy minus → po stronie stanu straty, '}${S}.`;
+    return `${nz}: strata maleje o ${zl(kwota)}${powod}. ${pelna ? 'Strata to pasywo na minusie: jej stan stoi po Wn. Mniejszy minus to ubytek straty, więc zapisujemy go po przeciwnej stronie — ' : 'Mniejszy minus → po stronie przeciwnej do stanu straty, '}${S}. Pasywa przez to rosną.`;
   }
-  const z = zmianaStrony(k.typ, strona);
-  const czyje = k.obciazenie ? `${k.rodzaj ?? 'obciążenie wyniku'} —` : k.typ === 'K' ? 'konto kosztów — koszt' : k.typ === 'R' ? 'konto przychodów — przychód' : `konto ${NAZWA_TYPU[k.typ]},`;
-  return `<b>„${k.nazwa}”</b> — ${czyje} ${ZMIANA_SLOWO[z]} o ${zl(kwota)} → zapis po stronie <b>${STRONA[strona]}</b>`;
+  if (k.typ === 'K') {
+    if (z === '−') return `${nz}: koszt maleje o ${zl(kwota)}${powod}. Koszty rosną po Wn, więc zmniejszenie kosztu zapisujemy po przeciwnej stronie — ${S}.`;
+    const czym = k.obciazenie ? 'Podatek dochodowy, tak jak koszt, zmniejsza zysk netto' : 'Koszt zmniejsza zysk';
+    return `${nz}: ${k.obciazenie ? 'powstaje obciążenie wyniku' : 'powstaje koszt'} ${zl(kwota)}${powod}. ${pelna ? `${czym}, a zysk to część kapitału własnego — pasywa. Zmniejszenie pasywów zapisuje się po Wn, dlatego ${k.obciazenie ? 'to konto rośnie' : 'koszty rosną'} po ${S}.` : `${czym} → po ${S}.`}`;
+  }
+  if (k.typ === 'R') {
+    if (z === '−') return `${nz}: przychód maleje o ${zl(kwota)}${powod}. Przychody rosną po Ma, więc zmniejszenie zapisujemy po przeciwnej stronie — ${S}.`;
+    return `${nz}: powstaje przychód ${zl(kwota)}${powod}. ${pelna ? `Przychód zwiększa zysk, a zysk to część kapitału własnego — pasywa. Zwiększenie pasywów zapisuje się po Ma, dlatego przychody rosną po ${S}.` : `Przychód zwiększa zysk → po ${S}.`}`;
+  }
+  const aktywo = k.typ === 'A';
+  const czym = aktywo ? 'aktywo, czyli coś, co firma ma' : k.wynik ? 'konto wyniku — część kapitału własnego' : 'pasywo, czyli źródło majątku: kapitał albo dług';
+  const stan = aktywo ? 'Wn' : 'Ma';
+  const gdzie = aktywo ? 'Aktywa stoją w bilansie po lewej, więc stan konta aktywnego jest po lewej stronie — po Wn.' : 'Pasywa stoją w bilansie po prawej, więc stan konta pasywnego jest po prawej stronie — po Ma.';
+  const wstep = `Stan konta ${nz} ${z === '+' ? 'rośnie' : 'maleje'} o ${zl(kwota)}${powod}.`;
+  if (z === '+') return `${wstep} ${pelna ? `To ${czym}. ${gdzie} Przybytek dopisujemy do stanu, czyli po tej samej stronie — ${S}.` : `${aktywo ? 'Aktywo' : 'Pasywo'} rośnie → przybytek po stronie stanu, ${S}.`}`;
+  return `${wstep} ${pelna ? `To ${czym}. Jego stan stoi po ${stan}. Ubytek ma się od stanu odjąć, więc zapisujemy go po przeciwnej stronie — ${S}.` : `${aktywo ? 'Aktywo' : 'Pasywo'} maleje → ubytek po stronie przeciwnej do stanu, ${S}.`}`;
 }
 
 // Podpis przeksięgowania: saldo konta wynikowego przechodzi na konto wyniku finansowego
@@ -115,14 +140,17 @@ function opisPrzeksiegowania(op, m) {
 }
 
 // Podpis kroku dla jednej operacji (używany w animacji i w wyjaśnieniach ćwiczeń)
-export function opisOperacji(op, konta) {
+export function opisOperacji(op, konta, wyjasnione = new Set()) {
   if (op.h) return op.h;
   const m = mapa(konta);
   const typ0 = typOperacji(op, konta);
   if (typ0 === 'Z') return opisPrzeksiegowania(op, m);
   const t = OPIS_TYPU[typ0];
-  const typ = t.skrot === 'wynikowa' ? 'operacja <b>wynikowa</b>' : `typ <b>${t.skrot}</b> (${t.nazwa}) — ${t.zdanie}`;
-  return `${zdanieKonta(m.get(op.wn), 'wn', op.kwota)}. ${zdanieKonta(m.get(op.ma), 'ma', op.kwota)}. To ${typ}.`;
+  const typ = t.skrot === 'wynikowa' ? 'operacja <b>wynikowa</b>: jedna strona to koszt albo przychód' : `typ <b>${t.skrot}</b> (${t.nazwa}) — ${t.zdanie}`;
+  const pierwszy = !wyjasnione.has('PZ');
+  wyjasnione.add('PZ');
+  const pz = pierwszy ? ' Jedna kwota po Wn jednego konta, ta sama po Ma drugiego — tak działa podwójny zapis, więc suma zapisów Wn zawsze równa się sumie Ma.' : '';
+  return `${zdanieKonta(m.get(op.wn), 'wn', op.kwota, { co: op.co?.wn, wyjasnione })} ${zdanieKonta(m.get(op.ma), 'ma', op.kwota, { co: op.co?.ma, wyjasnione })} To ${typ}.${pz}`;
 }
 
 // Zamknięcie jednego konta: obroty (z Sp, jak na zajęciach), saldo, sumy.
@@ -146,16 +174,37 @@ export function zamknij(konto, wpisy) {
 const suma = (skl) => (skl.length === 0 ? '0' : skl.length === 1 ? zl(skl[0]) : `${skl.map(zl).join(' + ')} = ${zl(skl.reduce((a, b) => a + b, 0))}`);
 
 // Słowny rachunek zamknięcia konta (do podpisów i wyjaśnień)
+// Co znaczy saldo w rzeczywistości (pole stan konta albo zdanie ogólne z rodzaju składnika)
+function znaczenieSalda(konto, z) {
+  if (wynikowe(konto) || konto.wynik) return '';
+  const k = `${zl(z.saldo)} zł`;
+  if (konto.stan) return ` ${konto.stan.replace('{k}', k)}`;
+  const n = konto.nazwa.toLowerCase();
+  if (konto.ujemne) return z.saldo ? ` Tyle straty z lat ubiegłych jest jeszcze niepokryte: ${k}.` : ' Strata jest w całości pokryta.';
+  if (konto.typ === 'A') {
+    const ktos = /odbiorc|należn|pracownik/.test(n);
+    if (!z.saldo) return ktos ? ' Nikt nie jest już winien firmie z tego tytułu.' : ' Tego składnika firma już nie ma.';
+    return ktos ? ` Tyle jest jeszcze winien firmie ktoś z zewnątrz: ${k}.` : ` Tyle wart jest ten składnik majątku na koniec okresu: ${k}.`;
+  }
+  if (/^kapitał/.test(n)) return z.saldo ? ` Tyle wynosi ten kapitał na koniec okresu: ${k}.` : '';
+  return z.saldo ? ` Tyle firma jest jeszcze winna: ${k}.` : ' Długu już nie ma.';
+}
+
 export function opisZamkniecia(konto, z) {
   const r = [];
-  r.push(`<b>„${konto.nazwa}”</b>. Obroty Wn: ${suma(z.sklWn)}. Obroty Ma: ${suma(z.sklMa)}.`);
-  if (!z.saldoStrona) r.push('Obie strony są równe — saldo końcowe wynosi 0, konto się „wyzerowało”.');
+  const sS = z.spStrona;
+  const zwyklaStrona = konto.typ === 'K' ? 'wn' : konto.typ === 'R' ? 'ma' : sS;
+  r.push(`<b>„${konto.nazwa}”</b>. Obroty to suma każdej strony${z.sp ? ', razem ze stanem na start' : ''}: Wn ${suma(z.sklWn)}, Ma ${suma(z.sklMa)}.`);
+  if (!z.saldoStrona) r.push(`Obie strony są równe — saldo końcowe wynosi 0.${znaczenieSalda(konto, z)}`);
   else {
     const wieksze = z.saldoStrona === 'wn' ? z.obrWn : z.obrMa;
     const mniejsze = z.saldoStrona === 'wn' ? z.obrMa : z.obrWn;
-    r.push(`Większa jest strona ${STRONA[z.saldoStrona]}, więc to <b>saldo ${STRONA[z.saldoStrona]}</b>: ${zl(wieksze)} − ${zl(mniejsze)} = <b>${zl(z.saldo)}</b>.`);
+    const sens = wynikowe(konto) ? '' : z.saldoStrona === zwyklaStrona
+      ? ` Strona ${STRONA[zwyklaStrona]} zbiera stan na start i przybytki, przeciwna — ubytki. Różnica to to, co zostało.`
+      : ' Saldo wyszło po stronie przeciwnej niż zwykle stoi stan tego konta — to znak nadpłaty albo błędu w zapisach.';
+    r.push(`Saldo = większa strona − mniejsza: ${zl(wieksze)} − ${zl(mniejsze)} = <b>${zl(z.saldo)}</b>, to <b>saldo ${STRONA[z.saldoStrona]}</b>.${sens}${znaczenieSalda(konto, z)}`);
     if (wynikowe(konto)) r.push('Saldo konta wynikowego tylko liczymy, nie wpisujemy go na konto. Konto zamknie przeksięgowanie na wynik finansowy.');
-    else r.push(`Wpisujemy je po stronie mniejszej (${STRONA[z.wpisSalda]}), żeby obie strony dały po ${zl(z.razem)}.`);
+    else r.push(`Wpisujemy je po stronie mniejszej (${STRONA[z.wpisSalda]}), żeby obie kolumny zamknęły się tą samą sumą, ${zl(z.razem)} — wtedy widać, że nic nie zginęło.`);
   }
   if (wynikowe(konto) && !z.saldoStrona && (z.obrWn || z.obrMa)) r.push('Konto wynikowe zamknęło przeksięgowanie na wynik finansowy — do bilansu nie wchodzi.');
   if (konto.wynik && z.saldoStrona) r.push(z.saldoStrona === 'ma' ? `Saldo Ma konta wyniku to <b>zysk netto: ${zl(z.saldo)}</b>.` : `Saldo Wn konta wyniku to <b>strata netto: ${zl(z.saldo)}</b>.`);
@@ -210,13 +259,14 @@ export function krokiKsiegowania(konta, operacje, { bilans = true } = {}) {
   const wTxt = maK || maR ? ` Konta ${maK && maR ? 'kosztów i przychodów' : maK ? 'kosztów' : 'przychodów'}${maW ? ' oraz konto wyniku' : ''} też startują puste — nie mają salda początkowego.` : '';
   kroki.push({ a: 'otwarcie', html: `<b>Otwieramy konta.</b> Każdy składnik z bilansu dostaje swoje konto, a jego kwota to <b>saldo początkowe (Sp.)</b>. Aktywa (${spA.join(', ')}) — Sp. po stronie <b>Wn</b>. Pasywa (${spP.join(', ')}) — Sp. po stronie <b>Ma</b>.${uTxt} Konta bez kwoty w bilansie otwieramy puste.${wTxt}` });
   let sA = k.sumaA0;
+  const wyjasnione = new Set();
   for (const op of operacje) {
     const t = typOperacji(op, konta);
     let sumaTxt = '';
     if (t === 'AP+') { sumaTxt = ` Suma bilansowa: ${zl(sA)} + ${zl(op.kwota)} = ${zl(sA + op.kwota)}.`; sA += op.kwota; }
     else if (t === 'AP-') { sumaTxt = ` Suma bilansowa: ${zl(sA)} − ${zl(op.kwota)} = ${zl(sA - op.kwota)}.`; sA -= op.kwota; }
     else if (t === 'A' || t === 'P') sumaTxt = ` Suma bilansowa bez zmian: ${zl(sA)}.`;
-    kroki.push({ a: 'op', nr: op.nr, wn: op.wn, ma: op.ma, html: `<b>${t === 'Z' ? 'Przeksięgowanie' : 'Operacja'} ${op.nr}</b> (${zl(op.kwota)}). ${opisOperacji(op, konta)}${sumaTxt}${op.dopisek ?? ''}` });
+    kroki.push({ a: 'op', nr: op.nr, wn: op.wn, ma: op.ma, html: `<b>${t === 'Z' ? 'Przeksięgowanie' : 'Operacja'} ${op.nr}</b> (${zl(op.kwota)})${op.opis && t !== 'Z' ? `: ${op.opis.replace(/\.$/, '')}.` : '.'} ${opisOperacji(op, konta, wyjasnione)}${sumaTxt}${op.dopisek ?? ''}` });
   }
   for (const x of konta) kroki.push({ a: 'zamk', konto: x.id, html: opisZamkniecia(x, k.zam[x.id]) });
   if (bilans && konta.every((x) => !wynikowe(x) || k.zam[x.id].saldo === 0)) {
@@ -251,14 +301,16 @@ export function krokiJednegoKonta(konto, zmiany) {
   kroki.push({ a: 'otwarcie', html: `<b>Otwieramy konto „${konto.nazwa}”.</b> To konto ${typ}: zwiększenia zapisujemy po <b>${plus}</b>, zmniejszenia po <b>${minus}</b>. Saldo początkowe ${zl(z.sp)} to stan na start, więc stoi po stronie zwiększeń: „Sp. ${zl(z.sp)}” po ${plus}.` });
   zmiany.forEach((zm, i) => {
     const w = wpisy[i];
-    kroki.push({ a: 'op', nr: zm.nr, html: `<b>Operacja ${zm.nr}</b>: ${zm.opis}. Konto „${konto.nazwa}” <b>${ZMIANA_SLOWO[zm.zmiana]}</b> o ${zl(zm.kwota)}. ${zm.zmiana === '+' ? 'Zwiększenie' : 'Zmniejszenie'} konta ${TYP_DOP[konto.typ]} zapisujemy po stronie <b>${STRONA[w.strona]}</b> → „${zapis(w.strona, zm.nr, zm.kwota)}”.` });
+    const stanS = STRONA[stronaZmiany(konto.typ, '+')];
+    const dlaczego = zm.zmiana === '+' ? `Przybytek dopisujemy do stanu, który stoi po ${stanS} — więc też po <b>${STRONA[w.strona]}</b>.` : `Ubytek ma się odjąć od stanu, który stoi po ${stanS} — więc zapisujemy go po przeciwnej stronie, <b>${STRONA[w.strona]}</b>.`;
+    kroki.push({ a: 'op', nr: zm.nr, html: `<b>Operacja ${zm.nr}</b>: ${zm.opis}. Stan konta „${konto.nazwa}” <b>${ZMIANA_SLOWO[zm.zmiana]}</b> o ${zl(zm.kwota)}. ${dlaczego} Na koncie: „${zapis(w.strona, zm.nr, zm.kwota)}”.` });
   });
   const obr = (s, skl) => `<b>Obroty ${STRONA[s]}</b> — dodajemy wszystko po stronie ${STRONA[s]}${skl.length && z.sp && z.spStrona === s ? ' (razem z Sp.)' : ''}: ${suma(skl)}.`;
   kroki.push({ a: 'obr', strona: 'wn', html: obr('wn', z.sklWn) });
   kroki.push({ a: 'obr', strona: 'ma', html: obr('ma', z.sklMa) });
   if (z.saldoStrona) {
     const [wi, mn] = z.saldoStrona === 'wn' ? [z.obrWn, z.obrMa] : [z.obrMa, z.obrWn];
-    kroki.push({ a: 'sk', html: `<b>Saldo końcowe.</b> Porównujemy obroty: ${zl(z.obrWn)} po Wn i ${zl(z.obrMa)} po Ma. Przeważa ${STRONA[z.saldoStrona]}, więc to <b>saldo ${STRONA[z.saldoStrona]}</b> (Sk ${STRONA[z.saldoStrona]}): ${zl(wi)} − ${zl(mn)} = <b>${zl(z.saldo)}</b>. Wpisujemy je po stronie mniejszej, czyli ${STRONA[z.wpisSalda]}.` });
+    kroki.push({ a: 'sk', html: `<b>Saldo końcowe.</b> Strona stanu (${plus}) zbiera stan na start i przybytki, strona ${minus} — ubytki. To, co zostało, to różnica: ${zl(wi)} − ${zl(mn)} = <b>${zl(z.saldo)}</b>. Przeważa ${STRONA[z.saldoStrona]}, więc to <b>saldo ${STRONA[z.saldoStrona]}</b> (Sk ${STRONA[z.saldoStrona]}).${znaczenieSalda(konto, z)} Wpisujemy je po stronie mniejszej, czyli ${STRONA[z.wpisSalda]}, żeby obie kolumny zamknęły się tą samą sumą.` });
     const mnSkl = z.wpisSalda === 'wn' ? z.obrWn : z.obrMa;
     kroki.push({ a: 'razem', html: `<b>Sprawdzenie.</b> Strona ${STRONA[z.wpisSalda]}: ${zl(mnSkl)} + ${zl(z.saldo)} = ${zl(z.razem)} — tyle samo co ${STRONA[z.saldoStrona]}. Obie strony równe, konto zamknięte. <b>Stan na koniec: ${zl(z.saldo)} zł.</b>` });
   } else {

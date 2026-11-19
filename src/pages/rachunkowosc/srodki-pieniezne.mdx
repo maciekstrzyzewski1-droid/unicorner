@@ -96,10 +96,10 @@ Słowa takie jak czek obcy, suma wekslowa czy dyskonto wyjaśniają kolejne sekc
 | Weksel od klienta | Weksle obce | weksel |
 | Wyszedł z jednego miejsca, do drugiego nie dotarł | Środki pieniężne w drodze | bankowy dowód wpłaty, potem WB |
 
-**Jak czytać:** wiersz to jedna postać pieniądza. Środkowa kolumna podaje konto, na którym ją księgujesz. Ostatnia kolumna podaje dokument, bez którego zapisu nie robisz. Wszystkie te konta są **aktywne**: przybywa po Wn, ubywa po Ma.
+**Jak czytać:** wiersz to jedna postać pieniądza. Środkowa kolumna podaje konto, na którym ją księgujesz. Ostatnia kolumna podaje dokument, bez którego zapisu nie robisz. Wszystkie te konta są **aktywne**, bo to pieniądze firmy, tylko w różnych postaciach. Ich stan stoi po Wn, więc przybytek dopisujemy po Wn, a ubytek zapisujemy po Ma.
 
 <Ramka kind="zapamietaj" tytul="przypomnienie: strony konta">
-Konto aktywne (to, co firma ma) rośnie po stronie **Wn**, maleje po **Ma**. Konto pasywne (długi i kapitały) odwrotnie: rośnie po **Ma**, maleje po **Wn**. Koszt rośnie po **Wn**. Przychód rośnie po **Ma**. Każda operacja to ta sama kwota po Wn jednego konta i po Ma drugiego.
+Stan konta stoi po tej stronie, po której składnik stoi w bilansie. Przybytek dopisujemy po stronie stanu, ubytek po przeciwnej. Dlatego konto aktywne (to, co firma ma) rośnie po stronie **Wn**, maleje po **Ma**. Konto pasywne (długi i kapitały) odwrotnie: rośnie po **Ma**, maleje po **Wn**. Koszt zmniejsza zysk, a więc kapitał własny, dlatego rośnie po **Wn** — tam, gdzie maleją pasywa. Przychód zwiększa zysk, dlatego rośnie po **Ma**. Każda operacja to ta sama kwota po Wn jednego konta i po Ma drugiego.
 </Ramka>
 
 <Ramka kind="zapamietaj" tytul="skróty dokumentów">
@@ -124,7 +124,7 @@ W kasie leży gotówka trzech rodzajów: zapas na bieżące wydatki, gotówka po
 **Przepis:**
 
 1. Przy każdej pozycji raportu ustal: gotówka **wpłynęła** do kasy czy z niej **wyszła**.
-2. Wpłynęła → **Wn Kasa**. Wyszła → **Ma Kasa**.
+2. Wpłynęła → **Wn Kasa**: kasa to aktywo, a przybytek idzie na stronę stanu. Wyszła → **Ma Kasa**: ubytek idzie na stronę przeciwną.
 3. Zapytaj: skąd przyszła albo na co poszła? Odpowiedź wskazuje drugie konto.
 4. Drugie konto dostaje tę samą kwotę po przeciwnej stronie.
 </Ramka>
@@ -133,10 +133,10 @@ Konspekt z wykładu podaje dziewięć typowych księgowań na koncie „Kasa”:
 
 <Tab dane={SCHEMAT_KASA} />
 
-**Jak czytać:** wiersz to jedna operacja. Kolumna „Wn” podaje konto, na którym kwotę zapisujesz po lewej stronie. Kolumna „Ma” podaje konto, na którym tę samą kwotę zapisujesz po prawej. W operacjach 1, 4, 6 i 9 gotówki przybywa, więc Kasa stoi w kolumnie Wn. W pozostałych ubywa, więc Kasa stoi w kolumnie Ma. „Rozrachunki z pracownikami” to dług firmy wobec pracowników. W module o wyniku finansowym to samo konto nazywało się „Rozrachunki z tytułu wynagrodzeń”.
+**Jak czytać:** wiersz to jedna operacja. Kolumna „Wn” podaje konto, na którym kwotę zapisujesz po lewej stronie. Kolumna „Ma” podaje konto, na którym tę samą kwotę zapisujesz po prawej. W operacjach 1, 4, 6 i 9 gotówki przybywa, więc Kasa stoi w kolumnie Wn. W pozostałych ubywa, więc Kasa stoi w kolumnie Ma. Drugie konto zawsze stoi po przeciwnej stronie. W operacjach 3 i 5 jest nim dług: wobec pracowników albo wobec dostawców. Gotówka go spłaca, a ubytek pasywa idzie po Wn. W operacji 7 jest nim koszt, który rośnie po Wn, bo zmniejsza zysk. W operacji 6 to przychód ze sprzedaży, który rośnie po Ma, bo zwiększa zysk. „Rozrachunki z pracownikami” to dług firmy wobec pracowników. W module o wyniku finansowym to samo konto nazywało się „Rozrachunki z tytułu wynagrodzeń”.
 
 <Ramka kind="intuicja" tytul="niedobór i nadwyżka">
-Kasjer liczy gotówkę i wychodzi mu mniej, niż wynika z raportu. To **niedobór**. Gotówki naprawdę nie ma, więc zdejmujesz ją z Kasy (Ma). Nie wiadomo jeszcze, kto zawinił, więc kwota czeka na koncie „Rozliczenie niedoborów, szkód i nadwyżek” (Wn). **Nadwyżka** to sytuacja odwrotna: gotówki jest więcej, więc Kasa rośnie (Wn), a kwota czeka na tym samym koncie po stronie Ma.
+Kasjer liczy gotówkę i wychodzi mu mniej, niż wynika z raportu. To **niedobór**. Gotówki naprawdę nie ma, więc zdejmujesz ją z Kasy: to ubytek aktywa, Ma. Nie wiadomo jeszcze, kto zawinił, więc kwota czeka na koncie „Rozliczenie niedoborów, szkód i nadwyżek” po Wn. Stoi tam jak roszczenie do wyjaśnienia: ktoś może ją oddać albo stanie się stratą firmy. **Nadwyżka** to sytuacja odwrotna. Gotówki jest więcej, więc Kasa rośnie: przybytek aktywa, Wn. Kwota czeka na tym samym koncie po stronie Ma — jak coś, co firma może być komuś winna, dopóki nie wiadomo, skąd się wzięła.
 </Ramka>
 
 <Pytania tag="Sprawdź się" pytania={[
@@ -153,7 +153,7 @@ Bank prowadzi dla firmy kilka rodzajów rachunków: rachunek bieżący, rachunki
 **Przepis:**
 
 1. Przy każdej pozycji wyciągu ustal: pieniądze **wpłynęły** na rachunek czy z niego **wyszły**.
-2. Wpłynęły → **Wn Rachunek bieżący**. Wyszły → **Ma Rachunek bieżący**.
+2. Wpłynęły → **Wn Rachunek bieżący**: przybytek aktywa idzie na stronę stanu. Wyszły → **Ma Rachunek bieżący**: ubytek idzie na stronę przeciwną.
 3. Drugie konto wskazuje powód: odbiorca zapłacił, spłacono dostawcę, bank pobrał odsetki.
 4. Sprawdź, czy ta pozycja nie zamyka czegoś „w drodze”: gotówki wpłaconej wcześniej z kasy, czeku albo weksla oddanego do banku. Jeśli tak, drugim kontem są „Środki pieniężne w drodze”.
 </Ramka>
@@ -162,14 +162,14 @@ Siedem typowych księgowań na koncie „Rachunek bieżący” z konspektu:
 
 <Tab dane={SCHEMAT_RB} />
 
-**Jak czytać:** tak samo jak tabelę kasy. W operacjach 1, 4 i 5 pieniędzy na rachunku przybywa (Wn). W pozostałych ubywa (Ma). Odsetki od kredytu to koszt finansowy, a koszt rośnie po Wn.
+**Jak czytać:** tak samo jak tabelę kasy. W operacjach 1, 4 i 5 pieniędzy na rachunku przybywa (Wn). W pozostałych ubywa (Ma). Odsetki od kredytu to cena za korzystanie z pieniędzy banku, czyli koszt finansowy. Koszt zmniejsza zysk, więc rośnie po Wn. Spłata raty w operacji 6 to co innego: zmniejsza dług wobec banku, więc ubytek pasywa stoi po Wn konta „Kredyt”.
 
 ### Środki pieniężne w drodze
 
 W schemacie gotówka przechodzi z kasy na rachunek jednym zapisem. Tak jest, gdy wpłatę i wyciąg masz tego samego dnia. Często jest inaczej: raport kasowy mówi „wpłacono do banku 2 000”, a wyciąg bankowy z tą wpłatą przychodzi później. To dwa dokumenty, więc robisz dwa zapisy. Między nimi pieniądze czekają na koncie **„Środki pieniężne w drodze”**.
 
 <Konta konta={KD} operacje={OD}>
-na górze dwie operacje, pod nimi trzy konta. Operacja 1: gotówka wychodzi z kasy (Ma Kasa) i trafia „w drogę” (Wn). Operacja 2: bank potwierdza wpływ, więc pieniądze schodzą z „drogi” (Ma) i wchodzą na rachunek (Wn). Konto „Środki pieniężne w drodze” kończy z saldem zero.
+na górze dwie operacje, pod nimi trzy konta. „Środki pieniężne w drodze” to wciąż pieniądze firmy, więc konto jest aktywne: przybytek po Wn, ubytek po Ma. Operacja 1: gotówka wychodzi z kasy (Ma Kasa) i trafia „w drogę” (Wn). Operacja 2: bank potwierdza wpływ, więc pieniądze schodzą z „drogi” (Ma) i wchodzą na rachunek (Wn). Konto „Środki pieniężne w drodze” kończy z saldem zero.
 </Konta>
 
 <Ramka kind="kiedy" tytul="konto „Środki pieniężne w drodze”">
@@ -234,7 +234,13 @@ operacja 1 przenosi 2 000 zł z rachunku na akredytywę. Operacja 2 ma dwa zapis
 </Konta>
 
 <Dlaczego>
-Akredytywa to konto aktywne, bo to wciąż nasze pieniądze, tylko w innym miejscu. Dlatego otwarcie to Wn Akredytywa, Ma Rachunek bieżący.
+
+Akredytywa to konto aktywne, bo to wciąż nasze pieniądze, tylko w innym miejscu. Otwarcie: akredytywy przybywa, więc Wn Akredytywa. Rachunku ubywa, więc Ma Rachunek bieżący.
+
+Faktura: remont jest zrobiony, a zapłata dopiero przyjdzie, więc rośnie dług wobec wykonawcy. To pasywo, dlatego oba zapisy 2.1 i 2.2 stoją po Ma „Rozrachunków z dostawcami”. Po Wn stoi koszt remontu, bo zmniejsza zysk. Po Wn stoi też VAT: urząd odliczy go nam od podatku, więc zmniejsza to, co jesteśmy mu winni.
+
+Zapłata: dług wobec wykonawcy znika, więc Wn Rozrachunki z dostawcami. Akredytywy ubywa, więc Ma Akredytywa. Zamknięcie: reszta wraca na rachunek, więc Wn Rachunek bieżący, a akredytywa spada do zera po Ma.
+
 </Dlaczego>
 
 <Dlaczego typ="umowa">
@@ -289,7 +295,7 @@ Czeki dzieli się według trzech kryteriów:
   <KontoT konto={{ nazwa: 'Rachunek bieżący', typ: 'A' }} wpisy={[{ nr: 3, strona: 'wn', kwota: 3000 }]} zamkniete={false} />
 </Rzad>
 
-**Jak czytać:** czek na 3 000 zł wędruje od lewej do prawej. Operacja 1 zamienia należność na czek. Operacja 2 przenosi czek „w drogę”. Operacja 3 zamienia go na pieniądze na rachunku. Na każdym koncie po drodze kwota wchodzi po Wn i wychodzi po Ma.
+**Jak czytać:** czek na 3 000 zł wędruje od lewej do prawej. Operacja 1 zamienia należność na czek. Operacja 2 przenosi czek „w drogę”. Operacja 3 zamienia go na pieniądze na rachunku. Wszystkie cztery konta są aktywne: to te same 3 000 zł, które tylko zmieniają postać. Najpierw odbiorca jest nam je winien, potem mamy czek, potem pieniądze są w drodze, a na końcu leżą na rachunku. Dlatego na każdym koncie kwota wchodzi po Wn, jako przybytek, i wychodzi po Ma, jako ubytek.
 
 <a id="polecenie-weksle" class="k-anchor"></a>
 
@@ -384,11 +390,11 @@ Weksel obcy księgujesz zawsze w **sumie wekslowej**. Różnica między sumą a 
   [4, 'Indosowanie weksla, czyli przekazanie go na spłatę naszego zobowiązania', 'a) Rozrachunki z dostawcami (spłacony dług), b) Koszty finansowe (odsetki)', 'Weksle obce (suma wekslowa)'],
 ]} />
 
-**Jak czytać:** operacja 1 wprowadza weksel na konto. Operacje 2, 3 i 4 to trzy sposoby, w jakie weksel może z konta zejść. Przy każdym schodzi cała suma wekslowa. Litery a) i b) oznaczają dwie kwoty, które razem dają sumę wekslową. „Wykupienie” weksla to po prostu zapłata przez tego, kto go wystawił.
+**Jak czytać:** operacja 1 wprowadza weksel na konto. Operacje 2, 3 i 4 to trzy sposoby, w jakie weksel może z konta zejść. Przy każdym schodzi cała suma wekslowa. Litery a) i b) oznaczają dwie kwoty, które razem dają sumę wekslową. „Wykupienie” weksla to po prostu zapłata przez tego, kto go wystawił. Weksel obcy to coś, co mamy: prawo do pieniędzy. Dlatego wchodzi na konto po Wn, jak każdy przybytek aktywa, a schodzi po Ma.
 
 <Ramka kind="intuicja" tytul="kiedy dyskonto to przychód, a kiedy koszt">
-- **Czekamy na pieniądze → zarabiamy.** Przyjmujemy weksel zamiast gotówki. Odsetki są dla nas: **przychody finansowe**.
-- **Chcemy pieniędzy wcześniej → płacimy.** Oddajemy weksel bankowi przed terminem (dyskonto) albo płacimy nim dostawcy (indos). Dostajemy mniej, niż weksel jest wart. Różnica to **koszty finansowe**.
+- **Czekamy na pieniądze → zarabiamy.** Przyjmujemy weksel zamiast gotówki. Odsetki są dla nas: **przychody finansowe**. Przychód zwiększa zysk, więc stoi po **Ma**.
+- **Chcemy pieniędzy wcześniej → płacimy.** Oddajemy weksel bankowi przed terminem (dyskonto) albo płacimy nim dostawcy (indos). Dostajemy mniej, niż weksel jest wart. Różnica to **koszty finansowe**. Koszt zmniejsza zysk, więc stoi po **Wn**.
 </Ramka>
 
 <Ramka kind="zapamietaj" tytul="dyskonto w banku i indos">
@@ -404,10 +410,10 @@ Weksel obcy księgujesz zawsze w **sumie wekslowej**. Różnica między sumą a 
   [3, 'Odpisanie przedawnionych zobowiązań z tytułu weksli własnych', 'Zobowiązania wekslowe', 'Pozostałe przychody operacyjne'],
 ]} />
 
-**Jak czytać:** operacja 1 zamienia zwykły dług wobec dostawcy na dług wekslowy, wyższy o odsetki. Odsetki są naszym kosztem, bo to my płacimy za odroczenie. Operacja 2 spłaca weksel. Operacja 3 zdarza się rzadko: nikt nie zgłosił się po zapłatę w terminie przewidzianym prawem. Firma odpisuje wtedy dług z ksiąg, a odpisana kwota staje się przychodem.
+**Jak czytać:** operacja 1 zamienia zwykły dług wobec dostawcy na dług wekslowy, wyższy o odsetki. Dług wobec dostawcy znika, więc ubytek pasywa idzie po Wn. Dług wekslowy powstaje, więc przybytek pasywa idzie po Ma. Odsetki są naszym kosztem, bo to my płacimy za odroczenie. Koszt zmniejsza zysk, więc też stoi po Wn. Operacja 2 spłaca weksel. Operacja 3 zdarza się rzadko: nikt nie zgłosił się po zapłatę w terminie przewidzianym prawem. Firma odpisuje wtedy dług z ksiąg — ubytek pasywa, Wn. Odpisana kwota staje się przychodem: zwiększa zysk, więc stoi po Ma.
 
 <Pytania tag="Sprawdź się" pytania={[
-  { q: 'Odbiorca jest nam winien 9 910 zł. Płaci wekslem o sumie wekslowej 10 000 zł. Co trafia na konto „Przychody finansowe”?', opcje: ['10 000 zł po stronie Ma', '90 zł po stronie Ma', '90 zł po stronie Wn'], dobra: 1, dlaczego: 'Weksle obce: Wn 10 000 (suma wekslowa). Rozrachunki z odbiorcami: Ma 9 910 (spłacona należność). Różnica 10 000 − 9 910 = 90 to nasze odsetki. Przychód rośnie po Ma. Po Wn stałyby koszty.' },
+  { q: 'Odbiorca jest nam winien 9 910 zł. Płaci wekslem o sumie wekslowej 10 000 zł. Co trafia na konto „Przychody finansowe”?', opcje: ['10 000 zł po stronie Ma', '90 zł po stronie Ma', '90 zł po stronie Wn'], dobra: 1, dlaczego: 'Weksle obce: Wn 10 000 (suma wekslowa). Rozrachunki z odbiorcami: Ma 9 910 (spłacona należność). Różnica 10 000 − 9 910 = 90 to nasze odsetki za czekanie. Przychód zwiększa zysk, więc rośnie po Ma. Po Wn stałyby koszty.' },
 ]} />
 
 ## Przykład z konspektu: weksle i czeki obce
@@ -440,7 +446,7 @@ Stany wybranych kont na początek okresu: weksle obce 8 000, czeki obce 5 000, r
 - 1.2) Czek: **Wn Środki pieniężne w drodze 5 000, Ma Czeki obce 5 000**.
 
 <Dlaczego>
-Weksla i czeku nie mamy już w ręku, więc schodzą ze swoich kont (Ma). Bank jeszcze niczego nie przelał, więc nie wolno ruszać rachunku. Kwoty czekają na koncie „Środki pieniężne w drodze”.
+Weksla i czeku nie mamy już w ręku, więc schodzą ze swoich kont (Ma). Bank jeszcze niczego nie przelał, więc nie wolno ruszać rachunku. Kwoty czekają na koncie „Środki pieniężne w drodze”. To wciąż nasze pieniądze, tylko w drodze, więc przybytek tego aktywa idzie po Wn.
 </Dlaczego>
 
 <Dlaczego typ="umowa">
@@ -458,7 +464,7 @@ Schemat weksla obcego z wykładu pokazuje dyskonto w banku jednym zapisem, bez k
 - 2b) Bank zrealizował czek: **Wn Rachunek bieżący 5 000, Ma Środki pieniężne w drodze 5 000**.
 
 <Dlaczego>
-Weksel był wart 6 000, a bank wypłacił 5 850. Brakujące 150 to cena za to, że mamy pieniądze przed terminem. To koszt finansowy. Razem 5 850 + 150 = 6 000, więc cała kwota weksla schodzi z „drogi”.
+Weksel był wart 6 000, a bank wypłacił 5 850. Te pieniądze doszły na rachunek, więc Wn Rachunek bieżący. Brakujące 150 to cena za to, że mamy pieniądze przed terminem. To koszt finansowy. Koszt zmniejsza zysk, więc stoi po Wn. Razem 5 850 + 150 = 6 000, więc cała kwota weksla schodzi z „drogi” po Ma.
 </Dlaczego>
 
 <Dlaczego>
@@ -471,7 +477,7 @@ Przy czeku nie ma dyskonta. Bank wypłaca całe 5 000.
 - 3.2) Dyskonto: **Wn Koszty finansowe 200, Ma Weksle obce 200**.
 
 <Dlaczego>
-Oddajemy dostawcy weksel wart 2 000, a nasz dług maleje tylko o 1 800. Dostawca będzie czekał na pieniądze z weksla, więc 200 zł to jego odsetki, a nasz koszt. Z konta „Weksle obce” schodzi cała suma wekslowa: 1 800 + 200 = 2 000.
+Oddajemy dostawcy weksel wart 2 000, a nasz dług maleje tylko o 1 800. Dług to pasywo, więc ubytek idzie po Wn. Dostawca będzie czekał na pieniądze z weksla, więc 200 zł to jego odsetki, a nasz koszt — też po Wn. Z konta „Weksle obce” schodzi po Ma cała suma wekslowa: 1 800 + 200 = 2 000.
 </Dlaczego>
 </Krok>
 
@@ -529,7 +535,7 @@ Operacje:
 - 1.2) **Wn Rozrachunki z odbiorcami 230, Ma Rozrachunki z tytułu VAT 230**.
 
 <Dlaczego>
-Odbiorca jest nam winien całą fakturę, czyli 1 230. Naszym przychodem jest tylko wartość netto. VAT jesteśmy winni urzędowi, więc rośnie po Ma konta rozrachunków z tytułu VAT.
+Odbiorca jest nam winien całą fakturę, czyli 1 230. To należność, czyli aktywo, którego przybyło. Dlatego oba zapisy stoją po Wn „Rozrachunków z odbiorcami”. Naszym przychodem jest tylko wartość netto. Przychód zwiększa zysk, więc stoi po Ma. VAT jesteśmy winni urzędowi. To dług, więc rośnie po Ma konta rozrachunków z tytułu VAT.
 </Dlaczego>
 </Krok>
 
@@ -538,7 +544,7 @@ Odbiorca jest nam winien całą fakturę, czyli 1 230. Naszym przychodem jest ty
 - 2.2) **Wn Weksle obce 170, Ma Przychody finansowe 170**.
 
 <Dlaczego>
-Weksel wchodzi na konto w sumie wekslowej: 1 230 + 170 = 1 400. Należność 1 230 znika. Nadwyżka 170 to nasze odsetki za czekanie, czyli przychód finansowy.
+Weksel to teraz nasze aktywo, więc wchodzi po Wn w sumie wekslowej: 1 230 + 170 = 1 400. Należność 1 230 znika, bo odbiorca zapłacił wekslem. To ubytek aktywa, więc Ma. Nadwyżka 170 to nasze odsetki za czekanie, czyli przychód finansowy. Zwiększa zysk, więc stoi po Ma.
 </Dlaczego>
 
 <Dlaczego typ="inaczej" etykieta="Jedna kwota zamiast dwóch">
@@ -565,7 +571,7 @@ Gotówka wyszła z kasy do banku, ale wyciągu jeszcze nie ma. Stąd „w drodze
 </Dlaczego>
 
 <Dlaczego>
-Zakup 4b to wzorzec z ramki o VAT. Materiały kupiono „do bezpośredniego zużycia”, więc nie trafiają do magazynu, tylko od razu w koszty. Kosztem jest wartość netto, 500. Z kasy wyszło brutto, 615. Różnica 115 to VAT z zakupu, który zmniejsza nasz dług wobec urzędu.
+Zakup 4b to wzorzec z ramki o VAT. Materiały kupiono „do bezpośredniego zużycia”, więc nie trafiają do magazynu, tylko od razu w koszty. Kosztem jest wartość netto, 500. Koszt zmniejsza zysk, więc stoi po Wn. Z kasy wyszło brutto, 615, więc po Ma Kasy stoją razem 500 + 115. Różnica 115 to VAT z zakupu. Zmniejsza nasz dług wobec urzędu, więc też stoi po Wn.
 </Dlaczego>
 
 <Dlaczego typ="umowa">
@@ -581,7 +587,7 @@ Konto kosztu nazywamy tu „Zużycie materiałów i energii”. W schemacie kasy
 - 5d) **Wn Zobowiązania wekslowe 10 000, Ma Rachunek bieżący 10 000**.
 
 <Dlaczego>
-Pozycje 5a, 5b i 5c zamykają to, co było „w drodze”: gotówkę z kasy, czek i weksel. Za weksel wart 5 000 bank przelał 4 700, a 300 zatrzymał. Pozycja 5d to co innego: wykupujemy własny weksel, więc nasz dług wekslowy maleje (Wn), a pieniądze wychodzą z rachunku (Ma).
+Pozycje 5a, 5b i 5c zamykają to, co było „w drodze”: gotówkę z kasy, czek i weksel. Za weksel wart 5 000 bank przelał 4 700, a 300 zatrzymał. Te 300 to nasz koszt finansowy, więc stoi po Wn — tak jak dyskonto w poprzednim przykładzie. Pozycja 5d to co innego: wykupujemy własny weksel, więc nasz dług wekslowy maleje (Wn), a pieniądze wychodzą z rachunku (Ma).
 </Dlaczego>
 </Krok>
 
@@ -590,7 +596,7 @@ Pozycje 5a, 5b i 5c zamykają to, co było „w drodze”: gotówkę z kasy, cze
 - 6.2) **Wn Koszty finansowe 210, Ma Weksle obce 210**.
 
 <Dlaczego>
-Weksel z operacji 2 jest wart 1 400. Oddajemy go dostawcy i spłacamy nim dług 1 190. Różnica 1 400 − 1 190 = 210 to dyskonto dostawcy, czyli nasz koszt finansowy.
+Weksel z operacji 2 jest wart 1 400. Oddajemy go dostawcy i spłacamy nim dług 1 190. Dług wobec dostawcy maleje o 1 190, więc ubytek pasywa idzie po Wn. Różnica 1 400 − 1 190 = 210 to dyskonto dostawcy, czyli nasz koszt finansowy, też po Wn. Weksel schodzi z konta w całości, po Ma.
 </Dlaczego>
 </Krok>
 
@@ -617,7 +623,7 @@ Konta wynikowe: Przychody ze sprzedaży usług {zl(R3.zam.ps.saldo)}, Przychody 
 <Ramka kind="pulapka">
 - **Wyciąg księgowany prosto z kasy albo z weksli.** Jeśli wcześniej był zapis „w drogę”, wyciąg zdejmuje kwotę z „drogi”, nie drugi raz z kasy.
 - **Weksel w kwocie długu.** Na kontach „Weksle obce” i „Zobowiązania wekslowe” weksel stoi zawsze w sumie wekslowej.
-- **Dyskonto po złej stronie.** Przyjmujemy weksel → przychód finansowy (Ma). Oddajemy weksel wcześniej albo wystawiamy własny → koszt finansowy (Wn).
+- **Dyskonto po złej stronie.** Przyjmujemy weksel — odsetki należą się nam, więc to przychód finansowy. Zwiększa zysk, więc stoi po Ma. Oddajemy weksel wcześniej albo wystawiamy własny — odsetki płacimy my, więc to koszt finansowy. Zmniejsza zysk, więc stoi po Wn.
 - **VAT w przychodach albo w kosztach.** Przychodem i kosztem jest wartość netto.
 </Ramka>
 
@@ -652,8 +658,8 @@ Konta „Rozrachunki z odbiorcami” i „Rozrachunki z dostawcami” wracają p
 
 <Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
   { q: 'Odbiorca wpłacił należność do kasy, 900 zł.', opcje: ['Wn Kasa, Ma Rozrachunki z odbiorcami', 'Wn Rozrachunki z odbiorcami, Ma Kasa', 'Wn Kasa, Ma Przychody ze sprzedaży'], dobra: 0, dlaczego: 'Gotówka wpłynęła, więc Wn Kasa. Należność od odbiorcy maleje, a konto aktywne maleje po Ma. Przychód był wcześniej, przy sprzedaży. Teraz tylko należność zamienia się w gotówkę.' },
-  { q: 'Bank pobrał z rachunku odsetki od kredytu, 400 zł.', opcje: ['Wn Kredyt, Ma Rachunek bieżący', 'Wn Rachunek bieżący, Ma Koszty finansowe', 'Wn Koszty finansowe, Ma Rachunek bieżący'], dobra: 2, dlaczego: 'Pieniądze wyszły z rachunku, więc Ma Rachunek bieżący. Odsetki to koszt finansowy, a koszt rośnie po Wn. Wn Kredyt to spłata raty, czyli zmniejszenie długu, a nie odsetki.' },
-  { q: 'Raport kasowy: wpłacono gotówkę do banku, 1 500 zł. Wyciągu bankowego jeszcze nie ma.', opcje: ['Wn Rachunek bieżący, Ma Kasa', 'Wn Środki pieniężne w drodze, Ma Kasa', 'Wn Kasa, Ma Środki pieniężne w drodze'], dobra: 1, dlaczego: 'Gotówka wyszła z kasy (Ma Kasa). Bank jeszcze jej nie potwierdził, więc rachunku nie ruszamy. Kwota czeka na koncie „Środki pieniężne w drodze” po Wn. Trzecia odpowiedź ma odwrócone strony.' },
+  { q: 'Bank pobrał z rachunku odsetki od kredytu, 400 zł.', opcje: ['Wn Kredyt, Ma Rachunek bieżący', 'Wn Rachunek bieżący, Ma Koszty finansowe', 'Wn Koszty finansowe, Ma Rachunek bieżący'], dobra: 2, dlaczego: 'Pieniądze wyszły z rachunku, więc Ma Rachunek bieżący. Odsetki to koszt finansowy. Koszt zmniejsza zysk, więc rośnie po Wn. Wn Kredyt to spłata raty, czyli zmniejszenie długu, a nie odsetki.' },
+  { q: 'Raport kasowy: wpłacono gotówkę do banku, 1 500 zł. Wyciągu bankowego jeszcze nie ma.', opcje: ['Wn Rachunek bieżący, Ma Kasa', 'Wn Środki pieniężne w drodze, Ma Kasa', 'Wn Kasa, Ma Środki pieniężne w drodze'], dobra: 1, dlaczego: 'Gotówka wyszła z kasy (Ma Kasa). Bank jeszcze jej nie potwierdził, więc rachunku nie ruszamy. Kwota czeka na koncie „Środki pieniężne w drodze”. To nadal nasze pieniądze, czyli aktywo, którego przybyło — Wn. Trzecia odpowiedź ma odwrócone strony.' },
   { q: 'Przyszedł wyciąg bankowy z wpłatą z poprzedniego zadania, 1 500 zł.', opcje: ['Wn Rachunek bieżący, Ma Kasa', 'Wn Środki pieniężne w drodze, Ma Rachunek bieżący', 'Wn Rachunek bieżący, Ma Środki pieniężne w drodze'], dobra: 2, dlaczego: 'Pieniądze są już na rachunku (Wn) i schodzą z „drogi” (Ma). Z kasy zdjęliśmy je przy raporcie kasowym. Drugi zapis Ma Kasa zdjąłby je dwa razy.' },
   { q: 'Przy liczeniu kasy stwierdzono nadwyżkę gotówki, 30 zł.', opcje: ['Wn Kasa, Ma Rozliczenie niedoborów, szkód i nadwyżek', 'Wn Rozliczenie niedoborów, szkód i nadwyżek, Ma Kasa', 'Wn Kasa, Ma Przychody finansowe'], dobra: 0, dlaczego: 'Gotówki jest więcej, więc Wn Kasa. Skąd się wzięła, jeszcze nie wiadomo, więc kwota czeka na koncie rozliczenia po Ma. Druga odpowiedź to niedobór.' },
 ]} />
@@ -680,7 +686,7 @@ Konta „Rozrachunki z odbiorcami” i „Rozrachunki z dostawcami” wracają p
 <Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
   { q: 'Odbiorca zapłacił czekiem rozrachunkowym, 3 000 zł. Czek leży jeszcze u nas.', opcje: ['Wn Rachunek bieżący, Ma Rozrachunki z odbiorcami', 'Wn Czeki obce, Ma Rozrachunki z odbiorcami', 'Wn Środki pieniężne w drodze, Ma Czeki obce'], dobra: 1, dlaczego: 'Mamy czek, nie pieniądze na rachunku. Czek obcy to konto aktywne i rośnie po Wn. Należność maleje po Ma. Trzecia odpowiedź to następny krok: złożenie czeku w banku.' },
   { q: 'Odbiorca, który jest nam winien 2 450 zł, płaci wekslem o sumie wekslowej 2 500 zł. Ile wpisujesz po Wn konta „Weksle obce”?', opcje: ['2 450 zł', '50 zł', '2 500 zł'], dobra: 2, dlaczego: 'Weksel księgujesz zawsze w sumie wekslowej: 2 500. Po Ma: Rozrachunki z odbiorcami 2 450 i Przychody finansowe 50.' },
-  { q: 'Bank przyjął do dyskonta weksel obcy o sumie wekslowej 8 000 zł i przelał 7 800 zł. Gdzie trafia 200 zł?', opcje: ['Ma Przychody finansowe', 'Wn Koszty finansowe', 'Zostaje na koncie Weksle obce'], dobra: 1, dlaczego: 'Dostaliśmy pieniądze przed terminem i bank wziął za to 200 zł. To nasz koszt finansowy, po Wn. Z konta „Weksle obce” schodzi cała suma 8 000, nic na nim nie zostaje.' },
+  { q: 'Bank przyjął do dyskonta weksel obcy o sumie wekslowej 8 000 zł i przelał 7 800 zł. Gdzie trafia 200 zł?', opcje: ['Ma Przychody finansowe', 'Wn Koszty finansowe', 'Zostaje na koncie Weksle obce'], dobra: 1, dlaczego: 'Dostaliśmy pieniądze przed terminem i bank wziął za to 200 zł. To nasz koszt finansowy. Zmniejsza zysk, więc stoi po Wn. Z konta „Weksle obce” schodzi cała suma 8 000, nic na nim nie zostaje.' },
   { q: 'Indosujemy weksel obcy o sumie wekslowej 3 000 zł na dostawcę. Nasz dług wobec niego to 2 900 zł. Który zapis jest pełny?', opcje: ['Wn Rozrachunki z dostawcami 3 000, Ma Weksle obce 3 000', 'Wn Rozrachunki z dostawcami 2 900, Wn Koszty finansowe 100, Ma Weksle obce 3 000', 'Wn Rozrachunki z dostawcami 2 900, Ma Weksle obce 2 900'], dobra: 1, dlaczego: 'Dług maleje o 2 900, weksel schodzi w całości (3 000), a różnica 100 to dyskonto, czyli koszt finansowy. Pierwsza odpowiedź zmniejsza dług o więcej, niż wynosi. Trzecia zostawia na koncie weksla 100 zł, choć weksla już nie mamy.' },
   { q: 'Wystawiamy dostawcy weksel własny o sumie wekslowej 5 000 zł na spłatę długu 4 900 zł. Co stoi po stronie Ma?', opcje: ['Zobowiązania wekslowe 5 000', 'Weksle obce 5 000', 'Rozrachunki z dostawcami 4 900'], dobra: 0, dlaczego: 'Weksel własny to nasz dług, konto pasywne „Zobowiązania wekslowe”, rośnie po Ma o sumę wekslową. Po Wn: Rozrachunki z dostawcami 4 900 i Koszty finansowe 100. „Weksle obce” to weksle, które dostaliśmy od innych.' },
   { q: 'Która cecha odróżnia czek od weksla?', opcje: ['Czek można indosować, weksla nie', 'Przy przekazaniu czeku nie stosuje się dyskonta', 'Czek jest zobowiązaniem do zapłaty w przyszłości'], dobra: 1, dlaczego: 'Czek jest płatny za okazaniem, więc nie ma za co naliczać odsetek. Indosować można i czek, i weksel. Zobowiązaniem do zapłaty w ustalonym terminie jest weksel.' },
