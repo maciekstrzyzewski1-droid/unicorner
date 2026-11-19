@@ -943,8 +943,28 @@ function otworz(w) {
         <div class="jz-wynik"><b>🔥 ${seriaTeraz()}</b><span>dni z rzędu</span></div>
       </div>
       ${zle.size ? `<p class="jz-podp">Ćwiczenia z błędami (${zle.size}) trafiły do „Powtórz błędy”.</p>` : ''}
-      ${nowe.length ? `<div class="jz-nowe-odz"><h3>Nowy kamień milowy!</h3>${nowe.map((o) => `<div class="jz-odz-mini"><span>${o.ikona}</span><b>${o.nazwa}</b><small>${o.opis}</small></div>`).join('')}</div>` : ''}`;
+      ${nowe.length ? `<div class="jz-nowe-odz" data-nowe-odz></div>` : ''}`;
     body.append(k);
+    if (nowe.length) {
+      const wrap = $('[data-nowe-odz]', k);
+      if (wrap) {
+        const nag = document.createElement('h3');
+        nag.textContent = 'Nowy kamień milowy!';
+        wrap.append(nag);
+        nowe.forEach((o) => {
+          const mini = document.createElement('div');
+          mini.className = 'jz-odz-mini';
+          const ico = document.createElement('span');
+          ico.textContent = o.ikona == null ? '' : String(o.ikona);
+          const naz = document.createElement('b');
+          naz.textContent = o.nazwa == null ? '' : String(o.nazwa);
+          const op = document.createElement('small');
+          op.textContent = o.opis == null ? '' : String(o.opis);
+          mini.append(ico, naz, op);
+          wrap.append(mini);
+        });
+      }
+    }
     if (ruch()) k.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
     const akcje = $('.jz-l-akcje', box);
     akcje.innerHTML = '';
