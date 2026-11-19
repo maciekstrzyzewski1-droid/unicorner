@@ -128,7 +128,10 @@ function klatka(t) {
   if (lenis) lenis.raf(t);
   const dt = ogr(t - ostT || 16.7, 1, 64); ostT = t;
   const y = scrollY, dy = y - ostY; ostY = y;
-  pred += (ogr((Math.abs(dy) * (16.7 / dt)) / (vh * 0.03), 0, 1.6) - pred) * 0.1;
+  // vh bywa 0 (okno bez wysokości: ukryty panel, karta w trakcie zmiany rozmiaru; pomiar() nadrabia to dopiero
+  // po 150 ms). Wtedy 0/0 = NaN, a wygładzanie trzymałoby NaN w `pred` na zawsze. Bez wysokości okna prędkość = 0.
+  const predTeraz = vh > 0 ? ogr((Math.abs(dy) * (16.7 / dt)) / (vh * 0.03), 0, 1.6) : 0;
+  pred += (predTeraz - pred) * 0.1;
 
   // --- odczyty ---
   const heroWidac = widac.get(heroWrap);
@@ -176,7 +179,8 @@ function klatka(t) {
     if (w !== p.w) { p.w = w; if (w) p.anim.play(); else p.anim.pause(); }
     if (!w) continue;
     const tempo = Math.round((1 + pred * 18) * 2) / 2;   // skok co 0,5, żeby nie wysyłać zmiany co klatkę
-    if (tempo !== p.tempo) { p.tempo = tempo; if (p.anim.updatePlaybackRate) p.anim.updatePlaybackRate(tempo); else p.anim.playbackRate = tempo; }
+    // nieskończone tempo rzuca wyjątek w updatePlaybackRate, a wyjątek przerywa całą pętlę (nie dochodzi do requestAnimationFrame na końcu)
+    if (Number.isFinite(tempo) && tempo !== p.tempo) { p.tempo = tempo; if (p.anim.updatePlaybackRate) p.anim.updatePlaybackRate(tempo); else p.anim.playbackRate = tempo; }
   }
 
   // światło kursora na siatce tła
