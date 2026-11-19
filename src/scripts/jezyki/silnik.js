@@ -8,7 +8,7 @@ const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const h = (tag, cls, content, allowHtml = false) => {
   const e = document.createElement(tag);
-  if (cls) e.className = cls;
+const bezTagow = (s) => { const t = document.createElement('template'); t.innerHTML = String(s); return t.content.textContent || ''; };
   if (content != null) {
     if (allowHtml) e.innerHTML = content;
     else e.textContent = String(content);
