@@ -4,7 +4,13 @@ import { JEZYKI } from '../../src/data/jezyki/index.js';
 
 const slug = process.argv[2] || 'hiszpanski';
 const { KURS } = JEZYKI[slug];
-const bt = (s) => String(s ?? '').replace(/[<>]/g, '').replace(/\s+/g, ' ').trim();
+// zwykły tekst do czytelnego zrzutu (konsola, nigdy HTML): znaczniki usuwane w pętli aż do skutku;
+// pozostałe pojedyncze < i > (np. „starszy (>)”) zamieniamy na ‹ ›, żeby nie zgubić sensu
+const bt = (s) => {
+  let t = String(s ?? ''), poprzedni;
+  do { poprzedni = t; t = t.replace(/<[^<>]*>/g, ''); } while (t !== poprzedni);
+  return t.replace(/</g, '‹').replace(/>/g, '›').replace(/\s+/g, ' ').trim();
+};
 const out = [];
 const p = (s = '') => out.push(s);
 const awTxt = (a) => a ? ` [POSTAĆ: ${a.imie}, ${a.plec === 'k' ? 'kobieta' : 'mężczyzna'}, ${a.wzrost}, ${a.wiek}, ${a.budowa}, pelo ${a.pelo}, ojos ${a.ojos}${a.gafas ? ', gafas' : ''}${a.barba ? ', barba' : ''}${a.bigote ? ', bigote' : ''}]` : '';
