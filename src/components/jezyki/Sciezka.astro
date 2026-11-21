@@ -8,13 +8,11 @@ interface Props { kurs: string }
 const { kurs: slug } = Astro.props;
 const { KURS, ODZNAKI } = JEZYKI[slug];
 const { lekcje, cwiczenia, jednostki } = statystyki(KURS);
-// JSON w <script type="application/json">: „<” zamieniamy, żeby żaden tekst nie zamknął znacznika
-const dane = JSON.stringify({ kurs: KURS, odznaki: ODZNAKI }).replace(/</g, '\\u003c');
 // zygzak węzłów jak na ścieżce w aplikacji (przesunięcie w jednostkach --x)
 const ZYG = [0, 1, 1.5, 1, 0, -1, -1.5, -1];
 const ileKol = KURS.kolokwium ? KURS.sekcje.flatMap((s) => s.jednostki).filter((u) => KURS.kolokwium.jednostki.includes(u.id)).reduce((a, u) => a + u.lekcje.length, 0) : 0;
 ---
-<div class="jz-app">
+<div class="jz-app" data-kurs={slug}>
   <header class="jz-hero">
     <span class="wz-eyebrow"><span class="dot"></span>Języki obce · {KURS.flaga} {KURS.nazwa}</span>
     <h1>{KURS.h1} <span class="grad">{KURS.h1Grad}</span></h1>
@@ -140,11 +138,13 @@ const ileKol = KURS.kolokwium ? KURS.sekcje.flatMap((s) => s.jednostki).filter((
       </section>
     </div>
   </div>
-
-  <script type="application/json" id="jz-dane" set:html={dane}></script>
 </div>
 
 <script>
   import { start } from '../../scripts/jezyki/silnik.js';
-  start();
+  // dane kursu z modułu w repo (pakowane razem ze skryptem), a nie z tekstu strony; data-kurs wybiera tylko klucz
+  import { JEZYKI } from '../../data/jezyki/index.js';
+  const app = document.querySelector('.jz-app[data-kurs]');
+  const wpis = app && Object.entries(JEZYKI).find(([slug]) => slug === app.dataset.kurs);
+  if (wpis) start({ kurs: wpis[1].KURS, odznaki: wpis[1].ODZNAKI });
 </script>

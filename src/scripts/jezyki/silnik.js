@@ -1,28 +1,19 @@
 // Silnik ścieżki językowej (hiszpański; angielski użyje tego samego kodu z innym plikiem danych).
-// Dane: <script type="application/json" id="jz-dane"> z obiektem { kurs, odznaki } (src/data/jezyki/*.js).
+// Dane: start({ kurs, odznaki }) z modułu src/data/jezyki/*.js, importowanego w <script> komponentu Sciezka.astro.
 // Ścieżka jest wyrenderowana statycznie (src/components/jezyki/Sciezka.astro); tu tylko ożywiamy stany
 // węzłów, prowadzimy lekcje i zapisujemy postęp w localStorage (bez logowania; prywatne okno = brak zapisu).
 import { awatar } from './awatar.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const bezTagow = (s) => {
-  let out = String(s);
-  let prev;
-  do {
-    prev = out;
-    out = out.replace(/<[^>]+>/g, '');
-  } while (out !== prev);
-  return out;
-};
-const h = (tag, cls, content, allowHtml = false) => {
-  const e = document.createElement(tag);
-  if (content != null) {
-    e.textContent = String(content);
-  }
-  return e;
-};
+const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
 const tasuj = (a) => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+/** Zwykły tekst (do syntezy mowy i aria-label — nigdy do HTML): bez znaczników, powtarzane aż do skutku, potem bez pojedynczych < i >. */
+const bezTagow = (s) => {
+  let t = String(s), poprzedni;
+  do { poprzedni = t; t = t.replace(/<[^<>]*>/g, ''); } while (t !== poprzedni);
+  return t.replace(/[<>]/g, '');
+};
 const ruch = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 // ── porównywanie odpowiedzi ──
@@ -270,7 +261,7 @@ function modal(tresc, przyciski = []) {
   const m = h('div', 'jz-modal');
   m.setAttribute('role', 'dialog');
   m.setAttribute('aria-modal', 'true');
-  if (typeof tresc === 'string') m.textContent = tresc; else m.append(tresc);
+  if (typeof tresc === 'string') m.innerHTML = tresc; else m.append(tresc);
   const nag = $('h3', m);
   if (nag) { nag.id = nag.id || `jz-m-${Math.random().toString(36).slice(2, 8)}`; m.setAttribute('aria-labelledby', nag.id); }
   const powrot = document.activeElement;
@@ -602,13 +593,7 @@ const R = {
           p.readOnly = true;
           const w = porownaj(p.value, [c.f[i]]);
           p.classList.add(w ? 'is-ok' : 'is-bad');
-          if (!w) {
-            ok = false;
-            const pop = h('span', 'jz-odm-pop');
-            pop.lang = 'es';
-            pop.textContent = c.f[i];
-            p.insertAdjacentElement('afterend', pop);
-          }
+          if (!w) { ok = false; const pop = h('span', 'jz-odm-pop'); pop.lang = KURS.jezyk; pop.textContent = c.f[i]; p.after(pop); }
           if (w === 'akcent') akcent = true;
         });
         return { ok, akcent, poprawnie: c.f.join(', '), mowic: c.f.join(', ') };
@@ -806,13 +791,7 @@ function otworz(w) {
   const pokazHaslo = () => {
     if (!boss) return;
     haslo.hidden = false;
-    haslo.textContent = '';
-    [...w.l.haslo].forEach((lit, i) => {
-      const span = document.createElement('span');
-      if (retoWynik[i].koniec) span.className = retoWynik[i].ok ? 'is-ok' : 'is-meh';
-      span.textContent = retoWynik[i].koniec ? lit : '•';
-      haslo.appendChild(span);
-    });
+    haslo.innerHTML = [...w.l.haslo].map((lit, i) => `<span class="${retoWynik[i].koniec ? (retoWynik[i].ok ? 'is-ok' : 'is-meh') : ''}">${retoWynik[i].koniec ? lit : '•'}</span>`).join('');
   };
 
   function ustawPrzycisk(tekst, tryb) {
@@ -834,13 +813,8 @@ function otworz(w) {
     if (boss && (poz === 0 || CW.get(kolejka[poz - 1].k).reto !== c.reto)) {
       karta.append(h('div', 'jz-reto', `Reto ${c.reto + 1}/${w.l.retos.length} · ${w.l.retos[c.reto].nazwa}`));
     }
-    const typ = h('div', 'jz-typ', ETYKIETA[c.t] || '');
-    if (wpis.proba) {
-      typ.append(document.createTextNode(' · '));
-      typ.append(h('span', 'jz-znow', 'jeszcze raz'));
-    }
-    karta.append(typ);
-    if (c.aw) karta.append(h('div', 'jz-aw-box', awatar(c.aw), true));
+    karta.append(h('div', 'jz-typ', `${ETYKIETA[c.t] || ''}${wpis.proba ? ' · <span class="jz-znow">jeszcze raz</span>' : ''}`));
+    if (c.aw) karta.append(h('div', 'jz-aw-box', awatar(c.aw)));
     if (c.kol) { const s = h('div', 'jz-swatch'); s.style.background = c.kol; s.setAttribute('aria-hidden', 'true'); karta.append(s); }
     const q = h('div', 'jz-q', c.q || '');
     karta.append(q);
@@ -962,28 +936,8 @@ function otworz(w) {
         <div class="jz-wynik"><b>🔥 ${seriaTeraz()}</b><span>dni z rzędu</span></div>
       </div>
       ${zle.size ? `<p class="jz-podp">Ćwiczenia z błędami (${zle.size}) trafiły do „Powtórz błędy”.</p>` : ''}
-      ${nowe.length ? `<div class="jz-nowe-odz" data-nowe-odz></div>` : ''}`;
+      ${nowe.length ? `<div class="jz-nowe-odz"><h3>Nowy kamień milowy!</h3>${nowe.map((o) => `<div class="jz-odz-mini"><span>${o.ikona}</span><b>${o.nazwa}</b><small>${o.opis}</small></div>`).join('')}</div>` : ''}`;
     body.append(k);
-    if (nowe.length) {
-      const wrap = $('[data-nowe-odz]', k);
-      if (wrap) {
-        const nag = document.createElement('h3');
-        nag.textContent = 'Nowy kamień milowy!';
-        wrap.append(nag);
-        nowe.forEach((o) => {
-          const mini = document.createElement('div');
-          mini.className = 'jz-odz-mini';
-          const ico = document.createElement('span');
-          ico.textContent = o.ikona == null ? '' : String(o.ikona);
-          const naz = document.createElement('b');
-          naz.textContent = o.nazwa == null ? '' : String(o.nazwa);
-          const op = document.createElement('small');
-          op.textContent = o.opis == null ? '' : String(o.opis);
-          mini.append(ico, naz, op);
-          wrap.append(mini);
-        });
-      }
-    }
     if (ruch()) k.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
     const akcje = $('.jz-l-akcje', box);
     akcje.innerHTML = '';
@@ -1057,12 +1011,15 @@ function otworz(w) {
 }
 
 // ── start ──
-export function start() {
-  const daneEl = document.getElementById('jz-dane');
-  if (!daneEl) return;
-  const D = JSON.parse(daneEl.textContent);
-  KURS = D.kurs;
-  ODZNAKI = D.odznaki || [];
+/**
+ * Dane kursu przychodzą jako moduł JS pakowany razem ze skryptem (src/data/jezyki/*), nie jako tekst
+ * z HTML-a strony — treść lekcji (z <b>, tabelami) wstawiamy przez innerHTML, więc jej źródłem ma być
+ * zawsze kod z repo, nigdy tekst odczytany z dokumentu.
+ */
+export function start({ kurs, odznaki } = {}) {
+  if (!kurs || !document.querySelector('[data-wezel]')) return;
+  KURS = kurs;
+  ODZNAKI = odznaki || [];
   KLUCZ = `uc-jezyki-v1:${KURS.slug}`;
   zbuduj(KURS);
   wczytaj();
@@ -1074,14 +1031,13 @@ export function start() {
       const w = LEK.get(el.dataset.wezel);
       if (!w) return;
       if (dostepny(w)) return otworz(w);
-      const tresc = document.createElement('div');
-      const nag = document.createElement('h3');
+      const tresc = h('div');
+      const nag = h('h3');
       nag.textContent = `🔒 ${w.tytul}`;
-      const p = document.createElement('p');
-      p.textContent = 'Ta lekcja jest dalej na ścieżce. Najlepiej przejść po kolei, bo każda lekcja korzysta z poprzednich. Kolokwium za pasem? Możesz otworzyć ją od razu.';
-      tresc.append(nag, p);
-      modal(tresc,
-        [['Otwórz mimo to', 'jz-btn-glow', () => otworz(w)], ['Wracam do ścieżki', 'jz-btn-ghost']]);
+      const opis = h('p');
+      opis.textContent = 'Ta lekcja jest dalej na ścieżce. Najlepiej przejść po kolei, bo każda lekcja korzysta z poprzednich. Kolokwium za pasem? Możesz otworzyć ją od razu.';
+      tresc.append(nag, opis);
+      modal(tresc, [['Otwórz mimo to', 'jz-btn-glow', () => otworz(w)], ['Wracam do ścieżki', 'jz-btn-ghost']]);
     });
   }
   for (const b of $$('[data-odblok]')) {
@@ -1096,7 +1052,7 @@ export function start() {
       const src = document.getElementById(`sciaga-${b.dataset.sciaga}`);
       if (!src) return;
       const k = h('div', 'jz-sciaga-m');
-      k.innerHTML = src.innerHTML;
+      k.append(...src.cloneNode(true).childNodes);   // kopia węzłów, bez ponownego parsowania HTML
       modal(k);
     });
   }

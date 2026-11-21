@@ -1,5 +1,5 @@
 // Wspólne pomocniki do pisania kursów językowych (hiszpański, później angielski).
-// Kurs to zwykły obiekt JS liczony przy buildzie; strona dostaje go jako JSON, a silnik
+// Kurs to zwykły obiekt JS; Sciezka.astro importuje go jako moduł i przekazuje do start({ kurs, odznaki }), a silnik
 // (src/scripts/jezyki/silnik.js) losuje z puli każdej lekcji kilka ćwiczeń przy każdym podejściu.
 //
 // Typy ćwiczeń (pole `t`):
