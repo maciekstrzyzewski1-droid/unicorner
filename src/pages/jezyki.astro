@@ -1,0 +1,80 @@
+---
+// Hub języków obcych: lista kursów-ścieżek. Nowy język = karta tutaj + strona + plik danych (src/data/jezyki/).
+import Base from '../layouts/Base.astro';
+import '../styles/wiedza.css';
+import '../styles/jezyki.css';
+import Bar from '../components/wiedza/Bar.astro';
+import { JEZYKI, statystyki } from '../data/jezyki/index.js';
+
+const title = 'Języki obce — hiszpański i angielski krok po kroku · Unicorner';
+const description = 'Nauka języków pod wymagania UEP: lekcje w kolejności zajęć, słownictwo i gramatyka z kolokwiów, XP, seria dni i kamienie milowe. Hiszpański już jest, angielski w przygotowaniu.';
+const url = 'https://unicorner.pl/jezyki.html';
+const es = statystyki(JEZYKI.hiszpanski.KURS);
+
+const KURSY = [
+  { flaga: '🇪🇸', nazwa: 'Hiszpański', sub: 'w biznesie · A1', file: 'hiszpanski.html', live: true,
+    desc: 'Od „¡Hola!” po zaimki dzierżawcze i cele zawodowe z querer. Wszystko z zakresu kolokwium 1 plus próbne kolokwium jako escape room.',
+    tags: [`${es.lekcje} lekcji`, `${es.cwiczenia} ćwiczeń`, 'escape room'] },
+  { flaga: '🇬🇧', nazwa: 'Angielski', sub: 'pod wymagania UEP', file: 'kontakt.html', live: false,
+    desc: 'Ta sama ścieżka: słownictwo i tematy z sylabusa w kolejności zajęć. W przygotowaniu.',
+    tags: ['wkrótce'] },
+];
+---
+<Base title={title} description={description}>
+  <Fragment slot="head">
+    <link rel="canonical" href={url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content="https://unicorner.pl/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </Fragment>
+
+  <Bar crumbs={[{ label: 'Języki obce' }]} />
+
+  <main id="main" class="jz-main">
+    <header class="jz-hero">
+      <span class="wz-eyebrow"><span class="dot"></span>Języki obce</span>
+      <h1>Języki <span class="grad">po kolei, nie losowo</span></h1>
+      <p class="jz-lede">Aplikacje do nauki zaczynają od przypadkowych tematów. Tutaj ścieżka idzie dokładnie w kolejności zajęć: najpierw to, co było na pierwszych zajęciach, a na końcu sekcji próbne kolokwium. Krótkie lekcje, wyjaśnienie przy każdej odpowiedzi, seria dni i kamienie milowe.</p>
+    </header>
+
+    <ul class="jz-hub">
+      {KURSY.map((k) => (
+        <li class:list={['jz-hub-k', { 'is-soon': !k.live }]}>
+          <a href={k.file}>
+            <span class="jz-hub-flaga" aria-hidden="true">{k.flaga}</span>
+            <span class="jz-hub-t">
+              <b>{k.nazwa} <small>{k.sub}</small></b>
+              <span>{k.desc}</span>
+              <span class="jz-hub-tagi">{k.tags.map((t) => <em>{t}</em>)}</span>
+            </span>
+            <span class="jz-hub-go" aria-hidden="true">{k.live ? '→' : '✉'}</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <section class="jz-jak">
+      <h2>Jak to działa</h2>
+      <ol>
+        <li><b>Ścieżka w kolejności zajęć.</b> Każda jednostka to jeden blok materiału z zajęć. Przed pierwszym podejściem do lekcji z nowym materiałem pokazuje się karta „Nowe”. Ściąga zbiera wszystkie karty jednostki.</li>
+        <li><b>10 typów zadań.</b> Wybór jednej odpowiedzi, zaznaczanie kilku, wpisywanie (z paskiem hiszpańskich znaków), układanie zdań, pary, sortowanie, odmiana, luki w tekście, słuchanie i własna wypowiedź ze wzorem. Opis osoby z obrazka ćwiczy się w kilku z nich.</li>
+        <li><b>Wyjaśnienie przy każdej odpowiedzi.</b> Także przy dobrej. Błędy wracają na końcu lekcji i trafiają do „Powtórz błędy”.</li>
+        <li><b>Postęp, który widać.</b> XP, seria dni, cel dzienny, gwiazdki, kamienie milowe i licznik gotowości na kolokwium.</li>
+      </ol>
+    </section>
+
+    <p class="k-bug jz-bug">Materiały to nasze własne opracowanie — nie jesteśmy powiązani z uczelnią ani prowadzącymi. Brakuje Twojego języka albo grupy? <a href="/kontakt.html">Napisz</a>.</p>
+  </main>
+
+  <footer class="wz-foot">
+    <div class="wz-wrap">
+      <span>unicorner · języki obce</span>
+      <nav aria-label="Stopka"><a href="/index.html">Strona główna</a><a href="/kontakt.html">Kontakt</a></nav>
+    </div>
+  </footer>
+</Base>

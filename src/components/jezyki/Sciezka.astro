@@ -1,0 +1,150 @@
+---
+// Ścieżka kursu językowego w stylu aplikacji do nauki: sekcje → jednostki → lekcje (węzły) → boss.
+// Cała struktura i ściągi są w HTML-u (działa bez JS i jest indeksowana), a src/scripts/jezyki/silnik.js
+// ożywia stany węzłów, prowadzi lekcje i zapisuje postęp w localStorage.
+import { JEZYKI, statystyki } from '../../data/jezyki/index.js';
+
+interface Props { kurs: string }
+const { kurs: slug } = Astro.props;
+const { KURS, ODZNAKI } = JEZYKI[slug];
+const { lekcje, cwiczenia, jednostki } = statystyki(KURS);
+// JSON w <script type="application/json">: „<” zamieniamy, żeby żaden tekst nie zamknął znacznika
+const dane = JSON.stringify({ kurs: KURS, odznaki: ODZNAKI }).replace(/</g, '\\u003c');
+// zygzak węzłów jak na ścieżce w aplikacji (przesunięcie w jednostkach --x)
+const ZYG = [0, 1, 1.5, 1, 0, -1, -1.5, -1];
+const ileKol = KURS.kolokwium ? KURS.sekcje.flatMap((s) => s.jednostki).filter((u) => KURS.kolokwium.jednostki.includes(u.id)).reduce((a, u) => a + u.lekcje.length, 0) : 0;
+---
+<div class="jz-app">
+  <header class="jz-hero">
+    <span class="wz-eyebrow"><span class="dot"></span>Języki obce · {KURS.flaga} {KURS.nazwa}</span>
+    <h1>{KURS.h1} <span class="grad">{KURS.h1Grad}</span></h1>
+    <p class="jz-lede">{KURS.opis}</p>
+    <ul class="jz-fakty">
+      <li><b>{jednostki}</b> jednostek</li>
+      <li><b>{lekcje}</b> lekcji</li>
+      <li><b>{cwiczenia}</b> ćwiczeń</li>
+      <li><b>10</b> typów zadań</li>
+    </ul>
+  </header>
+
+  <div class="jz-uklad">
+    <aside class="jz-panel" aria-label="Twój postęp">
+      <div class="jz-hud">
+        <div class="jz-hud-k" title="Dni nauki z rzędu"><span class="jz-hud-ik">🔥</span><b data-hud="seria">0</b><small>dni z rzędu</small></div>
+        <div class="jz-hud-k" title="Punkty doświadczenia"><span class="jz-hud-ik">⚡</span><b data-hud="xp">0</b><small>XP</small></div>
+        <div class="jz-hud-k" title="Kamienie milowe"><span class="jz-hud-ik">🏅</span><b data-hud="odznaki">0/{ODZNAKI.length}</b><small>odznaki</small></div>
+      </div>
+      <div class="jz-cel">
+        <div class="jz-cel-g"><span>🎯 Cel na dziś</span><b data-hud="dzis">0/30</b></div>
+        <div class="jz-pasek"><i data-hud="dzis-pasek"></i></div>
+      </div>
+      {KURS.kolokwium && (
+        <div class="jz-cel jz-gotowosc">
+          <div class="jz-cel-g"><span>🎓 Gotowość: {KURS.kolokwium.nazwa}</span><b data-hud="gotowosc">0%</b></div>
+          <div class="jz-pasek jz-pasek-zloty"><i data-hud="gotowosc-pasek"></i></div>
+          <small>Średnia z {ileKol} lekcji z zakresu kolokwium i escape roomu.</small>
+        </div>
+      )}
+      <div class="jz-panel-akcje">
+        <button type="button" class="jz-btn jz-btn-glow" data-akcja="dalej">▶ Ucz się dalej</button>
+        <button type="button" class="jz-btn" data-akcja="bledy" disabled>🩹 Powtórz błędy <span class="jz-ile">0</span></button>
+      </div>
+      <noscript><p class="jz-podp">Lekcje i zapis postępu wymagają JavaScriptu. Ściągi z każdej jednostki działają bez niego.</p></noscript>
+    </aside>
+
+    <div class="jz-sciezka">
+      {KURS.sekcje.map((s, si) => (
+        <section class="jz-sekcja" data-sekcja={s.id} id={s.id}>
+          <div class="jz-s-h">
+            <div>
+              <h2>{s.nazwa}</h2>
+              <p>{s.pl}</p>
+            </div>
+            {si > 0 && <button type="button" class="jz-btn jz-btn-ghost jz-btn-maly" data-odblok={s.id}>Zacznij tutaj</button>}
+          </div>
+          {s.jednostki.map((u, ui) => (
+            <div class="jz-jednostka" data-jednostka={u.id}>
+              <div class="jz-u-karta">
+                <span class="jz-u-ik" aria-hidden="true">{u.ikona}</span>
+                <div class="jz-u-t">
+                  <span class="jz-u-nr">Jednostka {KURS.sekcje.slice(0, si).reduce((a, x) => a + x.jednostki.length, 0) + ui + 1}{u.kolokwium && <em class="jz-tag">na kolokwium</em>}</span>
+                  <h3 lang="es">{u.tytul}</h3>
+                  <p>{u.pl}</p>
+                  <div class="jz-u-dol">
+                    <div class="jz-pasek jz-u-pasek"><i></i></div>
+                    <span class="jz-u-licz">0/{u.lekcje.length}</span>
+                  </div>
+                </div>
+                <button type="button" class="jz-btn jz-btn-maly jz-u-sc" data-sciaga={u.id} aria-label={`Ściąga: ${u.tytul}`}>📖 Ściąga</button>
+              </div>
+              <details class="jz-sciaga-src" id={`sciaga-${u.id}`}>
+                <summary>📖 Ściąga: {u.tytul}</summary>
+                <h3 class="jz-sc-h">📖 Ściąga · <span lang="es">{u.tytul}</span></h3>
+                {u.lekcje.flatMap((l) => l.nowe || []).map((n) => (
+                  <div class="jz-sc-k"><h4>{n.h}</h4><div class="jz-nowe-t" set:html={n.html} /></div>
+                ))}
+                <p class="jz-podp">Źródło: {u.zrodlo}.</p>
+              </details>
+              <ol class="jz-wezly">
+                {u.lekcje.map((l, i) => (
+                  <li style={`--x:${ZYG[(i + ui * 3) % ZYG.length]}`}>
+                    <button type="button" class="jz-wezel" data-wezel={l.id}>
+                      <span class="jz-w-krag"><span class="jz-w-nr">{i + 1}</span><span class="jz-w-ok" aria-hidden="true">✓</span><span class="jz-w-klodka" aria-hidden="true">🔒</span></span>
+                      <span class="jz-w-t">{l.tytul}</span>
+                      <span class="jz-gw" aria-hidden="true"></span>
+                    </button>
+                  </li>
+                ))}
+                <li class="jz-meta" data-meta={u.id} style={`--x:${ZYG[(u.lekcje.length + ui * 3) % ZYG.length]}`}>
+                  <span class="jz-meta-ik" aria-hidden="true">🏆</span><span>Kamień milowy: {u.tytul}</span>
+                </li>
+              </ol>
+            </div>
+          ))}
+          {s.powtorka && (
+            <div class="jz-specjalny">
+              <button type="button" class="jz-wezel jz-wezel-rep" data-wezel={s.powtorka.id}>
+                <span class="jz-w-krag"><span class="jz-w-nr">↻</span><span class="jz-w-ok" aria-hidden="true">✓</span><span class="jz-w-klodka" aria-hidden="true">🔒</span></span>
+                <span class="jz-w-t">{s.powtorka.tytul}<small>losowe ćwiczenia z całej sekcji · nie blokuje dalszej drogi</small></span>
+                <span class="jz-gw" aria-hidden="true"></span>
+              </button>
+            </div>
+          )}
+          {s.boss && (
+            <div class="jz-specjalny">
+              <button type="button" class="jz-wezel jz-boss" data-wezel={s.boss.id}>
+                <span class="jz-w-krag"><span class="jz-w-nr">🚪</span><span class="jz-w-ok" aria-hidden="true">✓</span><span class="jz-w-klodka" aria-hidden="true">🔒</span></span>
+                <span class="jz-w-t">{s.boss.tytul}<small>{s.boss.pl}</small></span>
+                <span class="jz-boss-haslo" aria-hidden="true">{[...s.boss.haslo].map(() => '•').join(' ')}</span>
+                <span class="jz-gw" aria-hidden="true"></span>
+              </button>
+            </div>
+          )}
+        </section>
+      ))}
+
+      <section class="jz-odznaki-sek" aria-labelledby="jz-odz-h">
+        <h2 id="jz-odz-h">Kamienie milowe</h2>
+        <p class="jz-podp">Zbierasz je za naukę, a nie za klikanie. Postęp zapisuje się w tej przeglądarce.</p>
+        <ul class="jz-odznaki">
+          {ODZNAKI.map((o) => (
+            <li class="jz-odznaka" data-odznaka={o.id}>
+              <span class="jz-od-ik" aria-hidden="true">{o.ikona}</span>
+              <b>{o.nazwa}</b>
+              <small>{o.opis}</small>
+              <span class="jz-od-data">jeszcze nie</span>
+            </li>
+          ))}
+        </ul>
+        <button type="button" class="jz-link" data-akcja="reset">Wyzeruj postęp w tym kursie</button>
+      </section>
+    </div>
+  </div>
+
+  <script type="application/json" id="jz-dane" set:html={dane}></script>
+</div>
+
+<script>
+  import { start } from '../../scripts/jezyki/silnik.js';
+  start();
+</script>
