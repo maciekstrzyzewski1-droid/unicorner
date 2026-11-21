@@ -6,7 +6,15 @@ import { awatar } from './awatar.js';
 
 const $ = (s, el = document) => el.querySelector(s);
 const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const bezTagow = (s) => String(s).replace(/<[^>]+>/g, '');
+const bezTagow = (s) => {
+  let out = String(s);
+  let prev;
+  do {
+    prev = out;
+    out = out.replace(/<[^>]+>/g, '');
+  } while (out !== prev);
+  return out;
+};
 const h = (tag, cls, content, allowHtml = false) => {
   const e = document.createElement(tag);
   if (content != null) {
