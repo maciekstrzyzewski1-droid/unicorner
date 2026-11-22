@@ -1,5 +1,5 @@
 /* =====================================================================
-   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 12 (konta, kredyty, udostępnianie, błędy, powtórki, PDF-y ze skanami, dłuższe odpowiedzi AI, zapis na powiadomienia)
+   Unicorner — backend  ·  Cloudflare Worker  ·  wersja 15 (konta, kredyty, udostępnianie, błędy, powtórki, PDF-y ze skanami, dłuższe odpowiedzi AI, zapis na powiadomienia)
    ---------------------------------------------------------------------
    Endpointy:
      POST /generate          → generator (wymaga zalogowania; tekst LUB zdjęcia notatek) (3 kredyty)

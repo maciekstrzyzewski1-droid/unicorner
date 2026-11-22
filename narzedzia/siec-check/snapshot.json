@@ -5,10 +5,14 @@
   "/assets/generator.js"
  ],
  "geografia.html": [],
+ "hiszpanski.html": [
+  "/_astro/Sciezka.astro_astro_type_script_index_0_lang.js"
+ ],
  "index.html": [
   "/_astro/index.astro_astro_type_script_index_0_lang.js",
   "/reviews.json"
  ],
+ "jezyki.html": [],
  "kontakt.html": [],
  "korelacja-wieloraka.html": [],
  "korelacja.html": [],

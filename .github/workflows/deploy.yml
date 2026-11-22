@@ -1,6 +1,6 @@
 name: Deploy do GitHub Pages
 
-# Buduje strone Astro i publikuje dist/ na GitHub Pages.
+# Buduje strone Astro, uruchamia test tresci i publikuje dist/ na GitHub Pages.
 # WYMAGANIE JEDNORAZOWE: Repo -> Settings -> Pages -> "Build and deployment" -> Source = "GitHub Actions".
 # Domena unicorner.pl utrzymywana przez public/CNAME (-> dist/CNAME).
 # Akcje przypiete do pelnego SHA (komentarz = wersja); aktualizuje je Dependabot (.github/dependabot.yml).
@@ -22,6 +22,7 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -30,12 +31,14 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: 24   # Astro 7 wymaga Node >= 22.23.4; 24 = aktualne LTS
+          node-version: 24   # Node 24 LTS; Astro 7 wymaga >= 22.23.4 (package.json -> engines)
           cache: npm
       - name: Install
         run: npm ci
       - name: Build (Astro)
         run: npm run build
+      - name: Test tresci (kod zamiast liczby, bledy KaTeX)
+        run: node narzedzia/tresc-check/sprawdz.mjs dist
       - name: Upload artifact
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5.0.0
         with:

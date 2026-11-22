@@ -12,16 +12,14 @@ git show <commit>:<ścieżka> > /tmp/x   # zapis do porównania
 ```
 
 - **Strona live sprzed przebudowy** = commit `30970aa` na `main` (zawsze dostępny).
-- **Wariant „Świt”** = commit `4bf9314` (gałąź `claude/nifty-brown-tu1o2m`). Jeśli gałąź zniknie, commit zostaje
-  w historii `main` po scaleniu PR-a przyciskiem „Create a merge commit” (tak scalane są PR-y w tym repo), a w każdym
-  przypadku pod `git fetch origin pull/<numer PR>/head`.
+- **Wariant „Świt”** = commit `4bf9314` (z PR #70, scalonego 2026-11-17 merge commitem, więc jest w historii `main`).
 - Przenosząc element do „Siatki”: kolory zamień na fiolet (`--fiolet #bd8bff` i odcienie, bez tęczy), a ruch, który trwa
   cały czas, zrób animacją CSS albo `transform`/`opacity` osobnej warstwy (patrz `CLAUDE.md`, „Pułapki”).
 
 ## Strona live sprzed przebudowy (`30970aa`)
 
 Pliki: `src/pages/index.astro`, style w `src/styles/global.css` (plik nadal jest w repo: używa go `kurs-szeroki.css`),
-komponenty w `src/components/` (nadal w repo).
+komponenty w `src/components/` (nadal w repo, od PR #70 nieużywane).
 
 | Element | Gdzie | Uwagi |
 | --- | --- | --- |
