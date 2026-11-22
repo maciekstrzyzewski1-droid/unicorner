@@ -51,7 +51,10 @@ function mow(tekst) {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(bezTagow(tekst));
     u.lang = KURS.jezyk;
-    const glos = window.speechSynthesis.getVoices().find((v) => (v.lang || '').toLowerCase().startsWith(KURS.jezyk.slice(0, 2)));
+    // Najpierw głos lokalny: działa bez sieci i od razu. Zdalny (localService: false) wysyła czytany tekst
+    // (sam tekst kursu, nie dane ucznia) na serwer dostawcy przeglądarki, więc bierzemy go tylko, gdy lokalnego nie ma.
+    const pasuje = window.speechSynthesis.getVoices().filter((v) => (v.lang || '').toLowerCase().startsWith(KURS.jezyk.slice(0, 2)));
+    const glos = pasuje.find((v) => v.localService === true) || pasuje[0];
     if (glos) u.voice = glos;
     u.rate = 0.9;
     window.speechSynthesis.speak(u);

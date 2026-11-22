@@ -1,18 +1,20 @@
 # Wdrożenie
 
 Dwa niezależne tory: **strona** (automatyczny deploy z GitHuba) i **Worker** (ręcznie w panelu Cloudflare).
-Stan na 2026-11-02, Worker w wersji 12 (konta, kredyty, udostępnianie, powtórki, PDF-y ze skanami, dłuższe odpowiedzi AI, zapis na powiadomienia).
+Stan na 2026-11-21, Worker w wersji 15 (`GET /health` → `version: 15`; konta, kredyty, udostępnianie, powtórki, PDF-y ze skanami, dłuższe odpowiedzi AI, zapis na powiadomienia).
 
 ---
 
 ## Strona (Astro → GitHub Pages)
 
 Nic nie trzeba wgrywać ręcznie. Push na `main` uruchamia `.github/workflows/deploy.yml`:
-`npm ci` → `npm run build` → publikacja `dist/`. Domena `unicorner.pl` pochodzi z `public/CNAME`.
+`npm ci` → `npm run build` → test treści (`narzedzia/tresc-check`) → publikacja `dist/`. Domena `unicorner.pl` pochodzi z `public/CNAME`.
 
 Jednorazowo w ustawieniach repo: **Settings → Pages → Source = „GitHub Actions"**.
-Przed pushem uruchom lokalnie `npm run build`. Testów automatycznych nie ma, więc to jedyna kontrola
-(na pull requestach CI uruchamia ten sam build: `.github/workflows/build-pr.yml`).
+Przed pushem uruchom lokalnie `npm run build` i `node narzedzia/tresc-check/sprawdz.mjs dist`. Testów jednostkowych nie ma.
+Na pull requestach CI (`.github/workflows/build-pr.yml`) robi build, test treści, kontrolę danych kursów językowych,
+test sieciowy i test dymny strony kursu językowego w Chromium. GitHub uruchamia też CodeQL i Dependabota
+(akcje i npm co tydzień, zgrupowane).
 Treść strony edytuje się w `src/` i `public/`.
 
 ---
@@ -35,6 +37,7 @@ Zmienne i sekrety (Settings → Variables and Secrets):
 - `ALLOWED_ORIGIN`: `https://unicorner.pl` (kilka adresów po przecinku, np. dodatkowo `https://www.unicorner.pl`).
 - opcjonalnie `ADMIN_EMAILS`: Twoje maile (po przecinku), konta bez limitu generowań.
 - opcjonalnie `FREE_MONTHLY_CREDITS`: darmowe kredyty na konto na miesiąc (domyślnie 30).
+- opcjonalnie `IP_SALT` (sekret): osobna, długa losowa wartość do skrótów w licznikach limitów. Bez niej Worker używa `ADMIN_CODE`. Ustawienie lub zmiana zeruje tylko bieżące liczniki.
 - `ACCESS_CODE`: stary wspólny kod, od wersji 9 nieużywany. Można usunąć.
 - `EO_API_KEY` (sekret) i `EO_LIST_ID`: zapis na powiadomienia o nowych materiałach (EmailOctopus). Bez nich `POST /newsletter` odpowiada 503 „Zapisy jeszcze nie działają”, reszta Workera działa normalnie.
 
@@ -42,15 +45,15 @@ Logowanie używa Google Identity Services. Identyfikator klienta (`GOOGLE_CLIENT
 
 ### Po wdrożeniu Workera
 
-- `GET https://red-queen-3002.unicorner.workers.dev/health` powinno zwrócić `{ok, db, kv, ai_key}`, wszystko na `true`.
+- `GET https://red-queen-3002.unicorner.workers.dev/health` powinno zwrócić `{ok, version, db, kv, ai_key}`: `version` 15, reszta na `true`.
 
-### Powiadomienia e-mail (EmailOctopus, od wersji 12)
+### Powiadomienia e-mail (EmailOctopus)
 
 Konfiguracja jednorazowa, **przed** mergem PR z formularzem albo zaraz po nim (bez sekretów formularz pokazuje „Zapisy jeszcze nie działają”):
 1. Konto na emailoctopus.com (plan Free). Adres nadawcy na domenie `unicorner.pl` wymaga rekordów DNS w Cloudflare (SPF/DKIM), które EmailOctopus pokaże w panelu.
 2. Nowa lista, np. „Unicorner — nowe materiały”. W zakładce **Consent & customisation** włącz **Double opt-in** i przetłumacz mail potwierdzający oraz stronę po potwierdzeniu na polski.
 3. Integrations & API → utwórz klucz API. Jeśli na planie Free nie ma API, zatrzymaj się i daj znać (nie potwierdziliśmy tego przed wdrożeniem).
-4. W Workerze dodaj `EO_API_KEY` (jako **Secret**) i `EO_LIST_ID` (ID listy z jej ustawień), wklej `worker.js` w wersji 12, Deploy.
+4. W Workerze dodaj `EO_API_KEY` (jako **Secret**) i `EO_LIST_ID` (ID listy z jej ustawień), wklej aktualny `worker.js`, Deploy.
 5. Test: zapisz własny adres na stronie kursu. Ma przyjść mail z linkiem potwierdzającym, a kontakt ma mieć status „pending”, po kliknięciu „subscribed” i tagi `zgoda-v1` i `kurs-…`. Brak maila potwierdzającego = double opt-in nie działa, nie wysyłaj nic do tej listy.
 6. Raz na kilka miesięcy usuń z listy kontakty, które nie potwierdziły zapisu (obiecuje to polityka prywatności).
 
@@ -69,14 +72,16 @@ Konfiguracja jednorazowa, **przed** mergem PR z formularzem albo zaraz po nim (b
 - [ ] Logowanie przez Google działa, widać licznik kredytów.
 - [ ] Generowanie z PDF (tekst) oraz z 1–2 zdjęć notatek (JPG z telefonu).
 - [ ] Skan-PDF / zdjęcia kartek zapisane jako PDF: generator sam zamienia strony na obrazy (do 12 stron) i robi talię. Długi PDF: pod wynikiem informacja, z których stron powstała talia.
-- [ ] `GET /health` zwraca `"version":11` (strona z nowym odczytem PDF wymaga Workera ≥ v10 — stary przyjmie najwyżej 4 obrazy).
+- [ ] `GET /health` zwraca `"version":15` (strona z nowym odczytem PDF wymaga Workera ≥ v10 — stary przyjmie najwyżej 4 obrazy).
 - [ ] Zapisana talia widoczna w „Moje talie", udostępnienie linkiem (podgląd w `talia.html`) i zapis kopii na drugie konto.
 - [ ] Konto bez kredytów dostaje czytelny komunikat, a nie błąd 500.
 - [ ] iPhone: zdjęcie prosto z aparatu (HEIC). Safari zwykle konwertuje do JPG; jeśli poleci błąd odczytu, zgłosić.
 
 **Strona główna**
-- [ ] Jednorożec z kropek składa się przy scrollu i reaguje na kursor / palec.
-- [ ] Telefon średniej klasy: scroll przy stopce płynny (jeśli nie, zmniejszyć liczbę kropek).
+- [ ] Neonowy napis UNICORNER (WebGL2) zapala się i przy scrollu wlatuje do nawigacji.
+- [ ] Siatka 38 px ze światłem kursora; blask ramek kart przy myszy.
+- [ ] Sekcja „Opinie” się pokazuje (Worker albo `reviews.json`).
+- [ ] Telefon: płynny scroll, przy 390 px bez przewijania w bok.
 
 ---
 
