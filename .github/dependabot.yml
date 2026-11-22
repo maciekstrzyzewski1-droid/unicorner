@@ -27,3 +27,19 @@ updates:
         # Dlatego three idzie osobnym PR, poza grupa.
         exclude-patterns: ["three"]
         update-types: ["minor", "patch"]
+    # Majory React 19 / R3F 9 / drei 10 wstrzymane do decyzji U1 (b) z ROADMAP.md:
+    # usunac nieuzywane od PR #70 komponenty 3D (src/components/*.jsx) razem z zaleznosciami,
+    # czy zostawic i podniesc je razem jedna galezia (osobno sie nie instaluja: ERESOLVE, PR #80, #81, #83).
+    # Poprawki bezpieczenstwa to nie blokuje: update-types dotyczy tylko aktualizacji wersji.
+    # Po decyzji usunac ten blok.
+    ignore:
+      - dependency-name: "@react-three/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/react-dom"
+        update-types: ["version-update:semver-major"]
