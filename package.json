@@ -27,7 +27,7 @@
     "react-dom": "^18",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
-    "three": "^0.185.1"
+    "three": "^0.187.0"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4",
