@@ -265,6 +265,10 @@ html.jz-lock,html.jz-lock body{overflow:hidden;overscroll-behavior:none;}
 /* kolor wyniku wygrywa z fokusem: bez fioletowej poświaty na sprawdzonym polu */
 .jz-pole.is-ok,.jz-pole.is-ok:focus{border-color:var(--jz-ok);background:rgba(90,209,160,.08);box-shadow:none;}
 .jz-pole.is-bad,.jz-pole.is-bad:focus{border-color:var(--jz-bad);background:rgba(255,92,138,.08);box-shadow:none;}
+/* globalny pierścień fokusu z Base.astro (cyjan, !important, na samej ramce) na sprawdzonym polu bierze kolor wyniku;
+   odsunięty o 2 px od ramki, więc fokus dalej widać jako drugi pierścień */
+.jz-pole.is-ok:focus-visible{outline-color:var(--jz-ok)!important;outline-offset:2px!important;}
+.jz-pole.is-bad:focus-visible{outline-color:var(--jz-bad)!important;outline-offset:2px!important;}
 .jz-znaki{display:flex;flex-wrap:wrap;gap:6px;}
 .jz-znak{flex-shrink:0;min-width:40px;height:40px;border-radius:10px;border:1px solid var(--jz-line);background:var(--jz-s2);color:var(--text);font-size:1.05rem;cursor:pointer;box-shadow:0 3px 0 var(--jz-cien);}
 .jz-znak:active{transform:translateY(2px);box-shadow:0 1px 0 var(--jz-cien);}
