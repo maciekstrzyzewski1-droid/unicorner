@@ -5,7 +5,7 @@
 import { awatar } from './awatar.js';
 import { $, $$, h, tasuj, ruch } from './dom.js';
 import { ustawJezyk, mowa, przyciskMowy, ozywMowe } from './mowa.js';
-import { R, ETYKIETA } from './cwiczenia.js';
+import { R, ETYKIETA, klawiatura } from './cwiczenia.js';
 
 let KURS = null;
 
@@ -261,32 +261,32 @@ function otworz(w) {
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-modal', 'true');
   box.setAttribute('aria-label', `Lekcja: ${w.tytul}`);
-  box.innerHTML = `<div class="jz-l-top"><button type="button" class="jz-x" aria-label="Zamknij lekcję">✕</button><div class="jz-l-pasek" aria-hidden="true"><i></i></div><span class="jz-combo" aria-live="polite"></span></div>
+  // .jz-lekcja zawsze kryje cały ekran (tło i kratka); do widocznej części ekranu dopasowuje się tylko ramka
+  box.innerHTML = `<div class="jz-l-ramka"><div class="jz-l-top"><button type="button" class="jz-x" aria-label="Zamknij lekcję">✕</button><div class="jz-l-pasek" aria-hidden="true"><i></i></div><span class="jz-combo" aria-live="polite"></span></div>
     <div class="jz-l-haslo" hidden></div><div class="jz-l-body"></div>
-    <div class="jz-l-dol"><div class="jz-fb" aria-live="polite"></div><div class="jz-l-akcje"><button type="button" class="jz-btn jz-btn-glow jz-spr" disabled>Sprawdź</button></div></div>`;
+    <div class="jz-l-dol"><div class="jz-fb" aria-live="polite"></div><div class="jz-l-znaki" hidden></div><div class="jz-l-akcje"><button type="button" class="jz-btn jz-btn-glow jz-spr" disabled>Sprawdź</button></div></div></div>`;
   document.body.append(box);
   // tło za oknem: bez Tab, kliknięć i Entera (aria-modal sam tego nie robi)
   const uspione = [...document.body.children].filter((e) => e !== box && !e.inert);
   uspione.forEach((e) => { e.inert = true; });
   box.focus({ preventScroll: true });
   const body = $('.jz-l-body', box), fb = $('.jz-fb', box), spr = $('.jz-spr', box), dol = $('.jz-l-dol', box);
-  const haslo = $('.jz-l-haslo', box);
+  const haslo = $('.jz-l-haslo', box), ramka = $('.jz-l-ramka', box), znaki = $('.jz-l-znaki', box);
 
-  // telefon: okno lekcji ma wysokość widocznej części ekranu, więc klawiatura nie zasłania „Sprawdź”
+  // telefon: ramka ma wysokość widocznej części ekranu, więc klawiatura nie zasłania „Sprawdź”;
+  // przy każdej niezgodności wysokości spod ramki widać tło lekcji, nigdy stronę
   const vv = window.visualViewport;
   const dopasuj = () => {
-    if (vv.scale > 1.01) { box.style.top = ''; box.style.height = ''; box.style.removeProperty('--jz-h'); return; }
-    box.style.top = `${vv.offsetTop}px`;
-    box.style.height = `${vv.height}px`;
-    box.style.setProperty('--jz-h', `${vv.height}px`);
+    if (vv.scale > 1.01) { ramka.style.top = ''; ramka.style.height = ''; ramka.style.removeProperty('--jz-h'); return; }
+    ramka.style.top = `${vv.offsetTop}px`;
+    ramka.style.height = `${vv.height}px`;
+    ramka.style.setProperty('--jz-h', `${vv.height}px`);
   };
   if (vv) { vv.addEventListener('resize', dopasuj); vv.addEventListener('scroll', dopasuj); dopasuj(); }
   body.addEventListener('focusin', (e) => {
     if (!e.target.matches?.('.jz-pole')) return;
     setTimeout(() => {
-      const r = e.target.getBoundingClientRect(), b = body.getBoundingClientRect();
-      const zn = $('.jz-odm .jz-znaki, .jz-luki .jz-znaki, .jz-pisz .jz-znaki', body);
-      const dolG = zn ? Math.min(b.bottom, zn.getBoundingClientRect().top) : b.bottom;
+      const r = e.target.getBoundingClientRect(), dolG = body.getBoundingClientRect().bottom;
       if (r.bottom > dolG - 8) body.scrollTop += r.bottom - dolG + 16;
     }, 350);
   });
@@ -348,8 +348,13 @@ function otworz(w) {
     karta.append(q);
     ozywMowe(q);
     renderer = R[c.t](c, () => { spr.disabled = !renderer.gotowe(); }, () => { if (faza === 'cw') sprawdz(); });
+    renderer.el.classList.add('jz-odp');          // strefa odpowiedzi: na telefonie zjeżdża do kciuka
     karta.append(renderer.el);
     body.append(karta);
+    // pasek znaków w dolnej belce (na dotyku ukrywa go CSS): tylko przy ćwiczeniach z polem
+    znaki.replaceChildren();
+    if (renderer.aktywnePole) znaki.append(klawiatura(renderer.aktywnePole));
+    znaki.hidden = !renderer.aktywnePole;
     ustawPrzycisk(c.t === 'pisz' ? 'Pokaż wzór' : 'Sprawdź', 'spr');
     spr.disabled = !renderer.gotowe();
     if (c.t === 'pary') spr.hidden = true; else spr.hidden = false;
@@ -363,6 +368,9 @@ function otworz(w) {
     if (faza !== 'cw' || !renderer || !renderer.gotowe()) return;
     faza = 'fb';
     const c = CW.get(biez.k);
+    // klawiatura ekranowa chowa się, więc panel wyniku jest widoczny; pasek znaków po sprawdzeniu znika
+    if (document.activeElement instanceof Element && document.activeElement.matches('.jz-pole')) document.activeElement.blur();
+    znaki.hidden = true;
     const r = renderer.sprawdz();
     const pierwsza = biez.proba === 0;
     if (!r.neutral) {
@@ -469,6 +477,7 @@ function otworz(w) {
     if (ruch()) k.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
     const akcje = $('.jz-l-akcje', box);
     akcje.innerHTML = '';
+    akcje.classList.add('is-koniec');
     const b1 = h('button', 'jz-btn jz-btn-ghost', 'Powtórz'); b1.type = 'button';
     b1.addEventListener('click', () => { zamknijLekcje(); otworz(w); });
     // po naprawieniu wszystkich błędów nie ma czego powtarzać

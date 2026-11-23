@@ -3,8 +3,9 @@ import { norm, bezAkc, porownaj } from './porownanie.js';
 import { jezyk, mow, mowa } from './mowa.js';
 
 export const ETYKIETA = { wybor: 'Wybierz', wiele: 'Zaznacz wszystkie', wpisz: 'Wpisz', uloz: 'Ułóż zdanie', pary: 'Połącz w pary', kat: 'Posortuj', odm: 'Odmień', luki: 'Uzupełnij tekst', sluchaj: 'Posłuchaj', pisz: 'Twoja wypowiedź' };
-// ¿ i ¡ pomijamy: porównanie odpowiedzi ignoruje znaki przestankowe, a 7 przycisków po 40 px mieści się w jednym rzędzie na 360 px
-export const ZNAKI = ['á', 'é', 'í', 'ó', 'ú', 'ñ', 'ü'];
+// pasek znaków w dolnej belce (tylko komputer). „ü” nie występuje w żadnej odpowiedzi kursu, więc go nie ma;
+// ¿ i ¡ są, choć porównanie odpowiedzi ignoruje znaki przestankowe
+export const ZNAKI = ['á', 'é', 'í', 'ó', 'ú', 'ñ', '¿', '¡'];
 
 export function klawiatura(getPole) {
   const bar = h('div', 'jz-znaki');
@@ -40,7 +41,10 @@ export function pole(placeholder) {
   return i;
 }
 
-/** Każdy renderer zwraca { el, gotowe(), sprawdz() → { ok, akcent?, poprawnie?, mowic? }, pierwszyFokus? }. */
+/**
+ * Każdy renderer zwraca { el, gotowe(), sprawdz() → { ok, akcent?, poprawnie?, mowic? }, pierwszyFokus?, aktywnePole?() }.
+ * aktywnePole() mają renderery z polami tekstowymi: silnik podpina do niego pasek znaków w dolnej belce.
+ */
 export const R = {
   wybor(c, gotowy) {
     const el = h('div', 'jz-opcje');
@@ -124,9 +128,9 @@ export const R = {
     const el = h('div', 'jz-wpisz');
     const i = pole(c.pod || 'wpisz odpowiedź');
     i.addEventListener('input', gotowy);
-    el.append(i, klawiatura(() => i));
+    el.append(i);
     return {
-      el, pierwszyFokus: i,
+      el, pierwszyFokus: i, aktywnePole: () => i,
       gotowe: () => i.value.trim().length > 0,
       sprawdz() {
         i.readOnly = true;
@@ -291,9 +295,8 @@ export const R = {
     });
     akt = pola[0];
     pola.forEach((p, k) => { p.enterKeyHint = k < pola.length - 1 ? 'next' : 'done'; });
-    el.append(klawiatura(() => akt));
     return {
-      el, pierwszyFokus: pola[0],
+      el, pierwszyFokus: pola[0], aktywnePole: () => akt,
       gotowe: () => pola.every((p) => p.value.trim()),
       sprawdz() {
         let ok = true, akcent = false;
@@ -365,9 +368,8 @@ export const R = {
       }
       el.append(bank);
     }
-    el.append(klawiatura(() => akt));
     return {
-      el, pierwszyFokus: pola[0],
+      el, pierwszyFokus: pola[0], aktywnePole: () => akt,
       gotowe: () => pola.every((p) => p.value.trim()),
       sprawdz() {
         el.dataset.zablokuj = '1';
@@ -395,9 +397,9 @@ export const R = {
     t.lang = jezyk();
     t.placeholder = 'Napisz po hiszpańsku (możesz też powiedzieć na głos i od razu sprawdzić wzór).';
     t.addEventListener('input', gotowy);
-    el.append(t, klawiatura(() => t));
+    el.append(t);
     return {
-      el, pierwszyFokus: t,
+      el, pierwszyFokus: t, aktywnePole: () => t,
       gotowe: () => true,
       sprawdz() {
         t.readOnly = true;
