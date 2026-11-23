@@ -22,3 +22,44 @@ export function porownaj(wpis, dobre) {
   }
   return null;
 }
+
+/** Zaimki osobowe według osoby 0–5 (kolejność jak OSOBY w danych kursu). */
+export const ZAIMKI_OS = [['yo'], ['tú'], ['él', 'ella', 'usted'], ['nosotros', 'nosotras'], ['vosotros', 'vosotras'], ['ellos', 'ellas', 'ustedes']];
+const ZWROTNE = new Set(['me', 'te', 'se', 'nos', 'os']);
+/** Zaimek zwrotny na początku wielowyrazowej formy ('te llamas' → 'te'); w innym razie null. */
+export function zaimekZwrotny(forma) {
+  const slowa = norm(forma).split(' ');
+  return slowa.length > 1 && ZWROTNE.has(slowa[0]) ? slowa[0] : null;
+}
+// Zdejmuje wpisany zaimek osobowy danej osoby: { reszta, akcent } albo null.
+function zdejmijZaimek(wpis, osoba) {
+  const slowa = norm(wpis).split(' ');
+  if (slowa.length < 2) return null;
+  const zaimki = ZAIMKI_OS[osoba] || [];
+  const reszta = slowa.slice(1).join(' ');
+  if (zaimki.some((z) => norm(z) === slowa[0])) return { reszta, akcent: false };
+  if (zaimki.some((z) => bezAkc(z) === slowa[0])) return { reszta, akcent: true };
+  return null;
+}
+/** 'ok' | 'akcent' — forma pasuje (z zaimkiem lub bez); 'zaimek' — brak zaimka zwrotnego; null — źle. */
+export function porownajForme(wpis, forma, osoba) {
+  const wprost = porownaj(wpis, [forma]);
+  if (wprost) return wprost;
+  const zdjety = zdejmijZaimek(wpis, osoba);
+  let reszta = wpis;
+  if (zdjety) {
+    const wynik = porownaj(zdjety.reszta, [forma]);
+    if (wynik) return zdjety.akcent ? 'akcent' : wynik;
+    reszta = zdjety.reszta;
+  }
+  if (zaimekZwrotny(forma) === null) return null;
+  const bezZwrotnego = norm(forma).split(' ').slice(1).join(' ');
+  return porownaj(reszta, [bezZwrotnego]) ? 'zaimek' : null;
+}
+/** 'hasta luego' → 'h____ l____': pierwsza litera każdego słowa, reszta jako '_'. */
+export function wzorPodpowiedzi(odp) {
+  return String(odp).normalize('NFC').replace(/\p{L}+/gu, (s) => {
+    const [pierwsza, ...nastepne] = Array.from(s);
+    return pierwsza + '_'.repeat(nastepne.length);
+  });
+}
