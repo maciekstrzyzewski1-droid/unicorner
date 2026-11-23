@@ -346,6 +346,7 @@ function otworz(w) {
     if (c.kol) { const s = h('div', 'jz-swatch'); s.style.background = c.kol; s.setAttribute('aria-hidden', 'true'); karta.append(s); }
     const q = h('div', 'jz-q', c.q || '');
     karta.append(q);
+    if (c.qp) { const sub = h('p', 'jz-q-sub', ''); sub.textContent = c.qp; karta.append(sub); }
     ozywMowe(q);
     renderer = R[c.t](c, () => { spr.disabled = !renderer.gotowe(); }, () => { if (faza === 'cw') sprawdz(); });
     renderer.el.classList.add('jz-odp');          // strefa odpowiedzi: na telefonie zjeżdża do kciuka
@@ -396,7 +397,7 @@ function otworz(w) {
     combEl.textContent = combo >= 3 ? `×${combo} combo` : '';
     if (combo >= 3 && combo % 5 === 0 && ruch()) combEl.animate([{ transform: 'scale(1.5)' }, { transform: 'scale(1)' }], { duration: 400, easing: 'cubic-bezier(.16,1,.3,1)' });
 
-    const naglowek = r.neutral ? '📝 Porównaj ze wzorem' : (r.ok ? (r.akcent ? '✓ Dobrze — uwaga na akcent' : ['✓ ¡Muy bien!', '✓ ¡Perfecto!', '✓ ¡Genial!', '✓ Dobrze!'][Math.floor(Math.random() * 4)]) : '✗ Nie tym razem');
+    const naglowek = r.naglowek || (r.neutral ? '📝 Porównaj ze wzorem' : (r.ok ? (r.akcent ? '✓ Dobrze — uwaga na akcent' : ['✓ ¡Muy bien!', '✓ ¡Perfecto!', '✓ ¡Genial!', '✓ Dobrze!'][Math.floor(Math.random() * 4)]) : '✗ Nie tym razem'));
     dol.className = `jz-l-dol ${r.neutral ? 'is-neutral' : (r.ok ? 'is-ok' : 'is-bad')}`;
     fb.innerHTML = `<b class="jz-fb-h">${naglowek}</b>`;
     if (r.poprawnie && (r.akcent || !r.ok)) {

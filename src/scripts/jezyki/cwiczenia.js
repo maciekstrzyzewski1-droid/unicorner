@@ -1,6 +1,69 @@
 import { $, $$, h, tasuj, ruch } from './dom.js';
-import { norm, bezAkc, porownaj } from './porownanie.js';
+import { norm, bezAkc, porownaj, porownajForme, zaimekZwrotny } from './porownanie.js';
 import { jezyk, mow, mowa } from './mowa.js';
+
+const RANGA_FORMY = { ok: 3, akcent: 2, zaimek: 1 };
+const BRAK_ZAIMKA = '✗ Brakuje zaimka';
+
+// „Wpisz” z c.forma: najlepszy wynik spośród dopuszczalnych odpowiedzi (ok > akcent > zaimek > null)
+function sprawdzForme(i, c) {
+  i.readOnly = true;
+  let w = null, zaim = null;
+  for (const a of c.a) {
+    const r = porownajForme(i.value, a, c.forma.os);
+    if ((RANGA_FORMY[r] || 0) > (RANGA_FORMY[w] || 0)) { w = r; if (r === 'zaimek') zaim = zaimekZwrotny(a); }
+  }
+  const ok = w === 'ok' || w === 'akcent';
+  i.classList.add(ok ? 'is-ok' : 'is-bad');
+  const wynik = { ok, akcent: w === 'akcent', poprawnie: c.a[0], mowic: c.a[0] };
+  if (w === 'zaimek') {
+    wynik.naglowek = BRAK_ZAIMKA;
+    wynik.info = `Czasownik dobrze, ale zabrakło zaimka ${zaim}.`;
+  }
+  return wynik;
+}
+
+const formaPola = (n) => (n === 1 ? '1 polu' : `${n} polach`);
+
+// pole odmiany -> wiersz z wynikiem; tekst ucznia tylko przez textContent
+function wierszWyniku(p, wynik, poprawna) {
+  const wpis = p.value.trim();
+  const sp = h('span', 'jz-odm-wart', '');
+  sp.lang = jezyk();
+  if (wynik === 'ok') {
+    sp.classList.add('is-ok');
+    sp.textContent = p.value.trim();
+  } else {
+    sp.classList.add(wynik === 'akcent' ? 'is-ok' : 'is-bad');
+    if (wynik === 'akcent') sp.classList.add('is-akcent');
+    const b = document.createElement('b');
+    b.textContent = poprawna;
+    sp.append(b);
+    if (wpis) { const sk = document.createElement('s'); sk.textContent = wpis; sp.append(sk); }
+  }
+  p.replaceWith(sp);
+}
+
+function infoZaimki(zaimkowe, mieszane, f) {
+  const lista = zaimkowe.map((i) => zaimekZwrotny(f[i])).join(', ');
+  const n = formaPola(zaimkowe.length);
+  return mieszane
+    ? `W ${n} zabrakło też zaimka: ${lista}.`
+    : `Czasowniki dobrze, ale w ${n} zabrakło zaimka: ${lista}. Przy czasownikach na -se zaimek to część odpowiedzi.`;
+}
+
+function sprawdzOdmiane(pola, c) {
+  const wyniki = pola.map((p, i) => porownajForme(p.value, c.f[i], i));
+  pola.forEach((p, i) => { p.readOnly = true; wierszWyniku(p, wyniki[i], c.f[i]); });
+  const zle = wyniki.map((w, i) => (w === 'ok' || w === 'akcent' ? -1 : i)).filter((i) => i >= 0);
+  const zaimkowe = zle.filter((i) => wyniki[i] === 'zaimek');
+  const wynik = { ok: zle.length === 0, akcent: wyniki.includes('akcent'), poprawnie: null, mowic: c.f.join(', ') };
+  if (zaimkowe.length) {
+    wynik.naglowek = BRAK_ZAIMKA;
+    wynik.info = infoZaimki(zaimkowe, zaimkowe.length < zle.length, c.f);
+  }
+  return wynik;
+}
 
 export const ETYKIETA = { wybor: 'Wybierz', wiele: 'Zaznacz wszystkie', wpisz: 'Wpisz', uloz: 'Ułóż zdanie', pary: 'Połącz w pary', kat: 'Posortuj', odm: 'Odmień', luki: 'Uzupełnij tekst', sluchaj: 'Posłuchaj', pisz: 'Twoja wypowiedź' };
 // pasek znaków w dolnej belce (tylko komputer). „ü” nie występuje w żadnej odpowiedzi kursu, więc go nie ma;
@@ -134,6 +197,7 @@ export const R = {
       gotowe: () => i.value.trim().length > 0,
       sprawdz() {
         i.readOnly = true;
+        if (c.forma) return sprawdzForme(i, c);
         const w = porownaj(i.value, c.a);
         i.classList.add(w ? 'is-ok' : 'is-bad');
         return { ok: !!w, akcent: w === 'akcent', poprawnie: c.a[0], mowic: c.a[0] };
@@ -298,17 +362,7 @@ export const R = {
     return {
       el, pierwszyFokus: pola[0], aktywnePole: () => akt,
       gotowe: () => pola.every((p) => p.value.trim()),
-      sprawdz() {
-        let ok = true, akcent = false;
-        pola.forEach((p, i) => {
-          p.readOnly = true;
-          const w = porownaj(p.value, [c.f[i]]);
-          p.classList.add(w ? 'is-ok' : 'is-bad');
-          if (!w) { ok = false; const pop = h('span', 'jz-odm-pop'); pop.lang = jezyk(); pop.textContent = c.f[i]; p.after(pop); }
-          if (w === 'akcent') akcent = true;
-        });
-        return { ok, akcent, poprawnie: c.f.join(', '), mowic: c.f.join(', ') };
-      },
+      sprawdz() { return sprawdzOdmiane(pola, c); },
     };
   },
   luki(c, gotowy) {
