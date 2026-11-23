@@ -1,6 +1,5 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
 import mdx from '@astrojs/mdx';
 import { unified } from '@astrojs/markdown-remark';
 import tailwindcss from '@tailwindcss/vite';
@@ -37,7 +36,7 @@ export default defineConfig({
   site: 'https://unicorner.pl',
   // strony wychodza jako foo.html (nie foo/index.html) -> zachowuje istniejace linki .html
   build: { format: 'file' },
-  integrations: [react(), mdx(), pdfjsWasm, cspMeta],
+  integrations: [mdx(), pdfjsWasm, cspMeta],
   // wzory $...$ i $$...$$ w plikach .md/.mdx renderowane przy buildzie (KaTeX) — zero JS po stronie przegladarki
   // Astro 7: domyślny procesor Markdown to Sätteri, który nie uruchamia wtyczek remark/rehype.
   // Zostajemy przy unified (jak w Astro 5) — MDX dziedziczy go razem z wtyczkami.

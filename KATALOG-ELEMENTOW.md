@@ -13,20 +13,33 @@ git show <commit>:<ścieżka> > /tmp/x   # zapis do porównania
 
 - **Strona live sprzed przebudowy** = commit `30970aa` na `main` (zawsze dostępny).
 - **Wariant „Świt”** = commit `4bf9314` (z PR #70, scalonego 2026-11-17 merge commitem, więc jest w historii `main`).
+- **Komponenty React** (`FaultyTerminal`, `HeroSkull`, `BorderGlow`), model `skeleton.glb` i opis jego kompresji
+  (`narzedzia/model-3d/README.md`) zostały usunięte z drzewa 2026-11-23 (decyzja U1 (b)). Ostatni raz są w commicie
+  `2218f05` na `main`:
+
+  ```
+  git show 2218f05:src/components/HeroSkull.jsx                                   # podgląd
+  git restore --source=2218f05 -- src/components/HeroSkull.jsx public/assets/skeleton.glb   # przywrócenie
+  ```
+
+  Plik `.glb` przywracaj przez `git restore`, nie przez `git show … >`, bo w PowerShellu przekierowanie psuje pliki binarne.
+  Komponent zadziała dopiero z zależnościami i integracją Reacta z tego samego commitu (wersje: `git show 2218f05:package.json`):
+  `@astrojs/react`, `react`, `react-dom` (dla wszystkich trzech), `ogl` (`FaultyTerminal`), `three`, `@react-three/fiber`
+  i `@react-three/drei` (`HeroSkull`), do tego `react()` w `integrations` w `astro.config.mjs` i dyrektywa `client:` na stronie.
 - Przenosząc element do „Siatki”: kolory zamień na fiolet (`--fiolet #bd8bff` i odcienie, bez tęczy), a ruch, który trwa
   cały czas, zrób animacją CSS albo `transform`/`opacity` osobnej warstwy (patrz `CLAUDE.md`, „Pułapki”).
 
 ## Strona live sprzed przebudowy (`30970aa`)
 
 Pliki: `src/pages/index.astro`, style w `src/styles/global.css` (plik nadal jest w repo: używa go `kurs-szeroki.css`),
-komponenty w `src/components/` (nadal w repo, od PR #70 nieużywane).
+komponenty React w `src/components/*.jsx` (od PR #70 nieużywane, usunięte 2026-11-23; przywracanie z `2218f05`, patrz wyżej).
 
 | Element | Gdzie | Uwagi |
 | --- | --- | --- |
-| Tło hero ze znaków (fioletowy terminal) | `src/components/FaultyTerminal.jsx` (+ `.css`), w `index.astro` jako `<FaultyTerminal client:load tint="#bb1cfc" …>` | WebGL (ogl), ok. 55 KB skryptu |
-| Chromowany szkielet 3D w hero | `src/components/HeroSkull.jsx`, model `public/assets/skeleton.glb` (205 KB, opis w `narzedzia/model-3d/`) | three.js + R3F, ok. 1 MB skryptu; automatyczna przeglądarka wiesza się na nim; licencja MIT, autor w stopce |
+| Tło hero ze znaków (fioletowy terminal) | `2218f05:src/components/FaultyTerminal.jsx` (+ `.css`), w `index.astro` jako `<FaultyTerminal client:load tint="#bb1cfc" …>` | WebGL (ogl), ok. 55 KB skryptu |
+| Chromowany szkielet 3D w hero | `2218f05:src/components/HeroSkull.jsx`, model `2218f05:public/assets/skeleton.glb` (205 KB, opis w `2218f05:narzedzia/model-3d/README.md`) | three.js + R3F, ok. 1 MB skryptu; automatyczna przeglądarka wiesza się na nim; model „three-skull” (Cullen Webber), licencja MIT: po przywróceniu wraca też podpis autora w stopce |
 | HUD hero: „Edukacja po ludzku.”, „Jedno miejsce. Cała Twoja nauka.”, napis `unicorner` w rogu, „// 01 Scroll to explore” | `index.astro` (`.hero-hud`, `.hh-*`), style `global.css` sekcja „HERO HUD” | |
-| Przycisk „Zacznij naukę” z poświatą krawędzi | `src/components/BorderGlow.jsx` (+ `.css`) | React, poświata podąża za kursorem |
+| Przycisk „Zacznij naukę” z poświatą krawędzi | `2218f05:src/components/BorderGlow.jsx` (+ `.css`) | React, poświata podąża za kursorem |
 | Hero przy przewijaniu: jedzie w górę i gaśnie maską od dołu, pojawia się siatka | skrypt na końcu `index.astro` („Pierwszy ekran przy przewijaniu…”) | |
 | Stała neonowa siatka z podłogą w perspektywie | `.site-grid` w `global.css` | oczko 38 px; w „Siatce” wróciła jako `.tlo` |
 | Fioletowa łuna dryfująca przy scrollu | `.glow-drift` w `global.css` + skrypt w `index.astro` | |
