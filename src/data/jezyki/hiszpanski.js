@@ -29,14 +29,16 @@ export const V = {
   ir: { pl: 'iść, jechać', f: ['voy', 'vas', 'va', 'vamos', 'vais', 'van'], uw: 'IR jest całkiem nieregularny: voy, vas, va, vamos, vais, van.' },
 };
 const nazwa = (v) => V[v].bez || v;
+/** Czasownik zwrotny (llamarse): forma ma zaimek me/te/se/nos/os. */
+const zwrotny = (v) => nazwa(v).endsWith('se');
 
 /** Krótki dryl: osoba + bezokolicznik → forma. */
 function dryl(v, idx) {
-  return idx.map((i) => P(`<b>${OSOBY[i]}</b> … <i>(${nazwa(v)})</i>`, V[v].f[i],
-    `${OSOBY[i]} → ${es(V[v].f[i])}. ${V[v].uw || `Regularny czasownik na -${V[v].reg}: końcówki jak w tabelce.`}`, { pod: 'forma czasownika' }));
+  return idx.map((i) => P(`<b>${OSOBY[i]}</b> … <i>(${nazwa(v)})</i>${zwrotny(v) ? ' — z zaimkiem' : ''}`, V[v].f[i],
+    `${OSOBY[i]} → ${es(V[v].f[i])}. ${V[v].uw || `Regularny czasownik na -${V[v].reg}: końcówki jak w tabelce.`}`, { pod: 'forma czasownika', forma: { os: i } }));
 }
 /** Pełna odmiana w 6 polach. */
-const ODM = (v, x) => ({ t: 'odm', v: nazwa(v), pl: V[v].pl, f: V[v].f, q: `Odmień czasownik ${es(nazwa(v))} (${V[v].pl})`, x: x || V[v].uw || `Regularny na -${V[v].reg}: odcinasz -${V[v].reg} i dokładasz końcówki.` });
+const ODM = (v, x) => ({ t: 'odm', v: nazwa(v), pl: V[v].pl, f: V[v].f, q: `Odmień czasownik ${es(nazwa(v))} (${V[v].pl})`, ...(zwrotny(v) ? { qp: 'Z zaimkiem: me, te, se, nos, os, se' } : {}), x: x || V[v].uw || `Regularny na -${V[v].reg}: odcinasz -${V[v].reg} i dokładasz końcówki.` });
 /** Tabelka odmiany do kart „Nowe”. */
 const tabOdm = (v) => tab(OSOBY.map((o, i) => [o, es(V[v].f[i])]), [`${nazwa(v)} — ${V[v].pl}`, '']);
 
