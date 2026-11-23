@@ -259,6 +259,10 @@ html.jz-lock,html.jz-lock body{overflow:hidden;overscroll-behavior:none;}
   background:radial-gradient(circle at 50% 30%,#2d2155,#120f22);color:var(--text);cursor:pointer;box-shadow:0 5px 0 #3b2580,0 0 26px rgba(189,139,255,.35);}
 .jz-gloso:active{transform:translateY(3px);box-shadow:0 2px 0 #3b2580;}
 
+.jz-glos-info{display:flex;align-items:center;gap:8px;margin:0 0 12px;padding:6px 6px 6px 14px;background:var(--jz-s2);border:1px solid var(--jz-line2);border-radius:12px;font-size:15px;line-height:1.4;color:var(--text);}
+.jz-glos-info span{flex:1;min-width:0;}
+.jz-glos-x{flex-shrink:0;width:40px;height:40px;display:grid;place-items:center;border:0;border-radius:10px;background:transparent;color:var(--jz-v3);font-size:1rem;cursor:pointer;}
+
 /* pola tekstowe i znaki */
 .jz-pole{width:100%;font:inherit;font-size:16px;padding:14px 16px;border-radius:14px;border:2px solid rgba(189,139,255,.3);background:#0d0b17;color:var(--text);outline:none;transition:border-color .15s,box-shadow .15s;}
 .jz-pole:focus{border-color:var(--jz-v);box-shadow:0 0 0 3px rgba(189,139,255,.18);}

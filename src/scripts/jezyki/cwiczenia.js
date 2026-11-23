@@ -1,6 +1,6 @@
 import { $, $$, h, tasuj, ruch } from './dom.js';
 import { norm, bezAkc, porownaj, porownajForme, zaimekZwrotny } from './porownanie.js';
-import { jezyk, mow, mowa } from './mowa.js';
+import { jezyk, mow, mowa, wskazowkaGlosu } from './mowa.js';
 
 const RANGA_FORMY = { ok: 3, akcent: 2, zaimek: 1 };
 const BRAK_ZAIMKA = '✗ Brakuje zaimka';
@@ -145,7 +145,7 @@ export const R = {
     const box = h('div', 'jz-sluchaj');
     const b = h('button', 'jz-gloso', '🔊 <span>Odtwórz</span>');
     b.type = 'button';
-    b.addEventListener('click', () => mow(c.mow));
+    b.addEventListener('click', () => { mow(c.mow); wskazowkaGlosu(); });
     box.append(b);
     if (!mowa) box.append(h('p', 'jz-uwaga', `Twoja przeglądarka nie czyta na głos. Przeczytaj: <b lang="es">${c.mow}</b>`));
     box.append(r.el);
