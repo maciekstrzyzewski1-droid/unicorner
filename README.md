@@ -6,10 +6,10 @@ i generator AI robiący fiszki oraz quiz z własnych notatek. Działa na telefon
 Strony z materiałami nie wymagają logowania; logowanie (Google) potrzebne jest tylko w generatorze.
 
 - **Live:** https://unicorner.pl
-- **Frontend:** Astro 7 + React 18 (wyspy), Tailwind 4, MDX + KaTeX. Build do statycznych plików.
+- **Frontend:** Astro 7, Tailwind 4, MDX + KaTeX. Build do statycznych plików, bez Reacta i bez wysp `client:`.
 - **Hosting:** GitHub Pages, wdrażane przez GitHub Actions (`.github/workflows/deploy.yml`) z katalogu `dist/`.
 - **Backend:** Cloudflare Worker (`worker.js`) + KV + baza D1. Generator AI, konta (Google), talie, kredyty, opinie, moderacja.
-- **Efekty strony głównej:** własny WebGL2 (`src/scripts/siatka/napis.js`) + Lenis. `three`/R3F/`ogl` i `src/components/*.jsx` (szkielet 3D, `FaultyTerminal`, `BorderGlow`) są od PR #70 nieużywane i zostają do decyzji (`ROADMAP.md`, U1 (b)).
+- **Efekty strony głównej:** własny WebGL2 (`src/scripts/siatka/napis.js`) + Lenis. Dawne efekty na React i three (szkielet 3D, `FaultyTerminal`, `BorderGlow`) zostały usunięte razem z zależnościami 2026-11-23 (PR #85; `ROADMAP.md`, U1 (b)); jak je przywrócić z gita: `KATALOG-ELEMENTOW.md`.
 
 > Stan na 2026-11-21. Wcześniejsza wersja projektu (czysty HTML, każda strona jako samodzielny plik w roocie)
 > została usunięta z repo; jest w historii gita (przed commitem „usunięcie starej wersji z roota”).
@@ -48,7 +48,7 @@ CodeQL (konfiguracja domyślna) i Dependabota (`.github/dependabot.yml`: akcje i
 | `src/pages/rachunkowosc/*.mdx` | Moduły kursu rachunkowości (`istota`, `bilans`, `konta`, `zestawienie`, `wynik-finansowy`, `srodki-pieniezne`, `inwestycje-krotkoterminowe`) + słowniczek pojęć (`pojecia.astro`). |
 | `src/pages/metody-badan-rynku/*.mdx` | Moduły kursu metod badań rynku (`wielkosc-proby`, `dobor-proby`, `skale`) + słowniczek pojęć (`pojecia.astro`). |
 | `src/layouts/Kurs.astro` | Szablon modułu kursu: nagłówek, spis treści, poprzedni/następny. |
-| `src/components/` | Komponenty React/Astro: ramki i ćwiczenia kursów (`kurs/`), widok ścieżki kursów językowych (`jezyki/`), karty artykułów (`wiedza/`), dawne efekty wizualne (`*.jsx`, od PR #70 nieużywane). |
+| `src/components/` | Komponenty Astro: ramki i ćwiczenia kursów (`kurs/`), widok ścieżki kursów językowych (`jezyki/`), karty artykułów (`wiedza/`). |
 | `src/lib/` | Logika w czystym JS (tabele prawdy, macierze, relacje, układy równań, matematyka finansowa, pochodne, wykresy, KaTeX) i wtyczki rehype (`rehype-interpunkcja`, `rehype-liczby`, `rehype-tabele`). |
 | `src/data/kursy/` | Opisy kursów, lista modułów (`status: 'live'` / `'soon'`), słowniczek. Rejestr w `index.js`. |
 | `src/data/wiedza.js` | Metadane artykułów: kategoria, seria, kolejność, tytuł SEO, opis. |
