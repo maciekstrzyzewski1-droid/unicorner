@@ -14,7 +14,7 @@ git show <commit>:<ścieżka> > /tmp/x   # zapis do porównania
 - **Strona live sprzed przebudowy** = commit `30970aa` na `main` (zawsze dostępny).
 - **Wariant „Świt”** = commit `4bf9314` (z PR #70, scalonego 2026-11-17 merge commitem, więc jest w historii `main`).
 - **Komponenty React** (`FaultyTerminal`, `HeroSkull`, `BorderGlow`), model `skeleton.glb` i opis jego kompresji
-  (`narzedzia/model-3d/README.md`) zostały usunięte z drzewa 2026-11-23 (decyzja U1 (b)). Ostatni raz są w commicie
+  (`narzedzia/model-3d/README.md`) zostały usunięte z drzewa 2026-11-23 (PR #85, decyzja U1 (b)). Ostatni raz są w commicie
   `2218f05` na `main`:
 
   ```

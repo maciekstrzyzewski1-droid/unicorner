@@ -23,7 +23,7 @@ Wiele plików ma 50–220 KB. Nie czytaj ich w całości: najpierw `grep -n`, po
 - Kursy językowe: dane `src/data/jezyki/*.js` (hiszpański 112 KB) i silnik `src/scripts/jezyki/silnik.js` (50 KB).
 - `src/teksty/*.html` (artykuły, do ok. 107 KB każdy).
 - Nie otwieraj bez potrzeby: `package-lock.json` (ok. 296 KB), `worker.js` (ok. 73 KB, endpointy opisane na górze), `public/assets/generator.js`.
-- Dawnych efektów WebGL na React i three (szkielet 3D, `FaultyTerminal`, `BorderGlow`) nie ma już w drzewie ani w zależnościach (usunięte 2026-11-23). Nie szukaj ich w repo: przywracanie z gita opisuje `KATALOG-ELEMENTOW.md`.
+- Dawnych efektów WebGL na React i three (szkielet 3D, `FaultyTerminal`, `BorderGlow`) nie ma już w drzewie ani w zależnościach (usunięte 2026-11-23, PR #85). Nie szukaj ich w repo: przywracanie z gita opisuje `KATALOG-ELEMENTOW.md`.
 
 ## Pułapki
 - Strony przedmiotów i statystyki mają własny JS i część własnego CSS. Zmiana w nich nie przenosi się na inne strony. Wyjątek: `src/scripts/przedmiot/quiz-silnik.js` zmienia 4 strony naraz (etir, geografia, marketing, ort). Zmiana we wspólnym pliku z `src/styles/` działa na wszystkie strony, które go importują.

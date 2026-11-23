@@ -9,7 +9,7 @@ Strony z materiałami nie wymagają logowania; logowanie (Google) potrzebne jest
 - **Frontend:** Astro 7, Tailwind 4, MDX + KaTeX. Build do statycznych plików, bez Reacta i bez wysp `client:`.
 - **Hosting:** GitHub Pages, wdrażane przez GitHub Actions (`.github/workflows/deploy.yml`) z katalogu `dist/`.
 - **Backend:** Cloudflare Worker (`worker.js`) + KV + baza D1. Generator AI, konta (Google), talie, kredyty, opinie, moderacja.
-- **Efekty strony głównej:** własny WebGL2 (`src/scripts/siatka/napis.js`) + Lenis. Dawne efekty na React i three (szkielet 3D, `FaultyTerminal`, `BorderGlow`) zostały usunięte razem z zależnościami 2026-11-23 (`ROADMAP.md`, U1 (b)); jak je przywrócić z gita: `KATALOG-ELEMENTOW.md`.
+- **Efekty strony głównej:** własny WebGL2 (`src/scripts/siatka/napis.js`) + Lenis. Dawne efekty na React i three (szkielet 3D, `FaultyTerminal`, `BorderGlow`) zostały usunięte razem z zależnościami 2026-11-23 (PR #85; `ROADMAP.md`, U1 (b)); jak je przywrócić z gita: `KATALOG-ELEMENTOW.md`.
 
 > Stan na 2026-11-21. Wcześniejsza wersja projektu (czysty HTML, każda strona jako samodzielny plik w roocie)
 > została usunięta z repo; jest w historii gita (przed commitem „usunięcie starej wersji z roota”).
