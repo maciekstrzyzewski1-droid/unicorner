@@ -1,6 +1,6 @@
 import { $, $$, h, tasuj, ruch } from './dom.js';
 import { norm, bezAkc, porownaj } from './porownanie.js';
-import { jezyk, mow } from './mowa.js';
+import { jezyk, mow, mowa } from './mowa.js';
 
 export const ETYKIETA = { wybor: 'Wybierz', wiele: 'Zaznacz wszystkie', wpisz: 'Wpisz', uloz: 'Ułóż zdanie', pary: 'Połącz w pary', kat: 'Posortuj', odm: 'Odmień', luki: 'Uzupełnij tekst', sluchaj: 'Posłuchaj', pisz: 'Twoja wypowiedź' };
 // ¿ i ¡ pomijamy: porównanie odpowiedzi ignoruje znaki przestankowe, a 7 przycisków po 40 px mieści się w jednym rzędzie na 360 px
