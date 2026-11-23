@@ -11,7 +11,7 @@ Strony z materiałami nie wymagają logowania; logowanie (Google) potrzebne jest
 - **Backend:** Cloudflare Worker (`worker.js`) + KV + baza D1. Generator AI, konta (Google), talie, kredyty, opinie, moderacja.
 - **Efekty strony głównej:** własny WebGL2 (`src/scripts/siatka/napis.js`) + Lenis. Dawne efekty na React i three (szkielet 3D, `FaultyTerminal`, `BorderGlow`) zostały usunięte razem z zależnościami 2026-11-23 (PR #85; `ROADMAP.md`, U1 (b)); jak je przywrócić z gita: `KATALOG-ELEMENTOW.md`.
 
-> Stan na 2026-11-21. Wcześniejsza wersja projektu (czysty HTML, każda strona jako samodzielny plik w roocie)
+> Stan na 2026-11-23. Wcześniejsza wersja projektu (czysty HTML, każda strona jako samodzielny plik w roocie)
 > została usunięta z repo; jest w historii gita (przed commitem „usunięcie starej wersji z roota”).
 
 ---
@@ -25,7 +25,7 @@ npm run build     # build do dist/ (ok. 1 min, 87 stron HTML w `dist/`: 85 z Ast
 npm run preview   # podgląd zbudowanej strony
 ```
 
-Wymagany Node 24 (Astro 7 wymaga co najmniej 22.23.4; workflow używa 24). Testów jednostkowych nie ma. Przed pushem uruchom
+Node co najmniej 22.23.4 (`engines` w `package.json`, wymóg Astro 7); zalecany Node 24, ten sam co w workflow. Testów jednostkowych nie ma. Przed pushem uruchom
 `npm run build` i `node narzedzia/tresc-check/sprawdz.mjs dist`, a przy zmianach w kursach językowych także
 `node narzedzia/jezyki-check/sprawdz.mjs`.
 
@@ -49,13 +49,13 @@ CodeQL (konfiguracja domyślna) i Dependabota (`.github/dependabot.yml`: akcje i
 | `src/pages/metody-badan-rynku/*.mdx` | Moduły kursu metod badań rynku (`wielkosc-proby`, `dobor-proby`, `skale`) + słowniczek pojęć (`pojecia.astro`). |
 | `src/layouts/Kurs.astro` | Szablon modułu kursu: nagłówek, spis treści, poprzedni/następny. |
 | `src/components/` | Komponenty Astro: ramki i ćwiczenia kursów (`kurs/`), widok ścieżki kursów językowych (`jezyki/`), karty artykułów (`wiedza/`). |
-| `src/lib/` | Logika w czystym JS (tabele prawdy, macierze, relacje, układy równań, matematyka finansowa, pochodne, wykresy, KaTeX) i wtyczki rehype (`rehype-interpunkcja`, `rehype-liczby`, `rehype-tabele`). |
+| `src/lib/` | Logika w JS i TS (tabele prawdy, macierze, relacje, układy równań, matematyka finansowa, pochodne, wykresy, KaTeX), loader artykułów `wiedza.js`, integracja CSP `csp-meta.mjs` i wtyczki rehype (`rehype-interpunkcja`, `rehype-liczby`, `rehype-tabele`). |
 | `src/data/kursy/` | Opisy kursów, lista modułów (`status: 'live'` / `'soon'`), słowniczek. Rejestr w `index.js`. |
 | `src/data/wiedza.js` | Metadane artykułów: kategoria, seria, kolejność, tytuł SEO, opis. |
 | `src/teksty/*.html` | Treść artykułów (gotowy HTML, 33 pliki). |
-| `src/styles/` | `tailwind.css`, `tokeny.css` (wspólne kolory, ładowany w `Base.astro`), `siatka.css` (strona główna), `global.css` (dawny landing, dziś tylko baza dla `kurs-szeroki.css`), `kurs.css`, `kurs-szeroki.css`, `wiedza.css`, `generator.css`, `jezyki.css` oraz wspólne style stron przedmiotów i statystyki (`przedmiot-motyw.css`, `stat-*.css`, `giga-napis.css`). |
+| `src/styles/` | `tailwind.css`, `tokeny.css` (wspólne kolory, ładowany w `Base.astro`), `siatka.css` (strona główna), `global.css` (dawny landing: od PR #70 nic go nie importuje i nie trafia do buildu, zostaje jako źródło elementów z `KATALOG-ELEMENTOW.md`), `kurs.css`, `kurs-szeroki.css`, `wiedza.css`, `generator.css`, `jezyki.css` oraz wspólne style stron przedmiotów i statystyki (`przedmiot-motyw.css`, `stat-*.css`, `giga-napis.css`). |
 | `src/scripts/` | `siatka/` (strona główna: `silnik.js` — jedna pętla klatek dla animacji sterowanych scrollem i kursorem, Lenis, menu; `napis.js` — neonowy napis UNICORNER w WebGL2), `jezyki/` (silnik kursów językowych), `przedmiot/quiz-silnik.js` (wspólny silnik quizu etir, geografia, marketing i ort), `makroekonomia/` (dane fiszek i quizu). |
-| `public/` | Pliki kopiowane 1:1 do `dist/`: `CNAME`, `robots.txt`, `assets/` (szkielet 3D, dziś nieużywany; `generator.js`, `talia.js`), `fonts/`, favicony, `og-image.jpg`, `recenzje.html`, `moderacja.html`, `reviews.json`. |
+| `public/` | Pliki kopiowane 1:1 do `dist/`: `CNAME`, `robots.txt`, `assets/` (`generator.js`, `talia.js`), `fonts/`, favicony, `og-image.jpg`, `recenzje.html`, `moderacja.html`, `reviews.json`. |
 | `worker.js` | Źródło Cloudflare Workera (nie jest częścią builda Astro). Opis endpointów na górze pliku. |
 | `WDROZENIE.md` | Konfiguracja i wdrożenie Workera. |
 | `ROADMAP.md` | Kierunek i priorytety. |

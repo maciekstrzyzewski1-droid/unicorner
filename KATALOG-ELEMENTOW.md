@@ -31,7 +31,7 @@ git show <commit>:<ścieżka> > /tmp/x   # zapis do porównania
 
 ## Strona live sprzed przebudowy (`30970aa`)
 
-Pliki: `src/pages/index.astro`, style w `src/styles/global.css` (plik nadal jest w repo: używa go `kurs-szeroki.css`),
+Pliki: `src/pages/index.astro`, style w `src/styles/global.css` (plik nadal jest w repo, ale od PR #70 nic go nie importuje),
 komponenty React w `src/components/*.jsx` (od PR #70 nieużywane, usunięte 2026-11-23; przywracanie z `2218f05`, patrz wyżej).
 
 | Element | Gdzie | Uwagi |
@@ -56,7 +56,7 @@ komponenty React w `src/components/*.jsx` (od PR #70 nieużywane, usunięte 2026
 ## Wariant „Świt” (`4bf9314`)
 
 Pliki: `src/pages/index.astro` (w tym commicie), `src/styles/start.css`, `src/scripts/start/silnik.js`, `src/scripts/start/chrom.js`.
-Inspiracja: Daydrift Festival (biblioteka Futurepedii). Uwagi Maćka do tego wariantu: `ROADMAP.md`, sekcja „W toku”, U1.
+Inspiracja: Daydrift Festival (biblioteka Futurepedii). Uwagi Maćka do tego wariantu: `ROADMAP.md`, sekcja „Zrobione”, U1.
 
 | Element | Gdzie | Uwagi |
 | --- | --- | --- |
