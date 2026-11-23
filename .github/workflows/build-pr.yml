@@ -33,6 +33,8 @@ jobs:
         run: node narzedzia/tresc-check/sprawdz.mjs dist
       - name: Kontrola danych kursow jezykowych
         run: node narzedzia/jezyki-check/sprawdz.mjs
+      - name: Testy jednostkowe kursu jezykowego
+        run: node --test "narzedzia/jezyki-check/*.test.mjs"
       - name: Playwright (do testu sieciowego i dymnego, poza zaleznosciami projektu)
         run: |
           npm install --prefix "$RUNNER_TEMP/pw" --no-save --ignore-scripts playwright@1.63.0
