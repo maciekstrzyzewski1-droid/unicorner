@@ -1,0 +1,40 @@
+---
+// Angielski — Unit 6 „The business of tourism” pod kolokwium. Dane: src/data/jezyki/angielski.js,
+// widok: src/components/jezyki/Sciezka.astro, logika: src/scripts/jezyki/silnik.js.
+import Base from '../layouts/Base.astro';
+import '../styles/wiedza.css';
+import '../styles/jezyki.css';
+import Bar from '../components/wiedza/Bar.astro';
+import Sciezka from '../components/jezyki/Sciezka.astro';
+
+const title = 'Angielski: Unit 6 The business of tourism — lekcje pod kolokwium · Unicorner';
+const description = 'Business English, Unit 6 „The business of tourism”: słownictwo z turystyki, czasy przeszłe i discourse markers, networking, storytelling w prezentacji i e-mail do partnera biznesowego. Krótkie lekcje i próbne kolokwium.';
+const url = 'https://unicorner.pl/angielski.html';
+---
+<Base title={title} description={description}>
+  <Fragment slot="head">
+    <link rel="canonical" href={url} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={url} />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:image" content="https://unicorner.pl/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </Fragment>
+
+  <Bar crumbs={[{ label: 'Języki obce', href: '/jezyki.html' }, { label: 'Angielski' }]} back={{ label: '← Języki', href: '/jezyki.html' }} />
+
+  <main id="main" class="jz-main">
+    <Sciezka kurs="angielski" />
+    <p class="k-bug jz-bug">Materiały to nasze własne opracowanie na podstawie zakresu zajęć — nie jesteśmy powiązani z uczelnią ani prowadzącymi. Gdy prowadzący zapisuje coś inaczej, liczy się jego wersja. Błąd albo niejasność? <a href="/kontakt.html">Napisz</a>.</p>
+  </main>
+
+  <footer class="wz-foot">
+    <div class="wz-wrap">
+      <span>unicorner · angielski</span>
+      <nav aria-label="Stopka"><a href="/index.html">Strona główna</a><a href="/jezyki.html">Języki obce</a><a href="/kontakt.html">Kontakt</a></nav>
+    </div>
+  </footer>
+</Base>

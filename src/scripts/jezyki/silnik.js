@@ -3,80 +3,12 @@
 // Ścieżka jest wyrenderowana statycznie (src/components/jezyki/Sciezka.astro); tu tylko ożywiamy stany
 // węzłów, prowadzimy lekcje i zapisujemy postęp w localStorage (bez logowania; prywatne okno = brak zapisu).
 import { awatar } from './awatar.js';
+import { $, $$, h, tasuj, ruch } from './dom.js';
+import { ustawJezyk, mowa, przyciskMowy, ozywMowe } from './mowa.js';
+import { R, ETYKIETA, klawiatura, ustawPo } from './cwiczenia.js';
+import { dzwiek, dzwiekWl, ustawDzwiek } from './dzwiek.js';
 
-const $ = (s, el = document) => el.querySelector(s);
-const $$ = (s, el = document) => [...el.querySelectorAll(s)];
-const h = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
-const tasuj = (a) => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
-/** Zwykły tekst (do syntezy mowy i aria-label — nigdy do HTML): bez znaczników, powtarzane aż do skutku, potem bez pojedynczych < i >. */
-const bezTagow = (s) => {
-  let t = String(s), poprzedni;
-  do { poprzedni = t; t = t.replace(/<[^<>]*>/g, ''); } while (t !== poprzedni);
-  return t.replace(/[<>]/g, '');
-};
-const ruch = () => !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-// ── porównywanie odpowiedzi ──
-const norm = (s) => String(s).normalize('NFC').toLowerCase().replace(/[¿?¡!.,;:„”"«»()]/g, ' ').replace(/\s+/g, ' ').trim();
-const bezAkc = (s) => norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-// Słowa, w których akcent zmienia znaczenie (tu = twój, tú = ty; que = że, qué = co?; esta = ta, está = jest).
-// Tu brak akcentu to inne słowo, nie literówka. Celowo bez solo/sólo i este/éste: RAE dopuszcza je bez akcentu.
-const AKC_SLOWO = new Set([
-  'tu', 'tú', 'mi', 'mí', 'el', 'él', 'si', 'sí', 'se', 'sé', 'te', 'té', 'de', 'dé', 'mas', 'más',
-  'que', 'qué', 'como', 'cómo', 'donde', 'dónde', 'adonde', 'adónde', 'cuando', 'cuándo', 'cual', 'cuál', 'cuales', 'cuáles',
-  'quien', 'quién', 'quienes', 'quiénes', 'cuanto', 'cuánto', 'cuanta', 'cuánta', 'cuantos', 'cuántos', 'cuantas', 'cuántas',
-  'esta', 'está', 'estas', 'estás',
-]);
-/** 'ok' — dokładnie; 'akcent' — dobrze poza akcentem/ñ; null — źle. */
-function porownaj(wpis, dobre) {
-  const w = norm(wpis);
-  if (!w) return null;
-  for (const d of dobre) if (norm(d) === w) return 'ok';
-  const ws = w.split(' ');
-  for (const d of dobre) {
-    if (bezAkc(d) !== bezAkc(wpis)) continue;
-    const ds = norm(d).split(' ');
-    if (ds.some((x, i) => x !== ws[i] && AKC_SLOWO.has(x) && AKC_SLOWO.has(ws[i]))) continue;
-    return 'akcent';
-  }
-  return null;
-}
-
-// ── synteza mowy ──
 let KURS = null;
-const mowa = typeof window !== 'undefined' && 'speechSynthesis' in window && typeof SpeechSynthesisUtterance !== 'undefined';
-function mow(tekst) {
-  if (!mowa) return false;
-  try {
-    window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(bezTagow(tekst));
-    u.lang = KURS.jezyk;
-    // Najpierw głos lokalny: działa bez sieci i od razu. Zdalny (localService: false) wysyła czytany tekst
-    // (sam tekst kursu, nie dane ucznia) na serwer dostawcy przeglądarki, więc bierzemy go tylko, gdy lokalnego nie ma.
-    const pasuje = window.speechSynthesis.getVoices().filter((v) => (v.lang || '').toLowerCase().startsWith(KURS.jezyk.slice(0, 2)));
-    const glos = pasuje.find((v) => v.localService === true) || pasuje[0];
-    if (glos) u.voice = glos;
-    u.rate = 0.9;
-    window.speechSynthesis.speak(u);
-    return true;
-  } catch { return false; }
-}
-function przyciskMowy(tekst, cls = 'jz-mow') {
-  const b = h('button', cls, '🔊');
-  b.type = 'button';
-  b.setAttribute('aria-label', 'Odsłuchaj: ' + bezTagow(tekst));
-  b.addEventListener('click', (e) => { e.stopPropagation(); mow(tekst); });
-  return b;
-}
-/** Dokleja 🔊 do każdego fragmentu po hiszpańsku (span.es) w kontenerze. */
-function ozywMowe(el) {
-  if (!mowa) return;
-  for (const s of $$('span.es', el)) {
-    if (s.dataset.mow) continue;
-    s.dataset.mow = '1';
-    s.append(przyciskMowy(s.textContent, 'jz-mow jz-mow-mini'));
-  }
-}
 
 // ── zapis postępu ──
 const dataStr = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
@@ -159,7 +91,7 @@ function nastepnyWezel() {
   return WEZLY.slice(od).find(ok) || WEZLY.find(ok) || null;
 }
 function dostepny(w) {
-  if (w.nr === 0 || zrobione(w.id)) return true;
+  if (KURS.otwarte || w.nr === 0 || zrobione(w.id)) return true;
   const pierwszyWSekcji = WEZLY.find((x) => x.sekcja === w.sekcja) === w;
   if (pierwszyWSekcji && st.odblok[w.sekcja]) return true;
   let i = w.nr - 1;
@@ -202,6 +134,12 @@ function sprawdzOdznaki(wynik) {
   if (u9.length && u9.every((w) => zrobione(w.id))) przyznaj('posesivos', nowe);
   if ((st.lekcje.boss1?.best ?? 0) >= 80) przyznaj('boss1', nowe);
   if (gotowosc() >= 90) przyznaj('gotowy', nowe);
+  // odznaki opisane w danych kursu: { jednostka: 'uX' } albo { boss: 'id' }
+  for (const o of ODZNAKI) {
+    const wj = o.jednostka ? WEZLY.filter((w) => w.jednostka === o.jednostka) : [];
+    if (wj.length && wj.every((w) => zrobione(w.id))) przyznaj(o.id, nowe);
+    if (o.boss && (st.lekcje[o.boss]?.best ?? 0) >= 80) przyznaj(o.id, nowe);
+  }
   return nowe;
 }
 
@@ -296,414 +234,25 @@ function modal(tresc, przyciski = []) {
   return zamknij;
 }
 
-// ── ćwiczenia ──
-const ETYKIETA = { wybor: 'Wybierz', wiele: 'Zaznacz wszystkie', wpisz: 'Wpisz', uloz: 'Ułóż zdanie', pary: 'Połącz w pary', kat: 'Posortuj', odm: 'Odmień', luki: 'Uzupełnij tekst', sluchaj: 'Posłuchaj', pisz: 'Twoja wypowiedź' };
-// ¿ i ¡ pomijamy: porównanie odpowiedzi ignoruje znaki przestankowe, a 7 przycisków po 40 px mieści się w jednym rzędzie na 360 px
-const ZNAKI = ['á', 'é', 'í', 'ó', 'ú', 'ñ', 'ü'];
-
-function klawiatura(getPole) {
-  const bar = h('div', 'jz-znaki');
-  bar.setAttribute('aria-label', 'Znaki hiszpańskie');
-  for (const z of ZNAKI) {
-    const b = h('button', 'jz-znak', z);
-    b.type = 'button';
-    b.tabIndex = -1;
-    b.addEventListener('mousedown', (e) => e.preventDefault());
-    b.addEventListener('click', () => {
-      const p = getPole();
-      if (!p || p.readOnly) return;
-      const a = p.selectionStart ?? p.value.length, bb = p.selectionEnd ?? p.value.length;
-      p.value = p.value.slice(0, a) + z + p.value.slice(bb);
-      p.setSelectionRange(a + 1, a + 1);
-      p.dispatchEvent(new Event('input', { bubbles: true }));
-      p.focus();
-    });
-    bar.append(b);
-  }
-  return bar;
-}
-function pole(placeholder) {
-  const i = h('input', 'jz-pole');
-  i.type = 'text';
-  i.autocomplete = 'off';
-  i.autocapitalize = 'off';
-  i.spellcheck = false;
-  i.setAttribute('autocorrect', 'off');
-  i.lang = KURS.jezyk;
-  i.enterKeyHint = 'done';
-  if (placeholder) i.placeholder = placeholder;
-  return i;
-}
-
-/** Każdy renderer zwraca { el, gotowe(), sprawdz() → { ok, akcent?, poprawnie?, mowic? }, pierwszyFokus? }. */
-const R = {
-  wybor(c, gotowy) {
-    const el = h('div', 'jz-opcje');
-    const dobra = c.o[0];
-    let wyb = null;
-    tasuj(c.o).forEach((o, i) => {
-      const b = h('button', 'jz-opcja', `<kbd>${i + 1}</kbd><span>${o}</span>`);
-      b.type = 'button';
-      b.dataset.v = o;
-      b.setAttribute('aria-pressed', 'false');
-      b.addEventListener('click', (e) => {
-        if (el.dataset.zablokuj) return;
-        $$('.jz-opcja', el).forEach((x) => { x.classList.remove('is-sel'); x.setAttribute('aria-pressed', 'false'); });
-        b.classList.add('is-sel');
-        b.setAttribute('aria-pressed', 'true');
-        wyb = o;
-        gotowy();
-        if (e.detail > 0) b.blur(); // klik myszą/palcem: Enter ma sprawdzić, a nie kliknąć opcję drugi raz
-      });
-      el.append(b);
-    });
-    return {
-      el,
-      gotowe: () => wyb !== null,
-      klawisz: (k) => { const b = $$('.jz-opcja', el)[k - 1]; if (b) b.click(); },
-      sprawdz() {
-        el.dataset.zablokuj = '1';
-        for (const b of $$('.jz-opcja', el)) { if (b.dataset.v === dobra) b.classList.add('is-ok'); else if (b.dataset.v === wyb) b.classList.add('is-bad'); }
-        return { ok: wyb === dobra, poprawnie: dobra, mowic: dobra };
-      },
-    };
-  },
-  sluchaj(c, gotowy) {
-    const r = R.wybor(c, gotowy);
-    const box = h('div', 'jz-sluchaj');
-    const b = h('button', 'jz-gloso', '🔊 <span>Odtwórz</span>');
-    b.type = 'button';
-    b.addEventListener('click', () => mow(c.mow));
-    box.append(b);
-    if (!mowa) box.append(h('p', 'jz-uwaga', `Twoja przeglądarka nie czyta na głos. Przeczytaj: <b lang="es">${c.mow}</b>`));
-    box.append(r.el);
-    setTimeout(() => mow(c.mow), 250);
-    return { ...r, el: box };
-  },
-  wiele(c, gotowy) {
-    const el = h('div', 'jz-opcje jz-wiele');
-    const dobre = new Set(c.d.map((i) => c.o[i]));
-    const wyb = new Set();
-    tasuj(c.o).forEach((o) => {
-      const b = h('button', 'jz-opcja', `<i class="jz-check" aria-hidden="true"></i><span lang="es">${o}</span>`);
-      b.type = 'button';
-      b.setAttribute('aria-pressed', 'false');
-      b.dataset.v = o;
-      b.addEventListener('click', (e) => {
-        if (el.dataset.zablokuj) return;
-        if (wyb.has(o)) wyb.delete(o); else wyb.add(o);
-        b.classList.toggle('is-sel', wyb.has(o));
-        b.setAttribute('aria-pressed', String(wyb.has(o)));
-        gotowy();
-        if (e.detail > 0) b.blur();
-      });
-      el.append(b);
-    });
-    return {
-      el,
-      gotowe: () => wyb.size > 0,
-      sprawdz() {
-        el.dataset.zablokuj = '1';
-        let ok = true;
-        for (const b of $$('.jz-opcja', el)) {
-          const v = b.dataset.v, d = dobre.has(v), w = wyb.has(v);
-          if (d && w) b.classList.add('is-ok');
-          else if (d && !w) { b.classList.add('is-brak'); ok = false; }
-          else if (!d && w) { b.classList.add('is-bad'); ok = false; }
-        }
-        return { ok, poprawnie: [...dobre].join(' '), mowic: [...dobre].join(' ') };
-      },
-    };
-  },
-  wpisz(c, gotowy) {
-    const el = h('div', 'jz-wpisz');
-    const i = pole(c.pod || 'wpisz odpowiedź');
-    i.addEventListener('input', gotowy);
-    el.append(i, klawiatura(() => i));
-    return {
-      el, pierwszyFokus: i,
-      gotowe: () => i.value.trim().length > 0,
-      sprawdz() {
-        i.readOnly = true;
-        const w = porownaj(i.value, c.a);
-        i.classList.add(w ? 'is-ok' : 'is-bad');
-        return { ok: !!w, akcent: w === 'akcent', poprawnie: c.a[0], mowic: c.a[0] };
-      },
-    };
-  },
-  uloz(c, gotowy) {
-    const slowa = (s) => s.replace(/[¿?¡!.,:;„”"]/g, ' ').split(/\s+/).filter(Boolean);
-    const cel = slowa(c.a);
-    const el = h('div', 'jz-uloz');
-    const linia = h('div', 'jz-linia');
-    linia.setAttribute('aria-label', 'Twoje zdanie');
-    const bank = h('div', 'jz-bank');
-    const kafel = (t) => {
-      const b = h('button', 'jz-kafel', t);
-      b.type = 'button';
-      b.lang = KURS.jezyk;
-      b.addEventListener('click', () => {
-        if (el.dataset.zablokuj) return;
-        (b.parentElement === bank ? linia : bank).append(b);
-        if (b.parentElement === linia && ruch()) b.animate([{ transform: 'scale(.85)' }, { transform: 'scale(1)' }], { duration: 160, easing: 'ease-out' });
-        gotowy();
-      });
-      return b;
-    };
-    for (const t of tasuj([...cel, ...(c.extra || [])])) bank.append(kafel(t));
-    el.append(linia, bank);
-    return {
-      el,
-      gotowe: () => linia.children.length > 0,
-      sprawdz() {
-        el.dataset.zablokuj = '1';
-        const wpis = $$('.jz-kafel', linia).map((k) => k.textContent).join(' ');
-        // inne poprawne szyki z tych samych kafelków (pole `alt` w danych)
-        const wzory = [c.a, ...(c.alt || [])].map((z) => norm(slowa(z).join(' ')));
-        const ok = wzory.includes(norm(wpis));
-        linia.classList.add(ok ? 'is-ok' : 'is-bad');
-        return { ok, poprawnie: c.a, mowic: c.a };
-      },
-    };
-  },
-  pary(c, gotowy, natychmiast) {
-    const el = h('div', 'jz-pary');
-    const L = h('div', 'jz-pary-k'), P = h('div', 'jz-pary-k');
-    let lewy = null, prawy = null, bledy = 0, dopasowane = 0;
-    const mapa = new Map(c.p.map(([a, b]) => [a, b]));
-    const sprobuj = () => {
-      if (!lewy || !prawy) return;
-      const ok = mapa.get(lewy.dataset.v) === prawy.dataset.v;
-      const [a, b] = [lewy, prawy];
-      lewy = prawy = null;
-      a.classList.remove('is-sel'); b.classList.remove('is-sel');
-      if (ok) {
-        a.classList.add('is-ok'); b.classList.add('is-ok'); a.disabled = b.disabled = true;
-        dopasowane++;
-        if (KURS && /[a-záéíóúñ¿¡]/i.test(a.dataset.v)) mow(a.dataset.v);
-        if (dopasowane === c.p.length) { gotowy(); natychmiast(); }
-      } else {
-        bledy++;
-        for (const x of [a, b]) { x.classList.add('is-bad'); setTimeout(() => x.classList.remove('is-bad'), 450); }
-      }
-    };
-    const przycisk = (t, strona) => {
-      const b = h('button', 'jz-para', t);
-      b.type = 'button';
-      b.dataset.v = t;
-      if (strona === 'L') b.lang = KURS.jezyk;
-      b.addEventListener('click', () => {
-        if (strona === 'L') { if (lewy) lewy.classList.remove('is-sel'); lewy = b; } else { if (prawy) prawy.classList.remove('is-sel'); prawy = b; }
-        b.classList.add('is-sel');
-        sprobuj();
-      });
-      return b;
-    };
-    for (const [a] of tasuj(c.p)) L.append(przycisk(a, 'L'));
-    for (const [, b] of tasuj(c.p)) P.append(przycisk(b, 'P'));
-    el.append(L, P);
-    return {
-      el,
-      gotowe: () => dopasowane === c.p.length,
-      sprawdz: () => ({ ok: bledy === 0, info: bledy ? `Pomyłki przy łączeniu: ${bledy}. Pary są już połączone poprawnie — zapamiętaj je.` : '' }),
-    };
-  },
-  kat(c, gotowy) {
-    const el = h('div', 'jz-kat');
-    const pula = h('div', 'jz-kat-pula');
-    const kosze = h('div', 'jz-kosze');
-    let wybrany = null;
-    const dozwolone = (e) => [].concat(e[1]);
-    c.k.forEach((nazwa, ki) => {
-      const k = h('div', 'jz-kosz', `<b>${nazwa}</b><div class="jz-kosz-in"></div>`);
-      k.dataset.k = ki;
-      k.setAttribute('role', 'button');
-      k.tabIndex = 0;
-      const wrzuc = () => {
-        if (!wybrany || el.dataset.zablokuj) return;
-        $('.jz-kosz-in', k).append(wybrany);
-        wybrany.classList.remove('is-sel');
-        wybrany = null;
-        el.classList.remove('is-wybor');
-        gotowy();
-      };
-      k.addEventListener('click', (e) => { if (e.target.closest('.jz-chip')) return; wrzuc(); });
-      k.addEventListener('keydown', (e) => {
-        if (e.key !== 'Enter' && e.key !== ' ') return;
-        if (e.key === ' ') e.preventDefault();   // spacja nie przewija strony
-        if (!wybrany) return;                     // nic do wrzucenia: Enter idzie dalej i sprawdza
-        e.preventDefault();
-        e.stopPropagation();                      // wrzucenie słowa nie sprawdza od razu
-        wrzuc();
-      });
-      kosze.append(k);
-    });
-    for (const e of tasuj(c.e)) {
-      const b = h('button', 'jz-chip', e[0]);
-      b.type = 'button';
-      b.lang = KURS.jezyk;
-      b.dataset.v = e[0];
-      b.addEventListener('click', () => {
-        if (el.dataset.zablokuj) return;
-        if (wybrany === b) { b.classList.remove('is-sel'); wybrany = null; el.classList.remove('is-wybor'); return; }
-        if (b.parentElement !== pula && !wybrany) { pula.append(b); gotowy(); return; }
-        if (wybrany) wybrany.classList.remove('is-sel');
-        wybrany = b; b.classList.add('is-sel'); el.classList.add('is-wybor');
-      });
-      pula.append(b);
-    }
-    const podp = h('p', 'jz-podp', 'Stuknij słowo, potem kategorię. Stuknięcie słowa w kategorii odsyła je z powrotem.');
-    el.append(podp, pula, kosze);
-    return {
-      el,
-      gotowe: () => pula.children.length === 0,
-      sprawdz() {
-        el.dataset.zablokuj = '1';
-        const zle = [];
-        for (const k of $$('.jz-kosz', el)) for (const ch of $$('.jz-chip', k)) {
-          const e = c.e.find((x) => x[0] === ch.dataset.v);
-          const ok = dozwolone(e).includes(Number(k.dataset.k));
-          ch.classList.add(ok ? 'is-ok' : 'is-bad');
-          if (!ok) zle.push(`<b lang="es">${e[0]}</b> → ${dozwolone(e).map((i) => c.k[i]).join(' / ')}`);
-        }
-        return { ok: zle.length === 0, info: zle.length ? `Popraw: ${zle.join('; ')}.` : '' };
-      },
-    };
-  },
-  odm(c, gotowy) {
-    const el = h('div', 'jz-odm');
-    const OS = ['yo', 'tú', 'él / ella / usted', 'nosotros / nosotras', 'vosotros / vosotras', 'ellos / ellas / ustedes'];
-    let akt = null;
-    const pola = c.f.map((_, i) => {
-      const w = h('label', 'jz-odm-w');
-      w.append(h('span', 'jz-odm-os', OS[i]));
-      const p = pole('');
-      p.addEventListener('focus', () => { akt = p; });
-      p.addEventListener('input', gotowy);
-      w.append(p);
-      el.append(w);
-      return p;
-    });
-    akt = pola[0];
-    pola.forEach((p, k) => { p.enterKeyHint = k < pola.length - 1 ? 'next' : 'done'; });
-    el.append(klawiatura(() => akt));
-    return {
-      el, pierwszyFokus: pola[0],
-      gotowe: () => pola.every((p) => p.value.trim()),
-      sprawdz() {
-        let ok = true, akcent = false;
-        pola.forEach((p, i) => {
-          p.readOnly = true;
-          const w = porownaj(p.value, [c.f[i]]);
-          p.classList.add(w ? 'is-ok' : 'is-bad');
-          if (!w) { ok = false; const pop = h('span', 'jz-odm-pop'); pop.lang = KURS.jezyk; pop.textContent = c.f[i]; p.after(pop); }
-          if (w === 'akcent') akcent = true;
-        });
-        return { ok, akcent, poprawnie: c.f.join(', '), mowic: c.f.join(', ') };
-      },
-    };
-  },
-  luki(c, gotowy) {
-    const el = h('div', 'jz-luki');
-    const dobre = [];
-    const tekst = h('p', 'jz-luki-t');
-    tekst.lang = KURS.jezyk;
-    const czesci = c.tekst.split(/\[\[(.+?)\]\]/);
-    const pola = [];
-    let akt = null;
-    czesci.forEach((cz, i) => {
-      if (i % 2 === 0) { tekst.append(document.createTextNode(cz)); return; }
-      const alt = cz.split('|');
-      dobre.push(alt);
-      const p = pole('');
-      p.classList.add('jz-luka');
-      p.setAttribute('aria-label', `Luka ${pola.length + 1}`);
-      p.size = Math.max(4, alt[0].length + 1);
-      p.addEventListener('focus', () => { akt = p; });
-      p.addEventListener('input', gotowy);
-      pola.push(p);
-      tekst.append(p);
-    });
-    akt = pola[0];
-    pola.forEach((p, k) => { p.enterKeyHint = k < pola.length - 1 ? 'next' : 'done'; });
-    el.append(tekst);
-    if (c.bank && c.bank.length) {
-      const bank = h('div', 'jz-luki-bank');
-      bank.append(h('span', 'jz-podp', 'Słowa do wyboru (stuknij, żeby wstawić):'));
-      const chipy = [];
-      // przygaszone są dokładnie te słowa, które teraz stoją w polach (po skasowaniu albo nadpisaniu wracają)
-      const odswiezBank = () => {
-        const zostalo = pola.map((p) => norm(p.value)).filter(Boolean);
-        for (const b of chipy) {
-          const i = zostalo.indexOf(norm(b.textContent));
-          b.classList.toggle('is-uzyte', i >= 0);
-          if (i >= 0) zostalo.splice(i, 1);
-        }
-      };
-      pola.forEach((p) => p.addEventListener('input', odswiezBank));
-      for (const s of tasuj(c.bank)) {
-        const b = h('button', 'jz-chip', s);
-        b.type = 'button';
-        b.lang = KURS.jezyk;
-        chipy.push(b);
-        b.addEventListener('click', () => {
-          if (el.dataset.zablokuj) return;
-          const cel = (akt && !akt.value) ? akt : (pola.find((p) => !p.value) || akt);
-          if (!cel) return;
-          cel.value = s;
-          odswiezBank();
-          const nast = pola.find((p) => !p.value);
-          if (nast) { akt = nast; if (window.matchMedia('(pointer:fine)').matches) nast.focus({ preventScroll: true }); }
-          gotowy();
-        });
-        bank.append(b);
-      }
-      el.append(bank);
-    }
-    el.append(klawiatura(() => akt));
-    return {
-      el, pierwszyFokus: pola[0],
-      gotowe: () => pola.every((p) => p.value.trim()),
-      sprawdz() {
-        el.dataset.zablokuj = '1';
-        let ok = true, akcent = false;
-        const pisownia = [];
-        pola.forEach((p, i) => {
-          p.readOnly = true;
-          const w = porownaj(p.value, dobre[i]);
-          p.classList.add(w ? 'is-ok' : 'is-bad');
-          if (!w) ok = false;
-          // przy samym akcencie pokazujemy właściwą pisownię tego słowa, przy błędzie — dobrą odpowiedź
-          const wzor = w === 'akcent' ? (dobre[i].find((d) => bezAkc(d) === bezAkc(p.value)) || dobre[i][0]) : dobre[i][0];
-          if (w === 'akcent') { akcent = true; pisownia.push(wzor); }
-          if (w !== 'ok') { const pop = h('span', 'jz-luka-pop'); pop.lang = KURS.jezyk; pop.textContent = wzor; p.after(pop); }
-        });
-        const pelny = c.tekst.replace(/\[\[(.+?)\]\]/g, (_, a) => a.split('|')[0]);
-        return { ok, akcent, poprawnie: ok && pisownia.length ? pisownia.join(', ') : null, mowic: pelny };
-      },
-    };
-  },
-  pisz(c, gotowy) {
-    const el = h('div', 'jz-pisz');
-    const t = h('textarea', 'jz-pole jz-pisz-t');
-    t.rows = 4;
-    t.lang = KURS.jezyk;
-    t.placeholder = 'Napisz po hiszpańsku (możesz też powiedzieć na głos i od razu sprawdzić wzór).';
-    t.addEventListener('input', gotowy);
-    el.append(t, klawiatura(() => t));
-    return {
-      el, pierwszyFokus: t,
-      gotowe: () => true,
-      sprawdz() {
-        t.readOnly = true;
-        const lista = (c.punkty || []).map((p) => `<li>${p}</li>`).join('');
-        return { ok: true, neutral: true, info: `<b>Wzór:</b> <span lang="es">${c.wzor}</span>${lista ? `<br><b>Sprawdź u siebie:</b><ul class="jz-lista">${lista}</ul>` : ''}`, mowic: c.wzor };
-      },
-    };
-  },
-};
 
 // ── lekcja ──
+/** Krótkie konfetti w oknie lekcji (tylko gdy użytkownik nie wyłączył animacji). */
+function konfetti(ramka) {
+  const kol = ['#bd8bff', '#5ad1a0', '#ffd84a', '#22d3ee', '#ff7eb6'];
+  const k = h('div', 'jz-konf');
+  k.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < 28; i++) {
+    const c = document.createElement('i');
+    c.style.left = `${Math.random() * 100}%`;
+    c.style.background = kol[i % kol.length];
+    c.style.animationDelay = `${Math.random() * 0.35}s`;
+    c.style.setProperty('--dx', `${(Math.random() - 0.5) * 120}px`);
+    c.style.setProperty('--rot', `${(Math.random() - 0.5) * 900}deg`);
+    k.append(c);
+  }
+  ramka.append(k);
+  setTimeout(() => k.remove(), 2600);
+}
 function zestaw(w) {
   if (w.typ === 'boss') {
     const out = [];
@@ -736,32 +285,36 @@ function otworz(w) {
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-modal', 'true');
   box.setAttribute('aria-label', `Lekcja: ${w.tytul}`);
-  box.innerHTML = `<div class="jz-l-top"><button type="button" class="jz-x" aria-label="Zamknij lekcję">✕</button><div class="jz-l-pasek" aria-hidden="true"><i></i></div><span class="jz-combo" aria-live="polite"></span></div>
+  // .jz-lekcja zawsze kryje cały ekran (tło i kratka); do widocznej części ekranu dopasowuje się tylko ramka
+  box.innerHTML = `<div class="jz-l-ramka"><div class="jz-l-top"><button type="button" class="jz-x" aria-label="Zamknij lekcję">✕</button><div class="jz-l-pasek" aria-hidden="true"><i></i></div><span class="jz-combo" aria-live="polite"></span><button type="button" class="jz-dzw" aria-label="Dźwięki lekcji"></button></div>
     <div class="jz-l-haslo" hidden></div><div class="jz-l-body"></div>
-    <div class="jz-l-dol"><div class="jz-fb" aria-live="polite"></div><div class="jz-l-akcje"><button type="button" class="jz-btn jz-btn-glow jz-spr" disabled>Sprawdź</button></div></div>`;
+    <div class="jz-l-dol"><div class="jz-fb" aria-live="polite"></div><div class="jz-l-znaki" hidden></div><div class="jz-l-akcje"><button type="button" class="jz-btn jz-btn-glow jz-spr" disabled>Sprawdź</button></div></div></div>`;
   document.body.append(box);
   // tło za oknem: bez Tab, kliknięć i Entera (aria-modal sam tego nie robi)
   const uspione = [...document.body.children].filter((e) => e !== box && !e.inert);
   uspione.forEach((e) => { e.inert = true; });
   box.focus({ preventScroll: true });
   const body = $('.jz-l-body', box), fb = $('.jz-fb', box), spr = $('.jz-spr', box), dol = $('.jz-l-dol', box);
-  const haslo = $('.jz-l-haslo', box);
+  const haslo = $('.jz-l-haslo', box), ramka = $('.jz-l-ramka', box), znaki = $('.jz-l-znaki', box);
+  const dzw = $('.jz-dzw', box);
+  const pokazDzw = () => { const wl = dzwiekWl(); dzw.textContent = wl ? '🔊' : '🔇'; dzw.setAttribute('aria-pressed', String(wl)); };
+  pokazDzw();
+  dzw.addEventListener('click', () => { ustawDzwiek(!dzwiekWl()); pokazDzw(); });
 
-  // telefon: okno lekcji ma wysokość widocznej części ekranu, więc klawiatura nie zasłania „Sprawdź”
+  // telefon: ramka ma wysokość widocznej części ekranu, więc klawiatura nie zasłania „Sprawdź”;
+  // przy każdej niezgodności wysokości spod ramki widać tło lekcji, nigdy stronę
   const vv = window.visualViewport;
   const dopasuj = () => {
-    if (vv.scale > 1.01) { box.style.top = ''; box.style.height = ''; box.style.removeProperty('--jz-h'); return; }
-    box.style.top = `${vv.offsetTop}px`;
-    box.style.height = `${vv.height}px`;
-    box.style.setProperty('--jz-h', `${vv.height}px`);
+    if (vv.scale > 1.01) { ramka.style.top = ''; ramka.style.height = ''; ramka.style.removeProperty('--jz-h'); return; }
+    ramka.style.top = `${vv.offsetTop}px`;
+    ramka.style.height = `${vv.height}px`;
+    ramka.style.setProperty('--jz-h', `${vv.height}px`);
   };
   if (vv) { vv.addEventListener('resize', dopasuj); vv.addEventListener('scroll', dopasuj); dopasuj(); }
   body.addEventListener('focusin', (e) => {
     if (!e.target.matches?.('.jz-pole')) return;
     setTimeout(() => {
-      const r = e.target.getBoundingClientRect(), b = body.getBoundingClientRect();
-      const zn = $('.jz-odm .jz-znaki, .jz-luki .jz-znaki, .jz-pisz .jz-znaki', body);
-      const dolG = zn ? Math.min(b.bottom, zn.getBoundingClientRect().top) : b.bottom;
+      const r = e.target.getBoundingClientRect(), dolG = body.getBoundingClientRect().bottom;
       if (r.bottom > dolG - 8) body.scrollTop += r.bottom - dolG + 16;
     }, 350);
   });
@@ -813,21 +366,30 @@ function otworz(w) {
     const c = CW.get(wpis.k);
     body.innerHTML = '';
     const karta = h('div', 'jz-cw');
+    karta.dataset.cw = wpis.k;                 // klucz ćwiczenia (test przejścia lekcji: narzedzia/jezyki-check/przejdz.cjs)
     if (boss && (poz === 0 || CW.get(kolejka[poz - 1].k).reto !== c.reto)) {
-      karta.append(h('div', 'jz-reto', `Reto ${c.reto + 1}/${w.l.retos.length} · ${w.l.retos[c.reto].nazwa}`));
+      karta.append(h('div', 'jz-reto', `${KURS.etap || 'Reto'} ${c.reto + 1}/${w.l.retos.length} · ${w.l.retos[c.reto].nazwa}`));
     }
     karta.append(h('div', 'jz-typ', `${ETYKIETA[c.t] || ''}${wpis.proba ? ' · <span class="jz-znow">jeszcze raz</span>' : ''}`));
     if (c.aw) karta.append(h('div', 'jz-aw-box', awatar(c.aw)));
     if (c.kol) { const s = h('div', 'jz-swatch'); s.style.background = c.kol; s.setAttribute('aria-hidden', 'true'); karta.append(s); }
     const q = h('div', 'jz-q', c.q || '');
     karta.append(q);
+    if (c.qp) { const sub = h('p', 'jz-q-sub', ''); sub.textContent = c.qp; karta.append(sub); }
     ozywMowe(q);
     renderer = R[c.t](c, () => { spr.disabled = !renderer.gotowe(); }, () => { if (faza === 'cw') sprawdz(); });
+    renderer.el.classList.add('jz-odp');          // strefa odpowiedzi: na telefonie zjeżdża do kciuka
     karta.append(renderer.el);
     body.append(karta);
+    // pasek znaków w dolnej belce (na dotyku ukrywa go CSS): tylko przy ćwiczeniach z polem
+    znaki.replaceChildren();
+    // KURS.znaki: własny zestaw znaków; pusta lista = bez paska (np. angielski)
+    const zZnakami = renderer.aktywnePole && (!KURS.znaki || KURS.znaki.length > 0);
+    if (zZnakami) znaki.append(klawiatura(renderer.aktywnePole, KURS.znaki || undefined));
+    znaki.hidden = !zZnakami;
     ustawPrzycisk(c.t === 'pisz' ? 'Pokaż wzór' : 'Sprawdź', 'spr');
     spr.disabled = !renderer.gotowe();
-    if (c.t === 'pary') spr.hidden = true; else spr.hidden = false;
+    spr.hidden = c.t === 'pary' || c.t === 'fiszka';
     if (ruch()) karta.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.16,1,.3,1)' });
     if (renderer.pierwszyFokus && window.matchMedia('(pointer:fine)').matches) renderer.pierwszyFokus.focus({ preventScroll: true });
     else { q.tabIndex = -1; q.focus({ preventScroll: true }); }   // nie na wyłączonym „Sprawdź” i nie pod oknem
@@ -838,6 +400,9 @@ function otworz(w) {
     if (faza !== 'cw' || !renderer || !renderer.gotowe()) return;
     faza = 'fb';
     const c = CW.get(biez.k);
+    // klawiatura ekranowa chowa się, więc panel wyniku jest widoczny; pasek znaków po sprawdzeniu znika
+    if (document.activeElement instanceof Element && document.activeElement.matches('.jz-pole')) document.activeElement.blur();
+    znaki.hidden = true;
     const r = renderer.sprawdz();
     const pierwsza = biez.proba === 0;
     if (!r.neutral) {
@@ -859,15 +424,16 @@ function otworz(w) {
       }
     }
     zapisz();
+    if (!r.neutral) dzwiek(r.ok ? 'ok' : (r.fiszka ? 'pyk' : 'zle'));
     const combEl = $('.jz-combo', box);
     combEl.textContent = combo >= 3 ? `×${combo} combo` : '';
     if (combo >= 3 && combo % 5 === 0 && ruch()) combEl.animate([{ transform: 'scale(1.5)' }, { transform: 'scale(1)' }], { duration: 400, easing: 'cubic-bezier(.16,1,.3,1)' });
 
-    const naglowek = r.neutral ? '📝 Porównaj ze wzorem' : (r.ok ? (r.akcent ? '✓ Dobrze — uwaga na akcent' : ['✓ ¡Muy bien!', '✓ ¡Perfecto!', '✓ ¡Genial!', '✓ Dobrze!'][Math.floor(Math.random() * 4)]) : '✗ Nie tym razem');
+    const naglowek = r.naglowek || (r.neutral ? '📝 Porównaj ze wzorem' : (r.ok ? (r.akcent ? (KURS.uwagaPisownia || '✓ Dobrze — uwaga na akcent') : (() => { const p = KURS.pochwaly || ['¡Muy bien!', '¡Perfecto!', '¡Genial!', 'Dobrze!']; return `✓ ${p[Math.floor(Math.random() * p.length)]}`; })()) : '✗ Nie tym razem'));
     dol.className = `jz-l-dol ${r.neutral ? 'is-neutral' : (r.ok ? 'is-ok' : 'is-bad')}`;
     fb.innerHTML = `<b class="jz-fb-h">${naglowek}</b>`;
     if (r.poprawnie && (r.akcent || !r.ok)) {
-      const p = h('div', 'jz-fb-pop', `${r.ok ? 'Pisownia' : 'Poprawnie'}: <b lang="es">${r.poprawnie}</b> `);
+      const p = h('div', 'jz-fb-pop', `${r.ok ? 'Pisownia' : 'Poprawnie'}: <b lang="${KURS.jezyk.slice(0, 2)}">${r.poprawnie}</b> `);
       if (r.mowic) p.append(przyciskMowy(r.mowic));
       fb.append(p);
     } else if (r.mowic && !r.neutral) {
@@ -925,7 +491,7 @@ function otworz(w) {
     odswiez();
     pokazHaslo();
     const nast = WEZLY[w.nr + 1];
-    const tytul = boss ? (proc >= 80 ? '🚪 Drzwi otwarte! ¡APROBADO!' : '🔒 Drzwi jeszcze zamknięte') : proc === 100 ? '💎 Bez ani jednego błędu!' : proc >= 70 ? '🎉 Lekcja zaliczona!' : '💪 Ukończone — powtórz, żeby utrwalić';
+    const tytul = boss ? (proc >= 80 ? `🚪 Drzwi otwarte! ${KURS.okrzykBoss || '¡APROBADO!'}` : '🔒 Drzwi jeszcze zamknięte') : proc === 100 ? '💎 Bez ani jednego błędu!' : proc >= 70 ? '🎉 Lekcja zaliczona!' : '💪 Ukończone — powtórz, żeby utrwalić';
     const kom = boss ? (proc >= 80 ? 'Masz min. 80% za pierwszym razem. To dobry znak przed kolokwium.' : 'Do wyjścia potrzeba min. 80%. Wróć do lekcji z błędami albo zrób powtórkę błędów i spróbuj jeszcze raz.') : '';
     body.innerHTML = '';
     dol.className = 'jz-l-dol';
@@ -942,8 +508,10 @@ function otworz(w) {
       ${nowe.length ? `<div class="jz-nowe-odz"><h3>Nowy kamień milowy!</h3>${nowe.map((o) => `<div class="jz-odz-mini"><span>${o.ikona}</span><b>${o.nazwa}</b><small>${o.opis}</small></div>`).join('')}</div>` : ''}`;
     body.append(k);
     if (ruch()) k.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
+    if (proc >= 70) { dzwiek('koniec'); if (ruch()) konfetti(ramka); }
     const akcje = $('.jz-l-akcje', box);
     akcje.innerHTML = '';
+    akcje.classList.add('is-koniec');
     const b1 = h('button', 'jz-btn jz-btn-ghost', 'Powtórz'); b1.type = 'button';
     b1.addEventListener('click', () => { zamknijLekcje(); otworz(w); });
     // po naprawieniu wszystkich błędów nie ma czego powtarzać
@@ -1021,6 +589,8 @@ function otworz(w) {
  */
 export function start({ kurs, odznaki } = {}) {
   if (!kurs || !document.querySelector('[data-wezel]')) return;
+  ustawJezyk(kurs.jezyk);
+  ustawPo(kurs.po);
   KURS = kurs;
   ODZNAKI = odznaki || [];
   KLUCZ = `uc-jezyki-v1:${KURS.slug}`;

@@ -1,4 +1,4 @@
-// Wspólne pomocniki do pisania kursów językowych (hiszpański, później angielski).
+// Wspólne pomocniki do pisania kursów językowych (hiszpański, angielski).
 // Kurs to zwykły obiekt JS; Sciezka.astro importuje go jako moduł i przekazuje do start({ kurs, odznaki }), a silnik
 // (src/scripts/jezyki/silnik.js) losuje z puli każdej lekcji kilka ćwiczeń przy każdym podejściu.
 //
@@ -14,6 +14,7 @@
 //   luki   – tekst z lukami [[odp|inna odp]]; `bank` = słowa do wyboru (opcjonalnie)
 //   sluchaj – posłuchaj (synteza mowy) i wybierz; `mow` = tekst do przeczytania, `o` jak w wybor
 //   pisz   – wypowiedź własna + wzór + samoocena (nie liczy się do błędów)
+//   fiszka – karta: przód `a`, tył `b` (+ przykład `ex`); „Jeszcze nie” = błąd, karta wraca na końcu lekcji
 // Każde ćwiczenie może mieć: `x` (wyjaśnienie, pokazywane po sprawdzeniu — także przy dobrej
 // odpowiedzi), `aw` (parametry postaci do opisu, rysuje ją src/scripts/jezyki/awatar.js),
 // `kol` (próbka koloru), `reto` (numer etapu w escape roomie).
@@ -27,9 +28,13 @@ export const KAT = (q, k, e, x, ext = {}) => ({ t: 'kat', q, k, e, x, ...ext });
 export const LUKI = (q, tekst, bank, x, ext = {}) => ({ t: 'luki', q, tekst, bank, x, ...ext });
 export const SLUCHAJ = (mow, o, x, ext = {}) => ({ t: 'sluchaj', q: 'Posłuchaj i wybierz, co słyszysz', mow, o, x, ...ext });
 export const PISZ = (q, wzor, punkty, x, ext = {}) => ({ t: 'pisz', q, wzor, punkty, x, ...ext });
+/** Fiszka: a = przód (w języku kursu), b = znaczenie po polsku, ex = przykład (opcjonalnie). Uczeń sam ocenia: umiem / jeszcze nie. */
+export const F = (a, b, ex, ext = {}) => ({ t: 'fiszka', q: 'Pamiętasz, co to znaczy?', a, b, ex, ...ext });
 
 /** Fragment po hiszpańsku w karcie „Nowe” — silnik dokleja do niego przycisk 🔊. */
 export const es = (t) => `<span class="es" lang="es">${t}</span>`;
+/** Fragment po angielsku — tak samo z przyciskiem 🔊 (silnik czyta go głosem z KURS.jezyk). */
+export const en = (t) => `<span class="obcy" lang="en">${t}</span>`;
 
 /** Mała tabela HTML do kart „Nowe” i ściąg. Komórki mogą zawierać HTML. */
 export function tab(wiersze, naglowek) {

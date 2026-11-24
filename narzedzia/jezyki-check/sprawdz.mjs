@@ -40,7 +40,10 @@ function cw(c, gdzie) {
       if (new Set(c.d).size !== c.d.length) blad(gdzie, 'powtórzone indeksy d');
       break;
     }
-    case 'wpisz': if (!c.a.length || c.a.some((a) => !String(a).trim())) blad(gdzie, 'brak odpowiedzi'); break;
+    case 'wpisz':
+      if (!c.a.length || c.a.some((a) => !String(a).trim())) blad(gdzie, 'brak odpowiedzi');
+      if (c.forma && (!Number.isInteger(c.forma.os) || c.forma.os < 0 || c.forma.os > 5)) blad(gdzie, `forma.os poza 0–5: ${c.forma.os}`);
+      break;
     case 'uloz': {
       const slowa = (s) => s.replace(/[¿?¡!.,:;„”"]/g, ' ').split(/\s+/).filter(Boolean).map(norm);
       const cel = slowa(c.a);
@@ -61,7 +64,10 @@ function cw(c, gdzie) {
       for (const e of c.e) for (const i of [].concat(e[1])) if (!(i >= 0 && i < c.k.length)) blad(gdzie, `„${e[0]}”: zła kategoria ${i}`);
       break;
     }
-    case 'odm': if (c.f.length !== 6 || c.f.some((f) => !f)) blad(gdzie, 'odmiana musi mieć 6 form'); break;
+    case 'odm':
+      if (c.f.length !== 6 || c.f.some((f) => !f)) blad(gdzie, 'odmiana musi mieć 6 form');
+      if (String(c.v).endsWith('se') && (!c.qp || c.qp.includes('<'))) blad(gdzie, `odm ${c.v}: ${c.qp ? 'qp zawiera znacznik HTML' : 'brak qp'}`);
+      break;
     case 'luki': {
       const luki = [...c.tekst.matchAll(/\[\[(.+?)\]\]/g)].map((m) => m[1].split('|'));
       if (!luki.length) blad(gdzie, 'brak luk');
@@ -77,6 +83,7 @@ function cw(c, gdzie) {
       break;
     }
     case 'pisz': if (!c.wzor) blad(gdzie, 'brak wzoru'); break;
+    case 'fiszka': if (!String(c.a || '').trim() || !String(c.b || '').trim()) blad(gdzie, 'fiszka bez przodu albo tyłu'); break;
     default: blad(gdzie, `nieznany typ „${c.t}”`);
   }
 }
@@ -118,6 +125,13 @@ for (const [klucz, v] of Object.entries(V)) {
   const rdzen = bez.slice(0, -2);
   const wzor = KONC[v.reg].map((k) => rdzen + k);
   v.f.forEach((f, i) => { if (f !== wzor[i]) blad(`odmiana ${bez}`, `osoba ${i + 1}: „${f}”, z reguły „${wzor[i]}”`); });
+}
+
+// czasowniki zwrotne: każda forma zaczyna się od zaimka
+for (const [klucz, v] of Object.entries(V)) {
+  const bez = v.bez || klucz;
+  if (!bez.endsWith('se')) continue;
+  v.f.forEach((f, i) => { if (!/^(me|te|se|nos|os)\s/.test(f)) blad(`odmiana ${bez}`, `osoba ${i + 1}: „${f}” bez zaimka zwrotnego`); });
 }
 
 for (const u of uwagi) console.log('uwaga  ', u);

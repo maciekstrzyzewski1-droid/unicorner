@@ -1,9 +1,11 @@
 // Rejestr kursów językowych. Nowy język = nowy plik danych (wzór: hiszpanski.js) + wpis tutaj
 // + strona src/pages/<slug>.astro z <Sciezka kurs="<slug>" /> + karta w src/pages/jezyki.astro.
 import * as hiszpanski from './hiszpanski.js';
+import * as angielski from './angielski.js';
 
 export const JEZYKI = {
   hiszpanski: { KURS: hiszpanski.KURS, ODZNAKI: hiszpanski.ODZNAKI },
+  angielski: { KURS: angielski.KURS, ODZNAKI: angielski.ODZNAKI },
 };
 
 /** Liczby do opisów (strona kursu, hub języków). */
