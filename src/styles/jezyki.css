@@ -427,6 +427,9 @@ html.jz-lock,html.jz-lock body{overflow:hidden;overscroll-behavior:none;}
 .jz-fk-oceny{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .jz-fk-oceny .jz-btn{min-height:54px;font-size:1.02rem;}
 @media (prefers-reduced-motion:reduce){ .jz-fk-in{transition:none;} }
+/* fiszka odwrotna (polski na przodzie): odpowiedź po angielsku jest główną treścią odwrocia */
+.jz-fiszka.is-pl .jz-fk-przod .jz-fk-slowo{font-family:var(--sans,inherit);font-weight:600;font-size:clamp(1.35rem,6vw,1.8rem);color:var(--text);}
+.jz-fiszka.is-pl .jz-fk-znaczy{font-family:var(--disp);font-size:clamp(1.6rem,7vw,2.1rem);font-weight:700;color:var(--jz-v3);line-height:1.15;}
 
 /* ── konfetti na koniec dobrze zrobionej lekcji ── */
 .jz-konf{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5;}

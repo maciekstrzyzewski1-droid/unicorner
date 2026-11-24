@@ -5,7 +5,7 @@
 //   1. strona ładuje się bez błędów JS (pageerror, console.error) i silnik kursu startuje;
 //   2. „Ucz się dalej” ([data-akcja="dalej"]) otwiera okno lekcji .jz-lekcja z position: fixed;
 //   3. karty „Nowe” przechodzą przyciskiem .jz-spr;
-//   4. w ćwiczeniu z opcjami (.jz-opcja) wybór opcji i „Sprawdź” dają wynik
+//   4. w ćwiczeniu z opcjami (.jz-opcja) wybór opcji i „Sprawdź” dają wynik; w fiszce (.jz-fk) odwrócenie i „Umiem”
 //      (.jz-l-dol.is-ok albo .is-bad) i przycisk „Dalej”;
 //   5. okno lekcji się zamyka.
 // Kolejność ćwiczeń jest losowa. Gdy pierwsze ćwiczenie nie ma opcji, test zamyka lekcję i otwiera ją od nowa.
@@ -127,16 +127,22 @@ async function znajdzCwiczenieZOpcjami(page) {
     if (proba === 1) await sprawdzPozycjeOkna(page);
     const karty = await przejdzKartyNowe(page);
     if (proba === 1) kartyNowe = karty;
-    if (await page.locator('.jz-lekcja .jz-cw .jz-opcja').count()) return { proba, kartyNowe };
+    if (await page.locator('.jz-lekcja .jz-cw .jz-opcja, .jz-lekcja .jz-cw .jz-fk').count()) return { proba, kartyNowe };
     await zamknijLekcje(page);
   }
-  return porazka(`w ${MAKS_PROB} otwarciach lekcji nie trafiło się ćwiczenie z opcjami (.jz-opcja)`);
+  return porazka(`w ${MAKS_PROB} otwarciach lekcji nie trafiło się ćwiczenie z opcjami (.jz-opcja) ani fiszka (.jz-fk)`);
 }
 
 async function rozwiazCwiczenieZOpcjami(page) {
   const spr = page.locator('.jz-lekcja .jz-spr');
-  await krok('nie da się wybrać opcji .jz-opcja', () => page.locator('.jz-lekcja .jz-cw .jz-opcja').first().click());
-  await krok('„Sprawdź” nie odblokował się po wyborze opcji', () => spr.click());
+  if (await page.locator('.jz-lekcja .jz-cw .jz-fk').count()) {
+    // fiszka: stuknięcie odwraca kartę, „Umiem” sprawdza od razu (bez „Sprawdź”)
+    await krok('nie da się odwrócić fiszki .jz-fk', () => page.locator('.jz-lekcja .jz-cw .jz-fk').click());
+    await krok('po odwróceniu fiszki nie ma przycisku „Umiem” (.jz-fk-tak)', () => page.locator('.jz-lekcja .jz-fk-tak').click());
+  } else {
+    await krok('nie da się wybrać opcji .jz-opcja', () => page.locator('.jz-lekcja .jz-cw .jz-opcja').first().click());
+    await krok('„Sprawdź” nie odblokował się po wyborze opcji', () => spr.click());
+  }
   await krok('po „Sprawdź” nie pojawił się wynik (.jz-l-dol.is-ok albo .jz-l-dol.is-bad)',
     () => page.locator('.jz-lekcja .jz-l-dol.is-ok, .jz-lekcja .jz-l-dol.is-bad').waitFor({ state: 'visible' }));
   const wynik = await page.$eval('.jz-lekcja .jz-l-dol', (el) => (el.classList.contains('is-ok') ? 'dobrze' : 'źle'));
@@ -173,7 +179,7 @@ async function main() {
 }
 
 main().then((r) => {
-  console.log(`OK: ${STRONA}: okno lekcji ma position: fixed, kart „Nowe”: ${r.kartyNowe}, ćwiczenie z opcjami `
+  console.log(`OK: ${STRONA}: okno lekcji ma position: fixed, kart „Nowe”: ${r.kartyNowe}, ćwiczenie z opcjami albo fiszka `
     + `w ${r.proba}. otwarciu, odpowiedź: ${r.wynik}, przycisk „${r.tekst}”, lekcja zamknięta. Brak błędów JS.`);
 }).catch((e) => {
   console.log(`::error::${STRONA}: test dymny nie przeszedł: ${e.message}`);

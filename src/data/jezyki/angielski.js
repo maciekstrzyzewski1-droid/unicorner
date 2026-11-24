@@ -6,6 +6,7 @@
 // Ćwiczenia to własne opracowanie; krótkie fragmenty artykułu i prezentacji służą tylko do ćwiczeń z dopasowaniem.
 import { W, WIELE, P, U, PARY, KAT, LUKI, PISZ, F, en, tab, paryZ } from './narzedzia.js';
 import { SEKCJA_CZASY } from './angielski-czasy.js';
+import { SEKCJA_SLOWKA } from './angielski-slowka.js';
 
 // ─────────────────────────────── 6.1 słownictwo ───────────────────────────────
 // ćw. 6: lewe pudełko + prawe pudełko (rozwiązanie jednoznaczne: „tourism” jest w prawym pudełku raz,
@@ -266,9 +267,10 @@ export const KURS = {
   flaga: '🇬🇧',
   h1: 'Angielski',
   h1Grad: 'czasy i Unit 6 pod kolokwium',
-  opis: 'Wszystkie arkusze z czasami z zajęć (wpisujesz formy jak na kolokwium) i cały dział 6 „The business of tourism”: fiszki ze słówkami, kolokacje, artykuł, networking, storytelling i e-mail do partnera. Każda lekcja jest otwarta od razu, a na końcu czeka próbne kolokwium jako escape room.',
-  kolokwium: { nazwa: 'kolokwium', jednostki: ['t1', 't2', 't3', 't4', 'u1', 'u2', 'u3', 'u4', 'u5'], boss: 'boss1' },
+  opis: 'Słówka z listy z zajęć jako fiszki (najpierw polski, potem angielski), wszystkie arkusze z czasami z zajęć (wpisujesz formy jak na kolokwium) i cały dział 6 „The business of tourism”: fiszki ze słówkami, kolokacje, artykuł, networking, storytelling i e-mail do partnera. Każda lekcja jest otwarta od razu, a na końcu czeka próbne kolokwium jako escape room.',
+  kolokwium: { nazwa: 'kolokwium', jednostki: ['v1', 't1', 't2', 't3', 't4', 'u1', 'u2', 'u3', 'u4', 'u5'], boss: 'boss1' },
   sekcje: [
+    SEKCJA_SLOWKA,
     SEKCJA_CZASY,
     {
       id: 's1', nazwa: 'Unit 6 · The business of tourism', pl: 'lekcje 6.1–6.5 w kolejności podręcznika · możesz zacząć od dowolnej',
@@ -741,6 +743,7 @@ export const ODZNAKI = [
   { id: 'xp250', ikona: '⭐', nazwa: '250 XP', opis: 'Zbierz 250 punktów doświadczenia.' },
   { id: 'xp1000', ikona: '🌟', nazwa: '1000 XP', opis: 'Zbierz 1000 punktów doświadczenia.' },
   { id: 'bledy', ikona: '🩹', nazwa: 'Naprawione błędy', opis: 'Zrób powtórkę swoich błędów.' },
+  { id: 'v1', ikona: '🗂️', nazwa: 'Słówka opanowane', opis: 'Przejdź wszystkie fiszki ze słówkami z zajęć.', jednostka: 'v1' },
   { id: 't1', ikona: '⏱️', nazwa: 'Since or ago?', opis: 'Ukończ wszystkie lekcje z arkusza I.', jednostka: 't1' },
   { id: 't2', ikona: '⏪', nazwa: 'Past master', opis: 'Ukończ wszystkie lekcje z arkusza II.', jednostka: 't2' },
   { id: 't3', ikona: '🔀', nazwa: 'Mixed tenses', opis: 'Ukończ wszystkie lekcje z arkusza IV.', jednostka: 't3' },
