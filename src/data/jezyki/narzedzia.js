@@ -30,6 +30,8 @@ export const SLUCHAJ = (mow, o, x, ext = {}) => ({ t: 'sluchaj', q: 'Posłuchaj 
 export const PISZ = (q, wzor, punkty, x, ext = {}) => ({ t: 'pisz', q, wzor, punkty, x, ...ext });
 /** Fiszka: a = przód (w języku kursu), b = znaczenie po polsku, ex = przykład (opcjonalnie). Uczeń sam ocenia: umiem / jeszcze nie. */
 export const F = (a, b, ex, ext = {}) => ({ t: 'fiszka', q: 'Pamiętasz, co to znaczy?', a, b, ex, ...ext });
+/** Fiszka odwrotna: na przodzie polskie znaczenie, na odwrocie słowo w języku kursu (odsłuch po odwróceniu). */
+export const FPL = (pl, obcy, ex, ext = {}) => ({ t: 'fiszka', q: 'Jak to powiesz po angielsku?', a: pl, b: obcy, ex, pl: true, ...ext });
 
 /** Fragment po hiszpańsku w karcie „Nowe” — silnik dokleja do niego przycisk 🔊. */
 export const es = (t) => `<span class="es" lang="es">${t}</span>`;

@@ -452,11 +452,14 @@ export const R = {
   // fiszka: przód (słowo w języku kursu) → stuknięcie odwraca → znaczenie i przykład → uczeń sam ocenia.
   // „Jeszcze nie” liczy się jak błąd: fiszka wraca na końcu lekcji i trafia do „Powtórz błędy”.
   fiszka(c, gotowy, natychmiast) {
-    const el = h('div', 'jz-fiszka');
+    // c.pl: na przodzie polskie znaczenie, na odwrocie słowo w języku kursu (czytane na głos)
+    const lp = c.pl ? 'pl' : lng(), lt = c.pl ? lng() : 'pl';
+    const obcy = c.pl ? c.b : c.a;
+    const el = h('div', c.pl ? 'jz-fiszka is-pl' : 'jz-fiszka');
     const karta = h('button', 'jz-fk',
-      `<span class="jz-fk-in"><span class="jz-fk-p jz-fk-przod"><span class="jz-fk-slowo" lang="${lng()}">${c.a}</span>`
-      + `<small>stuknij, żeby odwrócić</small></span><span class="jz-fk-p jz-fk-tyl"><span class="jz-fk-slowo-m" lang="${lng()}">${c.a}</span>`
-      + `<span class="jz-fk-znaczy">${c.b}</span>${c.ex ? `<span class="jz-fk-ex" lang="${lng()}">${c.ex}</span>` : ''}</span></span>`);
+      `<span class="jz-fk-in"><span class="jz-fk-p jz-fk-przod"><span class="jz-fk-slowo" lang="${lp}">${c.a}</span>`
+      + `<small>stuknij, żeby odwrócić</small></span><span class="jz-fk-p jz-fk-tyl"><span class="jz-fk-slowo-m" lang="${lp}">${c.a}</span>`
+      + `<span class="jz-fk-znaczy" lang="${lt}">${c.b}</span>${c.ex ? `<span class="jz-fk-ex" lang="${lng()}">${c.ex}</span>` : ''}</span></span>`);
     karta.type = 'button';
     karta.setAttribute('aria-label', 'Odwróć fiszkę');
     const oceny = h('div', 'jz-fk-oceny');
@@ -471,7 +474,7 @@ export const R = {
       karta.classList.add('is-odwr');
       karta.setAttribute('aria-label', 'Fiszka odwrócona');
       oceny.hidden = false;
-      mow(c.a);
+      mow(obcy);
       tak.focus({ preventScroll: true });
     };
     karta.addEventListener('click', odwroc);
@@ -487,8 +490,8 @@ export const R = {
         el.dataset.zablokuj = '1';
         nie.disabled = tak.disabled = true;
         return wynik
-          ? { ok: true, mowic: c.a, fiszka: true }
-          : { ok: false, mowic: c.a, fiszka: true, naglowek: '↻ Wróci na końcu lekcji', info: `<b lang="${lng()}">${c.a}</b> = ${c.b}` };
+          ? { ok: true, mowic: obcy, fiszka: true }
+          : { ok: false, mowic: obcy, fiszka: true, naglowek: '↻ Wróci na końcu lekcji', info: `<b lang="${lp}">${c.a}</b> = <b lang="${lt}">${c.b}</b>` };
       },
     };
   },
