@@ -537,7 +537,7 @@ po prawej widać, co gdzie przeciągnąć. Przycisk „% sumy kolumny” zamieni
 </Przestawna>
 
 <Ramka kind="botak" tytul="„Liczba z” albo „Suma z”">
-Gdy w kolumnie są słowa, Excel w Wartościach liczy komórki: „Liczba z…”. Gdy są **liczby** (np. kody), Excel od razu je **sumuje**: „Suma z…”. Do zliczania osób zmień to: prawy przycisk → **Podsumuj wartości według** → **Liczba**.
+Gdy w kolumnie są słowa, Excel w Wartościach liczy komórki: „Liczba z…”. Gdy są **same liczby** (np. kody, bez pustych komórek), Excel od razu je **sumuje**: „Suma z…”. Gdy obok liczb są puste komórki (np. N/D), znów wybiera „Liczba z…”. Zawsze sprawdź napis w nagłówku i w razie potrzeby zmień: prawy przycisk → **Podsumuj wartości według** → **Liczba** albo **Średnia**.
 
 **Zasada:** „ile osób” = Liczba. „Suma kodów” prawie nigdy nie jest tym, czego szukasz.
 </Ramka>
@@ -747,7 +747,7 @@ Przy pytaniach ze skalą (P7, P8) zamiast liczyć osoby przy każdej odpowiedzi,
 <Ramka kind="polecenie" tytul="Policz średnią ocenę w grupach">
 1. Upewnij się, że stwierdzenie jest **zakodowane** (1–5), a N/D to **puste komórki**.
 2. Tabela przestawna: grupy (np. płeć) do **Wierszy**.
-3. Zakodowaną kolumnę (np. AP) do **Wartości**. Excel napisze „Suma z AP”.
+3. Zakodowaną kolumnę (np. AP) do **Wartości**. Excel napisze „Suma z AP” (albo „Liczba z…”, gdy w kolumnie są puste komórki).
 4. Prawy przycisk na liczbie → **Podsumuj wartości według → Średnia**.
 5. Prawy przycisk → **Format liczby** → Liczbowe, 2 miejsca po przecinku.
 6. Odfiltruj braki w grupach (np. „odmowa odp.”).
