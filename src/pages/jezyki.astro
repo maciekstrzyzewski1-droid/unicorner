@@ -7,17 +7,18 @@ import Bar from '../components/wiedza/Bar.astro';
 import { JEZYKI, statystyki } from '../data/jezyki/index.js';
 
 const title = 'Języki obce — hiszpański i angielski krok po kroku · Unicorner';
-const description = 'Nauka języków pod wymagania UEP: lekcje w kolejności zajęć, słownictwo i gramatyka z kolokwiów, XP, seria dni i kamienie milowe. Hiszpański już jest, angielski w przygotowaniu.';
+const description = 'Nauka języków pod wymagania UEP: lekcje w kolejności zajęć, słownictwo i gramatyka z kolokwiów, XP, seria dni i kamienie milowe. Hiszpański i angielski (Unit 6) już są.';
 const url = 'https://unicorner.pl/jezyki.html';
 const es = statystyki(JEZYKI.hiszpanski.KURS);
+const en = statystyki(JEZYKI.angielski.KURS);
 
 const KURSY = [
   { flaga: '🇪🇸', nazwa: 'Hiszpański', sub: 'w biznesie · A1', file: 'hiszpanski.html', live: true,
     desc: 'Od „¡Hola!” po zaimki dzierżawcze i cele zawodowe z querer. Wszystko z zakresu kolokwium 1 plus próbne kolokwium jako escape room.',
     tags: [`${es.lekcje} lekcji`, `${es.cwiczenia} ćwiczeń`, 'escape room'] },
-  { flaga: '🇬🇧', nazwa: 'Angielski', sub: 'pod wymagania UEP', file: 'kontakt.html', live: false,
-    desc: 'Ta sama ścieżka: słownictwo i tematy z sylabusa w kolejności zajęć. W przygotowaniu.',
-    tags: ['wkrótce'] },
+  { flaga: '🇬🇧', nazwa: 'Angielski', sub: 'business English · Unit 6', file: 'angielski.html', live: true,
+    desc: 'Unit 6 „The business of tourism” pod kolokwium: słownictwo z turystyki, czasy przeszłe, networking, storytelling i e-mail do partnera. Wszystkie lekcje otwarte od razu.',
+    tags: [`${en.lekcje} lekcji`, `${en.cwiczenia} ćwiczeń`, 'escape room'] },
 ];
 ---
 <Base title={title} description={description}>

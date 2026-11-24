@@ -1,4 +1,4 @@
-// Wspólne pomocniki do pisania kursów językowych (hiszpański, później angielski).
+// Wspólne pomocniki do pisania kursów językowych (hiszpański, angielski).
 // Kurs to zwykły obiekt JS; Sciezka.astro importuje go jako moduł i przekazuje do start({ kurs, odznaki }), a silnik
 // (src/scripts/jezyki/silnik.js) losuje z puli każdej lekcji kilka ćwiczeń przy każdym podejściu.
 //
@@ -30,6 +30,8 @@ export const PISZ = (q, wzor, punkty, x, ext = {}) => ({ t: 'pisz', q, wzor, pun
 
 /** Fragment po hiszpańsku w karcie „Nowe” — silnik dokleja do niego przycisk 🔊. */
 export const es = (t) => `<span class="es" lang="es">${t}</span>`;
+/** Fragment po angielsku — tak samo z przyciskiem 🔊 (silnik czyta go głosem z KURS.jezyk). */
+export const en = (t) => `<span class="obcy" lang="en">${t}</span>`;
 
 /** Mała tabela HTML do kart „Nowe” i ściąg. Komórki mogą zawierać HTML. */
 export function tab(wiersze, naglowek) {
