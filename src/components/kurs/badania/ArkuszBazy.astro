@@ -1,0 +1,75 @@
+---
+// Fragment bazy danych z ankiety narysowany jak arkusz Excela: litery kolumn, numery wierszy, w wierszu 1 nagłówki
+// (pytania), niżej odpowiedzi respondentów. Dane z lib/baza.js (pierwsze wiersze bazy + wiersze z błędami).
+// kolumny: 'P5' (tekst z bazy), 'P7_1#' (kod z kolumny bazy, np. AP), 'P5#BA' (kod we własnej, nowej kolumnie BA).
+// oznacz: { 'AH36': 'roz' } — kolor kratki (zloto, cyan, ok, roz); kolumnaOzn: { 'AH': 'roz' } — cała kolumna.
+// pelne — pełne nagłówki pytań (domyślnie skrócone do ok. 26 znaków, pełny tekst w podpowiedzi).
+import { zm, wartosc, koduj, kolumnaKodu } from '../../../lib/baza.js';
+interface Props { kolumny: string[]; wiersze: number[]; oznacz?: Record<string, string>; kolumnaOzn?: Record<string, string>; pelne?: boolean; przerwa?: number[]; tytul?: string }
+const { kolumny, wiersze, oznacz = {}, kolumnaOzn = {}, pelne = false, przerwa = [], tytul } = Astro.props;
+const kol = kolumny.map((s) => {
+  const [id, kodK] = s.split('#');
+  const kodowana = s.includes('#');
+  const litera = kodowana ? kodK || kolumnaKodu(id) : zm(id).kol;
+  if (!litera) throw new Error(`ArkuszBazy: brak litery kolumny dla ${s}`);
+  const naz = zm(id).nazwa;
+  const nag = kodowana ? `${naz} — kod` : naz;
+  return { id, kodowana, litera, nag, krotki: nag.length > 26 && !pelne ? nag.slice(0, 24).trimEnd() + '…' : nag };
+});
+const tekst = (r: number, k: (typeof kol)[number]) => {
+  const t = wartosc(r, k.id);
+  return k.kodowana ? String(koduj(k.id, t)) : t;
+};
+---
+<figure class="k-fig k-bz">
+  {tytul && <div class="k-bz-tyt">{tytul}</div>}
+  <div class="k-bz-scroll" data-kk-scroll>
+    <table class="k-bz-t">
+      <thead>
+        <tr><th class="k-bz-rn"></th>{kol.map((k) => <th class:list={[kolumnaOzn[k.litera] && `is-${kolumnaOzn[k.litera]}`]}>{k.litera}</th>)}</tr>
+      </thead>
+      <tbody>
+        <tr class="k-bz-nag"><td class="k-bz-rn">1</td>{kol.map((k) => <td title={k.nag}>{k.krotki}</td>)}</tr>
+        {wiersze.map((r) => (
+          <>
+            {przerwa.includes(r) && <tr class="k-bz-gap"><td class="k-bz-rn">⋮</td>{kol.map(() => <td>⋮</td>)}</tr>}
+            <tr>
+              <td class="k-bz-rn">{r}</td>
+              {kol.map((k) => {
+                const v = tekst(r, k);
+                const c = oznacz[`${k.litera}${r}`] ?? kolumnaOzn[k.litera];
+                return <td class:list={[c && `is-${c}`, k.kodowana && 'is-kod', /^\d+$/.test(v) && !k.kodowana && 'is-liczba', v === '' && 'is-pusta']}>{v}</td>;
+              })}
+            </tr>
+          </>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<style>
+  .k-bz-tyt{font-family:var(--mono);font-size:.7rem;letter-spacing:.8px;text-transform:uppercase;color:var(--cyan);margin:0 0 6px;}
+  .k-bz-scroll{overflow-x:auto;border:1px solid var(--line2);}
+  .k-bz-t{border-collapse:collapse;background:#fff;color:#1d1a2b;font-size:.84rem;font-variant-numeric:tabular-nums;min-width:100%;}
+  .k-bz-t th,.k-bz-t td{border:1px solid #d4d4dc;padding:4px 8px;text-align:left;white-space:nowrap;}
+  .k-bz-t thead th{background:#ececf1;color:#5d5873;font-weight:500;text-align:center;font-size:.76rem;}
+  .k-bz-t .k-bz-rn{background:#ececf1;color:#5d5873;text-align:center;font-size:.74rem;width:2.2em;padding:4px;}
+  .k-bz-t tr.k-bz-nag td:not(.k-bz-rn){font-weight:700;background:#f6f5fa;max-width:16em;overflow:hidden;text-overflow:ellipsis;}
+  .k-bz-t tr.k-bz-gap td{color:#9a96ad;text-align:center;padding:0 8px;line-height:1.1;}
+  .k-bz-t td.is-kod{text-align:right;font-weight:700;color:#0b6b3a;}
+  .k-bz-t td.is-liczba{text-align:right;}
+  .k-bz-t td.is-pusta{background:repeating-linear-gradient(135deg,#fff,#fff 5px,#f1f0f5 5px,#f1f0f5 10px);}
+  .k-bz-t .is-zloto{background:#ffe9a6!important;box-shadow:inset 0 0 0 2px #c99400;}
+  .k-bz-t .is-cyan{background:#cdf3fb!important;box-shadow:inset 0 0 0 2px #1497b8;}
+  .k-bz-t .is-ok{background:#dff5ea!important;}
+  .k-bz-t .is-roz{background:#ffd9ea!important;box-shadow:inset 0 0 0 2px #d6337a;}
+  @media(max-width:560px){
+    .k-bz-t{font-size:.72rem;}
+    .k-bz-t th,.k-bz-t td{padding:3px 4px;}
+    .k-bz-t .k-bz-rn{width:1.6em;padding:2px 1px;font-size:.66rem;}
+    .k-bz-t tr.k-bz-nag td:not(.k-bz-rn){max-width:7.5em;white-space:normal;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word;}
+    .k-bz-t td{white-space:normal;min-width:3.2em;max-width:7.5em;line-height:1.25;}
+  }
+</style>

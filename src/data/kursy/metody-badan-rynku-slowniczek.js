@@ -45,4 +45,16 @@ export const SLOWNICZEK = [
   { nazwa: 'Schemat wyjściowy', znaczy: 'Kwoty na jednego ankietera przed zaokrągleniem: kratka próby podzielona przez liczbę ankieterów. Mogą w nim wyjść ułamki.', modul: 'dobor-proby' },
   { nazwa: 'Liczba dodatków kratki', znaczy: 'Ilu ankieterów ma dostać w danej kratce jedną osobę więcej, niż wynosi część pewna: część po przecinku razy liczba ankieterów.', modul: 'dobor-proby' },
   { nazwa: 'Schemat (A, B, C…)', znaczy: 'Kartka dla jednego ankietera w całych liczbach: ile osób z której kratki ma zbadać. Różne grupy ankieterów dostają różne schematy.', modul: 'dobor-proby' },
+  // --- Baza danych z ankiety ---
+  { nazwa: 'Baza danych (macierz danych)', znaczy: 'Tabela z odpowiedziami wszystkich respondentów: wiersz = osoba, kolumna = pytanie (zmienna), komórka = odpowiedź.', modul: 'baza-danych' },
+  { nazwa: 'Zmienna', znaczy: 'To, o co pytamy, zapisane w jednej kolumnie bazy, np. płeć albo ocena jednego stwierdzenia.', modul: 'baza-danych' },
+  { nazwa: 'Kodowanie', znaczy: 'Zamiana odpowiedzi słownych na liczby według klucza, np. „raczej się zgadzam” → 4.', modul: 'baza-danych' },
+  { nazwa: 'Klucz kodowy', znaczy: 'Spis „odpowiedź → kod” dla każdego pytania. Bez niego nikt nie odczyta, co znaczą liczby w bazie.', modul: 'baza-danych' },
+  { nazwa: 'Brak danych', znaczy: 'Osoba nie odpowiedziała albo pytanie jej nie dotyczy (N/D, odmowa). W bazie: pusta komórka, nigdy 0.', modul: 'baza-danych' },
+  { nazwa: 'Czyszczenie danych', znaczy: 'Sprawdzenie bazy przed liczeniem: kody spoza klucza, literówki, braki i sprzeczności między pytaniami.', modul: 'baza-danych' },
+  { nazwa: 'Przekodowanie (łączenie kategorii)', znaczy: 'Zamiana wielu kategorii na mniej grup, np. 10 przedziałów dochodu na 5. Grupy są większe, ale znika szczegół.', modul: 'baza-danych' },
+  { nazwa: 'Tabela przestawna', znaczy: 'Narzędzie Excela, które zlicza wiersze bazy w grupach (liczba, procent, średnia) bez pisania formuł.', modul: 'baza-danych' },
+  { nazwa: 'Tabela krzyżowa', znaczy: 'Tabela z dwoma pytaniami naraz: jedno w wierszach, drugie w kolumnach. W kratce — liczba osób z tą parą odpowiedzi.', modul: 'baza-danych' },
+  { nazwa: '% sumy kolumny', znaczy: 'Kratka podzielona przez sumę swojej kolumny. Każda kolumna daje 100%. Wybierasz, gdy porównywane grupy stoją w kolumnach.', modul: 'baza-danych' },
+  { nazwa: 'Punkt procentowy', znaczy: 'Jednostka różnicy dwóch procentów: 73% − 49% = 24 punkty procentowe (nie „24%”).', modul: 'baza-danych' },
 ];

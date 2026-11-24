@@ -1,0 +1,252 @@
+---
+// Tabela przestawna jak w Excelu, liczona przy buildzie z lib/baza.js (zagregowana baza z zajęć, 361 osób).
+// Obok tabeli — panel „Pola tabeli przestawnej” (Filtry, Kolumny, Wiersze, Wartości), żeby było widać, co gdzie przeciągnąć.
+// Tryby: w (pole w Wierszach) + opcjonalnie k (pole w Kolumnach) → liczebności; tryb = „Pokaż wartości jako”:
+//   'liczba' (Bez obliczeń), 'kol' (% sumy kolumny), 'wiersz' (% sumy wiersza), 'calosc' (% sumy końcowej).
+//   tryby = przyciski do przełączania. sr = lista stwierdzeń (P7_k / P8_k) → w Wartościach „Średnia z …” kodów 1–5.
+// bezW / bezK — kategorie usunięte filtrem (np. 'odmowa odp.'); excel — kolejność wierszy taka, jak ustawia ją Excel.
+// Klik w liczbę → złota kratka, turkusowa suma, z której liczymy procent, i zdanie z rachunkiem w panelu k-live.
+import { tabela, rozklad, pokaz, srednie, zm, krotka, kolumnaKodu, fmt, pr } from '../../../lib/baza.js';
+type Tryb = 'liczba' | 'kol' | 'wiersz' | 'calosc';
+interface Props { w: string; k?: string; sr?: string[]; tryb?: Tryb; tryby?: Tryb[]; bezW?: string[]; bezK?: string[]; excel?: boolean; tytul?: string; filtr?: string }
+const { w, k, sr, tryb = 'liczba', tryby, bezW = [], bezK = [], excel = false, tytul, filtr } = Astro.props;
+const JAKO: Record<Tryb, string> = { liczba: 'Bez obliczeń', kol: '% sumy kolumny', wiersz: '% sumy wiersza', calosc: '% sumy końcowej' };
+const PRZYCISK: Record<Tryb, string> = { liczba: 'Liczba', kol: '% sumy kolumny', wiersz: '% sumy wiersza', calosc: '% sumy końcowej' };
+const krotkaPola = (id: string) => (/^P\d/.test(id) ? krotka(id) : zm(id).nazwa);
+
+// --- dane tabeli ---
+let naglowekWart: string;
+let kolumny: string[];
+let wiersze: string[];
+let kom: { n: number; s?: number; nd?: number }[][];
+let sumyW: { n: number; s?: number; nd?: number }[] = [];
+let sumyK: { n: number; s?: number; nd?: number }[] = [];
+let suma: { n: number; s?: number; nd?: number };
+const srednia = !!sr;
+if (sr) {
+  // średnie: wiersze = kategorie w, kolumny = stwierdzenia
+  const dane = sr.map((s) => srednie(s, w, { bez: bezW }));
+  wiersze = dane[0].map((r) => r.et);
+  if (excel) throw new Error('Przestawna: excel nie działa ze średnimi');
+  kolumny = sr.map((s) => `Średnia z ${kolumnaKodu(s) ?? krotka(s)}`);
+  kom = wiersze.map((_, i) => dane.map((d) => ({ n: d[i].n, s: d[i].suma, nd: d[i].nd })));
+  sumyK = dane.map((d) => ({ n: d.reduce((a, r) => a + r.n, 0), s: d.reduce((a, r) => a + r.suma, 0), nd: d.reduce((a, r) => a + r.nd, 0) }));
+  suma = { n: 0 };
+  naglowekWart = sr.length === 1 ? kolumny[0] : 'Wartości';
+} else if (k) {
+  const t = tabela(w, k, { bezW, bezK, excel });
+  wiersze = t.wiersze; kolumny = t.kolumny;
+  kom = t.liczby.map((r) => r.map((n) => ({ n })));
+  sumyW = t.sumyW.map((n) => ({ n })); sumyK = t.sumyK.map((n) => ({ n })); suma = { n: t.suma };
+  naglowekWart = `Liczba z ${krotkaPola(w)}`;
+} else {
+  const r = rozklad(w, { bez: bezW, excel });
+  wiersze = r.kat; kolumny = [`Liczba z ${krotkaPola(w)}`];
+  kom = r.liczby.map((n) => [{ n }]);
+  sumyK = [{ n: r.suma }]; suma = { n: r.suma };
+  naglowekWart = kolumny[0];
+}
+const dwa = !!k && !sr;
+// wartość wyświetlana w trybie (tak samo liczy skrypt na stronie)
+const pokazNa = (n: number, mian: number, t: Tryb) => (t === 'liczba' ? fmt(n) : pr((100 * n) / mian));
+const T = suma.n;
+const wart = (i: number | 'S', j: number | 'S', t: Tryb): string => {
+  if (srednia) {
+    const c = i === 'S' ? sumyK[j as number] : kom[i][j as number];
+    return c.n ? fmt(c.s! / c.n, 2) : '—';
+  }
+  if (i === 'S' && j === 'S') return t === 'liczba' ? fmt(T) : pr(100);
+  if (i === 'S') return t === 'kol' ? pr(100) : pokazNa(sumyK[j as number].n, T, t);
+  if (j === 'S') return t === 'wiersz' ? pr(100) : pokazNa(sumyW[i].n, T, t);
+  const n = kom[i][j].n;
+  return pokazNa(n, t === 'kol' ? sumyK[j].n : t === 'wiersz' ? sumyW[i].n : T, t);
+};
+// kontrola: przy kolumnach — te same procenty co pokaz() z lib (żeby skrypt strony i build liczyły jednakowo)
+if (dwa) {
+  const p = pokaz(tabela(w, k!, { bezW, bezK, excel }), tryb);
+  p.kom.forEach((r, i) => r.forEach((x, j) => { if (wart(i, j, tryb) !== (tryb === 'liczba' ? fmt(x) : pr(x))) throw new Error('Przestawna: rozjazd z pokaz()'); }));
+}
+// filtr = pole w obszarze „Filtry” (opis); bezK / bezW = kategorie odznaczone na liście ▾ przy etykietach
+const filtrTekst = filtr ?? '';
+const odznaczone = [...bezK.map((x) => ({ x, gdzie: 'Etykiety kolumn' })), ...bezW.map((x) => ({ x, gdzie: 'Etykiety wierszy' }))];
+const pole = (id?: string) => (id ? krotkaPola(id) : '');
+const atr = (c: { n: number; s?: number; nd?: number }) => ({ 'data-n': c.n, 'data-s': c.s, 'data-nd': c.nd });
+---
+<figure class="k-fig k-pp" data-pp data-tryb={tryb} data-sr={srednia ? '1' : ''} data-dwa={dwa ? '1' : ''} data-wn={krotka(w)} data-kn={k ? krotka(k) : ''} data-filtr={filtrTekst || odznaczone.length ? '1' : ''}>
+  {tytul && <div class="k-pp-tyt">{tytul}</div>}
+  <div class="k-pp-uklad">
+    <div class="k-pp-scroll">
+      <table class="k-pp-t">
+        <thead>
+          {dwa ? (
+            <>
+              <tr><th class="k-pp-wart">{naglowekWart}</th><th class="k-pp-et" colspan={kolumny.length + 1}>Etykiety kolumn ▾</th></tr>
+              <tr><th class="k-pp-et">Etykiety wierszy ▾</th>{kolumny.map((c) => <th class="k-pp-kat" data-kat-k>{c}</th>)}<th class="k-pp-kat">Suma końcowa</th></tr>
+            </>
+          ) : (
+            <tr><th class="k-pp-et">Etykiety wierszy ▾</th>{kolumny.map((c) => <th class="k-pp-wart" data-kat-k>{c}</th>)}</tr>
+          )}
+        </thead>
+        <tbody>
+          {wiersze.map((r, i) => (
+            <tr>
+              <th class="k-pp-kat" scope="row" data-kat-w>{r}</th>
+              {kolumny.map((_, j) => <td data-r={i} data-c={j} {...atr(kom[i][j])} tabindex="0">{wart(i, j, tryb)}</td>)}
+              {dwa && <td class="is-suma" data-r={i} data-c="S" {...atr(sumyW[i])} tabindex="0">{wart(i, 'S', tryb)}</td>}
+            </tr>
+          ))}
+          <tr class="is-suma">
+            <th class="k-pp-kat" scope="row">Suma końcowa</th>
+            {kolumny.map((_, j) => <td data-r="S" data-c={j} {...atr(sumyK[j])} tabindex="0">{wart('S', j, tryb)}</td>)}
+            {dwa && <td data-r="S" data-c="S" {...atr(suma)} tabindex="0">{wart('S', 'S', tryb)}</td>}
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="k-pp-pola" aria-label="Pola tabeli przestawnej">
+      <div class="k-pp-pt">Pola tabeli przestawnej</div>
+      <div class="k-pp-o"><span>Filtry</span><em class:list={[!filtrTekst && 'is-pusto']}>{filtrTekst || '—'}</em></div>
+      <div class="k-pp-o"><span>Kolumny</span><em class:list={[!k && !srednia && 'is-pusto']}>{srednia ? (sr!.length > 1 ? 'Σ Wartości' : '—') : pole(k) || '—'}</em></div>
+      <div class="k-pp-o"><span>Wiersze</span><em>{pole(w)}</em></div>
+      <div class="k-pp-o"><span>Wartości</span><em>{srednia ? kolumny.join(' · ') : naglowekWart}</em></div>
+      {!srednia && <div class="k-pp-jako">Pokaż wartości jako: <b data-pp-jako>{JAKO[tryb]}</b></div>}
+      {odznaczone.length > 0 && <div class="k-pp-jako">Odznaczone na liście ▾ przy „{odznaczone[0].gdzie}”: <b>{odznaczone.map((o) => `„${o.x}”`).join(', ')}</b></div>}
+    </div>
+  </div>
+  {tryby && (
+    <div class="k-pp-tryby" role="group" aria-label="Pokaż wartości jako">
+      {tryby.map((t) => <button type="button" class:list={['k-btn', t !== tryb && 'k-btn-ghost']} data-pp-tryb={t} aria-pressed={t === tryb ? 'true' : 'false'}>{PRZYCISK[t]}</button>)}
+    </div>
+  )}
+  <p class="k-pp-out k-live" data-pp-out aria-live="polite">Kliknij liczbę w tabeli: zobaczysz, skąd się wzięła.</p>
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<script>
+  type Tryb = 'liczba' | 'kol' | 'wiersz' | 'calosc';
+  const JAKO: Record<Tryb, string> = { liczba: 'Bez obliczeń', kol: '% sumy kolumny', wiersz: '% sumy wiersza', calosc: '% sumy końcowej' };
+  const fmt = (x: number, d = 0) => x.toLocaleString('pl-PL', { minimumFractionDigits: d, maximumFractionDigits: d }).replace(/ | /g, ' ');
+  const pr = (x: number) => fmt(x, 2) + '%';
+  const osob = (n: number) => { if (n === 1) return 'osoba'; const d = n % 10, dd = n % 100; return d >= 2 && d <= 4 && !(dd >= 12 && dd <= 14) ? 'osoby' : 'osób'; };
+  document.querySelectorAll<HTMLElement>('[data-pp]').forEach((box) => {
+    const tds = Array.from(box.querySelectorAll<HTMLTableCellElement>('td[data-r]'));
+    const out = box.querySelector<HTMLElement>('[data-pp-out]')!;
+    const jako = box.querySelector<HTMLElement>('[data-pp-jako]');
+    const wiersze = Array.from(box.querySelectorAll<HTMLElement>('[data-kat-w]')).map((e) => e.textContent!.trim());
+    const kolumny = Array.from(box.querySelectorAll<HTMLElement>('[data-kat-k]')).map((e) => e.textContent!.trim());
+    const sr = box.dataset.sr === '1', dwa = box.dataset.dwa === '1', wn = box.dataset.wn!, kn = box.dataset.kn!;
+    const cell = (r: string, c: string) => tds.find((t) => t.dataset.r === r && t.dataset.c === c)!;
+    const n = (r: string, c: string) => Number(cell(r, c).dataset.n);
+    const T = dwa ? n('S', 'S') : sr ? 0 : n('S', '0');
+    let tryb = box.dataset.tryb as Tryb;
+    const mian = (r: string, c: string, t: Tryb): string[] | null => {
+      if (t === 'liczba' || sr) return null;
+      if (!dwa) return r === 'S' ? null : ['S', '0'];
+      if (r === 'S' && c === 'S') return null;
+      if (t === 'kol') return r === 'S' ? null : ['S', c];
+      if (t === 'wiersz') return c === 'S' ? null : [r, 'S'];
+      return ['S', 'S'];
+    };
+    const wartosc = (r: string, c: string, t: Tryb) => {
+      const x = n(r, c);
+      if (sr) return null;
+      if (t === 'liczba') return fmt(x);
+      const m = mian(r, c, t);
+      if (!m) return pr(100);
+      return pr((100 * x) / (dwa ? n(m[0], m[1]) : T));
+    };
+    const zdanie = (r: string, c: string): string => {
+      const td = cell(r, c);
+      const x = Number(td.dataset.n);
+      const R = r === 'S' ? '' : wiersze[Number(r)], C = c === 'S' ? '' : kolumny[Number(c)];
+      if (sr) {
+        const s = Number(td.dataset.s), nd = Number(td.dataset.nd);
+        const kto = r === 'S' ? 'wszystkich w tabeli' : `grupy „${R}”`;
+        const ndT = nd ? ` ${nd} ${osob(nd)} z odpowiedzią „N/D” nie wchodzi do średniej (pusta komórka).` : '';
+        return `<b>${fmt(s)} : ${fmt(x)} = ${fmt(s / x, 2)}</b>. To średnia kodów 1–5 ${kto}: suma kodów podzielona przez liczbę osób, które dały ocenę (${fmt(x)} ${osob(x)}).${ndT}`;
+      }
+      const m = mian(r, c, tryb);
+      const p = wartosc(r, c, tryb);
+      const ul = m ? `<b>${fmt(x)} : ${fmt(dwa ? n(m[0], m[1]) : T)} = ${p}</b>. ` : '';
+      if (!dwa) {
+        if (r === 'S') return tryb === 'liczba' ? `<b>${fmt(x)}</b> — tyle osób jest w tabeli${box.dataset.filtr ? ' po filtrze' : ''}. To mianownik procentów.` : `<b>100%</b> — wszyscy w tabeli. Procenty z kolumny sumują się do 100%.`;
+        return tryb === 'liczba' ? `<b>${fmt(x)}</b> ${osob(x)} ma ${wn}: „${R}”. Tabela przestawna policzyła wiersze bazy z tą odpowiedzią.` : `${ul}${fmt(T)} to wszyscy w tabeli. Czytaj: ${p} badanych ma ${wn}: „${R}”.`;
+      }
+      if (r === 'S' && c === 'S') return tryb === 'liczba' ? `<b>${fmt(x)}</b> — wszyscy w tabeli${box.dataset.filtr ? ' (po filtrze)' : ''}.` : '<b>100%</b> — cała tabela.';
+      if (c === 'S') {
+        if (tryb === 'liczba') return `<b>${fmt(x)}</b> ${osob(x)} ma ${wn}: „${R}”. To suma wiersza: wszystkie kolumny razem.`;
+        if (tryb === 'wiersz') return '<b>100%</b> — przy „% sumy wiersza” każdy wiersz sumuje się do 100%.';
+        return `${ul}Taki odsetek wszystkich w tabeli ma ${wn}: „${R}”.`;
+      }
+      if (r === 'S') {
+        if (tryb === 'liczba') return `<b>${fmt(x)}</b> ${osob(x)} ma ${kn}: „${C}”. To suma kolumny: cała ta grupa.`;
+        if (tryb === 'kol') return '<b>100%</b> — przy „% sumy kolumny” każda kolumna sumuje się do 100%.';
+        return `${ul}Taki odsetek wszystkich w tabeli ma ${kn}: „${C}”.`;
+      }
+      if (tryb === 'liczba') return `<b>${fmt(x)}</b> ${osob(x)} ma naraz ${wn}: „${R}” i ${kn}: „${C}”. Tabela przestawna policzyła wiersze bazy, w których obie odpowiedzi są właśnie takie.`;
+      if (tryb === 'kol') return `${ul}${fmt(n('S', c))} to suma kolumny „${C}”, czyli cała ta grupa. Czytaj: w grupie ${kn}: „${C}” ${p} ma ${wn}: „${R}”.`;
+      if (tryb === 'wiersz') return `${ul}${fmt(n(r, 'S'))} to suma wiersza „${R}”. Czytaj: wśród osób z odpowiedzią ${wn}: „${R}” ${p} ma ${kn}: „${C}”.`;
+      return `${ul}${fmt(T)} to wszyscy w tabeli. Czytaj: ${p} wszystkich badanych ma naraz ${wn}: „${R}” i ${kn}: „${C}”.`;
+    };
+    const czysc = () => tds.forEach((t) => t.classList.remove('is-wyb', 'is-mian'));
+    const pokaz = (td: HTMLTableCellElement) => {
+      czysc();
+      td.classList.add('is-wyb');
+      const m = mian(td.dataset.r!, td.dataset.c!, tryb);
+      if (m) cell(m[0], m[1]).classList.add('is-mian');
+      out.innerHTML = zdanie(td.dataset.r!, td.dataset.c!);
+      out.classList.add('is-live');
+    };
+    tds.forEach((td) => {
+      td.addEventListener('click', () => pokaz(td));
+      td.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pokaz(td); } });
+    });
+    box.querySelectorAll<HTMLButtonElement>('[data-pp-tryb]').forEach((b) => b.addEventListener('click', () => {
+      tryb = b.dataset.ppTryb as Tryb;
+      box.querySelectorAll<HTMLButtonElement>('[data-pp-tryb]').forEach((x) => { const on = x === b; x.classList.toggle('k-btn-ghost', !on); x.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+      tds.forEach((td) => { const v = wartosc(td.dataset.r!, td.dataset.c!, tryb); if (v !== null) td.textContent = v; });
+      if (jako) jako.textContent = JAKO[tryb];
+      czysc();
+      out.classList.remove('is-live');
+      out.innerHTML = `Pokaż wartości jako: <b>${JAKO[tryb]}</b>. Kliknij liczbę w tabeli: zobaczysz, skąd się wzięła.`;
+    }));
+  });
+</script>
+
+<style>
+  .k-pp-tyt{font-family:var(--mono);font-size:.7rem;letter-spacing:.8px;text-transform:uppercase;color:var(--cyan);margin:0 0 6px;}
+  .k-pp-uklad{display:flex;flex-wrap:wrap;align-items:flex-start;gap:12px;}
+  .k-pp-scroll{overflow-x:auto;flex:1 1 300px;max-width:100%;}
+  .k-pp-t{border-collapse:collapse;background:#fff;color:#1d1a2b;font-size:.86rem;font-variant-numeric:tabular-nums;}
+  .k-pp-t th,.k-pp-t td{border:1px solid #d4d4dc;padding:5px 9px;}
+  .k-pp-t thead th{background:#dce6f4;font-weight:700;text-align:left;}
+  .k-pp-t th.k-pp-et{font-weight:700;color:#1d1a2b;}
+  .k-pp-t th.k-pp-wart{background:#dce6f4;}
+  .k-pp-t th.k-pp-kat{font-weight:500;text-align:left;background:#fff;}
+  .k-pp-t thead th.k-pp-kat{font-weight:700;background:#dce6f4;text-align:right;}
+  .k-pp-t td{text-align:right;cursor:pointer;white-space:nowrap;transition:background .2s,box-shadow .2s;}
+  .k-pp-t td:hover{background:#f1f5fb;}
+  .k-pp-t td:focus-visible{outline:2px solid #1497b8;outline-offset:-2px;}
+  .k-pp-t tr.is-suma th,.k-pp-t tr.is-suma td,.k-pp-t td.is-suma{font-weight:700;}
+  .k-pp-t tr.is-suma th,.k-pp-t tr.is-suma td{border-top:2px solid #6a83ad;background:#dce6f4;}
+  .k-pp-t td.is-wyb{background:#ffe9a6!important;box-shadow:inset 0 0 0 2px #c99400;}
+  .k-pp-t td.is-mian{background:#cdf3fb!important;box-shadow:inset 0 0 0 2px #1497b8;}
+  .k-pp-pola{flex:0 1 230px;min-width:200px;border:1px solid var(--line2);background:rgba(255,255,255,.03);padding:8px 10px;font-size:.82rem;}
+  .k-pp-pt{font-family:var(--mono);font-size:.66rem;letter-spacing:.8px;text-transform:uppercase;color:var(--cyan);margin-bottom:6px;}
+  .k-pp-o{display:grid;grid-template-columns:5.4em 1fr;gap:6px;align-items:baseline;margin:3px 0;}
+  .k-pp-o span{color:var(--muted);}
+  .k-pp-o em{font-style:normal;font-weight:600;color:var(--text);border:1px solid var(--line2);padding:1px 6px;background:rgba(167,139,250,.1);}
+  .k-pp-o em.is-pusto{background:none;border-style:dashed;color:var(--muted);font-weight:400;}
+  .k-pp-jako{margin-top:6px;color:var(--muted);}
+  .k-pp-jako b{color:var(--gold);}
+  .k-pp-tryby{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;}
+  .k-pp-out{margin:10px 0 0!important;padding:8px 12px;border-left:2px solid var(--gold);background:rgba(255,216,74,.05);font-size:.92rem;line-height:1.6;min-height:2.6em;}
+  @media(max-width:560px){
+    .k-pp-t{font-size:.72rem;}
+    .k-pp-t th,.k-pp-t td{padding:4px 4px;}
+    .k-pp-t th.k-pp-kat{white-space:normal;min-width:4.2em;}
+    .k-pp-t th.k-pp-et,.k-pp-t th.k-pp-wart{white-space:normal;}
+    .k-pp-pola{flex-basis:100%;}
+    .k-pp-tryby .k-btn{padding:8px 10px;font-size:.76rem;}
+  }
+</style>

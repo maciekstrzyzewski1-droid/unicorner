@@ -1,0 +1,128 @@
+---
+// Kodowanie odpowiedzi „Znajdź i zamień” (Ctrl+H) krok po kroku: arkusz z kopią kolumn tekstowych, nad nim okno
+// Excela „Znajdź i zamień”. Każdy krok to jedno „Zamień wszystko”: wszystkie komórki z danym tekstem naraz zmieniają
+// się w kod (złoto = zamienione teraz). Bez JS widać arkusz po zakodowaniu (tekst pod kodem, mniejszym drukiem).
+// kolumny: id stwierdzeń skali Likerta (P7_k, P8_k); litery: litery kolumn kopii (np. ['BA','BB','BC']).
+import { zm, wartosc, koduj, LIKERT, B, fmt, osob } from '../../../lib/baza.js';
+import Sterowanie from '../Sterowanie.astro';
+import Legenda from '../Legenda.astro';
+interface Props { kolumny: string[]; litery: string[]; wiersze: number[] }
+const { kolumny, litery, wiersze } = Astro.props;
+if (kolumny.length !== litery.length) throw new Error('Zamiana: liczba kolumn ≠ liczba liter');
+// kolejność zamian: od 5 do 1, na końcu N/D (tylko te teksty, które są w zaznaczonych kolumnach całej bazy)
+const teksty = [...LIKERT].reverse().concat(['N/D']).filter((t) => kolumny.some((id) => zm(id).kat.includes(t) && B.rozklad[id][zm(id).kat.indexOf(t)] > 0));
+const krok = (t: string) => teksty.indexOf(t) + 1;
+const ileWBazie = (t: string) => kolumny.reduce((s, id) => s + (zm(id).kat.includes(t) ? B.rozklad[id][zm(id).kat.indexOf(t)] : 0), 0);
+const zakres = litery.length > 1 ? `${litery[0]}:${litery[litery.length - 1]}` : litery[0];
+const adresy = (t: string) => wiersze.flatMap((r) => kolumny.map((id, j) => (wartosc(r, id) === t ? `${litery[j]}${r}` : null))).filter(Boolean);
+const kroki = [
+  { z: '', na: '', html: `<b>Start.</b> Kolumny ${zakres} to <b>kopia</b> odpowiedzi tekstowych (oryginał zostaje obok). Zaznacz kolumny ${zakres} i naciśnij <b>Ctrl+H</b>. Otworzy się okno „Znajdź i zamień”. Kliknij „Opcje &gt;&gt;” i zaznacz „Dopasuj zawartość całej komórki”.` },
+  ...teksty.map((t) => {
+    const c = koduj(kolumny.find((id) => zm(id).kat.includes(t))!, t);
+    const a = adresy(t);
+    const n = ileWBazie(t);
+    const gdzie = a.length ? `W widocznych wierszach zmieniają się: ${a.join(', ')}.` : 'W widocznych wierszach tego tekstu nie ma.';
+    const na = c === '' ? 'nic (pole puste)' : String(c);
+    return { z: t, na: c === '' ? '' : String(c), html: `<b>Znajdź:</b> „${t}” · <b>Zamień na:</b> ${na} → „Zamień wszystko”. ${gdzie} W całej bazie Excel zamieni w tych kolumnach ${fmt(n)} ${n === 1 ? 'komórkę' : 'komórek'}.${c === '' ? ' Komórka zostaje pusta: to brak danych, nie zero.' : ''}` };
+  }),
+  { z: '', na: '', html: `<b>Gotowe.</b> W kolumnach ${zakres} są już tylko liczby 1–5 i puste komórki. Sprawdź to filtrem (Dane → Filtr): na liście nie może zostać żaden tekst.` },
+];
+---
+<figure class="k-fig k-zam" data-kbox data-zam>
+  <div class="k-fig-box">
+    <div class="k-zam-okno" aria-label="Okno Znajdź i zamień">
+      <div class="k-zam-tyt">Znajdź i zamień <span>· karta „Zamień”</span></div>
+      <div class="k-zam-pole"><span>Znajdź:</span><code data-z>…</code></div>
+      <div class="k-zam-pole"><span>Zamień na:</span><code data-na>…</code></div>
+      <div class="k-zam-opt">☑ Dopasuj zawartość całej komórki</div>
+    </div>
+    <div class="k-zam-scroll" data-kk-scroll>
+      <table class="k-zam-t">
+        <thead><tr><th class="k-zam-rn"></th>{litery.map((l) => <th>{l}</th>)}</tr></thead>
+        <tbody>
+          <tr class="k-zam-nag"><td class="k-zam-rn">1</td>{kolumny.map((id) => <td title={zm(id).nazwa}>{zm(id).nazwa.replace(/^(P\d \(\d\)).*/, '$1')} — kod</td>)}</tr>
+          {wiersze.map((r) => (
+            <tr>
+              <td class="k-zam-rn">{r}</td>
+              {kolumny.map((id) => {
+                const t = wartosc(r, id);
+                const c = koduj(id, t);
+                return <td data-od={krok(t)} class:list={['is-gotowe', c === '' && 'is-nd']}><span class="k-zam-tx">{t}</span><b class="k-zam-kod">{c === '' ? '' : c}</b></td>;
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <Legenda items={[['zloto', 'zamienione w tym kroku'], ['ok', 'już zakodowane'], ['pusta', 'pusta komórka = brak danych']]} />
+  </div>
+  <Sterowanie opis="jedna zamiana na krok, jak w Excelu" />
+  <ol hidden data-kroki>{kroki.map((k) => <li data-z={k.z} data-na={k.na} set:html={k.html} />)}</ol>
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<script>
+  import { krokowka, own, widok, blysk } from '../../../lib/krokowka';
+  document.querySelectorAll<HTMLElement>('[data-zam]').forEach((box) => {
+    const kom = own<HTMLElement>(box, '[data-od]');
+    const z = own<HTMLElement>(box, '[data-z]')[0];
+    const na = own<HTMLElement>(box, '[data-na]')[0];
+    const czysc = () => {
+      kom.forEach((e) => { e.classList.add('is-gotowe'); e.classList.remove('is-tekst', 'is-teraz'); });
+      z.textContent = '…';
+      na.textContent = '…';
+    };
+    krokowka(box, {
+      render: (st, li) => {
+        kom.forEach((e) => {
+          const od = Number(e.dataset.od);
+          e.classList.remove('is-gotowe');
+          e.classList.toggle('is-tekst', od > st);
+          e.classList.toggle('is-teraz', od === st);
+        });
+        z.textContent = li.dataset.z || '—';
+        na.textContent = li.dataset.z ? (li.dataset.na || '(puste)') : '—';
+        const teraz = kom.filter((e) => Number(e.dataset.od) === st);
+        teraz.forEach((e) => blysk(e));
+        widok(box, teraz[0]);
+      },
+      zamknij: czysc,
+    });
+  });
+</script>
+
+<style>
+  .k-zam-okno{max-width:420px;margin:0 0 12px;border:1px solid #c9c9d3;background:#f4f4f6;color:#1d1a2b;font-size:.86rem;padding:8px 10px;}
+  .k-zam-tyt{font-weight:700;margin-bottom:6px;}
+  .k-zam-tyt span{font-weight:400;color:#5d5873;}
+  .k-zam-pole{display:grid;grid-template-columns:6.5em 1fr;align-items:center;gap:6px;margin:4px 0;}
+  .k-zam-pole code{display:block;background:#fff;border:1px solid #b9b7c6;padding:3px 6px;min-height:1.7em;font-family:var(--mono);font-size:.82rem;color:#0b6b3a;white-space:normal;word-break:break-word;}
+  .k-zam-opt{margin-top:6px;font-size:.8rem;color:#3b3650;}
+  .k-zam-scroll{overflow-x:auto;}
+  .k-zam-t{border-collapse:collapse;background:#fff;color:#1d1a2b;font-size:.84rem;min-width:100%;}
+  .k-zam-t th,.k-zam-t td{border:1px solid #d4d4dc;padding:4px 8px;text-align:left;transition:background .25s;}
+  .k-zam-t thead th{background:#ececf1;color:#5d5873;font-weight:500;text-align:center;font-size:.76rem;}
+  .k-zam-t .k-zam-rn{background:#ececf1;color:#5d5873;text-align:center;font-size:.74rem;width:2.2em;padding:4px;}
+  .k-zam-t tr.k-zam-nag td:not(.k-zam-rn){font-weight:700;background:#f6f5fa;white-space:nowrap;}
+  .k-zam-tx{display:block;font-size:.78rem;line-height:1.25;color:#3b3650;}
+  .k-zam-kod{display:block;font-family:var(--mono);color:#0b6b3a;text-align:right;}
+  /* stan końcowy (bez JS i po „Zamknij”): kod na górze, tekst mniejszym drukiem pod spodem */
+  .k-zam-t td.is-gotowe{background:#f3fbf6;}
+  .k-zam-t td.is-gotowe .k-zam-tx{order:2;font-size:.7rem;color:#77728c;}
+  .k-zam-t td.is-gotowe{display:table-cell;}
+  .k-zam-t td.is-gotowe.is-nd{background:repeating-linear-gradient(135deg,#fff,#fff 5px,#f1f0f5 5px,#f1f0f5 10px);}
+  /* w trybie kroków: tekst do zamiany albo sam kod */
+  .k-zam-t td.is-tekst .k-zam-kod{display:none;}
+  .k-zam-t td:not(.is-tekst):not(.is-gotowe) .k-zam-tx{display:none;}
+  .k-zam-t td:not(.is-tekst):not(.is-gotowe){background:#dff5ea;}
+  .k-zam-t td:not(.is-tekst):not(.is-gotowe).is-nd{background:repeating-linear-gradient(135deg,#fff,#fff 5px,#f1f0f5 5px,#f1f0f5 10px);}
+  .k-zam-t td.is-teraz{background:#ffe9a6!important;box-shadow:inset 0 0 0 2px #c99400;}
+  @media(max-width:560px){
+    .k-zam-t{font-size:.72rem;}
+    .k-zam-t th,.k-zam-t td{padding:3px 4px;}
+    .k-zam-tx{font-size:.68rem;}
+    .k-zam-t .k-zam-rn{width:1.6em;padding:2px 1px;font-size:.66rem;}
+    .k-zam-okno{font-size:.8rem;}
+    .k-zam-pole{grid-template-columns:5.6em 1fr;}
+  }
+</style>

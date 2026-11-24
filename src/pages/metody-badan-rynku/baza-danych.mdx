@@ -1,0 +1,943 @@
+---
+layout: ../../layouts/Kurs.astro
+kurs: metody-badan-rynku
+slug: baza-danych
+title: Baza danych z ankiety
+podtytul: kodowanie odpowiedzi, sprawdzanie bazy i tabele przestawne w Excelu
+description: Baza danych z ankiety w Excelu krok po kroku – kodowanie odpowiedzi liczbami (skala Likerta, N/D, tak/nie), klucz kodowy, sprawdzanie i czyszczenie bazy, łączenie kategorii, tabele przestawne, tabele krzyżowe z procentami i średnie ocen w grupach.
+lede: Ankieta jest zebrana i masz w Excelu 361 wierszy samych słów. Tu nauczysz się zamienić je na liczby, wyłapać błędy w bazie i wyciągnąć z niej odpowiedzi tabelą przestawną — na bazie z zajęć, liczba po liczbie.
+wymaga: Nic. Przyda się moduł o skalach (porządkowa, nominalna, Likerta), ale to, czego potrzebujesz, przypominamy na miejscu.
+umiesz:
+  - przeczytać bazę danych z ankiety (wiersz = respondent, kolumna = pytanie)
+  - ułożyć klucz kodowy i zakodować odpowiedzi liczbami w Excelu
+  - wyłapać błędy w bazie filtrem i sprawdzeniem między pytaniami
+  - połączyć kategorie w mniej grup (przekodować) i sprawdzić wynik sumami
+  - zrobić tabelę przestawną z liczebnościami i procentami
+  - zbudować tabelę krzyżową i wybrać właściwy procent do porównania grup
+  - policzyć w tabeli przestawnej średnią ocenę w grupach
+---
+import Ramka from '../../components/kurs/Ramka.astro';
+import Rozwiazanie from '../../components/kurs/Rozwiazanie.astro';
+import Krok from '../../components/kurs/Krok.astro';
+import Dlaczego from '../../components/kurs/Dlaczego.astro';
+import Pytania from '../../components/kurs/Pytania.astro';
+import Polecenia from '../../components/kurs/Polecenia.astro';
+import Klasyfikator from '../../components/kurs/Klasyfikator.astro';
+import Legenda from '../../components/kurs/Legenda.astro';
+import TabelaKarty from '../../components/kurs/TabelaKarty.astro';
+import ArkuszBazy from '../../components/kurs/badania/ArkuszBazy.astro';
+import Zamiana from '../../components/kurs/badania/Zamiana.astro';
+import Filtr from '../../components/kurs/badania/Filtr.astro';
+import Przestawna from '../../components/kurs/badania/Przestawna.astro';
+import Przesuniecie from '../../components/kurs/badania/Przesuniecie.astro';
+import CwiczenieKody from '../../components/kurs/badania/CwiczenieKody.astro';
+import Formula from '../../components/kurs/badania/Formula.astro';
+import { N, fmt, pr, osob, tabela, pokaz, rozklad, srednie, sredniaOgolem, odpowiedzi, P6, P6suma, K, G, WIERSZE, LIKERT, zm } from '../../lib/baza.js';
+
+export const P = (x) => pr(x, 2);
+export const P1 = (x) => pr(x, 1);
+export const t5g = tabela('P5', 'GEN');
+export const k5g = pokaz(t5g, 'kol');
+export const w5g = pokaz(t5g, 'wiersz');
+export const c5g = pokaz(t5g, 'calosc');
+export const t5p = tabela('P5', 'PLEC', { bezK: ['odmowa odp.'] });
+export const k5p = pokaz(t5p, 'kol');
+export const t5w = tabela('P5', 'WYK');
+export const k5w = pokaz(t5w, 'kol');
+export const t2g = tabela('P2', 'GEN');
+export const k2g = pokaz(t2g, 'kol');
+export const t9g = tabela('P6_9', 'GEN');
+export const k9g = pokaz(t9g, 'kol');
+export const r5 = rozklad('P5');
+export const r2 = rozklad('P2');
+export const r2x = rozklad('P2', { excel: true });
+export const r4 = rozklad('P4');
+export const rP = rozklad('PLEC');
+export const rS = rozklad('SYT');
+export const rM = rozklad('MIEJSCE');
+export const s81 = sredniaOgolem('P8_1');
+export const s81z = sredniaOgolem('P8_1', { nd0: true });
+export const s84 = sredniaOgolem('P8_4');
+export const s84z = sredniaOgolem('P8_4', { nd0: true });
+export const s71 = sredniaOgolem('P7_1');
+export const s71p = srednie('P7_1', 'PLEC', { bez: ['odmowa odp.'] });
+export const s71g = srednie('P7_1', 'GEN');
+export const s84g = srednie('P8_4', 'GEN');
+export const o81 = odpowiedzi('P8_1');
+export const o71 = odpowiedzi('P7_1');
+export const nOdm = rP.liczby[2];
+export const nS5 = rS.liczby[4];
+export const nM1 = rM.liczby[0];
+export const dochK = G.doch.kody;
+export const dochZKodow = [dochK.slice(0, 4), dochK.slice(4, 6), [dochK[6]], [dochK[7]], dochK.slice(8)].map((a) => a.reduce((x, y) => x + y, 0));
+export const dochAI = rozklad('DOCH').liczby;
+export const P6top = [...P6.slice(0, 8)].sort((a, b) => b.tak - a.tak);
+export const pp = (a, b) => fmt(Math.abs(a - b), 1);
+export const wierszy = (n) => `${fmt(n)} ${osob(n).replace('osoba', 'wiersz').replace('osoby', 'wiersze').replace('osób', 'wierszy')}`;
+export const os = (n) => `${fmt(n)} ${osob(n)}`;
+export const zgoda = (i) => (dochZKodow[i] === dochAI[i] ? '✓' : `✗ (różnica ${Math.abs(dochZKodow[i] - dochAI[i])})`);
+export const ROZNE = dochZKodow.filter((x, i) => x !== dochAI[i]).length;
+
+## Po co to jest
+
+Ankieta o AI w aplikacjach bankowych jest zebrana. Dostajesz plik Excela: {N} wierszy, kilkadziesiąt kolumn i same słowa. „Raczej się zgadzam”, „5001-7000”, „N/D”. Prowadząca pyta: **czy młodsi częściej wiedzą, że aplikacja banku może używać AI?**
+
+Odpowiedź siedzi w tym pliku. Żeby ją wyciągnąć, robisz trzy rzeczy:
+
+1. **Kodujesz** — zamieniasz słowa na liczby według stałego klucza.
+2. **Sprawdzasz** — szukasz w bazie błędów, zanim policzą się z resztą.
+3. **Liczysz** — tabela przestawna sama zlicza odpowiedzi w grupach.
+
+Na końcu wychodzi jedno zdanie: w pokoleniu Z wiedziało o tym {P1(k5g.kom[0][2])} osób, a w pokoleniu X — {P1(k5g.kom[0][0])}. Wszystkie liczby w tym module są policzone z bazy z zajęć, więc możesz je porównać z tym, co wychodzi ci w Excelu.
+
+## Co będzie na kolokwium
+
+<Polecenia items={[
+  { polecenie: 'Zakoduj odpowiedzi liczbami (przygotuj klucz kodowy)', jak: 'Każdej odpowiedzi nadajesz liczbę według klucza, a braki odpowiedzi zostawiasz puste. W Excelu: kopia kolumny i Ctrl+H albo formuła.', przepis: 'polecenie-kody', cwiczenia: 'cw-kody', zrodlo: 'jak w bazie z zajęć 1 (kolumny AP–AW)' },
+  { polecenie: 'Sprawdź bazę i popraw błędy', jak: 'Filtrem oglądasz wszystkie wartości w kolumnie. Szukasz kodów spoza klucza, braków i sprzeczności między pytaniami.', przepis: 'polecenie-czysc', cwiczenia: 'cw-czysc', zrodlo: 'na bazie z zajęć 1' },
+  { polecenie: 'Połącz kategorie w mniej grup (przekoduj zmienną)', jak: 'Spisujesz klucz „stary kod → nowa grupa”, tworzysz nową kolumnę formułą i sprawdzasz, czy sumy grup się zgadzają.', przepis: 'polecenie-grupy', cwiczenia: 'cw-grupy', zrodlo: 'jak w bazie z zajęć 2 (kolumny AM i AN)' },
+  { polecenie: 'Zrób tabelę przestawną: rozkład odpowiedzi', jak: 'To samo pole przeciągasz do Wierszy i do Wartości. Dostajesz liczebności, potem procenty. Kategorie układasz w kolejności z kafeterii.', przepis: 'polecenie-rozklad', cwiczenia: 'cw-rozklad', zrodlo: 'na bazie z zajęć' },
+  { polecenie: 'Zrób tabelę krzyżową i porównaj grupy', jak: 'Pytanie do Wierszy, grupy do Kolumn, procent liczony w grupach (% sumy kolumny). Porównujesz procenty w wierszu.', przepis: 'polecenie-krzyzowa', cwiczenia: 'cw-krzyzowa', zrodlo: 'na bazie z zajęć' },
+  { polecenie: 'Policz średnią ocenę w grupach', jak: 'Grupy do Wierszy, zakodowaną kolumnę do Wartości, „Suma” zmieniasz na „Średnia”. N/D nie może być zerem.', przepis: 'polecenie-srednie', cwiczenia: 'cw-srednie', zrodlo: 'na bazie z zajęć 1 (kolumny AP–AW)' },
+]} />
+
+Na zajęciach te kroki idą zwykle po kolei na jednej bazie. Najpierw kodowanie, potem sprawdzenie, na końcu tabele. Tak samo jest ułożony ten moduł.
+
+## Pojęcia od podstaw
+
+<Ramka kind="zapamietaj">
+- **Baza danych** (macierz danych) — tabela z odpowiedziami wszystkich respondentów. Respondent to osoba, która wypełniła ankietę.
+- **Wiersz** = jeden respondent. **Kolumna** = jedno pytanie, czyli **zmienna**. **Komórka** = odpowiedź jednej osoby na jedno pytanie.
+- **Kod** — liczba, która zastępuje odpowiedź słowną, np. „raczej się zgadzam” → 4.
+- **Klucz kodowy** — spis „odpowiedź → kod” dla każdego pytania. Bez niego nikt nie odczyta, co znaczy 4.
+- **Brak danych** — osoba nie odpowiedziała albo pytanie jej nie dotyczy (N/D). W bazie to **pusta komórka**.
+</Ramka>
+
+Tak wygląda początek bazy z zajęć. Wiersz 1 to nagłówki, czyli pytania. Od wiersza 2 zaczynają się respondenci.
+
+<ArkuszBazy kolumny={['P1', 'P2', 'P5', 'P7_1', 'PLEC', 'GEN']} wiersze={[2, 3, 4, 5, 6]} oznacz={{ D4: 'zloto' }}>
+litery A, B, D… to kolumny Excela, liczby po lewej to wiersze. Złota komórka D4 to odpowiedź osoby z wiersza 4 na pytanie P5: „{WIERSZE[4].P5}”. Kolumny C, E–M i dalsze są ukryte, żeby tabela zmieściła się na ekranie.
+</ArkuszBazy>
+
+Adres komórki czytasz jak w statkach: **litera kolumny, potem numer wiersza**. D4 to kolumna D (pytanie P5) i wiersz 4 (trzeci respondent, bo wiersz 1 zajmują nagłówki).
+
+### Pytania, które zajmują kilka kolumn
+
+Nie każde pytanie mieści się w jednej kolumnie. W bazie z zajęć są dwa takie rodzaje.
+
+<div class="k-dwa">
+<div>
+
+**Pytanie wielokrotnego wyboru** (P6: „z których funkcji AI korzystasz?”). Każda odpowiedź ma **swoją kolumnę** (E–M). W komórce stoi 1, gdy osoba ją zaznaczyła, i 2, gdy nie.
+
+</div>
+<div>
+
+**Pytanie tabelkowe** (P7: osiem stwierdzeń o aplikacji). Każde stwierdzenie ma **swoją kolumnę** (N–U). W komórce stoi stopień skali, np. „raczej się zgadzam”.
+
+</div>
+</div>
+
+<ArkuszBazy kolumny={['P6_1', 'P6_2', 'P6_3', 'P6_4', 'P6_9']} wiersze={[2, 3, 4, 5]} oznacz={{ F2: 'zloto', M3: 'cyan' }}>
+każda kolumna to jedna funkcja z pytania P6. Złote F2: osoba z wiersza 2 zaznaczyła funkcję 2 (oszczędzanie i planowanie). Turkusowe M3: osoba z wiersza 3 zaznaczyła „nie korzystałam/em z żadnego”. Kolumny G–L poza G i H są ukryte.
+</ArkuszBazy>
+
+<Ramka kind="botak" tytul="dlaczego tyle kolumn">
+Jedna komórka mieści jedną wartość. Osoba, która zaznaczyła trzy funkcje, ma trzy odpowiedzi naraz. Dlatego każda funkcja dostaje osobną kolumnę z odpowiedzią „tak/nie”.
+
+**Zasada:** jedna kolumna = jedna rzecz, o którą pytamy.
+</Ramka>
+
+<Ramka kind="pulapka">
+- Jeden wiersz to zawsze jedna osoba. Wszystkie jej odpowiedzi muszą zostać w tym samym wierszu.
+- Nie sortuj jednej kolumny osobno. Odpowiedzi przeskoczą do cudzych wierszy i baza przestanie mieć sens.
+- Sortujesz? Zaznacz całą bazę (Ctrl+A) albo włącz filtr na całej tabeli.
+</Ramka>
+
+<a id="polecenie-kody" class="k-anchor"></a>
+
+## Kodowanie odpowiedzi
+
+Excel umie policzyć, ile razy pada „raczej się zgadzam”. Ale nie policzy z tego średniej ani nie powie, że „raczej się zgadzam” to więcej niż „ani się nie zgadzam, ani się zgadzam”. Do tego potrzebne są **liczby**.
+
+Kodowanie to zamiana każdej odpowiedzi na liczbę według **klucza kodowego**. Klucz piszesz raz i trzymasz się go w całej bazie.
+
+### Klucz kodowy
+
+Tak zakodowano pytanie P7 w bazie z zajęć (kolumny AP–AW). Tym samym kluczem kodujemy w module pytanie P8.
+
+| Odpowiedź | Kod |
+|---|---|
+| zdecydowanie się nie zgadzam | 1 |
+| raczej się nie zgadzam | 2 |
+| ani się nie zgadzam, ani się zgadzam | 3 |
+| raczej się zgadzam | 4 |
+| zdecydowanie się zgadzam | 5 |
+| N/D (nie dotyczy) | pusta komórka |
+
+**Jak czytać:** lewa kolumna to tekst w bazie, prawa — liczba, którą wpisujesz zamiast niego. Im bardziej osoba się zgadza, tym większy kod.
+
+<Ramka kind="botak" tytul="kierunek kodów">
+Kody mogłyby iść odwrotnie (5 = zdecydowanie się nie zgadzam). Przyjęło się jednak, że **większy kod = bardziej się zgadzam**. Wtedy wyższa średnia znaczy lepszą ocenę i nikt się nie myli przy czytaniu.
+
+**Zasada:** sprawdź kierunek w kluczu, zanim zaczniesz czytać wyniki.
+</Ramka>
+
+Pozostałe pytania z modułu kodujemy tak:
+
+| Pytanie | Klucz |
+|---|---|
+| P5: tak / nie | tak = 1, nie = 2 (jak kolumny P6 w bazie) |
+| płeć | kobieta = 1, mężczyzna = 2, odmowa odpowiedzi = pusta komórka |
+| generacja | X = 1, Y = 2, Z = 3 |
+
+**Jak czytać:** przy pytaniach z samymi nazwami (skala nominalna) kod to tylko etykieta. Kobieta = 1 nie znaczy, że kobieta jest „mniej” niż mężczyzna. Ważne jest jedno: klucz zapisany i ten sam w całej bazie.
+
+<Ramka kind="polecenie" tytul="Zakoduj odpowiedzi liczbami">
+1. **Spisz klucz kodowy.** Dla każdego pytania: lista odpowiedzi z kafeterii i kod przy każdej. Braki (N/D, odmowa) → pusta komórka.
+2. **Zrób kopię kolumn**, które kodujesz. Zaznacz kolumny z tekstem, skopiuj (Ctrl+C) i wklej w wolne kolumny obok bazy (Ctrl+V). Oryginał zostaje — gdy coś pójdzie źle, masz z czego wrócić.
+3. **Zaznacz kopię** (np. kolumny AY:BG) i naciśnij **Ctrl+H**. Otworzy się okno „Znajdź i zamień”.
+4. Kliknij „Opcje &gt;&gt;” i zaznacz **„Dopasuj zawartość całej komórki”**.
+5. W pole „Znajdź” wpisz pierwszą odpowiedź, np. „zdecydowanie się zgadzam”. W pole „Zamień na” wpisz jej kod: 5. Kliknij **„Zamień wszystko”**.
+6. Powtórz krok 5 dla każdej odpowiedzi z klucza.
+7. Dla „N/D”: w „Zamień na” **nie wpisuj nic** i kliknij „Zamień wszystko”. Komórki zostaną puste.
+8. **Sprawdź:** włącz filtr (Dane → Filtr) i rozwiń listę w każdej nowej kolumnie. Mają tam być tylko kody z klucza i „(Puste)”. Każdy inny wpis to tekst, którego nie zamieniłeś.
+</Ramka>
+
+<Ramka kind="pulapka" tytul="bez „Dopasuj zawartość całej komórki”">
+- Excel szuka wtedy tekstu także **w środku** dłuższych komórek.
+- Przykład: zamiana „się zgadzam” → 4 trafi też w „ani się nie zgadzam, ani się zgadzam”.
+- Wyjdzie z tego „ani się nie zgadzam, ani 4” — komórka zepsuta.
+- Dlatego zaznacz to pole, zanim klikniesz „Zamień wszystko”.
+</Ramka>
+
+### Zobacz Ctrl+H krok po kroku
+
+Poniżej kopia trzech kolumn z pytania P8 (oryginały: V, W, X) i siedem pierwszych respondentów. Każdy krok to jedno „Zamień wszystko”.
+
+<Zamiana kolumny={['P8_1', 'P8_2', 'P8_3']} litery={['AY', 'AZ', 'BA']} wiersze={[2, 3, 4, 5, 6, 7, 8]}>
+bez animacji widać wynik: na górze kod, pod nim mniejszym drukiem tekst, który był w komórce. Kratki w paski to braki danych (N/D zamienione na pustą komórkę). Po „▶ Zobacz krok po kroku” arkusz wraca do tekstu i zamienia jedną odpowiedź na raz. Złote kratki zmieniają się w tym kroku.
+</Zamiana>
+
+<Dlaczego typ="inaczej">
+Zamiast Ctrl+H można użyć formuły z tabelą klucza. Wpisz klucz w dwie wolne kolumny, np. BK (odpowiedź) i BL (kod), w wierszach 2–6. Potem w AY2 wpisz:
+
+<Formula t={'=JEŻELI.BŁĄD(WYSZUKAJ.PIONOWO(V2;$BK$2:$BL$6;2;FAŁSZ);"")'} />
+
+i przeciągnij formułę w dół i w bok. WYSZUKAJ.PIONOWO szuka tekstu z V2 w pierwszej kolumnie klucza i oddaje liczbę z drugiej. FAŁSZ znaczy „tylko dokładnie ten tekst”. „N/D” nie ma w kluczu, więc wychodzi błąd — JEŻELI.BŁĄD zamienia go na pustą komórkę. Ta droga zostawia oryginał nietknięty, ale jest dłuższa do wpisania.
+</Dlaczego>
+
+<Rozwiazanie tytul="Zakoduj odpowiedzi respondenta z wiersza 7" zrodlo="baza z zajęć 1, wiersz 7">
+<div slot="tresc">
+
+Zakoduj odpowiedzi osoby z wiersza 7 na pytania P5, P7 (1), P8 (1), P8 (2) i płeć. Użyj klucza z tego modułu.
+
+<ArkuszBazy kolumny={['P5', 'P7_1', 'P8_1', 'P8_2', 'PLEC']} wiersze={[7]} />
+
+</div>
+<div slot="plan">
+
+1. Bierzemy klucz, bo kod nie wynika z samej odpowiedzi — trzeba go odczytać.
+2. Kodujemy pytanie po pytaniu, od lewej. Przy każdym: szukamy odpowiedzi w kluczu i przepisujemy kod.
+3. N/D zostawiamy puste. To jedyna komórka, w której nie wpisujemy liczby.
+4. Na końcu porównujemy wiersz przed i po. Innej drogi nie ma: kodowanie to czytanie klucza.
+
+</div>
+
+<Krok tytul="P5 — „tak”">
+
+W kluczu P5: tak = 1, nie = 2. Osoba odpowiedziała „tak”, więc kod to **1**.
+
+<Dlaczego typ="umowa">
+To, że „tak” ma 1, a nie 0, wynika z bazy z zajęć: tak samo zakodowano kolumny P6 (1 = zaznaczone, 2 = nie). Gdyby prowadząca podała inny klucz, np. tak = 1, nie = 0, użyj jej klucza.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="P7 (1) — „zdecydowanie się zgadzam”">
+
+W kluczu skali to najwyższy stopień: **5**. Możesz to sprawdzić w bazie — w kolumnie AP, wiersz 7, stoi właśnie 5.
+
+<Dlaczego>
+Kolumny AP–AW to P7 zakodowane przez prowadzącą. To gotowy wzór klucza dla całej skali.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="P8 (1) — „N/D”">
+
+N/D znaczy „nie dotyczy”: osoba nie oceniała tego stwierdzenia. Komórka zostaje **pusta**.
+
+<Dlaczego>
+Pusta komórka to dla Excela brak danych. Średnia ją pomija. Gdyby wpisać 0, Excel policzyłby je jak najgorszą możliwą ocenę — a ta osoba nic nie oceniła.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="P8 (2) — „raczej się zgadzam”">
+
+W kluczu: **4**.
+</Krok>
+
+<Krok tytul="Płeć — „kobieta”">
+
+W kluczu: kobieta = **1**.
+</Krok>
+
+<Krok tytul="Wynik: wiersz 7 przed i po">
+
+<ArkuszBazy kolumny={['P5#BH', 'P7_1#', 'P8_1#AY', 'P8_2#AZ', 'PLEC#BI']} wiersze={[7]} />
+
+Kod P5 trafił do nowej kolumny BH, a płci — do BI. P7 (1) to gotowa kolumna AP z bazy. P8 trafiło do kopii AY i AZ. Pusta komórka AY7 (w paski) to N/D.
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="N/D zamienione na 0">
+- Stwierdzenie P8 (1) „AI ułatwia korzystanie z usług bankowych” oceniło {s81.n} osób. {s81.nd} osób odpowiedziało N/D.
+- Średnia z ocen, gdy N/D to puste komórki: {fmt(s81.suma)} : {s81.n} = **{fmt(s81.srednia, 2)}**.
+- Gdy N/D wpisano jako 0, Excel dzieli przez wszystkich: {fmt(s81.suma)} : {N} = **{fmt(s81z.srednia, 2)}**.
+- Wynik spada o ponad jeden stopień skali. To nie jest prawda o opiniach — to błąd kodowania.
+</Ramka>
+
+<Ramka kind="granica" tytul="czego nie liczyć z kodów">
+- Kody płci, generacji czy miejsca zamieszkania to etykiety. Ich średnia nic nie znaczy.
+- Przykład: „średnia płeć = 1,47” nie mówi nic sensownego. Takie pytania tylko **zliczasz** (ile osób, jaki procent).
+- Średnią liczysz z kodów skali, gdzie większy kod znaczy „więcej” (np. 1–5).
+</Ramka>
+
+<a id="polecenie-czysc" class="k-anchor"></a>
+
+## Sprawdzanie bazy
+
+Każdy błąd w bazie przechodzi potem do tabel. Literówka zrobi z jednej odpowiedzi dwie. Zapomniany kod zrobi „kategorię”, której nie było w ankiecie. Dlatego przed liczeniem bazę się sprawdza. Fachowo to **czyszczenie danych**.
+
+<Ramka kind="polecenie" tytul="Sprawdź bazę i popraw błędy">
+1. Kliknij w bazę i włącz **filtr**: Dane → Filtr. W nagłówku każdej kolumny pojawi się strzałka ▾.
+2. Rozwiń listę ▾ w pierwszej kolumnie. Excel pokazuje tam **każdą różną wartość** z tej kolumny, jeden raz.
+3. Porównaj listę z kafeterią pytania. Szukasz:
+   - wartości, której nie ma w kafeterii (liczba wśród tekstów, literówka, inna pisownia),
+   - „(Puste)” tam, gdzie odpowiedź jest obowiązkowa,
+   - odmów odpowiedzi („odmowa odp.”).
+4. Zrób tak w każdej kolumnie.
+5. Sprawdź **sprzeczności między pytaniami**. Przykład: ktoś zaznaczył „nie korzystałem z żadnej funkcji”, a w innej kolumnie zaznaczył funkcję.
+6. Przy każdym błędzie zapisz: kolumna, wiersz, co jest źle, co z tym robisz.
+</Ramka>
+
+<Ramka kind="botak" tytul="co robić ze znalezionym błędem">
+- Kod, którego nie ma w kluczu → sprawdź w kwestionariuszu, co znaczy. Nie zgaduj.
+- Odmowa odpowiedzi → brak danych (pusta komórka). Tę osobę pomijasz w tabelach z tym pytaniem.
+- Sprzeczne odpowiedzi → zostaw wiersz, ale nie licz tej osoby w pytaniu, którego dotyczy sprzeczność. Zapisz to w raporcie.
+
+**Zasada:** nie kasuj respondenta bez powodu i każdą poprawkę zapisz.
+</Ramka>
+
+<Rozwiazanie tytul="Sprawdź bazę z zajęć" zrodlo="baza z zajęć 1, 361 respondentów">
+<div slot="tresc">
+
+Sprawdź bazę z zajęć filtrem i porównaniem odpowiedzi między pytaniami. Wypisz znalezione błędy i powiedz, co z nimi zrobić.
+
+</div>
+<div slot="plan">
+
+1. Kolumny z metryczki (płeć, sytuacja, miejsce zamieszkania) oglądamy filtrem. Tam najłatwiej o kod, który nie został opisany.
+2. Potem sprawdzamy pytania, które się ze sobą łączą: P1 z P2 i P6 (9) z P6 (1)–(8). Sprzeczność widać dopiero, gdy patrzy się na dwie kolumny naraz.
+3. Na końcu spis błędów z decyzją przy każdym. Kolejność nie jest obowiązkowa, ale filtr najpierw daje szybki przegląd całej bazy.
+
+</div>
+
+<Krok tytul="Sytuacja zawodowa (kolumna AH): liczba 5 wśród tekstów">
+
+<Filtr id="SYT" oznacz={{ '5': `liczba zamiast opisu — ${wierszy(nS5)}` }}>
+to lista ▾ z kolumny AH. Excel pokazuje każdą wartość raz, liczby przed tekstem. Liczbę wierszy po prawej dopisaliśmy sami — na liście w Excelu jej nie ma.
+</Filtr>
+
+Cztery odpowiedzi to słowa z kafeterii. Piąta to **liczba 5** w {nS5} wierszach, np. w wierszach {K.syt5.slice(0, 3).join(', ')}.
+
+<Dlaczego>
+Najpewniej to piąta odpowiedź z kafeterii, której opisu nikt nie wpisał. W bazie są tylko cztery opisy, a kafeteria o sytuacji zawodowej ma zwykle jeszcze np. „nie pracuję”. Co dokładnie znaczy 5, rozstrzyga kwestionariusz. Do tego czasu nie zgadujemy i opisujemy to jako „5 — brak opisu kodu”.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Miejsce zamieszkania (kolumna AL): liczba 1 i brak „wsi”">
+
+<Filtr id="MIEJSCE" oznacz={{ '1': `liczba zamiast opisu — ${wierszy(nM1)}` }}>
+lista ▾ z kolumny AL. Trzy odpowiedzi to miasta. Liczba 1 stoi w {nM1} wierszach.
+</Filtr>
+
+W kafeterii są trzy wielkości miast. Brakuje **wsi**, a liczba 1 stoi w {nM1} wierszach. Najpewniej „1” to wieś zapisana kodem.
+
+<Dlaczego>
+Miejsce zamieszkania prawie zawsze ma odpowiedź „wieś”. Tu jej nie ma, a liczba 1 jest — i to w prawie co trzecim wierszu. Pasuje też baza z zajęć 2: w kolumnie AN (miejsce zapisane kodami 1–8) kod 1 stoi tam, gdzie w AL jest „1” (patrz dalej, przy łączeniu kategorii). Mimo to opis „wieś” trzeba potwierdzić w kwestionariuszu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Płeć (kolumna AE): odmowa odpowiedzi">
+
+Na liście ▾ w kolumnie AE są trzy wartości: „kobieta”, „mężczyzna” i „odmowa odp.”. Odmowa pada w {nOdm} wierszach: {K.odmowa.join(', ')}.
+
+<Dlaczego>
+To nie błąd ankiety — ktoś miał prawo nie odpowiedzieć. Ale w tabelach z płcią te {nOdm} osoby trzeba wyłączyć filtrem. Inaczej powstanie „trzecia płeć” z trzema osobami, a procenty będą liczone od innej liczby niż w opisie.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprzeczność w P6: „nie korzystam z żadnej”, a funkcja zaznaczona">
+
+<ArkuszBazy kolumny={['P6_4', 'P6_5', 'P6_8', 'P6_9']} wiersze={K.p6Sprzeczne} oznacz={{ H204: 'roz', I204: 'roz', M204: 'roz', H359: 'roz', L359: 'roz', M359: 'roz' }}>
+wiersze {K.p6Sprzeczne.join(' i ')}. W kolumnie M stoi 1, czyli „nie korzystałam/em z żadnego z tych rozwiązań”. W tym samym wierszu w innej kolumnie też stoi 1, czyli zaznaczona funkcja. Obie odpowiedzi naraz nie mogą być prawdziwe.
+</ArkuszBazy>
+
+<Dlaczego>
+Takiej sprzeczności filtr nie pokaże, bo każda kolumna osobno wygląda dobrze. Trzeba ją policzyć. W Excelu: w nowej kolumnie wpisz <Formula t={'=JEŻELI(ORAZ(M2=1;LICZ.JEŻELI(E2:L2;1)>0);"SPRZECZNE";"")'} />, przeciągnij w dół i przefiltruj „SPRZECZNE”. LICZ.JEŻELI liczy, ile jedynek jest w kolumnach E–L.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sprzeczność P1 i reszty ankiety">
+
+W wierszu {K.p1Nie[0]} w P1 („Z aplikacji ilu banków korzysta Pan(i)?”) stoi „nie korzystam”. Ta sama osoba odpowiada dalej na pytania o aplikację, np. ocenia jej obsługę w P7.
+
+<Dlaczego>
+Ankieta powinna mieć tu pytanie filtrujące: po „nie korzystam” → koniec albo metryczka. Nie miała, więc odpowiedzi tej osoby o aplikacji nie mają podstaw. Bezpiecznie: nie liczyć jej w pytaniach o korzystanie z aplikacji.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Spis błędów">
+
+| Gdzie | Co | Co robimy |
+|---|---|---|
+| AH, {wierszy(nS5)} | liczba 5 bez opisu | sprawdzić kod w kwestionariuszu |
+| AL, {wierszy(nM1)} | liczba 1, brak „wsi” | najpewniej wieś — potwierdzić |
+| AE, {wierszy(nOdm)} | odmowa odpowiedzi | brak danych, odfiltrować przy płci |
+| P6, wiersze {K.p6Sprzeczne.join(' i ')} | „żadne” + zaznaczona funkcja | wyłączyć z analizy P6 |
+| P1, wiersz {K.p1Nie[0]} | „nie korzystam”, a ocenia aplikację | wyłączyć z pytań o aplikację |
+
+**Jak czytać:** każdy wiersz to jeden znaleziony problem. Kolumna „Co robimy” to decyzja, którą zapisujesz w raporcie.
+</Krok>
+</Rozwiazanie>
+
+<a id="polecenie-grupy" class="k-anchor"></a>
+
+## Łączenie kategorii w mniej grup
+
+W bazie z zajęć 2 doszły dwie kolumny z kodami. AM to dochód w **10 przedziałach** (kody 1–10). AN to miejsce zamieszkania w **8 kategoriach** (kody 1–8). W kolumnach AI i AL te same dane stoją w mniejszej liczbie grup: dochód w 5, miejsce w 4. Zamiana 10 kategorii na 5 to **przekodowanie**, czyli łączenie kategorii.
+
+Po co? Małe grupy dają w tabelach niepewne procenty. Kod 2 w dochodzie ma tylko {dochK[1]} osób. W tabeli z trzema pokoleniami to po kilka osób na kratkę, a jedna osoba więcej zmienia wynik o kilka procent. Po połączeniu grupy są większe. Cena: **tracisz szczegóły**. Nie wiesz już, kto zarabia 1000 zł, a kto 2900 zł.
+
+### Klucz łączenia
+
+Klucz odczytujemy z wierszy 2–{G.pierwszyZly - 1} bazy z zajęć 2, gdzie kod i grupa stoją obok siebie i się zgadzają.
+
+<TabelaKarty naglowki={['Kod dochodu (AM)', 'Grupa (AI)', 'Osób w całej bazie']} wiersze={dochK.map((n, i) => [String(i + 1), G.doch.grupy[i + 1], n])} />
+
+**Jak czytać:** wiersz to jeden kod z kolumny AM i grupa, do której trafia. Kody 1–4 to razem „do 3000”, 5–6 to „3001-5000”, a 9–10 to „pow. 10000”. Kody 7 i 8 przechodzą bez łączenia.
+
+<Ramka kind="polecenie" tytul="Połącz kategorie (przekoduj zmienną)">
+1. **Spisz klucz** „stary kod → nowa grupa”. Łącz tylko **sąsiednie** przedziały.
+2. Sprawdź, czy nowe grupy są **rozłączne i wyczerpujące**: każdy stary kod trafia do dokładnie jednej grupy.
+3. Wpisz klucz w dwie wolne kolumny (stary kod, nowa grupa).
+4. Obok bazy dodaj nową kolumnę i wpisz formułę z WYSZUKAJ.PIONOWO, np. <Formula t={'=WYSZUKAJ.PIONOWO(AM2;$BK$2:$BL$11;2;FAŁSZ)'} />. Przeciągnij ją w dół.
+5. **Sprawdź sumy:** liczba osób w nowej grupie = suma osób ze starych kodów, które do niej weszły.
+</Ramka>
+
+<Dlaczego typ="inaczej">
+Zamiast tabeli klucza można zagnieździć JEŻELI: <Formula t={'=JEŻELI(AM2<=4;"do 3000";JEŻELI(AM2<=6;"3001-5000";JEŻELI(AM2=7;"5001-7000";JEŻELI(AM2=8;"7001-10000";"pow. 10000"))))'} />. Działa tak samo, ale łatwo pomylić nawias albo granicę. Tabela klucza jest czytelniejsza i łatwiej ją poprawić.
+</Dlaczego>
+
+<Ramka kind="granica">
+- Łącz tylko sąsiednie przedziały. „Do 3000” z „pow. 10000” to grupa bez sensu.
+- Skali nominalnej (np. województwa) nie łączysz „po kolei”, tylko według sensu (np. regiony). Zapisz, jak łączysz.
+- Nowe grupy muszą spełniać te same zasady co kafeteria: rozłączne i wyczerpujące.
+</Ramka>
+
+<Rozwiazanie tytul="Połącz dochód z 10 kodów w 5 grup i sprawdź sumy" zrodlo="baza z zajęć 2, kolumny AM i AI">
+<div slot="tresc">
+
+W kolumnie AM dochód jest zapisany kodami 1–10. Połącz kody w pięć grup jak w kolumnie AI i sprawdź, czy liczby osób się zgadzają.
+
+</div>
+<div slot="plan">
+
+1. Liczymy osoby przy każdym kodzie. Bez tego nie da się sprawdzić wyniku.
+2. Sumujemy kody według klucza. Tak samo zrobi formuła, ale sumę liczymy sami, żeby mieć z czym porównać.
+3. Porównujemy z kolumną AI. Jeśli coś się nie zgadza, szukamy przyczyny w wierszach.
+
+</div>
+
+<Krok tytul="Ile osób przy każdym kodzie">
+
+Tabela przestawna: AM do Wierszy i do Wartości (Liczba). Wychodzi: {dochK.map((n, i) => `${i + 1} → ${n}`).join(', ')}.
+
+<Dlaczego>
+To rozkład kodów. Z niego policzysz, ile osób powinno być w każdej nowej grupie.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Sumy według klucza">
+
+- do 3000 (kody 1–4): {dochK[0]} + {dochK[1]} + {dochK[2]} + {dochK[3]} = **{dochZKodow[0]}**
+- 3001-5000 (kody 5–6): {dochK[4]} + {dochK[5]} = **{dochZKodow[1]}**
+- 5001-7000 (kod 7): **{dochZKodow[2]}**
+- 7001-10000 (kod 8): **{dochZKodow[3]}**
+- pow. 10000 (kody 9–10): {dochK[8]} + {dochK[9]} = **{dochZKodow[4]}**
+
+Razem: {dochZKodow.join(' + ')} = {dochZKodow.reduce((a, b) => a + b, 0)}, czyli wszyscy.
+
+<Dlaczego>
+Każdy kod trafia do jednej grupy, więc suma grup musi dać wszystkich {N} respondentów. To pierwsza kontrola: jeśli wychodzi mniej, któryś kod nie trafił do żadnej grupy.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Porównanie z kolumną AI">
+
+| Grupa | z kodów AM | w kolumnie AI | zgadza się? |
+|---|---|---|---|
+| do 3000 | {dochZKodow[0]} | {dochAI[0]} | {zgoda(0)} |
+| 3001-5000 | {dochZKodow[1]} | {dochAI[1]} | {zgoda(1)} |
+| 5001-7000 | {dochZKodow[2]} | {dochAI[2]} | {zgoda(2)} |
+| 7001-10000 | {dochZKodow[3]} | {dochAI[3]} | {zgoda(3)} |
+| pow. 10000 | {dochZKodow[4]} | {dochAI[4]} | {zgoda(4)} |
+
+**Jak czytać:** środkowa kolumna to sumy policzone z kodów (krok wyżej), trzecia — ile osób ma tę grupę wpisaną w kolumnie AI.
+
+Dwie grupy różnią się o jedną osobę. To znak, że kolumny AM i AI nie opisują dokładnie tych samych wierszy.
+</Krok>
+
+<Krok tytul="Gdzie kolumny się rozjeżdżają">
+
+<Przesuniecie co="doch">
+wiersz = respondent. AM to kod, „powinno być” to grupa z klucza, AI to grupa wpisana w bazie. Zielone wiersze się zgadzają, różowe nie. Od wiersza {G.pierwszyZly} zgodność znika.
+</Przesuniecie>
+
+W wierszach 2–{G.pierwszyZly - 1} kod i grupa zgadzają się w każdym wierszu. Od wiersza {G.pierwszyZly} przestają. W całej bazie zgadza się tylko {G.zgodneDoch} wierszy z {N}.
+
+<Dlaczego>
+Tak wygląda baza, w której część kolumny przesunęła się względem reszty wiersza: po sortowaniu jednej kolumny albo wklejeniu jej od innego wiersza. Z samej bazy nie da się rozstrzygnąć, która kolumna jest dobra. Trzeba to zgłosić prowadzącej, zanim zaczniesz liczyć tabele z dochodem. Kolumny AN i AL (miejsce) mają ten sam problem: zgadzają się w {G.zgodneMiejsce} wierszach z {N}.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="kiedy" tytul="kiedy sprawdzać zgodność kolumn">
+Zawsze, gdy w bazie są dwie kolumny o tej samej rzeczy (kod i opis, stary i nowy podział). Wybierz po kilka wierszy z **góry, środka i dołu** bazy i porównaj je. Sprawdzenie samej góry nic by tu nie dało — błąd zaczyna się w wierszu {G.pierwszyZly}.
+</Ramka>
+
+<a id="polecenie-rozklad" class="k-anchor"></a>
+
+## Tabela przestawna: rozkład odpowiedzi
+
+Tabela przestawna to narzędzie Excela, które **zlicza wiersze bazy w grupach**. Nie piszesz żadnej formuły. Przeciągasz nazwy kolumn w cztery pola i Excel liczy sam.
+
+<Ramka kind="polecenie" tytul="Zrób tabelę przestawną: rozkład odpowiedzi">
+1. Kliknij dowolną komórkę bazy.
+2. **Wstawianie → Tabela przestawna**. Excel sam zaznaczy całą bazę. Wybierz „Nowy arkusz” i kliknij OK.
+3. Po prawej pojawi się panel **„Pola tabeli przestawnej”**: lista kolumn bazy i cztery obszary — Filtry, Kolumny, Wiersze, Wartości.
+4. Przeciągnij pytanie (np. P5) do obszaru **Wiersze**. Pojawi się lista odpowiedzi.
+5. Przeciągnij **to samo pytanie** jeszcze raz do obszaru **Wartości**. Excel napisze „Liczba z P5” i przy każdej odpowiedzi poda, ile osób ją wybrało.
+6. Procenty: kliknij prawym przyciskiem liczbę w tabeli → **Pokaż wartości jako** → **% sumy kolumny**.
+7. Ułóż odpowiedzi w kolejności z kafeterii (patrz pułapka niżej).
+</Ramka>
+
+<Przestawna w="P5" tryby={['liczba', 'kol']} tytul="P5: czy wiedział(a), że aplikacje mogą używać AI">
+po prawej widać, co gdzie przeciągnąć. Przycisk „% sumy kolumny” zamienia liczby na procenty. Kliknij liczbę — pod tabelą pojawi się rachunek. Przykład: {fmt(r5.liczby[0])} : {N} = {P(r5.proc[0])}.
+</Przestawna>
+
+<Ramka kind="botak" tytul="„Liczba z” albo „Suma z”">
+Gdy w kolumnie są słowa, Excel w Wartościach liczy komórki: „Liczba z…”. Gdy są **liczby** (np. kody), Excel od razu je **sumuje**: „Suma z…”. Do zliczania osób zmień to: prawy przycisk → **Podsumuj wartości według** → **Liczba**.
+
+**Zasada:** „ile osób” = Liczba. „Suma kodów” prawie nigdy nie jest tym, czego szukasz.
+</Ramka>
+
+### Kolejność odpowiedzi
+
+Excel układa odpowiedzi sam: najpierw liczby, potem tekst według alfabetu. Przy pytaniach z kolejnością (skala porządkowa) wychodzi wtedy bałagan.
+
+<div class="k-dwa">
+<div>
+
+<Przestawna w="P2" excel tytul="tak ułoży Excel">
+„ani razu” trafia za „6-10”, bo zaczyna się od litery.
+</Przestawna>
+
+</div>
+<div>
+
+<Przestawna w="P2" tytul="tak ma być">
+kolejność jak w kafeterii: od „ani razu” do „ponad 10”.
+</Przestawna>
+
+</div>
+</div>
+
+<Ramka kind="pulapka" tytul="kolejność alfabetyczna">
+- Excel nie wie, że „ani razu” to mniej niż „1-2”. Ustawia według pierwszego znaku.
+- Tak samo przy dochodzie: „do 3000” ląduje za „7001-10000”.
+- Popraw ręcznie: prawy przycisk na etykiecie → **Przenieś** → „Przenieś … na początek”. Albo przeciągnij krawędź komórki z etykietą.
+</Ramka>
+
+### Pytanie wielokrotnego wyboru
+
+W P6 każda funkcja ma swoją kolumnę (1 = zaznaczona). Każdą kolumnę liczysz osobno. Procent liczysz od **wszystkich respondentów** ({N}), bo każdy mógł zaznaczyć każdą funkcję.
+
+<TabelaKarty naglowki={['Funkcja (kolumna)', 'Zaznaczyło', `% z ${N}`]} wiersze={P6.map((p) => [`${p.t} (${p.kol})`, p.tak, P1((100 * p.tak) / N)])} />
+
+**Jak czytać:** wiersz to jedna kolumna bazy, czyli jedna funkcja. „Zaznaczyło” to liczba jedynek w tej kolumnie. W Excelu: <Formula t={'=LICZ.JEŻELI(E2:E362;1)'} />.
+
+<Ramka kind="pulapka" tytul="procenty nie sumują się do 100%">
+- Jedynek w kolumnach E–M jest razem {P6suma}, a osób tylko {N}.
+- Jedna osoba może zaznaczyć kilka funkcji, więc procenty sumują się do ponad 100%.
+- To nie błąd. Przy pytaniu wielokrotnego wyboru **nie dopisuj** wiersza „razem 100%”.
+</Ramka>
+
+<Rozwiazanie tytul="Rozkład odpowiedzi na P2 (ile razy w ostatnich 7 dniach)" zrodlo="baza z zajęć 1, kolumna B">
+<div slot="tresc">
+
+Przygotuj tabelę przestawną z odpowiedziami na P2: liczba osób i procent. Opisz wynik jednym zdaniem.
+
+</div>
+<div slot="plan">
+
+1. Ustawiamy pola: P2 do Wierszy i do Wartości. Tak Excel policzy osoby.
+2. Dokładamy procenty, bo „108 osób” nic nie mówi bez wiedzy, ilu było wszystkich.
+3. Układamy odpowiedzi w kolejności z kafeterii, bo to skala porządkowa.
+4. Opisujemy najliczniejszą odpowiedź i krańce skali.
+
+</div>
+
+<Krok tytul="Pola i liczby">
+
+P2 do Wierszy, P2 do Wartości. Excel daje: {r2x.kat.map((t, i) => `${t}: ${r2x.liczby[i]}`).join(', ')}. Suma końcowa: {r2.suma}.
+
+<Dlaczego>
+Excel liczy, w ilu wierszach stoi każda odpowiedź. Suma musi dać {N}: każdy odpowiedział na P2 dokładnie raz.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Procenty i kolejność">
+
+<Przestawna w="P2" tryb="kol" tryby={['liczba', 'kol']}>
+„% sumy kolumny” dzieli każdą liczbę przez sumę końcową {N}. Kolejność poprawiona ręcznie: „ani razu” na górze.
+</Przestawna>
+
+<Dlaczego>
+Przy jednej kolumnie „% sumy kolumny” i „% sumy końcowej” dają to samo, bo jedyna kolumna to cała tabela.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Opis">
+
+Najwięcej osób korzystało z aplikacji 3–5 razy w tygodniu ({P1(r2.proc[2])}), prawie tyle samo — 1–2 razy ({P1(r2.proc[1])}). Ani razu nie zajrzało do niej {P1(r2.proc[0])} badanych.
+
+<Dlaczego>
+Opis zaczynasz od najliczniejszej odpowiedzi, potem krańce. Liczby w zdaniu zaokrąglasz do jednego miejsca po przecinku — dwa miejsca w tekście tylko utrudniają czytanie.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<a id="polecenie-krzyzowa" class="k-anchor"></a>
+
+## Tabela krzyżowa: porównanie grup
+
+Tabela krzyżowa pokazuje **dwa pytania naraz**. W wierszach jest jedno (np. P5), w kolumnach drugie (np. generacja). W każdej kratce stoi liczba osób, które mają naraz tę odpowiedź i tę grupę.
+
+W tabeli przestawnej to jedno przeciągnięcie więcej: grupę wrzucasz do obszaru **Kolumny**.
+
+<Przestawna w="P5" k="GEN" tryby={['liczba', 'kol', 'wiersz', 'calosc']} tytul="P5 × generacja">
+każda kratka to liczba osób z daną odpowiedzią (wiersz) i z danego pokolenia (kolumna). Przyciski zmieniają „Pokaż wartości jako”. Kliknij liczbę: złota kratka to licznik, turkusowa — suma, przez którą dzielimy.
+</Przestawna>
+
+Te same liczby można zamienić na procent na trzy sposoby. Każdy odpowiada na inne pytanie.
+
+<TabelaKarty naglowki={['Pokaż wartości jako', 'Dzielisz kratkę przez', 'Odpowiada na pytanie', 'Przykład (Z, „tak”)']} wiersze={[
+  ['% sumy kolumny', 'sumę kolumny', 'jaka część grupy tak odpowiedziała?', `${t5g.liczby[0][2]} : ${t5g.sumyK[2]} = ${P(k5g.kom[0][2])}`],
+  ['% sumy wiersza', 'sumę wiersza', 'jaka część tej odpowiedzi to ta grupa?', `${t5g.liczby[0][2]} : ${t5g.sumyW[0]} = ${P(w5g.kom[0][2])}`],
+  ['% sumy końcowej', 'wszystkich w tabeli', 'jaka część wszystkich ma naraz to i to?', `${t5g.liczby[0][2]} : ${t5g.suma} = ${P(c5g.kom[0][2])}`],
+]} mocne={[0]} />
+
+**Jak czytać:** wiersz to jedna opcja z menu „Pokaż wartości jako”. Ostatnia kolumna to ta sama kratka (pokolenie Z, odpowiedź „tak”) policzona trzema sposobami.
+
+<Ramka kind="botak" tytul="który procent wybrać">
+Porównujesz **grupy**? Licz procent **w każdej grupie osobno**. Grupy stoją w kolumnach, więc wybierasz **% sumy kolumny**. Każda kolumna sumuje się wtedy do 100% i grupy różnej wielkości da się porównać.
+
+**Zasada:** procent liczysz w tym kierunku, w którym stoją grupy. Porównujesz potem liczby w poprzek, w jednym wierszu.
+</Ramka>
+
+<Ramka kind="polecenie" tytul="Zrób tabelę krzyżową i porównaj grupy">
+1. Ustal, **co porównujesz** (grupy, np. pokolenia) i **pod jakim względem** (pytanie, np. P5).
+2. Tabela przestawna: pytanie do **Wierszy**, grupy do **Kolumn**, pytanie jeszcze raz do **Wartości** (Liczba).
+3. Wyrzuć braki: strzałka ▾ przy „Etykiety kolumn” albo „Etykiety wierszy” → odznacz „odmowa odp.”, „(puste)”.
+4. Prawy przycisk na liczbie → **Pokaż wartości jako → % sumy kolumny**.
+5. Sprawdź: każda kolumna ma w „Sumie końcowej” 100%.
+6. Porównaj procenty **w jednym wierszu** (np. „tak”) i napisz zdanie: która grupa ma ich więcej i o ile punktów procentowych.
+</Ramka>
+
+<Rozwiazanie tytul="Czy pokolenia różnią się wiedzą o AI w aplikacjach?" zrodlo="baza z zajęć 1, kolumny D i AF">
+<div slot="tresc">
+
+Sprawdź, czy osoby z pokoleń X, Y i Z tak samo często wiedziały przed badaniem, że aplikacje bankowe mogą wykorzystywać AI (P5). Opisz wynik.
+
+</div>
+<div slot="plan">
+
+1. Porównujemy pokolenia, więc pokolenie idzie do Kolumn, a P5 do Wierszy.
+2. Najpierw liczby, żeby zobaczyć, jak duże są grupy.
+3. Potem % sumy kolumny. Grupy mają różną liczbę osób, więc same liczby dałyby złe porównanie.
+4. Czytamy wiersz „tak” od lewej do prawej i piszemy wniosek.
+
+</div>
+
+<Krok tytul="Liczby">
+
+<Przestawna w="P5" k="GEN" />
+
+Pokolenie X to {os(t5g.sumyK[0])}, Y — {os(t5g.sumyK[1])}, a Z — {os(t5g.sumyK[2])}. „Tak” odpowiedziało: w X {t5g.liczby[0][0]}, w Y {t5g.liczby[0][1]}, w Z {t5g.liczby[0][2]}.
+
+<Dlaczego>
+Z samych liczb nie wolno porównywać. {os(t5g.liczby[0][1])} z Y to więcej niż {t5g.liczby[0][0]} z X, ale grupa Y jest też większa ({t5g.sumyK[1]} zamiast {t5g.sumyK[0]} osób). Trzeba sprowadzić grupy do wspólnej miary: procentu.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="% sumy kolumny">
+
+<Przestawna w="P5" k="GEN" tryb="kol" />
+
+Pokolenie X: {t5g.liczby[0][0]} : {t5g.sumyK[0]} = {P(k5g.kom[0][0])}. Pokolenie Y: {t5g.liczby[0][1]} : {t5g.sumyK[1]} = {P(k5g.kom[0][1])}. Pokolenie Z: {t5g.liczby[0][2]} : {t5g.sumyK[2]} = {P(k5g.kom[0][2])}.
+
+<Dlaczego>
+Każdą kratkę dzielimy przez sumę jej kolumny, czyli przez całe pokolenie. Kolumny sumują się do 100%: w X to {P(k5g.kom[0][0])} + {P(k5g.kom[1][0])}.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wniosek">
+
+Im młodsze pokolenie, tym więcej osób wiedziało o AI w aplikacjach: w pokoleniu X {P1(k5g.kom[0][0])}, w Y {P1(k5g.kom[0][1])}, a w Z {P1(k5g.kom[0][2])}. Różnica między Z a X to {pp(k5g.kom[0][2], k5g.kom[0][0])} punktu procentowego.
+
+<Dlaczego typ="umowa">
+Różnicę dwóch procentów podajemy w **punktach procentowych**: {P(k5g.kom[0][2])} − {P(k5g.kom[0][0])} = {fmt(k5g.kom[0][2] - k5g.kom[0][0], 2)} punktu procentowego, w zaokrągleniu {pp(k5g.kom[0][2], k5g.kom[0][0])}. Napis „o {pp(k5g.kom[0][2], k5g.kom[0][0])}%” byłby błędem: procent liczy się od czegoś, a tu odejmujemy dwa procenty od siebie. Odejmuj procenty dokładne (z dwoma miejscami), a zaokrąglaj dopiero wynik.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="zły procent, zły wniosek">
+- Tabela pokazuje „% sumy wiersza”, a w kratce (Z, „tak”) stoi {P(w5g.kom[0][2])}.
+- Błędny wniosek: „{P1(w5g.kom[0][2])} pokolenia Z wie o AI”.
+- Dobry odczyt: wśród **wszystkich**, którzy wiedzieli o AI, {P1(w5g.kom[0][2])} to pokolenie Z.
+- Zanim przepiszesz liczbę, sprawdź, który wiersz albo kolumna daje 100%.
+</Ramka>
+
+### Filtr: wyrzuć odmowy
+
+Przy płci jest jeszcze jedna rzecz: {nOdm} osoby odmówiły odpowiedzi. Bez filtra tabela ma trzecią kolumnę z trzema osobami. Odznaczasz ją na liście ▾ przy „Etykiety kolumn”.
+
+<Przestawna w="P5" k="PLEC" tryb="kol" tryby={['liczba', 'kol']} bezK={['odmowa odp.']}>
+kolumna „odmowa odp.” jest odfiltrowana, więc w tabeli jest {t5p.suma} osób zamiast {N}. Wiedziało o AI {P1(k5p.kom[0][0])} kobiet i {P1(k5p.kom[0][1])} mężczyzn.
+</Przestawna>
+
+<Ramka kind="granica" tytul="małe grupy">
+- Wykształcenie „podst., zaw.” ma tylko {t5w.sumyK[0]} osoby.
+- Jedna osoba to w tej grupie {P1(100 / t5w.sumyK[0])}.
+- Wynik {P1(k5w.kom[0][0])} „tak” w tej grupie jest więc bardzo chwiejny.
+- Przy małej grupie podaj obok procentu liczbę osób.
+</Ramka>
+
+<Ramka kind="gdzie" tytul="przypadek czy prawdziwa różnica">
+Tabela krzyżowa opisuje **próbę**. Czy różnica między pokoleniami jest na tyle duża, że nie wyszła przypadkiem? Na to odpowiada test chi-kwadrat z wykładu (następny moduł kursu). Wchodzą do niego te same liczby co do tej tabeli.
+</Ramka>
+
+<a id="polecenie-srednie" class="k-anchor"></a>
+
+## Średnia ocena w grupach
+
+Przy pytaniach ze skalą (P7, P8) zamiast liczyć osoby przy każdej odpowiedzi, można podać **średnią z kodów**. Jedna liczba zamiast pięciu procentów.
+
+<Ramka kind="polecenie" tytul="Policz średnią ocenę w grupach">
+1. Upewnij się, że stwierdzenie jest **zakodowane** (1–5), a N/D to **puste komórki**.
+2. Tabela przestawna: grupy (np. płeć) do **Wierszy**.
+3. Zakodowaną kolumnę (np. AP) do **Wartości**. Excel napisze „Suma z AP”.
+4. Prawy przycisk na liczbie → **Podsumuj wartości według → Średnia**.
+5. Prawy przycisk → **Format liczby** → Liczbowe, 2 miejsca po przecinku.
+6. Odfiltruj braki w grupach (np. „odmowa odp.”).
+7. Odczytaj średnią na skali: 1 = zdecydowanie się nie zgadzam … 5 = zdecydowanie się zgadzam.
+</Ramka>
+
+<Rozwiazanie tytul="Czy aplikacja jest łatwa w obsłudze — kobiety i mężczyźni" zrodlo="baza z zajęć 1, kolumny AP i AE">
+<div slot="tresc">
+
+Porównaj średnią ocenę stwierdzenia P7 (1) „Aplikacja bankowa jest łatwa w obsłudze” u kobiet i mężczyzn.
+
+</div>
+<div slot="plan">
+
+1. Bierzemy gotową kolumnę z kodami AP, bo średnią liczy się z liczb, nie ze słów.
+2. Płeć do Wierszy, AP do Wartości, „Suma” zamieniamy na „Średnią”.
+3. Wyrzucamy „odmowa odp.”, bo to nie jest grupa do porównania.
+4. Odczytujemy średnie na skali 1–5 i porównujemy.
+
+</div>
+
+<Krok tytul="Ustawienie pól">
+
+<Przestawna w="PLEC" sr={['P7_1']} bezW={['odmowa odp.']} />
+
+<Dlaczego>
+„Średnia z AP” dla kobiet to suma kodów wszystkich kobiet podzielona przez liczbę kobiet. Kliknij liczbę w tabeli — rachunek pojawi się pod nią.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Rachunek">
+
+Kobiety: {fmt(s71p[0].suma)} : {s71p[0].n} = {fmt(s71p[0].srednia, 2)}. Mężczyźni: {fmt(s71p[1].suma)} : {s71p[1].n} = {fmt(s71p[1].srednia, 2)}.
+
+<Dlaczego>
+Suma kodów to dodane do siebie oceny wszystkich osób z grupy. Każda kobieta, która odpowiedziała „raczej się zgadzam”, dokłada do sumy kobiet 4, a każda z „zdecydowanie się zgadzam” — 5.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Odczyt">
+
+Obie średnie są powyżej 4, czyli bliżej „raczej się zgadzam” niż środka skali. Kobiety oceniają łatwość obsługi trochę wyżej: {fmt(s71p[0].srednia, 2)} wobec {fmt(s71p[1].srednia, 2)}.
+
+<Dlaczego>
+Średnia 4,36 nie jest odpowiedzią z kafeterii. Mówi, że przeciętna ocena leży między „raczej się zgadzam” (4) a „zdecydowanie się zgadzam” (5), bliżej czwórki.
+</Dlaczego>
+</Krok>
+</Rozwiazanie>
+
+<Ramka kind="botak" tytul="średnia ze skali porządkowej">
+Skala „zgadzam się” jest porządkowa: nie wiemy, czy odstęp między 4 a 5 jest taki sam jak między 1 a 2. Średnia z kodów zakłada, że jest. W badaniach rynku robi się tak często, bo jedna liczba łatwo się porównuje.
+
+**Zasada:** obok średniej pokaż rozkład odpowiedzi (ile osób przy każdym stopniu).
+</Ramka>
+
+Kiedy średnia zawodzi? Gdy rozkład jest skrajny. P7 (1) ma średnią {fmt(s71.srednia, 2)}, ale za tą liczbą stoi: {o71.map((o) => `${o.kod} → ${o.n}`).join(', ')}. Prawie wszyscy dali 4 albo 5, a dwadzieścia osób — 1 albo 2. Sama średnia tych dwudziestu osób nie pokaże.
+
+### N/D a średnia w grupach
+
+Stwierdzenie P8 (4) „Jestem pozytywnie nastawiony/a do wykorzystywania AI w aplikacjach bankowych” ma {s84.nd} odpowiedzi N/D.
+
+<Przestawna w="GEN" sr={['P8_4']}>
+średnia z kodów P8 (4) w pokoleniach. N/D to puste komórki, więc nie wchodzą do średniej. Kliknij liczbę: zobaczysz, ile osób z N/D pominięto w grupie.
+</Przestawna>
+
+Gdyby N/D zakodować jako 0, średnia ogółem spadłaby z {fmt(s84.srednia, 2)} do {fmt(s84z.srednia, 2)}. Najbardziej ucierpiałoby pokolenie X, bo tam N/D jest najwięcej ({s84g[0].nd} osób).
+
+<Ramka kind="podobny" tytul="indeks z kilku stwierdzeń">
+Osiem stwierdzeń P7 mierzy jedną rzecz: wygodę aplikacji. Można je połączyć w jeden **indeks**: dla każdej osoby średnia z jej ośmiu kodów, np. <Formula t={'=ŚREDNIA(AP2:AW2)'} />. Potem średnia indeksu w grupach — tak samo jak wyżej. Przed połączeniem sprawdź, czy wszystkie stwierdzenia idą w tę samą stronę (większy kod = lepiej).
+</Ramka>
+
+## Ściąga przed kolokwium
+
+<div class="k-sciaga">
+  <div><b>Baza</b>Wiersz = respondent, kolumna = pytanie, komórka = odpowiedź. Pytanie wielokrotnego wyboru i tabelkowe = kilka kolumn.</div>
+  <div><b>Klucz kodowy</b>Spis „odpowiedź → kod”. Skala: 1 = zdecydowanie się nie zgadzam … 5 = zdecydowanie się zgadzam. Tak = 1, nie = 2.</div>
+  <div><b>Braki</b>N/D i odmowa = pusta komórka. Nigdy 0 — zero zaniża średnią.</div>
+  <div><b>Ctrl+H</b>Kopia kolumn, „Dopasuj zawartość całej komórki”, jedna odpowiedź = jedno „Zamień wszystko”. Na końcu sprawdź filtrem.</div>
+  <div><b>Sprawdzanie</b>Dane → Filtr, lista ▾ w każdej kolumnie: kody spoza klucza, braki, odmowy. Potem sprzeczności między pytaniami.</div>
+  <div><b>Łączenie kategorii</b>Klucz stary kod → nowa grupa, tylko sąsiednie przedziały. Suma grup = wszyscy.</div>
+  <div><b>Tabela przestawna</b>Pytanie do Wierszy i do Wartości (Liczba). Liczby w kolumnie → Excel daje „Suma”, zmień na „Liczba” albo „Średnia”.</div>
+  <div><b>Kolejność</b>Excel układa alfabetycznie. Skalę porządkową ustaw ręcznie: Przenieś → na początek.</div>
+  <div><b>Tabela krzyżowa</b>Pytanie w Wierszach, grupy w Kolumnach, % sumy kolumny. Porównuj w jednym wierszu.</div>
+  <div><b>Różnica procentów</b>W punktach procentowych (p.p.): 60% − 50% = 10 p.p., a nie „10%”.</div>
+  <div><b>Średnia w grupach</b>Grupy do Wierszy, kody do Wartości → Średnia. Obok podaj rozkład.</div>
+  <div><b>Wielokrotny wybór</b>Każda kolumna osobno, procent od wszystkich. Suma procentów może przekroczyć 100%.</div>
+</div>
+
+<Ramka kind="gdzie">
+Tabela krzyżowa to punkt wyjścia do analizy zależności z wykładu: test chi-kwadrat, współczynniki V Cramera i C Pearsona. Średnie w grupach wracają przy teście t i analizie wariancji. Rozkłady odpowiedzi i tabele z procentami trafiają też do raportu z badania.
+</Ramka>
+
+## Ćwiczenia przed kolokwium
+
+<a id="cwiczenia" class="k-anchor"></a>
+
+Każde zadanie sprawdza jedno polecenie. Po kliknięciu odpowiedzi od razu widzisz, czy dobrze, i dlaczego. Liczby pochodzą z bazy z zajęć.
+
+<a id="cw-kody" class="k-anchor"></a>
+
+### Kodowanie odpowiedzi
+
+<CwiczenieKody tytul="Zakoduj pięć wierszy bazy" kolumny={['P5', 'P7_1', 'P8_1', 'PLEC']} wiersze={[5, 7, 10, 11, 250]}>
+
+Wpisz kod pod każdą odpowiedzią. Klucz: skala 1 = zdecydowanie się nie zgadzam … 5 = zdecydowanie się zgadzam; tak = 1, nie = 2; kobieta = 1, mężczyzna = 2. N/D i odmowę zostaw **puste**.
+
+</CwiczenieKody>
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'W kolumnie P8 (3) stoi „raczej się nie zgadzam”. Jaki kod wpisujesz?', opcje: ['2', '4', '−1'], dobra: 0, dlaczego: 'W kluczu: 1 = zdecydowanie się nie zgadzam, 2 = raczej się nie zgadzam. 4 to „raczej się zgadzam” — kod pomylony przez przeoczenie słowa „nie”. Kody na zajęciach są od 1 do 5, bez minusów.' },
+  { q: 'Respondent przy P8 (2) ma „N/D”. Co wpisujesz w zakodowanej kolumnie?', opcje: ['0', '3, bo to środek skali', 'nic — pusta komórka'], dobra: 2, dlaczego: 'N/D to brak oceny. Pusta komórka nie wchodzi do średniej. 0 zaniżyłoby średnią (w P8 (1) z 3,49 do 2,39). 3 udawałoby, że ta osoba miała zdanie „pośrodku”, a nie miała żadnego.' },
+  { q: 'Kodujesz Ctrl+H bez „Dopasuj zawartość całej komórki”. Najpierw zamieniasz „się zgadzam” na 4. Co się stanie z komórką „ani się nie zgadzam, ani się zgadzam”?', opcje: ['Nic, bo to inna odpowiedź', 'Zmieni się w „ani się nie zgadzam, ani 4”', 'Zmieni się w 3'], dobra: 1, dlaczego: 'Bez tego pola Excel zamienia tekst także w środku dłuższej komórki. „się zgadzam” jest na końcu tej odpowiedzi, więc zamieni się tylko ten kawałek. Excel nie wie, że to inna odpowiedź, i nie zgaduje kodu 3.' },
+  { q: 'Po co kopiować kolumny z tekstem, zanim zaczniesz Ctrl+H?', opcje: ['Żeby Excel szybciej liczył', 'Żeby mieć oryginał, gdy zamiana pójdzie źle', 'Bo Ctrl+H nie działa na oryginalnych kolumnach'], dobra: 1, dlaczego: '„Zamień wszystko” zmienia komórki od razu. Gdy pomylisz kod albo zapomnisz o „Dopasuj zawartość całej komórki”, oryginał w drugiej kolumnie pozwala zacząć od nowa. Ctrl+H działa na każdej kolumnie, a na szybkość liczenia kopia nie wpływa.' },
+  { q: 'Klucz dla płci: kobieta = 1, mężczyzna = 2. Ktoś liczy „średnią płeć” i wychodzi 1,47. Co to znaczy?', opcje: ['Nic — kody płci to etykiety, ich średnia nie ma sensu', 'Że kobiet jest 47%', 'Że respondent jest przeciętnie bardziej kobietą'], dobra: 0, dlaczego: 'Płeć to skala nominalna: kod to tylko nazwa. Z takiej zmiennej liczy się liczbę osób i procent. Procent kobiet odczytasz z tabeli przestawnej (tu 52,4%), a nie ze średniej kodów.' },
+]} />
+
+<a id="cw-czysc" class="k-anchor"></a>
+
+### Sprawdzanie bazy
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: 'Lista filtra w kolumnie „miejsce zamieszkania” pokazuje: 1, miasto do 50 tys., miasto 51-500 tys., miasto pow. 500 tys. Co jest podejrzane?', opcje: ['Nic, wszystko gra', 'Liczba 1 wśród opisów — kod, któremu nikt nie dopisał nazwy', 'Że miast jest za dużo'], dobra: 1, dlaczego: 'Pozostałe wartości to opisy, a 1 to kod. Do tego brakuje „wsi”, więc 1 to najpewniej wieś — ale potwierdzasz to w kwestionariuszu. Trzy wielkości miast to zwykła kafeteria.' },
+  { q: 'Jak najszybciej zobaczyć wszystkie różne wartości w jednej kolumnie bazy?', opcje: ['Dane → Filtr i rozwinąć strzałkę ▾ w nagłówku', 'Przewinąć 361 wierszy', 'Posortować tylko tę kolumnę'], dobra: 0, dlaczego: 'Lista filtra pokazuje każdą wartość raz. Przewijanie trwa długo i łatwo coś przeoczyć. Sortowanie jednej kolumny bez reszty wiersza przenosi odpowiedzi do cudzych respondentów — to niszczy bazę.' },
+  { q: 'W wierszu 204 w P6 (9) „nie korzystałam/em z żadnego” stoi 1, a w P6 (4) i P6 (5) też 1. Co robisz?', opcje: ['Kasujesz cały wiersz', 'Zostawiasz wiersz, ale nie liczysz tej osoby w P6 i zapisujesz to', 'Zmieniasz P6 (9) na 2, bo pewnie się pomyliła'], dobra: 1, dlaczego: 'Nie wiemy, która odpowiedź jest prawdziwa, więc nie poprawiamy jej sami. Reszta odpowiedzi tej osoby może być dobra — kasowanie wiersza wyrzuca je bez powodu. Wyłączasz ją tylko z P6 i zapisujesz decyzję.' },
+  { q: 'Trzy osoby przy płci mają „odmowa odp.”. Robisz tabelę P5 × płeć. Co z nimi?', opcje: ['Zostają jako trzecia kolumna', 'Odfiltrowujesz je; tabela liczy wtedy 358 osób', 'Dopisujesz je do kobiet, bo kobiet jest więcej'], dobra: 1, dlaczego: 'Odmowa to brak danych. Trzecia kolumna z trzema osobami dałaby procenty bez znaczenia. Przypisanie płci na oko to fałszowanie danych. Po filtrze tabela ma 361 − 3 = 358 osób.' },
+  { q: 'Która sprzeczność wymaga patrzenia na dwie kolumny naraz?', opcje: ['Literówka „kobiet” zamiast „kobieta”', 'Liczba 5 wśród opisów sytuacji zawodowej', '„Nie korzystam z aplikacji” w P1, a ocena aplikacji w P7'], dobra: 2, dlaczego: 'Literówkę i obcy kod widać na liście filtra jednej kolumny. Sprzeczność P1 z P7 to dwie odpowiedzi, które osobno wyglądają dobrze. Wychodzi dopiero przy porównaniu kolumn w jednym wierszu.' },
+]} />
+
+<a id="cw-grupy" class="k-anchor"></a>
+
+### Łączenie kategorii
+
+<Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
+  { q: `Kody dochodu 1–4 łączysz w „do 3000”. Liczba osób przy kodach 1–4: ${dochK.slice(0, 4).join(', ')}. Ile osób będzie w grupie „do 3000”?`, opcje: [`${dochZKodow[0]}`, `${dochK[3]}`, `${Math.round(dochZKodow[0] / 4)}`], dobra: 0, dlaczego: `Grupa zbiera wszystkich z kodów 1–4: ${dochK.slice(0, 4).join(' + ')} = ${dochZKodow[0]}. ${dochK[3]} to tylko kod 4. Średnia z czterech kodów nie jest liczbą osób.` },
+  { q: 'Które połączenie przedziałów dochodu jest złe?', opcje: ['„3001-5000” + „5001-7000”', '„do 3000” + „pow. 10000”', '„7001-10000” + „pow. 10000”'], dobra: 1, dlaczego: 'Łączy się tylko sąsiednie przedziały. „Do 3000” i „pow. 10000” to dwa krańce skali — grupa z nich nic by nie znaczyła. Pozostałe pary leżą obok siebie.' },
+  { q: 'Po przekodowaniu nowe grupy sumują się do 355 osób, a w bazie jest 361. Co to znaczy?', opcje: ['Wszystko w porządku, różnica jest mała', 'Któryś stary kod nie trafił do żadnej grupy (albo są puste komórki)', 'Excel zaokrąglił wynik'], dobra: 1, dlaczego: 'Każdy wiersz ma trafić do dokładnie jednej grupy, więc suma musi dać wszystkich. Brakuje 6 osób: albo kod spoza klucza, albo brak danych. Excel nie zaokrągla liczby osób.' },
+  { q: 'Dlaczego w ogóle łączy się kategorie?', opcje: ['Bo Excel nie przyjmie więcej niż 5 kategorii', 'Żeby grupy były większe i procenty mniej przypadkowe; ceną jest utrata szczegółów', 'Żeby wyniki wyszły lepsze'], dobra: 1, dlaczego: 'W małej grupie jedna osoba zmienia procent o kilka punktów. Po połączeniu grupy są większe, ale nie widać już szczegółu (np. 1000 zł i 2900 zł to ta sama grupa). Excel nie ma limitu 5 kategorii.' },
+]} />
+
+<a id="cw-rozklad" class="k-anchor"></a>
+
+### Rozkład odpowiedzi
+
+<Pytania licznik tag="Ćwiczenia · 5 zadań" tytul="" pytania={[
+  { q: `Tabela przestawna P4 („jaką część czynności bankowych wykonujesz w aplikacji”): przy „75%i>” stoi ${r4.liczby[3]}, suma końcowa ${N}. Jaki to procent?`, opcje: [`${P(r4.proc[3])}`, `${r4.liczby[3]}%`, `${P((100 * r4.liczby[3]) / (N - r4.liczby[3]))}`], dobra: 0, dlaczego: `${r4.liczby[3]} : ${N} = ${P(r4.proc[3])}. Liczba osób to nie procent. Trzecia odpowiedź dzieli przez pozostałe osoby (${N - r4.liczby[3]}) zamiast przez wszystkich.` },
+  { q: 'Przeciągasz zakodowaną kolumnę AP do Wartości. Excel pokazuje „Suma z AP” = 1531. Chcesz wiedzieć, ile osób odpowiedziało. Co robisz?', opcje: ['Dzielisz 1531 przez 5', 'Podsumuj wartości według → Liczba', 'Nic, 1531 to liczba osób'], dobra: 1, dlaczego: 'Dla liczb Excel od razu sumuje: 1531 to suma kodów, nie liczba osób. „Liczba” policzy niepuste komórki (tu 361). Dzielenie przez 5 nie ma uzasadnienia.' },
+  { q: 'W tabeli P2 Excel ustawił: 1-2, 3-5, 6-10, ani razu, ponad 10. Co jest nie tak?', opcje: ['Nic, to kolejność rosnąca', '„ani razu” powinno być na górze — Excel ułożył alfabetycznie', 'Brakuje kategorii „0”'], dobra: 1, dlaczego: 'Excel ustawia tekst według pierwszego znaku: cyfry przed literami. Przy skali porządkowej kolejność ma znaczenie, więc „ani razu” przenosisz na początek. „Ani razu” to właśnie 0 — nie brakuje niczego.' },
+  { q: `W P6 kolumny E–M mają razem ${P6suma} jedynek, a osób jest ${N}. Procenty przy funkcjach sumują się do ponad 100%. Dlaczego?`, opcje: ['Ktoś zaznaczył coś dwa razy', 'Jedna osoba mogła zaznaczyć kilka funkcji', 'Procenty policzono źle'], dobra: 1, dlaczego: 'P6 to pytanie wielokrotnego wyboru. Każda osoba ma 9 kolumn i w każdej może mieć 1. Suma procentów ponad 100% to tu normalne. W jednej komórce nie da się zaznaczyć czegoś „dwa razy”.' },
+  { q: `Najczęściej używana funkcja AI z P6 (bez „nie korzystałam”) to:`, opcje: [`${P6top[1].t} (${P6top[1].tak} osób)`, `${P6top[2].t} (${P6top[2].tak} osób)`, `${P6top[0].t} (${P6top[0].tak} osób)`], dobra: 2, dlaczego: `Szukasz największej liczby jedynek wśród kolumn E–L. ${P6top[0].t}: ${P6top[0].tak} osób, czyli ${P1((100 * P6top[0].tak) / N)} badanych. Pozostałe dwie to kolejne miejsca: ${P6top[1].tak} i ${P6top[2].tak} osób.` },
+]} />
+
+<a id="cw-krzyzowa" class="k-anchor"></a>
+
+### Tabela krzyżowa
+
+<Przestawna w="P6_9" k="GEN" tryby={['liczba', 'kol', 'wiersz']} tytul="do zadań: P6 (9) „nie korzystałam/em z żadnego” × generacja">
+w wierszach kod: 1 = osoba zaznaczyła „nie korzystałam/em z żadnego z tych rozwiązań”, 2 = nie zaznaczyła (czyli korzysta z co najmniej jednej funkcji).
+</Przestawna>
+
+<Pytania licznik tag="Ćwiczenia · 6 zadań" tytul="" pytania={[
+  { q: 'Chcesz porównać pokolenia: w którym najwięcej osób nie korzysta z żadnej funkcji AI? Jaki procent wybierasz w tabeli wyżej?', opcje: ['% sumy wiersza', '% sumy kolumny', '% sumy końcowej'], dobra: 1, dlaczego: 'Pokolenia stoją w kolumnach, a porównujesz grupy. Procent liczysz więc w każdej kolumnie osobno: % sumy kolumny. % sumy wiersza mówi, jak „niekorzystający” dzielą się na pokolenia. % sumy końcowej dzieli wszystko przez 361.' },
+  { q: `W pokoleniu X z żadnej funkcji nie korzysta ${t9g.liczby[0][0]} z ${t9g.sumyK[0]} osób. Ile to procent?`, opcje: [`${P(k9g.kom[0][0])}`, `${P((100 * t9g.liczby[0][0]) / t9g.sumyW[0])}`, `${P((100 * t9g.liczby[0][0]) / N)}`], dobra: 0, dlaczego: `${t9g.liczby[0][0]} : ${t9g.sumyK[0]} = ${P(k9g.kom[0][0])} (% sumy kolumny). Druga odpowiedź dzieli przez sumę wiersza (${t9g.sumyW[0]}) — to % sumy wiersza. Trzecia dzieli przez wszystkich (${N}) — to % sumy końcowej.` },
+  { q: `Procent niekorzystających: X ${P1(k9g.kom[0][0])}, Y ${P1(k9g.kom[0][1])}, Z ${P1(k9g.kom[0][2])}. O ile punktów procentowych X wyprzedza Z?`, opcje: [`o ${pp(k9g.kom[0][0], k9g.kom[0][2])}%`, `o ${fmt((100 * (k9g.kom[0][0] - k9g.kom[0][2])) / k9g.kom[0][2], 1)} punktu procentowego`, `o ${pp(k9g.kom[0][0], k9g.kom[0][2])} punktu procentowego`], dobra: 2, dlaczego: `${P1(k9g.kom[0][0])} − ${P1(k9g.kom[0][2])} = ${pp(k9g.kom[0][0], k9g.kom[0][2])} punktu procentowego. Różnicę dwóch procentów podaje się w punktach procentowych, nie w procentach. Druga odpowiedź to różnica podzielona przez wynik Z — inna miara, nie różnica punktów.` },
+  { q: `W trybie „% sumy wiersza” kratka (Z, 1) pokazuje ${P((100 * t9g.liczby[0][2]) / t9g.sumyW[0])}. Co to znaczy?`, opcje: [`${P1((100 * t9g.liczby[0][2]) / t9g.sumyW[0])} osób z pokolenia Z nie korzysta z żadnej funkcji`, `Wśród wszystkich niekorzystających ${P1((100 * t9g.liczby[0][2]) / t9g.sumyW[0])} to pokolenie Z`, `${P1((100 * t9g.liczby[0][2]) / t9g.sumyW[0])} wszystkich badanych to niekorzystający z pokolenia Z`], dobra: 1, dlaczego: `% sumy wiersza dzieli przez sumę wiersza: ${t9g.liczby[0][2]} : ${t9g.sumyW[0]}. Suma wiersza to wszyscy niekorzystający, więc wynik mówi, jaką ich część stanowi pokolenie Z. Odsetek w pokoleniu Z to ${P1(k9g.kom[0][2])} (% sumy kolumny).` },
+  { q: 'Robisz tabelę P5 × płeć. Gdzie wrzucasz płeć, żeby porównać kobiety i mężczyzn?', opcje: ['Do Kolumn, a procent: % sumy kolumny', 'Do Wartości', 'Do Filtrów i nic więcej'], dobra: 0, dlaczego: 'Grupy, które porównujesz, idą do Kolumn, a procent liczysz w kolumnach. W Wartościach jest to, co liczymy (Liczba z P5). Sam filtr pokaże tylko jedną płeć naraz — wtedy nie ma porównania w jednej tabeli.' },
+  { q: `W pokoleniu Y „tak” w P5 odpowiedziało ${os(t5g.liczby[0][1])}, a w X — ${os(t5g.liczby[0][0])}. Czy z tego wynika, że Y wie o AI częściej?`, opcje: ['Tak, bo 74 to więcej niż 54', `Nie wiadomo bez procentów: grupy mają ${t5g.sumyK[1]} i ${t5g.sumyK[0]} osób`, 'Nie, bo X jest starsze'], dobra: 1, dlaczego: `Grupy różnej wielkości porównuje się procentami. Tu akurat Y ma więcej także w procentach (${P1(k5g.kom[0][1])} wobec ${P1(k5g.kom[0][0])}), ale z samych liczb tego nie wiadomo. Wiek nie zastępuje rachunku.` },
+]} />
+
+<a id="cw-srednie" class="k-anchor"></a>
+
+### Średnie w grupach
+
+<Pytania licznik tag="Ćwiczenia · 4 zadania" tytul="" pytania={[
+  { q: 'Wrzucasz zakodowaną kolumnę do Wartości i chcesz średnią. Co klikasz?', opcje: ['Pokaż wartości jako → % sumy kolumny', 'Podsumuj wartości według → Średnia', 'Format liczby → Procentowe'], dobra: 1, dlaczego: '„Podsumuj wartości według” wybiera, co Excel liczy: sumę, liczbę albo średnią. „Pokaż wartości jako” zamienia gotowy wynik na procent. Format liczby zmienia tylko wygląd, nie rachunek.' },
+  { q: `Średnia P7 (1) w pokoleniu X: suma kodów ${s71g[0].suma}, osób ${s71g[0].n}. Ile wynosi?`, opcje: [`${fmt(s71g[0].srednia, 2)}`, `${fmt(s71g[0].suma / 5, 2)}`, `${fmt(s71g[0].n / s71g[0].suma, 2)}`], dobra: 0, dlaczego: `Średnia = suma kodów : liczba osób = ${s71g[0].suma} : ${s71g[0].n} = ${fmt(s71g[0].srednia, 2)}. Dzielenie przez 5 (liczbę stopni skali) nie daje średniej. Trzecia odpowiedź to dzielenie odwrotne.` },
+  { q: 'Średnia ocena wyszła 4,32. Jak to opisać słowami na skali 1–5?', opcje: ['Między „raczej się zgadzam” a „zdecydowanie się zgadzam”, bliżej „raczej”', '4,32% osób się zgadza', 'Ocena neutralna'], dobra: 0, dlaczego: '4 = raczej się zgadzam, 5 = zdecydowanie się zgadzam. 4,32 leży między nimi, bliżej czwórki. To średnia kodów, nie procent. Ocena neutralna to okolice 3.' },
+  { q: `P8 (4) ma ${s84.nd} odpowiedzi N/D. Średnia z pustymi komórkami to ${fmt(s84.srednia, 2)}. Ktoś wpisał N/D jako 0. Ile mu wyjdzie?`, opcje: [`${fmt(s84.srednia, 2)}, bo 0 nic nie zmienia`, `${fmt(s84z.srednia, 2)}`, `${fmt((s84.suma) / (s84.n - s84.nd), 2)}`], dobra: 1, dlaczego: `Zero liczy się jak ocena: suma kodów ${s84.suma} dzielona przez wszystkich ${N} zamiast przez ${s84.n} oceniających daje ${fmt(s84z.srednia, 2)}. Puste komórki Excel pomija, zera — nie. Trzecia odpowiedź odejmuje N/D drugi raz.` },
+]} />
+
+## Quiz z teorii
+
+<Pytania licznik tytul="Baza danych i tabele przestawne" pytania={[
+  { q: 'Co jest jednym wierszem bazy danych z ankiety?', opcje: ['Jedno pytanie', 'Jeden respondent', 'Jedna odpowiedź z kafeterii'], dobra: 1, dlaczego: 'Wiersz = osoba, która wypełniła ankietę, ze wszystkimi swoimi odpowiedziami. Pytanie to kolumna. Odpowiedź z kafeterii to wartość w komórce.' },
+  { q: 'Klucz kodowy to:', opcje: ['spis „odpowiedź → kod” dla każdego pytania', 'hasło do pliku z bazą', 'pierwszy wiersz bazy z nazwami pytań'], dobra: 0, dlaczego: 'Klucz mówi, jaka liczba stoi za każdą odpowiedzią. Bez niego nikt nie odczyta kodów. Pierwszy wiersz bazy to nagłówki, nie klucz.' },
+  { q: 'Jak w bazie zapisuje się brak odpowiedzi (N/D, odmowa)?', opcje: ['Jako 0', 'Jako pustą komórkę', 'Jako 9'], dobra: 1, dlaczego: 'Pusta komórka to dla Excela brak danych: średnia ją pomija. 0 wchodzi do średniej i ją zaniża. Kod 9 bywa używany w programach statystycznych, ale wtedy trzeba go ręcznie wyłączyć — w Excelu na zajęciach zostawiamy puste.' },
+  { q: 'Pytanie wielokrotnego wyboru z 9 odpowiedziami zajmuje w bazie:', opcje: ['jedną kolumnę z listą zaznaczonych odpowiedzi', 'dziewięć kolumn, po jednej na odpowiedź', 'jeden wiersz'], dobra: 1, dlaczego: 'W komórce mieści się jedna wartość. Każda odpowiedź dostaje więc swoją kolumnę z 1 (zaznaczona) albo 2 (nie). Wiersz to zawsze respondent.' },
+  { q: 'Do czego służy tabela przestawna?', opcje: ['Do zliczania wierszy bazy w grupach bez pisania formuł', 'Do zamiany tekstu na kody', 'Do sortowania jednej kolumny'], dobra: 0, dlaczego: 'Tabela przestawna liczy (liczba, suma, średnia) według pól z Wierszy i Kolumn. Kodowanie robi się Ctrl+H albo formułą. Sortowanie jednej kolumny psuje bazę.' },
+  { q: 'Tabela krzyżowa to tabela, w której:', opcje: ['w wierszach są odpowiedzi na jedno pytanie, a w kolumnach na drugie', 'krzyżykiem zaznacza się błędy', 'są tylko procenty'], dobra: 0, dlaczego: 'Każda kratka to liczba osób z daną parą odpowiedzi. Procenty to dodatek, który wybierasz w „Pokaż wartości jako”.' },
+  { q: 'Porównujesz kobiety i mężczyzn, płeć jest w kolumnach. Jaki procent?', opcje: ['% sumy wiersza', '% sumy końcowej', '% sumy kolumny'], dobra: 2, dlaczego: 'Procent liczy się w obrębie porównywanych grup, a grupy są w kolumnach. Wtedy każda kolumna to 100% i kobiety oraz mężczyzn można zestawić, choć jest ich różnie dużo.' },
+  { q: 'Różnica między 60,1% a 52,9% to:', opcje: ['7,2 punktu procentowego', '7,2%', '13,6%'], dobra: 0, dlaczego: '60,1 − 52,9 = 7,2 punktu procentowego. „7,2%” sugerowałoby procent czegoś. 13,6% to różnica podzielona przez 52,9 — inna miara.' },
+  { q: 'Przekodowanie (łączenie kategorii) daje:', opcje: ['więcej szczegółów', 'większe grupy, ale mniej szczegółów', 'dokładniejsze wyniki w każdej grupie'], dobra: 1, dlaczego: 'Po połączeniu w każdej grupie jest więcej osób, więc procenty są mniej przypadkowe. Ale nie rozróżnisz już przedziałów, które połączyłeś. Szczegółów przybyć nie może.' },
+  { q: 'Dlaczego nie wolno sortować tylko jednej kolumny bazy?', opcje: ['Bo Excel na to nie pozwala', 'Bo odpowiedzi przeskoczą do innych respondentów', 'Bo zmienią się kody w kluczu'], dobra: 1, dlaczego: 'Sortowanie jednej kolumny zmienia jej kolejność, a reszta wiersza zostaje. Odpowiedź osoby z wiersza 5 trafia wtedy do osoby z wiersza 80. Excel na to pozwala (ostrzega), a klucz się nie zmienia.' },
+]} />

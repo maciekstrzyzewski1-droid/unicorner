@@ -1,0 +1,99 @@
+---
+// Ćwiczenie „zakoduj sam”: kilka wierszy bazy z odpowiedziami słownymi, pod każdą odpowiedzią pole na kod.
+// Klucz kodowy jest w lib/baza.js (koduj): skala Likerta 1–5, N/D i odmowa → puste pole, tak = 1, nie = 2…
+// „Sprawdź” koloruje pola i przy każdym złym pisze, jaki jest kod i dlaczego (dlaczegoKod). Pola mają 16 px,
+// żeby iPhone nie powiększał strony. Puste pole jest poprawną odpowiedzią tam, gdzie klucz mówi „brak danych”.
+import { zm, wartosc, koduj, dlaczegoKod, krotka } from '../../../lib/baza.js';
+interface Props { tytul: string; kolumny: string[]; wiersze: number[] }
+const { tytul, kolumny, wiersze } = Astro.props;
+const pola = wiersze.map((r) => kolumny.map((id) => {
+  const t = wartosc(r, id);
+  const c = koduj(id, t);
+  return { r, id, t, ok: String(c), dl: `<b>Wiersz ${r}, ${krotka(id)}: „${t}” → ${c === '' ? 'puste pole' : c}.</b> ${dlaczegoKod(id, t)}` };
+}));
+---
+<section class="k-ct k-ck" data-ck>
+  <div class="k-pyt-head"><span class="k-pyt-tag k-ct-tag">Wpisz sam</span><h3 class="k-pyt-h">{tytul}</h3></div>
+  <div class="k-ct-tresc"><slot /></div>
+  <div class="k-ck-scroll">
+    <table class="k-ck-t">
+      <thead><tr><th>wiersz</th>{kolumny.map((id) => <th title={zm(id).nazwa}>{krotka(id)}</th>)}</tr></thead>
+      <tbody>
+        {pola.map((w) => (
+          <tr>
+            <th>{w[0].r}</th>
+            {w.map((p) => (
+              <td>
+                <span class="k-ck-tx">{p.t}</span>
+                <input type="text" inputmode="numeric" maxlength="2" autocomplete="off" class="k-ck-in" data-ok={p.ok} aria-label={`Wiersz ${p.r}, ${krotka(p.id)}: ${p.t} — kod`} />
+                <span hidden data-dl set:html={p.dl} />
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  <div class="k-ct-ctl">
+    <button type="button" class="k-btn" data-ck-check>Sprawdź</button>
+    <button type="button" class="k-btn k-btn-ghost" data-ck-show>Pokaż odpowiedzi</button>
+    <button type="button" class="k-btn k-btn-ghost" data-ck-clear>Wyczyść</button>
+  </div>
+  <div class="k-ct-wynik" hidden aria-live="polite"><p class="k-ct-sum" data-ck-sum></p><ul class="k-ct-bledy" data-ck-bledy></ul></div>
+</section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-ck]').forEach((box) => {
+    const ins = Array.from(box.querySelectorAll<HTMLInputElement>('.k-ck-in'));
+    const wynik = box.querySelector<HTMLElement>('.k-ct-wynik')!;
+    const sum = box.querySelector<HTMLElement>('[data-ck-sum]')!;
+    const bledy = box.querySelector<HTMLElement>('[data-ck-bledy]')!;
+    const dl = (i: HTMLInputElement) => i.parentElement!.querySelector<HTMLElement>('[data-dl]')!.innerHTML;
+    const czysty = (v: string) => v.trim().replace(/\s+/g, '');
+    ins.forEach((i) => i.addEventListener('input', () => i.classList.remove('is-good', 'is-bad', 'is-shown')));
+    box.querySelector('[data-ck-check]')!.addEventListener('click', () => {
+      const zle = ins.filter((i) => czysty(i.value) !== i.dataset.ok);
+      ins.forEach((i) => { i.classList.remove('is-shown'); i.classList.toggle('is-bad', zle.includes(i)); i.classList.toggle('is-good', !zle.includes(i)); });
+      bledy.innerHTML = '';
+      if (!zle.length) sum.innerHTML = '<b class="k-ct-ok">Wszystko dobrze!</b> Każdy kod zgadza się z kluczem, a braki danych zostały puste.';
+      else {
+        sum.innerHTML = `Dobrze: <b>${ins.length - zle.length}</b> z ${ins.length} · do poprawy: <b>${zle.length}</b> (na różowo). Dlaczego:`;
+        zle.forEach((i) => {
+          const li = document.createElement('li');
+          const v = czysty(i.value);
+          const dop = v === '0' && i.dataset.ok === '' ? ' Wpisane 0 to częsty błąd: zero liczy się do średniej, a „brak odpowiedzi” nie powinien.' : v === '' && i.dataset.ok !== '' ? ' Pole jest puste, a ta odpowiedź ma kod.' : '';
+          li.innerHTML = dl(i) + dop;
+          bledy.appendChild(li);
+        });
+      }
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-ck-show]')!.addEventListener('click', () => {
+      ins.forEach((i) => { i.value = i.dataset.ok ?? ''; i.classList.remove('is-good', 'is-bad'); i.classList.add('is-shown'); });
+      sum.innerHTML = 'Tak wygląda rozwiązanie. Puste pole = brak danych.';
+      bledy.innerHTML = '';
+      wynik.hidden = false;
+    });
+    box.querySelector('[data-ck-clear]')!.addEventListener('click', () => { ins.forEach((i) => { i.value = ''; i.classList.remove('is-good', 'is-bad', 'is-shown'); }); wynik.hidden = true; });
+  });
+</script>
+
+<style>
+  .k-ck-scroll{overflow-x:auto;margin:0 0 10px;}
+  .k-ck-t{border-collapse:collapse;font-size:.86rem;}
+  .k-ck-t th,.k-ck-t td{border:1px solid var(--line2);padding:6px 8px;vertical-align:top;}
+  .k-ck-t thead th{font-family:var(--mono);font-size:.74rem;color:var(--cyan);text-align:left;white-space:nowrap;}
+  .k-ck-t tbody th{font-family:var(--mono);color:var(--muted);font-weight:400;}
+  .k-ck-tx{display:block;font-size:.8rem;line-height:1.3;color:var(--muted);margin-bottom:4px;min-width:7em;}
+  .k-ck-in{width:3.2em;height:38px;font-size:16px;font-family:var(--mono);font-weight:700;text-align:center;color:var(--text);background:rgba(255,255,255,.04);border:1px dashed var(--line2);}
+  .k-ck-in:focus-visible{outline:2px solid var(--cyan);outline-offset:1px;}
+  .k-ck-in.is-good{background:rgba(90,209,160,.16);border:1px solid var(--ok);}
+  .k-ck-in.is-bad{background:rgba(255,46,151,.2);border:1px solid var(--magenta);color:#ffd0e6;}
+  .k-ck-in.is-shown{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.5);}
+  @media(max-width:560px){
+    .k-ck-t{font-size:.76rem;}
+    .k-ck-t th,.k-ck-t td{padding:4px 5px;}
+    .k-ck-tx{font-size:.7rem;min-width:4.4em;hyphens:auto;-webkit-hyphens:auto;overflow-wrap:break-word;}
+    .k-ck-in{width:2.6em;}
+  }
+</style>

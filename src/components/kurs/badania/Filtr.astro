@@ -1,0 +1,39 @@
+---
+// Lista filtra Excela (Dane → Filtr → strzałka w nagłówku kolumny) dla jednej kolumny bazy: wszystkie różne wartości
+// w kolejności, w jakiej pokazuje je Excel (liczby przed tekstem), z liczbą wierszy obok (tej liczby Excel na liście
+// nie pisze — dopisujemy ją, żeby było widać skalę problemu). oznacz: wartości podejrzane (na różowo) + opis.
+import { zm, B, porzadekExcela, fmt } from '../../../lib/baza.js';
+interface Props { id: string; oznacz?: Record<string, string> }
+const { id, oznacz = {} } = Astro.props;
+const z = zm(id);
+const lista = porzadekExcela(z.kat.filter((t) => B.rozklad[id][z.kat.indexOf(t)] > 0)).map((t) => ({ t, n: B.rozklad[id][z.kat.indexOf(t)] }));
+for (const t of Object.keys(oznacz)) if (!z.kat.includes(t)) throw new Error(`Filtr ${id}: nie ma wartości „${t}”`);
+---
+<figure class="k-fig k-flt">
+  <div class="k-flt-box">
+    <div class="k-flt-nag"><b>{z.kol}</b> {z.nazwa} <span class="k-flt-str">▾</span></div>
+    <ul class="k-flt-lista">
+      <li class="k-flt-wsz">☑ (Zaznacz wszystko)</li>
+      {lista.map((x) => (
+        <li class:list={[oznacz[x.t] && 'is-roz']}>
+          <span>☑ {x.t}</span><span class="k-flt-n">{fmt(x.n)} w.</span>
+          {oznacz[x.t] && <span class="k-flt-uw">{oznacz[x.t]}</span>}
+        </li>
+      ))}
+    </ul>
+  </div>
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<style>
+  .k-flt-box{max-width:420px;border:1px solid #c9c9d3;background:#fff;color:#1d1a2b;font-size:.86rem;}
+  .k-flt-nag{padding:6px 10px;background:#ececf1;border-bottom:1px solid #c9c9d3;}
+  .k-flt-nag b{font-family:var(--mono);color:#5d5873;margin-right:4px;}
+  .k-flt-str{float:right;color:#5d5873;}
+  .k-flt-lista{list-style:none;margin:0!important;padding:6px 10px!important;}
+  .k-flt-lista li{display:flex;flex-wrap:wrap;justify-content:space-between;gap:2px 10px;padding:3px 4px;margin:0!important;border-radius:2px;}
+  .k-flt-wsz{color:#5d5873;}
+  .k-flt-n{font-family:var(--mono);font-size:.76rem;color:#77728c;}
+  .k-flt-lista li.is-roz{background:#ffd9ea;box-shadow:inset 0 0 0 2px #d6337a;}
+  .k-flt-uw{flex-basis:100%;font-size:.78rem;color:#8a1c4d;}
+</style>

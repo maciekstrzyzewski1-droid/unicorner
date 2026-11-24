@@ -1,0 +1,13 @@
+---
+// Formuła Excela w tekście (polska wersja: nazwy funkcji po polsku, średniki). Wygląda jak pasek fx
+// i łamie się w dowolnym miejscu, żeby długa formuła nie wypychała strony poza ekran telefonu.
+interface Props { t: string }
+const { t } = Astro.props;
+---
+<code class="k-fx"><span class="k-fx-l" aria-hidden="true">fx</span>{t}</code>
+
+<style>
+  .k-fx{display:inline;font-family:var(--mono);font-size:.86em;background:#f4f4f6;color:#0b6b3a;border:1px solid #c9c9d3;border-radius:2px;padding:.1em .4em;
+    overflow-wrap:anywhere;word-break:break-all;-webkit-box-decoration-break:clone;box-decoration-break:clone;line-height:1.9;}
+  .k-fx-l{font-family:Georgia,serif;font-style:italic;font-weight:700;color:#5d5873;margin-right:.45em;}
+</style>

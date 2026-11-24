@@ -1,0 +1,57 @@
+---
+// Baza z zajęć 2: kolumna z kodem (AM: dochód 1–10 albo AN: miejsce 1–8) obok kolumny z grupą słownie (AI / AL).
+// Każdy wiersz: kod → grupa według klucza → co stoi w bazie → zgadza się (✓) albo nie (✗).
+// Pokazuje pierwsze wiersze (wszystko się zgadza) i wiersze wokół miejsca, od którego kolumny się rozjeżdżają.
+import { G } from '../../../lib/baza.js';
+interface Props { co: 'doch' | 'miejsce' }
+const { co } = Astro.props;
+const kol = co === 'doch' ? { kod: 'AM', tekst: 'AI', nazwa: 'dochód' } : { kod: 'AN', tekst: 'AL', nazwa: 'miejsce zamieszkania' };
+const klucz = G[co].grupy;
+const wiersze = G.przyklad.map(([r, am, doch, an, miejsce]) => {
+  const k = co === 'doch' ? am : an;
+  const t = co === 'doch' ? doch : miejsce;
+  return { r, k, grupa: klucz[k], t, ok: klucz[k] === t };
+});
+const pierwszy = wiersze.findIndex((w) => w.r >= G.pierwszyZly - 2);
+---
+<figure class="k-fig k-prz">
+  <div class="k-prz-scroll">
+    <table class="k-prz-t">
+      <thead>
+        <tr><th></th><th>{kol.kod}</th><th>według klucza</th><th>{kol.tekst}</th><th></th></tr>
+        <tr class="k-prz-nag"><th>1</th><th>kod</th><th>powinno być</th><th>jest w bazie</th><th>?</th></tr>
+      </thead>
+      <tbody>
+        {wiersze.map((w, i) => (
+          <>
+            {i === pierwszy && <tr class="k-prz-gap"><td>⋮</td><td>⋮</td><td>⋮</td><td>⋮</td><td></td></tr>}
+            <tr class:list={[w.ok ? 'is-ok' : 'is-roz']}>
+              <td class="k-prz-rn">{w.r}</td><td class="k-prz-k">{w.k}</td><td>{w.grupa}</td><td>{w.t}</td><td class="k-prz-z">{w.ok ? '✓' : '✗'}</td>
+            </tr>
+          </>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  {Astro.slots.has('default') && <figcaption><span class="k-lbl">Jak czytać:</span> <slot /></figcaption>}
+</figure>
+
+<style>
+  .k-prz-scroll{overflow-x:auto;}
+  .k-prz-t{border-collapse:collapse;background:#fff;color:#1d1a2b;font-size:.84rem;}
+  .k-prz-t th,.k-prz-t td{border:1px solid #d4d4dc;padding:4px 8px;white-space:nowrap;}
+  .k-prz-t thead th{background:#ececf1;color:#5d5873;font-weight:500;font-size:.76rem;text-align:center;}
+  .k-prz-t tr.k-prz-nag th{background:#f6f5fa;color:#1d1a2b;font-weight:700;}
+  .k-prz-rn{background:#ececf1;color:#5d5873;text-align:center;font-size:.74rem;}
+  .k-prz-k{text-align:right;font-family:var(--mono);font-weight:700;}
+  .k-prz-z{text-align:center;font-weight:800;}
+  .k-prz-t tr.is-ok td:not(.k-prz-rn){background:#eefaf3;}
+  .k-prz-t tr.is-ok .k-prz-z{color:#1f8a57;}
+  .k-prz-t tr.is-roz td:not(.k-prz-rn){background:#ffe3ef;}
+  .k-prz-t tr.is-roz .k-prz-z{color:#c0245f;}
+  .k-prz-t tr.k-prz-gap td{text-align:center;color:#9a96ad;background:#fff;line-height:1.1;}
+  @media(max-width:560px){
+    .k-prz-t{font-size:.72rem;}
+    .k-prz-t th,.k-prz-t td{padding:3px 4px;}
+  }
+</style>
