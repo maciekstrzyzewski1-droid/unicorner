@@ -4,7 +4,7 @@
 // kolumny: 'P5' (tekst z bazy), 'P7_1#' (kod z kolumny bazy, np. AP), 'P5#BA' (kod we własnej, nowej kolumnie BA).
 // oznacz: { 'AH36': 'roz' } — kolor kratki (zloto, cyan, ok, roz); kolumnaOzn: { 'AH': 'roz' } — cała kolumna.
 // pelne — pełne nagłówki pytań (domyślnie skrócone do ok. 26 znaków, pełny tekst w podpowiedzi).
-import { zm, wartosc, koduj, kolumnaKodu } from '../../../lib/baza.js';
+import { zm, wartosc, koduj, kolumnaKodu, krotka } from '../../../lib/baza.js';
 interface Props { kolumny: string[]; wiersze: number[]; oznacz?: Record<string, string>; kolumnaOzn?: Record<string, string>; pelne?: boolean; przerwa?: number[]; tytul?: string }
 const { kolumny, wiersze, oznacz = {}, kolumnaOzn = {}, pelne = false, przerwa = [], tytul } = Astro.props;
 const kol = kolumny.map((s) => {
@@ -13,7 +13,7 @@ const kol = kolumny.map((s) => {
   const litera = kodowana ? kodK || kolumnaKodu(id) : zm(id).kol;
   if (!litera) throw new Error(`ArkuszBazy: brak litery kolumny dla ${s}`);
   const naz = zm(id).nazwa;
-  const nag = kodowana ? `${naz} — kod` : naz;
+  const nag = kodowana ? `${/^P\d/.test(id) ? krotka(id) : naz} — kod` : naz;
   return { id, kodowana, litera, nag, krotki: nag.length > 26 && !pelne ? nag.slice(0, 24).trimEnd() + '…' : nag };
 });
 const tekst = (r: number, k: (typeof kol)[number]) => {

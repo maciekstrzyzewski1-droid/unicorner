@@ -28,7 +28,7 @@ if (sr) {
   const dane = sr.map((s) => srednie(s, w, { bez: bezW }));
   wiersze = dane[0].map((r) => r.et);
   if (excel) throw new Error('Przestawna: excel nie działa ze średnimi');
-  kolumny = sr.map((s) => `Średnia z ${kolumnaKodu(s) ?? krotka(s)}`);
+  kolumny = sr.map((s) => `Średnia z ${krotka(s)} — kod`);
   kom = wiersze.map((_, i) => dane.map((d) => ({ n: d[i].n, s: d[i].suma, nd: d[i].nd })));
   sumyK = dane.map((d) => ({ n: d.reduce((a, r) => a + r.n, 0), s: d.reduce((a, r) => a + r.suma, 0), nd: d.reduce((a, r) => a + r.nd, 0) }));
   suma = { n: 0 };
@@ -128,6 +128,7 @@ const atr = (c: { n: number; s?: number; nd?: number }) => ({ 'data-n': c.n, 'da
   const fmt = (x: number, d = 0) => x.toLocaleString('pl-PL', { minimumFractionDigits: d, maximumFractionDigits: d }).replace(/ | /g, ' ');
   const pr = (x: number) => fmt(x, 2) + '%';
   const osob = (n: number) => { if (n === 1) return 'osoba'; const d = n % 10, dd = n % 100; return d >= 2 && d <= 4 && !(dd >= 12 && dd <= 14) ? 'osoby' : 'osób'; };
+  const ma = (n: number) => (osob(n) === 'osoby' ? 'mają' : 'ma');
   document.querySelectorAll<HTMLElement>('[data-pp]').forEach((box) => {
     const tds = Array.from(box.querySelectorAll<HTMLTableCellElement>('td[data-r]'));
     const out = box.querySelector<HTMLElement>('[data-pp-out]')!;
@@ -170,22 +171,22 @@ const atr = (c: { n: number; s?: number; nd?: number }) => ({ 'data-n': c.n, 'da
       const ul = m ? `<b>${fmt(x)} : ${fmt(dwa ? n(m[0], m[1]) : T)} = ${p}</b>. ` : '';
       if (!dwa) {
         if (r === 'S') return tryb === 'liczba' ? `<b>${fmt(x)}</b> — tyle osób jest w tabeli${box.dataset.filtr ? ' po filtrze' : ''}. To mianownik procentów.` : `<b>100%</b> — wszyscy w tabeli. Procenty z kolumny sumują się do 100%.`;
-        return tryb === 'liczba' ? `<b>${fmt(x)}</b> ${osob(x)} ma ${wn}: „${R}”. Tabela przestawna policzyła wiersze bazy z tą odpowiedzią.` : `${ul}${fmt(T)} to wszyscy w tabeli. Czytaj: ${p} badanych ma ${wn}: „${R}”.`;
+        return tryb === 'liczba' ? `<b>${fmt(x)}</b> ${osob(x)} ${ma(x)} ${wn}: „${R}”. Tabela przestawna policzyła wiersze bazy z tą odpowiedzią.` : `${ul}${fmt(T)} to wszyscy w tabeli. Czytaj: ${p} badanych ma ${wn}: „${R}”.`;
       }
       if (r === 'S' && c === 'S') return tryb === 'liczba' ? `<b>${fmt(x)}</b> — wszyscy w tabeli${box.dataset.filtr ? ' (po filtrze)' : ''}.` : '<b>100%</b> — cała tabela.';
       if (c === 'S') {
-        if (tryb === 'liczba') return `<b>${fmt(x)}</b> ${osob(x)} ma ${wn}: „${R}”. To suma wiersza: wszystkie kolumny razem.`;
+        if (tryb === 'liczba') return `<b>${fmt(x)}</b> ${osob(x)} ${ma(x)} ${wn}: „${R}”. To suma wiersza: wszystkie kolumny razem.`;
         if (tryb === 'wiersz') return '<b>100%</b> — przy „% sumy wiersza” każdy wiersz sumuje się do 100%.';
         return `${ul}Taki odsetek wszystkich w tabeli ma ${wn}: „${R}”.`;
       }
       if (r === 'S') {
-        if (tryb === 'liczba') return `<b>${fmt(x)}</b> ${osob(x)} ma ${kn}: „${C}”. To suma kolumny: cała ta grupa.`;
+        if (tryb === 'liczba') return `<b>${fmt(x)}</b> ${osob(x)} ${ma(x)} ${kn}: „${C}”. To suma kolumny: cała ta grupa.`;
         if (tryb === 'kol') return '<b>100%</b> — przy „% sumy kolumny” każda kolumna sumuje się do 100%.';
         return `${ul}Taki odsetek wszystkich w tabeli ma ${kn}: „${C}”.`;
       }
-      if (tryb === 'liczba') return `<b>${fmt(x)}</b> ${osob(x)} ma naraz ${wn}: „${R}” i ${kn}: „${C}”. Tabela przestawna policzyła wiersze bazy, w których obie odpowiedzi są właśnie takie.`;
-      if (tryb === 'kol') return `${ul}${fmt(n('S', c))} to suma kolumny „${C}”, czyli cała ta grupa. Czytaj: w grupie ${kn}: „${C}” ${p} ma ${wn}: „${R}”.`;
-      if (tryb === 'wiersz') return `${ul}${fmt(n(r, 'S'))} to suma wiersza „${R}”. Czytaj: wśród osób z odpowiedzią ${wn}: „${R}” ${p} ma ${kn}: „${C}”.`;
+      if (tryb === 'liczba') return `<b>${fmt(x)}</b> ${osob(x)} ${ma(x)} naraz ${wn}: „${R}” i ${kn}: „${C}”. Tabela przestawna policzyła wiersze bazy, w których obie odpowiedzi są właśnie takie.`;
+      if (tryb === 'kol') return `${ul}${fmt(n('S', c))} to suma kolumny „${C}”, czyli cała ta grupa. Czytaj: wśród osób z grupy „${C}” (${kn}) ${p} ma ${wn}: „${R}”.`;
+      if (tryb === 'wiersz') return `${ul}${fmt(n(r, 'S'))} to suma wiersza „${R}”. Czytaj: wśród osób z odpowiedzią „${R}” (${wn}) ${p} należy do grupy „${C}” (${kn}).`;
       return `${ul}${fmt(T)} to wszyscy w tabeli. Czytaj: ${p} wszystkich badanych ma naraz ${wn}: „${R}” i ${kn}: „${C}”.`;
     };
     const czysc = () => tds.forEach((t) => t.classList.remove('is-wyb', 'is-mian'));
