@@ -46,4 +46,6 @@ jobs:
       - name: Test dymny kursu jezykowego (lekcja otwiera sie, jedno cwiczenie)
         env:
           NODE_PATH: ${{ runner.temp }}/pw/node_modules
-        run: node narzedzia/jezyki-check/dymny.cjs dist
+        run: |
+          node narzedzia/jezyki-check/dymny.cjs dist hiszpanski.html
+          node narzedzia/jezyki-check/dymny.cjs dist angielski.html

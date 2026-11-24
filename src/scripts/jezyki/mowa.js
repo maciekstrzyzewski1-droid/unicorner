@@ -55,10 +55,10 @@ export function przyciskMowy(tekst, cls = 'jz-mow') {
   b.addEventListener('click', (e) => { e.stopPropagation(); mow(tekst); wskazowkaGlosu(); });
   return b;
 }
-/** Dokleja 🔊 do każdego fragmentu po hiszpańsku (span.es) w kontenerze. */
+/** Dokleja 🔊 do każdego fragmentu w języku kursu (span.es, span.obcy) w kontenerze. */
 export function ozywMowe(el) {
   if (!mowa) return;
-  for (const s of $$('span.es', el)) {
+  for (const s of $$('span.es, span.obcy', el)) {
     if (s.dataset.mow) continue;
     s.dataset.mow = '1';
     s.append(przyciskMowy(s.textContent, 'jz-mow jz-mow-mini'));

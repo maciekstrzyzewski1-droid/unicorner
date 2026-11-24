@@ -5,7 +5,7 @@
 import { awatar } from './awatar.js';
 import { $, $$, h, tasuj, ruch } from './dom.js';
 import { ustawJezyk, mowa, przyciskMowy, ozywMowe } from './mowa.js';
-import { R, ETYKIETA, klawiatura } from './cwiczenia.js';
+import { R, ETYKIETA, klawiatura, ustawPo } from './cwiczenia.js';
 
 let KURS = null;
 
@@ -90,7 +90,7 @@ function nastepnyWezel() {
   return WEZLY.slice(od).find(ok) || WEZLY.find(ok) || null;
 }
 function dostepny(w) {
-  if (w.nr === 0 || zrobione(w.id)) return true;
+  if (KURS.otwarte || w.nr === 0 || zrobione(w.id)) return true;
   const pierwszyWSekcji = WEZLY.find((x) => x.sekcja === w.sekcja) === w;
   if (pierwszyWSekcji && st.odblok[w.sekcja]) return true;
   let i = w.nr - 1;
@@ -133,6 +133,12 @@ function sprawdzOdznaki(wynik) {
   if (u9.length && u9.every((w) => zrobione(w.id))) przyznaj('posesivos', nowe);
   if ((st.lekcje.boss1?.best ?? 0) >= 80) przyznaj('boss1', nowe);
   if (gotowosc() >= 90) przyznaj('gotowy', nowe);
+  // odznaki opisane w danych kursu: { jednostka: 'uX' } albo { boss: 'id' }
+  for (const o of ODZNAKI) {
+    const wj = o.jednostka ? WEZLY.filter((w) => w.jednostka === o.jednostka) : [];
+    if (wj.length && wj.every((w) => zrobione(w.id))) przyznaj(o.id, nowe);
+    if (o.boss && (st.lekcje[o.boss]?.best ?? 0) >= 80) przyznaj(o.id, nowe);
+  }
   return nowe;
 }
 
@@ -338,8 +344,9 @@ function otworz(w) {
     const c = CW.get(wpis.k);
     body.innerHTML = '';
     const karta = h('div', 'jz-cw');
+    karta.dataset.cw = wpis.k;                 // klucz ćwiczenia (test przejścia lekcji: narzedzia/jezyki-check/przejdz.cjs)
     if (boss && (poz === 0 || CW.get(kolejka[poz - 1].k).reto !== c.reto)) {
-      karta.append(h('div', 'jz-reto', `Reto ${c.reto + 1}/${w.l.retos.length} · ${w.l.retos[c.reto].nazwa}`));
+      karta.append(h('div', 'jz-reto', `${KURS.etap || 'Reto'} ${c.reto + 1}/${w.l.retos.length} · ${w.l.retos[c.reto].nazwa}`));
     }
     karta.append(h('div', 'jz-typ', `${ETYKIETA[c.t] || ''}${wpis.proba ? ' · <span class="jz-znow">jeszcze raz</span>' : ''}`));
     if (c.aw) karta.append(h('div', 'jz-aw-box', awatar(c.aw)));
@@ -354,8 +361,10 @@ function otworz(w) {
     body.append(karta);
     // pasek znaków w dolnej belce (na dotyku ukrywa go CSS): tylko przy ćwiczeniach z polem
     znaki.replaceChildren();
-    if (renderer.aktywnePole) znaki.append(klawiatura(renderer.aktywnePole));
-    znaki.hidden = !renderer.aktywnePole;
+    // KURS.znaki: własny zestaw znaków; pusta lista = bez paska (np. angielski)
+    const zZnakami = renderer.aktywnePole && (!KURS.znaki || KURS.znaki.length > 0);
+    if (zZnakami) znaki.append(klawiatura(renderer.aktywnePole, KURS.znaki || undefined));
+    znaki.hidden = !zZnakami;
     ustawPrzycisk(c.t === 'pisz' ? 'Pokaż wzór' : 'Sprawdź', 'spr');
     spr.disabled = !renderer.gotowe();
     if (c.t === 'pary') spr.hidden = true; else spr.hidden = false;
@@ -401,7 +410,7 @@ function otworz(w) {
     dol.className = `jz-l-dol ${r.neutral ? 'is-neutral' : (r.ok ? 'is-ok' : 'is-bad')}`;
     fb.innerHTML = `<b class="jz-fb-h">${naglowek}</b>`;
     if (r.poprawnie && (r.akcent || !r.ok)) {
-      const p = h('div', 'jz-fb-pop', `${r.ok ? 'Pisownia' : 'Poprawnie'}: <b lang="es">${r.poprawnie}</b> `);
+      const p = h('div', 'jz-fb-pop', `${r.ok ? 'Pisownia' : 'Poprawnie'}: <b lang="${KURS.jezyk.slice(0, 2)}">${r.poprawnie}</b> `);
       if (r.mowic) p.append(przyciskMowy(r.mowic));
       fb.append(p);
     } else if (r.mowic && !r.neutral) {
@@ -557,6 +566,7 @@ function otworz(w) {
 export function start({ kurs, odznaki } = {}) {
   if (!kurs || !document.querySelector('[data-wezel]')) return;
   ustawJezyk(kurs.jezyk);
+  ustawPo(kurs.po);
   KURS = kurs;
   ODZNAKI = odznaki || [];
   KLUCZ = `uc-jezyki-v1:${KURS.slug}`;

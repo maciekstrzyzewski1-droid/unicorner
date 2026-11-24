@@ -2,6 +2,11 @@ import { $, $$, h, tasuj, ruch } from './dom.js';
 import { norm, bezAkc, porownaj, porownajForme, zaimekZwrotny } from './porownanie.js';
 import { jezyk, mow, mowa, wskazowkaGlosu } from './mowa.js';
 
+const lng = () => jezyk().slice(0, 2);
+// nazwa języka w podpowiedziach („Napisz po …”); ustawia ją silnik z KURS.po
+let PO = 'hiszpańsku';
+export const ustawPo = (po) => { if (po) PO = po; };
+
 const RANGA_FORMY = { ok: 3, akcent: 2, zaimek: 1 };
 const BRAK_ZAIMKA = '✗ Brakuje zaimka';
 
@@ -70,10 +75,10 @@ export const ETYKIETA = { wybor: 'Wybierz', wiele: 'Zaznacz wszystkie', wpisz: '
 // ¿ i ¡ są, choć porównanie odpowiedzi ignoruje znaki przestankowe
 export const ZNAKI = ['á', 'é', 'í', 'ó', 'ú', 'ñ', '¿', '¡'];
 
-export function klawiatura(getPole) {
+export function klawiatura(getPole, znaki = ZNAKI) {
   const bar = h('div', 'jz-znaki');
-  bar.setAttribute('aria-label', 'Znaki hiszpańskie');
-  for (const z of ZNAKI) {
+  bar.setAttribute('aria-label', 'Znaki specjalne');
+  for (const z of znaki) {
     const b = h('button', 'jz-znak', z);
     b.type = 'button';
     b.tabIndex = -1;
@@ -147,7 +152,7 @@ export const R = {
     b.type = 'button';
     b.addEventListener('click', () => { mow(c.mow); wskazowkaGlosu(); });
     box.append(b);
-    if (!mowa) box.append(h('p', 'jz-uwaga', `Twoja przeglądarka nie czyta na głos. Przeczytaj: <b lang="es">${c.mow}</b>`));
+    if (!mowa) box.append(h('p', 'jz-uwaga', `Twoja przeglądarka nie czyta na głos. Przeczytaj: <b lang="${lng()}">${c.mow}</b>`));
     box.append(r.el);
     setTimeout(() => mow(c.mow), 250);
     return { ...r, el: box };
@@ -157,7 +162,7 @@ export const R = {
     const dobre = new Set(c.d.map((i) => c.o[i]));
     const wyb = new Set();
     tasuj(c.o).forEach((o) => {
-      const b = h('button', 'jz-opcja', `<i class="jz-check" aria-hidden="true"></i><span lang="es">${o}</span>`);
+      const b = h('button', 'jz-opcja', `<i class="jz-check" aria-hidden="true"></i><span lang="${lng()}">${o}</span>`);
       b.type = 'button';
       b.setAttribute('aria-pressed', 'false');
       b.dataset.v = o;
@@ -337,7 +342,7 @@ export const R = {
           const e = c.e.find((x) => x[0] === ch.dataset.v);
           const ok = dozwolone(e).includes(Number(k.dataset.k));
           ch.classList.add(ok ? 'is-ok' : 'is-bad');
-          if (!ok) zle.push(`<b lang="es">${e[0]}</b> → ${dozwolone(e).map((i) => c.k[i]).join(' / ')}`);
+          if (!ok) zle.push(`<b lang="${lng()}">${e[0]}</b> → ${dozwolone(e).map((i) => c.k[i]).join(' / ')}`);
         }
         return { ok: zle.length === 0, info: zle.length ? `Popraw: ${zle.join('; ')}.` : '' };
       },
@@ -449,7 +454,7 @@ export const R = {
     const t = h('textarea', 'jz-pole jz-pisz-t');
     t.rows = 4;
     t.lang = jezyk();
-    t.placeholder = 'Napisz po hiszpańsku (możesz też powiedzieć na głos i od razu sprawdzić wzór).';
+    t.placeholder = `Napisz po ${PO} (możesz też powiedzieć na głos i od razu sprawdzić wzór).`;
     t.addEventListener('input', gotowy);
     el.append(t);
     return {
@@ -458,7 +463,7 @@ export const R = {
       sprawdz() {
         t.readOnly = true;
         const lista = (c.punkty || []).map((p) => `<li>${p}</li>`).join('');
-        return { ok: true, neutral: true, info: `<b>Wzór:</b> <span lang="es">${c.wzor}</span>${lista ? `<br><b>Sprawdź u siebie:</b><ul class="jz-lista">${lista}</ul>` : ''}`, mowic: c.wzor };
+        return { ok: true, neutral: true, info: `<b>Wzór:</b> <span lang="${lng()}">${c.wzor}</span>${lista ? `<br><b>Sprawdź u siebie:</b><ul class="jz-lista">${lista}</ul>` : ''}`, mowic: c.wzor };
       },
     };
   },

@@ -11,7 +11,7 @@
 // Kolejność ćwiczeń jest losowa. Gdy pierwsze ćwiczenie nie ma opcji, test zamyka lekcję i otwiera ją od nowa.
 // Żądania do obcych originów są przerywane: test nic nie wysyła do internetu.
 //
-// Użycie:   node narzedzia/jezyki-check/dymny.cjs dist
+// Użycie:   node narzedzia/jezyki-check/dymny.cjs dist [strona.html]   (domyślnie hiszpanski.html)
 // Wymaga:   pakiet `playwright` z Chromium. W CI instalowany poza projektem jak dla siec-check,
 //           NODE_PATH wskazuje jego node_modules (patrz narzedzia/siec-check/README.md).
 // Kod wyjścia 1 = test nie przeszedł.
@@ -20,7 +20,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const STRONA = 'hiszpanski.html';
+const STRONA = process.argv[3] || 'hiszpanski.html'; // drugi argument: inna strona kursu, np. angielski.html
 const MAKS_PROB = 15;        // tyle razy otwieramy lekcję, żeby trafić na ćwiczenie z opcjami
 const MAKS_KART_NOWE = 20;   // bezpiecznik pętli kart „Nowe”
 const LIMIT_MS = 15000;      // limit czekania na element lub akcję

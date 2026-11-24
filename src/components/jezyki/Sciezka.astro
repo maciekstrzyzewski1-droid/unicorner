@@ -10,6 +10,9 @@ const { KURS, ODZNAKI } = JEZYKI[slug];
 const { lekcje, cwiczenia, jednostki } = statystyki(KURS);
 // zygzak węzłów jak na ścieżce w aplikacji (przesunięcie w jednostkach --x)
 const ZYG = [0, 1, 1.5, 1, 0, -1, -1.5, -1];
+const lng = KURS.jezyk.slice(0, 2);
+// liczba typów zadań użytych w kursie (hiszpański ma wszystkie 10)
+const typy = new Set(KURS.sekcje.flatMap((s) => [...s.jednostki.flatMap((u) => u.lekcje.flatMap((l) => l.pula)), ...(s.boss ? s.boss.retos.flatMap((r) => r.pula) : [])]).map((c) => c.t)).size;
 const ileKol = KURS.kolokwium ? KURS.sekcje.flatMap((s) => s.jednostki).filter((u) => KURS.kolokwium.jednostki.includes(u.id)).reduce((a, u) => a + u.lekcje.length, 0) : 0;
 ---
 <div class="jz-app" data-kurs={slug}>
@@ -21,7 +24,7 @@ const ileKol = KURS.kolokwium ? KURS.sekcje.flatMap((s) => s.jednostki).filter((
       <li><b>{jednostki}</b> jednostek</li>
       <li><b>{lekcje}</b> lekcji</li>
       <li><b>{cwiczenia}</b> ćwiczeń</li>
-      <li><b>10</b> typów zadań</li>
+      <li><b>{typy}</b> typów zadań</li>
     </ul>
   </header>
 
@@ -66,7 +69,7 @@ const ileKol = KURS.kolokwium ? KURS.sekcje.flatMap((s) => s.jednostki).filter((
                 <span class="jz-u-ik" aria-hidden="true">{u.ikona}</span>
                 <div class="jz-u-t">
                   <span class="jz-u-nr">Jednostka {KURS.sekcje.slice(0, si).reduce((a, x) => a + x.jednostki.length, 0) + ui + 1}{u.kolokwium && <em class="jz-tag">na kolokwium</em>}</span>
-                  <h3 lang="es">{u.tytul}</h3>
+                  <h3 lang={lng}>{u.tytul}</h3>
                   <p>{u.pl}</p>
                   <div class="jz-u-dol">
                     <div class="jz-pasek jz-u-pasek"><i></i></div>
@@ -77,7 +80,7 @@ const ileKol = KURS.kolokwium ? KURS.sekcje.flatMap((s) => s.jednostki).filter((
               </div>
               <details class="jz-sciaga-src" id={`sciaga-${u.id}`}>
                 <summary>📖 Ściąga: {u.tytul}</summary>
-                <h3 class="jz-sc-h">📖 Ściąga · <span lang="es">{u.tytul}</span></h3>
+                <h3 class="jz-sc-h">📖 Ściąga · <span lang={lng}>{u.tytul}</span></h3>
                 {u.lekcje.flatMap((l) => l.nowe || []).map((n) => (
                   <div class="jz-sc-k"><h4>{n.h}</h4><div class="jz-nowe-t" set:html={n.html} /></div>
                 ))}

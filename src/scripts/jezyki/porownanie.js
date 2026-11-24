@@ -1,4 +1,5 @@
-export const norm = (s) => String(s).normalize('NFC').toLowerCase().replace(/[¿?¡!.,;:„”"«»()]/g, ' ').replace(/\s+/g, ' ').trim();
+// apostrof z klawiatury iPhone'a (’) liczy się jak zwykły (')
+export const norm = (s) => String(s).normalize('NFC').toLowerCase().replace(/[’‘ʼ`´]/g, "'").replace(/[¿?¡!.,;:„”"«»()]/g, ' ').replace(/\s+/g, ' ').trim();
 export const bezAkc = (s) => norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
 // Słowa, w których akcent zmienia znaczenie (tu = twój, tú = ty; que = że, qué = co?; esta = ta, está = jest).
 // Tu brak akcentu to inne słowo, nie literówka. Celowo bez solo/sólo i este/éste: RAE dopuszcza je bez akcentu.
