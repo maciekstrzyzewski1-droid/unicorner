@@ -23,7 +23,4 @@ updates:
       npm-drobne:
         applies-to: version-updates
         patterns: ["*"]
-        # three ma wersje 0.x: Dependabot liczy 0.185 -> 0.186 jako minor, choc to zmiana lamiaca API.
-        # Dlatego three idzie osobnym PR, poza grupa.
-        exclude-patterns: ["three"]
         update-types: ["minor", "patch"]

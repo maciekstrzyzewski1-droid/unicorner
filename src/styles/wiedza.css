@@ -30,7 +30,7 @@ a{color:inherit;}
 .wz-brand .horn .seg{fill:url(#irisGrad);}
 .wz-brand .wm{font-family:var(--mono);font-weight:700;font-size:1.12rem;letter-spacing:.3px;}
 .wz-crumb{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.78rem;letter-spacing:.6px;color:var(--muted);min-width:0;}
-.wz-crumb a{text-decoration:none;color:var(--muted);transition:color .2s;}
+.wz-crumb a{text-decoration:none;color:var(--muted);transition:color .2s;white-space:nowrap;}
 .wz-crumb a:hover{color:var(--text);}
 .wz-crumb .sep{color:var(--muted2);}
 .wz-crumb .cur{color:var(--cyan);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -40,6 +40,8 @@ a{color:inherit;}
 .wz-progress{position:absolute;left:0;bottom:-1px;height:2px;width:100%;transform-origin:0 50%;transform:scaleX(0);
   background:var(--iris);box-shadow:0 0 10px rgba(167,139,250,.6);}
 @media(max-width:640px){.wz-crumb .hide-sm{display:none;}.wz-glabel .d{display:none;}}
+/* telefon: sam róg zamiast napisu „unicorner” (link i aria-label zostają), żeby okruszki mieściły się w jednej linii */
+@media(max-width:480px){.wz-brand .wm{display:none;}.wz-crumb{gap:6px;}}
 
 /* --- pulpit: nagłówek --- */
 .wz-hero{padding:64px 0 26px;max-width:780px;}

@@ -15,12 +15,16 @@ const { crumbs = [], back = { label: '← Strona główna', href: '/index.html' 
         <svg class="horn" viewBox="0 0 24 24" aria-hidden="true"><path class="seg" d="M12 1 L15 22 H9 Z"/></svg>
         <span class="wm">unicorner</span>
       </a>
-      {crumbs.map((c, i) => (
-        <>
-          <span class={`sep ${i < crumbs.length - 1 ? '' : ''}`}>/</span>
-          {c.href ? <a href={c.href} class={i > 0 && i < crumbs.length - 1 ? 'hide-sm' : ''}>{c.label}</a> : <span class="cur">{c.label}</span>}
-        </>
-      ))}
+      {crumbs.map((c, i) => {
+        // środkowe okruszki znikają na telefonie razem ze swoim „/”, inaczej zostaje podwójny separator
+        const ukryj = c.href && i > 0 && i < crumbs.length - 1 ? 'hide-sm' : '';
+        return (
+          <>
+            <span class={`sep ${ukryj}`}>/</span>
+            {c.href ? <a href={c.href} class={ukryj}>{c.label}</a> : <span class="cur">{c.label}</span>}
+          </>
+        );
+      })}
     </nav>
     <a class="wz-back" href={back.href}>{back.label}</a>
   </div>

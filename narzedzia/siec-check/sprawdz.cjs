@@ -57,7 +57,7 @@ function startServer() {
   return new Promise(resolve => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
 
-// Nazwy plikow Astro maja hash (np. HeroSkull.B1SEp9PW.js); do porownan go zdejmujemy.
+// Nazwy plikow Astro maja hash (np. Sciezka.astro_astro_type_script_index_0_lang.DHkK82eP.js); do porownan go zdejmujemy.
 const unhash = p => p.replace(/\.[A-Za-z0-9_-]{8}\.(js|mjs|css)$/, '.$1');
 
 async function crawlOne(browser, origin, rel) {
