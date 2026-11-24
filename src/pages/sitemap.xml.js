@@ -2,6 +2,8 @@
 import { getArticles } from '../lib/wiedza.js';
 
 const SKIP = ['404', 'sitemap.xml', 'talia']; // talia = podgląd udostępnionych talii (noindex)
+// strony leżące jako gotowe pliki w public/ (glob ich nie widzi); moderacja.html celowo pominięta (noindex, Disallow)
+const PUBLICZNE = ['recenzje'];
 export function GET() {
   const pages = Object.keys(import.meta.glob('./*.astro'))
     .map((p) => p.replace('./', '').replace('.astro', ''))
@@ -12,7 +14,8 @@ export function GET() {
     .filter((p) => !p.includes('['))
     .map((p) => `https://unicorner.pl/${p.replace('./', '').replace(/\.(astro|mdx)$/, '')}.html`);
   const arts = getArticles().map((a) => `https://unicorner.pl${a.url}`);
-  const urls = [...pages, ...kursy, ...arts].map((u) => `  <url><loc>${u}</loc></url>`).join('\n');
+  const publiczne = PUBLICZNE.map((p) => `https://unicorner.pl/${p}.html`);
+  const urls = [...pages, ...publiczne, ...kursy, ...arts].map((u) => `  <url><loc>${u}</loc></url>`).join('\n');
   return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`,
     { headers: { 'Content-Type': 'application/xml; charset=utf-8' } });
 }
