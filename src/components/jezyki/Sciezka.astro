@@ -50,6 +50,8 @@ const ileKol = KURS.kolokwium ? KURS.sekcje.flatMap((s) => s.jednostki).filter((
       <noscript><p class="jz-podp">Lekcje i zapis postępu wymagają JavaScriptu. Ściągi z każdej jednostki działają bez niego.</p></noscript>
     </aside>
 
+    <!-- Znaczniki niżej wyłączają Email Obfuscation Cloudflare dla treści lekcji: przykładowe adresy z ćwiczeń nie mają być linkami mailto -->
+    <!--email_off-->
     <div class="jz-sciezka">
       {KURS.sekcje.map((s, si) => (
         <section class="jz-sekcja" data-sekcja={s.id} id={s.id}>
@@ -137,6 +139,7 @@ const ileKol = KURS.kolokwium ? KURS.sekcje.flatMap((s) => s.jednostki).filter((
         <button type="button" class="jz-link" data-akcja="reset">Wyzeruj postęp w tym kursie</button>
       </section>
     </div>
+    <!--/email_off-->
   </div>
 </div>
 
