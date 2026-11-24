@@ -404,3 +404,31 @@ html.jz-lock,html.jz-lock body{overflow:hidden;overscroll-behavior:none;}
   .jz-wezel.is-next .jz-w-krag::after,.jz-wezel.is-next::before,.jz-para.is-bad{animation:none;}
   .jz-pasek i,.jz-l-pasek i{transition:none;}
 }
+
+/* ── włącznik dźwięków w górnej belce lekcji ── */
+.jz-dzw{flex-shrink:0;width:40px;height:40px;border-radius:12px;border:1px solid var(--jz-line);background:transparent;color:var(--text);font-size:1rem;cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.jz-dzw[aria-pressed="false"]{opacity:.6;}
+.jz-dzw:focus-visible,.jz-fk:focus-visible{outline:2px solid var(--jz-v3);outline-offset:3px;}
+
+/* ── fiszka: karta odwracana w 3D, pod nią ocena „Jeszcze nie / Umiem” ── */
+.jz-fiszka{display:grid;gap:16px;}
+.jz-fk{display:block;width:100%;min-height:230px;padding:0;border:0;background:none;color:var(--text);font:inherit;cursor:pointer;perspective:1100px;-webkit-tap-highlight-color:transparent;}
+.jz-fk-in{position:relative;display:grid;min-height:230px;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.16,1,.3,1);}
+.jz-fk.is-odwr .jz-fk-in{transform:rotateY(180deg);}
+.jz-fk-p{grid-area:1/1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:26px 20px;border-radius:22px;text-align:center;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden;border:2px solid var(--jz-line2);box-shadow:0 6px 0 var(--jz-cien),0 0 28px rgba(189,139,255,.14);}
+.jz-fk-przod{background:radial-gradient(120% 90% at 50% 0%,#2a1f52 0%,var(--jz-s2) 70%);}
+.jz-fk-tyl{background:radial-gradient(120% 90% at 50% 0%,#123a33 0%,var(--jz-s2) 70%);border-color:rgba(90,209,160,.45);transform:rotateY(180deg);}
+.jz-fk-slowo{font-family:var(--disp);font-size:clamp(1.6rem,7vw,2.2rem);font-weight:700;line-height:1.15;color:var(--jz-v3);overflow-wrap:anywhere;}
+.jz-fk-przod small{font-size:.85rem;color:var(--muted2);}
+.jz-fk-slowo-m{font-size:.95rem;color:var(--muted);}
+.jz-fk-znaczy{font-size:1.35rem;font-weight:600;line-height:1.3;color:var(--text);}
+.jz-fk-ex{font-size:1rem;line-height:1.45;color:var(--jz-ok);font-style:italic;max-width:34ch;}
+.jz-fk-oceny{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.jz-fk-oceny .jz-btn{min-height:54px;font-size:1.02rem;}
+@media (prefers-reduced-motion:reduce){ .jz-fk-in{transition:none;} }
+
+/* ── konfetti na koniec dobrze zrobionej lekcji ── */
+.jz-konf{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:5;}
+.jz-konf i{position:absolute;top:-14px;width:9px;height:14px;border-radius:2px;opacity:.95;animation:jz-konf 1.9s cubic-bezier(.25,.6,.45,1) forwards;}
+@keyframes jz-konf{to{transform:translate(var(--dx),105vh) rotate(var(--rot));opacity:.2;}}

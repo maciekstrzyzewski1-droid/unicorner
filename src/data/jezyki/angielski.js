@@ -4,7 +4,8 @@
 // s. 141–142 (maile Yongli/James i notatki Greenleaves), s. 154 (transkrypt Ángela), transkrypty wideo.
 // Lekcja „If and alternatives” i zwroty do networkingu i debaty to ogólny materiał do tych tematów (nie z podręcznika).
 // Ćwiczenia to własne opracowanie; krótkie fragmenty artykułu i prezentacji służą tylko do ćwiczeń z dopasowaniem.
-import { W, WIELE, P, U, PARY, KAT, LUKI, PISZ, en, tab, paryZ } from './narzedzia.js';
+import { W, WIELE, P, U, PARY, KAT, LUKI, PISZ, F, en, tab, paryZ } from './narzedzia.js';
+import { SEKCJA_CZASY } from './angielski-czasy.js';
 
 // ─────────────────────────────── 6.1 słownictwo ───────────────────────────────
 // ćw. 6: lewe pudełko + prawe pudełko (rozwiązanie jednoznaczne: „tourism” jest w prawym pudełku raz,
@@ -153,6 +154,103 @@ const MAIL_DOSTAWCA = [
 ];
 const K_KLIENT = MAIL_KLIENT.map((m) => m[0]);
 
+
+// ─────────────────────────────── fiszki: przykłady zdań ───────────────────────────────
+const PRZYKLAD = {
+  'bed and breakfast': 'We stayed at a cosy bed and breakfast in the hills.',
+  'eco-resort': 'The eco-resort uses solar power and recycles its water.',
+  'hotel chain': 'Big hotel chains are opening resorts on the coast.',
+  'mainland': 'The ferry to the mainland takes an hour.',
+  'marine life': 'Divers come here to see the marine life.',
+  'mass tourism': 'Mass tourism has changed many Spanish beaches.',
+  'national park': 'The national park protects rare animals.',
+  'overdevelop': 'Some coastal towns have been overdeveloped.',
+  'package tour': 'A package tour includes the flight and the hotel.',
+  'tour guide': 'Our tour guide showed us the old town.',
+  'tourist trap': 'That restaurant is a tourist trap. Avoid it!',
+  'whale-watching': 'We went whale-watching in Iceland.',
+  'white-sand beach': 'The island is famous for its white-sand beaches.',
+  'lush valleys': 'The island has mountains and lush valleys.',
+  'crystal-clear waters': 'Swim in the crystal-clear waters of the bay.',
+  'remote': 'New roads connect remote villages.',
+  'underdeveloped': 'The region is still underdeveloped.',
+  'wages': 'Hotel staff are paid low wages.',
+  'to tip': 'It’s a good idea to tip the waiters.',
+  'housekeeper': 'The housekeeper cleans the rooms every morning.',
+  'sustainable': 'We need more sustainable tourism.',
+  'unspoilt': 'It’s one of the last unspoilt beaches in Europe.',
+  'accommodation': 'Accommodation is expensive in August.',
+  'upmarket': 'The hotel is in an upmarket neighbourhood.',
+  'high-end': 'High-end travellers want authentic experiences.',
+  'wealthy': 'Wealthy Europeans stay at the hotel.',
+  'homage': 'The hotel is a homage to the Madrid of art and culture.',
+  'cachet': 'Top restaurants add to Spain’s cachet as a luxury destination.',
+  'hotspot': 'France and Italy are luxury hotspots.',
+  'to catch up with': 'Spain is still far from catching up with France.',
+  'GDP': 'Tourism accounts for almost 15 percent of Spain’s GDP.',
+  'rowdy': 'Rowdy tourists annoy local residents.',
+  'short-term rentals': 'The city wants limits on short-term rentals.',
+  'sustainability': 'Spaniards are concerned about the sustainability of tourism.',
+  'booming': 'In the 1960s, Spain was booming as a destination.',
+  'revenue': 'Revenue per room fell by 11.3 percent.',
+  'a shift toward': 'There is a shift toward luxury tourism.',
+  'to be in its infancy': 'Luxury tourism in Madrid is still in its infancy.',
+  'off the beaten track': 'We found a little village off the beaten track.',
+  'well-kept secret': 'This beach is a well-kept secret.',
+  'interface': 'The app has a simple interface.',
+  "pique someone's interest": 'The headline piqued my interest.',
+  'novice': 'I’m a complete novice at networking.',
+  'get the hang of something': 'Don’t worry, you’ll soon get the hang of it.',
+  'homesick': 'She felt homesick in her first month abroad.',
+  'picturesque': 'It’s a picturesque fishing village.',
+  'laid-back': 'The staff are very laid-back.',
+  "That's neat!": 'You can book in one click? That’s neat!',
+  'to attend': 'Can you attend the fair next Thursday?',
+  'a trade fair': 'The trade fair has 5,000 exhibitors.',
+  'an exhibitor': 'Talk to the exhibitors about advertising.',
+  'to spread the word about': 'Spread the word about our magazine.',
+  'to drum up advertising': 'See if you can drum up some advertising.',
+  'to pick up your media badge': 'You can pick up your media badge at the entrance.',
+  'to cover an event': 'Susan has been assigned to cover the fair.',
+  'industry insight': 'Experts share their industry insight.',
+};
+const fiszki = (lista) => lista.map(([a, b]) => F(a, b, PRZYKLAD[a]));
+const FISZKI_NETWORKING = [
+  F('networking', 'nawiązywanie kontaktów zawodowych', 'Networking is more about farming than hunting.'),
+  F('small talk', 'rozmowa o niczym ważnym', 'We made small talk about the weather.'),
+  F('to come across as', 'sprawiać wrażenie', 'You don’t want to come across as lacking in confidence.'),
+  F('imposition', 'narzucanie się, kłopot dla kogoś', 'Don’t say sorry for the imposition.'),
+  F('fake it till you make it', 'udawaj pewność, aż ją zdobędziesz', 'Stay cool and fake it till you make it.'),
+  F('to find common ground', 'znaleźć wspólny temat', 'Try to find common ground with the other person.'),
+  F('to steer the conversation', 'kierować rozmową', 'She steered the conversation towards advertising.'),
+];
+const FISZKI_STORY = [
+  F('all of a sudden', 'nagle', 'All of a sudden, Tom stops eating.'),
+  F('a turning point', 'punkt zwrotny', 'That dinner was the turning point of the story.'),
+  F('the moral of the story', 'morał historii', 'The moral of the story is: care about people.'),
+  F('a rhetorical question', 'pytanie retoryczne', 'He ended with a rhetorical question.'),
+  F('to resign', 'złożyć wypowiedzenie, zrezygnować', 'I realised my mistake only when he resigned.'),
+  F('at the end of the day', 'koniec końców, w gruncie rzeczy', 'At the end of the day, for him, I didn’t care.'),
+  F('the funny thing is', 'zabawne jest to, że', 'The funny thing is, I didn’t notice anything.'),
+  F('to acknowledge a mistake', 'przyznać się do błędu', 'A good leader acknowledges his mistakes.'),
+  F('to make a joke at yourself', 'żartować z samego siebie', 'He made a joke at himself to relax the audience.'),
+  F('arsenal', 'arsenał (zbiór „broni”)', 'Stories are the most powerful weapon in a leader’s arsenal.'),
+];
+const FISZKI_MAIL = [
+  F('an early reply', 'szybka odpowiedź', 'I would appreciate an early reply.'),
+  F('feel free to', 'śmiało, nie krępuj się', 'Please feel free to call me directly.'),
+  F('apparently', 'podobno, jak się okazuje', 'Apparently there was some confusion over the booking.'),
+  F('confusion over', 'zamieszanie wokół', 'There was some confusion over the hotel rooms.'),
+  F('this end', 'po naszej stronie, u nas', 'Let me know if there is anything I can do this end.'),
+  F('re', 'w sprawie (regarding)', 'Re your email of 3 March…'),
+  F('a double-booking', 'podwójna rezerwacja', 'Unfortunately, there was a double-booking.'),
+  F('to assure', 'zapewnić', 'They assured me it will not happen again.'),
+  F('unless', 'chyba że', 'We’ll book the hotel unless you tell us otherwise.'),
+  F('provided that', 'pod warunkiem że', 'You get a discount provided that you pay now.'),
+  F('in case', 'na wypadek gdyby', 'Take my number in case you get lost.'),
+  F('otherwise', 'w przeciwnym razie', 'Please confirm by Monday; otherwise, we may lose the rooms.'),
+];
+
 // ─────────────────────────────── KURS ───────────────────────────────
 export const KURS = {
   slug: 'angielski',
@@ -161,13 +259,17 @@ export const KURS = {
   znaki: [],
   otwarte: true,
   etap: 'Etap',
+  pochwaly: ['Great!', 'Well done!', 'Spot on!', 'Nice one!', 'Brilliant!', 'Dobrze!'],
+  uwagaPisownia: '✓ Dobrze — sprawdź pisownię',
+  okrzykBoss: 'You made it!',
   nazwa: 'Angielski',
   flaga: '🇬🇧',
   h1: 'Angielski',
-  h1Grad: 'Unit 6 pod kolokwium',
-  opis: 'Cały dział 6 „The business of tourism” jako krótkie lekcje: słownictwo z turystyki, czasy przeszłe i discourse markers, networking, storytelling w prezentacji i e-mail do partnera biznesowego. Każda lekcja jest otwarta od razu, a na końcu czeka próbne kolokwium jako escape room.',
-  kolokwium: { nazwa: 'kolokwium z Unit 6', jednostki: ['u1', 'u2', 'u3', 'u4', 'u5'], boss: 'boss1' },
+  h1Grad: 'czasy i Unit 6 pod kolokwium',
+  opis: 'Wszystkie arkusze z czasami z zajęć (wpisujesz formy jak na kolokwium) i cały dział 6 „The business of tourism”: fiszki ze słówkami, kolokacje, artykuł, networking, storytelling i e-mail do partnera. Każda lekcja jest otwarta od razu, a na końcu czeka próbne kolokwium jako escape room.',
+  kolokwium: { nazwa: 'kolokwium', jednostki: ['t1', 't2', 't3', 't4', 'u1', 'u2', 'u3', 'u4', 'u5'], boss: 'boss1' },
   sekcje: [
+    SEKCJA_CZASY,
     {
       id: 's1', nazwa: 'Unit 6 · The business of tourism', pl: 'lekcje 6.1–6.5 w kolejności podręcznika · możesz zacząć od dowolnej',
       jednostki: [
@@ -175,6 +277,7 @@ export const KURS = {
         {
           id: 'u1', tytul: '6.1 The impact of tourism', pl: 'słownictwo: turystyka i hotelarstwo, kolokacje', ikona: '🏝️', kolokwium: true, zrodlo: 'podręcznik 6.1, s. 59, ćw. 6–9',
           lekcje: [
+            { id: 'u1f', tytul: 'Fiszki: słówka 6.1', ile: 12, nowe: [{ h: 'Jak działają fiszki', html: 'Stuknij kartę, żeby ją odwrócić i usłyszeć wymowę. Potem oceń się uczciwie: <b>Umiem</b> albo <b>Jeszcze nie</b>. Fiszki „jeszcze nie” wracają na końcu lekcji i trafiają do „Powtórz błędy”.' }], pula: fiszki([...KOLOKACJE, ...WYSPA]) },
             {
               id: 'u1l1', tytul: 'Collocations — połącz słowa', ile: 10,
               nowe: [
@@ -236,6 +339,7 @@ export const KURS = {
         {
           id: 'u2', tytul: '6.2 Evolving tourism', pl: 'artykuł o Hiszpanii, czasy przeszłe, discourse markers', ikona: '🇪🇸', kolokwium: true, zrodlo: 'podręcznik 6.2, s. 60–61, ćw. 2–8',
           lekcje: [
+            { id: 'u2f', tytul: 'Fiszki: słówka z artykułu', ile: 12, pula: fiszki(ARTYKUL) },
             {
               id: 'u2l1', tytul: 'Reading: from mass market to luxury', ile: 10,
               nowe: [
@@ -351,6 +455,7 @@ export const KURS = {
         {
           id: 'u3', tytul: '6.3 Business networking', pl: 'networking na targach, słówka z wideo, zwroty', ikona: '🤝', kolokwium: true, zrodlo: 'podręcznik 6.3, s. 62–63, ćw. 1–6',
           lekcje: [
+            { id: 'u3f', tytul: 'Fiszki: networking', ile: 12, pula: [...fiszki(WIDEO_PL), ...fiszki(MAIL_DONNY), ...FISZKI_NETWORKING] },
             {
               id: 'u3l1', tytul: 'Networking at a trade fair', ile: 10,
               nowe: [
@@ -414,6 +519,7 @@ export const KURS = {
         {
           id: 'u4', tytul: '6.4 Storytelling in presentations', pl: 'historia Ángela, struktura w 10 krokach, techniki', ikona: '🎤', kolokwium: true, zrodlo: 'podręcznik 6.4, ćw. 1–6',
           lekcje: [
+            { id: 'u4f', tytul: 'Fiszki: storytelling', ile: 10, pula: FISZKI_STORY },
             {
               id: 'u4l1', tytul: 'Ángel’s story', ile: 9,
               nowe: [
@@ -468,6 +574,7 @@ export const KURS = {
         {
           id: 'u5', tytul: '6.5 Email to a business partner', pl: 'struktura maila, odpowiedź, ton, if and alternatives', ikona: '✉️', kolokwium: true, zrodlo: 'podręcznik 6.5, ćw. 1–4',
           lekcje: [
+            { id: 'u5f', tytul: 'Fiszki: e-mail', ile: 12, pula: FISZKI_MAIL },
             {
               id: 'u5l1', tytul: 'Email: customer → supplier', ile: 10,
               nowe: [
@@ -558,6 +665,30 @@ export const KURS = {
             },
           ],
         },
+        // ───────────── tematy z egzaminu ustnego ─────────────
+        {
+          id: 'u6', tytul: 'Exam topics: Unit 6', pl: 'tematy 15–17 z listy na egzamin: wzorcowe odpowiedzi i zwroty', ikona: '🎙️', zrodlo: 'lista „Zagadnienia na egzamin”, tematy 15–17 (U6)',
+          lekcje: [
+            {
+              id: 'u6l1', tytul: 'Topics 15–17', ile: 8,
+              nowe: [
+                { h: '15. Why do people like travelling?', html: `<i>Why do people like travelling? What are your favourite destinations? Talk about a place which was a real eye-opener for you.</i><br>${en('an eye-opener')} = coś, co zaskakuje i otwiera oczy, uczy czegoś nowego.<br><b>Wzór:</b> ${en('People like travelling because it lets them escape their daily routine and see how others live. Travelling broadens the mind: you learn about other cultures, food and history. I love city breaks, but my favourite places are off the beaten track. A real eye-opener for me was a trip to Lisbon. I had expected a typical tourist city, but I discovered a laid-back, friendly place full of different cultures. It taught me that the best experiences are often unplanned.')}` },
+                { h: '16. The tourism boom: pros and cons', html: `<i>Discuss the positive and negative aspects of the current boom in tourism. Provide some examples.</i><br><b>Wzór:</b> ${en('On the one hand, the tourism boom creates jobs, boosts the local economy and pays for better infrastructure. On the other hand, mass tourism can damage nature and marine life, and many coastal towns have become overdeveloped. In cities like Barcelona, rowdy tourists and short-term rentals have pushed up rents, which has led to protests and “turismofobia”. Many jobs in tourism are also seasonal and low-paid. In my opinion, the answer is sustainable tourism that respects local people and nature.')}` },
+                { h: '17. What is networking?', html: `<i>What is networking and why is it important in business? Where can networking take place?</i><br><b>Wzór:</b> ${en('Networking means meeting other professionals to share information, make useful contacts and support each other. It is important because many jobs, clients and partners come through personal contacts. As Ivan Misner says, networking is more about farming than hunting: you build relationships slowly. Networking can take place at trade fairs, conferences and industry events, but also at university, on LinkedIn or even during small talk at a party. To network well, introduce yourself confidently, find common ground and follow up after the meeting.')}` },
+              ],
+              pula: [
+                W('Co znaczy „a real eye-opener”?', ['coś, co zaskakuje i uczy czegoś nowego', 'otwieracz do butelek', 'wczesna pobudka', 'miejsce z pięknym widokiem'], '<b>eye-opener</b> = doświadczenie, które „otwiera oczy”.'),
+                KAT('Tourism boom: plus czy minus?', ['positive', 'negative'], [['creates jobs', 0], ['boosts the local economy', 0], ['better infrastructure', 0], ['cultural exchange', 0], ['damages marine life', 1], ['overdeveloped coast', 1], ['higher rents', 1], ['seasonal, low-paid jobs', 1]], 'Plusy: praca, gospodarka, infrastruktura, kontakt kultur. Minusy: przyroda, zabudowa, czynsze, sezonowe prace.'),
+                WIELE('Gdzie może odbywać się networking? Zaznacz wszystko, co pasuje.', ['at trade fairs', 'at conferences', 'on LinkedIn', 'at university events', 'only in the office of your boss'], [0, 1, 2, 3], 'Networking to każde miejsce, gdzie poznajesz ludzi z branży: targi, konferencje, sieć, uczelnia.'),
+                W('Jak dobrze zacząć odpowiedź „pros and cons”?', ['On the one hand, …', 'Firstly of all, …', 'In my opinion of it, …', 'From one side hand, …'], '<b>On the one hand… On the other hand…</b> „Firstly of all” to błąd: „First of all” albo „Firstly”.'),
+                U('Ułóż: Podróże poszerzają horyzonty.', 'Travelling broadens the mind.', '<b>broaden the mind</b> = poszerzać horyzonty.', ['broad', 'minds']),
+                PISZ('Temat 15: Why do people like travelling? Talk about a place which was a real eye-opener for you. (4–6 zdań)', 'People like travelling because it lets them escape their daily routine. A real eye-opener for me was a trip to Lisbon. I had expected a typical tourist city, but I discovered a laid-back, friendly place. It taught me that the best experiences are often unplanned.', ['dlaczego ludzie podróżują (2 powody)', 'ulubione miejsca', 'eye-opener: co myślałeś przed, co odkryłeś (Past Perfect + Past Simple)', 'słówka z działu: off the beaten track, laid-back, picturesque']),
+                PISZ('Temat 16: Discuss the positive and negative aspects of the current boom in tourism. (5–6 zdań)', 'On the one hand, the tourism boom creates jobs and boosts the local economy. On the other hand, mass tourism damages nature and many coastal towns have become overdeveloped. In Barcelona, short-term rentals have pushed up rents. In my opinion, we need sustainable tourism.', ['On the one hand… On the other hand…', '2 plusy i 2 minusy', 'przykład miasta albo kraju', 'własne zdanie: In my opinion…']),
+                PISZ('Temat 17: What is networking and why is it important? Where can it take place? (4–6 zdań)', 'Networking means meeting other professionals to share information and make useful contacts. It is important because many jobs and clients come through personal contacts. It can take place at trade fairs, conferences or on LinkedIn. To network well, find common ground and follow up after the meeting.', ['definicja: meeting other professionals to…', 'dlaczego ważny (kontakty, praca, klienci)', 'gdzie: trade fairs, conferences, LinkedIn…', 'rada: find common ground, follow up']),
+              ],
+            },
+          ],
+        },
       ],
       powtorka: { id: 's1rep', tytul: 'Mieszana powtórka Unit 6', ile: 14 },
       boss: {
@@ -610,6 +741,10 @@ export const ODZNAKI = [
   { id: 'xp250', ikona: '⭐', nazwa: '250 XP', opis: 'Zbierz 250 punktów doświadczenia.' },
   { id: 'xp1000', ikona: '🌟', nazwa: '1000 XP', opis: 'Zbierz 1000 punktów doświadczenia.' },
   { id: 'bledy', ikona: '🩹', nazwa: 'Naprawione błędy', opis: 'Zrób powtórkę swoich błędów.' },
+  { id: 't1', ikona: '⏱️', nazwa: 'Since or ago?', opis: 'Ukończ wszystkie lekcje z arkusza I.', jednostka: 't1' },
+  { id: 't2', ikona: '⏪', nazwa: 'Past master', opis: 'Ukończ wszystkie lekcje z arkusza II.', jednostka: 't2' },
+  { id: 't3', ikona: '🔀', nazwa: 'Mixed tenses', opis: 'Ukończ wszystkie lekcje z arkusza IV.', jednostka: 't3' },
+  { id: 't4', ikona: '📄', nazwa: 'Teksty z lukami', opis: 'Ukończ wszystkie lekcje z arkusza III.', jednostka: 't4' },
   { id: 'u1', ikona: '🏝️', nazwa: 'Tourism words', opis: 'Ukończ wszystkie lekcje 6.1.', jednostka: 'u1' },
   { id: 'u2', ikona: '⏳', nazwa: 'Past tenses', opis: 'Ukończ wszystkie lekcje 6.2.', jednostka: 'u2' },
   { id: 'u3', ikona: '🤝', nazwa: 'Networker', opis: 'Ukończ wszystkie lekcje 6.3.', jednostka: 'u3' },

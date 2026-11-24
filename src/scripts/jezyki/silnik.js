@@ -6,6 +6,7 @@ import { awatar } from './awatar.js';
 import { $, $$, h, tasuj, ruch } from './dom.js';
 import { ustawJezyk, mowa, przyciskMowy, ozywMowe } from './mowa.js';
 import { R, ETYKIETA, klawiatura, ustawPo } from './cwiczenia.js';
+import { dzwiek, dzwiekWl, ustawDzwiek } from './dzwiek.js';
 
 let KURS = null;
 
@@ -235,6 +236,23 @@ function modal(tresc, przyciski = []) {
 
 
 // ── lekcja ──
+/** Krótkie konfetti w oknie lekcji (tylko gdy użytkownik nie wyłączył animacji). */
+function konfetti(ramka) {
+  const kol = ['#bd8bff', '#5ad1a0', '#ffd84a', '#22d3ee', '#ff7eb6'];
+  const k = h('div', 'jz-konf');
+  k.setAttribute('aria-hidden', 'true');
+  for (let i = 0; i < 28; i++) {
+    const c = document.createElement('i');
+    c.style.left = `${Math.random() * 100}%`;
+    c.style.background = kol[i % kol.length];
+    c.style.animationDelay = `${Math.random() * 0.35}s`;
+    c.style.setProperty('--dx', `${(Math.random() - 0.5) * 120}px`);
+    c.style.setProperty('--rot', `${(Math.random() - 0.5) * 900}deg`);
+    k.append(c);
+  }
+  ramka.append(k);
+  setTimeout(() => k.remove(), 2600);
+}
 function zestaw(w) {
   if (w.typ === 'boss') {
     const out = [];
@@ -268,7 +286,7 @@ function otworz(w) {
   box.setAttribute('aria-modal', 'true');
   box.setAttribute('aria-label', `Lekcja: ${w.tytul}`);
   // .jz-lekcja zawsze kryje cały ekran (tło i kratka); do widocznej części ekranu dopasowuje się tylko ramka
-  box.innerHTML = `<div class="jz-l-ramka"><div class="jz-l-top"><button type="button" class="jz-x" aria-label="Zamknij lekcję">✕</button><div class="jz-l-pasek" aria-hidden="true"><i></i></div><span class="jz-combo" aria-live="polite"></span></div>
+  box.innerHTML = `<div class="jz-l-ramka"><div class="jz-l-top"><button type="button" class="jz-x" aria-label="Zamknij lekcję">✕</button><div class="jz-l-pasek" aria-hidden="true"><i></i></div><span class="jz-combo" aria-live="polite"></span><button type="button" class="jz-dzw" aria-label="Dźwięki lekcji"></button></div>
     <div class="jz-l-haslo" hidden></div><div class="jz-l-body"></div>
     <div class="jz-l-dol"><div class="jz-fb" aria-live="polite"></div><div class="jz-l-znaki" hidden></div><div class="jz-l-akcje"><button type="button" class="jz-btn jz-btn-glow jz-spr" disabled>Sprawdź</button></div></div></div>`;
   document.body.append(box);
@@ -278,6 +296,10 @@ function otworz(w) {
   box.focus({ preventScroll: true });
   const body = $('.jz-l-body', box), fb = $('.jz-fb', box), spr = $('.jz-spr', box), dol = $('.jz-l-dol', box);
   const haslo = $('.jz-l-haslo', box), ramka = $('.jz-l-ramka', box), znaki = $('.jz-l-znaki', box);
+  const dzw = $('.jz-dzw', box);
+  const pokazDzw = () => { const wl = dzwiekWl(); dzw.textContent = wl ? '🔊' : '🔇'; dzw.setAttribute('aria-pressed', String(wl)); };
+  pokazDzw();
+  dzw.addEventListener('click', () => { ustawDzwiek(!dzwiekWl()); pokazDzw(); });
 
   // telefon: ramka ma wysokość widocznej części ekranu, więc klawiatura nie zasłania „Sprawdź”;
   // przy każdej niezgodności wysokości spod ramki widać tło lekcji, nigdy stronę
@@ -367,7 +389,7 @@ function otworz(w) {
     znaki.hidden = !zZnakami;
     ustawPrzycisk(c.t === 'pisz' ? 'Pokaż wzór' : 'Sprawdź', 'spr');
     spr.disabled = !renderer.gotowe();
-    if (c.t === 'pary') spr.hidden = true; else spr.hidden = false;
+    spr.hidden = c.t === 'pary' || c.t === 'fiszka';
     if (ruch()) karta.animate([{ opacity: 0, transform: 'translateY(12px)' }, { opacity: 1, transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.16,1,.3,1)' });
     if (renderer.pierwszyFokus && window.matchMedia('(pointer:fine)').matches) renderer.pierwszyFokus.focus({ preventScroll: true });
     else { q.tabIndex = -1; q.focus({ preventScroll: true }); }   // nie na wyłączonym „Sprawdź” i nie pod oknem
@@ -402,11 +424,12 @@ function otworz(w) {
       }
     }
     zapisz();
+    if (!r.neutral) dzwiek(r.ok ? 'ok' : (r.fiszka ? 'pyk' : 'zle'));
     const combEl = $('.jz-combo', box);
     combEl.textContent = combo >= 3 ? `×${combo} combo` : '';
     if (combo >= 3 && combo % 5 === 0 && ruch()) combEl.animate([{ transform: 'scale(1.5)' }, { transform: 'scale(1)' }], { duration: 400, easing: 'cubic-bezier(.16,1,.3,1)' });
 
-    const naglowek = r.naglowek || (r.neutral ? '📝 Porównaj ze wzorem' : (r.ok ? (r.akcent ? '✓ Dobrze — uwaga na akcent' : ['✓ ¡Muy bien!', '✓ ¡Perfecto!', '✓ ¡Genial!', '✓ Dobrze!'][Math.floor(Math.random() * 4)]) : '✗ Nie tym razem'));
+    const naglowek = r.naglowek || (r.neutral ? '📝 Porównaj ze wzorem' : (r.ok ? (r.akcent ? (KURS.uwagaPisownia || '✓ Dobrze — uwaga na akcent') : (() => { const p = KURS.pochwaly || ['¡Muy bien!', '¡Perfecto!', '¡Genial!', 'Dobrze!']; return `✓ ${p[Math.floor(Math.random() * p.length)]}`; })()) : '✗ Nie tym razem'));
     dol.className = `jz-l-dol ${r.neutral ? 'is-neutral' : (r.ok ? 'is-ok' : 'is-bad')}`;
     fb.innerHTML = `<b class="jz-fb-h">${naglowek}</b>`;
     if (r.poprawnie && (r.akcent || !r.ok)) {
@@ -468,7 +491,7 @@ function otworz(w) {
     odswiez();
     pokazHaslo();
     const nast = WEZLY[w.nr + 1];
-    const tytul = boss ? (proc >= 80 ? '🚪 Drzwi otwarte! ¡APROBADO!' : '🔒 Drzwi jeszcze zamknięte') : proc === 100 ? '💎 Bez ani jednego błędu!' : proc >= 70 ? '🎉 Lekcja zaliczona!' : '💪 Ukończone — powtórz, żeby utrwalić';
+    const tytul = boss ? (proc >= 80 ? `🚪 Drzwi otwarte! ${KURS.okrzykBoss || '¡APROBADO!'}` : '🔒 Drzwi jeszcze zamknięte') : proc === 100 ? '💎 Bez ani jednego błędu!' : proc >= 70 ? '🎉 Lekcja zaliczona!' : '💪 Ukończone — powtórz, żeby utrwalić';
     const kom = boss ? (proc >= 80 ? 'Masz min. 80% za pierwszym razem. To dobry znak przed kolokwium.' : 'Do wyjścia potrzeba min. 80%. Wróć do lekcji z błędami albo zrób powtórkę błędów i spróbuj jeszcze raz.') : '';
     body.innerHTML = '';
     dol.className = 'jz-l-dol';
@@ -485,6 +508,7 @@ function otworz(w) {
       ${nowe.length ? `<div class="jz-nowe-odz"><h3>Nowy kamień milowy!</h3>${nowe.map((o) => `<div class="jz-odz-mini"><span>${o.ikona}</span><b>${o.nazwa}</b><small>${o.opis}</small></div>`).join('')}</div>` : ''}`;
     body.append(k);
     if (ruch()) k.animate([{ opacity: 0, transform: 'scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.16,1,.3,1)' });
+    if (proc >= 70) { dzwiek('koniec'); if (ruch()) konfetti(ramka); }
     const akcje = $('.jz-l-akcje', box);
     akcje.innerHTML = '';
     akcje.classList.add('is-koniec');

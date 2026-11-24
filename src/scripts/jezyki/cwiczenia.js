@@ -70,7 +70,7 @@ function sprawdzOdmiane(pola, c) {
   return wynik;
 }
 
-export const ETYKIETA = { wybor: 'Wybierz', wiele: 'Zaznacz wszystkie', wpisz: 'Wpisz', uloz: 'Ułóż zdanie', pary: 'Połącz w pary', kat: 'Posortuj', odm: 'Odmień', luki: 'Uzupełnij tekst', sluchaj: 'Posłuchaj', pisz: 'Twoja wypowiedź' };
+export const ETYKIETA = { wybor: 'Wybierz', wiele: 'Zaznacz wszystkie', wpisz: 'Wpisz', uloz: 'Ułóż zdanie', pary: 'Połącz w pary', kat: 'Posortuj', odm: 'Odmień', luki: 'Uzupełnij tekst', sluchaj: 'Posłuchaj', pisz: 'Twoja wypowiedź', fiszka: 'Fiszka' };
 // pasek znaków w dolnej belce (tylko komputer). „ü” nie występuje w żadnej odpowiedzi kursu, więc go nie ma;
 // ¿ i ¡ są, choć porównanie odpowiedzi ignoruje znaki przestankowe
 export const ZNAKI = ['á', 'é', 'í', 'ó', 'ú', 'ñ', '¿', '¡'];
@@ -446,6 +446,49 @@ export const R = {
         });
         const pelny = c.tekst.replace(/\[\[(.+?)\]\]/g, (_, a) => a.split('|')[0]);
         return { ok, akcent, poprawnie: ok && pisownia.length ? pisownia.join(', ') : null, mowic: pelny };
+      },
+    };
+  },
+  // fiszka: przód (słowo w języku kursu) → stuknięcie odwraca → znaczenie i przykład → uczeń sam ocenia.
+  // „Jeszcze nie” liczy się jak błąd: fiszka wraca na końcu lekcji i trafia do „Powtórz błędy”.
+  fiszka(c, gotowy, natychmiast) {
+    const el = h('div', 'jz-fiszka');
+    const karta = h('button', 'jz-fk',
+      `<span class="jz-fk-in"><span class="jz-fk-p jz-fk-przod"><span class="jz-fk-slowo" lang="${lng()}">${c.a}</span>`
+      + `<small>stuknij, żeby odwrócić</small></span><span class="jz-fk-p jz-fk-tyl"><span class="jz-fk-slowo-m" lang="${lng()}">${c.a}</span>`
+      + `<span class="jz-fk-znaczy">${c.b}</span>${c.ex ? `<span class="jz-fk-ex" lang="${lng()}">${c.ex}</span>` : ''}</span></span>`);
+    karta.type = 'button';
+    karta.setAttribute('aria-label', 'Odwróć fiszkę');
+    const oceny = h('div', 'jz-fk-oceny');
+    oceny.hidden = true;
+    const nie = h('button', 'jz-btn jz-fk-nie', '↻ Jeszcze nie');
+    const tak = h('button', 'jz-btn jz-btn-glow jz-fk-tak', '✓ Umiem');
+    nie.type = tak.type = 'button';
+    oceny.append(nie, tak);
+    let wynik = null;
+    const odwroc = () => {
+      if (karta.classList.contains('is-odwr')) return;
+      karta.classList.add('is-odwr');
+      karta.setAttribute('aria-label', 'Fiszka odwrócona');
+      oceny.hidden = false;
+      mow(c.a);
+      tak.focus({ preventScroll: true });
+    };
+    karta.addEventListener('click', odwroc);
+    const ocen = (w) => () => { if (el.dataset.zablokuj) return; wynik = w; gotowy(); natychmiast(); };
+    nie.addEventListener('click', ocen(false));
+    tak.addEventListener('click', ocen(true));
+    el.append(karta, oceny);
+    return {
+      el, pierwszyFokus: karta,
+      gotowe: () => wynik !== null,
+      klawisz: (k) => { if (k === 1) (oceny.hidden ? odwroc() : nie.click()); if (k === 2 && !oceny.hidden) tak.click(); },
+      sprawdz() {
+        el.dataset.zablokuj = '1';
+        nie.disabled = tak.disabled = true;
+        return wynik
+          ? { ok: true, mowic: c.a, fiszka: true }
+          : { ok: false, mowic: c.a, fiszka: true, naglowek: '↻ Wróci na końcu lekcji', info: `<b lang="${lng()}">${c.a}</b> = ${c.b}` };
       },
     };
   },

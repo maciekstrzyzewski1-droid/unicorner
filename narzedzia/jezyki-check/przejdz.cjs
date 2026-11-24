@@ -128,6 +128,7 @@ function serwer() {
               }
               break;
             }
+            case 'fiszka': box.querySelector('.jz-fk').click(); box.querySelector('.jz-fk-tak').click(); break;
             default: throw new Error(`typ ${c.t} bez obsługi w teście`);
           }
         }, c).then(() => true, (e) => { porazki.push(`${stan.k}: ${e.message.split('\n')[0]}`); return false; });

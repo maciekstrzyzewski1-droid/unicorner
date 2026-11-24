@@ -1,6 +1,7 @@
 // apostrof z klawiatury iPhone'a (’) liczy się jak zwykły (')
 export const norm = (s) => String(s).normalize('NFC').toLowerCase().replace(/[’‘ʼ`´]/g, "'").replace(/[¿?¡!.,;:„”"«»()]/g, ' ').replace(/\s+/g, ' ').trim();
-export const bezAkc = (s) => norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+// bez akcentów i bez apostrofów: „havent” zamiast „haven't” to drobna uwaga o pisowni, nie błąd
+export const bezAkc = (s) => norm(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/'/g, '');
 // Słowa, w których akcent zmienia znaczenie (tu = twój, tú = ty; que = że, qué = co?; esta = ta, está = jest).
 // Tu brak akcentu to inne słowo, nie literówka. Celowo bez solo/sólo i este/éste: RAE dopuszcza je bez akcentu.
 export const AKC_SLOWO = new Set([

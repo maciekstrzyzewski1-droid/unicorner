@@ -83,6 +83,7 @@ function cw(c, gdzie) {
       break;
     }
     case 'pisz': if (!c.wzor) blad(gdzie, 'brak wzoru'); break;
+    case 'fiszka': if (!String(c.a || '').trim() || !String(c.b || '').trim()) blad(gdzie, 'fiszka bez przodu albo tyłu'); break;
     default: blad(gdzie, `nieznany typ „${c.t}”`);
   }
 }
