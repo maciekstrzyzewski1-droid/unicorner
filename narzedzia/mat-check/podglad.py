@@ -19,6 +19,15 @@ h = re.sub(r'<!DOCTYPE html>|</?html[^>]*>|</?head>|</?body[^>]*>|<meta charset=
 h = f'<title>{tytul}</title>\n<style>:root{{color-scheme:dark}}</style>\n' + h.lstrip()
 pliki = set(re.findall(r'/_astro/([^"\')\s]+)', h))
 h = h.replace('"/_astro/', '"astro/')
+# czcionki strony (public/fonts/fonty.css) jadą razem z podglądem — artifact blokuje CSS z innych domen
+PUB = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'public')
+if 'href="/fonts/fonty.css"' in h:
+    os.makedirs(OUT + '/fonts', exist_ok=True)
+    c = open(f'{PUB}/fonts/fonty.css', encoding='utf-8').read()
+    for g in set(re.findall(r'url\(/fonts/([^)]+)\)', c)):
+        shutil.copy(f'{PUB}/fonts/{g}', f'{OUT}/fonts/{g}')
+    open(f'{OUT}/fonts/fonty.css', 'w', encoding='utf-8').write(c.replace('url(/fonts/', 'url('))
+    h = h.replace('href="/fonts/fonty.css"', 'href="fonts/fonty.css"')
 # linki do innych stron serwisu prowadzą na żywą stronę
 h = re.sub(r'href="/(?!/)', 'href="https://unicorner.pl/', h)
 open(OUT + '/index.html', 'w', encoding='utf-8').write(h)
