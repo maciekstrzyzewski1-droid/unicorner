@@ -23,7 +23,7 @@ import Pytania from '../../components/kurs/Pytania.astro';
 import Polecenia from '../../components/kurs/Polecenia.astro';
 import TabelaKwot from '../../components/kurs/badania/TabelaKwot.astro';
 import Schematy from '../../components/kurs/badania/Schematy.astro';
-import { suma, sumyW, sumyK, mapuj, procentyPelne, probaZProcentow, probaDokladna, ilu, wyjsciowy, dodatki, przykladowy, ulozSchematy, sprawdz, reszta, SLAJD, ARKUSZ, BIBLIOTEKA, SKLEP } from '../../lib/kwoty.js';
+import { suma, sumyW, sumyK, mapuj, procentyPelne, probaZProcentow, probaDokladna, ilu, wyjsciowy, dodatki, przykladowy, ulozSchematy, sprawdz, reszta, SLAJD, ARKUSZ, BIBLIOTEKA, SKLEP, POZNAN } from '../../lib/kwoty.js';
 import { fmt, alokuj } from '../../lib/proba.js';
 
 export const S = SLAJD;
@@ -48,6 +48,20 @@ export const aPoA = reszta(aPr, A.schematy[0]);
 export const aInny = ulozSchematy(aPr, aAnk, A.naAnk);
 export const aKr = A.wiersze.flatMap((w, i) => A.kolumny.map((k, j) => ({ w, k, i, j, et: `${w}, ${k}` })));
 
+export const Pz = POZNAN;
+export const pzN = suma(Pz.pop);
+export const pzPct = procentyPelne(Pz.pop);
+export const pzPr = probaZProcentow(pzPct, Pz.n);
+export const pzAnk = ilu(Pz.n, Pz.naAnk);
+export const pzWyj = wyjsciowy(pzPr, pzAnk);
+export const pzDod = dodatki(pzPr, pzAnk, Pz.naAnk);
+export const pzJeden = przykladowy(pzPr, pzAnk, Pz.naAnk);
+export const pzSch = ulozSchematy(pzPr, pzAnk, Pz.naAnk);
+export const pzTest = sprawdz(pzPr, pzSch, Pz.naAnk, pzAnk);
+export const pzDok = probaDokladna(Pz.pop, Pz.n);
+export const pzKr = Pz.wiersze.flatMap((w, i) => Pz.kolumny.map((k, j) => ({ w, k, i, j, et: `${w}, ${k}` })));
+export const pzDodatkowe = pzKr.filter((c) => pzJeden[c.i][c.j] > pzDod.pewna[c.i][c.j]);
+export const pzUl = pzKr.map((c) => ({ ...c, ul: pzWyj[c.i][c.j] - pzDod.pewna[c.i][c.j] })).filter((c) => c.ul > 1e-9).sort((a, b) => b.ul - a.ul);
 export const B = BIBLIOTEKA;
 export const bN = suma(B.pop);
 export const bPct = procentyPelne(B.pop);
@@ -104,7 +118,7 @@ Dobór kwotowy pilnuje, żeby próba była **miniaturą populacji**. Jeśli 8% p
 <Polecenia items={[
   { polecenie: 'Określ strukturę próby metodą doboru kwotowego', jak: 'Liczysz, jaki procent populacji stanowi każda grupa, i ten sam procent bierzesz z $n$.', przepis: 'polecenie-struktura', cwiczenia: 'cw-struktura', zrodlo: 'jak w Zad. 1–3 z zestawu „Liczebność i metody doboru próby badawczej – zadania”' },
   { polecenie: 'Ilu ankieterów należy zatrudnić? Określ kwoty dla ankietera', jak: 'Dzielisz $n$ przez liczbę ankiet na jednego ankietera. Potem każdą grupę z próby dzielisz przez liczbę ankieterów.', przepis: 'polecenie-ankieterzy', cwiczenia: 'cw-ankieterzy', zrodlo: 'jak w Zad. 1 i 2 z tego zestawu' },
-  { polecenie: 'Zaproponuj przykładową strukturę próby dla ankietera', jak: 'Ułamki zamieniasz na całe osoby tak, żeby suma dała liczbę ankiet na ankietera.', przepis: 'polecenie-schemat', cwiczenia: 'cw-schemat', zrodlo: 'jak w Zad. 4 z zestawu „Zadania – powtórka”' },
+  { polecenie: 'Zaproponuj przykładową strukturę próby dla ankietera', jak: 'Ułamki zamieniasz na całe osoby tak, żeby suma dała liczbę ankiet na ankietera.', przepis: 'polecenie-schemat', cwiczenia: 'cw-schemat', zrodlo: 'jak w Zad. 4 z zestawu „Zadania – powtórka” (rozwiązane w module)' },
   { polecenie: 'Ułóż schematy dla ankieterów i sprawdź, czy odtwarzają próbę', jak: 'Różne grupy ankieterów dostają różne schematy. Wszystkie razem mają dać dokładnie strukturę próby.', przepis: 'polecenie-komplet', cwiczenia: 'cw-komplet', zrodlo: 'jak na slajdach (schematy A i B) i w arkuszu „Metody doboru próby – przykład” (schematy A–D)' },
 ]} />
 
@@ -604,6 +618,114 @@ Próba {fmt(A.n)} osób, {aAnk} ankieterów, każdy robi {A.naAnk} ankiet. Ułó
 - **Kartka z inną sumą.** Każda kartka ma dokładnie tyle ankiet, ile robi ankieter.
 - **Pominięty test kratek.** Dwie pierwsze kontrole mogą wyjść dobrze, a struktura i tak będzie zła.
 </Ramka>
+
+<a id="zadanie-poznan" class="k-anchor"></a>
+
+### Zadanie z powtórki: Poznań, 1200 respondentów
+
+<Rozwiazanie tytul="Mieszkańcy Poznania: struktura próby i kartka dla badacza" zrodlo="Zad. 4 z zestawu „Zadania – powtórka”">
+<div slot="tresc">
+
+Populację mieszkańców Poznania podzielono według dzielnicy i ekonomicznej grupy wieku (w tys. osób). Dobierz metodą kwotową próbę {fmt(Pz.n)} respondentów. Jeden badacz wykonuje {Pz.naAnk} ankiet. Określ strukturę próby dla badacza i zaproponuj przykładową strukturę próby dla badacza.
+
+<TabelaKwot wiersze={Pz.wiersze} kolumny={Pz.kolumny} m={Pz.pop} razem={false} />
+
+**Jak czytać:** liczby to tysiące osób. „Przedprod.” to wiek przedprodukcyjny (dzieci i młodzież do 17 lat), „poprod.” — poprodukcyjny (emeryci). Grunwald, wiek produkcyjny: {Pz.pop[0][1]} tys. osób.
+
+</div>
+
+<div slot="plan">
+
+1. Sumy i $N$. Bez $N$ nie policzymy procentów.
+2. Struktura populacji w pełnych procentach, jak w arkuszu z zajęć.
+3. Struktura próby: procent kratki wzięty z {fmt(Pz.n)}.
+4. Liczba badaczy: {fmt(Pz.n)} : {Pz.naAnk}.
+5. „Struktura próby dla badacza” to schemat wyjściowy: kratka próby podzielona przez liczbę badaczy.
+6. „Przykładowa struktura dla badacza” to kartka w całych liczbach: część pewna + dodatki. Sprawdzamy, że daje {Pz.naAnk}.
+
+</div>
+
+<Krok tytul="Sumy i N">
+<TabelaKwot wiersze={Pz.wiersze} kolumny={Pz.kolumny} m={Pz.pop} />
+
+**Jak czytać:** ostatnia kolumna to suma dzielnicy, np. Grunwald: {Pz.pop[0].join(' + ')} = {suma([Pz.pop[0]])}. W rogu $N$ = {pzN} tys.
+
+<Dlaczego>
+Procent kratki liczymy z tabeli, więc dzielimy przez sumę tabeli: {pzN} tys. Treść Zad. 3 mówi o 580 tys. mieszkańców, ale kratki dają {pzN} tys. — różnica to najpewniej zaokrąglenia w tabeli. Po podzieleniu przez 580 procenty kratek nie dałyby razem 100.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Struktura populacji w procentach">
+Przykład pełnymi zdaniami: Grunwald, wiek produkcyjny. {Pz.pop[0][1]} : {pzN} = {fmt(Pz.pop[0][1] / pzN, 4)}, czyli {fmt((100 * Pz.pop[0][1]) / pzN, 2)}%, po zaokrągleniu {pzPct[0][1]}%.
+
+<TabelaKwot wiersze={Pz.wiersze} kolumny={Pz.kolumny} m={pzPct} jedn="%" sumyW={pzPct.map((w) => w.reduce((a, b) => a + b, 0))} sumyK={Pz.kolumny.map((_, j) => pzPct.reduce((a, w) => a + w[j], 0))} calosc={suma(pzPct)} />
+
+**Jak czytać:** {pzPct[3][1]}% mieszkańców to osoby w wieku produkcyjnym ze Starego Miasta. Piętnaście kratek daje razem {suma(pzPct)}%. Sumy w kolumnie „Razem” to tu sumy zaokrąglonych kratek.
+
+<Dlaczego>
+Tu pełne procenty akurat dają równo 100. Gdyby wyszło 99 albo 101, licz dokładnie, bez procentów: kratka : $N$ · $n$, a brakujące osoby dostają kratki z największą częścią po przecinku.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Struktura próby">
+Procent kratki bierzemy z {fmt(Pz.n)}. Grunwald, wiek produkcyjny: {pzPct[0][1]}% z {fmt(Pz.n)} to {fmt(pzPct[0][1] / 100, 2)} · {fmt(Pz.n)} = {pzPr[0][1]} osób.
+
+<TabelaKwot wiersze={Pz.wiersze} kolumny={Pz.kolumny} m={pzPr} />
+
+**Jak czytać:** w próbie ma być {pzPr[0][1]} osób w wieku produkcyjnym z Grunwaldu, {pzPr[0][0]} w wieku przedprodukcyjnym z Grunwaldu i tak dalej. Razem {fmt(suma(pzPr))}.
+
+<Dlaczego>
+Każdy procent to {fmt(Pz.n / 100)} osób, bo 1% z {fmt(Pz.n)} = {fmt(Pz.n / 100)}. Dlatego wszystkie kratki wychodzą w całych liczbach podzielnych przez 12.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Liczba badaczy">
+{fmt(Pz.n)} : {Pz.naAnk} = **{pzAnk} badaczy**.
+
+<Dlaczego>
+Każdy badacz robi {Pz.naAnk} ankiet. {pzAnk} badaczy · {Pz.naAnk} ankiet = {fmt(pzAnk * Pz.naAnk)}, czyli cała próba.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Struktura próby dla badacza (schemat wyjściowy)">
+Każdą kratkę próby dzielimy przez {pzAnk}. Grunwald, wiek produkcyjny: {pzPr[0][1]} : {pzAnk} = {fmt(pzWyj[0][1], 1)}.
+
+<TabelaKwot wiersze={Pz.wiersze} kolumny={Pz.kolumny} m={pzWyj} d={1} />
+
+**Jak czytać:** tyle osób z każdej kratki przypada średnio na jednego badacza. Razem {fmt(suma(pzWyj), 0)}, czyli tyle, ile ankiet robi badacz.
+
+<Dlaczego>
+Ułamek {fmt(pzWyj[0][1], 1)} znaczy: każdy badacz bada {pzDod.pewna[0][1]} osoby z tej kratki, a {fmt(pzWyj[0][1] - pzDod.pewna[0][1], 1)} · {pzAnk} = {pzDod.potrzeba[0][1]} badaczy — o jedną więcej. Razem {pzAnk} · {pzDod.pewna[0][1]} + {pzDod.potrzeba[0][1]} = {pzPr[0][1]}.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Przykładowa struktura próby dla badacza">
+Części pewne (liczby przed przecinkiem) dają razem {suma(pzDod.pewna)}. Badacz robi {Pz.naAnk} ankiet, więc brakuje {Pz.naAnk} − {suma(pzDod.pewna)} = **{pzDod.brak}** osób.
+
+Największe części po przecinku: {pzUl.slice(0, pzDod.brak + 2).map((c) => `${c.et} (${fmt(c.ul, 1)})`).join('; ')}. Dodatki dostaje {pzDod.brak} pierwszych.
+
+<TabelaKwot wiersze={Pz.wiersze} kolumny={Pz.kolumny} m={pzJeden} oznacz={pzDodatkowe.map((c) => [c.i, c.j])} />
+
+**Jak czytać:** to kartka dla jednego badacza. Złote kratki dostały dodatek. Razem {suma(pzJeden)} ankiet.
+
+<Dlaczego>
+Przy równych częściach po przecinku wybierasz dowolną z tych kratek. Dlatego dobrych kartek jest kilka. Każda jest poprawna, jeśli: kratki to część pewna albo część pewna + 1, a suma wynosi {Pz.naAnk}.
+</Dlaczego>
+</Krok>
+
+</Rozwiazanie>
+
+<Ramka kind="granica" tytul="treść zadania a tabela">
+- Treść mówi o „ogólnopolskim badaniu”, a próba i tabela dotyczą tylko Poznania. Opisuj to jako badanie mieszkańców Poznania.
+- W Zad. 3 z tego zestawu badani mają być **dorośli**, a tabela zawiera wiek przedprodukcyjny (do 17 lat). Na zajęciach liczy się z całej tabeli — tak zrobiliśmy wyżej.
+- Jeśli prowadzący każe pominąć dzieci, usuń kolumnę „przedprod.” i licz od nowa: $N$ = {pzN - Pz.pop.reduce((a, w) => a + w[0], 0)} tys.
+</Ramka>
+
+<Schematy szeroki tytul="Poznań: ułóż komplet schematów" zrodlo="próba z Zad. 4 z zestawu „Zadania – powtórka”" wiersze={Pz.wiersze} kolumny={Pz.kolumny} proba={pzPr} naAnk={Pz.naAnk} ankieterow={pzAnk} przyklad={pzSch}>
+
+Próba {fmt(Pz.n)} osób, {pzAnk} badaczy, każdy robi {Pz.naAnk} ankiet. Ułóż komplet kartek, który przejdzie trzy testy. Schemat wyjściowy dla przypomnienia: {pzKr.map((c) => `${c.et}: ${fmt(pzWyj[c.i][c.j], 1)}`).join('; ')}.
+
+</Schematy>
 
 ## Ściąga przed kolokwium
 

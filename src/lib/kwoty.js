@@ -124,6 +124,15 @@ export const BIBLIOTEKA = {
   n: 400,
   naAnk: 20,
 };
+// Zad. 4 z zestawu „Zadania – powtórka” (skale i dobór próby): ludność Poznania w tys. według dzielnicy i ekonomicznej
+// grupy wieku, próba 1200 respondentów, jeden badacz wykonuje 20 ankiet. Tabela sumuje się do 582 tys. (treść Zad. 3 podaje 580 tys.).
+export const POZNAN = {
+  wiersze: ['Grunwald', 'Jeżyce', 'Nowe Miasto', 'Stare Miasto', 'Wilda'],
+  kolumny: ['przedprod.', 'produkcyjny', 'poprod.'],
+  pop: [[22, 79, 21], [15, 53, 14], [26, 94, 24], [29, 106, 28], [13, 46, 12]],
+  n: 1200,
+  naAnk: 20,
+};
 // Dane do ćwiczeń (wymyślone): klienci sklepu internetowego, płeć × wiek, n = 200, 10 ankiet na ankietera.
 export const SKLEP = {
   wiersze: ['K', 'M'],

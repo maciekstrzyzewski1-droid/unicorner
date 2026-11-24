@@ -4,14 +4,14 @@
 // liczba ankieterów razem, schematy razy ankieterzy = struktura próby (kratka po kratce).
 // Poprawnych zestawów jest wiele, więc sprawdzamy warunki, a nie zgodność z jednym kluczem.
 interface Schemat { nazwa?: string; ilu: number; m: number[][] }
-interface Props { tytul: string; wiersze: string[]; kolumny: string[]; proba: number[][]; naAnk: number; ankieterow: number; ile?: number; przyklad?: Schemat[]; zrodlo?: string; kolumnaPierwsza?: boolean }
+interface Props { tytul: string; wiersze: string[]; kolumny: string[]; proba: number[][]; naAnk: number; ankieterow: number; ile?: number; przyklad?: Schemat[]; zrodlo?: string; kolumnaPierwsza?: boolean; szeroki?: boolean }
 // kolumnaPierwsza: w komunikatach kratka nazywa się „kolumna, wiersz” (np. „Miasto, 18–24”), tak jak w treści modułu
-const { tytul, wiersze, kolumny, proba, naAnk, ankieterow, ile = 4, przyklad = [], zrodlo, kolumnaPierwsza = false } = Astro.props;
+const { tytul, wiersze, kolumny, proba, naAnk, ankieterow, ile = 4, przyklad = [], zrodlo, kolumnaPierwsza = false, szeroki = false } = Astro.props;
 const LIT = 'ABCDEF';
 const sloty = Array.from({ length: Math.max(ile, przyklad.length) }, (_, i) => LIT[i]);
 const dane = JSON.stringify({ wiersze, kolumny, proba, naAnk, ankieterow, przyklad, kolumnaPierwsza });
 ---
-<section class="k-ct k-sch" data-sch data-dane={dane}>
+<section class:list={["k-ct k-sch", szeroki && "is-szeroki"]} data-sch data-dane={dane}>
   <div class="k-pyt-head">
     <span class="k-pyt-tag k-ct-tag">Ćwiczenie</span>
     <h3 class="k-pyt-h">{tytul}</h3>
@@ -57,6 +57,8 @@ const dane = JSON.stringify({ wiersze, kolumny, proba, naAnk, ankieterow, przykl
 
 <style>
   .k-sch-sloty{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin:0 0 12px;}
+  /* szeroki: kartki z wieloma kolumnami albo długimi nazwami wierszy (np. 5 dzielnic × 3 grupy wieku) — dwie kartki w rzędzie */
+  .is-szeroki .k-sch-sloty{grid-template-columns:repeat(auto-fit,minmax(min(100%,290px),1fr));}
   .k-sch-slot{border:1px solid var(--line2);padding:10px 10px 8px;background:rgba(255,255,255,.02);min-width:0;}
   .k-sch-slot-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:6px;margin:0 0 6px;font-size:.9rem;}
   .k-sch-slot-h label{display:flex;align-items:center;gap:6px;font-size:.8rem;color:var(--muted);}

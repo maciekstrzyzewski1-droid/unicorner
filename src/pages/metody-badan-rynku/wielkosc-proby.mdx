@@ -24,6 +24,7 @@ import Polecenia from '../../components/kurs/Polecenia.astro';
 import Rozbior from '../../components/kurs/Rozbior.astro';
 import Znak from '../../components/kurs/Znak.astro';
 import ArkuszProby from '../../components/kurs/badania/ArkuszProby.astro';
+import TabelaKwot from '../../components/kurs/badania/TabelaKwot.astro';
 import Kalkulator from '../../components/kurs/badania/Kalkulator.astro';
 import { GUS, populacja, N, NM, NK, udzial, nJak, nIl, w_gore, alokuj, blad, fmt, proc, arkusz } from '../../lib/proba.js';
 
@@ -60,6 +61,34 @@ export const z3ucz = nJak(95, 0.411, 0.045, null, 4);
 export const z3rok = nJak(95, 0.316, 0.045, null, 4);
 export const z3plec = nJak(95, 0.62, 0.045, null, 2);
 export const z3 = Math.max(w_gore(z3ucz), w_gore(z3rok), w_gore(z3plec));
+// Zad. 3 z zestawu „Zadania – powtórka”: mieszkańcy Poznania, dzielnica (5 frakcji) i wiek (3 frakcje), N = 580 tys., e = 3%
+export const PZ_W = ['Grunwald', 'Jeżyce', 'Nowe Miasto', 'Stare Miasto', 'Wilda'];
+export const PZ_K = ['przedprod.', 'produkcyjny', 'poprod.'];
+export const PZ = [[22, 79, 21], [15, 53, 14], [26, 94, 24], [29, 106, 28], [13, 46, 12]];
+export const pzDz = PZ.map((w) => w.reduce((a, b) => a + b, 0));
+export const pzWiek = PZ_K.map((_, j) => PZ.reduce((a, w) => a + w[j], 0));
+export const pzS = pzDz.reduce((a, b) => a + b, 0);
+export const pzN = 580000;
+export const pzE2 = 0.03 * 0.03;
+export const r4 = (x) => Math.round(x * 10000) / 10000;
+export const pzIdD = pzDz.indexOf(Math.max(...pzDz));
+export const pzIdW = pzWiek.indexOf(Math.max(...pzWiek));
+export const pzPd = r4(pzDz[pzIdD] / pzS);
+export const pzPw = r4(pzWiek[pzIdW] / pzS);
+// rachunek „na kartce”: wspólny kawałek zaokrąglony do 4 miejsc, każda linia z liczb widocznych linię wyżej
+export const pzAd = r4(3.8416 * pzPd * (1 - pzPd));
+export const pzAw = r4(3.8416 * pzPw * (1 - pzPw));
+export const pzM1 = (pzN - 1) * pzE2;
+export const pzLd = pzAd * pzN, pzMd = pzAd + pzM1, pzNd = pzLd / pzMd;
+export const pzLw = pzAw * pzN, pzMw = pzAw + pzM1, pzNw = pzLw / pzMw;
+export const pzNdBezN = nJak(95, pzPd, 0.03, null, 2);
+export const pzWynD = w_gore(pzNd * 1.73);
+export const pzWynW = w_gore(pzNw * 1.53);
+// Biostat liczy bez zaokrągleń pośrednich i od razu zaokrągla w górę; WWP ręcznie
+export const pzBioDn = w_gore(nJak(95, pzPd, 0.03, pzN, 2));
+export const pzBioWn = w_gore(nJak(95, pzPw, 0.03, pzN, 2));
+export const pzBioD = w_gore(pzBioDn * 1.73);
+export const pzBioW = w_gore(pzBioWn * 1.53);
 export const z1a = 3.8416 * z1V * z1V;
 export const ark = nJak(95, 0.4, 0.05, N, 2);
 
@@ -75,7 +104,7 @@ Ile to „kilkaset”? Za mała próba daje wynik, który jest zgadywaniem. Za d
   { polecenie: 'Ustal populację i jej strukturę', jak: 'Zamieniasz pokolenia na wiek, sumujesz osoby z tabeli GUS i liczysz udziały grup.', przepis: 'polecenie-populacja', cwiczenia: 'cw-populacja', zrodlo: 'jak w zadaniu z danymi GUS dla Wielkopolski' },
   { polecenie: 'Oszacuj minimalną liczebność próby — cecha jakościowa', jak: 'Bierzesz najliczniejszą frakcję $p$, podstawiasz do wzoru, mnożysz przez WWP, gdy są co najmniej trzy grupy.', przepis: 'polecenie-jakosciowa', cwiczenia: 'cw-jakosciowa', zrodlo: 'jak w zadaniu z danymi GUS i w Zad. 2' },
   { polecenie: 'Oszacuj minimalną liczebność próby — cecha ilościowa', jak: 'Podstawiasz odchylenie standardowe (albo współczynnik zmienności) i błąd do wzoru.', przepis: 'polecenie-ilosciowa', cwiczenia: 'cw-ilosciowa', zrodlo: 'jak w Zad. 1 i Zad. 2' },
-  { polecenie: 'Kilka kryteriów naraz — podaj jedną liczebność', jak: 'Liczysz próbę dla każdego kryterium osobno i bierzesz największą.', przepis: 'polecenie-kryteria', cwiczenia: 'cw-kryteria', zrodlo: 'jak w Zad. 2 i Zad. 3' },
+  { polecenie: 'Kilka kryteriów naraz — podaj jedną liczebność', jak: 'Liczysz próbę dla każdego kryterium osobno i bierzesz największą.', przepis: 'polecenie-kryteria', cwiczenia: 'cw-kryteria', zrodlo: 'jak w Zad. 2 i Zad. 3 oraz w Zad. 3 z powtórki (Poznań)' },
   { polecenie: 'Projekt w Excelu: z tabeli GUS przez kalkulator do kwot', jak: 'Sumujesz grupy wieku w pokolenia, liczysz udziały, wpisujesz frakcję, błąd, ufność i N do kalkulatora, mnożysz przez WWP i rozpisujesz kwoty.', przepis: 'polecenie-excel', cwiczenia: 'cw-excel', zrodlo: 'jak w arkuszu „liczebność próby 2026 -g3”' },
   { polecenie: 'Dobór kwotowy: struktura próby i kwoty dla ankieterów', jak: 'Udział grupy w populacji razy $n$, potem podział przez liczbę ankieterów.', przepis: 'polecenie-kwoty', cwiczenia: 'cw-kwoty', zrodlo: 'jak w schemacie doboru kwotowego' },
 ]} />
@@ -570,6 +599,93 @@ Płeć nie jest kryterium doboru z treści, ale treść podaje jej strukturę, w
 </Krok>
 
 </Rozwiazanie>
+
+<Rozwiazanie id="powtorka-poznan" tytul="Mieszkańcy Poznania: dzielnica i wiek" zrodlo="Zad. 3 z zestawu „Zadania – powtórka”">
+<div slot="tresc">
+
+Władze Poznania badają dorosłych mieszkańców w sprawie inwestycji w mieście. Populacja: 580 tys. osób. Strukturę według dzielnicy i grupy wieku podaje tabela (w tys.). Poziom ufności 95%, błąd 3%. WWP przy 95%: 3 frakcje — 1,53, 4 frakcje — 1,66, 5 frakcji — 1,73. Określ minimalną liczebność próby.
+
+<TabelaKwot wiersze={PZ_W} kolumny={PZ_K} m={PZ} razem={false} />
+
+**Jak czytać:** liczby to tysiące osób. „Przedprod.” to wiek przedprodukcyjny (do 17 lat), „poprod.” — poprodukcyjny.
+
+</div>
+
+<div slot="plan">
+
+1. Rozpoznajemy dwa kryteria: dzielnica (5 frakcji) i grupa wieku (3 frakcje). Obie są jakościowe, bo tabela daje liczby osób w grupach.
+2. Z tabeli liczymy sumy i najliczniejszą frakcję każdego kryterium. To jest $p$.
+3. $N$ jest podane, więc wzór ze znanym $N$ (jak w Biostacie, gdzie wpisujesz $N$).
+4. Każde kryterium mnożymy przez jego WWP. Wybieramy większy wynik.
+
+</div>
+
+<Krok tytul="Sumy z tabeli">
+<TabelaKwot wiersze={PZ_W} kolumny={PZ_K} m={PZ} />
+
+- Dzielnice (ostatnia kolumna): {pzDz.join(', ')}. Najwięcej: {PZ_W[pzIdD]}, {pzDz[pzIdD]} tys.
+- Grupy wieku (ostatni wiersz): {pzWiek.join(', ')}. Najwięcej: wiek {PZ_K[pzIdW]}, {pzWiek[pzIdW]} tys.
+- Cała tabela: {pzS} tys.
+
+<Dlaczego>
+Odsetek frakcji liczymy z tabeli, więc dzielimy przez sumę tabeli: {pzS}, nie 580. Kratki dają {pzS} tys., a treść podaje 580 tys. — to różnica z zaokrągleń w tabeli. 580 tys. wpisujemy jako $N$ do wzoru.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wspólne liczby">
+- $Z_\alpha^2 = 1{,}96^2 = 3{,}8416$
+- $e = 0{,}03$, więc $e^2 = 0{,}03 \cdot 0{,}03 = 0{,}0009$
+- $N$ = {fmt(pzN)}, więc $(N-1) \cdot e^2$ = {fmt(pzN - 1)} · 0,0009 = {fmt(pzM1, 4)}
+
+<Dlaczego>
+Ten kawałek mianownika jest taki sam dla obu kryteriów. Liczymy go raz.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kryterium: dzielnica (5 frakcji)">
+$p$ = {pzDz[pzIdD]} : {pzS} ≈ {fmt(pzPd, 4)}, więc $1 - p$ = {fmt(1 - pzPd, 4)}.
+
+- Wspólny kawałek: 3,8416 · {fmt(pzPd, 4)} · {fmt(1 - pzPd, 4)} ≈ {fmt(pzAd, 4)}
+- Licznik: {fmt(pzAd, 4)} · {fmt(pzN)} = {fmt(pzLd, 0)}
+- Mianownik: {fmt(pzAd, 4)} + {fmt(pzM1, 4)} = {fmt(pzMd, 4)}
+- Iloraz: {fmt(pzLd, 0)} : {fmt(pzMd, 4)} ≈ {fmt(pzNd, 2)}
+- Razy WWP dla 5 frakcji: {fmt(pzNd, 2)} · 1,73 ≈ {fmt(pzNd * 1.73, 2)} → **{pzWynD}**
+
+<Dlaczego typ="inaczej">
+Biostat: frakcja {fmt(pzPd * 100, 2)}, α = 5%, $N$ = {fmt(pzN)}, błąd 3. Pokaże {pzBioDn}. Ręcznie: {pzBioDn} · 1,73 = {fmt(pzBioDn * 1.73, 2)} → {pzBioD}. Wzór bez $N$ dałby {fmt(pzNdBezN, 2)} przed WWP — przy 580 tys. osób $N$ prawie nic nie zmienia.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Kryterium: grupa wieku (3 frakcje)">
+$p$ = {pzWiek[pzIdW]} : {pzS} ≈ {fmt(pzPw, 4)}, więc $1 - p$ = {fmt(1 - pzPw, 4)}.
+
+- Wspólny kawałek: 3,8416 · {fmt(pzPw, 4)} · {fmt(1 - pzPw, 4)} ≈ {fmt(pzAw, 4)}
+- Licznik: {fmt(pzAw, 4)} · {fmt(pzN)} = {fmt(pzLw, 0)}
+- Mianownik: {fmt(pzAw, 4)} + {fmt(pzM1, 4)} = {fmt(pzMw, 4)}
+- Iloraz: {fmt(pzLw, 0)} : {fmt(pzMw, 4)} ≈ {fmt(pzNw, 2)}
+- Razy WWP dla 3 frakcji: {fmt(pzNw, 2)} · 1,53 ≈ {fmt(pzNw * 1.53, 2)} → **{pzWynW}**
+
+<Dlaczego typ="inaczej">
+Biostat: frakcja {fmt(pzPw * 100, 2)}, reszta jak wyżej. Pokaże {pzBioWn}, a {pzBioWn} · 1,53 = {fmt(pzBioWn * 1.53, 2)} → {pzBioW}.
+</Dlaczego>
+</Krok>
+
+<Krok tytul="Wynik">
+Wzorem: {pzWynD} (dzielnica) i {pzWynW} (wiek). Minimalna liczebność próby to **{Math.max(pzWynD, pzWynW)} osób**. W Biostacie wyjdzie {Math.max(pzBioD, pzBioW)} — o jedną osobę więcej, bo kalkulator zaokrągla przed mnożeniem przez WWP.
+
+<Dlaczego>
+Przed WWP większe $n$ ma wiek ({fmt(pzNw, 2)} wobec {fmt(pzNd, 2)}), bo jego $p\,(1-p)$ jest bliżej 0,25. Ale dzielnice to 5 frakcji, a wiek — 3. Większy WWP odwraca kolejność. Dlatego licz oba kryteria do końca, a nie wybieraj „na oko”.
+</Dlaczego>
+</Krok>
+
+</Rozwiazanie>
+
+<Ramka kind="pulapka" tytul="Zad. 3 z powtórki">
+- Odsetek frakcji z dzielenia przez 580 zamiast przez sumę tabeli ({pzS}).
+- WWP dla 4 frakcji przy dzielnicach. Dzielnic jest pięć, więc 1,73.
+- Wybór kryterium po samym $p$. W tym zadaniu po WWP wygrywa kryterium z mniejszym $p\,(1-p)$, bo ma więcej frakcji.
+- Treść mówi o dorosłych, a tabela ma wiek przedprodukcyjny. Na zajęciach liczy się z całej tabeli, jak wyżej. Gdyby prowadzący kazał pominąć dzieci, zostają dwie grupy wieku (bez WWP), a wynik dalej wyznacza dzielnica.
+</Ramka>
 
 <Ramka kind="granica" tytul="czego wynik nie gwarantuje">
 - Wzory pochodzą ze statystyki dla **prób losowych** (respondentów wybiera los, np. losowanie z listy mieszkańców). Przy doborze nielosowym (np. kwotowym — krok 5) to orientacyjne minimum.
